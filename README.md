@@ -107,7 +107,8 @@ pm2 logs
 ```
 ### `yarn start:server`
 
-Runs the app server in the development mode.\
+Runs the app server in the development mode.
+
 ### `npm start:web`
 
 Runs the app in the development mode.\
