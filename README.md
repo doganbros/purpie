@@ -1,7 +1,7 @@
-# Jadmin Client (Typescript React App)
+# Octopus (Typescript React App - Express REST API with postgres using Node.js, Express and Sequelize)
 
 
-## Features
+## Frontend Features
 
 - Typescript (Strict Mode)
 - ESNext
@@ -13,30 +13,99 @@
 - Redux
 - Styled Components
 - Grommet
+- No transpilers, just vanilla javascript
+- ES2017 latest features like Async/Await
+- CORS enabled
+
+## Backend Features
+
+- Uses [yarn](https://yarnpkg.com) 
+- Express + Postgres ([Sequelize](http://docs.sequelizejs.com/))
+- Request validation ([express validator](https://github.com/ctavan/express-validator)
+- Consistent coding styles with [editorconfig](http://editorconfig.org)
+- Uses [helmet](https://github.com/helmetjs/helmet) to set some HTTP headers for security
+- Load environment variables from .env files with [dotenv](https://github.com/rolodato/dotenv-safe)
+- Gzip compression with [compression](https://github.com/expressjs/compression)
+- Linting with [eslint](http://eslint.org)
+- Logging with [morgan](https://github.com/expressjs/morgan)
+- API documentation generation with [postman](http://postman.com)
+- Monitoring with [pm2](https://github.com/Unitech/pm2)
 
 
 ## Requirements
 
-- At least Node v12
+- [Node v14.14](https://nodejs.org/en/download/current/)
+- [Yarn](https://yarnpkg.com/en/docs/install)
+- [Pm2] (https://pm2.io/)
 
 
 ## Getting Started
 
 ```bash
 
-    git clone https://github.com/doganbros/jadmin-frontend # Clone Repository
-    cd jadmin-frontend
-    yarn install # install dependencies or npm install
-    cp .env.example .env # copy example environment variables
-    npm start # Runs the app in the development mode.
+    git clone https://github.com/doganbros/octopus # Clone Repository
+    cd octopus
     # Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
 ```
 
+Install dependencies:
+
+```bash
+yarn install
+```
+
+Set environment variables into .env file:
+
+```bash
+cp .env.example .env
+```
+
+Create database
+
+```bash
+sequelize db:create --env development
+```
+
+## Insert neccessery data into Database tables
+
+```bash
+yarn migrate
+yarn seeds
+```
+
+## Running project
+
+```bash
+    yarn start:server # Runs backend side
+    yarn start:web # Runs frontend side
+```
 ## Available Scripts
 
 In the project directory, you can run:
-### `npm start`
+
+## Database commands
+
+```bash
+# run all migrations
+yarn migrate
+
+# run all seeds
+yarn seeds
+
+# generate new migration
+sequelize migration:generate --name new-migration
+
+# generate new seed
+sequelize seed:generate --name new-seeds
+```
+
+## Logs
+
+```bash
+# show logs in production
+pm2 logs
+```
+### `npm start:web`
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.

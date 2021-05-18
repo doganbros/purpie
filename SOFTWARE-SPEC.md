@@ -1,8 +1,6 @@
-# Jadmin Client (Typescript React App)
+# Octopus (Typescript React App - Express REST API with postgres using Node.js, Express and Sequelize)
 
-A single page react app used to interact with JADMIN Server
-
-# Features
+# Frontend Features
 
 - Typescript (Strict Mode)
 - ESNext
@@ -13,39 +11,28 @@ A single page react app used to interact with JADMIN Server
 - React Router
 - Redux
 
+## Backend Features
+
+- No transpilers, just vanilla javascript
+- ES2017 latest features like Async/Await
+- CORS enabled
+- Uses [yarn](https://yarnpkg.com)
+- Express + Postgres ([Sequelize](http://docs.sequelizejs.com/))
+- Request validation ([express validator](https://github.com/ctavan/express-validator)
+- Consistent coding styles with [editorconfig](http://editorconfig.org)
+- Uses [helmet](https://github.com/helmetjs/helmet) to set some HTTP headers for security
+- Load environment variables from .env files with [dotenv](https://github.com/rolodato/dotenv-safe)
+- Gzip compression with [compression](https://github.com/expressjs/compression)
+- Linting with [eslint](http://eslint.org)
+- Logging with [morgan](https://github.com/expressjs/morgan)
+- API documentation generation with [postman](http://postman.com)
+- Monitoring with [pm2](https://github.com/Unitech/pm2)
 
 # Requirements
 
-- At least Node v12
-
-
-# Getting Started
-
-```bash
-
-    git clone https://github.com/doganbros/jadmin-frontend # Clone Repository
-    cd jadmin-frontend
-    yarn install # install dependencies or npm install
-    cp .env.example .env # copy example environment variables
-    npm start # Runs the app in the development mode.
-    # Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-```
-
-# Available Scripts
-
-In the project directory, you can run:
-### `npm start`
-
-Runs the app in the development mode.
-### `npm run build`
-
-Builds the app for production to the `build` folder.
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- [Node v8.10](https://nodejs.org/en/download/current/)
+- [Yarn](https://yarnpkg.com/en/docs/install)
+- [PM2](http://pm2.keymetrics.io/)
 
 # Architecture
 
@@ -65,6 +52,12 @@ This app uses no `Javascript` (Although it compiles to javascript). `Typescript`
 
 ## Frameworks
 
+### Express.js(https://expressjs.com/)
+
+Express is a minimal and flexible Node.js web application framework that provides a robust set of features for web.Express provides to avoid deal with redundant dependencies.
+### [Axios](https://axios-http.com/)
+
+`Axios` is a promise based HTTP client used in this app. All AJAX requests are handled with `axios`. Their interceptors really help to avoid redundancy in most part of the app.
 ### [SCSS](https://sass-lang.com/)
 
 This app uses no `CSS` (Although it compiles to css in the long run). `SCSS` is rearely used in this app. It is used to style a large portion of the app. `SCSS Modules` is recommended if `SCSS` is used. `node-sass` is the library responsible for compiling the app's `scss` to `css`
@@ -85,12 +78,6 @@ Grommet is a `React styled-component` library that helps in building responsive 
 ### [Redux](https://redux.js.org/)
 
 `Redux` is a predictable state Container for Javascript (Typescript) Apps. This is the main state management library used in the app. Mostly states that are shared across multiple components of the app use redux. Also all network-related states are handled here. `react-redux` is the library that helps in binding redux to react. `redux-thunk` provides the redux middleware that helps the app to deal with asynchronous dispatches in redux actions.
-
-### [Axios](https://axios-http.com/)
-
-`Axios` is a promise based HTTP client used in this app. All AJAX requests are handled with `axios`. Their interceptors really help to avoid redundancy in most part of the app.
-
-
 
 ## Development Dependencies 
 
@@ -123,13 +110,39 @@ This app interacts with a stateless http server. Authentication is realized by s
 ```
 ├── README.md
 ├── SOFTWARE-SPEC.md
+├── appspec.yml
 ├── package-lock.json
 ├── package.json
-├── public
-│   ├── favicon.ico
-│   ├── index.html
-│   ├── manifest.json
-│   └── robots.txt
+├── scripts
+│   ├── after_install.sh
+│   ├── before_install.sh
+│   └── start.sh
+├── server
+│   ├── api
+│   │   ├── controllers
+│   │   ├── middlewares
+│   │   ├── models
+│   │   ├── repositories
+│   │   ├── routes
+│   │   ├── services
+│   │   ├── tests
+│   │   ├── utils
+│   │   └── validations
+│   ├── config
+│   ├── database
+│   │   ├── config.js
+│   │   ├── db-build.js
+│   │   ├── migrations
+│   │   └── seeders
+│   │       └── seed.js
+│   ├── index.js
+│   └── views
+│       └── emails
+│           ├── partials
+│           │   ├── footer.hbs
+│           │   └── header.hbs
+│           ├── reset-password.hbs
+│           └── welcome.hbs
 ├── src
 │   ├── App.tsx
 │   ├── assets
@@ -143,6 +156,7 @@ This app interacts with a stateless http server. Authentication is realized by s
 │   │   └── http.ts
 │   ├── helpers
 │   │   ├── history.ts
+│   │   ├── utils.ts
 │   │   └── validators.ts
 │   ├── hooks
 │   │   └── useTitle.ts
@@ -191,9 +205,58 @@ This app interacts with a stateless http server. Authentication is realized by s
 
     This is where the main index.html file that loads the react app lives.
 
+- `server`
+
+    This is where most backend work is done in this app.
+
+
+    - `api`
+
+        all api operations, functions, tests, .etc are included in api folder.
+
+        - `Controllers` 
+            Logic of our operations are run in this folder files. For example, on login operation we check the DB to prevent duplicate users. Then add to DB. All other logic are run in the controller. Also controller seperate to main parts like auth,tenant, meeting, etc...
+
+        - `Middlewares` 
+            functions that will be used before or after reaching controllers functions errorHandler and authenticate. 
+
+        - `models`
+            Database model,tables and attirbutes are included this this file.
+
+        - `repositories` 
+            It is like a HOC.DB functions are generic and just sending parameters for function prevents code repeating for any needed operations with DB.
+
+        - `routes` 
+            Specifying endpoints and which function they will connect with specified validations. 
+
+        - `services`
+            There are helper functions emailer, token decoding and generating.
+
+        - `tests`
+            Unit testing for all apis functions
+
+        - `utils` 
+            Utils functions are in there.
+
+        - `validations`
+            Before any routing to controller functions, these validation functions are run and check provided parameters, query and body values.
+
+    - `config`
+
+        This folder contains configurations for environments like development, test and production. There is project extensions like cors,error handler,helmet etc...
+
+    - `database`
+
+        This file contains the DB connection functions. For development purpose db migrations and seeds are included in this file. When running migration and seed configs are run.
+
+    - `views` 
+
+        All templates for user interaction are included in this file like forget-password.
+
+
 - `src`
 
-    This is where most of the work is done in this app.
+    This is where most frontend work is done in this app.
 
     - `App.tsx`
 
@@ -289,6 +352,12 @@ This app interacts with a stateless http server. Authentication is realized by s
             This is the file that contains the typescript configuration for the app. The configuration used in this app is strict
             
 
-    
+    - `scripts`
+        
+        Server run and build commands are included in this folder files for installing requirements and ci cd auto deployment.  
+
+    - `appspec.js`
+
+        file contains scripts files calls for ci cd auto deployment into aws instance
 
     
