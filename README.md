@@ -1,88 +1,62 @@
-# Jadmin (Express REST API with postgres using Node.js, Express and Sequelize)
+# Jadmin Client (Typescript React App)
 
 
 ## Features
 
-- No transpilers, just vanilla javascript
-- ES2017 latest features like Async/Await
-- CORS enabled
-- Uses [yarn](https://yarnpkg.com) 
-- Express + Postgres ([Sequelize](http://docs.sequelizejs.com/))
-- Request validation ([express validator](https://github.com/ctavan/express-validator)
-- Consistent coding styles with [editorconfig](http://editorconfig.org)
-- Uses [helmet](https://github.com/helmetjs/helmet) to set some HTTP headers for security
-- Load environment variables from .env files with [dotenv](https://github.com/rolodato/dotenv-safe)
-- Gzip compression with [compression](https://github.com/expressjs/compression)
-- Linting with [eslint](http://eslint.org)
-- Logging with [morgan](https://github.com/expressjs/morgan)
-- API documentation generation with [postman](http://postman.com)
-- Monitoring with [pm2](https://github.com/Unitech/pm2)
+- Typescript (Strict Mode)
+- ESNext
+- React 17
+- Prettier
+- Airbnb Coding Style Guide
+- Hooks
+- React Router
+- Redux
+- Styled Components
+- Grommet
+
 
 ## Requirements
 
-- [Node v14.14](https://nodejs.org/en/download/current/)
-- [Yarn](https://yarnpkg.com/en/docs/install)
-- [Pm2] 
+- At least Node v12
+
 
 ## Getting Started
 
-Clone the repo:
-
 ```bash
-git clone --depth 1 https://github.com/doganbros/jadmin-backend
-cd jadmin-backend
+
+    git clone https://github.com/doganbros/jadmin-frontend # Clone Repository
+    cd jadmin-frontend
+    yarn install # install dependencies or npm install
+    cp .env.example .env # copy example environment variables
+    npm start # Runs the app in the development mode.
+    # Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
 ```
 
-Install dependencies:
+## Available Scripts
 
-```bash
-yarn install
-```
+In the project directory, you can run:
+### `npm start`
 
-Set environment variables into .env file:
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-```bash
-cp .env.example .env
-```
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
+### `npm run build`
 
-Crete database
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-```bash
-sequelize db:create --env development
-```
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-## Insert neccessery data into Database tables
+### `npm run eject`
 
-```bash
-yarn migrate
-yarn seeds
-```
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-## Running project
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-```bash
-yarn start
-```
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-## Database commands
-
-```bash
-# run all migrations
-yarn migrate
-
-# run all seeds
-yarn seeds
-
-# generate new migration
-sequelize migration:generate --name new-migration
-
-# generate new seed
-sequelize seed:generate --name new-seeds
-```
-
-## Logs
-
-```bash
-# show logs in production
-pm2 logs
-```
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.

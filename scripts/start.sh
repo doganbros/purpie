@@ -1,3 +1,4 @@
 # Stop all servers and start the server as a daemon
-sudo pm2 stop API_LOCAL
+cd /home/ubuntu/codebase/jadmin-frontend
+sudo yarn build
 sudo pm2 start API_LOCAL

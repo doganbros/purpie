@@ -2,7 +2,7 @@ version: 0.0
 os: linux 
 files:
   - source: /
-    destination: /home/ubuntu/codebase/jadmin-backend
+    destination: /home/ubuntu/codebase/jadmin-frontend
 hooks:
   BeforeInstall:
     - location: scripts/before_install.sh

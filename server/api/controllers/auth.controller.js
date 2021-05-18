@@ -14,7 +14,7 @@ const { ApiError } = require('../utils/customErrors/baseError');
 const { default: Axios } = require('axios');
 const { Op } = require('sequelize');
 const {stringify: stringifyQuery} = require('querystring');
-const { HOST } = process.env
+
 /**
  * Generate response with auth tokens
  * @private
