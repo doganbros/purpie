@@ -6,7 +6,7 @@ module.exports = {
     apps: [
       {
         name: 'API',
-        script: 'src',
+        script: 'server',
         watch: false,
         exec_mode: 'cluster_mode',
         instances: 'max',
@@ -24,7 +24,7 @@ module.exports = {
       },
       {
         name: 'API_LOCAL',
-        script: 'src',
+        script: 'server',
         watch: true,
         exec_mode: 'fork',
         ignoreWatch: ['.idea/*', '.git/*'],
@@ -53,7 +53,7 @@ module.exports = {
         'pre-setup':
           'npm install -g yarn && npm install -g pm2 && npm install -g apidoc ',
         'post-setup':
-          'yarn && cp src/database/config.example.js src/database/config.js',
+          'yarn && cp server/database/config.example.js server/database/config.js',
       },
     },
   };
