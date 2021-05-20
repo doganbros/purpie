@@ -63,6 +63,7 @@
     "format": "prettier --write .",
     "analyze": "eslint .",
     "start:server": "pm2 start ecosystem.config.js --only API_LOCAL && pm2 logs",
+    "start:local": "nodemon server/index.js",
     "migrate": "sequelize db:migrate",
     "seeds": "sequelize db:seed:all"
   },

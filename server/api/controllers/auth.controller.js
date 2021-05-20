@@ -14,6 +14,7 @@ const { ApiError } = require('../utils/customErrors/baseError');
 const { default: Axios } = require('axios');
 const { Op } = require('sequelize');
 const {stringify: stringifyQuery} = require('querystring');
+const {HOST, JITSI_SECRET} = process.env
 
 /**
  * Generate response with auth tokens
@@ -245,6 +246,46 @@ exports.generateToken = async (req, res, next) => {
       id: tenant.id,
     });
     res.json({ accessToken });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+/**
+ * Returns jitsiToken
+ * @public
+ */
+exports.generateJitsiToken = async (req, res, next) => {
+  try {
+
+    const payload = {
+      aud: req.body.aud,
+      context: {
+        user: {
+          id: req.body.id,
+          name: req.body.name,
+          avatar:
+          req.body.avatar,
+          email: req.body.email,
+          moderator: req.body.moderator
+        },
+        group:req.body.group,
+        features: {
+          livestreaming: req.body.livestreaming,
+          'outbound-call': req.body.outboundCall,
+          transcription: req.body.transcription,
+          recording: req.body.recording
+        }
+      },
+      iss: req.body.iss,
+      nbf: req.body.nbf,
+      room: req.body.rooom,
+      sub: req.body.sub
+    }
+    const jitsiToken = generateAccessToken(payload, JITSI_SECRET, req.body.exp);
+
+    res.json({ jitsiToken });
   } catch (err) {
     next(err);
   }
