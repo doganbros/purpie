@@ -268,19 +268,19 @@ exports.generateJitsiToken = async (req, res, next) => {
           avatar:
           req.body.avatar,
           email: req.body.email,
-          moderator: req.body.moderator
+          moderator: req.body.moderator?'true':'false'
         },
         group:req.body.group,
         features: {
-          livestreaming: req.body.livestreaming,
-          'outbound-call': req.body.outboundCall,
-          transcription: req.body.transcription,
-          recording: req.body.recording
+          livestreaming: req.body.livestreaming?'true':'false',
+          'outbound-call': req.body.outboundCall?'true':'false',
+          transcription: req.body.transcription?'true':'false',
+          recording: req.body.recording?'true':'false'
         }
       },
       iss: req.body.iss,
       nbf: req.body.nbf,
-      room: req.body.rooom,
+      room: req.body.room,
       sub: req.body.sub
     }
     const jitsiToken = generateAccessToken(payload, JITSI_SECRET, req.body.exp);
