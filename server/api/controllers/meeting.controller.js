@@ -8,6 +8,8 @@ const _ = require('lodash');
 const meetingError = require('../utils/customErrors/meetingError');
 const tenantError = require('../utils/customErrors/tenantError');
 const authErrors = require('../utils/customErrors/authErrors');
+const { generateJitsiToken } = require('../services/jitsi');
+
 /**
  *  Create new meeting
  * @public
@@ -46,7 +48,7 @@ exports.create = async (req, res, next) => {
         'creatorId',
       ])
     );
-    meeting.link = `${tenant.subdomain}/${meeting.id}`;
+    meeting.link = `${tenant.subdomain}/${meeting.title.replace(' ', '-')}`;
     await meetingRepo.updateOneById(meeting.id, meeting);
 
     mailer(
@@ -207,7 +209,7 @@ exports.delete = async (req, res, next) => {
 
     if (req.user.subdomain && tenant.id != req.user.subdomain)
       throw authErrors.ACCESS_DENIED;
-      
+
     if (req.user.id != -1) {
       const userRepo = new IRepo(User);
       const user = await userRepo.findOneByField(req.user.id, 'id');
@@ -224,5 +226,53 @@ exports.delete = async (req, res, next) => {
     res.status(httpStatus.OK).json({ result: 'delete' });
   } catch (e) {
     next(e);
+  }
+};
+
+/**
+ *  Join meeting
+ * @public
+ */
+exports.join = async (req, res, next) => {
+  try {
+    const meetingRepo = new IRepo(Meeting);
+    const meeting = await meetingRepo.findOneByField(
+      req.params.meetingId,
+      'id'
+    );
+    if (!meeting) throw meetingError.MEETING_NOT_FOUND;
+    const jitsiToken = await generateJitsiToken(
+      req.user?.id,
+      meeting.id,
+      req.body
+    );
+    let configs = '#';
+
+    Object.keys(req.body).map(key => {
+      configs += `config.${key}=${encodeURIComponent(JSON.stringify(req.body[key]))}&`;
+    });
+    const roomLink = `https://${meeting.link}?jwt=${jitsiToken}${configs}`;
+
+    return res.status(httpStatus.OK).json({ roomLink });
+  } catch (e) {
+    return next(e);
+  }
+};
+
+/**
+ * Returns jitsiToken
+ * @public
+ */
+exports.jitsiToken = async (req, res, next) => {
+  try {
+    const jitsiToken = await generateJitsiToken(
+      req.user?.id,
+      req.params?.meetingId,
+      req.body
+    );
+
+    res.json({ jitsiToken });
+  } catch (err) {
+    next(err);
   }
 };

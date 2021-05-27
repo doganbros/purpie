@@ -17,7 +17,7 @@ exports.create = async (req, res, next) => {
     const tenantRepo = new IRepo(Tenant);
     req.body.adminId = req.user.id;
     req.body.subdomain =
-      req.body.name.toLowerCase().replace(' ', '-') + '.jadmin.com';
+      req.body.name.toLowerCase().replace(' ', '-') + '.doganbros.com';
 
     const tenant = await tenantRepo.create(
       _.pick(req.body, [
@@ -28,6 +28,8 @@ exports.create = async (req, res, next) => {
         'subdomain',
         'apiKey',
         'secret',
+        'aud',
+        'iss'
       ])
     );
 

@@ -50,6 +50,20 @@ const Tenant = sequelize.define('Tenant', {
       notEmpty: { msg: 'Secret is required' },
     },
   },
+  iss: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: { msg: 'iss is required' },
+    },
+  },
+  aud: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: { msg: 'aud is required' },
+    },
+  },
 });
 
 /** Models Hooks */
