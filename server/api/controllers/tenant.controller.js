@@ -29,7 +29,8 @@ exports.create = async (req, res, next) => {
         'apiKey',
         'secret',
         'aud',
-        'iss'
+        'iss',
+        'tenantMeetingCongigs'
       ])
     );
 
@@ -78,6 +79,7 @@ exports.update = async (req, res, next) => {
     tenant.website = req.body.website;
     tenant.active = req.body.active;
     tenant.description = req.body.description;
+    tenant.tenantMeetingConfigs = req.body.tenantMeetingConfigs;
 
     await tenantRepo.updateOneById(req.params.tenantId, tenant);
     return res.json(tenant);

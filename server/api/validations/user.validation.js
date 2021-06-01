@@ -9,5 +9,5 @@ module.exports = {
       .isEmail(),
     param('tenantId', 'Tenant id is required').exists(),
     param('tenantId', 'Tenant id must be integer').isNumeric(),
-  ],
+  ]
 };
