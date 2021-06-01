@@ -38,6 +38,8 @@ router
    * @apiParam  {String}              website      Tenant's website
    * @apiParam  {String}              apiKey       Tenant's apiKey
    * @apiParam  {String}              secret       Tenant's secret
+   * @apiParam  {String}              iss          Tenant's iss
+   * @apiParam  {String}              aud          Tenant's aud
    *
    * @apiSuccess {String}  id           Tenant's id
    * @apiSuccess {String}  name         Tenant's name
@@ -47,6 +49,8 @@ router
    * @apiSuccess {Boolean} active       Tenant's active
    * @apiSuccess {Integer} adminId      Tenant's adminId
    * @apiSuccess {Date}    createdAt    Timestamp
+   * @apiSuccess {String}  iss          Tenant's iss
+   * @apiSuccess {String}  aud          Tenant's aud
    *
    * @apiError (Bad Request 400)   ValidationError  Some parameters may contain invalid values
    * @apiError (Unauthorized 401)  Unauthorized     Only authenticated users can create the data
@@ -73,6 +77,8 @@ router
    * @apiSuccess {Boolean} active       Tenant's active
    * @apiSuccess {Integer} adminId      Tenant's adminId
    * @apiSuccess {Date}    createdAt    Timestamp
+   * @apiSuccess {String}  iss          Tenant's iss
+   * @apiSuccess {String}  aud          Tenant's aud
    *
    * @apiError (Unauthorized 401) Unauthorized Only authenticated users can access the data
    * @apiError (Forbidden 403)    Forbidden    Only user with same id or admins can access the data
@@ -105,6 +111,8 @@ router
    * @apiSuccess {Boolean} active       Tenant's active
    * @apiSuccess {Integer} adminId      Tenant's adminId
    * @apiSuccess {Date}    createdAt    Timestamp
+   * @apiSuccess {String}  iss          Tenant's iss
+   * @apiSuccess {String}  aud          Tenant's aud
    *
    * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values
    * @apiError (Forbidden 403)    Forbidden    Only  admins can modify the data

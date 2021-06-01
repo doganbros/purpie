@@ -17,7 +17,7 @@ exports.create = async (req, res, next) => {
     const tenantRepo = new IRepo(Tenant);
     req.body.adminId = req.user.id;
     req.body.subdomain =
-      req.body.name.toLowerCase().replace(' ', '-') + '.jadmin.com';
+      req.body.name.toLowerCase().replace(' ', '-') + '.doganbros.com';
 
     const tenant = await tenantRepo.create(
       _.pick(req.body, [
@@ -28,6 +28,9 @@ exports.create = async (req, res, next) => {
         'subdomain',
         'apiKey',
         'secret',
+        'aud',
+        'iss',
+        'tenantMeetingCongigs'
       ])
     );
 
@@ -76,6 +79,7 @@ exports.update = async (req, res, next) => {
     tenant.website = req.body.website;
     tenant.active = req.body.active;
     tenant.description = req.body.description;
+    tenant.tenantMeetingConfigs = req.body.tenantMeetingConfigs;
 
     await tenantRepo.updateOneById(req.params.tenantId, tenant);
     return res.json(tenant);

@@ -30,8 +30,12 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     defaultValue: null,
     validate: {
-      isValidPassword(value) {
-        if (!(value && value.length >= 6) && !(this.googleId && this.facebookId)) throw new Error('Password should be at least 6 chars');
+      isValidPassword (value) {
+        if (
+          !(value && value.length >= 6) &&
+          !(this.googleId && this.facebookId)
+        )
+          throw new Error('Password should be at least 6 chars');
       },
     },
   },
@@ -58,6 +62,48 @@ const User = sequelize.define('User', {
   token: {
     defaultValue: false,
     type: DataTypes.STRING,
+  },
+  userMeetingConfigs: {
+    type: DataTypes.JSON,
+    defaultValue: {
+      startWithAudioMuted: false,
+      startWithVideoMuted: false,
+      prejoinPageEnabled: false,
+      toolbarButtons: [
+        'microphone',
+        'camera',
+        'closedcaptions',
+        'desktop',
+        'embedmeeting',
+        'fullscreen',
+        'fodeviceselection',
+        'hangup',
+        'profile',
+        'chat',
+        'recording',
+        'livestreaming',
+        'etherpad',
+        'sharedvideo',
+        'shareaudio',
+        'settings',
+        'raisehand',
+        'videoquality',
+        'filmstrip',
+        'invite',
+        'feedback',
+        'stats',
+        'shortcuts',
+        'tileview',
+        'select-background',
+        'download',
+        'help',
+        'mute-everyone',
+        'mute-video-everyone',
+        'security',
+      ],
+      disableAudioLevels: false,
+      audioLevelsInterval: 200,
+    },
   },
 });
 
