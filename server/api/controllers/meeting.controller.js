@@ -8,7 +8,10 @@ const _ = require('lodash');
 const meetingError = require('../utils/customErrors/meetingError');
 const tenantError = require('../utils/customErrors/tenantError');
 const authErrors = require('../utils/customErrors/authErrors');
-const { generateJitsiToken } = require('../services/jitsi');
+const {
+  generateJitsiToken,
+  generateJoinMeetingUrl,
+} = require('../services/jitsi');
 
 /**
  *  Create new meeting
@@ -241,19 +244,30 @@ exports.join = async (req, res, next) => {
       'id'
     );
     if (!meeting) throw meetingError.MEETING_NOT_FOUND;
+
+    const tenantRepo = new IRepo(Tenant);
+    const tenant = await tenantRepo.findOneByField(
+      meeting.tenantId,
+      'id'
+    );
+    
+    if (!tenant) throw tenantError.TENANT_NOT_FOUND;
+    const userRepo = new IRepo(User);
+    const user = await userRepo.findOneByField(
+      req.user?.id,
+      'id'
+    );
+
+    if (!user) throw authErrors.USER_NOT_FOUND;
+
     const jitsiToken = await generateJitsiToken(
       req.user?.id,
       meeting.id,
       req.body
     );
-    let configs = '#';
 
-    Object.keys(req.body).map(key => {
-      configs += `config.${key}=${encodeURIComponent(JSON.stringify(req.body[key]))}&`;
-    });
-    const roomLink = `https://${meeting.link}?jwt=${jitsiToken}${configs}`;
-
-    return res.status(httpStatus.OK).json({ roomLink });
+    const roomLink = generateJoinMeetingUrl(tenant.tenantMeetingConfigs,user.userMeetingConfigs, meeting.link, jitsiToken);
+    return res.redirect(roomLink);
   } catch (e) {
     return next(e);
   }

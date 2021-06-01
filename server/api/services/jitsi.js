@@ -6,6 +6,7 @@ const authErrors = require('../utils/customErrors/authErrors');
 const meetingError = require('../utils/customErrors/meetingError');
 const tenantError = require('../utils/customErrors/tenantError');
 const { generateAccessToken } = require('./tokenGenerator');
+const { superAdminConfigs } = require('../../config/superAdminConfigs');
 
 const generateJitsiToken = async (userId, meetingId, body) => {
   const userRepo = new IRepo(User);
@@ -47,4 +48,29 @@ const generateJitsiToken = async (userId, meetingId, body) => {
   return generateAccessToken(payload, process.env.JITSI_SECRET, 1696284052);
 };
 
-module.exports = { generateJitsiToken };
+const generateJoinMeetingUrl = (
+  tenantConfigs,
+  userConfigs,
+  meetingLink,
+  jitsiToken
+) => {
+  // update tenantConfigs
+  Object.keys(tenantConfigs).map(key => {
+    superAdminConfigs[key] = tenantConfigs[key];
+  });
+  // update userConfigs
+  Object.keys(userConfigs).map(key => {
+    superAdminConfigs[key] = userConfigs[key];
+  });
+
+  let configs = '#';
+  // all configurations
+  Object.keys(superAdminConfigs).map(key => {
+    configs += `config.${key}=${encodeURIComponent(
+      JSON.stringify(superAdminConfigs[key])
+    )}&`;
+  });
+  return `https://${meetingLink}?jwt=${jitsiToken}${configs}`;
+};
+
+module.exports = { generateJitsiToken, generateJoinMeetingUrl };
