@@ -99,6 +99,7 @@ exports.login = [
   async (req, res, next) => {
     try {
       const subdomain = req.hostname.split('.')[0];
+      console.log(req.hostname)
       let tenant;
 
       if (subdomain !== HOST) {

@@ -4,25 +4,23 @@ import { errorResponseMessage } from '../helpers/utils';
 import { REMOVE_TOAST } from '../store/constants/util.constants';
 import { store } from '../store/store';
 
-const { REACT_APP_API_VERSION = 'v1' } = process.env;
+const {
+  REACT_APP_API_VERSION = 'v1',
+  REACT_APP_SERVER_HOST = 'http://localhost:8000',
+} = process.env;
 
-const domain = new URL(window.location.href);
-const subdomain = domain?.host.split('.')[1];
-let REACT_APP_BASE_URL;
-switch (process.env.NODE_ENV) {
-  case 'development':
-    REACT_APP_BASE_URL = `http://${subdomain}.localhost:8000`; // 'http://jadmin-test.localhost:8000';
-    break;
-  case 'production':
-    REACT_APP_BASE_URL = `http://${subdomain}.doganbros.com/api`; //  'http://jadmin-test.doganbros.com/api';
-    break;
-  case 'test':
-    REACT_APP_BASE_URL = `http://${subdomain}.doganbros.com/api`; //  'http://jadmin-test.doganbros.com/api';
-    break;
-  default:
-    break;
-}
-axios.defaults.baseURL = `${REACT_APP_BASE_URL}/${REACT_APP_API_VERSION}`;
+const [subdomain] = window.location.hostname.split('.');
+
+const serverHostUrl = new URL(REACT_APP_SERVER_HOST);
+
+const isValidSubDomain =
+  subdomain !== 'www' && subdomain !== serverHostUrl.hostname;
+
+axios.defaults.baseURL = `${
+  isValidSubDomain
+    ? `${serverHostUrl.protocol}//${subdomain}.${serverHostUrl.host}`
+    : REACT_APP_SERVER_HOST
+}/${REACT_APP_API_VERSION}`;
 
 axios.interceptors.request.use(
   (config) => {
@@ -46,12 +44,15 @@ axios.interceptors.response.use(
       store.dispatch({ type: 'LOGOUT' });
     else {
       const toastId = nanoid();
+
+      // eslint-disable-next-line no-console
+      console.error(error);
       store.dispatch({
         type: 'SET_TOAST',
         payload: {
           toastId,
           status: 'error',
-          message: errorResponseMessage(error?.response?.data),
+          message: errorResponseMessage(error?.response?.data || error),
         },
       });
 
