@@ -1,13 +1,4 @@
-import {
-  Box,
-  Form,
-  FormField,
-  Button,
-  Image,
-  Text,
-  TextInput,
-  Heading,
-} from 'grommet';
+import { Box, Form, FormField, Button, Image, Text, TextInput } from 'grommet';
 import { Google, FacebookOption } from 'grommet-icons';
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,10 +13,10 @@ import {
 import { AppState } from '../../store/reducers/root.reducer';
 import { LoginPayload } from '../../store/types/auth.types';
 import AuthLayout from '../../components/layouts/AuthLayout';
-import Logo from '../../assets/octopus-logo/logo-color.png';
 import SignInRect from '../../assets/sign-in-rect.svg';
 import Figure from '../../assets/login-bg/figure.png';
 import Banner from '../../assets/login-bg/banner.png';
+import { useResponsive } from '../../hooks/useResponsive';
 
 const Login: FC = () => {
   const dispatch = useDispatch();
@@ -41,26 +32,27 @@ const Login: FC = () => {
     dispatch(loginAction(value));
   };
 
+  const size = useResponsive();
+
   return (
     <AuthLayout
       title="Login"
+      formTitle="Welcome Back!"
+      formSubTitle="Sign In to continue."
       background={
         <>
           <Image
-            width="100%"
+            width="60%"
             src={Banner}
             style={{
               position: 'absolute',
-              top: '35%',
               pointerEvents: 'none',
-              left: '50%',
-              transform: 'translate(-50%, -35%)',
             }}
           />
           <Image
-            width="70%"
-            margin={{ bottom: 'large' }}
-            style={{ maxHeight: '70%', zIndex: 2 }}
+            width="85%"
+            alignSelf="center"
+            style={{ zIndex: 1 }}
             src={Figure}
           />
         </>
@@ -72,27 +64,6 @@ const Login: FC = () => {
       }}
     >
       <>
-        <Box
-          margin={{ bottom: 'xsmall' }}
-          direction="row"
-          align="center"
-          fill="horizontal"
-        >
-          <Image
-            margin={{ right: 'xsmall' }}
-            width="50px"
-            height="50px"
-            src={Logo}
-          />
-          <Text color="primary">octopus</Text>
-        </Box>
-        <Heading level="1" margin={{ bottom: 'xxsmall' }}>
-          Welcome Back!
-        </Heading>
-        <Text size="small" margin={{ left: 'xsmall', bottom: 'medium' }}>
-          Sign In to continue.
-        </Text>
-
         <Form onSubmit={handleSubmit}>
           <FormField
             name="email"
@@ -118,6 +89,7 @@ const Login: FC = () => {
           >
             <AnchorLink
               weight="normal"
+              size={size}
               label="Forgot Password?"
               to="/forgot-password"
             />
@@ -126,7 +98,7 @@ const Login: FC = () => {
             fill="horizontal"
             hoverIndicator="background"
             primary
-            size="large"
+            size={size}
             disabled={loading}
             type="submit"
             label="SIGN IN"
@@ -139,7 +111,7 @@ const Login: FC = () => {
             align="center"
             margin={{ vertical: 'medium' }}
           >
-            <Box basis="100%">
+            <Box basis="50%">
               <Image src={SignInRect} />
             </Box>
             <Box basis="100%" direction="row" justify="center">
@@ -147,19 +119,19 @@ const Login: FC = () => {
                 Or Sign In With
               </Text>
             </Box>
-            <Box basis="100%">
+            <Box basis="50%">
               <Image src={SignInRect} />
             </Box>
           </Box>
 
           <Box
-            margin={{ bottom: 'medium', top: 'large' }}
+            margin={{ vertical: size }}
             align="center"
             style={{ textAlign: 'center' }}
           >
             <Button
               label="Google"
-              size="large"
+              size={size}
               disabled={googleAuthBtnLoading}
               fill="horizontal"
               secondary
@@ -169,7 +141,7 @@ const Login: FC = () => {
               margin={{ right: 'small', bottom: 'small' }}
             />
             <Button
-              size="large"
+              size={size}
               fill="horizontal"
               primary
               label="Facebook"

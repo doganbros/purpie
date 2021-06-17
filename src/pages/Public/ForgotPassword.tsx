@@ -1,13 +1,15 @@
-import { Button, Heading, Form, FormField, TextInput, Box } from 'grommet';
+import { Button, Form, FormField, TextInput, Image } from 'grommet';
 import React, { FC } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import AuthLayout from '../../components/layouts/AuthLayout';
-import { AnchorLink } from '../../components/utils/AnchorLink';
 import { validators } from '../../helpers/validators';
 import { FormSubmitEvent } from '../../models/form-submit-event';
 import { forgetPasswordAction } from '../../store/actions/auth.action';
 import { AppState } from '../../store/reducers/root.reducer';
+import Figure from '../../assets/forgotten-password-bg/figure-1.png';
+import Banner from '../../assets/forgotten-password-bg/banner.png';
+import { useResponsive } from '../../hooks/useResponsive';
 
 const ForgotPassword: FC = () => {
   const dispatch = useDispatch();
@@ -21,19 +23,41 @@ const ForgotPassword: FC = () => {
     dispatch(forgetPasswordAction(value.email));
   };
 
+  const size = useResponsive();
+
   return (
     <AuthLayout
       title="Forgot Password"
+      formTitle="Password Recovery"
+      formSubTitle="Enter email to receive your password."
       callToAction={{
-        title: 'Remember Password',
+        title: 'Remember Password?',
         body: 'SIGN IN',
         onClick: () => history.push('/login'),
       }}
+      background={
+        <>
+          <Image
+            width="60%"
+            src={Banner}
+            style={{
+              position: 'absolute',
+              pointerEvents: 'none',
+              top: 0,
+              left: 0,
+              height: '100vh',
+            }}
+          />
+          <Image
+            height="100%"
+            alignSelf="center"
+            style={{ zIndex: 2 }}
+            src={Figure}
+          />
+        </>
+      }
     >
       <>
-        <Heading margin={{ bottom: 'medium' }} level="3">
-          Forget Password
-        </Heading>
         <Form onSubmit={handleSubmit}>
           <FormField
             name="email"
@@ -43,17 +67,16 @@ const ForgotPassword: FC = () => {
           >
             <TextInput id="emailInput" name="email" type="email" />
           </FormField>
-          <Box pad={{ vertical: 'medium' }} align="end">
-            <Button
-              hoverIndicator="background"
-              primary
-              fill="horizontal"
-              disabled={loading}
-              type="submit"
-              label="Go!"
-            />
-          </Box>
-          <AnchorLink label="Login" to="/login" />
+          <Button
+            fill="horizontal"
+            hoverIndicator="background"
+            primary
+            size={size}
+            margin={{ top: 'large' }}
+            disabled={loading}
+            type="submit"
+            label="SEND"
+          />
         </Form>
       </>
     </AuthLayout>

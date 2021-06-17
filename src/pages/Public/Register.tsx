@@ -1,17 +1,8 @@
 import React, { FC } from 'react';
-import {
-  Box,
-  Button,
-  Heading,
-  Image,
-  Text,
-  Form,
-  FormField,
-  TextInput,
-} from 'grommet';
+import { Button, Image, Form, FormField, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { AnchorLink } from '../../components/utils/AnchorLink';
+
 import { RegisterPayload } from '../../store/types/auth.types';
 import { registerAction } from '../../store/actions/auth.action';
 import { AppState } from '../../store/reducers/root.reducer';
@@ -19,7 +10,7 @@ import AuthLayout from '../../components/layouts/AuthLayout';
 import { FormSubmitEvent } from '../../models/form-submit-event';
 import { validators } from '../../helpers/validators';
 import Figure from '../../assets/register-bg/figure.png';
-import Banner from '../../assets/register-bg/banner.png';
+import { useResponsive } from '../../hooks/useResponsive';
 
 const Register: FC = () => {
   const dispatch = useDispatch();
@@ -33,9 +24,13 @@ const Register: FC = () => {
     dispatch(registerAction(value));
   };
 
+  const size = useResponsive();
+
   return (
     <AuthLayout
       title="Register"
+      formTitle="Create an Account"
+      formSubTitle="Sign Up to continue."
       callToAction={{
         title: 'Already have an account?',
         body: 'SIGN IN',
@@ -44,18 +39,8 @@ const Register: FC = () => {
       background={
         <>
           <Image
-            width="100%"
-            src={Banner}
-            style={{
-              position: 'absolute',
-              zIndex: 0,
-              pointerEvents: 'none',
-              top: '0',
-              right: '-27%',
-            }}
-          />
-          <Image
-            width="100%"
+            width="90%"
+            alignSelf="center"
             margin={{ bottom: 'large' }}
             style={{ maxHeight: '80%', zIndex: 1 }}
             src={Figure}
@@ -64,10 +49,6 @@ const Register: FC = () => {
       }
     >
       <>
-        <Heading margin={{ bottom: 'medium' }} level="3">
-          Create Account
-        </Heading>
-
         <Form onSubmit={handleSubmit}>
           <FormField
             label="First Name"
@@ -114,20 +95,16 @@ const Register: FC = () => {
           >
             <TextInput id="password1Input" name="password1" type="password" />
           </FormField>
-          <Box pad={{ vertical: 'medium' }} align="end">
-            <Button
-              hoverIndicator="background"
-              primary
-              fill="horizontal"
-              disabled={loading}
-              type="submit"
-              label="Go!"
-            />
-          </Box>
-          <Box direction="row" alignSelf="center" gap="xsmall">
-            <Text>Already have an account?</Text>
-            <AnchorLink to="/login" label="Sign in" />
-          </Box>
+          <Button
+            fill="horizontal"
+            hoverIndicator="background"
+            primary
+            size={size}
+            margin={{ top: 'medium' }}
+            disabled={loading}
+            type="submit"
+            label="SIGN UP"
+          />
         </Form>
       </>
     </AuthLayout>

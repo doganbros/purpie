@@ -28,7 +28,7 @@ const App: FC = () => {
   }, []);
 
   return (
-    <Grommet theme={theme} full>
+    <Grommet theme={theme}>
       <AppToast
         visible={toast.visible}
         status={toast.status}
