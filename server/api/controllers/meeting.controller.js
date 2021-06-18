@@ -1,10 +1,11 @@
+/* eslint-disable no-nested-ternary */
 const httpStatus = require('http-status');
+const _ = require('lodash');
 const Meeting = require('../models/meeting');
 const Tenant = require('../models/tenant');
 const User = require('../models/user');
 const IRepo = require('../repositories/iRepo');
 const mailer = require('../services/mailer');
-const _ = require('lodash');
 const meetingError = require('../utils/customErrors/meetingError');
 const tenantError = require('../utils/customErrors/tenantError');
 const authErrors = require('../utils/customErrors/authErrors');
@@ -23,17 +24,17 @@ exports.create = async (req, res, next) => {
     const tenant = await tenantRepo.findOneByField(req.body.tenantId, 'id');
     if (!tenant) throw tenantError.TENANT_NOT_FOUND;
 
-    if (req.user.subdomain && tenant.id != req.user.subdomain)
+    if (req.user.subdomain && tenant.id !== req.user.subdomain)
       throw authErrors.ACCESS_DENIED;
     const userRepo = new IRepo(User);
     const user = await userRepo.findOneByField(
-      req.user.id == -1 ? tenant.adminId : req.user.id,
+      req.user.id === -1 ? tenant.adminId : req.user.id,
       'id'
     );
 
     if (
       !user.roles.all &&
-      !user.tenantIds.includes(parseInt(req.body.tenantId))
+      !user.tenantIds.includes(parseInt(req.body.tenantId, 10))
     ) {
       throw authErrors.ACCESS_DENIED;
     }
@@ -83,10 +84,10 @@ exports.update = async (req, res, next) => {
     const tenantRepo = new IRepo(Tenant);
     const tenant = await tenantRepo.findOneByField(meeting.tenantId, 'id');
 
-    if (req.user.subdomain && tenant.id != req.user.subdomain)
+    if (req.user.subdomain && tenant.id !== req.user.subdomain)
       throw authErrors.ACCESS_DENIED;
 
-    if (req.user.id != -1) {
+    if (req.user.id !== -1) {
       const userRepo = new IRepo(User);
       const user = await userRepo.findOneByField(req.user.id, 'id');
 
@@ -120,38 +121,41 @@ exports.list = async (req, res, next) => {
     const { tenantId } = req.params;
     const userRepo = new IRepo(User);
     const user = await userRepo.findOneByField(req.user.id, 'id');
-    if (tenantId != -1) {
+    if (tenantId !== -1) {
       const tenantRepo = new IRepo(Tenant);
       const tenant = await tenantRepo.findOneByField(tenantId, 'id');
       if (!tenant) throw tenantError.TENANT_NOT_FOUND;
 
-      if (req.user.id != -1) {
-        if (!user.roles.all && !user.tenantIds.includes(parseInt(tenantId))) {
+      if (req.user.id !== -1) {
+        if (
+          !user.roles.all &&
+          !user.tenantIds.includes(parseInt(tenantId, 10))
+        ) {
           throw authErrors.ACCESS_DENIED;
         }
       }
-    } else if (req.user.id == -1) {
+    } else if (req.user.id === -1) {
       throw authErrors.ACCESS_DENIED;
     }
     const meetingRepo = new IRepo(Meeting);
     let meetings = [];
-    if (!user.roles.all || (tenantId != -1 && user.roles.all)) {
+    if (!user.roles.all || (tenantId !== -1 && user.roles.all)) {
       // api key user, admin or user get their all meetings or meetings by specific tenant
       // or superadmin get meetings by specific tenant
       meetings = await meetingRepo.findAllByField(
         req.user.subdomain
           ? req.user.subdomain
-          : tenantId != -1
+          : tenantId !== -1
           ? tenantId
           : user.tenantIds,
         'tenantId'
       );
-    } else if (tenantId == -1 && user.roles.all)
+    } else if (tenantId === -1 && user.roles.all)
       // superadmin gets all meetings
       meetings = await meetingRepo.findAll();
     return res.json(meetings);
   } catch (e) {
-    next(e);
+    return next(e);
   }
 };
 
@@ -168,12 +172,12 @@ exports.get = async (req, res, next) => {
     const tenant = await tenantRepo.findOneByField(req.params.tenantId, 'id');
     if (!tenant) throw tenantError.TENANT_NOT_FOUND;
 
-    if (req.user.subdomain && tenant.id != req.user.subdomain)
+    if (req.user.subdomain && tenant.id !== req.user.subdomain)
       throw authErrors.ACCESS_DENIED;
 
     if (
       !user.roles.all &&
-      !user.tenantIds.includes(parseInt(req.params.tenantId))
+      !user.tenantIds.includes(parseInt(req.params.tenantId, 10))
     ) {
       throw authErrors.ACCESS_DENIED;
     }
@@ -183,12 +187,12 @@ exports.get = async (req, res, next) => {
       'id'
     );
 
-    if (!meeting || meeting.tenantId != req.params.tenantId)
+    if (!meeting || meeting.tenantId !== req.params.tenantId)
       throw meetingError.MEETING_NOT_FOUND;
 
     return res.json(meeting);
   } catch (e) {
-    next(e);
+    return next(e);
   }
 };
 
@@ -210,10 +214,10 @@ exports.delete = async (req, res, next) => {
     const tenantRepo = new IRepo(Tenant);
     const tenant = await tenantRepo.findOneByField(meeting.tenantId, 'id');
 
-    if (req.user.subdomain && tenant.id != req.user.subdomain)
+    if (req.user.subdomain && tenant.id !== req.user.subdomain)
       throw authErrors.ACCESS_DENIED;
 
-    if (req.user.id != -1) {
+    if (req.user.id !== -1) {
       const userRepo = new IRepo(User);
       const user = await userRepo.findOneByField(req.user.id, 'id');
 
@@ -246,17 +250,11 @@ exports.join = async (req, res, next) => {
     if (!meeting) throw meetingError.MEETING_NOT_FOUND;
 
     const tenantRepo = new IRepo(Tenant);
-    const tenant = await tenantRepo.findOneByField(
-      meeting.tenantId,
-      'id'
-    );
-    
+    const tenant = await tenantRepo.findOneByField(meeting.tenantId, 'id');
+
     if (!tenant) throw tenantError.TENANT_NOT_FOUND;
     const userRepo = new IRepo(User);
-    const user = await userRepo.findOneByField(
-      req.user?.id,
-      'id'
-    );
+    const user = await userRepo.findOneByField(req.user?.id, 'id');
 
     if (!user) throw authErrors.USER_NOT_FOUND;
 
@@ -266,7 +264,12 @@ exports.join = async (req, res, next) => {
       req.body
     );
 
-    const roomLink = generateJoinMeetingUrl(tenant.tenantMeetingConfigs,user.userMeetingConfigs, meeting.link, jitsiToken);
+    const roomLink = generateJoinMeetingUrl(
+      tenant.tenantMeetingConfigs,
+      user.userMeetingConfigs,
+      meeting.link,
+      jitsiToken
+    );
     return res.redirect(roomLink);
   } catch (e) {
     return next(e);

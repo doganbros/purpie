@@ -3,6 +3,7 @@
   "env": {
     "node": true,
     "es6": true,
+    "mocha": true,
     "browser": true
   },
   "rules": {
@@ -24,5 +25,8 @@
         "endOfLine": "auto"
       }
     ]
+  },
+  "globals": {
+    "sequelize": "readonly"
   }
 }

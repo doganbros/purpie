@@ -1,4 +1,6 @@
 const httpStatus = require('http-status');
+const _ = require('lodash');
+const { Op } = require('sequelize');
 const User = require('../models/user');
 const Tenant = require('../models/tenant');
 const IRepo = require('../repositories/iRepo');
@@ -6,8 +8,7 @@ const { ApiError } = require('../utils/customErrors/baseError');
 const { authErrors } = require('../utils/customErrors/authErrors');
 const tenantError = require('../utils/customErrors/tenantError');
 const { decodeToken } = require('../services/tokenDecode');
-const _ = require('lodash');
-const { Op } = require('sequelize');
+
 const { HOST } = process.env;
 // const roles = {
 //   admin: ['guest', 'user'],
@@ -62,8 +63,8 @@ module.exports = () => async (req, res, next) => {
     let user;
     if (tenant) {
       user = await userRepo.findOneByMultipleFields({
-        ['id']: decoded.id,
-        ['tenantIds']: { [Op.contains]: [tenant?.id] },
+        id: decoded.id,
+        tenantIds: { [Op.contains]: [tenant?.id] },
       });
       if (!user) throw authErrors.USER_NOT_FOUND;
       user.subdomain = tenant.id;

@@ -7,7 +7,7 @@ exports.INVALID_CREDENTIALS = new ApiError({
   name: 'INVALID_CREDENTIALS',
 });
 
-exports.INVALID_SOCIAL = name =>
+exports.INVALID_SOCIAL = (name) =>
   new ApiError({
     message: `Invalid ${name} access token`,
     status: httpStatus.UNAUTHORIZED,

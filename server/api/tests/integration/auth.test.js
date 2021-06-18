@@ -4,12 +4,11 @@ const httpStatus = require('http-status');
 const { expect } = require('chai');
 const sinon = require('sinon');
 const nodemailer = require('nodemailer');
-const axios = require('axios');
 const uuidv4 = require('uuid/v4');
 const app = require('../../../index');
 const UserFactory = require('../factories/user.factory');
 const truncate = require('../helpers/truncate');
-const { User } = require('../../models');
+const User = require('../../models/user');
 const getAuthorizedUser = require('../helpers/user.auth');
 
 const sandbox = sinon.createSandbox();
@@ -50,9 +49,7 @@ describe('Authentication', () => {
         firstName,
         lastName,
       };
-      const res = await request(app)
-        .post('/v1/auth/register')
-        .send(req);
+      const res = await request(app).post('/v1/auth/register').send(req);
       delete req.password;
       expect(res.status).to.eq(httpStatus.OK);
       expect(res.body.tokens).to.have.a.property('refreshToken');
@@ -62,9 +59,7 @@ describe('Authentication', () => {
 
     it('should show error when emails has already taken', async () => {
       const user = UserFactory().save();
-      const res = await request(app)
-        .post('/v1/auth/register')
-        .send(user);
+      const res = await request(app).post('/v1/auth/register').send(user);
       expect(res.status).to.eq(httpStatus.BAD_REQUEST);
       expect(res.body.errors).to.have.a.property('email');
     });
@@ -72,9 +67,7 @@ describe('Authentication', () => {
     it('should show errors for required fields', async () => {
       const req = {};
 
-      const res = await request(app)
-        .post('/v1/auth/register')
-        .send(req);
+      const res = await request(app).post('/v1/auth/register').send(req);
       expect(res.status).to.eq(httpStatus.BAD_REQUEST);
       expect(res.body.errors).to.have.a.property('email');
       expect(res.body.errors).to.have.a.property('firstName');
@@ -95,9 +88,7 @@ describe('Authentication', () => {
     });
 
     it('should no show error if token is invalid', async () => {
-      const res = await request(app)
-        .post('/v1/auth/logout')
-        .send();
+      const res = await request(app).post('/v1/auth/logout').send();
       expect(res.status).to.eq(httpStatus.NO_CONTENT);
     });
   });
@@ -117,9 +108,7 @@ describe('Authentication', () => {
     });
 
     it('should show error with empty email and password', async () => {
-      const res = await request(app)
-        .post('/v1/auth/login')
-        .send({});
+      const res = await request(app).post('/v1/auth/login').send({});
       expect(res.status).to.eq(httpStatus.BAD_REQUEST);
       expect(res.body.errors).to.have.a.property('email');
       expect(res.body.errors).to.have.a.property('password');
@@ -146,7 +135,7 @@ describe('Authentication', () => {
         .expect(httpStatus.UNAUTHORIZED);
     });
   });
-  
+
   describe('Reset password', () => {
     it('should send email with reset password token', async () => {
       const transport = {

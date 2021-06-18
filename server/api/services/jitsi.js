@@ -55,17 +55,17 @@ const generateJoinMeetingUrl = (
   jitsiToken
 ) => {
   // update tenantConfigs
-  Object.keys(tenantConfigs).map(key => {
+  Object.keys(tenantConfigs).forEach((key) => {
     superAdminConfigs[key] = tenantConfigs[key];
   });
   // update userConfigs
-  Object.keys(userConfigs).map(key => {
+  Object.keys(userConfigs).forEach((key) => {
     superAdminConfigs[key] = userConfigs[key];
   });
 
   let configs = '#';
   // all configurations
-  Object.keys(superAdminConfigs).map(key => {
+  Object.keys(superAdminConfigs).forEach((key) => {
     configs += `config.${key}=${encodeURIComponent(
       JSON.stringify(superAdminConfigs[key])
     )}&`;

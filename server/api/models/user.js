@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { omit } = require('lodash');
 const DataTypes = require('sequelize');
+
 const User = sequelize.define('User', {
   firstName: {
     type: DataTypes.STRING,
@@ -30,7 +31,7 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     defaultValue: null,
     validate: {
-      isValidPassword (value) {
+      isValidPassword(value) {
         if (
           !(value && value.length >= 6) &&
           !(this.googleId && this.facebookId)
@@ -108,7 +109,7 @@ const User = sequelize.define('User', {
 });
 
 /** Models Hooks */
-User.beforeSave(async user => {
+User.beforeSave(async (user) => {
   try {
     if (user._changed.email) {
       user.email = user.email.toLowerCase();
@@ -130,10 +131,10 @@ User.beforeSave(async user => {
  * @param limit
  * @returns {Promise<*>}
  */
-User.paginate = async function paginate (page = 1, limit = 10) {
+User.paginate = async function paginate(page = 1, limit = 10) {
   const offset = limit * (page - 1);
   const result = await this.findAndCountAll({ limit, offset });
-  result.rows.map(user => user.transform());
+  result.rows.map((user) => user.transform());
   return result;
 };
 
@@ -143,7 +144,7 @@ const objectMethods = {
    * Prepare object to serialization
    * @returns {Object}
    */
-  transform () {
+  transform() {
     return omit(this.get({ plain: true }), [
       'password',
       'refreshToken',

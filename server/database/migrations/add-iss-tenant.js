@@ -1,5 +1,5 @@
 module.exports = {
-  up (queryInterface, Sequelize) {
+  up(queryInterface, Sequelize) {
     return Promise.all([
       queryInterface.addColumn(
         'Tenants', // table name
@@ -10,7 +10,7 @@ module.exports = {
           validate: {
             notEmpty: { msg: 'iss is required' },
           },
-          defaultValue:'123'
+          defaultValue: '123',
         }
       ),
       queryInterface.addColumn(
@@ -22,13 +22,13 @@ module.exports = {
           validate: {
             notEmpty: { msg: 'aud is required' },
           },
-          defaultValue:'123'
+          defaultValue: '123',
         }
       ),
     ]);
   },
 
-  down: function (queryInterface, Sequelize) {
+  down(queryInterface) {
     return Promise.all([
       queryInterface.removeColumn('Tenants', 'iss'),
       queryInterface.removeColumn('Tenants', 'aud'),

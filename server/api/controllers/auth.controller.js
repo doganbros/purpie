@@ -1,5 +1,9 @@
 const httpStatus = require('http-status');
 const bcrypt = require('bcryptjs');
+const _ = require('lodash');
+const { default: Axios } = require('axios');
+const { Op } = require('sequelize');
+const { stringify: stringifyQuery } = require('querystring');
 const User = require('../models/user');
 const Tenant = require('../models/tenant');
 const IRepo = require('../repositories/iRepo');
@@ -8,13 +12,10 @@ const tenantError = require('../utils/customErrors/tenantError');
 const { generateAccessToken } = require('../services/tokenGenerator');
 const { decodeToken } = require('../services/tokenDecode');
 const mailer = require('../services/mailer');
-const _ = require('lodash');
 const authenticate = require('../middlewares/authenticate');
 const { ApiError } = require('../utils/customErrors/baseError');
-const { default: Axios } = require('axios');
-const { Op } = require('sequelize');
-const {stringify: stringifyQuery} = require('querystring');
-const {HOST} = process.env
+
+const { HOST } = process.env;
 
 /**
  * Generate response with auth tokens
@@ -51,7 +52,7 @@ exports.register = [
         );
         if (!tenant) throw tenantError.TENANT_DOMAIN_NOT_FOUND;
 
-        req.user.tenantIds = [tenant.id]
+        req.user.tenantIds = [tenant.id];
         req.user.roles[tenant.id] = 3;
       }
       const userRepo = new IRepo(User);
@@ -74,7 +75,7 @@ exports.register = [
         'lastName',
         'email',
         'roles',
-        'tenantIds'
+        'tenantIds',
       ]);
       return next();
     } catch (e) {
@@ -96,10 +97,9 @@ exports.register = [
  * @public
  */
 exports.login = [
-  async (req, res, next) => {
+  async (req, __, next) => {
     try {
       const subdomain = req.hostname.split('.')[0];
-      console.log(req.hostname)
       let tenant;
 
       if (subdomain !== HOST) {
@@ -115,8 +115,8 @@ exports.login = [
       let user;
       if (tenant)
         user = await userRepo.findOneByMultipleFields({
-          ['email']: email,
-          ['tenantIds']: { [Op.contains]: [tenant?.id] },
+          email,
+          tenantIds: { [Op.contains]: [tenant?.id] },
         });
       else user = await userRepo.findOneByField(email, 'email');
 
@@ -134,7 +134,7 @@ exports.login = [
       ]);
       return next();
     } catch (e) {
-      next(e);
+      return next(e);
     }
   },
   authResponse,
@@ -165,7 +165,7 @@ exports.reset = async (req, res, next) => {
   try {
     const { email } = req.body;
     const userRepo = new IRepo(User);
-    let user = await userRepo.findOneByField(email, 'email');
+    const user = await userRepo.findOneByField(email, 'email');
     if (!user) throw authErrors.USER_NOT_FOUND;
 
     const token = generateAccessToken(user, 'RESET_PASSWORD_JADMIN');
@@ -190,13 +190,13 @@ exports.reset = async (req, res, next) => {
  */
 exports.changePassword = async (req, res, next) => {
   try {
-    let { password } = req.body;
+    const { password } = req.body;
     const token = req.header('Authorization').replace('Bearer ', '');
     const decoded = await decodeToken(token, 'RESET_PASSWORD_JADMIN');
     if (!decoded) throw authErrors.INVALID_TOKEN;
 
     const userRepo = new IRepo(User);
-    let user = await userRepo.findOneByField(decoded.email, 'email');
+    const user = await userRepo.findOneByField(decoded.email, 'email');
     if (!user) throw authErrors.USER_NOT_FOUND;
 
     if (token !== user.token) throw authErrors.INVALID_TOKEN;
@@ -246,174 +246,179 @@ exports.generateToken = async (req, res, next) => {
     const accessToken = generateAccessToken({
       id: tenant.id,
     });
-    res.json({ accessToken });
+    return res.json({ accessToken });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };
 
-
 exports.generateThirdPartyUrl = async (req, res, next) => {
   try {
-      const {name} = req.params;
-
-      if (name === 'google') {
-        const stringifiedQuery = stringifyQuery({
-          client_id: process.env.GOOGLE_OAUTH_CLIENT_ID,
-          redirect_uri: process.env.UI_HOST + '/auth/google',
-          scope: [
-            'https://www.googleapis.com/auth/userinfo.email',
-            'https://www.googleapis.com/auth/userinfo.profile',
-          ].join(' '), // space seperated string
-          response_type: 'code',
-          access_type: 'offline',
-          prompt: 'consent',
-        });
-
-        return res.json({url: `https://accounts.google.com/o/oauth2/v2/auth?${stringifiedQuery}`})
-      }
-
-      if (name === 'facebook') {
-        const stringifiedQuery = stringifyQuery({
-          client_id: process.env.FACEBOOK_OAUTH_CLIENT_ID,
-          redirect_uri: process.env.UI_HOST + '/auth/facebook',
-          scope: ['email', 'public_profile'].join(','),
-          response_type: 'code',
-          auth_type: 'rerequest',
-        });
-
-
-        return res.json({url: `https://www.facebook.com/v4.0/dialog/oauth?${stringifiedQuery}`})
-      }
-
-  } catch (err) {
-    next(err);
-  }
-}
-
-
-exports.authenticateFromThirdPartyCode = [
-  async (req, __, next) => {
-  try {
-    const {name} = req.params;
-    const {code} = req.body;
+    const { name } = req.params;
 
     if (name === 'google') {
-      const { data: {access_token} } = await Axios({
-        url: `https://oauth2.googleapis.com/token`,
-        method: 'post',
-        data: {
-          client_id: process.env.GOOGLE_OAUTH_CLIENT_ID,
-          client_secret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
-          redirect_uri: process.env.UI_HOST + '/auth/google',
-          grant_type: 'authorization_code',
-          code,
-        },
+      const stringifiedQuery = stringifyQuery({
+        client_id: process.env.GOOGLE_OAUTH_CLIENT_ID,
+        redirect_uri: `${process.env.UI_HOST}/auth/google`,
+        scope: [
+          'https://www.googleapis.com/auth/userinfo.email',
+          'https://www.googleapis.com/auth/userinfo.profile',
+        ].join(' '), // space seperated string
+        response_type: 'code',
+        access_type: 'offline',
+        prompt: 'consent',
       });
 
-
-      const { data } = await Axios({
-        url: 'https://www.googleapis.com/oauth2/v2/userinfo',
-        method: 'get',
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
+      return res.json({
+        url: `https://accounts.google.com/o/oauth2/v2/auth?${stringifiedQuery}`,
       });
-
-      const userRepo = new IRepo(User);
-      const user = await userRepo.findOneByMultipleFields(
-      {
-        [Op.or]: [
-          { email: data.email },
-          { googleId: data.id }
-        ]
-      }
-      );
-
-      if (user) {
-        if (!user.googleId)
-        await userRepo.updateOneById(user.id, {dataValues: {googleId: data.id}})
-        req.user = _.pick(user, [
-          'id',
-          'firstName',
-          'lastName',
-          'email',
-          'roles',
-        ]);
-        req.skipRegister = true;
-        return next();
-      }
-
-      req.body = {
-        firstName: data.given_name,
-        lastName: data.family_name,
-        email: data.email,
-        googleId: data.id,
-        isActive: true,
-      }
-      return next();
     }
 
     if (name === 'facebook') {
-      const { data: {access_token} } = await Axios({
-        url: 'https://graph.facebook.com/v4.0/oauth/access_token',
-        method: 'get',
-        params: {
-          client_id: process.env.FACEBOOK_OAUTH_CLIENT_ID,
-          client_secret: process.env.FACEBOOK_OAUTH_CLIENT_SECRET,
-          redirect_uri: process.env.UI_HOST + '/auth/facebook',
-          code,
-        },
+      const stringifiedQuery = stringifyQuery({
+        client_id: process.env.FACEBOOK_OAUTH_CLIENT_ID,
+        redirect_uri: `${process.env.UI_HOST}/auth/facebook`,
+        scope: ['email', 'public_profile'].join(','),
+        response_type: 'code',
+        auth_type: 'rerequest',
       });
 
-
-      const { data } = await Axios({
-        url: 'https://graph.facebook.com/me',
-        method: 'get',
-        params: {
-          fields: ['id', 'email', 'first_name', 'last_name', 'middle_name'].join(','),
-          access_token,
-        },
+      return res.json({
+        url: `https://www.facebook.com/v4.0/dialog/oauth?${stringifiedQuery}`,
       });
+    }
 
-      const userRepo = new IRepo(User);
-      const user = await userRepo.findOneByMultipleFields(
-      {
-        [Op.or]: [
-          { email: data.email },
-          { facebookId: data.id }
-        ]
-      }
-      );
+    return res.sendStatus(404);
+  } catch (err) {
+    return next(err);
+  }
+};
 
-      if (user) {
-        if (!user.facebookId)
-        await userRepo.updateOneById(user.id, {dataValues: {facebookId: data.id}})
-        req.user = _.pick(user, [
-          'id',
-          'firstName',
-          'lastName',
-          'email',
-          'roles',
-        ]);
-        req.skipRegister = true;
+exports.authenticateFromThirdPartyCode = [
+  async (req, res, next) => {
+    try {
+      const { name } = req.params;
+      const { code } = req.body;
+
+      if (name === 'google') {
+        const {
+          data: { accessToken },
+        } = await Axios({
+          url: `https://oauth2.googleapis.com/token`,
+          method: 'post',
+          data: {
+            client_id: process.env.GOOGLE_OAUTH_CLIENT_ID,
+            client_secret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
+            redirect_uri: `${process.env.UI_HOST}/auth/google`,
+            grant_type: 'authorization_code',
+            code,
+          },
+        });
+
+        const { data } = await Axios({
+          url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+          method: 'get',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        const userRepo = new IRepo(User);
+        const user = await userRepo.findOneByMultipleFields({
+          [Op.or]: [{ email: data.email }, { googleId: data.id }],
+        });
+
+        if (user) {
+          if (!user.googleId)
+            await userRepo.updateOneById(user.id, {
+              dataValues: { googleId: data.id },
+            });
+          req.user = _.pick(user, [
+            'id',
+            'firstName',
+            'lastName',
+            'email',
+            'roles',
+          ]);
+          req.skipRegister = true;
+          return next();
+        }
+
+        req.body = {
+          firstName: data.given_name,
+          lastName: data.family_name,
+          email: data.email,
+          googleId: data.id,
+          isActive: true,
+        };
         return next();
       }
 
+      if (name === 'facebook') {
+        const {
+          data: { accessToken },
+        } = await Axios({
+          url: 'https://graph.facebook.com/v4.0/oauth/access_token',
+          method: 'get',
+          params: {
+            client_id: process.env.FACEBOOK_OAUTH_CLIENT_ID,
+            client_secret: process.env.FACEBOOK_OAUTH_CLIENT_SECRET,
+            redirect_uri: `${process.env.UI_HOST}/auth/facebook`,
+            code,
+          },
+        });
 
-      req.body = {
-        firstName: data.first_name + (data.middle_name ? ` ${data.middle_name}`: ''),
-        lastName: data.last_name,
-        email: data.email,
-        facebookId: data.id,
-        isActive: true,
+        const { data } = await Axios({
+          url: 'https://graph.facebook.com/me',
+          method: 'get',
+          params: {
+            fields: [
+              'id',
+              'email',
+              'first_name',
+              'last_name',
+              'middle_name',
+            ].join(','),
+            accessToken,
+          },
+        });
+
+        const userRepo = new IRepo(User);
+        const user = await userRepo.findOneByMultipleFields({
+          [Op.or]: [{ email: data.email }, { facebookId: data.id }],
+        });
+
+        if (user) {
+          if (!user.facebookId)
+            await userRepo.updateOneById(user.id, {
+              dataValues: { facebookId: data.id },
+            });
+          req.user = _.pick(user, [
+            'id',
+            'firstName',
+            'lastName',
+            'email',
+            'roles',
+          ]);
+          req.skipRegister = true;
+          return next();
+        }
+
+        req.body = {
+          firstName:
+            data.first_name + (data.middle_name ? ` ${data.middle_name}` : ''),
+          lastName: data.last_name,
+          email: data.email,
+          facebookId: data.id,
+          isActive: true,
+        };
+        return next();
       }
-      return next();
-    }
 
-  } catch (err) {
-    next(err);
-  }
-},
+      return res.sendStatus(404);
+    } catch (err) {
+      return next(err);
+    }
+  },
   exports.register,
-]
+];

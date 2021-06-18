@@ -33,9 +33,8 @@ const invalidToken = (err, req, res, next) => {
 /**
  * Unexpected errors handler
  */
-const other = (err, req, res, next) => {
+const other = (err, req, res) => {
   if (!err.isOperational) {
-    console.log(err);
     res.status(err).json(err);
     return;
   }

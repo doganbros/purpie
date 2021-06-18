@@ -1,7 +1,7 @@
 const faker = require('faker');
 const { User } = require('../../models');
 
-module.exports = params => {
+module.exports = (params) => {
   const properties = {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
