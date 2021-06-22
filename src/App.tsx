@@ -16,6 +16,7 @@ import { AppState } from './store/reducers/root.reducer';
 
 const App: FC = () => {
   const dispatch = useDispatch();
+
   const {
     auth: {
       retrieveUser: { loading },
