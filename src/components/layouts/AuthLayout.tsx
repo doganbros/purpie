@@ -3,6 +3,7 @@ import { Box, Card, CardBody, Text, Button, Image, Heading } from 'grommet';
 import PublicPageLayout from './PublicPageLayout/PublicPageLayout';
 import { useResponsive } from '../../hooks/useResponsive';
 import Logo from '../../assets/octopus-logo/logo-color.png';
+import OctopusText from '../../assets/octopus-logo/octopus-text.png';
 
 interface Props {
   title: string;
@@ -95,7 +96,7 @@ const AuthLayout: React.FC<Props> = ({
                   height="50px"
                   src={Logo}
                 />
-                <Text color="primary">octopus</Text>
+                <Image src={OctopusText} height="20px" />
               </Box>
               <Heading
                 level={size === 'large' ? 1 : 2}
