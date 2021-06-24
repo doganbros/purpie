@@ -20,12 +20,5 @@ module.exports = (to, subject, html, templateName = null) => {
     subject,
     html: template || html,
   };
-  return sgMail
-    .send(msg)
-    .then(() => {
-      console.log('Email sent');
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  return sgMail.send(msg);
 };

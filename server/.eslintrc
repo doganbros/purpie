@@ -12,6 +12,7 @@
     "func-names": "off",
     "no-process-exit": "off",
     "class-methods-use-this": "off",
+    "no-param-reassign": "off",
     "no-restricted-syntax": "off",
     "global-require": "off",
     "import/no-dynamic-require": "off",
