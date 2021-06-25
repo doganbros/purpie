@@ -41,6 +41,41 @@ router
   .post(validate(rules.createMeeting), controller.create);
 
 router
+  .route('/:meetingId')
+  /**
+   * @api {post} v1/users Join Meeting
+   * @apiDescription Create a new meeting
+   * @apiVersion 1.0.0
+   * @apiName JoinMeeting
+   * @apiGroup Meeting
+   * @apiPermission user
+   *
+   * @apiHeader {String} Authorization  User's access token
+   *
+   * @apiParam  {String}              title         Meeting's title
+   * @apiParam  {String}              description   Meeting's description
+   * @apiParam  {Date}                startDate     Meeting's startDate
+   * @apiParam  {Date}                endDate       Meeting's endDate
+   * @apiParam  {String}              link          Meeting's link
+   * @apiParam  {Integer}             tenantId      Meeting's tenantId
+   *
+   * @apiSuccess  {Integer}             id            Meeting's id
+   * @apiSuccess  {String}              title         Meeting's title
+   * @apiSuccess  {String}              description   Meeting's description
+   * @apiSuccess  {String}              link          Meeting's link
+   * @apiSuccess  {Date}                startDate     Meeting's startDate
+   * @apiSuccess  {Date}                endDate       Meeting's endDate
+   * @apiSuccess  {String}              link          Meeting's link
+   * @apiSuccess  {Integer}             tenantId      Meeting's tenantId
+   * @apiSuccess  {Integer}             creatorId     Meeting's creatorId
+   * @apiSuccess  {Date}                createdAt     Timestamp
+   *
+   * @apiError (Bad Request 400)   ValidationError  Some parameters may contain invalid values
+   * @apiError (Unauthorized 401)  Unauthorized     Only authenticated users can create the data
+   */
+  .post(controller.join);
+
+router
   .route('/:tenantId')
   /**
    * @api {get} v1/meeting/:tenantId List Meetings
@@ -134,5 +169,29 @@ router
    * @apiError (Not Found 404)    NotFound      Meeting does not exist
    */
   .delete(validate(rules.deleteMeeting), controller.delete);
+
+/**
+ * @api {get} v1/meeting jitsiToken
+ * @apiDescription Generate Jitsi token
+ * @apiVersion 1.0.0
+ * @apiName jitsiToken
+ * @apiGroup Meeting
+ * @apiPermission user
+ *
+ * @apiParam  {Boolean}                moderator
+ * @apiParam  {Boolean}                livestreaming
+ * @apiParam  {Boolean                 outboundCall
+ * @apiParam  {Boolean}                transcription
+ * @apiParam  {Boolean}                recording
+ * @apiParam  {String}                 group
+ *
+ * @apiSuccess (Success 200) {String}  jitsiToken         User's jitsiToken
+ *
+ * @apiError (Forbidden 403)    Forbidden    Only  authorized users can access
+ * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values or missing
+ * @apiError (Bad Request 404)  NotFound  Tenant or meeting is not exist
+ */
+
+router.route('/jitsi/:meetingId').post(controller.jitsiToken);
 
 module.exports = router;

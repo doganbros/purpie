@@ -1,5 +1,5 @@
 module.exports = {
-  up (queryInterface, Sequelize) {
+  up(queryInterface, Sequelize) {
     return Promise.all([
       queryInterface.addColumn(
         'Tenants', // table name
@@ -26,7 +26,7 @@ module.exports = {
     ]);
   },
 
-  down: function (queryInterface, Sequelize) {
+  down(queryInterface) {
     return Promise.all([
       queryInterface.removeColumn('Tenants', 'apiKey'),
       queryInterface.removeColumn('Tenants', 'secret'),

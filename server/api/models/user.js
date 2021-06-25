@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { omit } = require('lodash');
 const DataTypes = require('sequelize');
+
 const User = sequelize.define('User', {
   firstName: {
     type: DataTypes.STRING,
@@ -31,7 +32,11 @@ const User = sequelize.define('User', {
     defaultValue: null,
     validate: {
       isValidPassword(value) {
-        if (!(value && value.length >= 6) && !(this.googleId && this.facebookId)) throw new Error('Password should be at least 6 chars');
+        if (
+          !(value && value.length >= 6) &&
+          !(this.googleId && this.facebookId)
+        )
+          throw new Error('Password should be at least 6 chars');
       },
     },
   },
@@ -59,10 +64,52 @@ const User = sequelize.define('User', {
     defaultValue: false,
     type: DataTypes.STRING,
   },
+  userMeetingConfigs: {
+    type: DataTypes.JSON,
+    defaultValue: {
+      startWithAudioMuted: false,
+      startWithVideoMuted: false,
+      prejoinPageEnabled: false,
+      toolbarButtons: [
+        'microphone',
+        'camera',
+        'closedcaptions',
+        'desktop',
+        'embedmeeting',
+        'fullscreen',
+        'fodeviceselection',
+        'hangup',
+        'profile',
+        'chat',
+        'recording',
+        'livestreaming',
+        'etherpad',
+        'sharedvideo',
+        'shareaudio',
+        'settings',
+        'raisehand',
+        'videoquality',
+        'filmstrip',
+        'invite',
+        'feedback',
+        'stats',
+        'shortcuts',
+        'tileview',
+        'select-background',
+        'download',
+        'help',
+        'mute-everyone',
+        'mute-video-everyone',
+        'security',
+      ],
+      disableAudioLevels: false,
+      audioLevelsInterval: 200,
+    },
+  },
 });
 
 /** Models Hooks */
-User.beforeSave(async user => {
+User.beforeSave(async (user) => {
   try {
     if (user._changed.email) {
       user.email = user.email.toLowerCase();
@@ -84,10 +131,10 @@ User.beforeSave(async user => {
  * @param limit
  * @returns {Promise<*>}
  */
-User.paginate = async function paginate (page = 1, limit = 10) {
+User.paginate = async function paginate(page = 1, limit = 10) {
   const offset = limit * (page - 1);
   const result = await this.findAndCountAll({ limit, offset });
-  result.rows.map(user => user.transform());
+  result.rows.map((user) => user.transform());
   return result;
 };
 
@@ -97,7 +144,7 @@ const objectMethods = {
    * Prepare object to serialization
    * @returns {Object}
    */
-  transform () {
+  transform() {
     return omit(this.get({ plain: true }), [
       'password',
       'refreshToken',

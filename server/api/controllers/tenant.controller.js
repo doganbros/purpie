@@ -1,10 +1,10 @@
 const httpStatus = require('http-status');
+const _ = require('lodash');
 const Tenant = require('../models/tenant');
 const User = require('../models/user');
 const IRepo = require('../repositories/iRepo');
 const mailer = require('../services/mailer');
 const { hasPermission } = require('../services/rolePermissions');
-const _ = require('lodash');
 const tenantError = require('../utils/customErrors/tenantError');
 const { ApiError } = require('../utils/customErrors/baseError');
 
@@ -16,8 +16,9 @@ exports.create = async (req, res, next) => {
   try {
     const tenantRepo = new IRepo(Tenant);
     req.body.adminId = req.user.id;
-    req.body.subdomain =
-      req.body.name.toLowerCase().replace(' ', '-') + '.jadmin.com';
+    req.body.subdomain = `${req.body.name
+      .toLowerCase()
+      .replace(' ', '-')}.doganbros.com`;
 
     const tenant = await tenantRepo.create(
       _.pick(req.body, [
@@ -28,6 +29,9 @@ exports.create = async (req, res, next) => {
         'subdomain',
         'apiKey',
         'secret',
+        'aud',
+        'iss',
+        'tenantMeetingCongigs',
       ])
     );
 
@@ -46,16 +50,16 @@ exports.create = async (req, res, next) => {
     else user.tenantIds = [tenant.id];
 
     await userRepo.updateOneById(req.user.id, user);
-    res.status(httpStatus.CREATED).json(tenant);
+    return res.status(httpStatus.CREATED).json(tenant);
   } catch (e) {
     if (e.errors && e.errors[0] && e.errors[0].message)
-      next(
+      return next(
         new ApiError({
           status: httpStatus.BAD_REQUEST,
           message: e.errors[0].message,
         })
       );
-    else return next(e);
+    return next(e);
   }
 };
 
@@ -70,12 +74,14 @@ exports.update = async (req, res, next) => {
     const tenant = await tenantRepo.findOneByField(req.params.tenantId, 'id');
     if (!tenant) throw tenantError.TENANT_NOT_FOUND;
 
-    tenant.subdomain =
-      req.body.name.toLowerCase().replace(' ', '-') + '.jadmin.com';
+    tenant.subdomain = `${req.body.name
+      .toLowerCase()
+      .replace(' ', '-')}.jadmin.com`;
     tenant.name = req.body.name;
     tenant.website = req.body.website;
     tenant.active = req.body.active;
     tenant.description = req.body.description;
+    tenant.tenantMeetingConfigs = req.body.tenantMeetingConfigs;
 
     await tenantRepo.updateOneById(req.params.tenantId, tenant);
     return res.json(tenant);
@@ -107,7 +113,7 @@ exports.list = async (req, res, next) => {
     else tenants = await generalRepo.findAllByField(user.tenantIds, 'id');
     return res.json(tenants);
   } catch (e) {
-    next(e);
+    return next(e);
   }
 };
 
@@ -117,8 +123,9 @@ exports.list = async (req, res, next) => {
  */
 exports.get = async (req, res, next) => {
   try {
-    let value, field;
-    if (req.params.tenantId == -1) {
+    let value;
+    let field;
+    if (req.params.tenantId === -1) {
       value = req.params.subdomain;
       field = 'subdomain';
     } else {
@@ -144,7 +151,7 @@ exports.get = async (req, res, next) => {
     }
     return res.json(tenant);
   } catch (e) {
-    next(e);
+    return next(e);
   }
 };
 

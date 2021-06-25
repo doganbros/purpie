@@ -20,37 +20,7 @@ const rules = require('../../validations/auth.validation');
  * @apiError (Bad Request 403)  Forbidden  api_key or secret is invalid
  */
 router.route('/').get(validate(rules.generateToken), controller.generateToken);
-/**
- * @api {get} v1/auth generateJitsiToken
- * @apiDescription Generate Jitsi token 
- * @apiVersion 1.0.0
- * @apiName generateJitsiToken
- * @apiGroup Auth
- * @apiPermission public
- *
- * @apiParam  {String}                 aud
- * @apiParam  {String                  id  
- * @apiParam  {String}                 name 
- * @apiParam  {String}                 avatar  
- * @apiParam  {String                  email
- * @apiParam  {Boolean}                moderator
- * @apiParam  {Boolean}                livestreaming
- * @apiParam  {Boolean                 outboundCall 
- * @apiParam  {Boolean}                transcription
- * @apiParam  {Boolean}                recording  
- * @apiParam  {Integer}                exp  
- * @apiParam  {String                  iss   
- * @apiParam  {Integer}                nbf 
- * @apiParam  {String}                 room  
- * @apiParam  {String}                 sub  
- * @apiParam  {String}                 group  
- *
- * @apiSuccess (Success 200) {String}  jitsiToken         User's jitsiToken
- *
- * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values or missing
- */
 
- router.route('/jitsi').post(validate(rules.generateJitsiToken), controller.generateJitsiToken);
 /**
  * @api {post} v1/auth/register Register
  * @apiDescription Register a new user
@@ -197,10 +167,9 @@ router
    */
   .put(validate(rules.changePassword), controller.changePassword);
 
-
-  router
-    .route('/third-party/:name')
-     /**
+router
+  .route('/third-party/:name')
+  /**
    * @api {get} v1/auth/third-party/:name Generate Third Party URL (Google, Facebook)
    * @apiDescription Send third party URL
    * @apiVersion 1.0.0
@@ -228,7 +197,6 @@ router
    *
    * @apiError (Bad Request 400)  NotImplemented   Authentication for this name is not implemented yet
    */
-  .post(validate(rules.thirdParty), controller.authenticateFromThirdPartyCode)
-
+  .post(validate(rules.thirdParty), controller.authenticateFromThirdPartyCode);
 
 module.exports = router;

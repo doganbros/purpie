@@ -16,6 +16,7 @@ import { AppState } from './store/reducers/root.reducer';
 
 const App: FC = () => {
   const dispatch = useDispatch();
+
   const {
     auth: {
       retrieveUser: { loading },
@@ -28,7 +29,7 @@ const App: FC = () => {
   }, []);
 
   return (
-    <Grommet theme={theme} full>
+    <Grommet theme={theme}>
       <AppToast
         visible={toast.visible}
         status={toast.status}

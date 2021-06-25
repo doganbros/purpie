@@ -8,6 +8,8 @@ module.exports = {
     }),
     body('apiKey', 'apiKey is required').exists(),
     body('secret', 'secret is required').exists(),
+    body('aud', 'aud is required').exists(),
+    body('iss', 'iss is required').exists(),
   ],
 
   // GET /v1/tenant/:tenantId

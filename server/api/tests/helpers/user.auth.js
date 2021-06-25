@@ -1,13 +1,13 @@
-const UserFactory = require('../factories/user.factory')
-const { generateAccessToken } = require('../../../api/services/tokenGenerator')
+const UserFactory = require('../factories/user.factory');
+const { generateAccessToken } = require('../../services/tokenGenerator');
 
 module.exports = async (role = 'user') => {
-  let user = await UserFactory({ role }).save()
-  user.refreshToken = generateRefreshToken(user)
-  user = await user.save()
+  let user = await UserFactory({ role }).save();
+  user.refreshToken = generateRefreshToken(user);
+  user = await user.save();
 
   return {
     user,
-    authToken: generateAccessToken(user)
-  }
-}
+    authToken: generateAccessToken(user),
+  };
+};

@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
+const _ = require('lodash');
 const Role = require('../models/role');
 const IRepo = require('../repositories/iRepo');
-const _ = require('lodash');
 
 /**
  *  Create new Role
@@ -13,7 +13,7 @@ exports.create = async (req, res, next) => {
     const role = await roleRepo.create(
       _.pick(req.body, ['name', 'permissions'])
     );
-    res.status(httpStatus.CREATED).json(role);
+    return res.status(httpStatus.CREATED).json(role);
   } catch (e) {
     return next(e);
   }
@@ -29,6 +29,6 @@ exports.list = async (req, res, next) => {
     const roles = await roleRepo.findAll();
     return res.json(roles);
   } catch (e) {
-    next(e);
+    return next(e);
   }
 };

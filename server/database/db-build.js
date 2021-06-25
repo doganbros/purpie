@@ -1,7 +1,9 @@
-const Sequelize = require('sequelize')
-const path = require('path')
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
-const { DB_USER, DB_PASSWORD, DB_DATABASE, DB_HOST } = process.env
+/* eslint-disable no-console */
+const Sequelize = require('sequelize');
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+
+const { DB_USER, DB_PASSWORD, DB_DATABASE, DB_HOST } = process.env;
 
 const sequelize = new Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
   host: DB_HOST,
@@ -11,13 +13,13 @@ const sequelize = new Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
   pool: {
     max: 5,
     min: 0,
-    idle: 10000
-  }
-})
+    idle: 10000,
+  },
+});
 
 sequelize
   .authenticate()
   .then(() => console.log('Database connected...'))
-  .catch(err => console.log('Error:', err))
-module.exports = sequelize
-global.sequelize = sequelize
+  .catch((err) => console.log('Error:', err));
+module.exports = sequelize;
+global.sequelize = sequelize;
