@@ -68,7 +68,7 @@ const Login: FC = () => {
           <FormField
             name="email"
             htmlFor="emailInput"
-            label="Email"
+            label="EMAIL"
             validate={[validators.required(), validators.email()]}
           >
             <TextInput id="emailInput" name="email" type="email" />
@@ -76,7 +76,7 @@ const Login: FC = () => {
           <FormField
             name="password"
             htmlFor="passwordInput"
-            label="Password"
+            label="PASSWORD"
             validate={[validators.required(), validators.minLength(6)]}
           >
             <TextInput id="passwordInput" name="password" type="password" />
@@ -89,7 +89,7 @@ const Login: FC = () => {
           >
             <AnchorLink
               weight="normal"
-              size={size}
+              size="small"
               label="Forgot Password?"
               to="/forgot-password"
             />
@@ -98,6 +98,7 @@ const Login: FC = () => {
             fill="horizontal"
             hoverIndicator="background"
             primary
+            margin={{ top: 'medium' }}
             size={size}
             disabled={loading}
             type="submit"
@@ -111,7 +112,7 @@ const Login: FC = () => {
             align="center"
             margin={{ vertical: 'medium' }}
           >
-            <Box basis="50%">
+            <Box basis="80%">
               <Image src={SignInRect} />
             </Box>
             <Box basis="100%" direction="row" justify="center">
@@ -119,35 +120,45 @@ const Login: FC = () => {
                 Or Sign In With
               </Text>
             </Box>
-            <Box basis="50%">
+            <Box basis="80%">
               <Image src={SignInRect} />
             </Box>
           </Box>
 
           <Box
-            margin={{ vertical: size }}
+            margin={{ vertical: 'small' }}
             align="center"
             style={{ textAlign: 'center' }}
           >
             <Button
-              label="Google"
+              label={<span />}
               size={size}
+              style={{ backgroundColor: '#F3F3F3', border: 'none' }}
               disabled={googleAuthBtnLoading}
               fill="horizontal"
-              secondary
               hoverIndicator="background"
               onClick={() => dispatch(getThirdPartyUrlAction('google'))}
-              icon={<Google />}
+              icon={
+                <Google
+                  color="plain"
+                  size={size === 'large' ? '30px' : 'medium'}
+                  style={{ marginLeft: '10px' }}
+                />
+              }
               margin={{ right: 'small', bottom: 'small' }}
             />
+
             <Button
               size={size}
+              label={<span />}
+              style={{ backgroundColor: '#3B5998' }}
               fill="horizontal"
               primary
-              label="Facebook"
               disabled={facebookAuthBtnLoading}
               onClick={() => dispatch(getThirdPartyUrlAction('facebook'))}
-              icon={<FacebookOption />}
+              icon={
+                <FacebookOption size={size === 'large' ? '33px' : 'medium'} />
+              }
             />
           </Box>
         </Form>

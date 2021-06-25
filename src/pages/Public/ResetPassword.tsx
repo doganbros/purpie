@@ -24,7 +24,7 @@ const ResetPassword: FC = () => {
   const handleSubmit = (payload: Record<string, any>) => {
     dispatch(
       resetPasswordAction({
-        password: payload.password,
+        password: payload.value.password,
         token,
       })
     );

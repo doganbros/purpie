@@ -51,7 +51,7 @@ const Register: FC = () => {
       <>
         <Form onSubmit={handleSubmit}>
           <FormField
-            label="First Name"
+            label="FIRST NAME"
             name="firstName"
             htmlFor="firstNameInput"
             validate={validators.required()}
@@ -59,7 +59,7 @@ const Register: FC = () => {
             <TextInput id="firstNameInput" name="firstName" />
           </FormField>
           <FormField
-            label="Last Name"
+            label="LAST NAME"
             name="lastName"
             htmlFor="lastNameInput"
             validate={validators.required()}
@@ -70,7 +70,7 @@ const Register: FC = () => {
           <FormField
             name="email"
             htmlFor="emailInput"
-            label="Email"
+            label="EMAIL"
             validate={[validators.required(), validators.email()]}
           >
             <TextInput id="emailInput" name="email" type="email" />
@@ -79,7 +79,7 @@ const Register: FC = () => {
           <FormField
             name="password"
             htmlFor="passwordInput"
-            label="Password"
+            label="PASSWORD"
             validate={[validators.required(), validators.minLength(6)]}
           >
             <TextInput id="passwordInput" name="password" type="password" />
@@ -87,7 +87,7 @@ const Register: FC = () => {
           <FormField
             name="password1"
             htmlFor="password1Input"
-            label="Confirm Password"
+            label="CONFIRM PASSWORD"
             validate={[
               validators.required(),
               validators.equalsField('password', 'Password'),

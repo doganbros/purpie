@@ -1,8 +1,19 @@
-import React from 'react';
-import { Box, Card, CardBody, Text, Button, Image, Heading } from 'grommet';
+import React, { useContext } from 'react';
+import {
+  ThemeContext,
+  Box,
+  Card,
+  CardBody,
+  Text,
+  Button,
+  Image,
+  Heading,
+} from 'grommet';
+import { useHistory } from 'react-router-dom';
 import PublicPageLayout from './PublicPageLayout/PublicPageLayout';
 import { useResponsive } from '../../hooks/useResponsive';
 import Logo from '../../assets/octopus-logo/logo-color.png';
+import LogoWhite from '../../assets/octopus-logo/logo-white.png';
 import OctopusText from '../../assets/octopus-logo/octopus-text.png';
 
 interface Props {
@@ -25,7 +36,10 @@ const AuthLayout: React.FC<Props> = ({
   formTitle,
   background,
 }) => {
+  const history = useHistory();
   const size = useResponsive();
+
+  const theme = useContext<Record<string, any>>(ThemeContext);
 
   const formWidth = {
     small: '100%',
@@ -76,7 +90,7 @@ const AuthLayout: React.FC<Props> = ({
         <Box basis={formWidth[size]} margin="0" style={{ zIndex: 2 }}>
           <Card
             elevation="xlarge"
-            background="light-1"
+            background={theme.dark ? 'dark-2' : 'white'}
             round="large"
             width="100%"
             height="100%"
@@ -87,6 +101,8 @@ const AuthLayout: React.FC<Props> = ({
               <Box
                 margin={{ bottom: 'xsmall' }}
                 direction="row"
+                style={{ cursor: 'pointer' }}
+                onClick={() => history.push('/login')}
                 align="center"
                 fill="horizontal"
               >
@@ -94,9 +110,13 @@ const AuthLayout: React.FC<Props> = ({
                   margin={{ right: 'xsmall' }}
                   width="50px"
                   height="50px"
-                  src={Logo}
+                  src={theme.dark ? LogoWhite : Logo}
                 />
-                <Image src={OctopusText} height="20px" />
+                {theme.dark ? (
+                  <Text>octopus</Text>
+                ) : (
+                  <Image src={OctopusText} height="23px" />
+                )}
               </Box>
               <Heading
                 level={size === 'large' ? 1 : 2}
