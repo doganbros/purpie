@@ -167,10 +167,9 @@ router
    */
   .put(validate(rules.changePassword), controller.changePassword);
 
-
-  router
-    .route('/third-party/:name')
-     /**
+router
+  .route('/third-party/:name')
+  /**
    * @api {get} v1/auth/third-party/:name Generate Third Party URL (Google, Facebook)
    * @apiDescription Send third party URL
    * @apiVersion 1.0.0
@@ -198,7 +197,6 @@ router
    *
    * @apiError (Bad Request 400)  NotImplemented   Authentication for this name is not implemented yet
    */
-  .post(validate(rules.thirdParty), controller.authenticateFromThirdPartyCode)
-
+  .post(validate(rules.thirdParty), controller.authenticateFromThirdPartyCode);
 
 module.exports = router;

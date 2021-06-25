@@ -1,4 +1,5 @@
 const { DataTypes } = require('sequelize');
+
 const Role = sequelize.define('Role', {
   name: {
     type: DataTypes.STRING,

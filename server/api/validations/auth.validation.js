@@ -11,11 +11,7 @@ module.exports = {
     body('password', 'Password is required').exists({ checkFalsy: true }),
   ],
   // POST /v1/auth/reset-password
-  email: [
-    body('email', 'Email is invalid')
-      .exists()
-      .isEmail(),
-  ],
+  email: [body('email', 'Email is invalid').exists().isEmail()],
   changePassword: [
     body('password', 'Password is required').exists({ checkFalsy: true }),
   ],
@@ -28,6 +24,9 @@ module.exports = {
 
   // GET /v1/auth/third-party/:name
   thirdParty: [
-    param('name', 'Authentication for this name has not been implemented yet').isIn(['google', 'facebook'])
-  ]
+    param(
+      'name',
+      'Authentication for this name has not been implemented yet'
+    ).isIn(['google', 'facebook']),
+  ],
 };

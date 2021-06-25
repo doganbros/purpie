@@ -26,7 +26,7 @@ router
   .get(validate(rules.inviteUser), controller.inviteUser);
 
 router
-.route('')
+  .route('')
   /**
    * @api {patch} v1/user Update User
    * @apiDescription Update some fields of a tenant document
@@ -53,6 +53,6 @@ router
    * @apiError (Forbidden 403)    Forbidden    same user can modify the data
    * @apiError (Not Found 404)    NotFound     user does not exist
    */
-  .patch(controller.update)
+  .patch(controller.update);
 
-  module.exports = router;
+module.exports = router;

@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const DataTypes = require('sequelize');
+
 const Tenant = sequelize.define('Tenant', {
   name: {
     type: DataTypes.STRING,
@@ -123,10 +124,11 @@ const Tenant = sequelize.define('Tenant', {
 });
 
 /** Models Hooks */
-Tenant.beforeSave(async tenant => {
+Tenant.beforeSave(async (tenant) => {
   try {
     if (tenant._changed.secret || tenant.secret) {
-      tenant.secret = await bcrypt.hash(tenant.secret, 10);
+      const t = tenant;
+      t.secret = await bcrypt.hash(tenant.secret, 10);
     }
     return tenant;
   } catch (error) {
@@ -134,7 +136,7 @@ Tenant.beforeSave(async tenant => {
   }
 });
 Tenant.prototype.toJSON = function () {
-  var values = Object.assign({}, this.get());
+  const values = { ...this.get() };
 
   delete values.secret;
   delete values.apiKey;

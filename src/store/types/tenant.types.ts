@@ -113,7 +113,7 @@ export type TenantActionParams =
         | typeof TENANT_CREATE_FAILED
         | typeof TENANT_UPDATE_FAILED
         | typeof TENANT_DELETE_FAILED
-        | typeof CLOSE_INVITE_PERSON_LAYER 
+        | typeof CLOSE_INVITE_PERSON_LAYER
         | typeof TENANT_GET_FAILED
         | typeof TENANT_GET_ALL_FAILED;
       payload: ResponseError;

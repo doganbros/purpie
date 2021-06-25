@@ -2,7 +2,7 @@ const { validationResult } = require('express-validator');
 const httpStatus = require('http-status');
 const flatten = require('flat');
 
-module.exports = rules => [
+module.exports = (rules) => [
   rules,
   (req, res, next) => {
     let validationErrors = validationResult(req);
@@ -18,7 +18,7 @@ module.exports = rules => [
     errors = flatten.unflatten(errors, { save: true });
     return res.status(httpStatus.BAD_REQUEST).json({
       message: errors,
-      name:'VALIDATOR_ERROR'
+      name: 'VALIDATOR_ERROR',
     });
   },
 ];

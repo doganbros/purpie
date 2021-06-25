@@ -33,9 +33,10 @@ const invalidToken = (err, req, res, next) => {
 /**
  * Unexpected errors handler
  */
-const other = (err, req, res, next) => {
+
+// eslint-disable-next-line no-unused-vars
+const other = (err, _req, res, _next) => {
   if (!err.isOperational) {
-    console.log(err);
     res.status(err).json(err);
     return;
   }

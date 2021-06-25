@@ -1,6 +1,5 @@
-'use strict';
 module.exports = {
-  up: async function (queryInterface, Sequelize) {
+  async up(queryInterface) {
     await queryInterface.bulkInsert('Roles', [
       {
         name: 'superadmin',
@@ -33,7 +32,7 @@ module.exports = {
     ]);
   },
 
-  down: async function (queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.bulkDelete('Roles');
   },
 };

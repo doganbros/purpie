@@ -1,3 +1,5 @@
+const _ = require('lodash');
+const httpStatus = require('http-status');
 const User = require('../models/user');
 const Tenant = require('../models/tenant');
 const IRepo = require('../repositories/iRepo');
@@ -5,23 +7,22 @@ const userErrors = require('../utils/customErrors/userErrors');
 const tenantError = require('../utils/customErrors/tenantError');
 const authErrors = require('../utils/customErrors/authErrors');
 const mailer = require('../services/mailer');
-const _ = require('lodash');
-
+const { ApiError } = require('../utils/customErrors/baseError');
 
 /**
  *  Update user
  * @public
  */
- exports.update = async (req, res, next) => {
+exports.update = async (req, res, next) => {
   try {
     const userRepo = new IRepo(User);
     let user = await userRepo.findOneByField(req.user.id, 'id');
     if (!user) throw authErrors.USER_NOT_FOUND;
 
-    user.firstName = req.body.firstName
-    user.lastName = req.body.lastName
-    user.isActive = req.body.isActive
-    user.userMeetingConfigs = req.body.userMeetingConfigs
+    user.firstName = req.body.firstName;
+    user.lastName = req.body.lastName;
+    user.isActive = req.body.isActive;
+    user.userMeetingConfigs = req.body.userMeetingConfigs;
 
     await userRepo.updateOneById(req.user.id, user);
     user = await userRepo.findOneByField(req.user.id, 'id');
@@ -34,7 +35,7 @@ const _ = require('lodash');
         'isActive',
         'userMeetingConfigs',
       ])
-    )
+    );
   } catch (e) {
     if (e.errors && e.errors[0] && e.errors[0].message)
       next(
@@ -59,7 +60,7 @@ exports.inviteUser = async (req, res, next) => {
     if (user) throw userErrors.USER_EXIST;
 
     const tenantRepo = new IRepo(Tenant);
-    let tenant = await tenantRepo.findOneByField(tenantId, 'id');
+    const tenant = await tenantRepo.findOneByField(tenantId, 'id');
     if (!tenant) throw tenantError.TENANT_NOT_FOUND;
 
     const link = `${req.protocol}://${req.hostname}/register`;

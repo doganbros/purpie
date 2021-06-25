@@ -1,18 +1,18 @@
 module.exports = {
-  up (queryInterface, Sequelize) {
+  up(queryInterface, Sequelize) {
     return Promise.all([
       queryInterface.addColumn(
         'Users', // table name
         'token', // new field name
         {
           type: Sequelize.STRING,
-          defaultValue: null
+          defaultValue: null,
         }
-      )
-    ])
+      ),
+    ]);
   },
 
-  down: function (queryInterface, Sequelize) {
-    return queryInterface.removeColumn('Users', 'token')
-  }
-}
+  down(queryInterface) {
+    return queryInterface.removeColumn('Users', 'token');
+  },
+};

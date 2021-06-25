@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 
 const decodeToken = (token, secret) => {
   try {
@@ -6,12 +6,12 @@ const decodeToken = (token, secret) => {
       token,
       !secret ? process.env.SECRET_STRING : secret,
       {
-        expiresIn: process.env.AUTH_TOKEN_LIFE
+        expiresIn: process.env.AUTH_TOKEN_LIFE,
       }
-    )
-    return decoded
+    );
+    return decoded;
   } catch (e) {
-    return false
+    return false;
   }
-}
-module.exports = { decodeToken }
+};
+module.exports = { decodeToken };

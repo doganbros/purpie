@@ -11,7 +11,7 @@ import { CloudComputer, Icon } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
 import React, { FC, useContext } from 'react';
 import { useTitle } from '../../../hooks/useTitle';
-import Logo from '../../../assets/logo.png';
+import Logo from '../../../assets/octopus-logo/logo-color.png';
 import { SidebarButton } from './SidebarButton';
 import SidebarFooter from './SidebarFooter';
 

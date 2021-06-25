@@ -1,5 +1,5 @@
 module.exports.superAdminConfigs = {
-  //**** Audio
+  //* *** Audio
 
   // Disable measuring of audio levels.
   disableAudioLevels: false,
@@ -27,7 +27,7 @@ module.exports.superAdminConfigs = {
   // applied locally. FIXME: having these 2 options is confusing.
   startWithAudioMuted: false,
 
-  //**** Video
+  //* *** Video
 
   // Every participant after the Nth will start video muted.
   startVideoMuted: 10,
@@ -36,12 +36,12 @@ module.exports.superAdminConfigs = {
   // applied locally. FIXME: having these 2 options is confusing.
   startWithVideoMuted: false,
 
-  //**** Desktop sharing
+  //* *** Desktop sharing
 
   // Try to start calls with screen-sharing instead of camera video.
   startScreenSharing: false,
 
-  //**** Recording
+  //* *** Recording
 
   // Whether to enable file recording or not.
   fileRecordingsEnabled: false,
@@ -49,7 +49,7 @@ module.exports.superAdminConfigs = {
   // Whether to enable live streaming or not.
   liveStreamingEnabled: false,
 
-  //**** UI
+  //* *** UI
 
   // Disables responsive tiles.
   disableResponsiveTiles: false,
