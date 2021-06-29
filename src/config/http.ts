@@ -14,21 +14,21 @@ const [subdomain] = window.location.hostname.split('.');
 const serverHostUrl = new URL(REACT_APP_SERVER_HOST);
 
 const isValidSubDomain =
-  subdomain !== 'www' && subdomain !== serverHostUrl.hostname;
+  window.location.hostname !== serverHostUrl.hostname &&
+  subdomain !== 'www' &&
+  window.location.hostname.split('.').length ===
+    serverHostUrl.hostname.split('.').length + 1;
 
-axios.defaults.baseURL = `${
-  isValidSubDomain
-    ? `${serverHostUrl.protocol}//${subdomain}.${serverHostUrl.host}`
-    : REACT_APP_SERVER_HOST
-}/${REACT_APP_API_VERSION}`;
+axios.defaults.baseURL = `${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}`;
 
 axios.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) {
-      const { headers } = config;
-      headers.Authorization = `Bearer ${accessToken}`;
-    }
+    const { headers } = config;
+    if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
+
+    if (isValidSubDomain) headers['App-Subdomain'] = subdomain;
+
     return config;
   },
   (err) => Promise.reject(err)

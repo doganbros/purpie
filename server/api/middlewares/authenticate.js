@@ -9,7 +9,6 @@ const { authErrors } = require('../utils/customErrors/authErrors');
 const tenantError = require('../utils/customErrors/tenantError');
 const { decodeToken } = require('../services/tokenDecode');
 
-const { HOST } = process.env;
 // const roles = {
 //   admin: ['guest', 'user'],
 //   user: ['guest'],
@@ -46,9 +45,9 @@ module.exports = () => async (req, res, next) => {
     return next(new ApiError(invalidToken));
   }
   if (decoded.email) {
-    const subdomain = req.hostname.split('.')[0];
+    const subdomain = req.headers['app-subdomain'];
     let tenant;
-    if (subdomain !== HOST) {
+    if (subdomain) {
       const tenantRepo = new IRepo(Tenant);
       tenant = await tenantRepo.findOneByField(
         `${subdomain}.jadmin.com`,
