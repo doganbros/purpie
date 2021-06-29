@@ -15,8 +15,6 @@ const mailer = require('../services/mailer');
 const authenticate = require('../middlewares/authenticate');
 const { ApiError } = require('../utils/customErrors/baseError');
 
-const { HOST } = process.env;
-
 /**
  * Generate response with auth tokens
  * @private
@@ -42,9 +40,9 @@ exports.register = [
   async (req, res, next) => {
     if (req.skipRegister) return next();
     try {
-      const subdomain = req.hostname.split('.')[0];
+      const subdomain = req.headers['app-subdomain'];
 
-      if (subdomain !== HOST) {
+      if (subdomain) {
         const tenantRepo = new IRepo(Tenant);
         const tenant = await tenantRepo.findOneByField(
           `${subdomain}.jadmin.com`,
@@ -99,10 +97,10 @@ exports.register = [
 exports.login = [
   async (req, __, next) => {
     try {
-      const subdomain = req.hostname.split('.')[0];
+      const subdomain = req.headers['app-subdomain'];
       let tenant;
 
-      if (subdomain !== HOST) {
+      if (subdomain) {
         const tenantRepo = new IRepo(Tenant);
         tenant = await tenantRepo.findOneByField(
           `${subdomain}.jadmin.com`,
