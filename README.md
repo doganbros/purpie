@@ -34,9 +34,11 @@
 
 ## Requirements
 
-- [Node v14.14](https://nodejs.org/en/download/current/)
+- [Node >= v14.14](https://nodejs.org/en/download/current/)
 - [Yarn](https://yarnpkg.com/en/docs/install)
 - [Pm2] (https://pm2.io/)
+- [Sequelize] (http://sequelize.org/)
+- [Postgress] (https://www.postgresql.org/)
 
 
 ## Getting Started
@@ -63,7 +65,21 @@ cp .env.example .env
 Create database
 
 ```bash
-sequelize db:create --env development
+yarn sequelize db:create --env development
+```
+
+
+## TODO: Remove migrates
+
+```bash
+yarn clean:migrate
+```
+
+## Running project
+
+```bash
+    yarn start:server # Runs backend side
+    yarn start:web # Runs frontend side
 ```
 
 ## Insert neccessery data into Database tables
@@ -73,12 +89,6 @@ yarn migrate
 yarn seeds
 ```
 
-## Running project
-
-```bash
-    yarn start:server # Runs backend side
-    yarn start:web # Runs frontend side
-```
 ## Available Scripts
 
 In the project directory, you can run:
@@ -93,10 +103,10 @@ yarn migrate
 yarn seeds
 
 # generate new migration
-sequelize migration:generate --name new-migration
+yarn sequelize migration:generate --name new-migration
 
 # generate new seed
-sequelize seed:generate --name new-seeds
+yarn sequelize seed:generate --name new-seeds
 ```
 
 ## Logs
