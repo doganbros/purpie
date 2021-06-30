@@ -7,28 +7,33 @@ import { store } from '../store/store';
 const {
   REACT_APP_API_VERSION = 'v1',
   REACT_APP_SERVER_HOST = 'http://localhost:8000',
+  REACT_APP_CLIENT_HOST = 'http://localhost:3000',
 } = process.env;
 
-const [subdomain] = window.location.hostname.split('.');
+const clientHostUrl = new URL(REACT_APP_CLIENT_HOST);
 
-const serverHostUrl = new URL(REACT_APP_SERVER_HOST);
+const { hostname } = window.location;
 
+const subdomain = hostname.slice(
+  0,
+  hostname.lastIndexOf(clientHostUrl.hostname) - 1
+);
 const isValidSubDomain =
-  subdomain !== 'www' && subdomain !== serverHostUrl.hostname;
+  hostname !== clientHostUrl.hostname &&
+  hostname.lastIndexOf(clientHostUrl.hostname) >= 0 &&
+  subdomain &&
+  subdomain !== 'www';
 
-axios.defaults.baseURL = `${
-  isValidSubDomain
-    ? `${serverHostUrl.protocol}//${subdomain}.${serverHostUrl.host}`
-    : REACT_APP_SERVER_HOST
-}/${REACT_APP_API_VERSION}`;
+axios.defaults.baseURL = `${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}`;
 
 axios.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) {
-      const { headers } = config;
-      headers.Authorization = `Bearer ${accessToken}`;
-    }
+    const { headers } = config;
+    if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
+
+    if (isValidSubDomain) headers['App-Subdomain'] = subdomain;
+
     return config;
   },
   (err) => Promise.reject(err)
