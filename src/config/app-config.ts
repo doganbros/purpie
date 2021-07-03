@@ -8,13 +8,26 @@ export const theme: typeof grommet = {
       ...grommet.global?.font,
       family: 'HelveticaNeue',
     },
+    colors: {
+      ...base.global?.colors,
+      brand: '#9060EB',
+    },
     input: {
       ...grommet.global?.input,
       extend: 'color: grey;',
+      padding: { vertical: '15px' },
       font: {
         weight: 'normal',
+        size: 'small',
       },
     },
+  },
+  button: {
+    color: 'white',
+    border: {
+      width: '0px',
+    },
+    extend: 'font-size: 16px; padding: 8px 4px; font-weight: 500;',
   },
   formField: {
     ...grommet.formField,
@@ -27,7 +40,11 @@ export const theme: typeof grommet = {
     },
     round: 'medium',
     label: {
-      margin: { horizontal: 'none' },
+      margin: { horizontal: '8px' },
+      size: '14px',
+      color: {
+        light: '#202631',
+      },
     },
   },
 };

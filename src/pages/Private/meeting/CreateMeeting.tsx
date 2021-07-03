@@ -106,13 +106,7 @@ const CreateMeeting: FC = () => {
               />
             </FormField>
             <Box pad={{ vertical: 'medium' }} align="end">
-              <Button
-                hoverIndicator="background"
-                primary
-                disabled={loading}
-                type="submit"
-                label="Go!"
-              />
+              <Button primary disabled={loading} type="submit" label="Go!" />
             </Box>
           </Form>
         </Box>

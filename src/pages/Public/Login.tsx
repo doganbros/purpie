@@ -96,7 +96,6 @@ const Login: FC = () => {
           </Box>
           <Button
             fill="horizontal"
-            hoverIndicator="background"
             primary
             margin={{ top: 'medium' }}
             size={size}
@@ -133,31 +132,33 @@ const Login: FC = () => {
             <Button
               label={<span />}
               size={size}
-              style={{ backgroundColor: '#F3F3F3', border: 'none' }}
+              color="#F3F3F3"
+              style={{ backgroundColor: '#F3F3F3' }}
               disabled={googleAuthBtnLoading}
               fill="horizontal"
-              hoverIndicator="background"
               onClick={() => dispatch(getThirdPartyUrlAction('google'))}
               icon={
                 <Google
                   color="plain"
                   size={size === 'large' ? '30px' : 'medium'}
-                  style={{ marginLeft: '10px' }}
                 />
               }
-              margin={{ right: 'small', bottom: 'small' }}
+              margin={{ bottom: 'small' }}
             />
 
             <Button
               size={size}
               label={<span />}
+              color="#3B5998"
               style={{ backgroundColor: '#3B5998' }}
               fill="horizontal"
-              primary
               disabled={facebookAuthBtnLoading}
               onClick={() => dispatch(getThirdPartyUrlAction('facebook'))}
               icon={
-                <FacebookOption size={size === 'large' ? '33px' : 'medium'} />
+                <FacebookOption
+                  color="white"
+                  size={size === 'large' ? '33px' : 'medium'}
+                />
               }
             />
           </Box>
