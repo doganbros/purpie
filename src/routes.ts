@@ -9,6 +9,7 @@ import CreateMeeting from './pages/Private/meeting/CreateMeeting';
 import MeetingsByTenant from './pages/Private/meeting/MeetingsByTenant';
 import MeetingsByUser from './pages/Private/meeting/MeetingsByUser';
 import ThirdPartyAuth from './pages/Public/ThirdPartyAuth';
+import VerifyEmail from './pages/Public/VerifyEmail';
 
 interface AppRoute {
   id: string;
@@ -50,6 +51,12 @@ export const publicRoutes: Array<AppRoute> = [
     path: '/reset-password/:token',
     component: ResetPassword,
     description: 'User resets after redirected from email',
+  },
+  {
+    id: nanoid(),
+    path: '/verify-email',
+    component: VerifyEmail,
+    description: 'User is asked to verify email',
   },
 ];
 

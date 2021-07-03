@@ -170,7 +170,6 @@ const CreateUpdateMeeting: FC<Props> = ({
             </FormField>
             <Box pad={{ vertical: 'medium' }} align="end">
               <Button
-                hoverIndicator="background"
                 primary
                 disabled={loading || updateLoading}
                 type="submit"

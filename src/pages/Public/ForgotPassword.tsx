@@ -49,7 +49,7 @@ const ForgotPassword: FC = () => {
             }}
           />
           <Image
-            height="100%"
+            height="90%"
             alignSelf="center"
             style={{ zIndex: 2 }}
             src={Figure}
@@ -62,17 +62,16 @@ const ForgotPassword: FC = () => {
           <FormField
             name="email"
             htmlFor="emailInput"
-            label="Email"
+            label="EMAIL"
             validate={[validators.required(), validators.email()]}
           >
             <TextInput id="emailInput" name="email" type="email" />
           </FormField>
           <Button
             fill="horizontal"
-            hoverIndicator="background"
             primary
             size={size}
-            margin={{ top: 'large' }}
+            margin={{ top: '55%' }}
             disabled={loading}
             type="submit"
             label="SEND"
