@@ -38,6 +38,7 @@ export interface Zone {
 }
 
 export interface UserZone {
+  id: number;
   zone: Zone;
 }
 

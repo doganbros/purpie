@@ -42,7 +42,7 @@ const ZoneList: FC = () => {
   } = useSelector((state: AppState) => state.zone);
 
   const deleteUserZone = (userZone: UserZone) =>
-    dispatch(deleteUserZoneAction(userZone.zone.id));
+    dispatch(deleteUserZoneAction(userZone.id));
 
   const onClose = () => {
     dispatch(closeUpdateZoneLayerAction);
@@ -144,7 +144,7 @@ const ZoneList: FC = () => {
                 hoverIndicator
               />
               <Button
-                onClick={() => onOpen(userZone.zone.id)}
+                onClick={() => onOpen(userZone.id)}
                 icon={<Edit />}
                 hoverIndicator
               />

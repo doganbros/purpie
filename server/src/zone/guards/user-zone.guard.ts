@@ -37,7 +37,7 @@ export class UserZoneGuard implements CanActivate {
 
     if (
       userZonePermissions?.includes('isAdmin') &&
-      req.userZone.adminId !== req.user.id
+      req.userZone.zone.adminId !== req.user.id
     )
       throw new NotFoundException('Zone not found', 'USER_ZONE_NOT_FOUND');
 

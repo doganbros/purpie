@@ -183,7 +183,7 @@ export const deleteUserZoneAction = (id: number): ZoneAction => {
       });
       setToastAction(
         'ok',
-        `Zone with the id ${id} has been deleted successfully`
+        `User zone with the id ${id} has been deleted successfully`
       )(dispatch);
       getMultipleUserZonesAction()(dispatch);
     } catch (err) {

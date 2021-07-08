@@ -7,6 +7,7 @@ import {
   Req,
   Headers,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -88,19 +89,7 @@ export class UserZoneController {
     };
   }
 
-  @Get('/by-zone-id/:zoneId')
-  @ApiParam({
-    name: 'zoneId',
-    description: 'Zone id',
-  })
-  @ApiBearerAuth()
-  @IsAuthenticated()
-  @UseGuards(UserZoneGuard)
-  async getUserZoneByZoneId(@Req() req: UserZoneRequest) {
-    return req.userZone;
-  }
-
-  @Get('/by-id/:id')
+  @Get('/:id')
   @ApiParam({
     name: 'id',
     description: 'User Zone Id',
@@ -110,5 +99,18 @@ export class UserZoneController {
   @UseGuards(UserZoneGuard)
   async getUserZoneById(@Req() req: UserZoneRequest) {
     return req.userZone;
+  }
+
+  @Delete('/:id')
+  @ApiParam({
+    name: 'id',
+    description: 'User Zone Id',
+  })
+  @ApiBearerAuth()
+  @IsAuthenticated()
+  @UseGuards(UserZoneGuard)
+  async deleteUserZoneById(@Req() req: UserZoneRequest) {
+    await req.userZone.remove();
+    return 'OK';
   }
 }
