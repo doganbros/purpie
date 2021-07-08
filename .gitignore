@@ -5,3 +5,4 @@ yarn.lock
 server/logs
 server/*.log
 server/dist
+.DS_Store
