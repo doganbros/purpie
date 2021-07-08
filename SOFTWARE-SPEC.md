@@ -102,7 +102,7 @@ This app interacts with a stateless http server. Authentication is realized by s
 5. The app stores the json web token in the browser's local storage.
 6. In subsequent requests, the app will send the access token stored in local storage to the server to identify the user making the request. Thanks to the `axios` request interceptor.
 7. If the token expires or becomes invalid the user will automatically be redirected to the login page. Thanks to the `axios` response interceptor.
-8. If the user returning to the app is already authenticated react router will redirect the user to the tenant lists.
+8. If the user returning to the app is already authenticated react router will redirect the user to the zone lists.
 
 
 # Application Structure
@@ -163,7 +163,7 @@ This app interacts with a stateless http server. Authentication is realized by s
 │   ├── index.tsx
 │   ├── layers
 │   │   ├── meeting
-│   │   └── tenant
+│   │   └── zone
 │   ├── models
 │   │   ├── form-submit-event.ts
 │   │   └── response-error.ts
@@ -215,7 +215,7 @@ This app interacts with a stateless http server. Authentication is realized by s
         all api operations, functions, tests, .etc are included in api folder.
 
         - `Controllers` 
-            Logic of our operations are run in this folder files. For example, on login operation we check the DB to prevent duplicate users. Then add to DB. All other logic are run in the controller. Also controller seperate to main parts like auth,tenant, meeting, etc...
+            Logic of our operations are run in this folder files. For example, on login operation we check the DB to prevent duplicate users. Then add to DB. All other logic are run in the controller. Also controller seperate to main parts like auth,zone, meeting, etc...
 
         - `Middlewares` 
             functions that will be used before or after reaching controllers functions errorHandler and authenticate. 

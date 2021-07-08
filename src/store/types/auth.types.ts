@@ -20,7 +20,11 @@ import {
   THIRD_PARTY_AUTH_WITH_CODE_REQUESTED,
   THIRD_PARTY_AUTH_WITH_CODE_FAILED,
   THIRD_PARTY_AUTH_WITH_CODE_SUCCESS,
+  VERIFY_USER_EMAIL_REQUESTED,
+  VERIFY_USER_EMAIL_SUCCESS,
+  VERIFY_USER_EMAIL_FAILED,
 } from '../constants/auth.constants';
+import { UtilActionParams } from './util.types';
 
 export type UserRole = 'user' | 'admin' | 'superadmin';
 
@@ -35,6 +39,10 @@ export interface User {
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
+  verifyUserEmail: {
+    loading: boolean;
+    error: ResponseError | null;
+  };
   retrieveUser: {
     loading: boolean;
     error: ResponseError | null;
@@ -84,10 +92,15 @@ export interface ResetPasswordPayload {
   token: string;
 }
 
+export interface VerifyEmailPayload {
+  token: string;
+}
+
 export type AuthActionParams =
   | {
       type:
         | typeof LOGIN_REQUESTED
+        | typeof VERIFY_USER_EMAIL_REQUESTED
         | typeof REGISTER_REQUESTED
         | typeof FORGOT_PASSWORD_REQUESTED
         | typeof THIRD_PARTY_AUTH_WITH_CODE_REQUESTED
@@ -104,6 +117,7 @@ export type AuthActionParams =
       type:
         | typeof LOGIN_SUCCESS
         | typeof REGISTER_SUCCESS
+        | typeof VERIFY_USER_EMAIL_SUCCESS
         | typeof THIRD_PARTY_AUTH_WITH_CODE_SUCCESS
         | typeof USER_RETRIEVED_SUCCESS;
       payload: User;
@@ -117,6 +131,7 @@ export type AuthActionParams =
         | typeof LOGIN_FAILED
         | typeof REGISTER_FAILED
         | typeof RESET_PASSWORD_FAILED
+        | typeof VERIFY_USER_EMAIL_FAILED
         | typeof THIRD_PARTY_URL_FAILED
         | typeof THIRD_PARTY_AUTH_WITH_CODE_FAILED
         | typeof USER_RETRIEVED_FAILED
@@ -125,7 +140,7 @@ export type AuthActionParams =
     };
 
 export interface AuthDispatch {
-  (dispatch: AuthActionParams): void;
+  (dispatch: AuthActionParams | UtilActionParams): void;
 }
 
 export interface AuthAction {

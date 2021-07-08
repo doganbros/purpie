@@ -1,0 +1,51 @@
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { RecordEntity } from './base/RecordEntity';
+import { Channel } from './Channel.entity';
+import { User } from './User.entity';
+import { Zone } from './Zone.entity';
+
+@Entity()
+export class Meeting extends RecordEntity {
+  @Column()
+  title: string;
+
+  @Column({ nullable: true })
+  description: string;
+
+  @Column({ unique: true })
+  slug: string;
+
+  @Column()
+  startDate: Date;
+
+  @Column({ nullable: true })
+  endDate: Date;
+
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'createdById' })
+  createdBy: User;
+
+  @Column()
+  createdById: number;
+
+  @ManyToOne(() => User, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'adminId' })
+  admin: User;
+
+  @Column()
+  adminId: number;
+
+  @ManyToOne(() => Zone, { nullable: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'zoneId' })
+  zone: Zone;
+
+  @ManyToOne(() => Channel, { nullable: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'channelId' })
+  channel: Channel;
+
+  @Column({ nullable: true })
+  zoneId: number;
+
+  @Column({ nullable: true })
+  channelId: number;
+}

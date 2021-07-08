@@ -4,12 +4,13 @@ import Login from './pages/Public/Login';
 import Register from './pages/Public/Register';
 import ForgotPassword from './pages/Public/ForgotPassword';
 import ResetPassword from './pages/Public/ResetPassword';
-import TenantList from './pages/Private/tenant/TenantList';
+import ZoneList from './pages/Private/zone/ZoneList';
 import CreateMeeting from './pages/Private/meeting/CreateMeeting';
-import MeetingsByTenant from './pages/Private/meeting/MeetingsByTenant';
+import MeetingsByZone from './pages/Private/meeting/MeetingsByZone';
 import MeetingsByUser from './pages/Private/meeting/MeetingsByUser';
 import ThirdPartyAuth from './pages/Public/ThirdPartyAuth';
-import VerifyEmail from './pages/Public/VerifyEmail';
+import VerifyUserEmailInfo from './pages/Public/VerifyUserEmailInfo';
+import VerifyUserEmail from './pages/Public/VerifyUserEmail';
 
 interface AppRoute {
   id: string;
@@ -55,8 +56,14 @@ export const publicRoutes: Array<AppRoute> = [
   {
     id: nanoid(),
     path: '/verify-email',
-    component: VerifyEmail,
+    component: VerifyUserEmailInfo,
     description: 'User is asked to verify email',
+  },
+  {
+    id: nanoid(),
+    path: '/verify-email/:token',
+    component: VerifyUserEmail,
+    description: 'User verifies email',
   },
 ];
 
@@ -64,8 +71,8 @@ export const privateRoutes: Array<AppRoute> = [
   {
     id: nanoid(),
     path: '/',
-    component: TenantList,
-    description: 'User creates a new tenant',
+    component: ZoneList,
+    description: 'User creates a new zone',
   },
   {
     id: nanoid(),
@@ -75,8 +82,8 @@ export const privateRoutes: Array<AppRoute> = [
   },
   {
     id: nanoid(),
-    path: '/meetings/:tenantId',
-    component: MeetingsByTenant,
+    path: '/meetings/:zoneId',
+    component: MeetingsByZone,
     description: 'User creates a new meeting',
   },
   {

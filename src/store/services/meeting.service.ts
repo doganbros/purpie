@@ -11,16 +11,16 @@ export const createMeeting = (
 
 export const getMultipleMeetings = (): Promise<Array<Meeting>> =>
   http.get('/meeting').then((res) => res.data);
-export const getMultipleMeetingsByTenantId = (
-  tenantId: number
+export const getMultipleMeetingsByZoneId = (
+  zoneId: number
 ): Promise<Array<Meeting>> =>
-  http.get(`/meeting/${tenantId}`).then((res) => res.data);
+  http.get(`/meeting/${zoneId}`).then((res) => res.data);
 
 export const getMeetingById = (
-  tenantId: number,
+  zoneId: number,
   meetingId: number
 ): Promise<Meeting> =>
-  http.get(`/meeting/${tenantId}/${meetingId}`).then((res) => res.data);
+  http.get(`/meeting/${zoneId}/${meetingId}`).then((res) => res.data);
 
 export const deleteMeetingById = (id: number): Promise<{ result: 'delete' }> =>
   http.delete(`/meeting/${id}`).then((res) => res.data);

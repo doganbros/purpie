@@ -42,10 +42,7 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (
-      error?.response?.status === 401 &&
-      error?.response?.data.message === 'Invalid token'
-    )
+    if (error?.response?.data?.error === 'NOT_SIGNED_IN')
       store.dispatch({ type: 'LOGOUT' });
     else {
       const toastId = nanoid();

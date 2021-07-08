@@ -1,0 +1,13 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "server/src",
+  "root": "server",
+  "entryFile": "src/main",
+  "compilerOptions": {
+    "tsConfigPath": "server/tsconfig.json",
+    "assets": [
+      { "include": "**/**/*.handlebars" }
+    ],
+    "watchAssets": true
+  }
+}
