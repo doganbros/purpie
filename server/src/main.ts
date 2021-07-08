@@ -1,4 +1,5 @@
 import helmet from 'helmet';
+import morgan from 'morgan';
 import compression from 'compression';
 import { ValidationPipe } from '@nestjs/common';
 import cors from 'cors';
@@ -12,6 +13,7 @@ loadEnv();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'combined'));
   app.enableVersioning();
   app.use(helmet());
   app.use(cors());

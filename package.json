@@ -30,6 +30,7 @@
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
     "moment-timezone": "^0.5.27",
+    "morgan": "^1.10.0",
     "nanoid": "^3.1.22",
     "nodemailer": "^6.6.2",
     "npm-merge-driver": "^2.3.5",

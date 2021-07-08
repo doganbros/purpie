@@ -13,7 +13,7 @@ export const getMultipleUserZones = (): Promise<PaginatedResponse<UserZone>> =>
   http.get('/user-zone').then((res) => res.data);
 
 export const getUserZoneById = (id: number): Promise<UserZone> =>
-  http.get(`/user-zone/${id}`).then((res) => res.data);
+  http.get(`/user-zone/by-id/${id}`).then((res) => res.data);
 
 export const updateZone = (
   zone: UpdateZonePayload,

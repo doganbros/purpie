@@ -88,7 +88,7 @@ export class UserZoneController {
     };
   }
 
-  @Get(':zoneId')
+  @Get('/by-zone-id/:zoneId')
   @ApiParam({
     name: 'zoneId',
     description: 'Zone id',
@@ -97,6 +97,18 @@ export class UserZoneController {
   @IsAuthenticated()
   @UseGuards(UserZoneGuard)
   async getUserZoneByZoneId(@Req() req: UserZoneRequest) {
+    return req.userZone;
+  }
+
+  @Get('/by-id/:id')
+  @ApiParam({
+    name: 'id',
+    description: 'User Zone Id',
+  })
+  @ApiBearerAuth()
+  @IsAuthenticated()
+  @UseGuards(UserZoneGuard)
+  async getUserZoneById(@Req() req: UserZoneRequest) {
     return req.userZone;
   }
 }
