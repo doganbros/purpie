@@ -6,7 +6,7 @@ module.exports = {
     apps: [
       {
         name: 'API',
-        script: 'server',
+        script: 'server/dist',
         watch: false,
         exec_mode: 'cluster_mode',
         instances: 'max',
@@ -24,7 +24,7 @@ module.exports = {
       },
       {
         name: 'API_LOCAL',
-        script: 'server',
+        script: 'server/dist/',
         watch: true,
         exec_mode: 'fork',
         ignoreWatch: ['.idea/*', '.git/*'],

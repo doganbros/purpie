@@ -63,7 +63,7 @@
     "analyze:web": "eslint src/.",
     "fix:server": "eslint --fix server/.",
     "fix:web": "eslint --fix src/.",
-    "start:server": "pm2 start ecosystem.config.js --only API_LOCAL && pm2 logs",
+    "start:server": "rimraf server/dist && nest build && pm2 start ecosystem.config.js --only API_LOCAL && pm2 logs",
     "server:build": "rimraf server/dist && nest build",
     "server:format": "prettier --write \"server/src/**/*.ts\"",
     "server:start": "nest start",
