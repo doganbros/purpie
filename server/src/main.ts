@@ -31,7 +31,6 @@ async function bootstrap() {
     .setTitle('Octopus')
     .setDescription('Octopus API Documentation')
     .setVersion('1.0')
-    .addServer('/v1/')
     .addBearerAuth()
     .build();
 
