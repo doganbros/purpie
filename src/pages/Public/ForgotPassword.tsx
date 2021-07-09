@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import AuthLayout from '../../components/layouts/AuthLayout';
 import { validators } from '../../helpers/validators';
 import { FormSubmitEvent } from '../../models/form-submit-event';
-import { forgetPasswordAction } from '../../store/actions/auth.action';
+import { resetPasswordRequestAction } from '../../store/actions/auth.action';
 import { AppState } from '../../store/reducers/root.reducer';
 import Figure from '../../assets/forgotten-password-bg/figure-1.png';
 import Banner from '../../assets/forgotten-password-bg/banner.png';
@@ -20,7 +20,7 @@ const ForgotPassword: FC = () => {
   } = useSelector((state: AppState) => state.auth);
 
   const handleSubmit: FormSubmitEvent<{ email: string }> = ({ value }) => {
-    dispatch(forgetPasswordAction(value.email));
+    dispatch(resetPasswordRequestAction(value.email));
   };
 
   const size = useResponsive();
@@ -49,7 +49,7 @@ const ForgotPassword: FC = () => {
             }}
           />
           <Image
-            height="100%"
+            height="90%"
             alignSelf="center"
             style={{ zIndex: 2 }}
             src={Figure}
@@ -62,17 +62,16 @@ const ForgotPassword: FC = () => {
           <FormField
             name="email"
             htmlFor="emailInput"
-            label="Email"
+            label="EMAIL"
             validate={[validators.required(), validators.email()]}
           >
             <TextInput id="emailInput" name="email" type="email" />
           </FormField>
           <Button
             fill="horizontal"
-            hoverIndicator="background"
             primary
             size={size}
-            margin={{ top: 'large' }}
+            margin={{ top: '55%' }}
             disabled={loading}
             type="submit"
             label="SEND"

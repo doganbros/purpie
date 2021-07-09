@@ -22,7 +22,7 @@ const NotFound: FC = () => {
       </Text>
       <Box margin="20px">
         {isAuthenticated ? (
-          <AnchorLink label="Tenants" to="/" />
+          <AnchorLink label="Zones" to="/" />
         ) : (
           <AnchorLink label="Login" to="/login" />
         )}

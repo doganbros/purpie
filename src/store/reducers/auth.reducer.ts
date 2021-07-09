@@ -16,6 +16,8 @@ import {
   THIRD_PARTY_URL_REQUESTED,
   LOGIN_FAILED,
   THIRD_PARTY_AUTH_WITH_CODE_SUCCESS,
+  VERIFY_USER_EMAIL_FAILED,
+  VERIFY_USER_EMAIL_SUCCESS,
 } from '../constants/auth.constants';
 import { AuthState, AuthActionParams } from '../types/auth.types';
 
@@ -32,6 +34,10 @@ const initialState: AuthState = {
   },
   retrieveUser: {
     loading: true,
+    error: null,
+  },
+  verifyUserEmail: {
+    loading: false,
     error: null,
   },
   forgotPassword: {
@@ -133,6 +139,22 @@ const authReducer = (
           loading: false,
         },
       };
+    case VERIFY_USER_EMAIL_SUCCESS:
+      return {
+        ...state,
+        verifyUserEmail: {
+          error: null,
+          loading: false,
+        },
+      };
+    case VERIFY_USER_EMAIL_FAILED:
+      return {
+        ...state,
+        verifyUserEmail: {
+          error: action.payload,
+          loading: false,
+        },
+      };
     case FORGOT_PASSWORD_REQUESTED:
       return {
         ...state,
@@ -168,8 +190,6 @@ const authReducer = (
     case REGISTER_SUCCESS:
       return {
         ...state,
-        isAuthenticated: true,
-        user: action.payload,
         register: {
           error: null,
           loading: false,

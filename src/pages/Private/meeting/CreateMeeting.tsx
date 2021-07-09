@@ -16,24 +16,24 @@ import { CreateMeetingPayload } from '../../../store/types/meeting.types';
 import { createMeetingAction } from '../../../store/actions/meeting.action';
 import { validators } from '../../../helpers/validators';
 import { FormSubmitEvent } from '../../../models/form-submit-event';
-import { getMultipleTenantsAction } from '../../../store/actions/tenant.action';
+import { getMultipleUserZonesAction } from '../../../store/actions/zone.action';
 import { AppState } from '../../../store/reducers/root.reducer';
-import { Tenant } from '../../../store/types/tenant.types';
+import { UserZone } from '../../../store/types/zone.types';
 
 interface Payload extends CreateMeetingPayload {
-  tenant: Tenant;
+  userZone: UserZone;
 }
 
 const CreateMeeting: FC = () => {
   const dispatch = useDispatch();
 
   const {
-    getMultipleTenants: { tenants },
-    createTenant: { loading },
-  } = useSelector((state: AppState) => state.tenant);
+    getMultipleUserZones: { userZones },
+    createZone: { loading },
+  } = useSelector((state: AppState) => state.zone);
 
   useEffect(() => {
-    dispatch(getMultipleTenantsAction());
+    dispatch(getMultipleUserZonesAction());
   }, []);
   const defaultDate = useRef(new Date().toISOString());
 
@@ -42,7 +42,7 @@ const CreateMeeting: FC = () => {
       ...value,
       startDate: value.startDate || defaultDate.current,
       endDate: value.endDate || defaultDate.current,
-      tenantId: value.tenant?.id,
+      zoneId: value.userZone?.zone.id,
     };
     dispatch(createMeetingAction(payload));
   };
@@ -57,16 +57,16 @@ const CreateMeeting: FC = () => {
 
           <Form onSubmit={handleSubmit}>
             <FormField
-              label="Select Tenant"
-              name="tenant"
+              label="Select Zone"
+              name="zone"
               htmlFor="tenantIdInput"
               validate={validators.required()}
             >
               <Select
-                options={tenants || []}
+                options={userZones || []}
                 labelKey="name"
                 valueKey="id"
-                name="tenant"
+                name="zone"
               />
             </FormField>
             <FormField
@@ -106,13 +106,7 @@ const CreateMeeting: FC = () => {
               />
             </FormField>
             <Box pad={{ vertical: 'medium' }} align="end">
-              <Button
-                hoverIndicator="background"
-                primary
-                disabled={loading}
-                type="submit"
-                label="Go!"
-              />
+              <Button primary disabled={loading} type="submit" label="Go!" />
             </Box>
           </Form>
         </Box>

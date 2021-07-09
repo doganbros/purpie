@@ -25,7 +25,7 @@ const MeetingsByUser: FC = () => {
   const dispatch = useDispatch();
 
   const [meetingUpdating, setMeetingUpdating] = useState<number | null>(null);
-  const [selectedMeetingTenantId, setSelectedMeetingTenantId] = useState<
+  const [selectedMeetingZoneId, setSelectedMeetingZoneId] = useState<
     number | null
   >(null);
 
@@ -46,9 +46,9 @@ const MeetingsByUser: FC = () => {
     setMeetingUpdating(null);
   };
 
-  const onOpen = (id: number, tenantId: number) => {
+  const onOpen = (id: number, zoneId: number) => {
     setMeetingUpdating(id);
-    setSelectedMeetingTenantId(tenantId);
+    setSelectedMeetingZoneId(zoneId);
     dispatch(openUpdateMeetingLayerAction);
   };
 
@@ -88,7 +88,7 @@ const MeetingsByUser: FC = () => {
     >
       <CreateUpdateMeeting
         meetingId={meetingUpdating || undefined}
-        tenantId={selectedMeetingTenantId || undefined}
+        zoneId={selectedMeetingZoneId || undefined}
         visible={!!meetingUpdating && layerIsVisible}
         onClose={onClose}
       />
@@ -111,7 +111,7 @@ const MeetingsByUser: FC = () => {
               background={{ light: 'light-2', dark: 'dark-2' }}
             >
               <Button
-                onClick={() => onOpen(meeting.id, meeting.tenantId)}
+                onClick={() => onOpen(meeting.id, meeting.zoneId)}
                 icon={<Edit />}
                 hoverIndicator
               />

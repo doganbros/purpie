@@ -80,7 +80,6 @@ const ResetPassword: FC = () => {
           </FormField>
           <Button
             fill="horizontal"
-            hoverIndicator="background"
             primary
             size="large"
             margin={{ top: 'large' }}

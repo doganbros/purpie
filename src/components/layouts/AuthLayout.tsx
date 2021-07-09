@@ -25,7 +25,7 @@ interface Props {
   };
   background?: JSX.Element;
   formTitle: string;
-  formSubTitle: string;
+  formSubTitle: string | JSX.Element;
 }
 
 const AuthLayout: React.FC<Props> = ({
@@ -43,8 +43,14 @@ const AuthLayout: React.FC<Props> = ({
 
   const formWidth = {
     small: '100%',
-    medium: '50%',
+    medium: '45%',
     large: '40%',
+  };
+
+  const headingSize = {
+    small: '30px',
+    medium: '38px',
+    large: '45px',
   };
 
   return (
@@ -58,7 +64,7 @@ const AuthLayout: React.FC<Props> = ({
       >
         {size !== 'small' ? (
           <Box
-            basis={size === 'medium' ? '50%' : '60%'}
+            basis={size === 'medium' ? '55%' : '60%'}
             height="100%"
             alignSelf="center"
             margin="0"
@@ -67,13 +73,13 @@ const AuthLayout: React.FC<Props> = ({
             <Box basis="25%" align="center">
               {callToAction && (
                 <>
-                  <Text margin={{ bottom: '20px', top: '20px' }}>
+                  <Text size="16px" margin={{ bottom: '19px', top: '20px' }}>
                     {callToAction.title}
                   </Text>
                   <Button
                     style={{
-                      paddingRight: size === 'large' ? '130px' : '50px',
-                      paddingLeft: size === 'large' ? '130px' : '50px',
+                      paddingRight: size === 'large' ? '150px' : '80px',
+                      paddingLeft: size === 'large' ? '150px' : '80px',
                       maxWidth: '600px',
                     }}
                     fill={false}
@@ -107,7 +113,7 @@ const AuthLayout: React.FC<Props> = ({
                 fill="horizontal"
               >
                 <Image
-                  margin={{ right: 'xsmall' }}
+                  margin={{ right: '8px' }}
                   width="50px"
                   height="50px"
                   src={theme.dark ? LogoWhite : Logo}
@@ -115,16 +121,13 @@ const AuthLayout: React.FC<Props> = ({
                 {theme.dark ? (
                   <Text>octopus</Text>
                 ) : (
-                  <Image src={OctopusText} height="23px" />
+                  <Image src={OctopusText} height="24px" />
                 )}
               </Box>
-              <Heading
-                level={size === 'large' ? 1 : 2}
-                margin={{ bottom: 'xxsmall' }}
-              >
+              <Heading size={headingSize[size]} margin={{ bottom: 'xxsmall' }}>
                 {formTitle}
               </Heading>
-              <Text size="small" margin={{ left: 'xsmall', bottom: size }}>
+              <Text size="14px" margin={{ left: 'xsmall', bottom: size }}>
                 {formSubTitle}
               </Text>
               {children}

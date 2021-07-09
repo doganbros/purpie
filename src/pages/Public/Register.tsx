@@ -97,7 +97,6 @@ const Register: FC = () => {
           </FormField>
           <Button
             fill="horizontal"
-            hoverIndicator="background"
             primary
             size={size}
             margin={{ top: 'medium' }}

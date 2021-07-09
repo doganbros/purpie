@@ -21,31 +21,31 @@ import {
 } from '../../store/actions/meeting.action';
 import { validators } from '../../helpers/validators';
 import { FormSubmitEvent } from '../../models/form-submit-event';
-import { getMultipleTenantsAction } from '../../store/actions/tenant.action';
+import { getMultipleUserZonesAction } from '../../store/actions/zone.action';
 import { AppState } from '../../store/reducers/root.reducer';
-import { Tenant } from '../../store/types/tenant.types';
+import { UserZone } from '../../store/types/zone.types';
 
 interface Payload extends CreateMeetingPayload {
-  tenant: Tenant;
+  userZone: UserZone;
 }
 
 interface Props {
   visible: boolean;
   onClose: () => void;
   meetingId?: number;
-  tenantId?: number;
+  zoneId?: number;
 }
 
 const CreateUpdateMeeting: FC<Props> = ({
   onClose,
   visible,
   meetingId,
-  tenantId,
+  zoneId,
 }) => {
   const dispatch = useDispatch();
   const {
-    tenant: {
-      getMultipleTenants: { tenants },
+    zone: {
+      getMultipleUserZones: { userZones },
     },
     meeting: {
       createMeeting: { loading },
@@ -55,12 +55,12 @@ const CreateUpdateMeeting: FC<Props> = ({
   } = useSelector((state: AppState) => state);
 
   useEffect(() => {
-    dispatch(getMultipleTenantsAction());
+    dispatch(getMultipleUserZonesAction());
 
-    if (meetingId && tenantId) {
-      dispatch(getMeetingByIdAction(tenantId, meetingId));
+    if (meetingId && zoneId) {
+      dispatch(getMeetingByIdAction(zoneId, meetingId));
     }
-  }, [meetingId, tenantId]);
+  }, [meetingId, zoneId]);
 
   const defaultDate = useRef(new Date().toISOString());
 
@@ -69,7 +69,7 @@ const CreateUpdateMeeting: FC<Props> = ({
       ...value,
       startDate: value.startDate || defaultDate.current,
       endDate: value.endDate || defaultDate.current,
-      tenantId: value.tenant?.id,
+      zoneId: value.userZone?.zone?.id,
     };
     if (meetingId) {
       dispatch(updateMeetingByIdAction(meetingId, payload));
@@ -106,17 +106,17 @@ const CreateUpdateMeeting: FC<Props> = ({
           <Form onSubmit={handleSubmit}>
             {!meetingId && (
               <FormField
-                label="Select Tenant"
-                name="tenant"
+                label="Select Zone"
+                name="zone"
                 htmlFor="tenantIdInput"
                 validate={meetingId ? validators.required() : undefined}
               >
                 <Select
-                  options={tenants || []}
+                  options={userZones || []}
                   labelKey="name"
-                  defaultValue={meetingId && meeting?.tenantId}
+                  defaultValue={meetingId && meeting?.zoneId}
                   valueKey="id"
-                  name="tenant"
+                  name="zone"
                 />
               </FormField>
             )}
@@ -170,7 +170,6 @@ const CreateUpdateMeeting: FC<Props> = ({
             </FormField>
             <Box pad={{ vertical: 'medium' }} align="end">
               <Button
-                hoverIndicator="background"
                 primary
                 disabled={loading || updateLoading}
                 type="submit"

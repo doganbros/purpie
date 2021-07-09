@@ -9,9 +9,9 @@ import {
   GET_ALL_MEETINGS_FAILED,
   GET_MEETINGS_BY_ID_SUCCESS,
   GET_MEETINGS_BY_ID_FAILED,
-  GET_ALL_MEETINGS_BY_TENANT_ID_REQUESTED,
-  GET_ALL_MEETINGS_BY_TENANT_ID_SUCCESS,
-  GET_ALL_MEETINGS_BY_TENANT_ID_FAILED,
+  GET_ALL_MEETINGS_BY_USER_ZONE_ID_REQUESTED,
+  GET_ALL_MEETINGS_BY_USER_ZONE_ID_SUCCESS,
+  GET_ALL_MEETINGS_BY_USER_ZONE_ID_FAILED,
   GET_ALL_MEETINGS_BY_USER_ID_REQUESTED,
   GET_ALL_MEETINGS_BY_USER_ID_SUCCESS,
   GET_ALL_MEETINGS_BY_USER_ID_FAILED,
@@ -26,7 +26,7 @@ import {
   OPEN_UPDATE_MEETING_LAYER,
   CLOSE_UPDATE_MEETING_LAYER,
 } from '../constants/meeting.constants';
-import { CLOSE_UPDATE_TENANT_LAYER } from '../constants/tenant.constants';
+import { CLOSE_UPDATE_USER_ZONE_LAYER } from '../constants/zone.constants';
 import { UtilActionParams } from './util.types';
 
 export interface Meeting {
@@ -36,13 +36,13 @@ export interface Meeting {
   startDate: string;
   endDate: string;
   link: string;
-  tenantId: number;
+  zoneId: number;
   creatorId: number;
   createdAt: Date;
 }
 
 export interface CreateMeetingPayload {
-  tenantId: number;
+  zoneId: number;
   title: string;
   description: string;
   startDate: string;
@@ -57,9 +57,9 @@ export interface MeetingState {
     meetings: Array<Meeting> | null;
     error: ResponseError | null;
   };
-  getMultipleMeetingsByTenantId: {
+  getMultipleMeetingsByZoneId: {
     loading: boolean;
-    meetingsByTenantId: Array<Meeting> | null;
+    meetingsByZoneId: Array<Meeting> | null;
     error: ResponseError | null;
   };
   getMultipleMeetingsByUserId: {
@@ -94,7 +94,7 @@ export type MeetingActionParams =
         | typeof MEETING_CREATE_REQUESTED
         | typeof GET_ALL_MEETINGS_REQUESTED
         | typeof DELETE_MEETINGS_BY_ID_REQUESTED
-        | typeof GET_ALL_MEETINGS_BY_TENANT_ID_REQUESTED
+        | typeof GET_ALL_MEETINGS_BY_USER_ZONE_ID_REQUESTED
         | typeof GET_ALL_MEETINGS_BY_USER_ID_REQUESTED
         | typeof MEETING_CREATE_SUCCESS
         | typeof DELETE_MEETINGS_BY_ID_SUCCESS
@@ -103,14 +103,14 @@ export type MeetingActionParams =
         | typeof OPEN_CREATE_MEETING_LAYER
         | typeof CLOSE_CREATE_MEETING_LAYER
         | typeof OPEN_UPDATE_MEETING_LAYER
-        | typeof CLOSE_UPDATE_TENANT_LAYER
+        | typeof CLOSE_UPDATE_USER_ZONE_LAYER
         | typeof CLOSE_UPDATE_MEETING_LAYER
         | typeof GET_MEETINGS_BY_ID_REQUESTED;
     }
   | {
       type:
         | typeof GET_ALL_MEETINGS_SUCCESS
-        | typeof GET_ALL_MEETINGS_BY_TENANT_ID_SUCCESS
+        | typeof GET_ALL_MEETINGS_BY_USER_ZONE_ID_SUCCESS
         | typeof GET_ALL_MEETINGS_BY_USER_ID_SUCCESS;
       payload: Array<Meeting>;
     }
@@ -122,7 +122,7 @@ export type MeetingActionParams =
       type:
         | typeof GET_ALL_MEETINGS_FAILED
         | typeof GET_MEETINGS_BY_ID_FAILED
-        | typeof GET_ALL_MEETINGS_BY_TENANT_ID_FAILED
+        | typeof GET_ALL_MEETINGS_BY_USER_ZONE_ID_FAILED
         | typeof GET_ALL_MEETINGS_BY_USER_ID_FAILED
         | typeof UPDATE_MEETINGS_BY_ID_FAILED
         | typeof DELETE_MEETINGS_BY_ID_FAILED

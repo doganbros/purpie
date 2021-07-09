@@ -10,7 +10,7 @@ import { theme } from './config/app-config';
 import appHistory from './helpers/history';
 import NotFound from './pages/Private/NotFound';
 import { privateRoutes, publicRoutes } from './routes';
-import { retieveUserAction } from './store/actions/auth.action';
+import { retrieveUserAction } from './store/actions/auth.action';
 import { removeToastAction } from './store/actions/util.action';
 import { AppState } from './store/reducers/root.reducer';
 
@@ -25,7 +25,7 @@ const App: FC = () => {
   } = useSelector((state: AppState) => state);
 
   useEffect(() => {
-    dispatch(retieveUserAction());
+    dispatch(retrieveUserAction());
   }, []);
 
   return (
