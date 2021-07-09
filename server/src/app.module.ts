@@ -14,7 +14,7 @@ import { MailModule } from './mail/mail.module';
 import { AuthGuard } from './auth/guards/auth.guard';
 import { ZoneModule } from './zone/zone.module';
 import { UtilsModule } from './utils/utils.module';
-import { UtilsMiddleware } from './utils/middlewares/utils.middleware';
+import { PaginationMiddleware } from './utils/middlewares/paginate.middleware';
 
 @Global()
 @Module({
@@ -40,7 +40,7 @@ import { UtilsMiddleware } from './utils/middlewares/utils.middleware';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(UtilsMiddleware)
+      .apply(PaginationMiddleware)
       .forRoutes({ path: '*', method: RequestMethod.GET });
   }
 }

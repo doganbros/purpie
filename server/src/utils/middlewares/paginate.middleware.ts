@@ -3,7 +3,7 @@ import { NextFunction } from 'express';
 import { PaginatedRequestQuery } from 'types/PaginationQuery';
 
 @Injectable()
-export class UtilsMiddleware implements NestMiddleware {
+export class PaginationMiddleware implements NestMiddleware {
   use(req: PaginatedRequestQuery, _: any, next: NextFunction) {
     req.query.limit = +req.query.limit || 30;
     req.query.skip = +req.query.skip || 0;
