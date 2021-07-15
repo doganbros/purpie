@@ -39,6 +39,7 @@
 - [Pm2](https://pm2.io/)
 - [Sequelize](http://sequelize.org/)
 - [Postgress](https://www.postgresql.org/)
+- (For Windows)[Windows Build Tools](https://www.npmjs.com/package/windows-build-tools) or check the option during Node installation
 
 
 ## Getting Started
