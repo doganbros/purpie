@@ -36,9 +36,9 @@
 
 - [Node >= v14.14](https://nodejs.org/en/download/current/)
 - [Yarn](https://yarnpkg.com/en/docs/install)
-- [Pm2] (https://pm2.io/)
-- [Sequelize] (http://sequelize.org/)
-- [Postgress] (https://www.postgresql.org/)
+- [Pm2](https://pm2.io/)
+- [Sequelize](http://sequelize.org/)
+- [Postgress](https://www.postgresql.org/)
 
 
 ## Getting Started
