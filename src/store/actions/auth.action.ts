@@ -85,7 +85,7 @@ export const verifyUserEmailAction = (body: VerifyEmailPayload): AuthAction => {
         'ok',
         `Your email ${payload.email} has been verified successfully. Please Login to continue`
       )(dispatch);
-      appHistory.push('/login');
+      appHistory.replace('/login');
       dispatch({
         type: VERIFY_USER_EMAIL_SUCCESS,
         payload,
@@ -128,7 +128,7 @@ export const authenticateWithThirdPartyCodeAction = (
         type: THIRD_PARTY_AUTH_WITH_CODE_FAILED,
         payload: err?.response?.data,
       });
-      appHistory.push('/login');
+      appHistory.replace('/login');
     }
   };
 };
@@ -172,7 +172,7 @@ export const resetPasswordRequestAction = (email: string): AuthAction => {
         'ok',
         `A password reset link has been sent to ${email}`
       )(dispatch);
-      appHistory.push('/login');
+      appHistory.replace('/login');
     } catch (err) {
       dispatch({
         type: FORGOT_PASSWORD_FAILED,
@@ -196,7 +196,7 @@ export const resetPasswordAction = (body: ResetPasswordPayload): AuthAction => {
         'ok',
         'Your password has been reset successfully'
       )(dispatch);
-      appHistory.push('/login');
+      appHistory.replace('/login');
     } catch (err) {
       dispatch({
         type: RESET_PASSWORD_FAILED,

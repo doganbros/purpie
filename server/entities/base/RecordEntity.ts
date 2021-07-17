@@ -15,15 +15,4 @@ export abstract class RecordEntity extends BaseEntity {
 
   @UpdateDateColumn({ nullable: true })
   updatedOn: Date;
-
-  // static async paginate(options?: FindManyOptions<BaseEntity>) {
-  //   const [data, total] = await BaseEntity.findAndCount(options);
-
-  //   return {
-  //     data,
-  //     total,
-  //     limit: options?.take,
-  //     skip: options?.skip,
-  //   };
-  // }
 }
