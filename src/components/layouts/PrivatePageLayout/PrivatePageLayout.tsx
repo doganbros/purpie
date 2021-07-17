@@ -10,7 +10,7 @@ import { CloudComputer, Icon } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
 import React, { FC, useContext } from 'react';
 import { useTitle } from '../../../hooks/useTitle';
-import Logo from '../../../assets/octopus-logo/logo-color.png';
+import Logo from '../../../assets/octopus-logo/logo-white.svg';
 import { SidebarButton } from './SidebarButton';
 import SidebarFooter from './SidebarFooter';
 
@@ -65,11 +65,14 @@ const PrivatePageLayout: FC<Props> = ({
         header={
           <Box pad="small">
             <Button onClick={() => history.push('/')}>
-              <Avatar
-                border={{ color: 'white', size: 'small' }}
-                round="medium"
-                src={Logo}
-              />
+              <Box align="center">
+                <Avatar
+                  alignSelf="center"
+                  size="72px"
+                  round="medium"
+                  src={Logo}
+                />
+              </Box>
             </Button>
           </Box>
         }
