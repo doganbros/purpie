@@ -49,19 +49,16 @@ const PrivatePageLayout: FC<Props> = ({
     <Box
       height="100vh"
       direction="row"
+      round="45px"
       style={{
-        borderRadius: '45px',
         boxShadow: '0px 30px 50px rgba(243, 111, 62, 0.15)',
       }}
     >
       <Sidebar
         background="brand"
         width="228px"
-        style={{
-          borderRadius: '45px',
-          marginRight: -93,
-          paddingRight: 93,
-        }}
+        round="45px"
+        margin={{ right: '-93px' }}
         header={
           <Box pad="small">
             <Button onClick={() => history.push('/')}>
@@ -76,7 +73,7 @@ const PrivatePageLayout: FC<Props> = ({
             </Button>
           </Box>
         }
-        pad={{ vertical: 'small' }}
+        pad={{ vertical: 'small', right: '93px' }}
         footer={<SidebarFooter />}
       >
         {sidebarBtns.map((v) => (
@@ -87,8 +84,9 @@ const PrivatePageLayout: FC<Props> = ({
         flex
         overflow="auto"
         background={{ light: 'white', dark: 'dark-1' }}
-        pad="30px 45px 0 45px"
-        style={{ borderRadius: '45px 0 0 45px', gap: '45px' }}
+        pad={{ top: '30px', horizontal: '45px' }}
+        round={{ corner: 'left', size: '45px' }}
+        gap="45px"
       >
         <Box flex>
           <Box
@@ -107,8 +105,8 @@ const PrivatePageLayout: FC<Props> = ({
       {!['small', 'xsmall'].includes(size) && (
         <Box
           width="387px"
+          round="45px"
           style={{
-            borderRadius: '45px',
             boxShadow: '-5px 5px 30px rgba(61, 19, 141, 0.15)',
           }}
         >
