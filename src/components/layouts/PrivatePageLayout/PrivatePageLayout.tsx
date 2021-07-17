@@ -13,6 +13,7 @@ import { useTitle } from '../../../hooks/useTitle';
 import Logo from '../../../assets/octopus-logo/logo-white.svg';
 import { SidebarButton } from './SidebarButton';
 import SidebarFooter from './SidebarFooter';
+import ZoneSelector from '../../utils/ZoneSelector';
 
 interface Props {
   title: string;
@@ -61,7 +62,10 @@ const PrivatePageLayout: FC<Props> = ({
         margin={{ right: '-93px' }}
         header={
           <Box pad="small">
-            <Button onClick={() => history.push('/')}>
+            <Button
+              margin={{ bottom: 'medium' }}
+              onClick={() => history.push('/')}
+            >
               <Box align="center">
                 <Avatar
                   alignSelf="center"
@@ -71,6 +75,7 @@ const PrivatePageLayout: FC<Props> = ({
                 />
               </Box>
             </Button>
+            <ZoneSelector />
           </Box>
         }
         pad={{ vertical: 'small', right: '93px' }}
