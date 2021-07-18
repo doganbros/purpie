@@ -6,12 +6,11 @@ import {
   ResponsiveContext,
   Sidebar,
 } from 'grommet';
-import { CloudComputer, Icon } from 'grommet-icons';
+import { Icon } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
 import React, { FC, useContext } from 'react';
 import { useTitle } from '../../../hooks/useTitle';
 import Logo from '../../../assets/octopus-logo/logo-white.svg';
-import { SidebarButton } from './SidebarButton';
 import SidebarFooter from './SidebarFooter';
 import ZoneSelector from './ZoneSelector';
 
@@ -21,19 +20,6 @@ interface Props {
   icon?: Icon;
   rightSideItem?: React.ReactNode;
 }
-
-const sidebarBtns = [
-  {
-    title: 'Zones',
-    icon: CloudComputer,
-    path: '/',
-  },
-  {
-    title: 'My Meetings',
-    icon: CloudComputer,
-    path: '/my-meetings',
-  },
-];
 
 const PrivatePageLayout: FC<Props> = ({
   children,
@@ -80,11 +66,7 @@ const PrivatePageLayout: FC<Props> = ({
         }
         pad={{ vertical: 'small', right: '93px' }}
         footer={<SidebarFooter />}
-      >
-        {sidebarBtns.map((v) => (
-          <SidebarButton {...v} key={v.path} />
-        ))}
-      </Sidebar>
+      />
       <Box
         flex
         overflow="auto"

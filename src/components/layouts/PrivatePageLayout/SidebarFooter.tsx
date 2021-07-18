@@ -1,7 +1,18 @@
 import { Box, Menu, Text } from 'grommet';
-import { AddCircle, CloudComputer, Group, Logout, User } from 'grommet-icons';
+import {
+  Add,
+  Bookmark,
+  Channel,
+  Chat,
+  CloudComputer,
+  Group,
+  Home,
+  Logout,
+  User,
+} from 'grommet-icons';
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { SidebarButton } from './SidebarButton';
 import CreateUpdateMeeting from '../../../layers/meeting/CreateUpdateMeeting';
 import CreateUpdateZone from '../../../layers/zone/CreateUpdateZone';
 import { logoutAction } from '../../../store/actions/auth.action';
@@ -15,9 +26,36 @@ import {
 } from '../../../store/actions/zone.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 
+const sidebarBtns = [
+  {
+    title: 'Home',
+    icon: Home,
+    path: '/',
+  },
+  {
+    title: 'Channels',
+    icon: Channel,
+    path: '/channels',
+  },
+  {
+    title: 'Messages',
+    icon: Chat,
+    path: '/messages',
+  },
+  {
+    title: 'Contacts',
+    icon: Group,
+    path: '/contacts',
+  },
+  {
+    title: 'Saved Videos',
+    icon: Bookmark,
+    path: '/saved_videos',
+  },
+];
+
 const SidebarFooter: FC = () => {
   const dispatch = useDispatch();
-
   const {
     zone: {
       createZone: { layerIsVisible: createZoneVisible },
@@ -65,8 +103,11 @@ const SidebarFooter: FC = () => {
         margin={{ bottom: '10px' }}
         alignSelf="center"
         items={data}
-        icon={<AddCircle />}
+        icon={<Add />}
       />
+      {sidebarBtns.map((v) => (
+        <SidebarButton {...v} />
+      ))}
       <Menu
         alignSelf="center"
         items={[
