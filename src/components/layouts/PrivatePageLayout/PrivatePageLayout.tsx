@@ -13,7 +13,7 @@ import { useTitle } from '../../../hooks/useTitle';
 import Logo from '../../../assets/octopus-logo/logo-white.svg';
 import { SidebarButton } from './SidebarButton';
 import SidebarFooter from './SidebarFooter';
-import ZoneSelector from '../../utils/ZoneSelector';
+import ZoneSelector from './ZoneSelector';
 
 interface Props {
   title: string;
