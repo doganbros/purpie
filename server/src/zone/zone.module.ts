@@ -5,7 +5,7 @@ import { UserZone } from 'entities/UserZone.entity';
 import { UserZonePermission } from 'entities/UserZonePermission.entity';
 import { Zone } from 'entities/Zone.entity';
 import { MailModule } from 'src/mail/mail.module';
-import { UserZoneController } from './user-zone.controller';
+import { UserZoneController } from './controllers/user-zone.controller';
 import { ZoneService } from './zone.service';
 
 @Module({

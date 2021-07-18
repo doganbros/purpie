@@ -3,7 +3,8 @@ import path from 'path';
 import ehbs from 'express-handlebars';
 import sendGrid, { MailDataRequired } from '@sendgrid/mail';
 
-const rootViewPath = path.join(__dirname, '..', '..', 'views');
+const rootViewPath = path.join(__dirname, '..', '..', 'mail', 'views');
+
 const viewEngine = ehbs.create({
   layoutsDir: path.join(rootViewPath, 'layouts'),
   partialsDir: path.join(rootViewPath, 'partials'),

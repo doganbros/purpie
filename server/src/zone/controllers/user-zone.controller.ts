@@ -10,7 +10,6 @@ import {
   Delete,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiCreatedResponse,
   ApiHeader,
   ApiOkResponse,
@@ -22,9 +21,9 @@ import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { UserPayloadRequest } from 'types/UserPayloadRequest';
 import { UserZoneRequest } from 'types/UserZoneRequest';
-import { CreateZoneDto } from './dto/create-zone.dto';
-import { UserZoneGuard } from './guards/user-zone.guard';
-import { ZoneService } from './zone.service';
+import { CreateZoneDto } from '../dto/create-zone.dto';
+import { UserZoneGuard } from '../guards/user-zone.guard';
+import { ZoneService } from '../zone.service';
 
 @Controller({ path: 'user-zone', version: '1' })
 @ApiTags('user-zone')
@@ -32,7 +31,6 @@ export class UserZoneController {
   constructor(private zoneService: ZoneService) {}
 
   @Post()
-  @ApiBearerAuth()
   @ApiCreatedResponse({
     description: `Current authenticated user adds a new zone.`,
   })
@@ -52,7 +50,6 @@ export class UserZoneController {
   }
 
   @Get()
-  @ApiBearerAuth()
   @ApiOkResponse({
     description: "Get the list of current user's zones",
   })
@@ -94,7 +91,6 @@ export class UserZoneController {
     name: 'id',
     description: 'User Zone Id',
   })
-  @ApiBearerAuth()
   @IsAuthenticated()
   @UseGuards(UserZoneGuard)
   async getUserZoneById(@Req() req: UserZoneRequest) {
@@ -106,7 +102,6 @@ export class UserZoneController {
     name: 'id',
     description: 'User Zone Id',
   })
-  @ApiBearerAuth()
   @IsAuthenticated()
   @UseGuards(UserZoneGuard)
   async deleteUserZoneById(@Req() req: UserZoneRequest) {
