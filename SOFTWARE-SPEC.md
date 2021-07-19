@@ -170,7 +170,10 @@ This section introduces the main pipes used in this application
 This section introduces the main decorators used in this application
 
 - #### IsAuthenticated
-    The isAuthenticated decorator wraps over the AuthGuard to avoid writing lots of boilerplates while passing permissions to the AuthGuard.
+    The IsAuthenticated decorator wraps over the AuthGuard to avoid writing lots of boilerplates while passing permissions to the AuthGuard.
+
+- #### UserZoneRole
+    The UserZoneRole decorator wraps over the UserZoneGuard to avoid writing lots of boilerplates while passing permissions to the it. It also extends the IsAuthenticated decorators so if you do not need to specify it while using it on a route.
 
 ### Middlewares Used in this application
 This section introduces the main middlewares used in this application.
