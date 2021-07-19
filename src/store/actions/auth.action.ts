@@ -91,6 +91,7 @@ export const verifyUserEmailAction = (body: VerifyEmailPayload): AuthAction => {
         payload,
       });
     } catch (err) {
+      appHistory.replace('/login');
       dispatch({
         type: VERIFY_USER_EMAIL_FAILED,
         payload: err?.response?.data,

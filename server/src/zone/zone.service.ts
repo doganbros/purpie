@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { URL } from 'url';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserZonePermission } from 'entities/UserZonePermission.entity';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { Zone } from 'entities/Zone.entity';
+import { Channel } from 'entities/Channel.entity';
+import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZoneRepository } from 'entities/repositories/UserZone.repository';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { MailService } from 'src/mail/mail.service';
@@ -18,37 +19,90 @@ export class ZoneService {
     @InjectRepository(Zone) private zoneRepository: Repository<Zone>,
     @InjectRepository(UserZoneRepository)
     private userZoneRepository: UserZoneRepository,
-    @InjectRepository(UserZonePermission)
-    private userZonePermissionRepo: Repository<UserZonePermission>,
+    @InjectRepository(UserChannel)
+    private userChannelRepository: Repository<UserChannel>,
+    @InjectRepository(Channel)
+    private channelRepository: Repository<Channel>,
     private mailService: MailService,
   ) {}
 
-  async createZone(userId: number, createZoneInfo: CreateZoneDto) {
-    const userZone = this.userZoneRepository.create({
+  async createZone(
+    userId: number,
+    createZoneInfo: CreateZoneDto,
+    defaultZone = false,
+  ) {
+    let userZone = this.userZoneRepository.create({
       userId,
+      zoneRoleCode: 'SUPER_ADMIN',
       zone: await this.zoneRepository
         .create({
+          defaultZone,
           name: createZoneInfo.name,
           subdomain: createZoneInfo.subdomain,
           description: createZoneInfo.description,
           public: createZoneInfo.public,
           createdById: userId,
-          adminId: userId,
+          categoryId: createZoneInfo.categoryId,
         })
         .save(),
-      userZonePermissions: await this.userZonePermissionRepo.create().save(),
     });
 
-    userZone.save();
+    userZone = await userZone.save();
 
-    return userZone.zone;
+    return userZone;
+  }
+
+  async createDefaultZoneAndChannel(
+    userId: number,
+    createZoneInfo: CreateZoneDto,
+  ) {
+    const userZone = await this.createZone(userId, createZoneInfo, true);
+
+    //  This will be pulled from the channel service when it is added
+    const userChannel = this.userChannelRepository.create({
+      userId,
+      channelRoleCode: 'SUPER_ADMIN',
+      channel: await this.channelRepository
+        .create({
+          zoneId: userZone.zone.id,
+          name: 'default',
+          defaultChannel: true,
+          public: createZoneInfo.public,
+          createdById: userId,
+          categoryId: userZone.zone.categoryId, // This will be changed to sub category when sub categories are added
+        })
+        .save(),
+    });
+
+    await userChannel.save();
+
+    return {
+      userZone,
+      userChannel,
+    };
+  }
+
+  async userHasDefaultZoneAndChannel(userId: number) {
+    const [zone, channel] = await Promise.all([
+      this.zoneRepository.findOne({
+        createdById: userId,
+        defaultZone: true,
+      }),
+      this.channelRepository.findOne({
+        createdById: userId,
+        defaultChannel: true,
+      }),
+    ]);
+
+    if (zone && channel) return true;
+    return false;
   }
 
   async getCurrentUserZones(user: UserPayload, query: PaginationQuery) {
     return this.userZoneRepository.paginate({
       skip: query.skip,
       take: query.limit,
-      relations: ['zone', 'userZonePermissions'],
+      relations: ['zone', 'zoneRole'],
       where: {
         userId: user.id,
       },
@@ -61,7 +115,7 @@ export class ZoneService {
         userId,
         ...params,
       },
-      relations: ['zone', 'userZonePermissions'],
+      relations: ['zone', 'zoneRole'],
     });
   }
 

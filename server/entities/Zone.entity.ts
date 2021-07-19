@@ -6,9 +6,11 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
 import { MeetingConfig } from 'types/Meeting';
 import { RecordEntity } from './base/RecordEntity';
+import { Category } from './Category.entity';
 import { Channel } from './Channel.entity';
 import { zoneMeetingConfig } from './data/zone-meeting-config';
 import { User } from './User.entity';
@@ -47,15 +49,18 @@ export class Zone extends RecordEntity {
   @JoinColumn({ name: 'createdById' })
   createdBy: User;
 
-  @ManyToOne(() => User, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'adminId' })
-  admin: User;
-
   @Column('int')
   createdById: number;
 
+  @OneToOne(() => Category, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'categoryId' })
+  category: Category;
+
   @Column('int')
-  adminId: number;
+  categoryId: number;
+
+  @Column({ default: false })
+  defaultZone: boolean;
 
   @OneToMany(() => UserZone, (userZone) => userZone.zone)
   userZone: Array<UserZone>;

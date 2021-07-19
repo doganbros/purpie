@@ -6,7 +6,7 @@
   "compilerOptions": {
     "tsConfigPath": "server/tsconfig.json",
     "assets": [
-      { "include": "**/**/*.handlebars" }
+      { "include": "**/*.handlebars" }
     ],
     "watchAssets": true
   }

@@ -1,24 +1,27 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Channel } from 'entities/Channel.entity';
 import { UserZoneRepository } from 'entities/repositories/UserZone.repository';
+import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
-import { UserZonePermission } from 'entities/UserZonePermission.entity';
 import { Zone } from 'entities/Zone.entity';
 import { MailModule } from 'src/mail/mail.module';
-import { UserZoneController } from './user-zone.controller';
+import { UserZoneController } from './controllers/user-zone.controller';
 import { ZoneService } from './zone.service';
+import { ZoneController } from './controllers/zone.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Zone,
       UserZone,
-      UserZonePermission,
+      Channel,
+      UserChannel,
       UserZoneRepository,
     ]),
     MailModule,
   ],
-  controllers: [UserZoneController],
+  controllers: [UserZoneController, ZoneController],
   providers: [ZoneService],
 })
 export class ZoneModule {}

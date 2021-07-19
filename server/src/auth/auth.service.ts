@@ -60,6 +60,7 @@ export class AuthService {
       lastName,
       email,
       password,
+      userRoleCode: 'NORMAL',
     });
 
     const registeredUser = {
@@ -99,6 +100,7 @@ export class AuthService {
       email,
       googleId,
       facebookId,
+      userRoleCode: 'NORMAL',
       emailConfirmed: true,
     });
 
@@ -110,7 +112,7 @@ export class AuthService {
   async subdomainValidity(subdomain: string, email: string) {
     const user = await this.userRepository
       .createQueryBuilder('user')
-      .leftJoin(Invitation, 'invitation', 'invitation.userId = user.id')
+      .leftJoin(Invitation, 'invitation', 'invitation.email = user.email')
       .leftJoin(UserZone, 'user_zone', 'user_zone.userId = user.id')
       .innerJoin(
         Zone,
@@ -134,6 +136,7 @@ export class AuthService {
       where: {
         email,
       },
+      relations: ['userRole'],
     });
 
     return user;
