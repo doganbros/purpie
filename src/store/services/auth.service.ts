@@ -43,7 +43,7 @@ export const resetPassword = async ({
 export const verifyUserEmail = async ({
   token,
 }: VerifyEmailPayload): Promise<any> => {
-  return http.post('/auth/verify-email', { token });
+  return http.post('/auth/verify-email', { token }).then((res) => res.data);
 };
 
 export const resetPasswordRequest = (email: string): Promise<any> =>

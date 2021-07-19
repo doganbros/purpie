@@ -1,8 +1,17 @@
-import { Entity, Column, ManyToMany, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToMany,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
+import { UserRoleCode } from 'types/RoleCodes';
 import { RecordEntity } from './base/RecordEntity';
 import { UserChannel } from './UserChannel.entity';
 import { Zone } from './Zone.entity';
 import { UserZone } from './UserZone.entity';
+import { UserRole } from './UserRole.entity';
 
 @Entity()
 export class User extends RecordEntity {
@@ -32,6 +41,13 @@ export class User extends RecordEntity {
 
   @Column({ nullable: true })
   mailVerificationToken: string;
+
+  @OneToOne(() => UserRole)
+  @JoinColumn({ name: 'userRoleCode', referencedColumnName: 'roleCode' })
+  userRole: UserRole;
+
+  @Column()
+  userRoleCode: UserRoleCode;
 
   @ManyToMany(() => Zone, (zone) => zone.users)
   zones: Array<Zone>;

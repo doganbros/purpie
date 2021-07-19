@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -14,12 +15,17 @@ export class CreateZoneDto {
   name: string;
 
   @ApiProperty()
+  @IsInt()
+  @IsNotEmpty()
+  categoryId: number;
+
+  @ApiProperty()
   @IsString()
   description: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  @Matches(/([a-z.])+([a-z])$/g, { message: 'Please enter a valid subdomain' })
+  @Matches(/([a-z.])+([a-z])$/, { message: 'Please enter a valid subdomain' })
   subdomain: string;
 
   @ApiProperty()

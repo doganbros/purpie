@@ -13,7 +13,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { ApiParam, ApiOkResponse } from '@nestjs/swagger';
+import { ApiParam, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from 'entities/User.entity';
 import { AuthByThirdPartyDto } from '../dto/auth-by-third-party.dto';
 import { ThirdPartyLoginParams } from '../dto/third-party-login.params';
@@ -27,6 +27,7 @@ const {
 } = process.env;
 
 @Controller({ path: 'auth/third-party', version: '1' })
+@ApiTags('auth-third-party')
 export class AuthThirdPartyController {
   constructor(private authService: AuthService) {}
 

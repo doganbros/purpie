@@ -6,8 +6,8 @@ import {
   Query,
   Req,
   Headers,
-  UseGuards,
   Delete,
+  ForbiddenException,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -21,8 +21,8 @@ import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { UserPayloadRequest } from 'types/UserPayloadRequest';
 import { UserZoneRequest } from 'types/UserZoneRequest';
+import { UserZoneRole } from '../decorators/user-zone-role.decorator';
 import { CreateZoneDto } from '../dto/create-zone.dto';
-import { UserZoneGuard } from '../guards/user-zone.guard';
 import { ZoneService } from '../zone.service';
 
 @Controller({ path: 'user-zone', version: '1' })
@@ -32,20 +32,55 @@ export class UserZoneController {
 
   @Post()
   @ApiCreatedResponse({
-    description: `Current authenticated user adds a new zone.`,
+    description: 'Current authenticated user adds a new zone.',
   })
   @IsAuthenticated()
   async createZone(
     @Body() createZoneInfo: CreateZoneDto,
     @Req() req: UserPayloadRequest,
   ) {
-    const zone = await this.zoneService.createZone(req.user.id, createZoneInfo);
+    const userZone = await this.zoneService.createZone(
+      req.user.id,
+      createZoneInfo,
+    );
 
-    this.zoneService.sendZoneInfoMail(zone, req.user);
+    this.zoneService.sendZoneInfoMail(userZone.zone, req.user);
+
+    return userZone;
+  }
+
+  @Post('/defaults')
+  @ApiCreatedResponse({
+    description:
+      'Current authenticated user creates a default zone and channel',
+  })
+  @IsAuthenticated()
+  async createDefaultZoneAndChannel(
+    @Body() createZoneInfo: CreateZoneDto,
+    @Req() req: UserPayloadRequest,
+  ) {
+    const hasDefaults = await this.zoneService.userHasDefaultZoneAndChannel(
+      req.user.id,
+    );
+
+    if (hasDefaults)
+      throw new ForbiddenException(
+        'Current User already has a default zone and channel',
+      );
+
+    const {
+      userZone,
+      userChannel,
+    } = await this.zoneService.createDefaultZoneAndChannel(
+      req.user.id,
+      createZoneInfo,
+    );
+
+    this.zoneService.sendZoneInfoMail(userZone.zone, req.user);
 
     return {
-      name: zone.name,
-      subdomain: zone.subdomain,
+      userZone,
+      userChannel,
     };
   }
 
@@ -86,24 +121,22 @@ export class UserZoneController {
     };
   }
 
-  @Get('/:id')
+  @Get('/:userZoneId')
   @ApiParam({
-    name: 'id',
+    name: 'userZoneId',
     description: 'User Zone Id',
   })
-  @IsAuthenticated()
-  @UseGuards(UserZoneGuard)
+  @UserZoneRole()
   async getUserZoneById(@Req() req: UserZoneRequest) {
     return req.userZone;
   }
 
-  @Delete('/:id')
+  @Delete('/:userZoneId')
   @ApiParam({
-    name: 'id',
+    name: 'userZoneId',
     description: 'User Zone Id',
   })
-  @IsAuthenticated()
-  @UseGuards(UserZoneGuard)
+  @UserZoneRole()
   async deleteUserZoneById(@Req() req: UserZoneRequest) {
     await req.userZone.remove();
     return 'OK';
