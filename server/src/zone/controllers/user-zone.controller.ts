@@ -14,13 +14,16 @@ import {
   ApiHeader,
   ApiOkResponse,
   ApiParam,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
+import { UserZone } from 'entities/UserZone.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { UserPayload } from 'src/auth/interfaces/user.interface';
+import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { UserPayloadRequest } from 'types/UserPayloadRequest';
-import { UserZoneRequest } from 'types/UserZoneRequest';
+import { CurrentUserZone } from '../decorators/current-user-zone.decorator';
 import { UserZoneRole } from '../decorators/user-zone-role.decorator';
 import { CreateZoneDto } from '../dto/create-zone.dto';
 import { ZoneService } from '../zone.service';
@@ -34,17 +37,17 @@ export class UserZoneController {
   @ApiCreatedResponse({
     description: 'Current authenticated user adds a new zone.',
   })
-  @IsAuthenticated()
+  @IsAuthenticated(['canCreateZone'])
   async createZone(
     @Body() createZoneInfo: CreateZoneDto,
-    @Req() req: UserPayloadRequest,
+    @CurrentUser() currentUser: UserPayload,
   ) {
     const userZone = await this.zoneService.createZone(
-      req.user.id,
+      currentUser.id,
       createZoneInfo,
     );
 
-    this.zoneService.sendZoneInfoMail(userZone.zone, req.user);
+    this.zoneService.sendZoneInfoMail(userZone.zone, currentUser);
 
     return userZone;
   }
@@ -57,10 +60,10 @@ export class UserZoneController {
   @IsAuthenticated()
   async createDefaultZoneAndChannel(
     @Body() createZoneInfo: CreateZoneDto,
-    @Req() req: UserPayloadRequest,
+    @CurrentUser() currentUser: UserPayload,
   ) {
     const hasDefaults = await this.zoneService.userHasDefaultZoneAndChannel(
-      req.user.id,
+      currentUser.id,
     );
 
     if (hasDefaults)
@@ -72,11 +75,11 @@ export class UserZoneController {
       userZone,
       userChannel,
     } = await this.zoneService.createDefaultZoneAndChannel(
-      req.user.id,
+      currentUser.id,
       createZoneInfo,
     );
 
-    this.zoneService.sendZoneInfoMail(userZone.zone, req.user);
+    this.zoneService.sendZoneInfoMail(userZone.zone, currentUser);
 
     return {
       userZone,
@@ -88,18 +91,7 @@ export class UserZoneController {
   @ApiOkResponse({
     description: "Get the list of current user's zones",
   })
-  @ApiQuery({
-    name: 'limit',
-    description: 'The number of zones to get. Defaults to 30',
-    type: Number,
-    required: false,
-  })
-  @ApiQuery({
-    name: 'skip',
-    description: 'The number of zones to skip. Defaults to 0',
-    type: Number,
-    required: false,
-  })
+  @PaginationQueryParams()
   @IsAuthenticated()
   @ApiHeader({
     name: 'app-subdomain',
@@ -127,8 +119,8 @@ export class UserZoneController {
     description: 'User Zone Id',
   })
   @UserZoneRole()
-  async getUserZoneById(@Req() req: UserZoneRequest) {
-    return req.userZone;
+  async getUserZoneById(@CurrentUserZone() currentUserZone: UserZone) {
+    return currentUserZone;
   }
 
   @Delete('/:userZoneId')
@@ -137,8 +129,8 @@ export class UserZoneController {
     description: 'User Zone Id',
   })
   @UserZoneRole()
-  async deleteUserZoneById(@Req() req: UserZoneRequest) {
-    await req.userZone.remove();
+  async deleteUserZoneById(@CurrentUserZone() currentUserZone: UserZone) {
+    await currentUserZone.remove();
     return 'OK';
   }
 }
