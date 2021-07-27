@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   NotFoundException,
   Param,
   Post,
@@ -21,6 +22,11 @@ import { ZoneService } from '../zone.service';
 @ApiTags('zone')
 export class ZoneController {
   constructor(private zoneService: ZoneService) {}
+
+  @Get('/ci-test')
+  async ciTest() {
+    return 'It works';
+  }
 
   @Post('/join/:zoneId')
   @IsAuthenticated()
