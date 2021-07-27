@@ -8,7 +8,6 @@ import {
   NotFoundException,
   Post,
   Put,
-  Req,
   UnauthorizedException,
 } from '@nestjs/common';
 import {
@@ -18,16 +17,20 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Request } from 'express';
 import { RegisterUserDto } from '../dto/register-user.dto';
 import { AuthService } from '../auth.service';
-import { UserBasic, UserPayloadWithToken } from '../interfaces/user.interface';
+import {
+  UserBasic,
+  UserPayload,
+  UserPayloadWithToken,
+} from '../interfaces/user.interface';
 import { LoginUserDto } from '../dto/login-user.dto';
 import { ParseTokenPipe } from '../pipes/parse-token.pipe';
 import { ResetPasswordRequestDto } from '../dto/reset-password-request.dto';
 import { VerifyEmailDto } from '../dto/verify-email.dto';
 import { ResetPasswordDto } from '../dto/reset-password.dto';
 import { IsAuthenticated } from '../decorators/auth.decorator';
+import { CurrentUser } from '../decorators/current-user.decorator';
 
 const {
   MAIL_VERIFICATION_TOKEN_SECRET = 'secret_m',
@@ -201,7 +204,7 @@ export class AuthController {
 
   @IsAuthenticated()
   @ApiOkResponse({
-    type: UserBasic,
+    type: UserPayload,
     description: `Verifies current token and retrieves user.`,
   })
   @ApiHeader({
@@ -212,12 +215,12 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('/retrieve')
   async retrieveUser(
-    @Req() req: Request & { user: UserBasic },
+    @CurrentUser() currentUser: UserPayload,
     @Headers('app-subdomain') subdomain: string,
   ) {
     if (subdomain) {
-      await this.authService.subdomainValidity(subdomain, req.user.email);
+      await this.authService.subdomainValidity(subdomain, currentUser.email);
     }
-    return req.user;
+    return currentUser;
   }
 }

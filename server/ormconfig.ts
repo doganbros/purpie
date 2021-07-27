@@ -39,6 +39,7 @@ const ormConfig: TypeOrmModuleOptions = {
     migrationsDir: 'migrations',
   },
   synchronize: false,
+  // logging: process.env.NODE_ENV === 'development',
 };
 
 export default ormConfig;

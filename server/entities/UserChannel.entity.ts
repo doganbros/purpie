@@ -17,7 +17,7 @@ export class UserChannel extends RecordEntity {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Channel, (zone) => zone.users, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Channel, (channel) => channel.users, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'channelId' })
   channel: Channel;
 

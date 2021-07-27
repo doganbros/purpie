@@ -12,6 +12,7 @@ import { UserChannel } from './UserChannel.entity';
 import { Zone } from './Zone.entity';
 import { UserZone } from './UserZone.entity';
 import { UserRole } from './UserRole.entity';
+import { Contact } from './Contact.entity';
 
 @Entity()
 export class User extends RecordEntity {
@@ -57,4 +58,7 @@ export class User extends RecordEntity {
 
   @OneToMany(() => UserChannel, (userChannel) => userChannel.user)
   userChannel: Array<UserChannel>;
+
+  @OneToMany(() => Contact, (contact) => contact.contactUserId)
+  contacts: Array<Contact>;
 }

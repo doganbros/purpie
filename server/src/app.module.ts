@@ -13,6 +13,8 @@ import { MailModule } from './mail/mail.module';
 import { ZoneModule } from './zone/zone.module';
 import { UtilsModule } from './utils/utils.module';
 import { PaginationMiddleware } from './utils/middlewares/paginate.middleware';
+import { UserModule } from './user/user.module';
+import { ChannelModule } from './channel/channel.module';
 
 @Module({
   imports: [
@@ -21,8 +23,9 @@ import { PaginationMiddleware } from './utils/middlewares/paginate.middleware';
     MailModule,
     ZoneModule,
     UtilsModule,
+    UserModule,
+    ChannelModule,
   ],
-  controllers: [],
   providers: [
     {
       provide: APP_FILTER,
