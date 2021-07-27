@@ -4,8 +4,6 @@ import {
   Get,
   Post,
   Query,
-  Req,
-  Headers,
   Delete,
   ForbiddenException,
 } from '@nestjs/common';
@@ -22,7 +20,6 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
-import { UserPayloadRequest } from 'types/UserPayloadRequest';
 import { CurrentUserZone } from '../decorators/current-user-zone.decorator';
 import { UserZoneRole } from '../decorators/user-zone-role.decorator';
 import { CreateZoneDto } from '../dto/create-zone.dto';
@@ -99,18 +96,10 @@ export class UserZoneController {
     description: 'Zone subdomain',
   })
   async getCurrentUserZones(
-    @Req() req: UserPayloadRequest,
+    @CurrentUser() user: UserPayload,
     @Query() paginatedQuery: PaginationQuery,
-    @Headers('app-subdomain') subdomain: string,
   ) {
-    const result = await this.zoneService.getCurrentUserZones(
-      req.user,
-      paginatedQuery,
-    );
-    return {
-      ...result,
-      currentSubDomain: subdomain,
-    };
+    return this.zoneService.getCurrentUserZones(user, paginatedQuery);
   }
 
   @Get('/:userZoneId')

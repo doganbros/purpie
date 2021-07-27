@@ -4,14 +4,12 @@ import {
   NotFoundException,
   Param,
   Post,
-  Req,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UserZone } from 'entities/UserZone.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
-import { UserPayloadRequest } from 'types/UserPayloadRequest';
 import { CurrentUserZone } from '../decorators/current-user-zone.decorator';
 import { UserZoneRole } from '../decorators/user-zone-role.decorator';
 import { InviteToJoinDto } from '../dto/invite-to-join.dto';
@@ -27,17 +25,14 @@ export class ZoneController {
   @Post('/join/:zoneId')
   @IsAuthenticated()
   async joinPublicZone(
-    @Req() req: UserPayloadRequest,
+    @CurrentUser() user: UserPayload,
     @Param() { zoneId }: ZoneIdParams,
   ) {
-    const zone = await this.zoneService.validateJoinPublicZone(
-      req.user.id,
-      zoneId,
-    );
+    const zone = await this.zoneService.validateJoinPublicZone(user.id, zoneId);
 
     if (!zone) throw new NotFoundException('Zone not found', 'ZONE_NOT_FOUND');
 
-    const userZone = await this.zoneService.addUserToZone(req.user.id, zoneId);
+    const userZone = await this.zoneService.addUserToZone(user.id, zoneId);
 
     return userZone;
   }

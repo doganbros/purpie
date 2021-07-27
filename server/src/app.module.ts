@@ -14,6 +14,7 @@ import { ZoneModule } from './zone/zone.module';
 import { UtilsModule } from './utils/utils.module';
 import { PaginationMiddleware } from './utils/middlewares/paginate.middleware';
 import { UserModule } from './user/user.module';
+import { ChannelModule } from './channel/channel.module';
 
 @Module({
   imports: [
@@ -23,8 +24,8 @@ import { UserModule } from './user/user.module';
     ZoneModule,
     UtilsModule,
     UserModule,
+    ChannelModule,
   ],
-  controllers: [],
   providers: [
     {
       provide: APP_FILTER,

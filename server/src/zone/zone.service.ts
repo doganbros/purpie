@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { URL } from 'url';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,6 +13,7 @@ import { Channel } from 'entities/Channel.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZoneRepository } from 'entities/repositories/UserZone.repository';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
+import { ChannelService } from 'src/channel/channel.service';
 import { MailService } from 'src/mail/mail.service';
 import { UserZone } from 'entities/UserZone.entity';
 import { Invitation } from 'entities/Invitation.entity';
@@ -29,6 +35,8 @@ export class ZoneService {
     @InjectRepository(Channel)
     private channelRepository: Repository<Channel>,
     private mailService: MailService,
+    @Inject(forwardRef(() => ChannelService))
+    private channelService: ChannelService,
   ) {}
 
   async createZone(
@@ -36,25 +44,23 @@ export class ZoneService {
     createZoneInfo: CreateZoneDto,
     defaultZone = false,
   ) {
-    let userZone = this.userZoneRepository.create({
-      userId,
-      zoneRoleCode: 'SUPER_ADMIN',
-      zone: await this.zoneRepository
-        .create({
-          defaultZone,
-          name: createZoneInfo.name,
-          subdomain: createZoneInfo.subdomain,
-          description: createZoneInfo.description,
-          public: createZoneInfo.public,
-          createdById: userId,
-          categoryId: createZoneInfo.categoryId,
-        })
-        .save(),
-    });
-
-    userZone = await userZone.save();
-
-    return userZone;
+    return this.userZoneRepository
+      .create({
+        userId,
+        zoneRoleCode: 'SUPER_ADMIN',
+        zone: await this.zoneRepository
+          .create({
+            defaultZone,
+            name: createZoneInfo.name,
+            subdomain: createZoneInfo.subdomain,
+            description: createZoneInfo.description,
+            public: createZoneInfo.public,
+            createdById: userId,
+            categoryId: createZoneInfo.categoryId,
+          })
+          .save(),
+      })
+      .save();
   }
 
   async validateJoinPublicZone(userId: number, zoneId: number) {
@@ -129,21 +135,16 @@ export class ZoneService {
   ) {
     const userZone = await this.createZone(userId, createZoneInfo, true);
 
-    //  This will be pulled from the channel service when it is added
-    const userChannel = this.userChannelRepository.create({
+    const userChannel = await this.channelService.createChannel(
       userId,
-      channelRoleCode: 'SUPER_ADMIN',
-      channel: await this.channelRepository
-        .create({
-          zoneId: userZone.zone.id,
-          name: 'default',
-          defaultChannel: true,
-          public: createZoneInfo.public,
-          createdById: userId,
-          categoryId: userZone.zone.categoryId, // This will be changed to sub category when sub categories are added
-        })
-        .save(),
-    });
+      userZone.zone.id,
+      {
+        categoryId:
+          userZone.zone.categoryId /* Will be changed to sub category later */,
+        name: 'default',
+      },
+      true,
+    );
 
     await userChannel.save();
 
