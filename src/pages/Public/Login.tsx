@@ -37,7 +37,7 @@ const Login: FC = () => {
   return (
     <AuthLayout
       title="Login"
-      formTitle="Welcome Back!!"
+      formTitle="Welcome Back!"
       formSubTitle="Sign In to continue."
       background={
         <>
