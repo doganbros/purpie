@@ -21,6 +21,7 @@ const isNumeric = (value: any) =>
     ? true
     : matchRegexp(value, /^[-+]?(?:\d*[.])?\d+$/);
 const isAlpha = (value: any) => matchRegexp(value, /^[A-Z]+$/i);
+const matches = (regex: RegExp) => (value: string) => matchRegexp(value, regex);
 const isAlphanumeric = (value: any) => matchRegexp(value, /^[0-9A-Z]+$/i);
 const isInt = (value: any) => matchRegexp(value, /^(?:[-+]?(?:0|[1-9]\d*))$/);
 const isFloat = (value: any) =>
@@ -51,6 +52,7 @@ const emailMsg = 'Please enter a valid email';
 const notEmptyStringMsg = "This field can't be empty";
 const numericMsg = 'Please enter a numeric value';
 const alphaMsg = 'Please enter only alphabets';
+const regexMsg = 'Value is invalid';
 const alphaNumericMsg = 'Please enter only alphabets and numbers';
 const intMsg = 'Please enter only numbers';
 const floatMsg = 'Please enter only decimal numbers';
@@ -77,6 +79,8 @@ export const validators = {
     ruleWrapper(notEmptyString, notEmptyStringMsg, message),
   numeric: (message?: string) => ruleWrapper(isNumeric, numericMsg, message),
   alpha: (message?: string) => ruleWrapper(isAlpha, alphaMsg, message),
+  matches: (pattern: RegExp, message?: string) =>
+    ruleWrapper(matches(pattern), regexMsg, message),
   alphaNumeric: (message?: string) =>
     ruleWrapper(isAlphanumeric, alphaNumericMsg, message),
   int: (message?: string) => ruleWrapper(isInt, intMsg, message),

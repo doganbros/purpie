@@ -4,9 +4,9 @@ import {
   DELETE_MEETINGS_BY_ID_FAILED,
   DELETE_MEETINGS_BY_ID_REQUESTED,
   DELETE_MEETINGS_BY_ID_SUCCESS,
-  GET_ALL_MEETINGS_BY_TENANT_ID_FAILED,
-  GET_ALL_MEETINGS_BY_TENANT_ID_REQUESTED,
-  GET_ALL_MEETINGS_BY_TENANT_ID_SUCCESS,
+  GET_ALL_MEETINGS_BY_USER_ZONE_ID_FAILED,
+  GET_ALL_MEETINGS_BY_USER_ZONE_ID_REQUESTED,
+  GET_ALL_MEETINGS_BY_USER_ZONE_ID_SUCCESS,
   GET_ALL_MEETINGS_BY_USER_ID_FAILED,
   GET_ALL_MEETINGS_BY_USER_ID_REQUESTED,
   GET_ALL_MEETINGS_BY_USER_ID_SUCCESS,
@@ -33,9 +33,9 @@ const initialState: MeetingState = {
     meetings: null,
     error: null,
   },
-  getMultipleMeetingsByTenantId: {
+  getMultipleMeetingsByZoneId: {
     loading: false,
-    meetingsByTenantId: null,
+    meetingsByZoneId: null,
     error: null,
   },
   getMultipleMeetingsByUserId: {
@@ -204,28 +204,28 @@ const meetingReducer = (
           error: null,
         },
       };
-    case GET_ALL_MEETINGS_BY_TENANT_ID_REQUESTED:
+    case GET_ALL_MEETINGS_BY_USER_ZONE_ID_REQUESTED:
       return {
         ...state,
-        getMultipleMeetingsByTenantId: {
-          ...state.getMultipleMeetingsByTenantId,
+        getMultipleMeetingsByZoneId: {
+          ...state.getMultipleMeetingsByZoneId,
           loading: true,
         },
       };
-    case GET_ALL_MEETINGS_BY_TENANT_ID_SUCCESS:
+    case GET_ALL_MEETINGS_BY_USER_ZONE_ID_SUCCESS:
       return {
         ...state,
-        getMultipleMeetingsByTenantId: {
-          meetingsByTenantId: action.payload,
+        getMultipleMeetingsByZoneId: {
+          meetingsByZoneId: action.payload,
           loading: false,
           error: null,
         },
       };
-    case GET_ALL_MEETINGS_BY_TENANT_ID_FAILED:
+    case GET_ALL_MEETINGS_BY_USER_ZONE_ID_FAILED:
       return {
         ...state,
-        getMultipleMeetingsByTenantId: {
-          meetingsByTenantId: null,
+        getMultipleMeetingsByZoneId: {
+          meetingsByZoneId: null,
           loading: false,
           error: null,
         },

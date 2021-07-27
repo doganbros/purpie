@@ -15,11 +15,12 @@ import {
   LOGOUT,
   USER_RETRIEVED_SUCCESS,
   USER_RETRIEVED_FAILED,
-  THIRD_PARTY_URL_REQUESTED,
-  THIRD_PARTY_URL_FAILED,
   THIRD_PARTY_AUTH_WITH_CODE_REQUESTED,
   THIRD_PARTY_AUTH_WITH_CODE_FAILED,
   THIRD_PARTY_AUTH_WITH_CODE_SUCCESS,
+  VERIFY_USER_EMAIL_SUCCESS,
+  VERIFY_USER_EMAIL_FAILED,
+  VERIFY_USER_EMAIL_REQUESTED,
 } from '../constants/auth.constants';
 import * as AuthService from '../services/auth.service';
 import {
@@ -27,7 +28,11 @@ import {
   LoginPayload,
   RegisterPayload,
   ResetPasswordPayload,
+  VerifyEmailPayload,
 } from '../types/auth.types';
+import { setToastAction } from './util.action';
+
+const { REACT_APP_SERVER_HOST } = process.env;
 
 export const loginAction = (user: LoginPayload): AuthAction => {
   return async (dispatch) => {
@@ -45,11 +50,14 @@ export const loginAction = (user: LoginPayload): AuthAction => {
         type: LOGIN_FAILED,
         payload: err?.response?.data,
       });
+      if (err?.response?.data?.error === 'MUST_VERIFY_EMAIL') {
+        appHistory.push('/verify-email');
+      }
     }
   };
 };
 
-export const retieveUserAction = (): AuthAction => {
+export const retrieveUserAction = (): AuthAction => {
   return async (dispatch) => {
     try {
       const payload = await AuthService.retrieveUser();
@@ -66,23 +74,35 @@ export const retieveUserAction = (): AuthAction => {
   };
 };
 
-export const getThirdPartyUrlAction = (name: string): AuthAction => {
+export const verifyUserEmailAction = (body: VerifyEmailPayload): AuthAction => {
   return async (dispatch) => {
-    dispatch({
-      type: THIRD_PARTY_URL_REQUESTED,
-      payload: name,
-    });
-
     try {
-      const url = await AuthService.getThirdPartyUrl(name);
-
-      window.location.href = url;
-    } catch (err) {
       dispatch({
-        type: THIRD_PARTY_URL_FAILED,
+        type: VERIFY_USER_EMAIL_REQUESTED,
+      });
+      const payload = await AuthService.verifyUserEmail(body);
+      setToastAction(
+        'ok',
+        `Your email ${payload.email} has been verified successfully. Please Login to continue`
+      )(dispatch);
+      appHistory.replace('/login');
+      dispatch({
+        type: VERIFY_USER_EMAIL_SUCCESS,
+        payload,
+      });
+    } catch (err) {
+      appHistory.replace('/login');
+      dispatch({
+        type: VERIFY_USER_EMAIL_FAILED,
         payload: err?.response?.data,
       });
     }
+  };
+};
+
+export const getThirdPartyUrlAction = (name: string): AuthAction => {
+  return async () => {
+    window.location.href = `${REACT_APP_SERVER_HOST}/v1/auth/third-party/${name}`;
   };
 };
 
@@ -109,7 +129,7 @@ export const authenticateWithThirdPartyCodeAction = (
         type: THIRD_PARTY_AUTH_WITH_CODE_FAILED,
         payload: err?.response?.data,
       });
-      appHistory.push('/login');
+      appHistory.replace('/login');
     }
   };
 };
@@ -129,6 +149,7 @@ export const registerAction = (user: RegisterPayload): AuthAction => {
         type: REGISTER_SUCCESS,
         payload,
       });
+      appHistory.push('/verify-email');
     } catch (err) {
       dispatch({
         type: REGISTER_FAILED,
@@ -138,17 +159,21 @@ export const registerAction = (user: RegisterPayload): AuthAction => {
   };
 };
 
-export const forgetPasswordAction = (email: string): AuthAction => {
+export const resetPasswordRequestAction = (email: string): AuthAction => {
   return async (dispatch) => {
     dispatch({
       type: FORGOT_PASSWORD_REQUESTED,
     });
     try {
-      await AuthService.forgetPassword(email);
+      await AuthService.resetPasswordRequest(email);
       dispatch({
         type: FORGOT_PASSWORD_SUCCESS,
       });
-      appHistory.push('/login');
+      setToastAction(
+        'ok',
+        `A password reset link has been sent to ${email}`
+      )(dispatch);
+      appHistory.replace('/login');
     } catch (err) {
       dispatch({
         type: FORGOT_PASSWORD_FAILED,
@@ -168,7 +193,11 @@ export const resetPasswordAction = (body: ResetPasswordPayload): AuthAction => {
       dispatch({
         type: RESET_PASSWORD_SUCCESS,
       });
-      appHistory.push('/login');
+      setToastAction(
+        'ok',
+        'Your password has been reset successfully'
+      )(dispatch);
+      appHistory.replace('/login');
     } catch (err) {
       dispatch({
         type: RESET_PASSWORD_FAILED,

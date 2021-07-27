@@ -3,24 +3,24 @@ import { AddCircle, CloudComputer, Group, Logout, User } from 'grommet-icons';
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CreateUpdateMeeting from '../../../layers/meeting/CreateUpdateMeeting';
-import CreateUpdateTenant from '../../../layers/tenant/CreateUpdateTenant';
+import CreateUpdateZone from '../../../layers/zone/CreateUpdateZone';
 import { logoutAction } from '../../../store/actions/auth.action';
 import {
   closeCreateMeetingLayerAction,
   openCreateMeetingLayerAction,
 } from '../../../store/actions/meeting.action';
 import {
-  closeCreateTenantLayerAction,
-  openCreateTenantLayerAction,
-} from '../../../store/actions/tenant.action';
+  closeCreateZoneLayerAction,
+  openCreateZoneLayerAction,
+} from '../../../store/actions/zone.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 
 const SidebarFooter: FC = () => {
   const dispatch = useDispatch();
 
   const {
-    tenant: {
-      createTenant: { layerIsVisible: createTenantVisible },
+    zone: {
+      createZone: { layerIsVisible: createZoneVisible },
     },
     meeting: {
       createMeeting: { layerIsVisible: createMeetingVisible },
@@ -41,11 +41,11 @@ const SidebarFooter: FC = () => {
     {
       label: (
         <Box pad={{ horizontal: 'xsmall' }}>
-          <Text size="large">Tenant</Text>
+          <Text size="large">Zone</Text>
         </Box>
       ),
-      onClick: () => dispatch(openCreateTenantLayerAction),
-      state: 'Tenant',
+      onClick: () => dispatch(openCreateZoneLayerAction),
+      state: 'Zone',
       icon: <CloudComputer size="medium" />,
     },
   ];
@@ -53,9 +53,9 @@ const SidebarFooter: FC = () => {
   const logout = () => dispatch(logoutAction);
   return (
     <>
-      <CreateUpdateTenant
-        visible={createTenantVisible}
-        onClose={() => dispatch(closeCreateTenantLayerAction)}
+      <CreateUpdateZone
+        visible={createZoneVisible}
+        onClose={() => dispatch(closeCreateZoneLayerAction)}
       />
       <CreateUpdateMeeting
         visible={createMeetingVisible}

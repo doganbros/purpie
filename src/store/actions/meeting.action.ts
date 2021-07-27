@@ -5,9 +5,9 @@ import {
   DELETE_MEETINGS_BY_ID_FAILED,
   DELETE_MEETINGS_BY_ID_REQUESTED,
   DELETE_MEETINGS_BY_ID_SUCCESS,
-  GET_ALL_MEETINGS_BY_TENANT_ID_FAILED,
-  GET_ALL_MEETINGS_BY_TENANT_ID_REQUESTED,
-  GET_ALL_MEETINGS_BY_TENANT_ID_SUCCESS,
+  GET_ALL_MEETINGS_BY_USER_ZONE_ID_FAILED,
+  GET_ALL_MEETINGS_BY_USER_ZONE_ID_REQUESTED,
+  GET_ALL_MEETINGS_BY_USER_ZONE_ID_SUCCESS,
   GET_ALL_MEETINGS_BY_USER_ID_FAILED,
   GET_ALL_MEETINGS_BY_USER_ID_REQUESTED,
   GET_ALL_MEETINGS_BY_USER_ID_SUCCESS,
@@ -48,9 +48,9 @@ export const createMeetingAction = (
       });
       setToastAction(
         'ok',
-        `New meeting for tenant ${response.title} been created successfully`
+        `New meeting for zone ${response.title} been created successfully`
       )(dispatch);
-      appHistory.push(`/meetings/${response.tenantId}`);
+      appHistory.push(`/meetings/${response.zoneId}`);
     } catch (err) {
       dispatch({
         type: MEETING_CREATE_FAILED,
@@ -96,24 +96,22 @@ export const getMultipleMeetingsAction = (): MeetingAction => {
   };
 };
 
-export const getMultipleMeetingsByTenantIdAction = (
-  tenantId: number
+export const getMultipleMeetingsByZoneIdAction = (
+  zoneId: number
 ): MeetingAction => {
   return async (dispatch) => {
     dispatch({
-      type: GET_ALL_MEETINGS_BY_TENANT_ID_REQUESTED,
+      type: GET_ALL_MEETINGS_BY_USER_ZONE_ID_REQUESTED,
     });
     try {
-      const payload = await MeetingService.getMultipleMeetingsByTenantId(
-        tenantId
-      );
+      const payload = await MeetingService.getMultipleMeetingsByZoneId(zoneId);
       dispatch({
-        type: GET_ALL_MEETINGS_BY_TENANT_ID_SUCCESS,
+        type: GET_ALL_MEETINGS_BY_USER_ZONE_ID_SUCCESS,
         payload,
       });
     } catch (err) {
       dispatch({
-        type: GET_ALL_MEETINGS_BY_TENANT_ID_FAILED,
+        type: GET_ALL_MEETINGS_BY_USER_ZONE_ID_FAILED,
         payload: err?.response?.data,
       });
     }
@@ -141,7 +139,7 @@ export const getMultipleMeetingsByUserIdAction = (): MeetingAction => {
 };
 
 export const getMeetingByIdAction = (
-  tenantId: number,
+  zoneId: number,
   meetingId: number
 ): MeetingAction => {
   return async (dispatch) => {
@@ -149,7 +147,7 @@ export const getMeetingByIdAction = (
       type: GET_MEETINGS_BY_ID_REQUESTED,
     });
     try {
-      const payload = await MeetingService.getMeetingById(tenantId, meetingId);
+      const payload = await MeetingService.getMeetingById(zoneId, meetingId);
       dispatch({
         type: GET_MEETINGS_BY_ID_SUCCESS,
         payload,
@@ -201,7 +199,7 @@ export const updateMeetingByIdAction = (
       });
 
       getMultipleMeetingsByUserIdAction()(dispatch);
-      getMultipleMeetingsByTenantIdAction(respond.tenantId)(dispatch);
+      getMultipleMeetingsByZoneIdAction(respond.zoneId)(dispatch);
 
       setToastAction(
         'ok',

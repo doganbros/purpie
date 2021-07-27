@@ -24,7 +24,7 @@ interface Props {
 
 const sidebarBtns = [
   {
-    title: 'Tenants',
+    title: 'Zones',
     icon: CloudComputer,
     path: '/',
   },

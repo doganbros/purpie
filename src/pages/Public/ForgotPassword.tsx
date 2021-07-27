@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import AuthLayout from '../../components/layouts/AuthLayout';
 import { validators } from '../../helpers/validators';
 import { FormSubmitEvent } from '../../models/form-submit-event';
-import { forgetPasswordAction } from '../../store/actions/auth.action';
+import { resetPasswordRequestAction } from '../../store/actions/auth.action';
 import { AppState } from '../../store/reducers/root.reducer';
 import Figure from '../../assets/forgotten-password-bg/figure-1.png';
 import Banner from '../../assets/forgotten-password-bg/banner.png';
@@ -20,7 +20,7 @@ const ForgotPassword: FC = () => {
   } = useSelector((state: AppState) => state.auth);
 
   const handleSubmit: FormSubmitEvent<{ email: string }> = ({ value }) => {
-    dispatch(forgetPasswordAction(value.email));
+    dispatch(resetPasswordRequestAction(value.email));
   };
 
   const size = useResponsive();

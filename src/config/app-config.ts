@@ -6,7 +6,11 @@ export const theme: typeof grommet = {
     ...grommet.global,
     font: {
       ...grommet.global?.font,
-      family: 'HelveticaNeue',
+      family: 'HelveticaNeue, Poppins, sans-serif',
+    },
+    colors: {
+      ...base.global?.colors,
+      brand: '#9060EB',
     },
     colors: {
       ...base.global?.colors,

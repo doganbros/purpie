@@ -15,29 +15,34 @@
 - Grommet
 - No transpilers, just vanilla javascript
 - ES2017 latest features like Async/Await
-- CORS enabled
 
 ## Backend Features
 
-- Uses [yarn](https://yarnpkg.com) 
-- Express + Postgres ([Sequelize](http://docs.sequelizejs.com/))
-- Request validation ([express validator](https://github.com/ctavan/express-validator)
-- Consistent coding styles with [editorconfig](http://editorconfig.org)
-- Uses [helmet](https://github.com/helmetjs/helmet) to set some HTTP headers for security
-- Load environment variables from .env files with [dotenv](https://github.com/rolodato/dotenv-safe)
-- Gzip compression with [compression](https://github.com/expressjs/compression)
-- Linting with [eslint](http://eslint.org)
-- Logging with [morgan](https://github.com/expressjs/morgan)
-- API documentation generation with [postman](http://postman.com)
+- [Typescript](https://www.typescriptlang.org/) (Strict Mode)
+- [Airbnb Coding Style Guide](https://github.com/airbnb/javascript)
+- ESNext
+- CORS enabled
+- [yarn](https://yarnpkg.com) for package management
+- [Handlebars](https://handlebarsjs.com/) for rendering email templates
+- [NestJS](https://nestjs.com/) is the main framework
+- [Postgresql](https://www.postgresql.org/) is the database used
+- [TypeORM](https://typeorm.io) is the database ORM used
+- [Class Validator](https://github.com/typestack/class-validator) is used to validate request body.
+- [helmet](https://github.com/helmetjs/helmet)  is used to set http headers correctly.
+- [dotenv](https://github.com/rolodato/dotenv-safe) is used to load .env variables
+- [compression](https://github.com/expressjs/compression)
+- [eslint](http://eslint.org)
+- [morgan](https://github.com/expressjs/morgan)
+- [Swagger](https://swagger.io/)
 - Monitoring with [pm2](https://github.com/Unitech/pm2)
+
 
 
 ## Requirements
 
-- [Node >= v14.14](https://nodejs.org/en/download/current/)
+- [Node.js](https://nodejs.org/en/download/) (>= 10.13.0, except for v13)
 - [Yarn](https://yarnpkg.com/en/docs/install)
-- [Pm2] (https://pm2.io/)
-- [Sequelize] (http://sequelize.org/)
+- [NestCli](https://docs.nestjs.com/cli/overview)
 - [Postgress] (https://www.postgresql.org/)
 
 
@@ -45,9 +50,8 @@
 
 ```bash
 
-    git clone https://github.com/doganbros/octopus # Clone Repository
-    cd octopus
-    # Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+git clone https://github.com/doganbros/octopus # Clone Repository
+cd octopus
 ```
 
 Install dependencies:
@@ -56,39 +60,26 @@ Install dependencies:
 yarn install
 ```
 
+Create Database if it doesn't exist
+
+```bash
+#eg with postgresql
+createdb octopus # use these credentials in your .env variable
+```
+
 Set environment variables into .env file:
 
 ```bash
-cp .env.example .env
+cp .env.example .env # Then make changes to the boilerplate provided
 ```
 
-Create database
-
-```bash
-yarn sequelize db:create --env development
-```
-
-
-## TODO: Remove migrates
-
-```bash
-yarn clean:migrate
-```
 
 ## Running project
 
 ```bash
-    yarn start:server # Runs backend side
-    yarn start:web # Runs frontend side
+yarn server:start:dev # Runs backend side in dev mode
+yarn start:web # Runs frontend side
 ```
-
-## Insert neccessery data into Database tables
-
-```bash
-yarn migrate
-yarn seeds
-```
-
 ## Available Scripts
 
 In the project directory, you can run:
@@ -97,16 +88,11 @@ In the project directory, you can run:
 
 ```bash
 # run all migrations
-yarn migrate
+yarn migration:run # Even though nestjs runs this automatically when it boots up.
 
-# run all seeds
-yarn seeds
+# create new migration boilerplate
+yarn migration:create
 
-# generate new migration
-yarn sequelize migration:generate --name new-migration
-
-# generate new seed
-yarn sequelize seed:generate --name new-seeds
 ```
 
 ## Logs
@@ -115,7 +101,21 @@ yarn sequelize seed:generate --name new-seeds
 # show logs in production
 pm2 logs
 ```
-### `yarn start:server`
+
+## Test
+
+```bash
+# unit tests
+$ yarn server:test
+
+# e2e tests
+yarn server:test:e2e
+
+# test coverage
+$ yarn server:test:cov
+```
+
+### `yarn server:start:dev`
 
 Runs the app server in the development mode.
 
@@ -126,7 +126,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
-### `npm run build`
+### `yarn build`
 
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
@@ -134,7 +134,7 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
-### `npm run eject`
+### `yarn eject`
 
 **Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
