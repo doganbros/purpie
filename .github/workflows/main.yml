@@ -1,0 +1,29 @@
+name: Octopus CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build-app:
+
+    runs-on: self-hosted
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          clean: false
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: sudo yarn install
+      - run: sudo yarn build
+      - run: "sudo pm2 stop API_LOCAL || :"
+      - run: "sudo pm2 delete --silent API_LOCAL || :"
+      - run: sudo pm2 flush
+      - run: sudo yarn start:server
