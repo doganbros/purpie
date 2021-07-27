@@ -1,3 +1,3 @@
 #!/bin/bash
-cd /home/ubuntu/codebase/jadmin-frontend
+cd /home/ubuntu/octopus
 sudo yarn install
