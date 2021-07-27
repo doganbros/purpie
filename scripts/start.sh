@@ -2,4 +2,4 @@
 cd /home/ubuntu/octopus
 sudo yarn install
 sudo yarn build
-sudo pm2 start API_LOCAL
+sudo yarn start:server
