@@ -29,7 +29,7 @@ export class MailService {
       subject,
       html: result,
     };
-    sendGrid.send(message);
+    return sendGrid.send(message);
   }
 
   async sendMailByText(to: string, subject: string, msg: string) {
@@ -39,7 +39,7 @@ export class MailService {
       subject,
       html: msg,
     };
-    sendGrid.send(message);
+    return sendGrid.send(message);
   }
 
   renderMail(
