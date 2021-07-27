@@ -24,6 +24,6 @@ jobs:
       - run: sudo yarn install
       - run: sudo yarn build
       - run: "sudo pm2 stop API_LOCAL || :"
-      - run: "sudo pm2 delete --silent API_LOCAL || :"
+      - run: "sudo pm2 delete API_LOCAL || :"
       - run: sudo pm2 flush
       - run: sudo yarn start:server
