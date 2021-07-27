@@ -12,6 +12,10 @@ export const theme: typeof grommet = {
       ...base.global?.colors,
       brand: '#9060EB',
     },
+    colors: {
+      ...base.global?.colors,
+      brand: '#9060EB',
+    },
     input: {
       ...grommet.global?.input,
       extend: 'color: grey;',
