@@ -2,10 +2,10 @@ import { Avatar, Box, Button } from 'grommet';
 import { Icon } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
 import React, { FC } from 'react';
-import { useTitle } from '../../../hooks/useTitle';
+import { useTitle } from '../../../../hooks/useTitle';
 import Logo from '../../../assets/octopus-logo/logo-white.svg';
-import Sidebar from './Sidebar';
-import ZoneSelector from './ZoneSelector';
+import Sidebar from '../Sidebar';
+import ZoneSelector from '../ZoneSelector';
 
 interface Props {
   title: string;
@@ -44,12 +44,17 @@ const PrivatePageLayout: FC<Props> = ({
           left: 0,
         }}
       >
-        <Button margin={{ bottom: 'medium' }} onClick={() => history.push('/')}>
+        <Button
+          margin={{ vertical: 'medium' }}
+          onClick={() => history.push('/')}
+        >
           <Box align="center">
             <Avatar alignSelf="center" size="72px" round="medium" src={Logo} />
           </Box>
         </Button>
-        <ZoneSelector />
+        <Box>
+          <ZoneSelector />
+        </Box>
         <Sidebar />
       </Box>
       <Box
