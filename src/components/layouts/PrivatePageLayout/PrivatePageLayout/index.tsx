@@ -1,11 +1,9 @@
-import { Avatar, Box, Button } from 'grommet';
+import { ResponsiveContext } from 'grommet';
 import { Icon } from 'grommet-icons';
-import { useHistory } from 'react-router-dom';
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
 import { useTitle } from '../../../../hooks/useTitle';
-import Logo from '../../../assets/octopus-logo/logo-white.svg';
-import Sidebar from '../Sidebar';
-import ZoneSelector from '../ZoneSelector';
+import Desktop from './Desktop';
+import Mobile from './Mobile';
 
 interface Props {
   title: string;
@@ -21,109 +19,16 @@ const PrivatePageLayout: FC<Props> = ({
   changeTitle,
 }) => {
   useTitle(title, changeTitle);
-  const history = useHistory();
-  // const size = useContext(ResponsiveContext);
+  const size = useContext(ResponsiveContext);
 
-  return (
-    <Box
-      height="100vh"
-      round="45px"
-      style={{
-        boxShadow: '0px 30px 50px rgba(243, 111, 62, 0.15)',
-      }}
-    >
-      <Box
-        background="#7D4CDB"
-        width="228px"
-        round="45px 0 0 45px"
-        pad="0 93px 0 0"
-        style={{
-          position: 'fixed',
-          top: 0,
-          bottom: 0,
-          left: 0,
-        }}
-      >
-        <Button
-          margin={{ vertical: 'medium' }}
-          onClick={() => history.push('/')}
-        >
-          <Box align="center">
-            <Avatar alignSelf="center" size="72px" round="medium" src={Logo} />
-          </Box>
-        </Button>
-        <Box>
-          <ZoneSelector />
-        </Box>
-        <Sidebar />
-      </Box>
-      <Box
-        style={{
-          position: 'fixed',
-          top: 0,
-          bottom: 0,
-          left: '135px',
-          right: 0,
-          borderRadius: '45px 0 0 45px',
-          background: 'white',
-        }}
-      />
-      <Box
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: '135px',
-          right: '387px',
-          minHeight: '100vh',
-          paddingTop: '140px',
-          paddingLeft: '45px',
-        }}
-      >
-        <Box
-          style={{
-            position: 'fixed',
-            top: 0,
-            right: '387px',
-            left: '135px',
-            height: '140px',
-            overflow: 'auto',
-            borderRadius: '45px 0 0 0',
-            backgroundColor: 'white',
-            paddingLeft: '45px',
-          }}
-        >
-          <Box
-            style={{
-              minWidth: 'min-content',
-            }}
-          >
-            {title}
-          </Box>
-        </Box>
-        {children}
-        <Box
-          style={{
-            position: 'fixed',
-            top: '0',
-            bottom: '0',
-            right: '0',
-            width: '387px',
-            backgroundColor: 'white',
-            borderRadius: '45px',
-            boxShadow: '-5px 5px 30px rgba(61, 19, 141, 0.15)',
-            overflow: 'auto',
-          }}
-        >
-          <Box
-            style={{
-              minHeight: 'min-content',
-            }}
-          >
-            {RightSideItem}
-          </Box>
-        </Box>
-      </Box>
-    </Box>
+  return size === 'small' ? (
+    <Mobile title={title} rightSideItem={RightSideItem}>
+      {children}
+    </Mobile>
+  ) : (
+    <Desktop title={title} rightSideItem={RightSideItem}>
+      {children}
+    </Desktop>
   );
 };
 
