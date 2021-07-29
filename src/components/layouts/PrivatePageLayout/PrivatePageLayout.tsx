@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import React, { FC } from 'react';
 import { useTitle } from '../../../hooks/useTitle';
 import Logo from '../../../assets/octopus-logo/logo-white.svg';
-import SidebarFooter from './SidebarFooter';
+import Sidebar from './Sidebar';
 import ZoneSelector from './ZoneSelector';
 
 interface Props {
@@ -50,7 +50,7 @@ const PrivatePageLayout: FC<Props> = ({
           </Box>
         </Button>
         <ZoneSelector />
-        <SidebarFooter />
+        <Sidebar />
       </Box>
       <Box
         style={{

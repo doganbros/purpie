@@ -54,7 +54,7 @@ const sidebarBtns = [
   },
 ];
 
-const SidebarFooter: FC = () => {
+const Sidebar: FC = () => {
   const dispatch = useDispatch();
   const {
     zone: {
@@ -123,4 +123,4 @@ const SidebarFooter: FC = () => {
   );
 };
 
-export default SidebarFooter;
+export default Sidebar;
