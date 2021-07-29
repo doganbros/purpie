@@ -1,27 +1,22 @@
-import { Select, Text, Box } from 'grommet';
+import { Text, Box } from 'grommet';
 import { Down } from 'grommet-icons';
 import React, { FC } from 'react';
 
-const Loader: FC = () => {
-  const [value, setValue] = React.useState('Zone 1');
+const ZoneSelector: FC = () => {
   return (
-    <Box background="#FFFFFF26" round="xxsmall">
-      <Select
-        options={['Zone 1', 'Zone 2', 'Zone 3']}
-        size="small"
-        plain
-        icon={<Down size="small" color="white" />}
-        valueLabel={
-          <Box pad="xxsmall">
-            <Text size="small" color="white">
-              {value}
-            </Text>
-          </Box>
-        }
-        onChange={({ option }) => setValue(option)}
-      />
+    <Box
+      margin="small"
+      background="#FFFFFF26"
+      round="xxsmall"
+      direction="row"
+      align="center"
+      justify="around"
+      pad="small"
+    >
+      <Text size="xsmall">Doganbros</Text>
+      <Down size="small" color="white" />
     </Box>
   );
 };
 
-export default Loader;
+export default ZoneSelector;
