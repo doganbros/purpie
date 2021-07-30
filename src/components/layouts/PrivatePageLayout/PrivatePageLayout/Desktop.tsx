@@ -85,6 +85,7 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
             }}
           >
             <Box
+              fill
               style={{
                 minWidth: 'min-content',
               }}
