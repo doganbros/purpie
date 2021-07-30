@@ -1,8 +1,9 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
+import { ZoneRoleCode } from 'types/RoleCodes';
 import { RecordEntity } from './base/RecordEntity';
 import { User } from './User.entity';
-import { UserZonePermission } from './UserZonePermission.entity';
 import { Zone } from './Zone.entity';
+import { ZoneRole } from './ZoneRole.entity';
 
 @Entity('user_zone')
 export class UserZone extends RecordEntity {
@@ -20,10 +21,10 @@ export class UserZone extends RecordEntity {
   @JoinColumn({ name: 'zoneId' })
   zone: Zone;
 
-  @Column()
-  userZonePermissionId: number;
+  @OneToOne(() => ZoneRole)
+  @JoinColumn({ name: 'zoneRoleCode', referencedColumnName: 'roleCode' })
+  zoneRole: ZoneRole;
 
-  @OneToOne(() => UserZonePermission, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'userZonePermissionId' })
-  userZonePermissions: UserZonePermission;
+  @Column()
+  zoneRoleCode: ZoneRoleCode;
 }

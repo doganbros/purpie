@@ -1,3 +1,3 @@
 #!/bin/bash
-cd /home/ubuntu/codebase/octopus
+cd /home/ubuntu/octopus
 sudo yarn install

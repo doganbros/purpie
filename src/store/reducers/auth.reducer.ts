@@ -168,7 +168,7 @@ const authReducer = (
         ...state,
         forgotPassword: {
           ...state.forgotPassword,
-          loading: true,
+          loading: false,
         },
       };
     case FORGOT_PASSWORD_SUCCESS:

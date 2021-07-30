@@ -1,54 +1,39 @@
-import { stringify as stringifyQuery } from 'querystring';
 import bcrypt from 'bcryptjs';
 import {
-  BadRequestException,
   Body,
   Controller,
-  Get,
   Headers,
   HttpCode,
   HttpStatus,
-  InternalServerErrorException,
   NotFoundException,
-  Param,
   Post,
   Put,
-  Req,
-  Res,
   UnauthorizedException,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
   ApiHeader,
   ApiOkResponse,
-  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from 'entities/User.entity';
-import { Request, Response } from 'express';
-import { RegisterUserDto } from './dto/register-user.dto';
-import { AuthService } from './auth.service';
+import { RegisterUserDto } from '../dto/register-user.dto';
+import { AuthService } from '../auth.service';
 import {
   UserBasic,
-  UserBasicWithToken,
+  UserPayload,
   UserPayloadWithToken,
-} from './interfaces/user.interface';
-import { LoginUserDto } from './dto/login-user.dto';
-import { ParseTokenPipe } from './pipes/parse-token.pipe';
-import { ResetPasswordRequestDto } from './dto/reset-password-request.dto';
-import { VerifyEmailDto } from './dto/verify-email.dto';
-import { ResetPasswordDto } from './dto/reset-password.dto';
-import { ThirdPartyLoginParams } from './dto/third-party-login.params';
-import { IsAuthenticated } from './decorators/auth.decorator';
-import { AuthByThirdPartyDto } from './dto/auth-by-third-party.dto';
+} from '../interfaces/user.interface';
+import { LoginUserDto } from '../dto/login-user.dto';
+import { ParseTokenPipe } from '../pipes/parse-token.pipe';
+import { ResetPasswordRequestDto } from '../dto/reset-password-request.dto';
+import { VerifyEmailDto } from '../dto/verify-email.dto';
+import { ResetPasswordDto } from '../dto/reset-password.dto';
+import { IsAuthenticated } from '../decorators/auth.decorator';
+import { CurrentUser } from '../decorators/current-user.decorator';
 
 const {
   MAIL_VERIFICATION_TOKEN_SECRET = 'secret_m',
-  GOOGLE_OAUTH_CLIENT_ID = '',
-  FACEBOOK_OAUTH_CLIENT_ID = '',
-  REACT_APP_CLIENT_HOST = '',
   RESET_PASSWORD_TOKEN_SECRET = 'secret_r',
 } = process.env;
 
@@ -218,9 +203,8 @@ export class AuthController {
   }
 
   @IsAuthenticated()
-  @ApiBearerAuth()
   @ApiOkResponse({
-    type: UserBasic,
+    type: UserPayload,
     description: `Verifies current token and retrieves user.`,
   })
   @ApiHeader({
@@ -231,138 +215,12 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('/retrieve')
   async retrieveUser(
-    @Req() req: Request & { user: UserBasic },
+    @CurrentUser() currentUser: UserPayload,
     @Headers('app-subdomain') subdomain: string,
   ) {
     if (subdomain) {
-      await this.authService.subdomainValidity(subdomain, req.user.email);
+      await this.authService.subdomainValidity(subdomain, currentUser.email);
     }
-    return req.user;
-  }
-
-  @Get('/third-party/:name')
-  @ApiParam({
-    name: 'name',
-    type: String,
-  })
-  @ApiOkResponse({
-    description: `User is redirected to a third-party to sign in.`,
-  })
-  async thirdPartyLogin(
-    @Param() { name }: ThirdPartyLoginParams,
-    @Res() res: Response,
-  ) {
-    if (name === 'google') {
-      const stringifiedQuery = stringifyQuery({
-        client_id: GOOGLE_OAUTH_CLIENT_ID,
-        redirect_uri: `${REACT_APP_CLIENT_HOST}/auth/google`,
-        scope: [
-          'https://www.googleapis.com/auth/userinfo.email',
-          'https://www.googleapis.com/auth/userinfo.profile',
-        ].join(' '),
-        response_type: 'code',
-        access_type: 'offline',
-        prompt: 'consent',
-      });
-
-      return res.redirect(
-        `https://accounts.google.com/o/oauth2/v2/auth?${stringifiedQuery}`,
-      );
-    }
-
-    if (name === 'facebook') {
-      const stringifiedQuery = stringifyQuery({
-        client_id: FACEBOOK_OAUTH_CLIENT_ID,
-        redirect_uri: `${REACT_APP_CLIENT_HOST}/auth/facebook`,
-        scope: ['email', 'public_profile'].join(','),
-        response_type: 'code',
-        auth_type: 'rerequest',
-      });
-
-      return res.redirect(
-        `https://www.facebook.com/v4.0/dialog/oauth?${stringifiedQuery}`,
-      );
-    }
-
-    throw new BadRequestException('Not implemented', 'NOT_IMPLEMENTED');
-  }
-
-  @Post('/third-party/:name')
-  @ApiParam({
-    name: 'name',
-    type: String,
-  })
-  @ApiOkResponse({
-    type: UserBasicWithToken,
-    description: `User signs in with a third-party. `,
-  })
-  @HttpCode(HttpStatus.OK)
-  async authenticateByThirdParty(
-    @Param() { name }: ThirdPartyLoginParams,
-    @Body() { code }: AuthByThirdPartyDto,
-  ) {
-    let user: User | undefined;
-    if (name === 'google') {
-      const accessToken = await this.authService.getGoogleAuthAccessToken(code);
-      const userInfo = await this.authService.getGoogleUserInfo(accessToken);
-
-      user = await this.authService.getUserByEmail(userInfo.email);
-
-      if (user) {
-        if (!user.googleId) {
-          user.googleId = userInfo.id;
-          user = await user.save();
-        }
-      } else {
-        user = await this.authService.registerUserByThirdParty({
-          firstName: userInfo.given_name,
-          lastName: userInfo.family_name,
-          email: userInfo.email,
-          googleId: userInfo.id,
-        });
-      }
-    } else if (name === 'facebook') {
-      const accessToken = await this.authService.getFacebookAuthAccessToken(
-        code,
-      );
-      const userInfo = await this.authService.getFacebookUserInfo(accessToken);
-
-      user = await this.authService.getUserByEmail(userInfo.email);
-
-      if (user) {
-        if (!user.facebookId) {
-          user.facebookId = userInfo.id;
-          user = await user.save();
-        }
-      } else {
-        user = await this.authService.registerUserByThirdParty({
-          firstName:
-            userInfo.first_name +
-            (userInfo.middle_name ? ` ${userInfo.middle_name}` : ''),
-          lastName: userInfo.last_name,
-          email: userInfo.email,
-          facebookId: userInfo.id,
-        });
-      }
-    }
-    if (user) {
-      const userPayload = {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-      };
-      const token = await this.authService.generateLoginToken(userPayload);
-
-      return {
-        user: userPayload,
-        token,
-      };
-    }
-
-    throw new InternalServerErrorException(
-      `Something went wrong while authenticating using ${name}`,
-      'THIRD_PARTH_AUTH_ERROR',
-    );
+    return currentUser;
   }
 }

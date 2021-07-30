@@ -32,8 +32,6 @@
     "moment-timezone": "^0.5.27",
     "morgan": "^1.10.0",
     "nanoid": "^3.1.22",
-    "nodemailer": "^6.6.2",
-    "npm-merge-driver": "^2.3.5",
     "pg": "^8.6.0",
     "pm2": "^4.5.6",
     "react": "^17.0.2",
@@ -63,7 +61,7 @@
     "analyze:web": "eslint src/.",
     "fix:server": "eslint --fix server/.",
     "fix:web": "eslint --fix src/.",
-    "start:server": "rimraf server/dist && nest build && pm2 start ecosystem.config.js --only API_LOCAL && pm2 logs",
+    "start:server": "rimraf server/dist && nest build && pm2 start ecosystem.config.js --only API_LOCAL",
     "server:build": "rimraf server/dist && nest build",
     "server:format": "prettier --write \"server/src/**/*.ts\"",
     "server:start": "nest start",
@@ -78,6 +76,7 @@
     "typeorm": "cd server && ts-node -r tsconfig-paths/register ../node_modules/typeorm/cli.js --config ./ormconfig.ts",
     "migration:run": "npm run typeorm migration:run",
     "migration:create": "npm run typeorm migration:create -- -n",
+    "migration:generate": "npm run typeorm migration:generate -- -n",
     "migration:revert": "npm run typeorm migration:revert"
   },
   "browserslist": {

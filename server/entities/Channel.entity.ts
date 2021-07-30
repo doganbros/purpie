@@ -6,12 +6,14 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
 import { MeetingConfig } from 'types/Meeting';
 import { RecordEntity } from './base/RecordEntity';
 import { UserChannel } from './UserChannel.entity';
 import { User } from './User.entity';
 import { Zone } from './Zone.entity';
+import { Category } from './Category.entity';
 
 @Entity()
 export class Channel extends RecordEntity {
@@ -30,28 +32,32 @@ export class Channel extends RecordEntity {
   @Column({ default: false })
   public: boolean;
 
-  @ManyToOne(() => Zone, (zone) => zone.channels, { onDelete: 'CASCADE' })
-  zone: Zone;
-
   @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'createdById' })
   createdBy: User;
 
+  @Column('int')
+  createdById: number;
+
   @Column({ type: 'simple-json', nullable: true })
   channelMeetingConfig: MeetingConfig;
+
+  @OneToOne(() => Category, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'categoryId' })
+  category: Category;
+
+  @Column('int')
+  categoryId: number;
+
+  @ManyToOne(() => Zone, (zone) => zone.channels, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'zoneId' })
+  zone: Zone;
 
   @Column('int')
   zoneId: number;
 
-  @ManyToOne(() => User, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'adminId' })
-  admin: User;
-
-  @Column('int')
-  adminId: number;
-
-  @Column('int')
-  createdById: number;
+  @Column({ default: false })
+  defaultChannel: boolean;
 
   @OneToMany(() => UserChannel, (userChannel) => userChannel.channel)
   userChannel: Array<UserChannel>;

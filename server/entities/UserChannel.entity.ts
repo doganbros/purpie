@@ -1,8 +1,9 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
+import { ChannelRoleCode } from 'types/RoleCodes';
 import { RecordEntity } from './base/RecordEntity';
 import { Channel } from './Channel.entity';
+import { ChannelRole } from './ChannelRole.entity';
 import { User } from './User.entity';
-import { UserChannelPermission } from './UserChannelPermission.entity';
 
 @Entity('user_channel')
 export class UserChannel extends RecordEntity {
@@ -16,14 +17,14 @@ export class UserChannel extends RecordEntity {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Channel, (zone) => zone.users, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Channel, (channel) => channel.users, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'channelId' })
   channel: Channel;
 
-  @Column()
-  userChannelPermissionId: number;
+  @OneToOne(() => ChannelRole)
+  @JoinColumn({ name: 'channelRoleCode', referencedColumnName: 'roleCode' })
+  channelRole: ChannelRole;
 
-  @OneToOne(() => UserChannelPermission, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'userChannelPermissionId' })
-  userZonePermissions: UserChannelPermission;
+  @Column()
+  channelRoleCode: ChannelRoleCode;
 }

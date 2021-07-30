@@ -3,7 +3,8 @@ import path from 'path';
 import ehbs from 'express-handlebars';
 import sendGrid, { MailDataRequired } from '@sendgrid/mail';
 
-const rootViewPath = path.join(__dirname, '..', '..', 'views');
+const rootViewPath = path.join(__dirname, '..', '..', 'mail', 'views');
+
 const viewEngine = ehbs.create({
   layoutsDir: path.join(rootViewPath, 'layouts'),
   partialsDir: path.join(rootViewPath, 'partials'),
@@ -28,7 +29,7 @@ export class MailService {
       subject,
       html: result,
     };
-    sendGrid.send(message);
+    return sendGrid.send(message);
   }
 
   async sendMailByText(to: string, subject: string, msg: string) {
@@ -38,7 +39,7 @@ export class MailService {
       subject,
       html: msg,
     };
-    sendGrid.send(message);
+    return sendGrid.send(message);
   }
 
   renderMail(
