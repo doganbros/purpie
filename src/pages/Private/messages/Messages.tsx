@@ -9,32 +9,34 @@ const Messages: FC = () => {
       title="Messages"
       topComponent={<Heading level="3">Messages</Heading>}
     >
-      <Card pad="large">
-        <Text>On this page, there is no right sidebar.</Text>
-      </Card>
-      <Box pad="medium">
-        <Text>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione
-          delectus amet perspiciatis quam perferendis suscipit earum fugiat!
-          Esse itaque non dicta voluptate dolore, tempore accusantium
-          consequatur veniam magnam eveniet aspernatur!
-        </Text>
-      </Box>
-      <Box pad="medium">
-        <Text>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione
-          delectus amet perspiciatis quam perferendis suscipit earum fugiat!
-          Esse itaque non dicta voluptate dolore, tempore accusantium
-          consequatur veniam magnam eveniet aspernatur!
-        </Text>
-      </Box>
-      <Box pad="medium">
-        <Text>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione
-          delectus amet perspiciatis quam perferendis suscipit earum fugiat!
-          Esse itaque non dicta voluptate dolore, tempore accusantium
-          consequatur veniam magnam eveniet aspernatur!
-        </Text>
+      <Box>
+        <Card pad="large">
+          <Text>On this page, there is no right sidebar.</Text>
+        </Card>
+        <Box pad={{ vertical: 'medium' }}>
+          <Text>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione
+            delectus amet perspiciatis quam perferendis suscipit earum fugiat!
+            Esse itaque non dicta voluptate dolore, tempore accusantium
+            consequatur veniam magnam eveniet aspernatur!
+          </Text>
+        </Box>
+        <Box pad={{ vertical: 'medium' }}>
+          <Text>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione
+            delectus amet perspiciatis quam perferendis suscipit earum fugiat!
+            Esse itaque non dicta voluptate dolore, tempore accusantium
+            consequatur veniam magnam eveniet aspernatur!
+          </Text>
+        </Box>
+        <Box pad={{ vertical: 'medium' }}>
+          <Text>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione
+            delectus amet perspiciatis quam perferendis suscipit earum fugiat!
+            Esse itaque non dicta voluptate dolore, tempore accusantium
+            consequatur veniam magnam eveniet aspernatur!
+          </Text>
+        </Box>
       </Box>
     </PrivatePageLayout>
   );

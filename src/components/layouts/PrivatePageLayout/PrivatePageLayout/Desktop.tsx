@@ -64,7 +64,7 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
           position: 'absolute',
           top: 0,
           left: '135px',
-          right: '387px',
+          right: rightComponent ? '432px' : '45px',
           minHeight: '100vh',
           paddingTop: topComponent ? '140px' : '0',
           paddingLeft: '45px',
@@ -75,7 +75,7 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
             style={{
               position: 'fixed',
               top: 0,
-              right: '387px',
+              right: rightComponent ? '387px' : 0,
               left: '135px',
               height: '140px',
               overflow: 'auto',
@@ -94,27 +94,29 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
           </Box>
         )}
         {children}
-        <Box
-          style={{
-            position: 'fixed',
-            top: '0',
-            bottom: '0',
-            right: '0',
-            width: '387px',
-            backgroundColor: 'white',
-            borderRadius: '45px',
-            boxShadow: '-5px 5px 30px rgba(61, 19, 141, 0.15)',
-            overflow: 'auto',
-          }}
-        >
+        {rightComponent && (
           <Box
             style={{
-              minHeight: 'min-content',
+              position: 'fixed',
+              top: '0',
+              bottom: '0',
+              right: '0',
+              width: '387px',
+              backgroundColor: 'white',
+              borderRadius: '45px',
+              boxShadow: '-5px 5px 30px rgba(61, 19, 141, 0.15)',
+              overflow: 'auto',
             }}
           >
-            {rightComponent}
+            <Box
+              style={{
+                minHeight: 'min-content',
+              }}
+            >
+              {rightComponent}
+            </Box>
           </Box>
-        </Box>
+        )}
       </Box>
     </Box>
   );
