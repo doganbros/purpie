@@ -106,7 +106,7 @@ const Sidebar: FC = () => {
         icon={<Add />}
       />
       {sidebarBtns.map((v) => (
-        <SidebarButton {...v} />
+        <SidebarButton key={v.title} {...v} />
       ))}
       <Menu
         alignSelf="center"
