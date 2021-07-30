@@ -45,12 +45,14 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
             }
           />
         </Box>
-        <Button
-          icon={<Previous size="medium" color="white" />}
-          onClick={() => {
-            setShowRightSidebar(true);
-          }}
-        />
+        {rightComponent && (
+          <Button
+            icon={<Previous size="medium" color="white" />}
+            onClick={() => {
+              setShowRightSidebar(true);
+            }}
+          />
+        )}
       </Header>
       {topComponent && (
         <Box pad="large">
