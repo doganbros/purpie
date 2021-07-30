@@ -53,14 +53,18 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
         />
       </Header>
       {topComponent && (
-        <Box pad="large" overflow="auto">
-          <Box
-            style={{
-              minWidth: 'min-content',
-            }}
-          >
-            {topComponent}
+        <Box pad="large">
+          <Box fill overflow="auto">
+            <Box
+              pad={{ vertical: 'large' }}
+              style={{
+                minWidth: 'min-content',
+              }}
+            >
+              {topComponent}
+            </Box>
           </Box>
+          <Box fill="horizontal" height="3px" background="#E4E9F2" />
         </Box>
       )}
       <Box pad="large" fill overflow="auto">

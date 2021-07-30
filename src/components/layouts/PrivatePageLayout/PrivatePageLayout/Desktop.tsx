@@ -92,6 +92,9 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
             >
               {topComponent}
             </Box>
+            <Box fill="horizontal" height="3px" pad={{ right: '45px' }}>
+              <Box fill background="#E4E9F2" />
+            </Box>
           </Box>
         )}
         {children}
