@@ -2,27 +2,22 @@ import { Avatar, Box, Button } from 'grommet';
 import { Icon } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
 import React, { FC } from 'react';
-import { useTitle } from '../../../../hooks/useTitle';
 import Logo from '../../../../assets/octopus-logo/logo-white.svg';
 import Sidebar from '../Sidebar';
 import ZoneSelector from '../ZoneSelector';
 
 interface Props {
-  title: string;
-  changeTitle?: boolean;
+  topComponent?: React.ReactNode;
   icon?: Icon;
   rightSideItem?: React.ReactNode;
 }
 
 const Desktop: FC<Props> = ({
   children,
-  title,
   rightSideItem: RightSideItem,
-  changeTitle,
+  topComponent,
 }) => {
-  useTitle(title, changeTitle);
   const history = useHistory();
-  // const size = useContext(ResponsiveContext);
 
   return (
     <Box
@@ -75,31 +70,33 @@ const Desktop: FC<Props> = ({
           left: '135px',
           right: '387px',
           minHeight: '100vh',
-          paddingTop: '140px',
+          paddingTop: topComponent ? '140px' : '0',
           paddingLeft: '45px',
         }}
       >
-        <Box
-          style={{
-            position: 'fixed',
-            top: 0,
-            right: '387px',
-            left: '135px',
-            height: '140px',
-            overflow: 'auto',
-            borderRadius: '45px 0 0 0',
-            backgroundColor: 'white',
-            paddingLeft: '45px',
-          }}
-        >
+        {topComponent && (
           <Box
             style={{
-              minWidth: 'min-content',
+              position: 'fixed',
+              top: 0,
+              right: '387px',
+              left: '135px',
+              height: '140px',
+              overflow: 'auto',
+              borderRadius: '45px 0 0 0',
+              backgroundColor: 'white',
+              paddingLeft: '45px',
             }}
           >
-            {title}
+            <Box
+              style={{
+                minWidth: 'min-content',
+              }}
+            >
+              {topComponent}
+            </Box>
           </Box>
-        </Box>
+        )}
         {children}
         <Box
           style={{

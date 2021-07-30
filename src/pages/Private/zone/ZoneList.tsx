@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardFooter,
   CardBody,
+  Heading,
   TextInput,
   Text,
 } from 'grommet';
@@ -68,6 +69,7 @@ const ZoneList: FC = () => {
     <PrivatePageLayout
       title="Zones"
       icon={CloudComputer}
+      topComponent={<Heading level="3">Zones</Heading>}
       rightSideItem={
         <Box flex={{ grow: 2 }}>
           <Box

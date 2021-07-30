@@ -11,18 +11,15 @@ import { useHistory } from 'react-router-dom';
 import React, { FC, useState } from 'react';
 import Sidebar from '../Sidebar';
 import Logo from '../../../../assets/octopus-logo/logo-white.svg';
-import { useTitle } from '../../../../hooks/useTitle';
 import ZoneSelector from '../ZoneSelector';
 
 interface Props {
-  title: string;
-  changeTitle?: boolean;
+  topComponent?: React.ReactNode;
   icon?: Icon;
   rightSideItem?: React.ReactNode;
 }
-const Mobile: FC<Props> = ({ children, title, rightSideItem, changeTitle }) => {
+const Mobile: FC<Props> = ({ children, topComponent, rightSideItem }) => {
   const history = useHistory();
-  useTitle(title, changeTitle);
 
   const [showLeftSidebar, setShowLeftSidebar] = useState(false);
   const [showRightSidebar, setShowRightSidebar] = useState(false);
@@ -55,7 +52,7 @@ const Mobile: FC<Props> = ({ children, title, rightSideItem, changeTitle }) => {
           }}
         />
       </Header>
-      <Box>{title}</Box>
+      {topComponent && <Box pad="medium">{topComponent}</Box>}
       <Box flex="grow" style={{ position: 'relative' }}>
         <Box
           style={{

@@ -8,6 +8,7 @@ import Mobile from './Mobile';
 interface Props {
   title: string;
   changeTitle?: boolean;
+  topComponent?: React.ReactNode;
   icon?: Icon;
   rightSideItem?: React.ReactNode;
 }
@@ -16,17 +17,18 @@ const PrivatePageLayout: FC<Props> = ({
   children,
   title,
   rightSideItem: RightSideItem,
+  topComponent,
   changeTitle,
 }) => {
   useTitle(title, changeTitle);
   const size = useContext(ResponsiveContext);
 
   return size === 'small' ? (
-    <Mobile title={title} rightSideItem={RightSideItem}>
+    <Mobile topComponent={topComponent} rightSideItem={RightSideItem}>
       {children}
     </Mobile>
   ) : (
-    <Desktop title={title} rightSideItem={RightSideItem}>
+    <Desktop topComponent={topComponent} rightSideItem={RightSideItem}>
       {children}
     </Desktop>
   );
