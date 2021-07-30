@@ -9,14 +9,10 @@ import ZoneSelector from '../ZoneSelector';
 interface Props {
   topComponent?: React.ReactNode;
   icon?: Icon;
-  rightSideItem?: React.ReactNode;
+  rightComponent?: React.ReactNode;
 }
 
-const Desktop: FC<Props> = ({
-  children,
-  rightSideItem: RightSideItem,
-  topComponent,
-}) => {
+const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
   const history = useHistory();
 
   return (
@@ -116,7 +112,7 @@ const Desktop: FC<Props> = ({
               minHeight: 'min-content',
             }}
           >
-            {RightSideItem}
+            {rightComponent}
           </Box>
         </Box>
       </Box>

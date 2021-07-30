@@ -70,7 +70,7 @@ const ZoneList: FC = () => {
       title="Zones"
       icon={CloudComputer}
       topComponent={<Heading level="3">Zones</Heading>}
-      rightSideItem={
+      rightComponent={
         <Box flex={{ grow: 2 }}>
           <Box
             pad={{ horizontal: 'medium' }}

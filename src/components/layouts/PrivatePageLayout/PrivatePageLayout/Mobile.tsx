@@ -16,9 +16,9 @@ import ZoneSelector from '../ZoneSelector';
 interface Props {
   topComponent?: React.ReactNode;
   icon?: Icon;
-  rightSideItem?: React.ReactNode;
+  rightComponent?: React.ReactNode;
 }
-const Mobile: FC<Props> = ({ children, topComponent, rightSideItem }) => {
+const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
   const history = useHistory();
 
   const [showLeftSidebar, setShowLeftSidebar] = useState(false);
@@ -111,7 +111,7 @@ const Mobile: FC<Props> = ({ children, topComponent, rightSideItem }) => {
                 }}
               />
             </Box>
-            {rightSideItem}
+            {rightComponent}
           </Box>
         </Layer>
       )}

@@ -7,7 +7,7 @@ const Channels: FC = () => (
   <PrivatePageLayout
     title="Zones"
     icon={CloudComputer}
-    rightSideItem={
+    rightComponent={
       <Box flex={{ grow: 2 }}>
         <Box
           pad={{ horizontal: 'medium' }}

@@ -10,13 +10,13 @@ interface Props {
   changeTitle?: boolean;
   topComponent?: React.ReactNode;
   icon?: Icon;
-  rightSideItem?: React.ReactNode;
+  rightComponent?: React.ReactNode;
 }
 
 const PrivatePageLayout: FC<Props> = ({
   children,
   title,
-  rightSideItem: RightSideItem,
+  rightComponent,
   topComponent,
   changeTitle,
 }) => {
@@ -24,11 +24,11 @@ const PrivatePageLayout: FC<Props> = ({
   const size = useContext(ResponsiveContext);
 
   return size === 'small' ? (
-    <Mobile topComponent={topComponent} rightSideItem={RightSideItem}>
+    <Mobile topComponent={topComponent} rightComponent={rightComponent}>
       {children}
     </Mobile>
   ) : (
-    <Desktop topComponent={topComponent} rightSideItem={RightSideItem}>
+    <Desktop topComponent={topComponent} rightComponent={rightComponent}>
       {children}
     </Desktop>
   );
