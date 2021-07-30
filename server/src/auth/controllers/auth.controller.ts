@@ -98,6 +98,9 @@ export class AuthController {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      userRole: {
+        ...user.userRole,
+      },
     };
 
     if (!user.emailConfirmed)

@@ -5,6 +5,7 @@ import { UserZoneRepository } from 'entities/repositories/UserZone.repository';
 import { Invitation } from 'entities/Invitation.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { Zone } from 'entities/Zone.entity';
+import { Category } from 'entities/Category.entity';
 import { MailModule } from 'src/mail/mail.module';
 import { ChannelModule } from 'src/channel/channel.module';
 import { UserZoneController } from './controllers/user-zone.controller';
@@ -18,6 +19,7 @@ import { ZoneController } from './controllers/zone.controller';
       Channel,
       UserChannel,
       Invitation,
+      Category,
       UserZoneRepository,
     ]),
     MailModule,

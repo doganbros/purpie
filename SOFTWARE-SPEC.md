@@ -175,6 +175,21 @@ This section introduces the main decorators used in this application
 - #### UserZoneRole
     The UserZoneRole decorator wraps over the UserZoneGuard to avoid writing lots of boilerplates while passing permissions to the it. It also extends the IsAuthenticated decorators so if you do not need to specify it while using it on a route.
 
+- #### UserChannelRole
+    The UserZoneRole decorator wraps over the UserChannelGuard to avoid writing lots of boilerplates while passing permissions to the it. It also extends the IsAuthenticated decorators so if you do not need to specify it while using it on a route.
+
+- #### CurrentUser
+
+    The CurrentUser decorator is helper to retrieve the current user's jwt payload
+
+- #### CurrentUserZone
+
+    The CurrentUserZone decorator is helper to retrieve the current user zone. Notice that it zoneId or userZoneId must be set as params in order to retrieve this.
+
+- #### CurrentUserChannel
+
+    The CurrentUserChannel decorator is helper to retrieve the current user channel. Notice that it channelId or userChannelId must be set as params in order to retrieve this.
+
 ### Middlewares Used in this application
 This section introduces the main middlewares used in this application.
 

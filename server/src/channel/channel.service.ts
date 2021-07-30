@@ -1,9 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from 'entities/Channel.entity';
+import { Invitation } from 'entities/Invitation.entity';
 import { UserChannelRepository } from 'entities/repositories/UserChannel.repository';
+import { User } from 'entities/User.entity';
+import { UserChannel } from 'entities/UserChannel.entity';
 import { Zone } from 'entities/Zone.entity';
 import { paginate } from 'helpers/utils';
+import pick from 'lodash.pick';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { MailService } from 'src/mail/mail.service';
 import { Repository } from 'typeorm';
@@ -18,6 +22,8 @@ export class ChannelService {
     @InjectRepository(Channel) private channelRepository: Repository<Channel>,
     @InjectRepository(UserChannelRepository)
     private userChannelRepository: UserChannelRepository,
+    @InjectRepository(Invitation)
+    private invitationRepository: Repository<Invitation>,
     private mailService: MailService,
   ) {}
 
@@ -37,7 +43,7 @@ export class ChannelService {
             zoneId,
             description: createChannelInfo.description,
             topic: createChannelInfo.topic,
-            categoryId: createChannelInfo.categoryId,
+            categoryId: defaultChannel ? null : createChannelInfo.categoryId,
             createdById: userId,
             defaultChannel,
           })
@@ -94,5 +100,115 @@ export class ChannelService {
       .getManyAndCount();
 
     return paginate(results, query);
+  }
+
+  async validateJoinPublicChannel(userId: number, channelId: number) {
+    const channel = await this.channelRepository
+      .createQueryBuilder('channel')
+      .leftJoin(
+        UserChannel,
+        'user_channel',
+        'user_channel.channelId = channel.id',
+      )
+      .leftJoin(User, 'user', 'user.id = user_channel.userId')
+
+      .where('channel.public = true')
+      .andWhere('channel.id = :channelId', { channelId })
+      .andWhere('user.id <> :userId', { userId })
+      .getOne();
+
+    return channel;
+  }
+
+  async addUserToChannel(userId: number, channelId: number) {
+    return this.userChannelRepository
+      .create({
+        userId,
+        channelRoleCode: 'NORMAL',
+        channelId,
+      })
+      .save();
+  }
+
+  async validateInviteUser(email: string, channelId: number) {
+    const invitation = await this.invitationRepository.findOne({
+      where: { email, channelId },
+    });
+
+    if (invitation)
+      throw new BadRequestException(
+        `The user with the email ${email} has already been invited to this channel`,
+      );
+
+    const channel = await this.channelRepository
+      .createQueryBuilder('channel')
+      .select('user.id', 'userId')
+      .leftJoin(
+        UserChannel,
+        'user_channel',
+        'user_channel.channelId = channel.id',
+      )
+      .leftJoin(User, 'user', 'user.id = user_channel.userId')
+
+      .andWhere('channel.id = :channelId', { channelId })
+      .andWhere('user.email <> :email', { email })
+
+      .getRawOne();
+
+    return channel;
+  }
+
+  async addUserToChannelInvitation(
+    email: string,
+    channelId: number,
+    userId: number,
+  ) {
+    return this.invitationRepository
+      .create({
+        email,
+        channelId,
+        createdById: userId,
+      })
+      .save();
+  }
+
+  async sendChannelInvitationMail(channel: Channel, email: string) {
+    const clientUrl = new URL(REACT_APP_CLIENT_HOST);
+
+    const context = {
+      name: channel.name,
+      link: `${clientUrl.protocol}//${clientUrl.host}/respond-to-invitation/channel/${channel.id}`,
+    };
+    return this.mailService.sendMailByView(
+      email,
+      `Invitation To '${channel.name}' Channel`,
+      'channel-invitation',
+      context,
+    );
+  }
+
+  async removeInvitation(email: string, channelId: number) {
+    return this.invitationRepository.delete({ email, channelId });
+  }
+
+  async validateInvitationResponse(invitationId: number, email: string) {
+    return this.invitationRepository.findOne({
+      where: {
+        email,
+        id: invitationId,
+      },
+      relations: ['channel'],
+    });
+  }
+
+  async deleteByChannelId(id: number) {
+    return this.channelRepository.delete({ id });
+  }
+
+  async editChannelById(id: number, editInfo: any) {
+    return this.channelRepository.update(
+      { id },
+      pick(editInfo, ['name', 'description', 'topic', 'public']),
+    );
   }
 }

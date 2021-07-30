@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { UserRole } from 'entities/UserRole.entity';
+import { SoftEntity } from 'types/SoftEntity';
 
 export class UserPayload {
   @ApiProperty()
@@ -12,6 +14,9 @@ export class UserPayload {
 
   @ApiProperty()
   email: string;
+
+  @ApiProperty()
+  userRole: SoftEntity<UserRole>;
 }
 
 export class UserBasic {

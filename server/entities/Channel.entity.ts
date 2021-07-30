@@ -46,8 +46,8 @@ export class Channel extends RecordEntity {
   @JoinColumn({ name: 'categoryId' })
   category: Category;
 
-  @Column('int')
-  categoryId: number;
+  @Column('int', { nullable: true })
+  categoryId: number | null;
 
   @ManyToOne(() => Zone, (zone) => zone.channels, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'zoneId' })

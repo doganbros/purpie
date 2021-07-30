@@ -4,22 +4,21 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
-// import { Reflector } from '@nestjs/core';
+import { Reflector } from '@nestjs/core';
 import { verifyJWT } from 'helpers/jwt';
 
 const { AUTH_TOKEN_SECRET = 'secret_a' } = process.env;
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  // constructor(private reflector: Reflector) {}
+  constructor(private reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
-    // const userPermissions = this.reflector.get<string[]>(
-    //   'userPermissions',
-    //   context.getHandler(),
-    // );
-    // Permissions can be checked later
+    const userPermissions = this.reflector.get<string[]>(
+      'userPermissions',
+      context.getHandler(),
+    );
 
     const token = req.headers?.authorization?.replace('Bearer ', '');
 
@@ -38,6 +37,14 @@ export class AuthGuard implements CanActivate {
         'You not authorized to use this route',
         'NOT_SIGNED_IN',
       );
+    }
+
+    for (const permission of userPermissions) {
+      if (!req.user.userRole?.[permission])
+        throw new UnauthorizedException(
+          'You are not authorized',
+          'NOT_AUTHORIZED',
+        );
     }
 
     return true;
