@@ -52,16 +52,21 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
           }}
         />
       </Header>
-      {topComponent && <Box pad="medium">{topComponent}</Box>}
-      <Box flex="grow" style={{ position: 'relative' }}>
+      {topComponent && (
+        <Box pad="large" overflow="auto">
+          <Box
+            style={{
+              minWidth: 'min-content',
+            }}
+          >
+            {topComponent}
+          </Box>
+        </Box>
+      )}
+      <Box pad="large" fill overflow="auto">
         <Box
           style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            overflow: 'auto',
+            minHeight: 'min-content',
           }}
         >
           {children}
@@ -98,9 +103,6 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
           onClickOutside={() => {
             setShowRightSidebar(false);
           }}
-          onClick={() => {
-            setShowRightSidebar(false);
-          }}
         >
           <Box fill>
             <Box direction="row" pad="medium">
@@ -111,7 +113,9 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
                 }}
               />
             </Box>
-            {rightComponent}
+            <Box fill overflow="auto" pad="large">
+              {rightComponent}
+            </Box>
           </Box>
         </Layer>
       )}
