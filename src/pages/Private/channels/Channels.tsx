@@ -13,7 +13,11 @@ import {
 import { Info, Search } from 'grommet-icons';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 
-const ChannelHeading: FC = () => <Heading level="3">Channel</Heading>;
+const ChannelHeading: FC = () => (
+  <Box fill justify="center">
+    <Heading level="3">Channel</Heading>
+  </Box>
+);
 const ChannelDummy: FC = () => (
   <Box
     fill
