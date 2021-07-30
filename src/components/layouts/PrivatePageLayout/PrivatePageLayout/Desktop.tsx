@@ -78,19 +78,20 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
               right: rightComponent ? '387px' : 0,
               left: '135px',
               height: '140px',
-              overflow: 'auto',
               borderRadius: '45px 0 0 0',
               backgroundColor: 'white',
               paddingLeft: '45px',
             }}
           >
-            <Box
-              fill
-              style={{
-                minWidth: 'min-content',
-              }}
-            >
-              {topComponent}
+            <Box fill overflow="auto">
+              <Box
+                fill
+                style={{
+                  minWidth: 'min-content',
+                }}
+              >
+                {topComponent}
+              </Box>
             </Box>
             <Box fill="horizontal" height="3px" pad={{ right: '45px' }}>
               <Box fill background="#E4E9F2" />
