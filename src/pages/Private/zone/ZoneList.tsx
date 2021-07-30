@@ -68,7 +68,11 @@ const ZoneList: FC = () => {
   return (
     <PrivatePageLayout
       title="Zones"
-      topComponent={<Heading level="3">Zones</Heading>}
+      topComponent={
+        <Box fill justify="center">
+          <Heading level="3">Zones</Heading>
+        </Box>
+      }
       rightComponent={
         <Box flex={{ grow: 2 }}>
           <Box

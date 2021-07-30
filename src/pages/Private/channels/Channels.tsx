@@ -15,7 +15,7 @@ import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/Pri
 
 const ChannelHeading: FC = () => (
   <Box fill justify="center">
-    <Heading level="3">Channel</Heading>
+    <Heading level="3">Channels</Heading>
   </Box>
 );
 const ChannelDummy: FC = () => (
