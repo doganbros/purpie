@@ -1,5 +1,4 @@
 import { ResponsiveContext } from 'grommet';
-import { Icon } from 'grommet-icons';
 import React, { FC, useContext } from 'react';
 import { useTitle } from '../../../../hooks/useTitle';
 import Desktop from './Desktop';
@@ -9,7 +8,6 @@ interface Props {
   title: string;
   changeTitle?: boolean;
   topComponent?: React.ReactNode;
-  icon?: Icon;
   rightComponent?: React.ReactNode;
 }
 
