@@ -6,6 +6,7 @@ import ForgotPassword from './pages/Public/ForgotPassword';
 import ResetPassword from './pages/Public/ResetPassword';
 import ZoneList from './pages/Private/zone/ZoneList';
 import Channels from './pages/Private/channels/Channels';
+import Messages from './pages/Private/messages/Messages';
 import CreateMeeting from './pages/Private/meeting/CreateMeeting';
 import MeetingsByZone from './pages/Private/meeting/MeetingsByZone';
 import MeetingsByUser from './pages/Private/meeting/MeetingsByUser';
@@ -98,5 +99,11 @@ export const privateRoutes: Array<AppRoute> = [
     path: '/channels',
     component: Channels,
     description: 'User views channels',
+  },
+  {
+    id: nanoid(),
+    path: '/messages',
+    component: Messages,
+    description: 'User views messages',
   },
 ];
