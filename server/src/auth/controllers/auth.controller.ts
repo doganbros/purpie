@@ -71,9 +71,8 @@ export class AuthController {
     @Body() loginUserDto: LoginUserDto,
     @Headers('app-subdomain') subdomain: string,
   ): Promise<UserPayloadWithToken> {
-    if (subdomain) {
+    if (subdomain)
       await this.authService.subdomainValidity(subdomain, loginUserDto.email);
-    }
 
     const user = await this.authService.getUserByEmail(loginUserDto.email);
 

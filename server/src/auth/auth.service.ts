@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import bcrypt from 'bcryptjs';
-import { Invitation } from 'entities/Invitation.entity';
 import { User } from 'entities/User.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
@@ -114,13 +113,8 @@ export class AuthService {
   async subdomainValidity(subdomain: string, email: string) {
     const user = await this.userRepository
       .createQueryBuilder('user')
-      .leftJoin(Invitation, 'invitation', 'invitation.email = user.email')
       .leftJoin(UserZone, 'user_zone', 'user_zone.userId = user.id')
-      .innerJoin(
-        Zone,
-        'zone',
-        'zone.id = invitation.zoneId or zone.id = user_zone.zoneId',
-      )
+      .innerJoin(Zone, 'zone', 'zone.id = user_zone.zoneId')
       .where('user.email = :email', { email })
       .andWhere('zone.subdomain = :subdomain', { subdomain })
       .getOne();
