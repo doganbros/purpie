@@ -9,6 +9,7 @@ import {
 import { Menu, Previous, Icon, Close } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
 import React, { FC, useState } from 'react';
+import styled from 'styled-components';
 import Sidebar from '../Sidebar';
 import Logo from '../../../../assets/octopus-logo/logo-white.svg';
 import ZoneSelector from '../ZoneSelector';
@@ -18,6 +19,15 @@ interface Props {
   icon?: Icon;
   rightComponent?: React.ReactNode;
 }
+
+const TopContent = styled(Box)`
+  min-width: min-content;
+`;
+
+const MainContent = styled(Box)`
+  min-height: min-content;
+`;
+
 const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
   const history = useHistory();
 
@@ -57,26 +67,13 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
       {topComponent && (
         <Box pad="large">
           <Box fill overflow="auto">
-            <Box
-              pad={{ vertical: 'large' }}
-              style={{
-                minWidth: 'min-content',
-              }}
-            >
-              {topComponent}
-            </Box>
+            <TopContent pad={{ vertical: 'large' }}>{topComponent}</TopContent>
           </Box>
           <Box fill="horizontal" height="3px" background="#E4E9F2" />
         </Box>
       )}
       <Box pad="large" fill overflow="auto">
-        <Box
-          style={{
-            minHeight: 'min-content',
-          }}
-        >
-          {children}
-        </Box>
+        <MainContent>{children}</MainContent>
       </Box>
       {showLeftSidebar && (
         <Layer
