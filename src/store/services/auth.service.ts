@@ -46,6 +46,14 @@ export const verifyUserEmail = async ({
   return http.post('/auth/verify-email', { token }).then((res) => res.data);
 };
 
+export const resendMailVerificationToken = async (
+  userId: number
+): Promise<any> => {
+  return http
+    .post(`/auth/resend-mail-verification-token/${userId}`)
+    .then((res) => res.data);
+};
+
 export const resetPasswordRequest = (email: string): Promise<any> =>
   http.post('/auth/reset-password-request', {
     email,

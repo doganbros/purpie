@@ -7,6 +7,7 @@ import { User } from 'entities/User.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
 import { generateJWT } from 'helpers/jwt';
+import { nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
 import { Not, Repository, IsNull } from 'typeorm';
 import { RegisterUserDto } from './dto/register-user.dto';
@@ -40,11 +41,13 @@ export class AuthService {
   }
 
   async generateResetPasswordToken(email: string) {
-    const token = await generateJWT({ email }, RESET_PASSWORD_TOKEN_SECRET, {
-      expiresIn: '1h',
-    });
-
-    return token;
+    return generateJWT(
+      { email, randomId: nanoid() },
+      RESET_PASSWORD_TOKEN_SECRET,
+      {
+        expiresIn: '1h',
+      },
+    );
   }
 
   async registerUser({
@@ -55,7 +58,7 @@ export class AuthService {
   }: RegisterUserDto): Promise<UserBasicWithToken> {
     const password = await bcrypt.hash(unhashedPassword, 10);
 
-    let user = this.userRepository.create({
+    const user = this.userRepository.create({
       firstName,
       lastName,
       email,
@@ -63,26 +66,25 @@ export class AuthService {
       userRoleCode: 'NORMAL',
     });
 
-    const registeredUser = {
+    return this.setMailVerificationToken(user);
+  }
+
+  async setMailVerificationToken(user: User) {
+    const userInfo = {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      randomId: nanoid(),
     };
-
-    const token = await generateJWT(
-      registeredUser,
-      MAIL_VERIFICATION_TOKEN_SECRET,
-      {
-        expiresIn: '1h',
-      },
-    );
+    const token = await generateJWT(userInfo, MAIL_VERIFICATION_TOKEN_SECRET, {
+      expiresIn: '1h',
+    });
 
     user.mailVerificationToken = await bcrypt.hash(token, 10);
 
-    user = await user.save();
-
+    await user.save();
     return {
-      user: registeredUser,
+      user: userInfo,
       token,
     };
   }
@@ -131,15 +133,26 @@ export class AuthService {
     return user;
   }
 
-  async getUserByEmail(email: string) {
-    const user = await this.userRepository.findOne({
+  getUserByEmail(email: string) {
+    return this.userRepository.findOne({
       where: {
         email,
       },
       relations: ['userRole'],
     });
+  }
 
-    return user;
+  async verifyResendMailVerificationToken(userId: number) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+        emailConfirmed: false,
+      },
+    });
+
+    if (!user) throw new NotFoundException('User not found', 'USER_NOT_FOUND');
+
+    return this.setMailVerificationToken(user);
   }
 
   async getUserByEmailAndResetPasswordToken(email: string, token: string) {
@@ -152,16 +165,16 @@ export class AuthService {
 
     if (!user)
       throw new NotFoundException(
-        `Invalid Token or user doesn't exist`,
-        'INVALID_TOKEN_OR_USER_NOT_EXIST',
+        `Invalid password reset token`,
+        'INVALID_PASSWORD_RESET_TOKEN',
       );
 
     const isValid = await bcrypt.compare(token, user.forgotPasswordToken);
 
     if (!isValid)
       throw new NotFoundException(
-        `Invalid Token or user doesn't exist`,
-        'INVALID_TOKEN_OR_USER_NOT_EXIST',
+        `Invalid password reset token`,
+        'INVALID_PASSWORD_RESET_TOKEN',
       );
 
     return user;
@@ -182,8 +195,8 @@ export class AuthService {
 
     if (!isValid)
       throw new NotFoundException(
-        `Invalid Token or user doesn't exist`,
-        'INVALID_TOKEN_OR_USER_NOT_EXIST',
+        `Invalid email verification token`,
+        'INVALID_EMAIL_VERIFICATION_TOKEN',
       );
 
     user.emailConfirmed = true;

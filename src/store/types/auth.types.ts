@@ -23,6 +23,9 @@ import {
   VERIFY_USER_EMAIL_REQUESTED,
   VERIFY_USER_EMAIL_SUCCESS,
   VERIFY_USER_EMAIL_FAILED,
+  RESEND_MAIL_VERIFICATION_TOKEN_REQUESTED,
+  RESEND_MAIL_VERIFICATION_TOKEN_SUCCESS,
+  RESEND_MAIL_VERIFICATION_TOKEN_FAILED,
 } from '../constants/auth.constants';
 import { UtilActionParams } from './util.types';
 
@@ -40,6 +43,10 @@ export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   verifyUserEmail: {
+    loading: boolean;
+    error: ResponseError | null;
+  };
+  resendMailVerificationToken: {
     loading: boolean;
     error: ResponseError | null;
   };
@@ -102,10 +109,12 @@ export type AuthActionParams =
         | typeof LOGIN_REQUESTED
         | typeof VERIFY_USER_EMAIL_REQUESTED
         | typeof REGISTER_REQUESTED
+        | typeof RESEND_MAIL_VERIFICATION_TOKEN_REQUESTED
         | typeof FORGOT_PASSWORD_REQUESTED
         | typeof THIRD_PARTY_AUTH_WITH_CODE_REQUESTED
         | typeof RESET_PASSWORD_REQUESTED
         | typeof FORGOT_PASSWORD_SUCCESS
+        | typeof RESEND_MAIL_VERIFICATION_TOKEN_SUCCESS
         | typeof LOGOUT
         | typeof RESET_PASSWORD_SUCCESS;
     }
@@ -134,6 +143,7 @@ export type AuthActionParams =
         | typeof VERIFY_USER_EMAIL_FAILED
         | typeof THIRD_PARTY_URL_FAILED
         | typeof THIRD_PARTY_AUTH_WITH_CODE_FAILED
+        | typeof RESEND_MAIL_VERIFICATION_TOKEN_FAILED
         | typeof USER_RETRIEVED_FAILED
         | typeof FORGOT_PASSWORD_FAILED;
       payload: ResponseError;
