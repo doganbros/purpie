@@ -9,24 +9,16 @@ import {
 import { Menu, Previous, Icon, Close } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
 import React, { FC, useState } from 'react';
-import styled from 'styled-components';
 import Sidebar from '../Sidebar';
 import Logo from '../../../../assets/octopus-logo/logo-white.svg';
 import ZoneSelector from '../ZoneSelector';
+import ExtendedBox from '../../../utils/ExtendedBox';
 
 interface Props {
   topComponent?: React.ReactNode;
   icon?: Icon;
   rightComponent?: React.ReactNode;
 }
-
-const TopContent = styled(Box)`
-  min-width: min-content;
-`;
-
-const MainContent = styled(Box)`
-  min-height: min-content;
-`;
 
 const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
   const history = useHistory();
@@ -48,7 +40,7 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
             icon={
               <Avatar
                 alignSelf="center"
-                size="35px"
+                size="medium"
                 round="medium"
                 src={Logo}
               />
@@ -67,13 +59,15 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
       {topComponent && (
         <Box pad="large">
           <Box fill overflow="auto">
-            <TopContent pad={{ vertical: 'large' }}>{topComponent}</TopContent>
+            <ExtendedBox minWidth="min-content" pad={{ vertical: 'large' }}>
+              {topComponent}
+            </ExtendedBox>
           </Box>
           <Box fill="horizontal" height="3px" background="#E4E9F2" />
         </Box>
       )}
       <Box pad="large" fill overflow="auto">
-        <MainContent>{children}</MainContent>
+        <ExtendedBox minHeight="min-content">{children}</ExtendedBox>
       </Box>
       {showLeftSidebar && (
         <Layer

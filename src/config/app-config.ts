@@ -21,6 +21,12 @@ export const theme: typeof grommet = {
         size: 'small',
       },
     },
+    elevation: {
+      ...grommet.global?.elevation,
+      light: {
+        xlarge: '-5px 5px 30px #3D138D26',
+      },
+    },
   },
   button: {
     color: 'white',
