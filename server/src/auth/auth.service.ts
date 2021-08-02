@@ -2,9 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import bcrypt from 'bcryptjs';
+import dayjs from 'dayjs';
 import { User } from 'entities/User.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
+import { Response } from 'express';
 import { generateJWT } from 'helpers/jwt';
 import { nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
@@ -20,7 +22,8 @@ const {
   FACEBOOK_OAUTH_CLIENT_SECRET = '',
   AUTH_TOKEN_LIFE = '24h',
   RESET_PASSWORD_TOKEN_SECRET = 'secret_r',
-  REACT_APP_CLIENT_HOST = 'http://localhost:3000',
+  REACT_APP_CLIENT_HOST = '',
+  REACT_APP_SERVER_HOST = '',
   MAIL_VERIFICATION_TOKEN_SECRET = 'secret_m',
 } = process.env;
 
@@ -28,6 +31,8 @@ const {
 export class AuthService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(UserZone)
+    private userZoneRepository: Repository<UserZone>,
     private mailService: MailService,
   ) {}
 
@@ -47,6 +52,14 @@ export class AuthService {
         expiresIn: '1h',
       },
     );
+  }
+
+  async setTokens(token: string, res: Response) {
+    res.cookie('OCTOPUS_ACCESS_TOKEN', token, {
+      expires: dayjs().add(1, 'hour').toDate(),
+      domain: `.${new URL(REACT_APP_SERVER_HOST).hostname}`,
+      httpOnly: true,
+    });
   }
 
   async registerUser({

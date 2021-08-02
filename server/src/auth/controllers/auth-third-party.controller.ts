@@ -12,6 +12,7 @@ import {
   Post,
   Res,
 } from '@nestjs/common';
+import dayjs from 'dayjs';
 import { Response } from 'express';
 import { ApiParam, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from 'entities/User.entity';
@@ -91,6 +92,7 @@ export class AuthThirdPartyController {
   async authenticateByThirdParty(
     @Param() { name }: ThirdPartyLoginParams,
     @Body() { code }: AuthByThirdPartyDto,
+    @Res({ passthrough: true }) res: Response,
   ) {
     let user: User | undefined;
     if (name === 'google') {
@@ -148,10 +150,10 @@ export class AuthThirdPartyController {
       };
       const token = await this.authService.generateLoginToken(userPayload);
 
-      return {
-        user: userPayload,
-        token,
-      };
+      res.cookie('OCTOPUS_ACCESS_TOKEN', token, {
+        expires: dayjs().add(1, 'hour').toDate(),
+      });
+      return userPayload;
     }
 
     throw new InternalServerErrorException(

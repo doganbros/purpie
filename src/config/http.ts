@@ -26,11 +26,11 @@ const isValidSubDomain =
 
 axios.defaults.baseURL = `${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}`;
 
+axios.defaults.withCredentials = true;
+
 axios.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem('accessToken');
     const { headers } = config;
-    if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
 
     if (isValidSubDomain) headers['App-Subdomain'] = subdomain;
 

@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
       context.getHandler(),
     );
 
-    const token = req.headers?.authorization?.replace('Bearer ', '');
+    const token = req.cookies.OCTOPUS_ACCESS_TOKEN;
 
     if (!token)
       throw new UnauthorizedException(
