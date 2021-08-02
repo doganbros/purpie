@@ -119,71 +119,31 @@ export class SchemaChanges1626633791984 implements MigrationInterface {
       }),
     );
 
-    await queryRunner.manager.insert(UserRole, [
-      {
-        roleName: 'Super Admin',
-        roleCode: 'SUPER_ADMIN',
-        canCreateZone: true,
-      },
-      {
-        roleName: 'Admin',
-        roleCode: 'ADMIN',
-        canCreateZone: true,
-      },
-      {
-        roleName: 'Normal',
-        roleCode: 'NORMAL',
-        canCreateZone: true,
-      },
-    ]);
-    await queryRunner.manager.insert(ZoneRole, [
-      {
-        roleName: 'Super Admin',
-        roleCode: 'SUPER_ADMIN',
-        canCreateChannel: true,
-        canInvite: true,
-      },
-      {
-        roleName: 'Admin',
-        roleCode: 'ADMIN',
-        canInvite: true,
-        canCreateChannel: true,
-      },
-      {
-        roleName: 'Editor',
-        roleCode: 'EDITOR',
-        canInvite: true,
-        canCreateChannel: true,
-      },
-      {
-        roleName: 'Normal',
-        roleCode: 'NORMAL',
-        canInvite: false,
-        canCreateChannel: true,
-      },
-    ]);
-    await queryRunner.manager.insert(ChannelRole, [
-      {
-        roleName: 'Super Admin',
-        roleCode: 'SUPER_ADMIN',
-        canInvite: true,
-      },
-      {
-        roleName: 'Admin',
-        roleCode: 'ADMIN',
-        canInvite: true,
-      },
-      {
-        roleName: 'Editor',
-        roleCode: 'EDITOR',
-        canInvite: true,
-      },
-      {
-        roleName: 'Normal',
-        roleCode: 'NORMAL',
-        canInvite: false,
-      },
-    ]);
+    const roleSeeds =  `
+      INSERT INTO user_role ("roleName", "roleCode", "canCreateZone")
+      values
+      ('Super Admin', 'SUPER_ADMIN', true),
+      ('Admin', 'ADMIN', true),
+      ('Normal', 'NORMAL', true);
+
+
+      INSERT INTO zone_role ("roleName", "roleCode", "canCreateChannel", "canInvite")
+      values
+      ('Super Admin', 'SUPER_ADMIN', true, true),
+      ('Admin', 'ADMIN', true, true),
+      ('Editor', 'EDITOR', true, true),
+      ('Normal', 'NORMAL', true, false);
+
+      INSERT INTO channel_role ("roleName", "roleCode", "canInvite")
+      values
+      ('Super Admin', 'SUPER_ADMIN', true),
+      ('Admin', 'ADMIN', true),
+      ('Editor', 'EDITOR', true),
+      ('Normal', 'NORMAL', true);
+    `;
+
+    await queryRunner.query(roleSeeds);
+
 
     await queryRunner.manager.insert(Category, [
       {

@@ -55,7 +55,7 @@ const MeetingsByUser: FC = () => {
   return (
     <PrivatePageLayout
       title="Meetings By User"
-      rightSideItem={
+      rightComponent={
         <Box flex={{ grow: 2 }}>
           <Box
             pad={{ horizontal: 'medium' }}

@@ -1,31 +1,30 @@
 import {
   IsBoolean,
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
+  Matches,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateChannelDto {
+export class EditZoneDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  name: string;
-
-  @ApiProperty()
-  @IsString()
-  topic?: string;
-
-  @ApiProperty({ type: Number, description: 'can be a number or null' })
   @IsOptional()
-  @IsInt()
-  categoryId: number | null;
+  name?: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
+  @IsNotEmpty()
   description?: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsOptional()
+  @Matches(/([a-z.])+([a-z])$/, { message: 'Please enter a valid subdomain' })
+  subdomain?: string;
 
   @ApiProperty()
   @IsOptional()

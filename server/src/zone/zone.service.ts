@@ -4,21 +4,23 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common';
+import pick from 'lodash.pick';
 import { URL } from 'url';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { Zone } from 'entities/Zone.entity';
 import { Channel } from 'entities/Channel.entity';
-import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZoneRepository } from 'entities/repositories/UserZone.repository';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { ChannelService } from 'src/channel/channel.service';
+import { Category } from 'entities/Category.entity';
 import { MailService } from 'src/mail/mail.service';
 import { UserZone } from 'entities/UserZone.entity';
 import { Invitation } from 'entities/Invitation.entity';
 import { User } from 'entities/User.entity';
 import { CreateZoneDto } from './dto/create-zone.dto';
+import { EditZoneDto } from './dto/edit-zone.dto';
 
 const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
 
@@ -28,12 +30,12 @@ export class ZoneService {
     @InjectRepository(Zone) private zoneRepository: Repository<Zone>,
     @InjectRepository(UserZoneRepository)
     private userZoneRepository: UserZoneRepository,
-    @InjectRepository(UserChannel)
-    private userChannelRepository: Repository<UserChannel>,
     @InjectRepository(Invitation)
     private invitationRepository: Repository<Invitation>,
     @InjectRepository(Channel)
     private channelRepository: Repository<Channel>,
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>,
     private mailService: MailService,
     @Inject(forwardRef(() => ChannelService))
     private channelService: ChannelService,
@@ -111,13 +113,18 @@ export class ZoneService {
       .save();
   }
 
-  async addUserToZoneInvitation(email: string, zoneId: number) {
+  async addUserToZoneInvitation(email: string, zoneId: number, userId: number) {
     return this.invitationRepository
       .create({
         email,
         zoneId,
+        createdById: userId,
       })
       .save();
+  }
+
+  async removeInvitation(email: string, zoneId: number) {
+    return this.invitationRepository.delete({ email, zoneId });
   }
 
   async validateInvitationResponse(invitationId: number, email: string) {
@@ -208,18 +215,39 @@ export class ZoneService {
     );
   }
 
+  async getCategories(parentCategoryId?: number) {
+    return this.categoryRepository.find({
+      where: { parentCategoryId: parentCategoryId ?? IsNull() },
+    });
+  }
+
   async sendZoneInvitationMail(zone: Zone, email: string) {
     const clientUrl = new URL(REACT_APP_CLIENT_HOST);
 
     const context = {
       name: zone.name,
-      link: `${clientUrl.protocol}//${zone.subdomain}.${clientUrl.host}/respond-to-invitation/${zone.id}`,
+      link: `${clientUrl.protocol}//${clientUrl.host}/respond-to-invitation/zone/${zone.id}`,
     };
     return this.mailService.sendMailByView(
       email,
       `Invitation To '${zone.name}' Zone`,
       'zone-invitation',
       context,
+    );
+  }
+
+  async userExistsInZone(userId: number, zoneId: number) {
+    return this.userZoneRepository.findOne({ where: { userId, zoneId } });
+  }
+
+  async deleteZoneById(id: number) {
+    return this.zoneRepository.delete({ id });
+  }
+
+  async editZoneById(id: number, editInfo: EditZoneDto) {
+    return this.zoneRepository.update(
+      { id },
+      pick(editInfo, ['name', 'description', 'subdomain', 'public']),
     );
   }
 }

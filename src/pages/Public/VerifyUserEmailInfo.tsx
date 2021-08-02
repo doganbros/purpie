@@ -1,20 +1,31 @@
 import { Button, Image } from 'grommet';
 import React, { FC } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import AuthLayout from '../../components/layouts/AuthLayout';
 import { AppState } from '../../store/reducers/root.reducer';
 import Figure from '../../assets/verify-email-bg/figure-1.png';
 import Banner from '../../assets/verify-email-bg/banner.png';
 import { useResponsive } from '../../hooks/useResponsive';
+import { resendMailVerificationTokenAction } from '../../store/actions/auth.action';
+
+interface Params {
+  userId: string;
+}
 
 const VerifyUserEmailInfo: FC = () => {
+  const dispatch = useDispatch();
+
   const {
-    forgotPassword: { loading },
+    resendMailVerificationToken: { loading },
   } = useSelector((state: AppState) => state.auth);
 
   const size = useResponsive();
   const history = useHistory();
+  const { userId } = useParams<Params>();
+
+  const submitResendMailVerificationToken = () =>
+    dispatch(resendMailVerificationTokenAction(Number.parseInt(userId, 10)));
 
   return (
     <AuthLayout
@@ -45,6 +56,12 @@ const VerifyUserEmailInfo: FC = () => {
           />
         </>
       }
+      callToAction={{
+        title: 'Resend mail verification link?',
+        body: 'RESEND',
+        disabled: loading,
+        onClick: submitResendMailVerificationToken,
+      }}
     >
       <Button
         fill="horizontal"
@@ -52,7 +69,6 @@ const VerifyUserEmailInfo: FC = () => {
         onClick={() => history.push('/login')}
         size={size}
         margin={{ top: '55%' }}
-        disabled={loading}
         type="submit"
         label="GO TO SIGN IN"
       />

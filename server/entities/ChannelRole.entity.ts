@@ -11,4 +11,10 @@ export class ChannelRole extends BaseEntity {
 
   @Column({ default: true })
   canInvite: boolean;
+
+  @Column({ default: false })
+  canDelete: boolean;
+
+  @Column({ default: true })
+  canEdit: boolean;
 }

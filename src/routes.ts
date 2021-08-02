@@ -5,6 +5,7 @@ import Register from './pages/Public/Register';
 import ForgotPassword from './pages/Public/ForgotPassword';
 import ResetPassword from './pages/Public/ResetPassword';
 import ZoneList from './pages/Private/zone/ZoneList';
+import Channels from './pages/Private/channels/Channels';
 import CreateMeeting from './pages/Private/meeting/CreateMeeting';
 import MeetingsByZone from './pages/Private/meeting/MeetingsByZone';
 import MeetingsByUser from './pages/Private/meeting/MeetingsByUser';
@@ -55,7 +56,7 @@ export const publicRoutes: Array<AppRoute> = [
   },
   {
     id: nanoid(),
-    path: '/verify-email',
+    path: '/verify-email-info/:userId',
     component: VerifyUserEmailInfo,
     description: 'User is asked to verify email',
   },
@@ -91,5 +92,11 @@ export const privateRoutes: Array<AppRoute> = [
     path: '/my-meetings',
     component: MeetingsByUser,
     description: 'User creates a new meeting and list meeting for just user',
+  },
+  {
+    id: nanoid(),
+    path: '/channels',
+    component: Channels,
+    description: 'User views channels',
   },
 ];

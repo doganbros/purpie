@@ -1,10 +1,5 @@
-import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
-import {
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiParam,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Controller, Delete, Get, Query } from '@nestjs/common';
+import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
@@ -16,46 +11,15 @@ import { PaginationQuery } from 'types/PaginationQuery';
 import { ChannelService } from '../channel.service';
 import { CurrentUserChannel } from '../decorators/current-user-channel.decorator';
 import { UserChannelRole } from '../decorators/user-channel-role.decorator';
-import { CreateChannelDto } from '../dto/create-channel.dto';
 
 @Controller({ path: 'user-channel', version: '1' })
 @ApiTags('user-channel')
 export class UserChannelController {
   constructor(private channelService: ChannelService) {}
 
-  @Post('/:userZoneId')
-  @ApiCreatedResponse({
-    description:
-      'Current authenticated user adds a new channel belong to the zoneId.',
-  })
-  @ApiParam({
-    name: 'userZoneId',
-    type: 'user zone id',
-  })
-  @UserZoneRole(['canCreateChannel'])
-  async createNewChannel(
-    @Body() createChannelInfo: CreateChannelDto,
-    @CurrentUser() currentUser: UserPayload,
-    @CurrentUserZone() currentUserZone: UserZone,
-  ) {
-    const userChannel = await this.channelService.createChannel(
-      currentUser.id,
-      currentUserZone.zone.id,
-      createChannelInfo,
-    );
-
-    this.channelService.sendChannelInfo(
-      currentUserZone.zone,
-      userChannel.channel,
-      currentUser,
-    );
-
-    return userChannel;
-  }
-
   @Get('/list/:userZoneId')
   @ApiOkResponse({
-    description: "Get the list of current user's zones",
+    description: "Get the list of current user's zone channels",
   })
   @ApiParam({
     name: 'userZoneId',
@@ -63,7 +27,7 @@ export class UserChannelController {
   })
   @PaginationQueryParams()
   @UserZoneRole()
-  async getCurrentUserZones(
+  async getCurrentUserZoneChannels(
     @CurrentUser() user: UserPayload,
     @CurrentUserZone() currentUserZone: UserZone,
     @Query() paginatedQuery: PaginationQuery,

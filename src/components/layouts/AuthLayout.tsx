@@ -22,6 +22,7 @@ interface Props {
     onClick: () => void;
     title: string;
     body: string;
+    disabled?: boolean;
   };
   background?: JSX.Element;
   formTitle: string;
@@ -77,6 +78,7 @@ const AuthLayout: React.FC<Props> = ({
                     {callToAction.title}
                   </Text>
                   <Button
+                    disabled={callToAction.disabled || false}
                     style={{
                       paddingRight: size === 'large' ? '150px' : '80px',
                       paddingLeft: size === 'large' ? '150px' : '80px',

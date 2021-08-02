@@ -56,7 +56,7 @@ const MeetingsByZone: FC = () => {
   return (
     <PrivatePageLayout
       title="Meetings By Zone"
-      rightSideItem={
+      rightComponent={
         <Box flex={{ grow: 2 }}>
           <Box
             pad={{ horizontal: 'medium' }}

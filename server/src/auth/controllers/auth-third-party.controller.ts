@@ -142,6 +142,9 @@ export class AuthThirdPartyController {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        userRole: {
+          ...user.userRole,
+        },
       };
       const token = await this.authService.generateLoginToken(userPayload);
 
