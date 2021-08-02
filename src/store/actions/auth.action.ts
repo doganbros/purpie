@@ -21,6 +21,9 @@ import {
   VERIFY_USER_EMAIL_SUCCESS,
   VERIFY_USER_EMAIL_FAILED,
   VERIFY_USER_EMAIL_REQUESTED,
+  RESEND_MAIL_VERIFICATION_TOKEN_SUCCESS,
+  RESEND_MAIL_VERIFICATION_TOKEN_FAILED,
+  RESEND_MAIL_VERIFICATION_TOKEN_REQUESTED,
 } from '../constants/auth.constants';
 import * as AuthService from '../services/auth.service';
 import {
@@ -51,7 +54,7 @@ export const loginAction = (user: LoginPayload): AuthAction => {
         payload: err?.response?.data,
       });
       if (err?.response?.data?.error === 'MUST_VERIFY_EMAIL') {
-        appHistory.push('/verify-email');
+        appHistory.push(`/verify-email-info/${err?.response?.data.user.id}`);
       }
     }
   };
@@ -149,7 +152,7 @@ export const registerAction = (user: RegisterPayload): AuthAction => {
         type: REGISTER_SUCCESS,
         payload,
       });
-      appHistory.push('/verify-email');
+      appHistory.push(`/verify-email-info/${payload.id}`);
     } catch (err) {
       dispatch({
         type: REGISTER_FAILED,
@@ -201,6 +204,31 @@ export const resetPasswordAction = (body: ResetPasswordPayload): AuthAction => {
     } catch (err) {
       dispatch({
         type: RESET_PASSWORD_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+export const resendMailVerificationTokenAction = (
+  userId: number
+): AuthAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: RESEND_MAIL_VERIFICATION_TOKEN_REQUESTED,
+    });
+    try {
+      await AuthService.resendMailVerificationToken(userId);
+      dispatch({
+        type: RESEND_MAIL_VERIFICATION_TOKEN_SUCCESS,
+      });
+      setToastAction(
+        'ok',
+        'Your email verification link has successfully been sent to your email'
+      )(dispatch);
+      appHistory.replace('/login');
+    } catch (err) {
+      dispatch({
+        type: RESEND_MAIL_VERIFICATION_TOKEN_FAILED,
         payload: err?.response?.data,
       });
     }

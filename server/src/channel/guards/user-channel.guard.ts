@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   NotFoundException,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ChannelService } from '../channel.service';
@@ -41,13 +42,16 @@ export class UserChannelGuard implements CanActivate {
     }
 
     if (!req.userChannel)
-      throw new NotFoundException('User Zone not found', 'USER_ZONE_NOT_FOUND');
+      throw new NotFoundException(
+        'User Channel not found',
+        'USER_CHANNEL_NOT_FOUND',
+      );
 
     for (const permission of userChannelPermissions) {
       if (!req.userChannel.channelRole[permission])
-        throw new NotFoundException(
-          'User channel not found',
-          'USER_CHANNEL_NOT_FOUND',
+        throw new UnauthorizedException(
+          'You are not authorized',
+          'NOT_AUTHORIZED',
         );
     }
 

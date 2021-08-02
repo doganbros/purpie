@@ -40,7 +40,6 @@ export class UserContact1627250340924 implements MigrationInterface {
             type: 'int',
           },
         ],
-        // uniques: ['userId', 'contactUserId'],
         uniques: [
           {
             name: 'contact_uid_cuid_unique_cols',

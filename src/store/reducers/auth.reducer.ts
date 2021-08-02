@@ -18,6 +18,9 @@ import {
   THIRD_PARTY_AUTH_WITH_CODE_SUCCESS,
   VERIFY_USER_EMAIL_FAILED,
   VERIFY_USER_EMAIL_SUCCESS,
+  RESEND_MAIL_VERIFICATION_TOKEN_REQUESTED,
+  RESEND_MAIL_VERIFICATION_TOKEN_SUCCESS,
+  RESEND_MAIL_VERIFICATION_TOKEN_FAILED,
 } from '../constants/auth.constants';
 import { AuthState, AuthActionParams } from '../types/auth.types';
 
@@ -37,6 +40,10 @@ const initialState: AuthState = {
     error: null,
   },
   verifyUserEmail: {
+    loading: false,
+    error: null,
+  },
+  resendMailVerificationToken: {
     loading: false,
     error: null,
   },
@@ -175,6 +182,30 @@ const authReducer = (
       return {
         ...state,
         forgotPassword: {
+          error: null,
+          loading: false,
+        },
+      };
+    case RESEND_MAIL_VERIFICATION_TOKEN_REQUESTED:
+      return {
+        ...state,
+        resendMailVerificationToken: {
+          ...state.resendMailVerificationToken,
+          loading: true,
+        },
+      };
+    case RESEND_MAIL_VERIFICATION_TOKEN_SUCCESS:
+      return {
+        ...state,
+        resendMailVerificationToken: {
+          ...state.resendMailVerificationToken,
+          loading: false,
+        },
+      };
+    case RESEND_MAIL_VERIFICATION_TOKEN_FAILED:
+      return {
+        ...state,
+        resendMailVerificationToken: {
           error: null,
           loading: false,
         },

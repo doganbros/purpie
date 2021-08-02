@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   NotFoundException,
+  Param,
   Post,
   Put,
   UnauthorizedException,
@@ -70,9 +71,8 @@ export class AuthController {
     @Body() loginUserDto: LoginUserDto,
     @Headers('app-subdomain') subdomain: string,
   ): Promise<UserPayloadWithToken> {
-    if (subdomain) {
+    if (subdomain)
       await this.authService.subdomainValidity(subdomain, loginUserDto.email);
-    }
 
     const user = await this.authService.getUserByEmail(loginUserDto.email);
 
@@ -98,13 +98,16 @@ export class AuthController {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      userRole: {
+        ...user.userRole,
+      },
     };
 
     if (!user.emailConfirmed)
       throw new UnauthorizedException({
         message: 'Email must be verified',
         error: 'MUST_VERIFY_EMAIL',
-        ...userPayload,
+        user: userPayload,
       });
 
     const token = await this.authService.generateLoginToken(userPayload);
@@ -136,6 +139,16 @@ export class AuthController {
   ) {
     const user = await this.authService.verifyUserEmail(email, token);
     return user;
+  }
+
+  @Post('resend-mail-verification-token/:userId')
+  async resendMailVerificationToken(@Param('userId') userId: string) {
+    const userInfo = await this.authService.verifyResendMailVerificationToken(
+      Number.parseInt(userId, 10),
+    );
+
+    await this.authService.sendAccountVerificationMail(userInfo);
+    return userInfo.user;
   }
 
   @Post('/reset-password-request')

@@ -55,7 +55,7 @@ export const publicRoutes: Array<AppRoute> = [
   },
   {
     id: nanoid(),
-    path: '/verify-email',
+    path: '/verify-email-info/:userId',
     component: VerifyUserEmailInfo,
     description: 'User is asked to verify email',
   },

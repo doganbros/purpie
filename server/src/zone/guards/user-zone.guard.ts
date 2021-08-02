@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   NotFoundException,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ZoneService } from '../zone.service';
@@ -42,9 +43,9 @@ export class UserZoneGuard implements CanActivate {
 
     for (const permission of userZonePermissions) {
       if (!req.userZone.zoneRole[permission])
-        throw new NotFoundException(
-          'User zone not found',
-          'USER_ZONE_NOT_FOUND',
+        throw new UnauthorizedException(
+          'You are not authorized',
+          'NOT_AUTHORIZED',
         );
     }
 
