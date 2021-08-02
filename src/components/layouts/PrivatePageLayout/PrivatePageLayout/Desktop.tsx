@@ -11,12 +11,12 @@ interface Props {
   rightComponent?: React.ReactNode;
 }
 
-const leftSidebarWidth = 135;
-const topHeight = 140;
-const rightSidebarWidth = 400;
-
 const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
   const history = useHistory();
+
+  const leftComponentWidth = 135;
+  const topComponentHeight = 140;
+  const rightComponentWidth = 400;
 
   return (
     <Box width="100vw" height="100vh" elevation="xlarge" round="large">
@@ -28,7 +28,7 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
         left="0"
         round="large"
         pad={{ right: '100px' }}
-        width={`${leftSidebarWidth + 100}px`}
+        width={`${leftComponentWidth + 100}px`}
       >
         <Button
           margin={{ vertical: 'medium' }}
@@ -48,18 +48,18 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
         top="0"
         right="0"
         bottom="0"
-        left={`${leftSidebarWidth}px`}
+        left={`${leftComponentWidth}px`}
         background="white"
         round={{ corner: 'left', size: 'large' }}
       />
       <ExtendedBox
         position="absolute"
         top="0"
-        left={`${leftSidebarWidth}px`}
-        right={`${rightComponent ? rightSidebarWidth : 0}px`}
+        left={`${leftComponentWidth}px`}
+        right={`${rightComponent ? rightComponentWidth : 0}px`}
         minHeight="100vh"
         pad={{
-          top: `${topComponent ? topHeight : 0}px`,
+          top: `${topComponent ? topComponentHeight : 0}px`,
           horizontal: 'large',
         }}
       >
@@ -67,9 +67,9 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
           <ExtendedBox
             position="fixed"
             top="0"
-            right={`${rightComponent ? rightSidebarWidth : 0}px`}
-            left={`${leftSidebarWidth}px`}
-            height={`${topHeight}px`}
+            right={`${rightComponent ? rightComponentWidth : 0}px`}
+            left={`${leftComponentWidth}px`}
+            height={`${topComponentHeight}px`}
             round={{ corner: 'top-left', size: 'large' }}
             background="white"
             pad={{ left: 'large' }}
@@ -91,7 +91,7 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
             top="0"
             bottom="0"
             right="0"
-            width={`${rightSidebarWidth}px`}
+            width={`${rightComponentWidth}px`}
             background="white"
             round="large"
             elevation="xlarge"
