@@ -6,10 +6,11 @@ import {
   CardHeader,
   CardFooter,
   CardBody,
+  Heading,
   TextInput,
   Text,
 } from 'grommet';
-import { CloudComputer, Edit, Info, Search, Task, Trash } from 'grommet-icons';
+import { Edit, Info, Search, Task, Trash } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -67,8 +68,12 @@ const ZoneList: FC = () => {
   return (
     <PrivatePageLayout
       title="Zones"
-      icon={CloudComputer}
-      rightSideItem={
+      topComponent={
+        <Box fill justify="center">
+          <Heading level="3">Zones</Heading>
+        </Box>
+      }
+      rightComponent={
         <Box flex={{ grow: 2 }}>
           <Box
             pad={{ horizontal: 'medium' }}
