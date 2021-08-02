@@ -1,12 +1,5 @@
-import {
-  Avatar,
-  Box,
-  Button,
-  Header,
-  Layer,
-  Sidebar as SidebarContainer,
-} from 'grommet';
-import { Menu, Previous, Icon, Close } from 'grommet-icons';
+import { Avatar, Box, Button, Header, Layer } from 'grommet';
+import { Menu, Previous, Close } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
 import React, { FC, useState } from 'react';
 import Sidebar from '../Sidebar';
@@ -16,7 +9,6 @@ import ExtendedBox from '../../../utils/ExtendedBox';
 
 interface Props {
   topComponent?: React.ReactNode;
-  icon?: Icon;
   rightComponent?: React.ReactNode;
 }
 
@@ -40,7 +32,7 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
             icon={
               <Avatar
                 alignSelf="center"
-                size="medium"
+                size="35px"
                 round="medium"
                 src={Logo}
               />
@@ -57,37 +49,46 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
         )}
       </Header>
       {topComponent && (
-        <Box pad="large">
-          <Box fill overflow="auto">
-            <ExtendedBox minWidth="min-content" pad={{ vertical: 'large' }}>
-              {topComponent}
-            </ExtendedBox>
-          </Box>
+        <ExtendedBox pad={{ horizontal: 'large' }} minHeight="min-content">
+          <ExtendedBox
+            overflow={{ horizontal: 'auto' }}
+            pad={{ vertical: 'medium' }}
+          >
+            <ExtendedBox minWidth="min-content">{topComponent}</ExtendedBox>
+          </ExtendedBox>
           <Box fill="horizontal" height="3px" background="#E4E9F2" />
-        </Box>
+        </ExtendedBox>
       )}
       <Box pad="large" fill overflow="auto">
         <ExtendedBox minHeight="min-content">{children}</ExtendedBox>
       </Box>
       {showLeftSidebar && (
         <Layer
-          plain
+          full="vertical"
           position="left"
-          animation="slide"
+          responsive={false}
           onEsc={() => {
             setShowLeftSidebar(false);
           }}
           onClickOutside={() => {
             setShowLeftSidebar(false);
           }}
-          onClick={() => {
-            setShowLeftSidebar(false);
-          }}
         >
-          <SidebarContainer width="135px" background="brand">
+          <Box
+            width="135px"
+            pad={{
+              vertical: 'large',
+              horizontal: 'medium',
+            }}
+            fill="vertical"
+            background="#7d4cdb"
+            justify="between"
+          >
             <ZoneSelector />
-            <Sidebar />
-          </SidebarContainer>
+            <Box pad={{ bottom: 'large' }}>
+              <Sidebar />
+            </Box>
+          </Box>
         </Layer>
       )}
       {showRightSidebar && (
