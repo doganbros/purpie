@@ -12,7 +12,6 @@ import {
   Post,
   Res,
 } from '@nestjs/common';
-import dayjs from 'dayjs';
 import { Response } from 'express';
 import { ApiParam, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from 'entities/User.entity';
@@ -148,11 +147,7 @@ export class AuthThirdPartyController {
           ...user.userRole,
         },
       };
-      const token = await this.authService.generateLoginToken(userPayload);
-
-      res.cookie('OCTOPUS_ACCESS_TOKEN', token, {
-        expires: dayjs().add(1, 'hour').toDate(),
-      });
+      await this.authService.setAccessTokens(userPayload, res);
       return userPayload;
     }
 

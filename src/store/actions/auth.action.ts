@@ -137,8 +137,13 @@ export const authenticateWithThirdPartyCodeAction = (
   };
 };
 
-export const logoutAction = {
-  type: LOGOUT,
+export const logoutAction = (): AuthAction => {
+  return async (dispatch) => {
+    await AuthService.logOut();
+    dispatch({
+      type: LOGOUT,
+    });
+  };
 };
 
 export const registerAction = (user: RegisterPayload): AuthAction => {

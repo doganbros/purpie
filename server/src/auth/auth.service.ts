@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import bcrypt from 'bcryptjs';
@@ -8,11 +12,14 @@ import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
 import { Response } from 'express';
 import { generateJWT } from 'helpers/jwt';
-import { nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
 import { Not, Repository, IsNull } from 'typeorm';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { UserBasic, UserBasicWithToken } from './interfaces/user.interface';
+import {
+  UserBasic,
+  UserBasicWithToken,
+  UserPayload,
+} from './interfaces/user.interface';
 
 const {
   AUTH_TOKEN_SECRET = 'secret_a',
@@ -20,7 +27,7 @@ const {
   GOOGLE_OAUTH_CLIENT_ID = '',
   FACEBOOK_OAUTH_CLIENT_ID = '',
   FACEBOOK_OAUTH_CLIENT_SECRET = '',
-  AUTH_TOKEN_LIFE = '24h',
+  AUTH_TOKEN_LIFE = '1h',
   RESET_PASSWORD_TOKEN_SECRET = 'secret_r',
   REACT_APP_CLIENT_HOST = '',
   REACT_APP_SERVER_HOST = '',
@@ -31,35 +38,86 @@ const {
 export class AuthService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(UserZone)
-    private userZoneRepository: Repository<UserZone>,
     private mailService: MailService,
   ) {}
 
   async generateLoginToken(payload: Record<string, any>) {
-    const token = await generateJWT(payload, AUTH_TOKEN_SECRET, {
+    const accessToken = await generateJWT(payload, AUTH_TOKEN_SECRET, {
       expiresIn: AUTH_TOKEN_LIFE,
     });
+    const refreshToken = await generateJWT(
+      payload,
+      `${AUTH_TOKEN_SECRET}_REFRESH_`,
+      {
+        expiresIn: '30d',
+      },
+    );
 
-    return token;
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 
   async generateResetPasswordToken(email: string) {
-    return generateJWT(
-      { email, randomId: nanoid() },
-      RESET_PASSWORD_TOKEN_SECRET,
-      {
-        expiresIn: '1h',
-      },
-    );
+    return generateJWT({ email }, RESET_PASSWORD_TOKEN_SECRET, {
+      expiresIn: '1h',
+    });
   }
 
-  async setTokens(token: string, res: Response) {
-    res.cookie('OCTOPUS_ACCESS_TOKEN', token, {
-      expires: dayjs().add(1, 'hour').toDate(),
+  async setAccessTokens(userPayload: UserPayload, res: Response) {
+    const { accessToken, refreshToken } = await this.generateLoginToken(
+      userPayload,
+    );
+
+    await this.userRepository.update(
+      { id: userPayload.id },
+      { refreshAccessToken: await bcrypt.hash(refreshToken, 10) },
+    );
+
+    res.cookie('OCTOPUS_ACCESS_TOKEN', accessToken, {
+      expires: dayjs().add(30, 'days').toDate(),
       domain: `.${new URL(REACT_APP_SERVER_HOST).hostname}`,
       httpOnly: true,
     });
+    res.cookie('OCTOPUS_REFRESH_ACCESS_TOKEN', refreshToken, {
+      expires: dayjs().add(30, 'days').toDate(),
+      domain: `.${new URL(REACT_APP_SERVER_HOST).hostname}`,
+      httpOnly: true,
+    });
+  }
+
+  removeAccessTokens(res: Response) {
+    res.cookie('OCTOPUS_ACCESS_TOKEN', '', {
+      expires: new Date(),
+      domain: `.${new URL(REACT_APP_SERVER_HOST).hostname}`,
+      httpOnly: true,
+    });
+    res.cookie('OCTOPUS_REFRESH_ACCESS_TOKEN', '', {
+      expires: new Date(),
+      domain: `.${new URL(REACT_APP_SERVER_HOST).hostname}`,
+      httpOnly: true,
+    });
+  }
+
+  async verifyRefreshToken(userPayload: UserPayload, refreshToken: string) {
+    const user = await this.userRepository.findOne({ id: userPayload.id });
+
+    if (!user) throw new NotFoundException('User not found', 'USER_NOT_FOUND');
+
+    if (!user.refreshAccessToken)
+      throw new UnauthorizedException(
+        'You not authorized to use this route',
+        'NOT_SIGNED_IN',
+      );
+    return bcrypt.compare(refreshToken, user.refreshAccessToken);
+  }
+
+  async removeRefreshToken(userId: number) {
+    await this.userRepository.update(
+      { id: userId },
+      { refreshAccessToken: null },
+    );
   }
 
   async registerUser({
@@ -86,7 +144,6 @@ export class AuthService {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      randomId: nanoid(),
     };
     const token = await generateJWT(userInfo, MAIL_VERIFICATION_TOKEN_SECRET, {
       expiresIn: '1h',

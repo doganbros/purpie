@@ -43,6 +43,9 @@ export class User extends RecordEntity {
   @Column({ nullable: true })
   mailVerificationToken: string;
 
+  @Column({ nullable: true, type: String })
+  refreshAccessToken: string | null;
+
   @OneToOne(() => UserRole)
   @JoinColumn({ name: 'userRoleCode', referencedColumnName: 'roleCode' })
   userRole: UserRole;

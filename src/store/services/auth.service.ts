@@ -13,7 +13,8 @@ export const login = async (user: LoginPayload): Promise<User> =>
 export const retrieveUser = async (): Promise<User> =>
   http.post('/auth/retrieve').then((res) => res.data);
 
-export const logOut = (): void => localStorage.removeItem('accessToken'); // TODO: implement logout
+export const logOut = (): Promise<any> =>
+  http.post('/auth/logout').then((res) => res.data);
 
 export const register = async (user: RegisterPayload): Promise<User> =>
   http.post('/auth/register', user).then((res) => res.data);

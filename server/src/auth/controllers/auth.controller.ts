@@ -109,10 +109,21 @@ export class AuthController {
         user: userPayload,
       });
 
-    const token = await this.authService.generateLoginToken(userPayload);
-
-    await this.authService.setTokens(token, res);
+    await this.authService.setAccessTokens(userPayload, res);
     return userPayload;
+  }
+
+  @Post('/logout')
+  @IsAuthenticated([], { removeAccessTokens: true })
+  async logout(
+    @CurrentUser() currentUser: UserPayload,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.authService.removeRefreshToken(currentUser.id);
+
+    this.authService.removeAccessTokens(res);
+
+    return 'OK';
   }
 
   @Post('/verify-email')
