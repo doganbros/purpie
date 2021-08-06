@@ -261,7 +261,6 @@ const authReducer = (
         },
       };
     case LOGOUT:
-      window.localStorage.removeItem('accessToken');
       return {
         ...state,
         isAuthenticated: false,
