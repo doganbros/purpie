@@ -18,7 +18,7 @@ import { logoutAction } from '../../../store/actions/auth.action';
 import { closeCreateMeetingLayerAction } from '../../../store/actions/meeting.action';
 import { closeCreateZoneLayerAction } from '../../../store/actions/zone.action';
 import { AppState } from '../../../store/reducers/root.reducer';
-import AddNew from '../../../layers/add-new/AddNew';
+import AddContent from '../../../layers/add-content/AddContent';
 
 const sidebarBtns = [
   {
@@ -72,7 +72,7 @@ const Sidebar: FC = () => {
         visible={createMeetingVisible}
         onClose={() => dispatch(closeCreateMeetingLayerAction)}
       />
-      {showAddNew && <AddNew onDismiss={() => setShowAddNew(false)} />}
+      {showAddNew && <AddContent onDismiss={() => setShowAddNew(false)} />}
       <Button
         onClick={() => {
           setShowAddNew(true);

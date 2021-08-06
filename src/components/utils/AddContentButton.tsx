@@ -1,14 +1,14 @@
 import React, { FC, ReactElement } from 'react';
 import { Button, Box, Text } from 'grommet';
 
-interface AddNewButtonProps {
+interface AddContentButtonProps {
   iconName: ReactElement;
   title: string;
   description: string;
   onClick: () => void;
 }
 
-const AddNewButton: FC<AddNewButtonProps> = ({
+const AddContentButton: FC<AddContentButtonProps> = ({
   iconName,
   title,
   description,
@@ -40,4 +40,4 @@ const AddNewButton: FC<AddNewButtonProps> = ({
   </Button>
 );
 
-export default AddNewButton;
+export default AddContentButton;

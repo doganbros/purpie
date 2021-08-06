@@ -8,14 +8,14 @@ import {
   ShareOption,
 } from 'grommet-icons';
 import { useDispatch } from 'react-redux';
-import AddNewButton from '../../components/utils/AddNewButton';
+import AddContentButton from '../../components/utils/AddContentButton';
 import { openCreateMeetingLayerAction } from '../../store/actions/meeting.action';
 
-interface AddNewProps {
+interface AddContentProps {
   onDismiss: () => void;
 }
 
-const AddNew: FC<AddNewProps> = ({ onDismiss }) => {
+const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
   const dispatch = useDispatch();
   const iconProps = {
     size: 'large',
@@ -91,7 +91,7 @@ const AddNew: FC<AddNewProps> = ({ onDismiss }) => {
         >
           {buttonProps.map((b) => (
             <Box key={b.title} margin={{ right: 'xxsmall' }}>
-              <AddNewButton {...b} />
+              <AddContentButton {...b} />
             </Box>
           ))}
         </Box>
@@ -100,4 +100,4 @@ const AddNew: FC<AddNewProps> = ({ onDismiss }) => {
   );
 };
 
-export default AddNew;
+export default AddContent;
