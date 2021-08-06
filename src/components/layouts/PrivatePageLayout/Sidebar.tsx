@@ -8,7 +8,7 @@ import {
   Group,
   Home,
   Logout,
-  User,
+  SettingsOption,
 } from 'grommet-icons';
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -122,7 +122,7 @@ const Sidebar: FC = () => {
             icon: <Logout />,
           },
         ]}
-        icon={<User />}
+        icon={<SettingsOption color="dark-6" />}
       />
     </>
   );
