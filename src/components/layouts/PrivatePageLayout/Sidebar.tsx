@@ -113,6 +113,13 @@ const Sidebar: FC = () => {
       {sidebarBtns.map((v) => (
         <SidebarButton key={v.title} {...v} />
       ))}
+      <Box
+        alignSelf="center"
+        background="dark-6"
+        width="30px"
+        height="3px"
+        margin={{ vertical: 'medium' }}
+      />
       <Menu
         alignSelf="center"
         items={[
