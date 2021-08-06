@@ -50,7 +50,7 @@ const sidebarBtns = [
 
 const Sidebar: FC = () => {
   const dispatch = useDispatch();
-  const [showAddNew, setShowAddNew] = useState(false);
+  const [showAddContent, setShowAddContent] = useState(false);
   const {
     zone: {
       createZone: { layerIsVisible: createZoneVisible },
@@ -72,10 +72,12 @@ const Sidebar: FC = () => {
         visible={createMeetingVisible}
         onClose={() => dispatch(closeCreateMeetingLayerAction)}
       />
-      {showAddNew && <AddContent onDismiss={() => setShowAddNew(false)} />}
+      {showAddContent && (
+        <AddContent onDismiss={() => setShowAddContent(false)} />
+      )}
       <Button
         onClick={() => {
-          setShowAddNew(true);
+          setShowAddContent(true);
         }}
         alignSelf="center"
       >
