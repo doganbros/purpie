@@ -99,12 +99,17 @@ const Sidebar: FC = () => {
         visible={createMeetingVisible}
         onClose={() => dispatch(closeCreateMeetingLayerAction)}
       />
-      <Menu
-        margin={{ bottom: '10px' }}
-        alignSelf="center"
-        items={data}
-        icon={<Add />}
-      />
+      <Menu alignSelf="center" items={data} label="Add">
+        <Box
+          width="min-content"
+          background="accent-4"
+          round="small"
+          pad={{ vertical: 'xxsmall', horizontal: 'xsmall' }}
+          margin={{ vertical: 'small' }}
+        >
+          <Add color="dark-1" />
+        </Box>
+      </Menu>
       {sidebarBtns.map((v) => (
         <SidebarButton key={v.title} {...v} />
       ))}
