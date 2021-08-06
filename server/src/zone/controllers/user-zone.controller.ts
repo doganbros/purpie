@@ -1,12 +1,6 @@
-import {
-  Controller,
-  Get,
-  Query,
-  Delete,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Controller, Get, Query, Delete } from '@nestjs/common';
 import { ApiHeader, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
-import { User } from 'entities/User.entity';
+
 import { UserZone } from 'entities/UserZone.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
@@ -22,7 +16,7 @@ import { ZoneService } from '../zone.service';
 export class UserZoneController {
   constructor(private zoneService: ZoneService) {}
 
-  @Get()
+  @Get('list')
   @ApiOkResponse({
     description: "Get the list of current user's zones",
   })
@@ -40,7 +34,7 @@ export class UserZoneController {
     return this.zoneService.getCurrentUserZones(user, paginatedQuery);
   }
 
-  @Get('/:userZoneId')
+  @Get('/detail/:userZoneId')
   @ApiParam({
     name: 'userZoneId',
     description: 'User Zone Id',
@@ -50,24 +44,13 @@ export class UserZoneController {
     return currentUserZone;
   }
 
-  @Delete('/:userZoneId')
+  @Delete('/remove/:userZoneId')
   @ApiParam({
     name: 'userZoneId',
     description: 'User Zone Id',
   })
   @UserZoneRole()
-  async deleteUserZoneById(
-    @CurrentUserZone() currentUserZone: UserZone,
-    @CurrentUser() currentUser: User,
-  ) {
-    if (
-      currentUserZone.zone.defaultZone &&
-      currentUserZone.userId === currentUser.id
-    )
-      throw new ForbiddenException(
-        'Cannot remove yourself from your default zone',
-        'CANNOT_REMOVE_YOURSELF_DEFAULT_ZONE',
-      );
+  async deleteUserZoneById(@CurrentUserZone() currentUserZone: UserZone) {
     await currentUserZone.remove();
     return 'OK';
   }

@@ -17,12 +17,10 @@ export class UserService {
         'CONTACT_ELIGEBILITY_ERR',
       );
 
-    return this.contactRepository
-      .create({
-        userId,
-        contactUserId,
-      })
-      .save();
+    return this.contactRepository.insert([
+      { userId, contactUserId },
+      { userId: contactUserId, contactUserId: userId },
+    ]);
   }
 
   async listContacts(userId: number, paginatedQuery: PaginationQuery) {
@@ -34,7 +32,18 @@ export class UserService {
     });
   }
 
-  async deleteContact(userId: number, contactId: number) {
-    return this.contactRepository.delete({ userId, id: contactId });
+  async deleteContact(userId: number, contactUserId: number) {
+    return this.contactRepository
+      .createQueryBuilder()
+      .delete()
+      .where('userId = :userId AND contactUserId = :contactUserId', {
+        userId,
+        contactUserId,
+      })
+      .orWhere('userId = :contactUserId AND contactUserId = :userId', {
+        userId,
+        contactUserId,
+      })
+      .execute();
   }
 }

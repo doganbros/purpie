@@ -13,7 +13,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
-import { ContactIdParam } from '../dto/contact-id.param';
+import { ContactUserIdParam } from '../dto/contact-user-id.param';
 import { CreateContactDto } from '../dto/create-contact.dto';
 import { UserService } from '../user.service';
 
@@ -46,12 +46,12 @@ export class UserController {
     return this.userService.listContacts(currentUser.id, paginatedQuery);
   }
 
-  @Delete('/contact/:contactId')
+  @Delete('/contact/:contactUserId')
   @IsAuthenticated()
   async deleteContact(
     @CurrentUser() currentUser: UserPayload,
-    @Param() { contactId }: ContactIdParam,
+    @Param() { contactUserId }: ContactUserIdParam,
   ) {
-    return this.userService.deleteContact(currentUser.id, contactId);
+    return this.userService.deleteContact(currentUser.id, contactUserId);
   }
 }

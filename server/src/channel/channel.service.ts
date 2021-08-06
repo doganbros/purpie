@@ -45,7 +45,6 @@ export class ChannelService {
             topic: createChannelInfo.topic,
             categoryId: defaultChannel ? null : createChannelInfo.categoryId,
             createdById: userId,
-            defaultChannel,
           })
           .save(),
       })
@@ -91,6 +90,20 @@ export class ChannelService {
   ) {
     const results = await this.userChannelRepository
       .createQueryBuilder('user_channel')
+      .select([
+        'id',
+        'channel.id',
+        'channel.createdOn',
+        'channel.name',
+        'channel.topic',
+        'channel.description',
+        'channel.active',
+        'channel.public',
+        'channel.createdById',
+        'channel.categoryId',
+        'channel.zoneId',
+        'channel.zoneId',
+      ])
       .leftJoinAndSelect('user_channel.channel', 'channel')
       .leftJoinAndSelect('user_channel.channelRole', 'channel_role')
       .where('user_channel.userId = :userId', { userId })

@@ -12,7 +12,7 @@ import { MeetingConfig } from 'types/Meeting';
 import { RecordEntity } from './base/RecordEntity';
 import { Category } from './Category.entity';
 import { Channel } from './Channel.entity';
-import { zoneMeetingConfig } from './data/zone-meeting-config';
+import { baseMeetingConfig } from './data/base-meeting-config';
 import { User } from './User.entity';
 import { UserZone } from './UserZone.entity';
 
@@ -42,7 +42,7 @@ export class Zone extends RecordEntity {
   @OneToMany(() => Channel, (channel) => channel.zone)
   channels: Channel;
 
-  @Column({ type: 'simple-json', default: zoneMeetingConfig })
+  @Column({ type: 'simple-json', default: baseMeetingConfig })
   zoneMeetingConfig: MeetingConfig;
 
   @ManyToOne(() => User, { onDelete: 'SET NULL' })
@@ -58,9 +58,6 @@ export class Zone extends RecordEntity {
 
   @Column('int')
   categoryId: number;
-
-  @Column({ default: false })
-  defaultZone: boolean;
 
   @OneToMany(() => UserZone, (userZone) => userZone.zone)
   userZone: Array<UserZone>;

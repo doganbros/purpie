@@ -40,7 +40,7 @@ export class UserChannelController {
     return result;
   }
 
-  @Get('/get/:userChannelId')
+  @Get('/detail/:userChannelId')
   @ApiParam({
     name: 'userChannelId',
     description: 'User Channel Id',
@@ -52,7 +52,7 @@ export class UserChannelController {
     return currentUserchannel;
   }
 
-  @Delete('/:userChannelId')
+  @Delete('/remove/:userChannelId')
   @ApiParam({
     name: 'UserZoneIdParams',
     description: 'User Zone Id',

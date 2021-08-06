@@ -1,7 +1,7 @@
-import { BaseEntity, FindManyOptions, Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 
 export class RecordRepository<T> extends Repository<T> {
-  async paginate(options?: FindManyOptions<BaseEntity>) {
+  async paginate(options?: FindManyOptions<T>) {
     const [data, total] = await this.findAndCount(options);
 
     return {

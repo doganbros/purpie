@@ -1,19 +1,12 @@
-import {
-  BadRequestException,
-  forwardRef,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import pick from 'lodash.pick';
 import { URL } from 'url';
 import { IsNull, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { Zone } from 'entities/Zone.entity';
-import { Channel } from 'entities/Channel.entity';
 import { UserZoneRepository } from 'entities/repositories/UserZone.repository';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
-import { ChannelService } from 'src/channel/channel.service';
 import { Category } from 'entities/Category.entity';
 import { MailService } from 'src/mail/mail.service';
 import { UserZone } from 'entities/UserZone.entity';
@@ -32,27 +25,18 @@ export class ZoneService {
     private userZoneRepository: UserZoneRepository,
     @InjectRepository(Invitation)
     private invitationRepository: Repository<Invitation>,
-    @InjectRepository(Channel)
-    private channelRepository: Repository<Channel>,
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
     private mailService: MailService,
-    @Inject(forwardRef(() => ChannelService))
-    private channelService: ChannelService,
   ) {}
 
-  async createZone(
-    userId: number,
-    createZoneInfo: CreateZoneDto,
-    defaultZone = false,
-  ) {
+  async createZone(userId: number, createZoneInfo: CreateZoneDto) {
     return this.userZoneRepository
       .create({
         userId,
         zoneRoleCode: 'SUPER_ADMIN',
         zone: await this.zoneRepository
           .create({
-            defaultZone,
             name: createZoneInfo.name,
             subdomain: createZoneInfo.subdomain,
             description: createZoneInfo.description,
@@ -134,47 +118,6 @@ export class ZoneService {
         id: invitationId,
       },
     });
-  }
-
-  async createDefaultZoneAndChannel(
-    userId: number,
-    createZoneInfo: CreateZoneDto,
-  ) {
-    const userZone = await this.createZone(userId, createZoneInfo, true);
-
-    const userChannel = await this.channelService.createChannel(
-      userId,
-      userZone.zone.id,
-      {
-        categoryId:
-          userZone.zone.categoryId /* Will be changed to sub category later */,
-        name: 'default',
-      },
-      true,
-    );
-
-    await userChannel.save();
-
-    return {
-      userZone,
-      userChannel,
-    };
-  }
-
-  async userHasDefaultZoneAndChannel(userId: number) {
-    const [zone, channel] = await Promise.all([
-      this.zoneRepository.findOne({
-        createdById: userId,
-        defaultZone: true,
-      }),
-      this.channelRepository.findOne({
-        createdById: userId,
-        defaultChannel: true,
-      }),
-    ]);
-
-    if (zone && channel) return true;
-    return false;
   }
 
   async getCurrentUserZones(user: UserPayload, query: PaginationQuery) {

@@ -32,6 +32,16 @@ type ToolbarButton =
 
 export interface MeetingConfig {
   startWithAudioMuted?: boolean;
+  enableNoisyMicDetection?: boolean;
+  disableResponsiveTiles?: boolean;
+  hideLobbyButton?: boolean;
+  disableProfile?: boolean;
+  roomPasswordNumberOfDigits?: boolean;
+  enableInsecureRoomNameWarning?: boolean;
+  enableAutomaticUrlCopy?: boolean;
+  disableRecordAudioNotification?: boolean;
+  disableRemoteMute?: boolean;
+  enableNoAudioDetection?: boolean;
   startScreenSharing?: boolean;
   disableJoinLeaveSounds?: boolean;
   hideConferenceSubject?: boolean;
