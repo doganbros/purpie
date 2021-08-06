@@ -4,19 +4,32 @@ import compression from 'compression';
 import { ValidationPipe } from '@nestjs/common';
 import cors from 'cors';
 import { NestFactory } from '@nestjs/core';
+import cookieParser from 'cookie-parser';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { loadEnv } from 'helpers/utils';
 import { AppModule } from './app.module';
 
 loadEnv();
 
+const { REACT_APP_CLIENT_HOST = '' } = process.env;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'combined'));
   app.enableVersioning();
   app.use(helmet());
-  app.use(cors());
+  app.use(
+    cors({
+      origin: new RegExp(
+        `(\\b|\\.)${new URL(REACT_APP_CLIENT_HOST).host.replace(
+          /\./g,
+          '\\.',
+        )}$`,
+      ),
+      credentials: true,
+    }),
+  );
+  app.use(cookieParser());
   app.use(compression());
 
   app.useGlobalPipes(
@@ -31,7 +44,7 @@ async function bootstrap() {
     .setTitle('Octopus')
     .setDescription('Octopus API Documentation')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addCookieAuth('OCTOPUS_ACCESS_TOKEN')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

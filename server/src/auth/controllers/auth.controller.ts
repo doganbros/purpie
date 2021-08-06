@@ -9,6 +9,7 @@ import {
   Param,
   Post,
   Put,
+  Res,
   UnauthorizedException,
 } from '@nestjs/common';
 import {
@@ -18,13 +19,10 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Response } from 'express';
 import { RegisterUserDto } from '../dto/register-user.dto';
 import { AuthService } from '../auth.service';
-import {
-  UserBasic,
-  UserPayload,
-  UserPayloadWithToken,
-} from '../interfaces/user.interface';
+import { UserBasic, UserPayload } from '../interfaces/user.interface';
 import { LoginUserDto } from '../dto/login-user.dto';
 import { ParseTokenPipe } from '../pipes/parse-token.pipe';
 import { ResetPasswordRequestDto } from '../dto/reset-password-request.dto';
@@ -63,14 +61,15 @@ export class AuthController {
     description: 'Zone subdomain',
   })
   @ApiOkResponse({
-    type: UserPayloadWithToken,
+    type: UserPayload,
     description: `Signs in user. If it contains a header subdomain, it will be validated. If user's email is not verified an unauthorized error will be thrown. `,
   })
   @HttpCode(HttpStatus.OK)
   async loginUser(
     @Body() loginUserDto: LoginUserDto,
     @Headers('app-subdomain') subdomain: string,
-  ): Promise<UserPayloadWithToken> {
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<UserPayload> {
     if (subdomain)
       await this.authService.subdomainValidity(subdomain, loginUserDto.email);
 
@@ -110,12 +109,21 @@ export class AuthController {
         user: userPayload,
       });
 
-    const token = await this.authService.generateLoginToken(userPayload);
+    await this.authService.setAccessTokens(userPayload, res);
+    return userPayload;
+  }
 
-    return {
-      user: userPayload,
-      token,
-    };
+  @Post('/logout')
+  @IsAuthenticated([], { removeAccessTokens: true })
+  async logout(
+    @CurrentUser() currentUser: UserPayload,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.authService.removeRefreshToken(currentUser.id);
+
+    this.authService.removeAccessTokens(res);
+
+    return 'OK';
   }
 
   @Post('/verify-email')

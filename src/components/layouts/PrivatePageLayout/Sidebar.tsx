@@ -88,7 +88,7 @@ const Sidebar: FC = () => {
     },
   ];
 
-  const logout = () => dispatch(logoutAction);
+  const logout = () => dispatch(logoutAction());
   return (
     <>
       <CreateUpdateZone
