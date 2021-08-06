@@ -38,7 +38,7 @@ export const SidebarButton: FC<Props> = ({
         plain
       >
         {({ hover }: any) => (
-          <Box flex={false} pad={{ vertical: 'medium' }} align="center">
+          <Box flex={false} pad={{ vertical: 'small' }} align="center">
             <IconComponent size="medium" color={hover ? 'black' : 'white'} />
           </Box>
         )}
