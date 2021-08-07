@@ -48,11 +48,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document, {
-    swaggerOptions: {
-      persistAuthorization: true,
-    },
-  });
+  SwaggerModule.setup('swagger', app, document);
 
   // eslint-disable-next-line no-console
   app.listen(PORT).then(() => console.log(`Server started on port ${PORT}`));

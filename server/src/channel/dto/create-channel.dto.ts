@@ -15,6 +15,7 @@ export class CreateChannelDto {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   topic?: string;
 
   @ApiProperty({ type: Number, description: 'can be a number or null' })

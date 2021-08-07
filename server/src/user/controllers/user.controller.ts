@@ -43,13 +43,13 @@ export class UserController {
       return 'OK';
     }
 
-    const contact = await this.userService.createNewContact(
+    await this.userService.createNewContact(
       invitation.inviterId,
       invitation.inviteeId,
     );
 
     await this.userService.removeContactInvitation(contactInvitationId);
-    return contact;
+    return 'OK';
   }
 
   @Post('/contact/invitation/create')

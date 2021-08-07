@@ -133,6 +133,16 @@ export class ContactInvitation1628182792637 implements MigrationInterface {
         default: `'${JSON.stringify(baseMeetingConfig)}'`,
       }),
     );
+
+    const meeting = await queryRunner.getTable('meeting');
+    if (meeting) {
+      const foreignKey = meeting.foreignKeys.find((f) =>
+        f.columnNames.includes('adminId'),
+      );
+      if (foreignKey) await queryRunner.dropForeignKey(meeting, foreignKey);
+
+      await queryRunner.dropColumn(meeting, 'adminId');
+    }
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -152,6 +162,22 @@ export class ContactInvitation1628182792637 implements MigrationInterface {
         name: 'defaultZone',
         default: true,
         type: 'boolean',
+      }),
+    );
+    await queryRunner.addColumn(
+      'meeting',
+      new TableColumn({
+        name: 'adminId',
+        type: 'int',
+      }),
+    );
+    await queryRunner.createForeignKey(
+      'meeting',
+      new TableForeignKey({
+        columnNames: ['adminId'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'user',
+        onDelete: 'RESTRICT',
       }),
     );
 

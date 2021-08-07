@@ -86,13 +86,13 @@ export class UserService {
       .paginate(query);
   }
 
-  async deleteContact(userId: number, contactUserId: number) {
+  async deleteContact(userId: number, id: number) {
     return this.contactRepository
       .createQueryBuilder()
       .delete()
-      .where('userId = :userId AND contactUserId = :contactUserId', {
+      .where('userId = :userId AND id = :id', {
         userId,
-        contactUserId,
+        id,
       })
       .execute();
   }

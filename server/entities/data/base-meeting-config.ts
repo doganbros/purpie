@@ -61,5 +61,4 @@ export const baseMeetingConfig: MeetingConfig = {
   hideConferenceSubject: false,
   hideConferenceTimer: true,
   hideParticipantsStats: true,
-  subject: 'Conference Subject',
 };

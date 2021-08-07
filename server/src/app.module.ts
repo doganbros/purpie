@@ -15,6 +15,7 @@ import { UtilsModule } from './utils/utils.module';
 import { PaginationMiddleware } from './utils/middlewares/paginate.middleware';
 import { UserModule } from './user/user.module';
 import { ChannelModule } from './channel/channel.module';
+import { MeetingModule } from './meeting/meeting.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ChannelModule } from './channel/channel.module';
     UtilsModule,
     UserModule,
     ChannelModule,
+    MeetingModule,
   ],
   providers: [
     {

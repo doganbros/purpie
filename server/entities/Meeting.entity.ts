@@ -30,13 +30,6 @@ export class Meeting extends RecordEntity {
   @Column()
   createdById: number;
 
-  @ManyToOne(() => User, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'adminId' })
-  admin: User;
-
-  @Column()
-  adminId: number;
-
   @ManyToOne(() => Zone, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'zoneId' })
   zone: Zone;
