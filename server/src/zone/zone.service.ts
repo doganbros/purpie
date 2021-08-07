@@ -121,14 +121,22 @@ export class ZoneService {
   }
 
   async getCurrentUserZones(user: UserPayload, query: PaginationQuery) {
-    return this.userZoneRepository.paginate({
-      skip: query.skip,
-      take: query.limit,
-      relations: ['zone', 'zoneRole'],
-      where: {
-        userId: user.id,
-      },
-    });
+    return this.userZoneRepository
+      .createQueryBuilder('user_zone')
+      .select([
+        'user_zone.id',
+        'zone.id',
+        'zone.name',
+        'zone.subdomain',
+        'zone.description',
+        'zone.active',
+        'zone.public',
+      ])
+      .leftJoin('user_zone.zone', 'zone')
+      .leftJoinAndSelect('user_zone.zoneRole', 'zone_role')
+      .leftJoinAndSelect('zone.category', 'category')
+      .where('user_zone.userId = :userId', { userId: user.id })
+      .paginate(query);
   }
 
   async getUserZone(userId: number, params: Record<string, any>) {
@@ -137,7 +145,7 @@ export class ZoneService {
         userId,
         ...params,
       },
-      relations: ['zone', 'zoneRole'],
+      relations: ['zone', 'zoneRole', 'zone.category'],
     });
   }
 

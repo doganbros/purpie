@@ -9,8 +9,8 @@ export const loadEnv = (defaultPath?: string) => {
   return envPath;
 };
 
-export const paginate = (
-  [data, total]: [data: Array<Record<string, any>>, total: number],
+export const paginate = <T>(
+  [data, total]: [data: Array<T>, total: number],
   query: PaginationQuery,
 ) => {
   return {

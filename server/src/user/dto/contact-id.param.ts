@@ -2,10 +2,10 @@ import { IsNotEmpty, IsInt } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
-export class ContactUserIdParam {
+export class ContactIdParam {
   @ApiProperty()
   @IsNotEmpty()
   @Type(() => Number)
   @IsInt()
-  contactUserId: number;
+  contactId: number;
 }

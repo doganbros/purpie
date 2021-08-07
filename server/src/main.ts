@@ -3,13 +3,13 @@ import morgan from 'morgan';
 import compression from 'compression';
 import { ValidationPipe } from '@nestjs/common';
 import cors from 'cors';
+import { initApp } from 'populators/init-app';
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { loadEnv } from 'helpers/utils';
 import { AppModule } from './app.module';
 
-loadEnv();
+initApp();
 
 const { REACT_APP_CLIENT_HOST = '' } = process.env;
 async function bootstrap() {

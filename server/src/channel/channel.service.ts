@@ -2,11 +2,9 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from 'entities/Channel.entity';
 import { Invitation } from 'entities/Invitation.entity';
-import { UserChannelRepository } from 'entities/repositories/UserChannel.repository';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { Zone } from 'entities/Zone.entity';
-import { paginate } from 'helpers/utils';
 import pick from 'lodash.pick';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { MailService } from 'src/mail/mail.service';
@@ -20,8 +18,8 @@ const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
 export class ChannelService {
   constructor(
     @InjectRepository(Channel) private channelRepository: Repository<Channel>,
-    @InjectRepository(UserChannelRepository)
-    private userChannelRepository: UserChannelRepository,
+    @InjectRepository(UserChannel)
+    private userChannelRepository: Repository<UserChannel>,
     @InjectRepository(Invitation)
     private invitationRepository: Repository<Invitation>,
     private mailService: MailService,
@@ -88,10 +86,10 @@ export class ChannelService {
     userId: number,
     query: PaginationQuery,
   ) {
-    const results = await this.userChannelRepository
+    return this.userChannelRepository
       .createQueryBuilder('user_channel')
       .select([
-        'id',
+        'user_channel.id',
         'channel.id',
         'channel.createdOn',
         'channel.name',
@@ -102,17 +100,12 @@ export class ChannelService {
         'channel.createdById',
         'channel.categoryId',
         'channel.zoneId',
-        'channel.zoneId',
       ])
-      .leftJoinAndSelect('user_channel.channel', 'channel')
+      .leftJoin('user_channel.channel', 'channel')
       .leftJoinAndSelect('user_channel.channelRole', 'channel_role')
       .where('user_channel.userId = :userId', { userId })
       .andWhere('channel.zoneId = :zoneId', { zoneId })
-      .limit(query.limit)
-      .skip(query.skip)
-      .getManyAndCount();
-
-    return paginate(results, query);
+      .paginate(query);
   }
 
   async validateJoinPublicChannel(userId: number, channelId: number) {
