@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Query,
@@ -14,6 +15,7 @@ import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { ContactIdParam } from '../dto/contact-id.param';
+import { ContactInvitationResponseDto } from '../dto/contact-invitation-response.dto';
 import { CreateContactDto } from '../dto/create-contact.dto';
 import { UserService } from '../user.service';
 
@@ -22,21 +24,64 @@ import { UserService } from '../user.service';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Post('/contact')
+  @Post('/contact/invitation/response')
   @IsAuthenticated()
-  async createNewContact(
+  async contactInvitationResponse(
+    @CurrentUser() currentUser: UserPayload,
+    @Body() { contactInvitationId, status }: ContactInvitationResponseDto,
+  ) {
+    const invitation = await this.userService.getContactInvitationByIdAndInviteeId(
+      contactInvitationId,
+      currentUser.id,
+    );
+
+    if (!invitation)
+      throw new NotFoundException('Contact Invitation not found');
+
+    if (status === 'reject') {
+      await this.userService.removeContactInvitation(contactInvitationId);
+      return 'OK';
+    }
+
+    await this.userService.createNewContact(
+      invitation.inviterId,
+      invitation.inviteeId,
+    );
+
+    await this.userService.removeContactInvitation(contactInvitationId);
+    return 'OK';
+  }
+
+  @Post('/contact/invitation/create')
+  @IsAuthenticated()
+  async createNewContactInvitation(
     @CurrentUser() currentUser: UserPayload,
     @Body() { userId }: CreateContactDto,
   ) {
-    const contact = await this.userService.createNewContact(
+    const contactInvitation = await this.userService.createNewContactInvitation(
       currentUser.id,
       userId,
     );
 
-    return contact;
+    return contactInvitation;
   }
 
-  @Get('/contact')
+  @Get('/contact/invitation/list')
+  @PaginationQueryParams()
+  @IsAuthenticated()
+  async getContactInvitations(
+    @CurrentUser() currentUser: UserPayload,
+    @Query() paginatedQuery: PaginationQuery,
+  ) {
+    const contactInvitation = await this.userService.listContactInvitations(
+      currentUser.id,
+      paginatedQuery,
+    );
+
+    return contactInvitation;
+  }
+
+  @Get('/contact/list')
   @PaginationQueryParams()
   @IsAuthenticated()
   async listContacts(
@@ -46,7 +91,7 @@ export class UserController {
     return this.userService.listContacts(currentUser.id, paginatedQuery);
   }
 
-  @Delete('/contact/:contactId')
+  @Delete('/contact/remove/:contactId')
   @IsAuthenticated()
   async deleteContact(
     @CurrentUser() currentUser: UserPayload,

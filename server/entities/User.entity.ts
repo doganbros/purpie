@@ -6,6 +6,7 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
+import { MeetingConfig } from 'types/Meeting';
 import { UserRoleCode } from 'types/RoleCodes';
 import { RecordEntity } from './base/RecordEntity';
 import { UserChannel } from './UserChannel.entity';
@@ -13,6 +14,7 @@ import { Zone } from './Zone.entity';
 import { UserZone } from './UserZone.entity';
 import { UserRole } from './UserRole.entity';
 import { Contact } from './Contact.entity';
+import { baseMeetingConfig } from './data/base-meeting-config';
 
 @Entity()
 export class User extends RecordEntity {
@@ -42,6 +44,9 @@ export class User extends RecordEntity {
 
   @Column({ nullable: true })
   mailVerificationToken: string;
+
+  @Column({ type: 'simple-json', default: baseMeetingConfig })
+  userMeetingConfig: MeetingConfig;
 
   @Column({ nullable: true, type: String })
   refreshAccessToken: string | null;

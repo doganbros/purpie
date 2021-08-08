@@ -14,6 +14,7 @@ import { UserChannel } from './UserChannel.entity';
 import { User } from './User.entity';
 import { Zone } from './Zone.entity';
 import { Category } from './Category.entity';
+import { baseMeetingConfig } from './data/base-meeting-config';
 
 @Entity()
 export class Channel extends RecordEntity {
@@ -39,7 +40,7 @@ export class Channel extends RecordEntity {
   @Column('int')
   createdById: number;
 
-  @Column({ type: 'simple-json', nullable: true })
+  @Column({ type: 'simple-json', default: baseMeetingConfig })
   channelMeetingConfig: MeetingConfig;
 
   @OneToOne(() => Category, { onDelete: 'RESTRICT' })
@@ -55,9 +56,6 @@ export class Channel extends RecordEntity {
 
   @Column('int')
   zoneId: number;
-
-  @Column({ default: false })
-  defaultChannel: boolean;
 
   @OneToMany(() => UserChannel, (userChannel) => userChannel.channel)
   userChannel: Array<UserChannel>;

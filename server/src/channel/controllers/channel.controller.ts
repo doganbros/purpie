@@ -5,7 +5,6 @@ import {
   NotFoundException,
   Body,
   Delete,
-  ForbiddenException,
   Put,
 } from '@nestjs/common';
 import { ApiCreatedResponse, ApiParam, ApiTags } from '@nestjs/swagger';
@@ -35,7 +34,7 @@ export class ChannelController {
     private zoneService: ZoneService,
   ) {}
 
-  @Post('/:userZoneId')
+  @Post('/create/:userZoneId')
   @ApiCreatedResponse({
     description: 'Current authenticated user adds a new channel to a zone',
   })
@@ -163,23 +162,17 @@ export class ChannelController {
     return userChannel;
   }
 
-  @Delete('/:channelId')
+  @Delete('/remove/:channelId')
   @ApiParam({
     name: 'channelId',
     description: 'The channel id',
   })
   @UserChannelRole(['canDelete'])
   async deleteZone(@CurrentUserChannel() userChannel: UserChannel) {
-    if (userChannel.channel.defaultChannel)
-      throw new ForbiddenException(
-        'Cannot delete default channel',
-        'CANNOT_DELETE_DEFAULT_CHANNEL',
-      );
-
     return this.channelService.deleteByChannelId(userChannel.channel.id);
   }
 
-  @Put('/:channelId')
+  @Put('/update/:channelId')
   @ApiParam({
     name: 'channelId',
     description: 'The channel id',

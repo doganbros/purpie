@@ -1,5 +1,7 @@
 import dotEnv from 'dotenv';
+import { stringify } from 'querystring';
 import path from 'path';
+import { MeetingConfig, MeetingKey } from 'types/Meeting';
 import { PaginationQuery } from 'types/PaginationQuery';
 
 export const loadEnv = (defaultPath?: string) => {
@@ -9,8 +11,8 @@ export const loadEnv = (defaultPath?: string) => {
   return envPath;
 };
 
-export const paginate = (
-  [data, total]: [data: Array<Record<string, any>>, total: number],
+export const paginate = <T>(
+  [data, total]: [data: Array<T>, total: number],
   query: PaginationQuery,
 ) => {
   return {
@@ -20,3 +22,19 @@ export const paginate = (
     skip: query.skip,
   };
 };
+
+const setConfigProperty = (value: unknown) => {
+  if (typeof value === 'boolean') return value;
+  return JSON.stringify(value);
+};
+
+export const meetingConfigStringify = (meetingConfig: MeetingConfig) =>
+  stringify(
+    (Object.keys(meetingConfig) as Array<MeetingKey>).reduce(
+      (acc, v) => ({
+        ...acc,
+        [`config.${v}`]: setConfigProperty(meetingConfig[v]),
+      }),
+      {},
+    ) as any,
+  );

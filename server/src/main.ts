@@ -3,13 +3,13 @@ import morgan from 'morgan';
 import compression from 'compression';
 import { ValidationPipe } from '@nestjs/common';
 import cors from 'cors';
+import { initApp } from 'populators/init-app';
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { loadEnv } from 'helpers/utils';
 import { AppModule } from './app.module';
 
-loadEnv();
+initApp();
 
 const { REACT_APP_CLIENT_HOST = '' } = process.env;
 async function bootstrap() {
@@ -48,11 +48,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document, {
-    swaggerOptions: {
-      persistAuthorization: true,
-    },
-  });
+  SwaggerModule.setup('swagger', app, document);
 
   // eslint-disable-next-line no-console
   app.listen(PORT).then(() => console.log(`Server started on port ${PORT}`));

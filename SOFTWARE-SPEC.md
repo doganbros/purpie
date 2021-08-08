@@ -217,7 +217,7 @@ This app interacts with a stateless http server. Authentication is realized by s
 ### Authentication persistence through subdomains
 
 Since this app allows users to create subdomains, it needs to persist authentication through the main domain and subdomains. This is one of the main reasons why cookies are been used. For cookies to persist authentication through domains and subdomains, the main domain parameter supplied while creating them must be valid. One of the rules for its validity is that it must have at least one dot. Due to this, localhost will not work. Read this [article](https://medium.com/@emilycoco/working-with-subdomains-locally-and-sharing-cookies-across-them-12b108cf5e43) to learn more.
-Even though developers can still use localhost but if another subdomain is visited, authentication would be required again. Developers can therefore set a different domain other than localhost in `/etc/host` ( or ` C:\Windows\System32\Drivers\etc\hosts` for windows) file together with the active subdomains.
+Even though developers can still use localhost but if another subdomain is visited, authentication would be required again. Developers can therefore set a different domain other than localhost in `/etc/host` ( or ` C:\Windows\System32\Drivers\etc\hosts` for windows) file. The domain recommended is octopus.localhost. This is because it allows all subdomains to see the cookie as well.
 
 
 # Application Structure
