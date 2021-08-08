@@ -1,15 +1,10 @@
 import React, { FC } from 'react';
 import { Box, Button, Layer, Text } from 'grommet';
-import {
-  CirclePlay,
-  Close,
-  Group,
-  Schedules,
-  ShareOption,
-} from 'grommet-icons';
+import { Close } from 'grommet-icons';
 import { useDispatch } from 'react-redux';
 import AddContentButton from '../../components/utils/AddContentButton';
 import { openCreateMeetingLayerAction } from '../../store/actions/meeting.action';
+import buttonProps from './buttonProps';
 
 interface AddContentProps {
   onDismiss: () => void;
@@ -17,51 +12,7 @@ interface AddContentProps {
 
 const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
   const dispatch = useDispatch();
-  const iconProps = {
-    size: 'large',
-    color: 'white',
-  };
-  const buttonProps = [
-    {
-      iconName: <Group {...iconProps} />,
-      title: 'Meet!',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
-      onClick: () => {
-        dispatch(openCreateMeetingLayerAction);
-        onDismiss();
-      },
-    },
-    {
-      iconName: <CirclePlay {...iconProps} />,
-      title: 'Stream!',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
-      onClick: () => {},
-    },
-    {
-      iconName: <ShareOption {...iconProps} />,
-      title: 'Share a Video',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
-      onClick: () => {},
-    },
-    {
-      iconName: <Schedules {...iconProps} />,
-      title: 'Plan a Meeting',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
-      onClick: () => {},
-    },
-    {
-      iconName: <Group {...iconProps} />,
-      title: 'Meet! ',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
-      onClick: () => {},
-    },
-  ];
-
+  const openMeetingLayer = () => dispatch(openCreateMeetingLayerAction);
   return (
     <Layer onClickOutside={onDismiss}>
       <Box
@@ -89,7 +40,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
           overflow="auto"
           wrap
         >
-          {buttonProps.map((b) => (
+          {buttonProps(onDismiss, openMeetingLayer).map((b) => (
             <Box key={b.title} margin={{ right: 'xxsmall' }}>
               <AddContentButton {...b} />
             </Box>
