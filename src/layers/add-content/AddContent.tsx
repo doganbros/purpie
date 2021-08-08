@@ -8,7 +8,7 @@ import {
   ShareOption,
 } from 'grommet-icons';
 import { useDispatch } from 'react-redux';
-import AddContentButton from '../../components/utils/AddContentButton';
+import AddContentButton from './AddContentButton';
 import { openCreateMeetingLayerAction } from '../../store/actions/meeting.action';
 
 interface AddContentProps {
