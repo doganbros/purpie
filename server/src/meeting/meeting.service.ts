@@ -129,13 +129,14 @@ export class MeetingService {
           id: user.id,
           moderator,
         },
-        group: 'a123-123-456-789',
+        group: 'a122-123-456-789',
       },
       exp: 1696284052,
+      aud: 'doganbros-meet',
       iss: 'doganbros-meet',
       nbf: 1596197652,
       room: meeting.slug,
-      sub: 'meet.doganbros.com',
+      sub: new URL(JITSI_DOMAIN).hostname,
     };
 
     return generateJWT(payload, JITSI_SECRET);
