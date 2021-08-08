@@ -23,7 +23,8 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
   };
   const buttonProps = [
     {
-      iconName: <Group {...iconProps} />,
+      id: 0,
+      icon: <Group {...iconProps} />,
       title: 'Meet!',
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
@@ -33,29 +34,33 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
       },
     },
     {
-      iconName: <CirclePlay {...iconProps} />,
+      id: 1,
+      icon: <CirclePlay {...iconProps} />,
       title: 'Stream!',
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
       onClick: () => {},
     },
     {
-      iconName: <ShareOption {...iconProps} />,
+      id: 2,
+      icon: <ShareOption {...iconProps} />,
       title: 'Share a Video',
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
       onClick: () => {},
     },
     {
-      iconName: <Schedules {...iconProps} />,
+      id: 3,
+      icon: <Schedules {...iconProps} />,
       title: 'Plan a Meeting',
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
       onClick: () => {},
     },
     {
-      iconName: <Group {...iconProps} />,
-      title: 'Meet! ',
+      id: 4,
+      icon: <Group {...iconProps} />,
+      title: 'Meet!',
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
       onClick: () => {},
@@ -89,9 +94,14 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
           overflow="auto"
           wrap
         >
-          {buttonProps.map((b) => (
-            <Box key={b.title} margin={{ right: 'xxsmall' }}>
-              <AddContentButton {...b} />
+          {buttonProps.map(({ id, icon, title, description, onClick }) => (
+            <Box key={id} margin={{ right: 'xxsmall' }}>
+              <AddContentButton
+                icon={icon}
+                title={title}
+                description={description}
+                onClick={onClick}
+              />
             </Box>
           ))}
         </Box>

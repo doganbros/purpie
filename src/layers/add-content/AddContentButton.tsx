@@ -2,14 +2,14 @@ import React, { FC, ReactElement } from 'react';
 import { Button, Box, Text } from 'grommet';
 
 interface AddContentButtonProps {
-  iconName: ReactElement;
+  icon: ReactElement;
   title: string;
   description: string;
   onClick: () => void;
 }
 
 const AddContentButton: FC<AddContentButtonProps> = ({
-  iconName,
+  icon,
   title,
   description,
   onClick,
@@ -30,7 +30,7 @@ const AddContentButton: FC<AddContentButtonProps> = ({
             : 'linear-gradient(180deg, #3D138D 0%, #7D4CDB 100%)'
         }
       >
-        {iconName}
+        {icon}
         <Text color="white">{title}</Text>
         <Text size="xsmall" color="white">
           {description}
