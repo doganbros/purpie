@@ -1,30 +1,24 @@
-import { Box, Menu, Text } from 'grommet';
+import { Box, Button, Menu } from 'grommet';
 import {
   Add,
   Bookmark,
   Channel,
   Chat,
-  CloudComputer,
   Group,
   Home,
   Logout,
-  User,
+  SettingsOption,
 } from 'grommet-icons';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SidebarButton } from './SidebarButton';
 import CreateUpdateMeeting from '../../../layers/meeting/CreateUpdateMeeting';
 import CreateUpdateZone from '../../../layers/zone/CreateUpdateZone';
 import { logoutAction } from '../../../store/actions/auth.action';
-import {
-  closeCreateMeetingLayerAction,
-  openCreateMeetingLayerAction,
-} from '../../../store/actions/meeting.action';
-import {
-  closeCreateZoneLayerAction,
-  openCreateZoneLayerAction,
-} from '../../../store/actions/zone.action';
+import { closeCreateMeetingLayerAction } from '../../../store/actions/meeting.action';
+import { closeCreateZoneLayerAction } from '../../../store/actions/zone.action';
 import { AppState } from '../../../store/reducers/root.reducer';
+import AddContent from '../../../layers/add-content/AddContent';
 
 const sidebarBtns = [
   {
@@ -56,6 +50,7 @@ const sidebarBtns = [
 
 const Sidebar: FC = () => {
   const dispatch = useDispatch();
+  const [showAddContent, setShowAddContent] = useState(false);
   const {
     zone: {
       createZone: { layerIsVisible: createZoneVisible },
@@ -65,30 +60,8 @@ const Sidebar: FC = () => {
     },
   } = useSelector((state: AppState) => state);
 
-  const data = [
-    {
-      label: (
-        <Box pad={{ left: 'xsmall' }}>
-          <Text size="large">Meeting</Text>
-        </Box>
-      ),
-      state: 'Meeting',
-      onClick: () => dispatch(openCreateMeetingLayerAction),
-      icon: <Group size="medium" />,
-    },
-    {
-      label: (
-        <Box pad={{ horizontal: 'xsmall' }}>
-          <Text size="large">Zone</Text>
-        </Box>
-      ),
-      onClick: () => dispatch(openCreateZoneLayerAction),
-      state: 'Zone',
-      icon: <CloudComputer size="medium" />,
-    },
-  ];
-
   const logout = () => dispatch(logoutAction());
+
   return (
     <>
       <CreateUpdateZone
@@ -99,15 +72,37 @@ const Sidebar: FC = () => {
         visible={createMeetingVisible}
         onClose={() => dispatch(closeCreateMeetingLayerAction)}
       />
-      <Menu
-        margin={{ bottom: '10px' }}
+      {showAddContent && (
+        <AddContent onDismiss={() => setShowAddContent(false)} />
+      )}
+      <Button
+        onClick={() => {
+          setShowAddContent(true);
+        }}
         alignSelf="center"
-        items={data}
-        icon={<Add />}
-      />
+      >
+        <Box
+          alignSelf="center"
+          width="min-content"
+          background="accent-4"
+          round="small"
+          pad={{ vertical: 'xxsmall', horizontal: 'xsmall' }}
+          margin={{ vertical: 'small' }}
+        >
+          <Add color="dark-1" />
+        </Box>
+      </Button>
+
       {sidebarBtns.map((v) => (
         <SidebarButton key={v.title} {...v} />
       ))}
+      <Box
+        alignSelf="center"
+        background="dark-6"
+        width="30px"
+        height="3px"
+        margin={{ vertical: 'medium' }}
+      />
       <Menu
         alignSelf="center"
         items={[
@@ -117,7 +112,7 @@ const Sidebar: FC = () => {
             icon: <Logout />,
           },
         ]}
-        icon={<User />}
+        icon={<SettingsOption color="dark-6" />}
       />
     </>
   );

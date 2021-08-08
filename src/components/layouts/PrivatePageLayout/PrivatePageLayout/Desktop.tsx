@@ -28,20 +28,30 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
         left="0"
         round="large"
         pad={{ right: '100px' }}
+        justify="between"
         width={`${leftComponentWidth + 100}px`}
       >
-        <Button
-          margin={{ vertical: 'medium' }}
-          onClick={() => history.push('/')}
-        >
-          <Box align="center">
-            <Avatar alignSelf="center" size="large" round="medium" src={Logo} />
-          </Box>
-        </Button>
         <Box>
-          <ZoneSelector />
+          <Button
+            margin={{ vertical: 'medium' }}
+            onClick={() => history.push('/')}
+          >
+            <Box align="center">
+              <Avatar
+                alignSelf="center"
+                size="large"
+                round="medium"
+                src={Logo}
+              />
+            </Box>
+          </Button>
+          <Box>
+            <ZoneSelector />
+          </Box>
         </Box>
-        <Sidebar />
+        <Box margin={{ vertical: 'large' }}>
+          <Sidebar />
+        </Box>
       </ExtendedBox>
       <ExtendedBox
         position="fixed"
