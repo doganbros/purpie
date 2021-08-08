@@ -60,7 +60,7 @@ const Sidebar: FC = () => {
     },
   } = useSelector((state: AppState) => state);
 
-  const logout = () => dispatch(logoutAction);
+  const logout = () => dispatch(logoutAction());
 
   return (
     <>

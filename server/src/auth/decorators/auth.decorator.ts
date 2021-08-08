@@ -6,9 +6,11 @@ import { AuthGuard } from '../guards/auth.guard';
 
 export const IsAuthenticated = (
   permissions: Array<RolePermission<UserRole>> = [],
+  options: Record<string, any> = {},
 ) =>
   applyDecorators(
     SetMetadata('userPermissions', permissions),
+    SetMetadata('userPermissionsOptions', options),
     UseGuards(AuthGuard),
     ApiBearerAuth(),
     ApiUnauthorizedResponse({
