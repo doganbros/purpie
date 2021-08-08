@@ -1,8 +1,10 @@
 import { MeetingConfig } from 'types/Meeting';
 
-export const zoneMeetingConfig: MeetingConfig = {
+export const baseMeetingConfig: MeetingConfig = {
   disableAudioLevels: false,
   audioLevelsInterval: 200,
+  enableNoAudioDetection: true,
+  enableNoisyMicDetection: true,
   startAudioOnly: false,
   startAudioMuted: 10,
   startWithAudioMuted: false,
@@ -11,9 +13,15 @@ export const zoneMeetingConfig: MeetingConfig = {
   startScreenSharing: false,
   fileRecordingsEnabled: false,
   liveStreamingEnabled: false,
+  disableResponsiveTiles: false,
+  hideLobbyButton: false,
   requireDisplayName: true,
   defaultLanguage: 'en',
+  disableProfile: false,
+  roomPasswordNumberOfDigits: false,
   prejoinPageEnabled: false,
+  enableInsecureRoomNameWarning: false,
+  enableAutomaticUrlCopy: false,
   inviteAppName: null,
   toolbarButtons: [
     'microphone',
@@ -47,9 +55,10 @@ export const zoneMeetingConfig: MeetingConfig = {
     'mute-video-everyone',
     'security',
   ],
+  disableRecordAudioNotification: false,
+  disableJoinLeaveSounds: false,
+  disableRemoteMute: true,
   hideConferenceSubject: false,
   hideConferenceTimer: true,
   hideParticipantsStats: true,
-  subject: 'Conference Subject',
-  disableJoinLeaveSounds: false,
 };

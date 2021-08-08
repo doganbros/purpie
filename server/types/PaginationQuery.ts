@@ -9,6 +9,13 @@ export interface PaginationQuery extends Pagination {
   [key: string]: any;
 }
 
+export interface PaginationResponse<T> {
+  data: T[];
+  total: number;
+  limit: number | undefined;
+  skip: number | undefined;
+}
+
 export type PaginatedRequestQuery<
   P = any,
   ResBody = any,

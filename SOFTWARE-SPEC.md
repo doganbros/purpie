@@ -207,11 +207,17 @@ This app interacts with a stateless http server. Authentication is realized by s
 1. When it is the first time the user is visiting the app or the returning user is not authenticated, React Router will redirect the user to the login page. 
 2. The User will either login or create a new account
 3. The app sends the authentication information to the server
-4. If the server successfully authenticates the user, a json web access token is created on the server and sent to the app
-5. The app stores the json web token in the browser's local storage.
-6. In subsequent requests, the app will send the access token stored in local storage to the server to identify the user making the request. Thanks to the `axios` request interceptor.
+4. If the server successfully authenticates the user, a json web access token and its refresh token is created on the server and sent as an http only cookie to the client
+5. By default the access token only lasts an hour. After this if the refresh token is still valid, the server will generate a new access and refresh tokens to the client
+6. In subsequent requests, the app will send the access token stored in the cookies to the server to identify the user making the request.
 7. If the token expires or becomes invalid the user will automatically be redirected to the login page. Thanks to the `axios` response interceptor.
-8. If the user returning to the app is already authenticated react router will redirect the user to the zone lists.
+8. If the user returning to the app is already authenticated react router will redirect the user to the main application page.
+
+
+### Authentication persistence through subdomains
+
+Since this app allows users to create subdomains, it needs to persist authentication through the main domain and subdomains. This is one of the main reasons why cookies are been used. For cookies to persist authentication through domains and subdomains, the main domain parameter supplied while creating them must be valid. One of the rules for its validity is that it must have at least one dot. Due to this, localhost will not work. Read this [article](https://medium.com/@emilycoco/working-with-subdomains-locally-and-sharing-cookies-across-them-12b108cf5e43) to learn more.
+Even though developers can still use localhost but if another subdomain is visited, authentication would be required again. Developers can therefore set a different domain other than localhost in `/etc/host` ( or ` C:\Windows\System32\Drivers\etc\hosts` for windows) file. The domain recommended is octopus.localhost. This is because it allows all subdomains to see the cookie as well.
 
 
 # Application Structure

@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
   NotFoundException,
   Param,
@@ -29,7 +28,7 @@ import { CreateZoneDto } from '../dto/create-zone.dto';
 export class ZoneController {
   constructor(private zoneService: ZoneService) {}
 
-  @Post()
+  @Post('create')
   @ApiCreatedResponse({
     description: 'Current authenticated user adds a new zone.',
   })
@@ -48,41 +47,6 @@ export class ZoneController {
     return userZone;
   }
 
-  @Post('/defaults')
-  @ApiCreatedResponse({
-    description:
-      'Current authenticated user creates a default zone and channel',
-  })
-  @IsAuthenticated()
-  async createDefaultZoneAndChannel(
-    @Body() createZoneInfo: CreateZoneDto,
-    @CurrentUser() currentUser: UserPayload,
-  ) {
-    const hasDefaults = await this.zoneService.userHasDefaultZoneAndChannel(
-      currentUser.id,
-    );
-
-    if (hasDefaults)
-      throw new ForbiddenException(
-        'Current User already has a default zone and channel',
-      );
-
-    const {
-      userZone,
-      userChannel,
-    } = await this.zoneService.createDefaultZoneAndChannel(
-      currentUser.id,
-      createZoneInfo,
-    );
-
-    this.zoneService.sendZoneInfoMail(userZone.zone, currentUser);
-
-    return {
-      userZone,
-      userChannel,
-    };
-  }
-
   @Post('/join/:zoneId')
   @IsAuthenticated()
   async joinPublicZone(
@@ -99,12 +63,12 @@ export class ZoneController {
     return userZone;
   }
 
-  @Get('/categories')
+  @Get('/categories/list')
   async getParentCategories() {
     return this.zoneService.getCategories();
   }
 
-  @Get('/categories/:zoneId')
+  @Get('/categories/list/:zoneId')
   @ApiParam({
     name: 'zoneId',
     description: 'The zone id',
@@ -164,23 +128,17 @@ export class ZoneController {
     return userZone;
   }
 
-  @Delete('/:zoneId')
+  @Delete('/remove/:zoneId')
   @ApiParam({
     name: 'zoneId',
     description: 'The zone id',
   })
   @UserZoneRole(['canDelete'])
   async deleteZone(@CurrentUserZone() userZone: UserZone) {
-    if (userZone.zone.defaultZone)
-      throw new ForbiddenException(
-        'Cannot delete default zone',
-        'CANNOT_DELETE_DEFAULT_ZONE',
-      );
-
     return this.zoneService.deleteZoneById(userZone.zone.id);
   }
 
-  @Put('/:zoneId')
+  @Put('/update/:zoneId')
   @ApiParam({
     name: 'zoneId',
     description: 'The zone id',

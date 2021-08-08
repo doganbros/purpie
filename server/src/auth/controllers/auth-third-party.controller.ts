@@ -91,6 +91,7 @@ export class AuthThirdPartyController {
   async authenticateByThirdParty(
     @Param() { name }: ThirdPartyLoginParams,
     @Body() { code }: AuthByThirdPartyDto,
+    @Res({ passthrough: true }) res: Response,
   ) {
     let user: User | undefined;
     if (name === 'google') {
@@ -146,12 +147,8 @@ export class AuthThirdPartyController {
           ...user.userRole,
         },
       };
-      const token = await this.authService.generateLoginToken(userPayload);
-
-      return {
-        user: userPayload,
-        token,
-      };
+      await this.authService.setAccessTokens(userPayload, res);
+      return userPayload;
     }
 
     throw new InternalServerErrorException(

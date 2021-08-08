@@ -1,6 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { MeetingConfig } from 'types/Meeting';
 import { RecordEntity } from './base/RecordEntity';
 import { Channel } from './Channel.entity';
+import { baseMeetingConfig } from './data/base-meeting-config';
 import { User } from './User.entity';
 import { Zone } from './Zone.entity';
 
@@ -28,13 +30,6 @@ export class Meeting extends RecordEntity {
   @Column()
   createdById: number;
 
-  @ManyToOne(() => User, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'adminId' })
-  admin: User;
-
-  @Column()
-  adminId: number;
-
   @ManyToOne(() => Zone, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'zoneId' })
   zone: Zone;
@@ -48,4 +43,13 @@ export class Meeting extends RecordEntity {
 
   @Column({ nullable: true })
   channelId: number;
+
+  @Column({ default: false })
+  public: boolean;
+
+  @Column({ default: false })
+  userContactExclusive: boolean;
+
+  @Column({ type: 'simple-json', default: baseMeetingConfig })
+  config: MeetingConfig;
 }

@@ -16,6 +16,17 @@ export const SidebarButton: FC<Props> = ({
 }) => {
   const location = useLocation();
   const history = useHistory();
+
+  const iconColor = (hover: any) => {
+    if (hover) {
+      return 'black';
+    }
+    if (location.pathname === path) {
+      return 'white';
+    }
+    return 'dark-6';
+  };
+
   return (
     <Tip
       content={
@@ -32,14 +43,13 @@ export const SidebarButton: FC<Props> = ({
       dropProps={{ align: { left: 'right' } }}
     >
       <Button
-        active={location.pathname === path}
         hoverIndicator={{ color: 'accent-1', opacity: 0.9 }}
         onClick={() => history.push(path)}
         plain
       >
         {({ hover }: any) => (
-          <Box flex={false} pad={{ vertical: 'medium' }} align="center">
-            <IconComponent size="medium" color={hover ? 'black' : 'white'} />
+          <Box flex={false} pad={{ vertical: 'small' }} align="center">
+            <IconComponent size="medium" color={iconColor(hover)} />
           </Box>
         )}
       </Button>
