@@ -29,17 +29,7 @@ const ZoneSelector: FC = () => {
         </Box>
       }
       onChange={({ option }) => setValue(option)}
-    >
-      {(option) => {
-        return (
-          <Box pad="xsmall" background={option === value ? '#E4E9F2' : 'white'}>
-            <Text weight={option === value ? 'bold' : 'normal'} size="small">
-              {option}
-            </Text>
-          </Box>
-        );
-      }}
-    </Select>
+    />
   );
 };
 
