@@ -26,7 +26,6 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
         top="0"
         bottom="0"
         left="0"
-        round="large"
         pad={{ right: '100px' }}
         justify="between"
         width={`${leftComponentWidth + 100}px`}
