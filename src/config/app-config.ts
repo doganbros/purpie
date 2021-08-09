@@ -33,6 +33,12 @@ export const theme: typeof grommet = {
       },
     },
   },
+  layer: {
+    border: {
+      radius: '20px',
+      intelligentRounding: true,
+    },
+  },
   select: {
     container: {
       extend: css`
