@@ -1,4 +1,5 @@
 import { grommet, base } from 'grommet';
+import { css } from 'styled-components';
 
 export const theme: typeof grommet = {
   ...grommet,
@@ -11,6 +12,10 @@ export const theme: typeof grommet = {
     colors: {
       ...base.global?.colors,
       brand: '#9060EB',
+    },
+    drop: {
+      ...base.global?.drop,
+      background: 'white',
     },
     input: {
       ...grommet.global?.input,
@@ -26,6 +31,15 @@ export const theme: typeof grommet = {
       light: {
         xlarge: '-5px 5px 30px #3D138D26',
       },
+    },
+  },
+  select: {
+    container: {
+      extend: css`
+        button {
+          padding: 0px;
+        }
+      `,
     },
   },
   button: {
