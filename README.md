@@ -1,6 +1,5 @@
 # Octopus (Typescript React App - Express REST API with postgres using Node.js, Express and Sequelize)
 
-
 ## Frontend Features
 
 - Typescript (Strict Mode)
@@ -28,7 +27,7 @@
 - [Postgresql](https://www.postgresql.org/) is the database used
 - [TypeORM](https://typeorm.io) is the database ORM used
 - [Class Validator](https://github.com/typestack/class-validator) is used to validate request body.
-- [helmet](https://github.com/helmetjs/helmet)  is used to set http headers correctly.
+- [helmet](https://github.com/helmetjs/helmet) is used to set http headers correctly.
 - [dotenv](https://github.com/rolodato/dotenv-safe) is used to load .env variables
 - [compression](https://github.com/expressjs/compression)
 - [eslint](http://eslint.org)
@@ -36,15 +35,12 @@
 - [Swagger](https://swagger.io/)
 - Monitoring with [pm2](https://github.com/Unitech/pm2)
 
-
-
 ## Requirements
 
-- [Node.js](https://nodejs.org/en/download/) (>= 10.13.0, except for v13)
+- [Node.js](https://nodejs.org/en/download/) (>= 10.13.0, except for v13) (Windows Build Tools for Windows systems)
 - [Yarn](https://yarnpkg.com/en/docs/install)
 - [NestCli](https://docs.nestjs.com/cli/overview)
-- [Postgress] (https://www.postgresql.org/)
-
+- [Postgress](https://www.postgresql.org/)
 
 ## Getting Started
 
@@ -73,13 +69,13 @@ Set environment variables into .env file:
 cp .env.example .env # Then make changes to the boilerplate provided
 ```
 
-
 ## Running project
 
 ```bash
 yarn server:start:dev # Runs backend side in dev mode
 yarn start:web # Runs frontend side
 ```
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -92,7 +88,6 @@ yarn migration:run # Even though nestjs runs this automatically when it boots up
 
 # create new migration boilerplate
 yarn migration:create
-
 ```
 
 ## Logs
@@ -126,6 +121,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
+
 ### `yarn build`
 
 Builds the app for production to the `build` folder.\
