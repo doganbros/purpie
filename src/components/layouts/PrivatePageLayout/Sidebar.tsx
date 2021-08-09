@@ -19,6 +19,7 @@ import { closeCreateMeetingLayerAction } from '../../../store/actions/meeting.ac
 import { closeCreateZoneLayerAction } from '../../../store/actions/zone.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import AddContent from '../../../layers/add-content/AddContent';
+import ExtendedBox from '../../utils/ExtendedBox';
 
 const sidebarBtns = [
   {
@@ -96,24 +97,26 @@ const Sidebar: FC = () => {
       {sidebarBtns.map((v) => (
         <SidebarButton key={v.title} {...v} />
       ))}
-      <Box
-        alignSelf="center"
-        background="dark-6"
-        width="30px"
-        height="3px"
-        margin={{ vertical: 'medium' }}
-      />
-      <Menu
-        alignSelf="center"
-        items={[
-          {
-            label: <Box pad={{ left: 'xsmall' }}>Logout</Box>,
-            onClick: logout,
-            icon: <Logout />,
-          },
-        ]}
-        icon={<SettingsOption color="dark-6" />}
-      />
+      <ExtendedBox opacity="0.5">
+        <Box
+          alignSelf="center"
+          background="white"
+          width="30px"
+          height="3px"
+          margin={{ vertical: 'medium' }}
+        />
+        <Menu
+          alignSelf="center"
+          items={[
+            {
+              label: <Box pad={{ left: 'xsmall' }}>Logout</Box>,
+              onClick: logout,
+              icon: <Logout />,
+            },
+          ]}
+          icon={<SettingsOption color="white" />}
+        />
+      </ExtendedBox>
     </>
   );
 };
