@@ -2,6 +2,7 @@ import { Box, Tip, Button } from 'grommet';
 import { Icon } from 'grommet-icons';
 import React, { FC } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
+import ExtendedBox from '../../utils/ExtendedBox';
 
 interface Props {
   title: string;
@@ -16,16 +17,6 @@ export const SidebarButton: FC<Props> = ({
 }) => {
   const location = useLocation();
   const history = useHistory();
-
-  const iconColor = (hover: any) => {
-    if (hover) {
-      return 'black';
-    }
-    if (location.pathname === path) {
-      return 'white';
-    }
-    return 'dark-6';
-  };
 
   return (
     <Tip
@@ -48,9 +39,14 @@ export const SidebarButton: FC<Props> = ({
         plain
       >
         {({ hover }: any) => (
-          <Box flex={false} pad={{ vertical: 'small' }} align="center">
-            <IconComponent size="medium" color={iconColor(hover)} />
-          </Box>
+          <ExtendedBox
+            opacity={location.pathname === path ? '1' : '0.5'}
+            flex={false}
+            pad={{ vertical: 'small' }}
+            align="center"
+          >
+            <IconComponent size="medium" color={hover ? 'dark-1' : 'white'} />
+          </ExtendedBox>
         )}
       </Button>
     </Tip>
