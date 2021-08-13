@@ -150,6 +150,13 @@ export class MeetingController {
     return this.meetingService.removeMeeting(meetingId, user.id);
   }
 
+  @Get('list/public')
+  @PaginationQueryParams()
+  @IsAuthenticated()
+  async getPublicMeetings(@Query() query: PaginationQuery) {
+    return this.meetingService.getPublicMeetings(query);
+  }
+
   @Get('list/user')
   @PaginationQueryParams()
   @IsAuthenticated()

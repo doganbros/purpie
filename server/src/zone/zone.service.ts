@@ -125,6 +125,7 @@ export class ZoneService {
       .createQueryBuilder('user_zone')
       .select([
         'user_zone.id',
+        'user_zone.createdOn',
         'zone.id',
         'zone.name',
         'zone.subdomain',
@@ -136,6 +137,7 @@ export class ZoneService {
       .leftJoinAndSelect('user_zone.zoneRole', 'zone_role')
       .leftJoinAndSelect('zone.category', 'category')
       .where('user_zone.userId = :userId', { userId: user.id })
+      .orderBy('user_zone.createdOn', 'DESC')
       .paginate(query);
   }
 

@@ -166,6 +166,14 @@ export class MeetingService {
       ]);
   }
 
+  async getPublicMeetings(query: PaginationQuery) {
+    return this.meetingSelections
+      .where('meeting.endDate is null')
+      .andWhere('meeting.public = true')
+      .orderBy('meeting.startDate', 'ASC')
+      .paginate(query);
+  }
+
   async getUserMeetings(userId: number, query: PaginationQuery) {
     return this.meetingSelections
       .leftJoin('meeting.createdBy', 'createdBy')
@@ -187,17 +195,16 @@ export class MeetingService {
         'meeting.userContactExclusive = true AND meeting.createdById = contact.userId AND contact.contactUserId = :userId',
         { userId },
       )
-      .where('meeting.startDate >= now()')
+      .where('meeting.endDate is null')
       .andWhere(
         new Brackets((qb) => {
           qb.where('user_zone.zoneId is not null')
             .orWhere('user_channel.channelId is not null')
-            .orWhere(
-              'contact.contactUserId is not null or meeting.createdById = :userId',
-              { userId },
-            );
+            .orWhere('contact.contactUserId is not null')
+            .orWhere('meeting.createdById = :userId', { userId });
         }),
       )
+      .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
   }
 
@@ -216,6 +223,8 @@ export class MeetingService {
         { userId },
       )
       .where('zone.id = :zoneId', { zoneId })
+      .andWhere('meeting.endDate is null')
+      .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
   }
 
@@ -234,6 +243,8 @@ export class MeetingService {
         { userId },
       )
       .where('channel.id = :channelId', { channelId })
+      .where('meeting.endDate is null')
+      .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
   }
 }
