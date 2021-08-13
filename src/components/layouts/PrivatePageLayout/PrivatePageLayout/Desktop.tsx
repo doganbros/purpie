@@ -5,6 +5,7 @@ import ExtendedBox from '../../../utils/ExtendedBox';
 import Logo from '../../../../assets/octopus-logo/logo-white.svg';
 import Sidebar from '../Sidebar';
 import ZoneSelector from '../ZoneSelector';
+import Divider from '../../../utils/Divider';
 
 interface Props {
   topComponent?: React.ReactNode;
@@ -88,8 +89,8 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
                 {topComponent}
               </ExtendedBox>
             </Box>
-            <Box fill="horizontal" height="3px" pad={{ right: 'large' }}>
-              <Box fill background="#E4E9F2" />
+            <Box fill="horizontal" pad={{ right: 'large' }}>
+              <Divider />
             </Box>
           </ExtendedBox>
         )}
