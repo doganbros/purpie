@@ -61,7 +61,7 @@ const Timeline: FC = () => {
       <Box pad={{ vertical: 'medium' }}>
         <Box direction="row" justify="between" align="center">
           <Text weight="bold">Timeline</Text>
-          <Box direction="row">
+          <Box direction="row" gap="small">
             {filters.map((f) => (
               <Button
                 onClick={() => {
