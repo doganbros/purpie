@@ -1,6 +1,10 @@
 import React, { FC, useState } from 'react';
-import { Box, Button, Text } from 'grommet';
+import { Avatar, Box, Button, Text, TextInput } from 'grommet';
+import { Search, User } from 'grommet-icons';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
+import Divider from '../../../components/utils/Divider';
+import ChannelsToFollow from './ChannelsToFollow';
+import ZonesToJoin from './ZonesToJoin';
 
 const Timeline: FC = () => {
   const [filters, setFilters] = useState([
@@ -34,8 +38,31 @@ const Timeline: FC = () => {
     <PrivatePageLayout
       title="Timeline"
       rightComponent={
-        <Box pad="large">
-          <Text>Right sidebar</Text>
+        <Box pad="medium" gap="medium">
+          <Box align="end">
+            <Box direction="row" align="center" gap="small">
+              <Box align="end">
+                <Text size="large" weight="bold">
+                  John Doe
+                </Text>
+                <Text size="small" color="status-disabled">
+                  Developer
+                </Text>
+              </Box>
+              <Avatar size="xlarge" round="medium" background="brand">
+                <User color="white" size="large" />
+              </Avatar>
+            </Box>
+          </Box>
+          <Divider />
+          <TextInput
+            icon={<Search color="light-4" />}
+            reverse
+            placeholder="Search"
+          />
+          <ChannelsToFollow />
+          <Divider />
+          <ZonesToJoin />
         </Box>
       }
       topComponent={
@@ -64,6 +91,7 @@ const Timeline: FC = () => {
           <Box direction="row" gap="small">
             {filters.map((f) => (
               <Button
+                key={f.id}
                 onClick={() => {
                   setFilters(
                     filters.map((v) => ({ ...v, active: v.id === f.id }))
