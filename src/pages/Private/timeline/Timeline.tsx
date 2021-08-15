@@ -5,6 +5,7 @@ import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/Pri
 import Divider from '../../../components/utils/Divider';
 import ChannelsToFollow from './ChannelsToFollow';
 import ZonesToJoin from './ZonesToJoin';
+import LastActivities from './LastActivities';
 
 const Timeline: FC = () => {
   const [filters, setFilters] = useState([
@@ -63,6 +64,7 @@ const Timeline: FC = () => {
           <ChannelsToFollow />
           <Divider />
           <ZonesToJoin />
+          <LastActivities />
         </Box>
       }
       topComponent={
