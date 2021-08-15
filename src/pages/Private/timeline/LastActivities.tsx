@@ -37,6 +37,34 @@ const activities = [
     icon: <Play />,
     message: 'Jane has started a live stream',
   },
+  {
+    id: '6',
+    icon: <Chat />,
+    message: "Maaike has commented on Philips' video",
+  },
+  {
+    id: '7',
+    icon: <Play />,
+    message: 'Philips has started a live stream',
+  },
+
+  {
+    id: '8',
+    icon: <Favorite />,
+    message: "Maaike has liked Leonita's post",
+  },
+
+  {
+    id: '9',
+    icon: <Chat />,
+    message: "Maaike has commented on Leonita's video",
+  },
+
+  {
+    id: '10',
+    icon: <Favorite />,
+    message: "Leonita has liked Maaike's video",
+  },
 ];
 
 const LastActivities: FC = () => {

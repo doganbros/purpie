@@ -36,6 +36,29 @@ const channels = [
     name: 'channel-6',
     bg: 'light-5',
   },
+  {
+    id: '#channel7',
+    name: 'channel-7',
+    bg: 'dark-3',
+  },
+
+  {
+    id: '#channel8',
+    name: 'channel-8',
+    bg: 'dark-4',
+  },
+
+  {
+    id: '#channel9',
+    name: 'channel-9',
+    bg: 'light-6',
+  },
+
+  {
+    id: '#channel10',
+    name: 'channel-10',
+    bg: 'light-5',
+  },
 ];
 const ChannelsToFollow: FC = () => {
   const [displayCount, setDisplayCount] = useState(3);

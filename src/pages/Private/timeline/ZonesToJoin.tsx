@@ -48,6 +48,36 @@ const zones = [
     memberCount: 245,
     bg: 'lightblue',
   },
+  {
+    id: '#Zone7',
+    name: 'Zone-7',
+    channelCount: 41,
+    memberCount: 245,
+    bg: 'teal',
+  },
+  {
+    id: '#Zone8',
+    name: 'Zone-8',
+    channelCount: 31,
+    memberCount: 3245,
+    bg: 'aqua',
+  },
+
+  {
+    id: '#Zone9',
+    name: 'Zone-9',
+    channelCount: 44,
+    memberCount: 143,
+    bg: 'aquamarine',
+  },
+
+  {
+    id: '#Zone10',
+    name: 'Zone-10',
+    channelCount: 5,
+    memberCount: 23,
+    bg: 'cadetblue',
+  },
 ];
 const ZonesToJoin: FC = () => {
   const [displayCount, setDisplayCount] = useState(3);
