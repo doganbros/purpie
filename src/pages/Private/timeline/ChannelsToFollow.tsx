@@ -51,7 +51,7 @@ const ChannelsToFollow: FC = () => {
           }}
         >
           <Text size="small" color="brand">
-            See all
+            {displayCount === 3 ? 'See more' : 'See less'}
           </Text>
         </Button>
       </Box>
