@@ -1,12 +1,12 @@
 import React, { FC, useState } from 'react';
-import { Box, Button, Text, TextInput } from 'grommet';
-import { Search } from 'grommet-icons';
+import { Box, Button, Text } from 'grommet';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
 import ChannelsToFollow from './ChannelsToFollow';
 import ZonesToJoin from './ZonesToJoin';
 import LastActivities from './LastActivities';
 import Profile from './Profile';
+import Searchbar from './Searchbar';
 
 const Timeline: FC = () => {
   const [filters, setFilters] = useState([
@@ -43,11 +43,7 @@ const Timeline: FC = () => {
         <Box pad="medium" gap="medium">
           <Profile />
           <Divider />
-          <TextInput
-            icon={<Search color="light-4" />}
-            reverse
-            placeholder="Search"
-          />
+          <Searchbar />
           <ChannelsToFollow />
           <Divider />
           <ZonesToJoin />
