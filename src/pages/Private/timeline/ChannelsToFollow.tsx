@@ -71,6 +71,13 @@ const ChannelsToFollow: FC = () => {
           <Button primary label="Follow" size="small" />
         </Box>
       ))}
+      {displayCount > 3 && (
+        <Button alignSelf="end">
+          <Text size="small" color="brand">
+            See all
+          </Text>
+        </Button>
+      )}
     </Box>
   );
 };
