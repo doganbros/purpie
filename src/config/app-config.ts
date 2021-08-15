@@ -1,24 +1,18 @@
 import { grommet, base } from 'grommet';
-import { css } from 'styled-components';
+import { deepMerge } from 'grommet/utils';
 
-export const theme: typeof grommet = {
-  ...grommet,
+export const theme: typeof grommet = deepMerge(base, {
   global: {
-    ...grommet.global,
     font: {
-      ...grommet.global?.font,
       family: 'HelveticaNeue, Poppins, sans-serif',
     },
     colors: {
-      ...base.global?.colors,
       brand: '#9060EB',
     },
     drop: {
-      ...base.global?.drop,
       background: 'white',
     },
     input: {
-      ...grommet.global?.input,
       extend: 'color: grey;',
       padding: { vertical: '15px' },
       font: {
@@ -27,9 +21,14 @@ export const theme: typeof grommet = {
       },
     },
     elevation: {
-      ...grommet.global?.elevation,
       light: {
         xlarge: '-5px 5px 30px #3D138D26',
+      },
+    },
+    control: {
+      border: {
+        color: 'light-4',
+        radius: '50px',
       },
     },
   },
@@ -39,24 +38,12 @@ export const theme: typeof grommet = {
       intelligentRounding: true,
     },
   },
-  select: {
-    container: {
-      extend: css`
-        button {
-          padding: 0px;
-        }
-      `,
-    },
-  },
   button: {
-    color: 'white',
-    border: {
-      width: '0px',
+    primary: {
+      extend: 'color: white;',
     },
-    extend: 'font-size: 16px; padding: 8px 4px; font-weight: 500;',
   },
   formField: {
-    ...grommet.formField,
     border: {
       side: 'all',
       color: {
@@ -73,4 +60,4 @@ export const theme: typeof grommet = {
       },
     },
   },
-};
+});

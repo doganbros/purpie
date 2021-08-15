@@ -64,7 +64,7 @@ const Sidebar: FC = () => {
   const logout = () => dispatch(logoutAction());
 
   return (
-    <>
+    <Box gap="small">
       <CreateUpdateZone
         visible={createZoneVisible}
         onClose={() => dispatch(closeCreateZoneLayerAction)}
@@ -117,7 +117,7 @@ const Sidebar: FC = () => {
           icon={<SettingsOption color="white" />}
         />
       </ExtendedBox>
-    </>
+    </Box>
   );
 };
 
