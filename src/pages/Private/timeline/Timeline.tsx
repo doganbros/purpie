@@ -1,11 +1,12 @@
 import React, { FC, useState } from 'react';
-import { Avatar, Box, Button, Text, TextInput } from 'grommet';
-import { Search, User } from 'grommet-icons';
+import { Box, Button, Text, TextInput } from 'grommet';
+import { Search } from 'grommet-icons';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
 import ChannelsToFollow from './ChannelsToFollow';
 import ZonesToJoin from './ZonesToJoin';
 import LastActivities from './LastActivities';
+import Profile from './Profile';
 
 const Timeline: FC = () => {
   const [filters, setFilters] = useState([
@@ -40,21 +41,7 @@ const Timeline: FC = () => {
       title="Timeline"
       rightComponent={
         <Box pad="medium" gap="medium">
-          <Box align="end">
-            <Box direction="row" align="center" gap="small">
-              <Box align="end">
-                <Text size="large" weight="bold">
-                  John Doe
-                </Text>
-                <Text size="small" color="status-disabled">
-                  Developer
-                </Text>
-              </Box>
-              <Avatar size="xlarge" round="medium" background="brand">
-                <User color="white" size="large" />
-              </Avatar>
-            </Box>
-          </Box>
+          <Profile />
           <Divider />
           <TextInput
             icon={<Search color="light-4" />}
