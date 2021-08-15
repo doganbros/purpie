@@ -113,7 +113,9 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
               />
             </Box>
             <Box fill overflow="auto" pad="large">
-              {rightComponent}
+              <Box flex="grow" height="min-content">
+                {rightComponent}
+              </Box>
             </Box>
           </Box>
         </Layer>
