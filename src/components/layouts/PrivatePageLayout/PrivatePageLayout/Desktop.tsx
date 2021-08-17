@@ -73,6 +73,7 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
           horizontal: 'large',
         }}
       >
+        {children}
         {topComponent && (
           <ExtendedBox
             position="fixed"
@@ -94,7 +95,6 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
             </Box>
           </ExtendedBox>
         )}
-        {children}
         {rightComponent && (
           <ExtendedBox
             position="fixed"

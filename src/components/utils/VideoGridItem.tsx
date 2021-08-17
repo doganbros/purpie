@@ -19,7 +19,6 @@ interface VideoGridItemProps {
 }
 
 const VideoGridItem: FC<VideoGridItemProps> = ({
-  id,
   thumbnailSrc,
   live,
   saved,
@@ -30,18 +29,14 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
   likes,
   comments,
   tags,
-  onClick,
 }) => (
-  <Box
-    onClick={() => onClick(id)}
-    round={{ corner: 'top', size: 'medium' }}
-    overflow="hidden"
-    gap="small"
-  >
-    <Box>
+  <Box round={{ corner: 'top', size: 'medium' }} overflow="hidden" gap="small">
+    <ExtendedBox position="relative">
       <ExtendedBox
-        position="relative"
-        height="0"
+        position="absolute"
+        top="0"
+        left="0"
+        right="0"
         direction="row"
         justify="between"
         pad="medium"
@@ -61,8 +56,13 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
         <Bookmark color={saved ? 'white' : 'status-disabled'} />
       </ExtendedBox>
       <Image src={thumbnailSrc} />
-    </Box>
-    <Box direction="row" align="center" justify="between">
+    </ExtendedBox>
+    <ExtendedBox
+      position="relative"
+      direction="row"
+      align="center"
+      justify="between"
+    >
       <Box direction="row" align="center">
         <Box
           margin={{ top: '-35px', left: '-3px' }}
@@ -75,7 +75,7 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
         <Text color="status-disabled">{userName}</Text>
       </Box>
       <Text color="status-disabled">{createdAt}</Text>
-    </Box>
+    </ExtendedBox>
     <Box direction="row" align="center" justify="between">
       <Text size="large" weight="bold" color="brand">
         {videoTitle}

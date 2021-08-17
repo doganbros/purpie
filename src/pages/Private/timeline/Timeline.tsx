@@ -97,7 +97,7 @@ const Timeline: FC = () => {
             ))}
           </Box>
         </Box>
-        <Grid columns={size !== 'small' ? 'medium' : '100%'} gap="medium">
+        <Grid columns={size !== 'small' ? '300px' : '100%'} gap="medium">
           {Array(30)
             .fill({
               id: 'id',
