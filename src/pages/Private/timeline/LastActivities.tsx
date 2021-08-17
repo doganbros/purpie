@@ -4,64 +4,64 @@ import { Chat, Play, Favorite } from 'grommet-icons';
 
 const activities = [
   {
-    id: '0',
+    id: 1,
     icon: <Chat />,
     message: "Maaike has commented on Philips' video",
   },
   {
-    id: '1',
+    id: 2,
     icon: <Play />,
     message: 'Philips has started a live stream',
   },
 
   {
-    id: '2',
+    id: 3,
     icon: <Favorite />,
     message: "Maaike has liked Leonita's post",
   },
 
   {
-    id: '3',
+    id: 4,
     icon: <Chat />,
     message: "Maaike has commented on Leonita's video",
   },
 
   {
-    id: '4',
+    id: 5,
     icon: <Favorite />,
     message: "Leonita has liked Maaike's video",
   },
 
   {
-    id: '5',
+    id: 6,
     icon: <Play />,
     message: 'Jane has started a live stream',
   },
   {
-    id: '6',
+    id: 7,
     icon: <Chat />,
     message: "Maaike has commented on Philips' video",
   },
   {
-    id: '7',
+    id: 8,
     icon: <Play />,
     message: 'Philips has started a live stream',
   },
 
   {
-    id: '8',
+    id: 9,
     icon: <Favorite />,
     message: "Maaike has liked Leonita's post",
   },
 
   {
-    id: '9',
+    id: 10,
     icon: <Chat />,
     message: "Maaike has commented on Leonita's video",
   },
 
   {
-    id: '10',
+    id: 11,
     icon: <Favorite />,
     message: "Leonita has liked Maaike's video",
   },
