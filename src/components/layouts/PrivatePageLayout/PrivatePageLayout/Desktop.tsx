@@ -103,7 +103,7 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
             right="0"
             width={`${rightComponentWidth}px`}
             background="white"
-            round="large"
+            round={{ corner: 'left', size: 'large' }}
             elevation="xlarge"
             overflow="auto"
           >
