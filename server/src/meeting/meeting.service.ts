@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import crypto from 'crypto';
 
@@ -32,12 +32,27 @@ export class MeetingService {
     private userChannelRepository: Repository<UserChannel>,
   ) {}
 
-  createNewMeeting(payload: DeepPartial<Meeting>) {
-    payload.slug = `${slugify(
-      payload.title!,
-    )}-${generateLowerAlphaNumId()}`.toLowerCase();
+  async createNewMeeting(payload: DeepPartial<Meeting>) {
+    const maxCreateAttempts = 5;
+    let createAttempts = 0;
 
-    return this.meetingRepository.create(payload).save();
+    while (createAttempts < maxCreateAttempts) {
+      try {
+        payload.slug = `${slugify(
+          payload.title!,
+        )}-${generateLowerAlphaNumId()}`.toLowerCase();
+        const meeting = await this.meetingRepository.create(payload).save();
+        return meeting;
+      } catch (err) {
+        if (createAttempts === maxCreateAttempts) throw err;
+        createAttempts++;
+      }
+    }
+
+    throw new InternalServerErrorException(
+      'Could not create meeting',
+      'COULD_NOT_CREATE_MEETING',
+    );
   }
 
   currentUserJoinMeetingValidator(userId: number, slug: string) {
