@@ -15,10 +15,12 @@ interface VideoGridItemProps {
   likes: number;
   comments: number;
   tags: string[];
-  onClick: (id: string) => any;
+  onClickPlay: (id: string) => any;
+  onClickSave: (id: string) => any;
 }
 
 const VideoGridItem: FC<VideoGridItemProps> = ({
+  id,
   thumbnailSrc,
   live,
   saved,
@@ -29,6 +31,8 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
   likes,
   comments,
   tags,
+  onClickPlay,
+  onClickSave,
 }) => {
   const [hover, setHover] = React.useState(false);
   return (
@@ -38,6 +42,9 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
       }}
       onMouseLeave={() => {
         setHover(false);
+      }}
+      onClick={() => {
+        onClickPlay(id);
       }}
       round={{ corner: 'top', size: 'medium' }}
       overflow="hidden"
@@ -63,10 +70,9 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
           right="0"
           direction="row"
           justify="between"
-          pad="medium"
           margin={{ bottom: '-50px' }}
         >
-          <Box>
+          <Box pad="medium">
             {live && (
               <Box
                 flex={{ shrink: 0 }}
@@ -77,11 +83,20 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
               />
             )}
           </Box>
-          {saved ? (
-            <Bookmark color="white" />
-          ) : (
-            hover && <Bookmark color="status-disabled" />
-          )}
+          <Box
+            pad="small"
+            margin="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClickSave(id);
+            }}
+          >
+            {saved ? (
+              <Bookmark color="white" />
+            ) : (
+              hover && <Bookmark color="status-disabled" />
+            )}
+          </Box>
         </ExtendedBox>
 
         <Image src={thumbnailSrc} />

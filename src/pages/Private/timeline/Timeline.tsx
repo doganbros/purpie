@@ -97,24 +97,32 @@ const Timeline: FC = () => {
             ))}
           </Box>
         </Box>
-        <Grid columns={size !== 'small' ? 'medium' : '100%'} gap="medium">
+        <Grid
+          columns={size !== 'small' ? 'medium' : '100%'}
+          gap={{ row: 'large', column: 'medium' }}
+        >
           {Array(30)
             .fill('')
             .map(() => ({
-              id: 'id',
-              comments: 432,
+              id: Math.random().toString(36).slice(2),
+              comments: Math.floor(Math.random() * 100),
               createdAt: '4:30 PM',
-              likes: 32,
+              likes: Math.floor(Math.random() * 30),
               saved: Math.random() < 0.5,
               live: Math.random() < 0.5,
-              tags: ['#somebody', '#once', '#told', '#me'],
+              tags: ['#animals', '#sea', '#octopus'],
               thumbnailSrc:
                 'https://images.unsplash.com/photo-1601511902608-bd1d92d0edb5?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&dl=stephanie-harlacher-cBHt4js8nVQ-unsplash.jpg&w=1920',
               userAvatarSrc:
                 'https://image.flaticon.com/icons/png/512/4721/4721623.png',
               userName: 'Jane Doe',
               videoTitle: 'Information About Octopuses',
-              onClick: () => {},
+              onClickPlay: (id: string) => {
+                console.log(`Clicked play on ${id}`);
+              },
+              onClickSave: (id: string) => {
+                console.log(`Clicked save on ${id}`);
+              },
             }))
             .map(
               ({
@@ -123,7 +131,8 @@ const Timeline: FC = () => {
                 createdAt,
                 likes,
                 live,
-                onClick,
+                onClickPlay,
+                onClickSave,
                 saved,
                 tags,
                 thumbnailSrc,
@@ -137,7 +146,8 @@ const Timeline: FC = () => {
                   createdAt={createdAt}
                   likes={likes}
                   live={live}
-                  onClick={onClick}
+                  onClickPlay={onClickPlay}
+                  onClickSave={onClickSave}
                   saved={saved}
                   tags={tags}
                   thumbnailSrc={thumbnailSrc}
