@@ -119,9 +119,13 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
           <Text color="status-disabled">{comments}</Text>
         </Box>
       </Box>
-      <Text>{live}</Text>
-      <Text>{saved}</Text>
-      <Text>{tags}</Text>
+      <Box direction="row" gap="small">
+        {tags.map((t) => (
+          <Text color="status-disabled" size="small">
+            {t}
+          </Text>
+        ))}
+      </Box>
     </Box>
   );
 };
