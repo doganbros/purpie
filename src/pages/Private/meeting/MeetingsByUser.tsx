@@ -19,7 +19,7 @@ import {
   getMultipleMeetingsByUserIdAction,
   openUpdateMeetingLayerAction,
 } from '../../../store/actions/meeting.action';
-import CreateUpdateMeeting from '../../../layers/meeting/CreateUpdateMeeting';
+import PlanMeeting from '../../../layers/meeting/PlanMeeting';
 
 const MeetingsByUser: FC = () => {
   const dispatch = useDispatch();
@@ -86,7 +86,7 @@ const MeetingsByUser: FC = () => {
         </Box>
       }
     >
-      <CreateUpdateMeeting
+      <PlanMeeting
         meetingId={meetingUpdating || undefined}
         zoneId={selectedMeetingZoneId || undefined}
         visible={!!meetingUpdating && layerIsVisible}
