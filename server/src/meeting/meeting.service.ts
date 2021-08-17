@@ -9,11 +9,12 @@ import { UserZone } from 'entities/UserZone.entity';
 import { generateJWT } from 'helpers/jwt';
 import { Brackets, DeepPartial, Repository } from 'typeorm';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
-import { meetingConfigStringify } from 'helpers/utils';
+import { generateLowerAlphaNumId, meetingConfigStringify } from 'helpers/utils';
 import { Contact } from 'entities/Contact.entity';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { Zone } from 'entities/Zone.entity';
 import { Channel } from 'entities/Channel.entity';
+import slugify from 'slugify';
 
 const {
   JITSI_SECRET = '',
@@ -32,6 +33,10 @@ export class MeetingService {
   ) {}
 
   createNewMeeting(payload: DeepPartial<Meeting>) {
+    payload.slug = `${slugify(
+      payload.title!,
+    )}-${generateLowerAlphaNumId()}`.toLowerCase();
+
     return this.meetingRepository.create(payload).save();
   }
 
