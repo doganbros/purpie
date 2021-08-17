@@ -1,5 +1,5 @@
-import React, { FC, useState } from 'react';
-import { Box, Button, Text } from 'grommet';
+import React, { FC, useState, useContext } from 'react';
+import { Box, Button, Grid, ResponsiveContext, Text } from 'grommet';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
 import ChannelsToFollow from './ChannelsToFollow';
@@ -7,8 +7,11 @@ import ZonesToJoin from './ZonesToJoin';
 import LastActivities from './LastActivities';
 import Profile from './Profile';
 import Searchbar from './Searchbar';
+import VideoGridItem from '../../../components/utils/VideoGridItem';
 
 const Timeline: FC = () => {
+  const size = useContext(ResponsiveContext);
+
   const [filters, setFilters] = useState([
     {
       id: 0,
@@ -70,7 +73,7 @@ const Timeline: FC = () => {
         </Box>
       }
     >
-      <Box pad={{ vertical: 'medium' }}>
+      <Box pad={{ vertical: 'medium' }} gap="medium">
         <Box direction="row" justify="between" align="center">
           <Text weight="bold">Timeline</Text>
           <Box direction="row" gap="small">
@@ -94,6 +97,55 @@ const Timeline: FC = () => {
             ))}
           </Box>
         </Box>
+        <Grid columns={size !== 'small' ? 'medium' : '100%'} gap="medium">
+          {Array(30)
+            .fill({
+              id: 'id',
+              comments: 432,
+              createdAt: '4:30 PM',
+              likes: 32,
+              saved: true,
+              live: true,
+              tags: ['#somebody', '#once', '#told', '#me'],
+              thumbnailSrc:
+                'https://images.unsplash.com/photo-1601511902608-bd1d92d0edb5?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&dl=stephanie-harlacher-cBHt4js8nVQ-unsplash.jpg&w=1920',
+              userAvatarSrc:
+                'https://image.flaticon.com/icons/png/512/4721/4721623.png',
+              userName: 'Jane Doe',
+              videoTitle: 'Information About Octopuses',
+            })
+            .map(
+              ({
+                id,
+                comments,
+                createdAt,
+                likes,
+                live,
+                onClick,
+                saved,
+                tags,
+                thumbnailSrc,
+                userAvatarSrc,
+                userName,
+                videoTitle,
+              }) => (
+                <VideoGridItem
+                  id={id}
+                  comments={comments}
+                  createdAt={createdAt}
+                  likes={likes}
+                  live={live}
+                  onClick={onClick}
+                  saved={saved}
+                  tags={tags}
+                  thumbnailSrc={thumbnailSrc}
+                  userAvatarSrc={userAvatarSrc}
+                  userName={userName}
+                  videoTitle={videoTitle}
+                />
+              )
+            )}
+        </Grid>
       </Box>
     </PrivatePageLayout>
   );
