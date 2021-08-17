@@ -97,15 +97,16 @@ const Timeline: FC = () => {
             ))}
           </Box>
         </Box>
-        <Grid columns={size !== 'small' ? '300px' : '100%'} gap="medium">
+        <Grid columns={size !== 'small' ? 'medium' : '100%'} gap="medium">
           {Array(30)
-            .fill({
+            .fill('')
+            .map(() => ({
               id: 'id',
               comments: 432,
               createdAt: '4:30 PM',
               likes: 32,
-              saved: true,
-              live: true,
+              saved: Math.random() < 0.5,
+              live: Math.random() < 0.5,
               tags: ['#somebody', '#once', '#told', '#me'],
               thumbnailSrc:
                 'https://images.unsplash.com/photo-1601511902608-bd1d92d0edb5?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&dl=stephanie-harlacher-cBHt4js8nVQ-unsplash.jpg&w=1920',
@@ -113,7 +114,8 @@ const Timeline: FC = () => {
                 'https://image.flaticon.com/icons/png/512/4721/4721623.png',
               userName: 'Jane Doe',
               videoTitle: 'Information About Octopuses',
-            })
+              onClick: () => {},
+            }))
             .map(
               ({
                 id,
