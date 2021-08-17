@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react';
-import { Avatar, Box, Button, Text } from 'grommet';
+import { Box, Button, Text } from 'grommet';
+import ZoneListItem from '../../../components/utils/zone/ZoneListItem';
 
 const zones = [
   {
@@ -7,14 +8,14 @@ const zones = [
     name: 'Zone-1',
     channelCount: 41,
     memberCount: 245,
-    bg: 'teal',
+    src: 'https://image.flaticon.com/icons/png/512/4568/4568785.png',
   },
   {
     id: '#Zone2',
     name: 'Zone-2',
     channelCount: 31,
     memberCount: 3245,
-    bg: 'aqua',
+    src: 'https://image.flaticon.com/icons/png/512/4568/4568755.png',
   },
 
   {
@@ -22,7 +23,7 @@ const zones = [
     name: 'Zone-3',
     channelCount: 44,
     memberCount: 143,
-    bg: 'aquamarine',
+    src: 'https://image.flaticon.com/icons/png/512/4568/4568773.png',
   },
 
   {
@@ -30,7 +31,7 @@ const zones = [
     name: 'Zone-4',
     channelCount: 5,
     memberCount: 23,
-    bg: 'cadetblue',
+    src: 'https://image.flaticon.com/icons/png/512/4569/4569967.png',
   },
 
   {
@@ -38,7 +39,7 @@ const zones = [
     name: 'Zone-5',
     channelCount: 48,
     memberCount: 245,
-    bg: 'darkcyan',
+    src: 'https://image.flaticon.com/icons/png/512/4568/4568719.png',
   },
 
   {
@@ -46,21 +47,21 @@ const zones = [
     name: 'Zone-6',
     channelCount: 61,
     memberCount: 245,
-    bg: 'lightblue',
+    src: 'https://image.flaticon.com/icons/png/512/4568/4568857.png',
   },
   {
     id: '#Zone7',
     name: 'Zone-7',
     channelCount: 41,
     memberCount: 245,
-    bg: 'teal',
+    src: 'https://image.flaticon.com/icons/png/512/4570/4570037.png',
   },
   {
     id: '#Zone8',
     name: 'Zone-8',
     channelCount: 31,
     memberCount: 3245,
-    bg: 'aqua',
+    src: 'https://image.flaticon.com/icons/png/512/4568/4568701.png',
   },
 
   {
@@ -68,7 +69,7 @@ const zones = [
     name: 'Zone-9',
     channelCount: 44,
     memberCount: 143,
-    bg: 'aquamarine',
+    src: 'https://image.flaticon.com/icons/png/512/4570/4570032.png',
   },
 
   {
@@ -76,7 +77,7 @@ const zones = [
     name: 'Zone-10',
     channelCount: 5,
     memberCount: 23,
-    bg: 'cadetblue',
+    src: 'https://image.flaticon.com/icons/png/512/4568/4568865.png',
   },
 ];
 const ZonesToJoin: FC = () => {
@@ -97,24 +98,14 @@ const ZonesToJoin: FC = () => {
           </Text>
         </Button>
       </Box>
-      {zones.slice(0, displayCount).map((c) => (
-        <Box key={c.id} direction="row" justify="between" align="center">
-          <Box direction="row" align="center" gap="small">
-            <Avatar size="medium" background={c.bg} />
-            <Box>
-              <Text size="small" weight="bold">
-                {c.name}
-              </Text>
-              <Text size="xsmall" color="status-disabled">
-                {`${c.channelCount} channels`}
-              </Text>
-              <Text size="xsmall" color="status-disabled">
-                {`${c.memberCount} members`}
-              </Text>
-            </Box>
-          </Box>
-          <Button primary label="Follow" size="small" />
-        </Box>
+      {zones.slice(0, displayCount).map((z) => (
+        <ZoneListItem
+          key={z.id}
+          name={z.name}
+          channelCount={z.channelCount}
+          memberCount={z.memberCount}
+          src={z.src}
+        />
       ))}
       {displayCount > 3 && (
         <Button alignSelf="end">
