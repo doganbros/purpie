@@ -1,63 +1,64 @@
 import React, { FC, useState } from 'react';
-import { Avatar, Box, Button, Text } from 'grommet';
+import { Box, Button, Text } from 'grommet';
+import ChannelListItem from '../../../components/utils/channel/ChannelListItem';
 
 const channels = [
   {
     id: '#channel1',
     name: 'channel-1',
-    bg: 'dark-1',
+    src: 'https://image.flaticon.com/icons/png/512/3969/3969733.png',
   },
   {
     id: '#channel2',
     name: 'channel-2',
-    bg: 'dark-2',
+    src: 'https://image.flaticon.com/icons/png/512/3969/3969743.png',
   },
 
   {
     id: '#channel3',
     name: 'channel-3',
-    bg: 'dark-3',
+    src: 'https://image.flaticon.com/icons/png/512/3969/3969722.png',
   },
 
   {
     id: '#channel4',
     name: 'channel-4',
-    bg: 'dark-4',
+    src: 'https://image.flaticon.com/icons/png/512/3969/3969724.png',
   },
 
   {
     id: '#channel5',
     name: 'channel-5',
-    bg: 'light-6',
+    src: 'https://image.flaticon.com/icons/png/512/3969/3969727.png',
   },
 
   {
     id: '#channel6',
     name: 'channel-6',
-    bg: 'light-5',
+    src: 'https://image.flaticon.com/icons/png/512/3969/3969730.png',
   },
   {
     id: '#channel7',
     name: 'channel-7',
-    bg: 'dark-3',
+    src: 'https://image.flaticon.com/icons/png/512/3969/3969735.png',
   },
 
   {
     id: '#channel8',
     name: 'channel-8',
-    bg: 'dark-4',
+    src: 'https://image.flaticon.com/icons/png/512/3969/3969738.png',
   },
 
   {
     id: '#channel9',
     name: 'channel-9',
-    bg: 'light-6',
+    src: 'https://image.flaticon.com/icons/png/512/3969/3969741.png',
   },
 
   {
     id: '#channel10',
     name: 'channel-10',
-    bg: 'light-5',
+    src: 'https://image.flaticon.com/icons/png/512/3969/3969747.png',
   },
 ];
 const ChannelsToFollow: FC = () => {
@@ -79,20 +80,7 @@ const ChannelsToFollow: FC = () => {
         </Button>
       </Box>
       {channels.slice(0, displayCount).map((c) => (
-        <Box key={c.id} direction="row" justify="between" align="center">
-          <Box direction="row" align="center" gap="small">
-            <Avatar size="medium" background={c.bg} />
-            <Box>
-              <Text size="small" weight="bold">
-                {c.name}
-              </Text>
-              <Text size="xsmall" color="status-disabled">
-                {c.id}
-              </Text>
-            </Box>
-          </Box>
-          <Button primary label="Follow" size="small" />
-        </Box>
+        <ChannelListItem key={c.id} id={c.id} name={c.name} src={c.src} />
       ))}
       {displayCount > 3 && (
         <Button alignSelf="end">
