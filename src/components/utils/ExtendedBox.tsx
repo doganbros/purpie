@@ -12,6 +12,7 @@ interface Props extends BoxProps {
   minWidth?: string;
   minHeight?: string;
   opacity?: string;
+  marginTop?: string;
 }
 
 const ExtendedBoxCSS = css`
@@ -23,6 +24,7 @@ const ExtendedBoxCSS = css`
   min-width: ${(props: Props) => props.minWidth};
   min-height: ${(props: Props) => props.minWidth};
   opacity: ${(props: Props) => props.opacity};
+  margin-top: ${(props: Props) => props.marginTop};
 `;
 
 const ExtendedBox: FC<Props> = (props) => {

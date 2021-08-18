@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { Box, Text } from 'grommet';
+import ExtendedBox from './ExtendedBox';
 
 interface Props {
   children: any;
@@ -10,24 +11,21 @@ interface Props {
 const SectionContainer: FC<Props> = ({ children, label, margin }) => {
   return (
     <Box margin={margin}>
-      <Text
-        size="small"
-        color="brand"
-        style={{
-          position: 'absolute',
-          backgroundColor: '#FFF',
-          left: 35,
-          marginTop: -10,
-          paddingInline: 10,
-          textAlign: 'center',
-        }}
+      <ExtendedBox
+        position="absolute"
+        left={`35px`}
+        background="white"
+        pad={{ horizontal: 'small' }}
+        marginTop={'-10px'}
       >
-        {label}
-      </Text>
+        <Text size="small" color="brand" textAlign={'center'}>
+          {label}
+        </Text>
+      </ExtendedBox>
       <Box
         pad="medium"
         border={{ color: 'brand', size: 'xsmall' }}
-        style={{ borderRadius: 10 }}
+        round={'small'}
       >
         {children}
       </Box>

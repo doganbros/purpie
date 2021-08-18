@@ -103,13 +103,13 @@ const PlanMeeting: FC<Props> = ({ onClose, visible, meetingId, zoneId }) => {
               <Text
                 size="small"
                 weight={activeSection >= i ? 'bold' : 'normal'}
-                color={activeSection >= i ? 'brand' : '#8F9BB3'}
+                color={activeSection >= i ? 'brand' : 'status-disabled'}
               >
                 {item.title}
               </Text>
               {i + 1 !== content.length && (
                 <Box
-                  background={activeSection >= i ? 'brand' : '#8F9BB3'}
+                  background={activeSection >= i ? 'brand' : 'status-disabled'}
                   height={activeSection >= i ? '2px' : '1px'}
                   width="48px"
                 />
@@ -124,7 +124,7 @@ const PlanMeeting: FC<Props> = ({ onClose, visible, meetingId, zoneId }) => {
               primary
               size="small"
               label="Back"
-              color="#8F9BB3"
+              color="status-disabled"
               style={{
                 width: 240,
                 borderRadius: 10,
@@ -138,7 +138,7 @@ const PlanMeeting: FC<Props> = ({ onClose, visible, meetingId, zoneId }) => {
             primary
             size="small"
             label="Go!"
-            color="#6FFFB0"
+            color="accent-1"
             style={{
               color: 'brand',
               width: 240,

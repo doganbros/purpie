@@ -9,7 +9,8 @@ const Switch: FC<Props> = ({ onChange, value }) => {
   return (
     <Box>
       <MaskedInput
-        style={{ borderWidth: 0, boxShadow: 'none' }}
+        plain
+        focusIndicator={false}
         mask={[
           {
             length: [1, 2],
