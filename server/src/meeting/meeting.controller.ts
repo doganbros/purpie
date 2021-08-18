@@ -11,8 +11,6 @@ import {
   Res,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import slugify from 'slugify';
-import { nanoid } from 'nanoid';
 import { Response } from 'express';
 import dayjs from 'dayjs';
 import { Meeting } from 'entities/Meeting.entity';
@@ -42,15 +40,11 @@ export class MeetingController {
     @CurrentUser() user: UserPayload,
   ) {
     const meetingPayload: Partial<Meeting> = {
-      title: createMeetingInfo.title || 'New Meeting',
+      title: createMeetingInfo.title || 'Untiltled Meeting',
       description: createMeetingInfo.description,
       startDate: createMeetingInfo.startDate ?? new Date(),
       createdById: user.id,
     };
-
-    meetingPayload.slug = `${slugify(
-      meetingPayload.title!,
-    )}-${nanoid()}`.toLowerCase();
 
     const {
       public: publicMeeting,
@@ -148,6 +142,13 @@ export class MeetingController {
     @CurrentUser() user: UserPayload,
   ) {
     return this.meetingService.removeMeeting(meetingId, user.id);
+  }
+
+  @Get('list/public')
+  @PaginationQueryParams()
+  @IsAuthenticated()
+  async getPublicMeetings(@Query() query: PaginationQuery) {
+    return this.meetingService.getPublicMeetings(query);
   }
 
   @Get('list/user')

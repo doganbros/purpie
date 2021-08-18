@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import crypto from 'crypto';
 
@@ -9,11 +9,12 @@ import { UserZone } from 'entities/UserZone.entity';
 import { generateJWT } from 'helpers/jwt';
 import { Brackets, DeepPartial, Repository } from 'typeorm';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
-import { meetingConfigStringify } from 'helpers/utils';
+import { generateLowerAlphaNumId, meetingConfigStringify } from 'helpers/utils';
 import { Contact } from 'entities/Contact.entity';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { Zone } from 'entities/Zone.entity';
 import { Channel } from 'entities/Channel.entity';
+import slugify from 'slugify';
 
 const {
   JITSI_SECRET = '',
@@ -31,8 +32,27 @@ export class MeetingService {
     private userChannelRepository: Repository<UserChannel>,
   ) {}
 
-  createNewMeeting(payload: DeepPartial<Meeting>) {
-    return this.meetingRepository.create(payload).save();
+  async createNewMeeting(payload: DeepPartial<Meeting>) {
+    const maxCreateAttempts = 5;
+    let createAttempts = 0;
+
+    while (createAttempts < maxCreateAttempts) {
+      try {
+        payload.slug = `${slugify(
+          payload.title!,
+        )}-${generateLowerAlphaNumId()}`.toLowerCase();
+        const meeting = await this.meetingRepository.create(payload).save();
+        return meeting;
+      } catch (err) {
+        if (createAttempts === maxCreateAttempts) throw err;
+        createAttempts++;
+      }
+    }
+
+    throw new InternalServerErrorException(
+      'Could not create meeting',
+      'COULD_NOT_CREATE_MEETING',
+    );
   }
 
   currentUserJoinMeetingValidator(userId: number, slug: string) {
@@ -166,6 +186,14 @@ export class MeetingService {
       ]);
   }
 
+  async getPublicMeetings(query: PaginationQuery) {
+    return this.meetingSelections
+      .where('meeting.endDate is null')
+      .andWhere('meeting.public = true')
+      .orderBy('meeting.startDate', 'ASC')
+      .paginate(query);
+  }
+
   async getUserMeetings(userId: number, query: PaginationQuery) {
     return this.meetingSelections
       .leftJoin('meeting.createdBy', 'createdBy')
@@ -187,17 +215,16 @@ export class MeetingService {
         'meeting.userContactExclusive = true AND meeting.createdById = contact.userId AND contact.contactUserId = :userId',
         { userId },
       )
-      .where('meeting.startDate >= now()')
+      .where('meeting.endDate is null')
       .andWhere(
         new Brackets((qb) => {
           qb.where('user_zone.zoneId is not null')
             .orWhere('user_channel.channelId is not null')
-            .orWhere(
-              'contact.contactUserId is not null or meeting.createdById = :userId',
-              { userId },
-            );
+            .orWhere('contact.contactUserId is not null')
+            .orWhere('meeting.createdById = :userId', { userId });
         }),
       )
+      .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
   }
 
@@ -216,6 +243,8 @@ export class MeetingService {
         { userId },
       )
       .where('zone.id = :zoneId', { zoneId })
+      .andWhere('meeting.endDate is null')
+      .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
   }
 
@@ -234,6 +263,8 @@ export class MeetingService {
         { userId },
       )
       .where('channel.id = :channelId', { channelId })
+      .where('meeting.endDate is null')
+      .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
   }
 }
