@@ -33,12 +33,6 @@ export class Zone extends RecordEntity {
   @Column({ default: false })
   public: boolean;
 
-  @Column({ nullable: true })
-  apiKey: string;
-
-  @Column({ nullable: true })
-  apiSecret: string;
-
   @OneToMany(() => Channel, (channel) => channel.zone)
   channels: Channel;
 

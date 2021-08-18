@@ -50,6 +50,16 @@ export const lowerAlphaNum = Array(10)
   )
   .join('');
 
+export const alphaNum = Array(10)
+  .fill(null)
+  .map((_, i) => i.toString())
+  .concat(
+    Array(26 * 2)
+      .fill(null)
+      .map((_, i) => String.fromCharCode(65 + (i > 25 ? i + 6 : i))),
+  )
+  .join('');
+
 export const generateLowerAlphaNumId = (size = 6) => {
   return customAlphabet(lowerAlphaNum, size)();
 };

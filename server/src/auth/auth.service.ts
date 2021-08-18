@@ -7,13 +7,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import bcrypt from 'bcryptjs';
 import dayjs from 'dayjs';
+import { Client } from 'entities/Client.entity';
 import { User } from 'entities/User.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
 import { Response } from 'express';
-import { generateJWT } from 'helpers/jwt';
+import { generateJWT, verifyJWT } from 'helpers/jwt';
+import { alphaNum } from 'helpers/utils';
+import { customAlphabet } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
 import { Not, Repository, IsNull } from 'typeorm';
+import { CreateClientDto } from './dto/create-client.dto';
+import { LoginClientDto } from './dto/login-client.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import {
   UserBasic,
@@ -38,6 +43,7 @@ const {
 export class AuthService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Client) private clientRepository: Repository<Client>,
     private mailService: MailService,
   ) {}
 
@@ -137,6 +143,98 @@ export class AuthService {
     });
 
     return this.setMailVerificationToken(user);
+  }
+
+  async createClient(userId: number, createClientInfo: CreateClientDto) {
+    const apiKey = customAlphabet(alphaNum, 50)();
+    const apiSecret = customAlphabet(alphaNum, 70)();
+
+    const apiSecretHashed = await bcrypt.hash(apiSecret, 10);
+
+    await this.clientRepository
+      .create({
+        apiKey,
+        apiSecret: apiSecretHashed,
+        name: createClientInfo.name,
+        clientRoleCode: createClientInfo.roleCode,
+        createdById: userId,
+      })
+      .save();
+    return {
+      apiKey,
+      apiSecret,
+    };
+  }
+
+  async authenticateClient(info: LoginClientDto) {
+    const client = await this.clientRepository.findOne({
+      where: { apiKey: info.apiKey },
+      relations: ['clientRole'],
+    });
+
+    if (!client)
+      throw new NotFoundException(
+        'Wrong client apiKey or apiSecret',
+        'WRONG_CLIENT_API_KEY_OR_SECRET',
+      );
+
+    const isValid = await bcrypt.compare(info.apiSecret, client.apiSecret);
+
+    if (!isValid)
+      throw new NotFoundException(
+        'Wrong client apiKey or apiSecret',
+        'WRONG_CLIENT_API_KEY_OR_SECRET',
+      );
+
+    const tokens = await this.generateLoginToken({
+      id: client.id,
+      name: client.name,
+      clientRole: client.clientRole,
+    });
+
+    client.refreshToken = await bcrypt.hash(tokens.refreshToken, 10);
+    await client.save();
+
+    return tokens;
+  }
+
+  async refreshClientTokens(refreshToken: string) {
+    try {
+      const payload = await verifyJWT(
+        refreshToken,
+        `${AUTH_TOKEN_SECRET}_REFRESH_`,
+      );
+
+      const client = await this.clientRepository.findOneOrFail({
+        where: { id: payload.id, refreshToken: Not(IsNull()) },
+        relations: ['clientRole'],
+      });
+
+      const isValid =
+        client.refreshToken &&
+        (await bcrypt.compare(refreshToken, client.refreshToken));
+
+      if (!isValid) throw new Error('Not Valid');
+
+      const tokens = await this.generateLoginToken({
+        id: client.id,
+        name: client.name,
+        clientRole: client.clientRole,
+      });
+
+      client.refreshToken = await bcrypt.hash(tokens.refreshToken, 10);
+      await client.save();
+      return tokens;
+    } catch (err) {
+      throw new UnauthorizedException(
+        'Invalid Refresh Token',
+        'INVALID_REFRESH_TOKEN',
+      );
+    }
+  }
+
+  async removeClientRefreshToken(id: number) {
+    await this.clientRepository.update(id, { refreshToken: null });
   }
 
   async setMailVerificationToken(user: User) {
