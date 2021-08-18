@@ -10,7 +10,6 @@ interface Payload extends CreateMeetingPayload {
   userZone: UserZone;
 }
 
-interface Props {}
 const users = [
   'umit@doganbros.com',
   'koray@doganbros.com',
@@ -20,7 +19,7 @@ const users = [
   'seyma@doganbros.com',
 ];
 
-const MeetingInvitation: FC<Props> = () => {
+const MeetingInvitation: FC = () => {
   const [suggestionsList, setSuggestionsList] = useState<string[]>(users);
   const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
   const [invitedUser, setInvitedUser] = useState<string>('');
@@ -35,7 +34,7 @@ const MeetingInvitation: FC<Props> = () => {
 
   const addUser = () => {
     if (!users.includes(invitedUser)) {
-      return null;
+      return;
     }
     const temp = JSON.parse(JSON.stringify(invitedUsers));
     temp.push(invitedUser);

@@ -13,19 +13,19 @@ const SectionContainer: FC<Props> = ({ children, label, margin }) => {
     <Box margin={margin}>
       <ExtendedBox
         position="absolute"
-        left={`35px`}
+        left="35px"
         background="white"
         pad={{ horizontal: 'small' }}
-        marginTop={'-10px'}
+        margin={{ top: '-10px' }}
       >
-        <Text size="small" color="brand" textAlign={'center'}>
+        <Text size="small" color="brand" textAlign="center">
           {label}
         </Text>
       </ExtendedBox>
       <Box
         pad="medium"
         border={{ color: 'brand', size: 'xsmall' }}
-        round={'small'}
+        round="small"
       >
         {children}
       </Box>

@@ -9,18 +9,21 @@ import MeetingCheckbox from '../components/MeetingCheckbox';
 interface Payload extends CreateMeetingPayload {
   userZone: UserZone;
 }
+const MeetingPrivacy: FC = () => {
+  const handleSubmit: FormSubmitEvent<Payload> = () => {};
 
-interface Props {}
-
-const MeetingPrivacy: FC<Props> = ({}) => {
-  const handleSubmit: FormSubmitEvent<Payload> = ({ value }) => {};
-
-  const joinSection = ['Private Meeting', 'Open for channel followers?'];
-  const streamSection = ['Live stream the meeting?', 'Enable recording?'];
+  const joinSection = [
+    { id: 1, title: 'Private Meeting' },
+    { id: 2, title: 'Open for channel followers?' },
+  ];
+  const streamSection = [
+    { id: 1, title: 'Live stream the meeting?' },
+    { id: 2, title: 'Enable recording?' },
+  ];
   const streamSubSection = [
-    'Stream to the channel?',
-    'Stream to the zone?',
-    'Stream to public?',
+    { id: 1, title: 'Stream to the channel?' },
+    { id: 2, title: 'Stream to the zone?' },
+    { id: 3, title: 'Stream to public?' },
   ];
   const [joinSectionSwitches, setJoinSectionSwitches] = useState<boolean[]>([
     false,
@@ -39,9 +42,9 @@ const MeetingPrivacy: FC<Props> = ({}) => {
         <Box justify="between" direction="row">
           {joinSection.map((item, i) => (
             <MeetingCheckbox
-              title={item}
+              title={item.title}
               width="280px"
-              key={i}
+              key={item.id}
               nopad
               onClick={() => {
                 const temp = joinSectionSwitches;
@@ -57,9 +60,9 @@ const MeetingPrivacy: FC<Props> = ({}) => {
         <Box justify="between" direction="row">
           {streamSection.map((item, i) => (
             <MeetingCheckbox
-              title={item}
+              title={item.title}
               width="280px"
-              key={i}
+              key={item.id}
               onClick={() => {
                 const temp = streamSectionSwitches;
                 temp[i] = !temp[i];
@@ -74,8 +77,8 @@ const MeetingPrivacy: FC<Props> = ({}) => {
         >
           {streamSubSection.map((item, i) => (
             <MeetingCheckbox
-              title={item}
-              key={i}
+              title={item.title}
+              key={item.id}
               width="267px"
               onClick={() => {
                 const temp = streamSubSectionSwitches;

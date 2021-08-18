@@ -11,9 +11,7 @@ interface Payload extends CreateMeetingPayload {
   userZone: UserZone;
 }
 
-interface Props {}
-
-const MeetingDetails: FC<Props> = () => {
+const MeetingDetails: FC = () => {
   const [swtichActive, setSwtichActive] = useState(false);
   const [time, setTime] = useState<string | undefined>(undefined);
   const defaultDate = useRef(new Date().toISOString());

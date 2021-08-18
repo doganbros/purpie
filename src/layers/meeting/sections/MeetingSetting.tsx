@@ -12,10 +12,8 @@ interface Payload extends CreateMeetingPayload {
   userZone: UserZone;
 }
 
-interface MainProps {}
-
-const MeetingSetting: FC<MainProps> = ({}) => {
-  const handleSubmit: FormSubmitEvent<Payload> = ({ value }) => {};
+const MeetingSetting: FC = () => {
+  const handleSubmit: FormSubmitEvent<Payload> = () => {};
 
   const [swtichActive, setSwtichActive] = useState(false);
   const [firstSelect, setFirstSelect] = useState('Public');
@@ -77,7 +75,6 @@ const MeetingSetting: FC<MainProps> = ({}) => {
                 <MeetingRadioButton
                   labels={item}
                   width="490px"
-                  key={i}
                   onClick={(index) => {
                     const temp = streamSectionRadios;
                     temp[i] = index;

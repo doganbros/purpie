@@ -1,10 +1,11 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Box, Button, Text, Layer } from 'grommet';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import { Close } from 'grommet-icons';
 import { getMeetingByIdAction } from '../../store/actions/meeting.action';
 import { getMultipleUserZonesAction } from '../../store/actions/zone.action';
-import { AppState } from '../../store/reducers/root.reducer';
+// import { AppState } from '../../store/reducers/root.reducer';
 import MeetingDetails from './sections/MeetingDetails';
 import MeetingPrivacy from './sections/MeetingPrivacy';
 import MeetingInvitation from './sections/MeetingInvitation';
@@ -20,16 +21,16 @@ interface Props {
 
 const PlanMeeting: FC<Props> = ({ onClose, visible, meetingId, zoneId }) => {
   const dispatch = useDispatch();
-  const {
-    zone: {
-      getMultipleUserZones: { userZones },
-    },
-    meeting: {
-      createMeeting: { loading },
-      updateMeetingById: { loading: updateLoading },
-      getOneMeeting: { loading: meetingLoading, meeting },
-    },
-  } = useSelector((state: AppState) => state);
+  // const {
+  //   zone: {
+  //     getMultipleUserZones: { userZones },
+  //   },
+  //   meeting: {
+  //     createMeeting: { loading },
+  //     updateMeetingById: { loading: updateLoading },
+  //     getOneMeeting: { loading: meetingLoading, meeting },
+  //   },
+  // } = useSelector((state: AppState) => state);
 
   const [activeSection, setActiveSection] = useState(2);
 
@@ -45,22 +46,27 @@ const PlanMeeting: FC<Props> = ({ onClose, visible, meetingId, zoneId }) => {
 
   const content = [
     {
+      id: 1,
       title: 'Meeting Details',
       component: <MeetingDetails />,
     },
     {
+      id: 2,
       title: 'Privacy',
       component: <MeetingPrivacy />,
     },
     {
+      id: 3,
       title: 'Invite',
       component: <MeetingInvitation />,
     },
     {
+      id: 4,
       title: 'More Settings',
       component: <MeetingSetting />,
     },
     {
+      id: 5,
       title: 'Even More Settings',
       component: <MeetingMoreSetting />,
     },
@@ -99,7 +105,7 @@ const PlanMeeting: FC<Props> = ({ onClose, visible, meetingId, zoneId }) => {
         </Box>
         <Box direction="row" gap="small" justify="center">
           {content.map((item, i) => (
-            <Box key={i} gap="small" direction="row" align="center">
+            <Box key={item.id} gap="small" direction="row" align="center">
               <Text
                 size="small"
                 weight={activeSection >= i ? 'bold' : 'normal'}

@@ -10,22 +10,16 @@ interface Payload extends CreateMeetingPayload {
   userZone: UserZone;
 }
 
-interface Props {}
+const MeetingMoreSetting: FC = () => {
+  const handleSubmit: FormSubmitEvent<Payload> = () => {};
 
-const MeetingMoreSetting: FC<Props> = ({}) => {
-  const handleSubmit: FormSubmitEvent<Payload> = ({ value }) => {};
+  const joinSection = Array(2)
+    .fill('')
+    .map((v, i) => ({ id: i + 1, title: 'Lorem Ipsum' }));
+  const streamSection = Array(8)
+    .fill('')
+    .map((v, i) => ({ id: i + 1, title: 'Lorem Ipsum' }));
 
-  const joinSection = ['Lorem Ipsum', 'Lorem Ipsum'];
-  const streamSection = [
-    'Lorem Ipsum',
-    'Lorem Ipsum',
-    'Lorem Ipsum',
-    'Lorem Ipsum',
-    'Lorem Ipsum',
-    'Lorem Ipsum',
-    'Lorem Ipsum',
-    'Lorem Ipsum',
-  ];
   const [joinSectionSwitches, setJoinSectionSwitches] = useState<boolean[]>([
     false,
     false,
@@ -40,9 +34,9 @@ const MeetingMoreSetting: FC<Props> = ({}) => {
         <Box justify="between" direction="row" wrap>
           {streamSection.map((item, i) => (
             <MeetingCheckbox
-              title={streamSection[i]}
+              title={item.title}
               width="280px"
-              key={i}
+              key={item.id}
               onClick={() => {
                 const temp = streamSectionSwitches;
                 temp[i] = !temp[i];
@@ -57,9 +51,9 @@ const MeetingMoreSetting: FC<Props> = ({}) => {
         <Box justify="between" direction="row">
           {joinSection.map((item, i) => (
             <MeetingCheckbox
-              title={item}
+              title={item.title}
               width="280px"
-              key={i}
+              key={item.id}
               nopad
               onClick={() => {
                 const temp = joinSectionSwitches;
