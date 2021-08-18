@@ -6,6 +6,7 @@ import Sidebar from '../Sidebar';
 import Logo from '../../../../assets/octopus-logo/logo-white.svg';
 import ZoneSelector from '../ZoneSelector';
 import ExtendedBox from '../../../utils/ExtendedBox';
+import Divider from '../../../utils/Divider';
 
 interface Props {
   topComponent?: React.ReactNode;
@@ -56,7 +57,7 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
           >
             <ExtendedBox minWidth="min-content">{topComponent}</ExtendedBox>
           </ExtendedBox>
-          <Box fill="horizontal" height="3px" background="#E4E9F2" />
+          <Divider />
         </ExtendedBox>
       )}
       <Box pad="large" fill overflow="auto">
@@ -112,7 +113,9 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
               />
             </Box>
             <Box fill overflow="auto" pad="large">
-              {rightComponent}
+              <Box flex="grow" height="min-content">
+                {rightComponent}
+              </Box>
             </Box>
           </Box>
         </Layer>
