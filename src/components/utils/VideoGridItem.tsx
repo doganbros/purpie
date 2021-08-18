@@ -121,11 +121,17 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
         </Box>
         <Text color="status-disabled">{createdAt}</Text>
       </ExtendedBox>
-      <Box direction="row" align="center" justify="between">
+      <Box direction="row" justify="between" align="start">
         <Text size="large" weight="bold" color="brand">
           {videoTitle}
         </Text>
-        <Box direction="row" align="center" gap="small">
+        <Box
+          direction="row"
+          align="center"
+          gap="small"
+          flex={{ shrink: 0 }}
+          margin={{ left: 'small' }}
+        >
           <Favorite color="status-disabled" />
           <Text size="small" color="status-disabled">
             {likes}
