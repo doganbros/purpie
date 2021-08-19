@@ -117,12 +117,8 @@ const Timeline: FC = () => {
                 'https://image.flaticon.com/icons/png/512/4721/4721623.png',
               userName: 'Jane Doe',
               videoTitle: 'Information About Octopuses',
-              onClickPlay: (id: string) => {
-                console.log(`Clicked play on ${id}`);
-              },
-              onClickSave: (id: string) => {
-                console.log(`Clicked save on ${id}`);
-              },
+              onClickPlay: () => {},
+              onClickSave: () => {},
             }))
             .map(
               ({
