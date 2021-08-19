@@ -61,15 +61,23 @@ const Timeline: FC = () => {
           gap="medium"
           pad={{ horizontal: 'small' }}
         >
-          {Array(30).fill(
-            <Box align="center">
-              <Box width="45px" height="45px" round="45px" background="#eee" />
-              <Text size="small">Channel</Text>
-              <Text size="xsmall" color="dark-1">
-                Subtitle
-              </Text>
-            </Box>
-          )}
+          {Array(30)
+            .fill('')
+            .map((v, i) => ({ id: i + 1 }))
+            .map((v) => (
+              <Box key={v.id} align="center">
+                <Box
+                  width="45px"
+                  height="45px"
+                  round="45px"
+                  background="#eee"
+                />
+                <Text size="small">Channel</Text>
+                <Text size="xsmall" color="dark-1">
+                  Subtitle
+                </Text>
+              </Box>
+            ))}
         </Box>
       }
     >
@@ -110,7 +118,11 @@ const Timeline: FC = () => {
               likes: Math.floor(Math.random() * 30),
               saved: Math.random() < 0.5,
               live: Math.random() < 0.5,
-              tags: ['#animals', '#sea', '#octopus'],
+              tags: [
+                { id: 1, title: '#animals' },
+                { id: 2, title: '#sea' },
+                { id: 3, title: '#octopus' },
+              ],
               thumbnailSrc:
                 'https://images.unsplash.com/photo-1601511902608-bd1d92d0edb5?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&dl=stephanie-harlacher-cBHt4js8nVQ-unsplash.jpg&w=1920',
               userAvatarSrc:
@@ -137,6 +149,7 @@ const Timeline: FC = () => {
                 videoTitle,
               }) => (
                 <VideoGridItem
+                  key={id}
                   id={id}
                   comments={comments}
                   createdAt={createdAt}
