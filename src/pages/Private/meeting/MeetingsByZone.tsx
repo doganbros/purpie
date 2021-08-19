@@ -20,7 +20,7 @@ import {
   getMultipleMeetingsByZoneIdAction,
   openUpdateMeetingLayerAction,
 } from '../../../store/actions/meeting.action';
-import CreateUpdateMeeting from '../../../layers/meeting/CreateUpdateMeeting';
+import PlanMeeting from '../../../layers/meeting/PlanMeeting';
 
 interface Params {
   zoneId: string;
@@ -87,7 +87,7 @@ const MeetingsByZone: FC = () => {
         </Box>
       }
     >
-      <CreateUpdateMeeting
+      <PlanMeeting
         meetingId={meetingUpdating || undefined}
         visible={!!meetingUpdating && layerIsVisible}
         onClose={onClose}

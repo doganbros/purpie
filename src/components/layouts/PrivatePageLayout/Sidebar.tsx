@@ -12,7 +12,7 @@ import {
 import React, { FC, useState, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SidebarButton } from './SidebarButton';
-import CreateUpdateMeeting from '../../../layers/meeting/CreateUpdateMeeting';
+import PlanMeeting from '../../../layers/meeting/PlanMeeting';
 import CreateUpdateZone from '../../../layers/zone/CreateUpdateZone';
 import { logoutAction } from '../../../store/actions/auth.action';
 import { closeCreateMeetingLayerAction } from '../../../store/actions/meeting.action';
@@ -71,7 +71,7 @@ const Sidebar: FC = () => {
         visible={createZoneVisible}
         onClose={() => dispatch(closeCreateZoneLayerAction)}
       />
-      <CreateUpdateMeeting
+      <PlanMeeting
         visible={createMeetingVisible}
         onClose={() => dispatch(closeCreateMeetingLayerAction)}
       />

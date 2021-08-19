@@ -44,11 +44,15 @@ async function bootstrap() {
     .setTitle('Octopus')
     .setDescription('Octopus API Documentation')
     .setVersion('1.0')
-    .addCookieAuth('OCTOPUS_ACCESS_TOKEN')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document);
+  SwaggerModule.setup('swagger', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
 
   // eslint-disable-next-line no-console
   app.listen(PORT).then(() => console.log(`Server started on port ${PORT}`));
