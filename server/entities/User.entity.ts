@@ -15,7 +15,6 @@ import { UserZone } from './UserZone.entity';
 import { UserRole } from './UserRole.entity';
 import { Contact } from './Contact.entity';
 import { baseMeetingConfig } from './data/base-meeting-config';
-
 @Entity()
 export class User extends RecordEntity {
   @Column()
@@ -61,7 +60,7 @@ export class User extends RecordEntity {
   @ManyToMany(() => Zone, (zone) => zone.users)
   zones: Array<Zone>;
 
-  @OneToMany(() => UserZone, (userZone) => userZone.zone)
+  @OneToMany(() => UserZone, (userZone) => userZone.user)
   userZone: Array<UserZone>;
 
   @OneToMany(() => UserChannel, (userChannel) => userChannel.user)

@@ -90,6 +90,7 @@ export class ChannelService {
       .createQueryBuilder('user_channel')
       .select([
         'user_channel.id',
+        'user_channel.createdOn',
         'channel.id',
         'channel.createdOn',
         'channel.name',
@@ -105,6 +106,7 @@ export class ChannelService {
       .leftJoinAndSelect('user_channel.channelRole', 'channel_role')
       .where('user_channel.userId = :userId', { userId })
       .andWhere('channel.zoneId = :zoneId', { zoneId })
+      .orderBy('user_channel.createdOn', 'DESC')
       .paginate(query);
   }
 

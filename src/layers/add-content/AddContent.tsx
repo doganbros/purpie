@@ -28,10 +28,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
       title: 'Meet!',
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
-      onClick: () => {
-        dispatch(openCreateMeetingLayerAction);
-        onDismiss();
-      },
+      onClick: () => {},
     },
     {
       id: 1,
@@ -55,7 +52,10 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
       title: 'Plan a Meeting',
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
-      onClick: () => {},
+      onClick: () => {
+        dispatch(openCreateMeetingLayerAction);
+        onDismiss();
+      },
     },
     {
       id: 4,

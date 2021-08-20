@@ -1,4 +1,4 @@
-import { Box, Button, Menu } from 'grommet';
+import { Box, Button, Menu, ResponsiveContext } from 'grommet';
 import {
   Add,
   Bookmark,
@@ -9,10 +9,10 @@ import {
   Logout,
   SettingsOption,
 } from 'grommet-icons';
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SidebarButton } from './SidebarButton';
-import CreateUpdateMeeting from '../../../layers/meeting/CreateUpdateMeeting';
+import PlanMeeting from '../../../layers/meeting/PlanMeeting';
 import CreateUpdateZone from '../../../layers/zone/CreateUpdateZone';
 import { logoutAction } from '../../../store/actions/auth.action';
 import { closeCreateMeetingLayerAction } from '../../../store/actions/meeting.action';
@@ -51,6 +51,8 @@ const sidebarBtns = [
 
 const Sidebar: FC = () => {
   const dispatch = useDispatch();
+  const size = useContext(ResponsiveContext);
+
   const [showAddContent, setShowAddContent] = useState(false);
   const {
     zone: {
@@ -64,12 +66,12 @@ const Sidebar: FC = () => {
   const logout = () => dispatch(logoutAction());
 
   return (
-    <>
+    <Box gap={size === 'small' ? 'large' : 'small'}>
       <CreateUpdateZone
         visible={createZoneVisible}
         onClose={() => dispatch(closeCreateZoneLayerAction)}
       />
-      <CreateUpdateMeeting
+      <PlanMeeting
         visible={createMeetingVisible}
         onClose={() => dispatch(closeCreateMeetingLayerAction)}
       />
@@ -103,7 +105,11 @@ const Sidebar: FC = () => {
           background="white"
           width="30px"
           height="3px"
-          margin={{ vertical: 'medium' }}
+          margin={
+            size === 'small'
+              ? { top: 'small', bottom: 'large' }
+              : { vertical: 'medium' }
+          }
         />
         <Menu
           alignSelf="center"
@@ -117,7 +123,7 @@ const Sidebar: FC = () => {
           icon={<SettingsOption color="white" />}
         />
       </ExtendedBox>
-    </>
+    </Box>
   );
 };
 
