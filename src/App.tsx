@@ -12,6 +12,7 @@ import NotFound from './pages/Private/NotFound';
 import { privateRoutes, publicRoutes } from './routes';
 import { retrieveUserAction } from './store/actions/auth.action';
 import { removeToastAction } from './store/actions/util.action';
+import { getUserZonesAction } from './store/actions/zone.action';
 import { AppState } from './store/reducers/root.reducer';
 
 const App: FC = () => {
@@ -19,14 +20,20 @@ const App: FC = () => {
 
   const {
     auth: {
+      isAuthenticated,
       retrieveUser: { loading },
     },
+    zone: { userZoneInitialized },
     util: { toast },
   } = useSelector((state: AppState) => state);
 
   useEffect(() => {
     dispatch(retrieveUserAction());
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) dispatch(getUserZonesAction());
+  }, [isAuthenticated]);
 
   return (
     <Grommet theme={theme}>
@@ -36,7 +43,7 @@ const App: FC = () => {
         message={toast.message}
         onClose={() => dispatch(removeToastAction)}
       />
-      {loading ? (
+      {loading || (isAuthenticated && !userZoneInitialized) ? (
         <Loader />
       ) : (
         <Router history={appHistory}>

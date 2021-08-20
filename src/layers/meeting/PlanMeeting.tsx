@@ -1,16 +1,22 @@
-import React, { FC, useEffect, useState } from 'react';
-import { Box, Button, Text, Layer } from 'grommet';
-import { useDispatch } from 'react-redux';
-// import { useSelector } from 'react-redux';
+import React, { FC, useEffect } from 'react';
+import { Box, Button, Text, Layer, Form } from 'grommet';
 import { Close } from 'grommet-icons';
-import { getMeetingByIdAction } from '../../store/actions/meeting.action';
-import { getMultipleUserZonesAction } from '../../store/actions/zone.action';
-// import { AppState } from '../../store/reducers/root.reducer';
+import { useDispatch, useSelector } from 'react-redux';
 import MeetingDetails from './sections/MeetingDetails';
 import MeetingPrivacy from './sections/MeetingPrivacy';
 import MeetingInvitation from './sections/MeetingInvitation';
 import MeetingSetting from './sections/MeetingSetting';
 import MeetingMoreSetting from './sections/MeetingMoreSetting';
+import { AppState } from '../../store/reducers/root.reducer';
+import {
+  createMeetingAction,
+  getUserMeetingConfigAction,
+  planMeetingDialogBackAction,
+  planMeetingDialogForwardAction,
+  setInitialMeetingFormAction,
+} from '../../store/actions/meeting.action';
+import { CreateMeetingPayload } from '../../store/types/meeting.types';
+import { appSubdomain } from '../../helpers/app-subdomain';
 
 interface Props {
   visible: boolean;
@@ -19,30 +25,47 @@ interface Props {
   zoneId?: number;
 }
 
-const PlanMeeting: FC<Props> = ({ onClose, visible, meetingId, zoneId }) => {
+const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
   const dispatch = useDispatch();
-  // const {
-  //   zone: {
-  //     getMultipleUserZones: { userZones },
-  //   },
-  //   meeting: {
-  //     createMeeting: { loading },
-  //     updateMeetingById: { loading: updateLoading },
-  //     getOneMeeting: { loading: meetingLoading, meeting },
-  //   },
-  // } = useSelector((state: AppState) => state);
 
-  const [activeSection, setActiveSection] = useState(2);
+  const {
+    meeting: {
+      createMeeting: {
+        planDialogCurrentIndex,
+        form: { payload: formPayload, submitting },
+      },
+      userMeetingConfig,
+    },
+  } = useSelector((state: AppState) => state);
 
   useEffect(() => {
-    dispatch(getMultipleUserZonesAction());
+    if (!userMeetingConfig.config && !userMeetingConfig.loading)
+      dispatch(getUserMeetingConfigAction());
+  }, []);
 
-    if (meetingId && zoneId) {
-      dispatch(getMeetingByIdAction(zoneId, meetingId));
+  useEffect(() => {
+    if (userMeetingConfig.config && !formPayload && visible) {
+      const initialPayload: CreateMeetingPayload = {
+        title: '',
+        description: '',
+        startDate: null,
+        config: userMeetingConfig.config,
+        public: false,
+        userContactExclusive: !appSubdomain,
+        planForLater: false,
+        liveStream: false,
+        record: false,
+      };
+
+      dispatch(setInitialMeetingFormAction(initialPayload));
     }
-  }, [meetingId, zoneId]);
+  }, [userMeetingConfig.config, visible]);
 
   if (!visible) return null;
+
+  const submitMeeting = () => {
+    if (formPayload) dispatch(createMeetingAction(formPayload));
+  };
 
   const content = [
     {
@@ -71,104 +94,101 @@ const PlanMeeting: FC<Props> = ({ onClose, visible, meetingId, zoneId }) => {
       component: <MeetingMoreSetting />,
     },
   ];
-
-  const goBack = () => {
-    setActiveSection(activeSection - 1);
-  };
-  const goNext = () => {
-    setActiveSection(activeSection + 1);
-  };
-
-  const closeLayer = () => {
-    setActiveSection(0);
-    onClose();
-  };
   return (
-    <Layer onClickOutside={closeLayer}>
-      <Box
-        width="750px"
-        height="505px"
-        round="20px"
-        background="white"
-        pad="medium"
-        gap="medium"
-      >
-        <Box direction="row" justify="between" align="start">
-          <Box pad="xsmall">
-            <Text size="large" weight="bold">
-              Plan A Meeting
-            </Text>
-          </Box>
-          <Button plain onClick={closeLayer}>
-            <Close color="brand" />
-          </Button>
-        </Box>
-        <Box direction="row" gap="small" justify="center">
-          {content.map((item, i) => (
-            <Box key={item.id} gap="small" direction="row" align="center">
-              <Text
-                size="small"
-                weight={activeSection >= i ? 'bold' : 'normal'}
-                color={activeSection >= i ? 'brand' : 'status-disabled'}
-              >
-                {item.title}
+    <Layer onClickOutside={onClose}>
+      <Form onSubmit={() => dispatch(planMeetingDialogForwardAction)}>
+        <Box
+          width="750px"
+          height="505px"
+          round="20px"
+          background="white"
+          pad="medium"
+          gap="medium"
+        >
+          <Box direction="row" justify="between" align="start">
+            <Box pad="xsmall">
+              <Text size="large" weight="bold">
+                Plan A Meeting
               </Text>
-              {i + 1 !== content.length && (
-                <Box
-                  background={activeSection >= i ? 'brand' : 'status-disabled'}
-                  height={activeSection >= i ? '2px' : '1px'}
-                  width="48px"
-                />
-              )}
             </Box>
-          ))}
-        </Box>
-        <Box height="275px">{content[activeSection]?.component}</Box>
-        <Box direction="row" gap="small" justify="end">
-          {activeSection !== 0 && (
+            <Button plain onClick={onClose}>
+              <Close color="brand" />
+            </Button>
+          </Box>
+          <Box direction="row" gap="small" justify="center">
+            {content.map((item, i) => (
+              <Box key={item.id} gap="small" direction="row" align="center">
+                <Text
+                  size="small"
+                  weight={planDialogCurrentIndex >= i ? 'bold' : 'normal'}
+                  color={
+                    planDialogCurrentIndex >= i ? 'brand' : 'status-disabled'
+                  }
+                >
+                  {item.title}
+                </Text>
+                {i + 1 !== content.length && (
+                  <Box
+                    background={
+                      planDialogCurrentIndex > i ? 'brand' : 'status-disabled'
+                    }
+                    height={planDialogCurrentIndex >= i ? '2px' : '1px'}
+                    width="48px"
+                  />
+                )}
+              </Box>
+            ))}
+          </Box>
+          <Box height="275px">
+            {formPayload && content[planDialogCurrentIndex]?.component}
+          </Box>
+          <Box direction="row" gap="small" justify="end">
+            {planDialogCurrentIndex !== 0 && (
+              <Button
+                primary
+                size="small"
+                label="Back"
+                color="status-disabled"
+                style={{
+                  width: 240,
+                  borderRadius: 10,
+                  height: 46,
+                  fontWeight: 'bold',
+                }}
+                onClick={() => dispatch(planMeetingDialogBackAction)}
+              />
+            )}
             <Button
               primary
               size="small"
-              label="Back"
-              color="status-disabled"
+              label={!submitting ? 'Go!' : 'Creating Meeting...'}
+              color="accent-1"
+              style={{
+                color: 'brand',
+                width: 240,
+                borderRadius: 10,
+                height: 46,
+                fontWeight: 'bold',
+              }}
+              disabled={submitting}
+              onClick={submitMeeting}
+            />
+            <Button
+              primary
+              size="small"
+              label="Next"
+              type="submit"
               style={{
                 width: 240,
                 borderRadius: 10,
                 height: 46,
                 fontWeight: 'bold',
               }}
-              onClick={() => goBack()}
+              disabled={planDialogCurrentIndex === content.length - 1}
             />
-          )}
-          <Button
-            primary
-            size="small"
-            label="Go!"
-            color="accent-1"
-            style={{
-              color: 'brand',
-              width: 240,
-              borderRadius: 10,
-              height: 46,
-              fontWeight: 'bold',
-            }}
-            onClick={() => {}}
-          />
-          <Button
-            primary
-            size="small"
-            label="Next"
-            style={{
-              width: 240,
-              borderRadius: 10,
-              height: 46,
-              fontWeight: 'bold',
-            }}
-            disabled={activeSection === content.length - 1}
-            onClick={() => goNext()}
-          />
+          </Box>
         </Box>
-      </Box>
+      </Form>
     </Layer>
   );
 };

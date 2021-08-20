@@ -1,6 +1,4 @@
-import { MeetingConfig } from 'types/Meeting';
-
-export const baseMeetingConfig: MeetingConfig = {
+export const baseMeetingConfig = {
   disableAudioLevels: false,
   audioLevelsInterval: 200,
   enableNoAudioDetection: true,

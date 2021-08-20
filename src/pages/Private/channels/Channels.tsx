@@ -12,6 +12,7 @@ import {
 } from 'grommet';
 import { Info, Search } from 'grommet-icons';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
+import { thirtyIds } from '../../../helpers/utils';
 
 const ChannelHeading: FC = () => (
   <Box fill justify="center">
@@ -26,9 +27,15 @@ const ChannelDummy: FC = () => (
     gap="medium"
     pad={{ horizontal: 'medium' }}
   >
-    {Array(30).fill(
-      <Box width="45px" height="45px" round="45px" background="#eee" />
-    )}
+    {thirtyIds.map((v) => (
+      <Box
+        width="45px"
+        height="45px"
+        round="45px"
+        background="#eee"
+        key={v.id}
+      />
+    ))}
     <Text>End</Text>
   </Box>
 );

@@ -9,7 +9,7 @@ import { verifyJWT } from 'helpers/jwt';
 import pick from 'lodash.pick';
 import { AuthService } from '../auth.service';
 
-const { AUTH_TOKEN_SECRET = 'secret_a' } = process.env;
+const { AUTH_TOKEN_SECRET = '', AUTH_TOKEN_SECRET_REFRESH = '' } = process.env;
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -44,7 +44,7 @@ export class AuthGuard implements CanActivate {
         try {
           const refreshPayload = await verifyJWT(
             refreshToken,
-            `${AUTH_TOKEN_SECRET}_REFRESH_`,
+            AUTH_TOKEN_SECRET_REFRESH,
           );
           const userPayload = pick(refreshPayload, [
             'id',

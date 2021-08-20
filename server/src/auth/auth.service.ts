@@ -27,16 +27,20 @@ import {
 } from './interfaces/user.interface';
 
 const {
-  AUTH_TOKEN_SECRET = 'secret_a',
+  AUTH_TOKEN_SECRET = '',
+  AUTH_TOKEN_SECRET_REFRESH = '',
+  CLIENT_AUTH_TOKEN_SECRET = '',
+  CLIENT_AUTH_TOKEN_SECRET_REFRESH = '',
   GOOGLE_OAUTH_CLIENT_SECRET = '',
   GOOGLE_OAUTH_CLIENT_ID = '',
   FACEBOOK_OAUTH_CLIENT_ID = '',
   FACEBOOK_OAUTH_CLIENT_SECRET = '',
   AUTH_TOKEN_LIFE = '1h',
-  RESET_PASSWORD_TOKEN_SECRET = 'secret_r',
+  AUTH_TOKEN_REFRESH_LIFE = '30d',
+  RESET_PASSWORD_TOKEN_SECRET = '',
   REACT_APP_CLIENT_HOST = '',
   REACT_APP_SERVER_HOST = '',
-  MAIL_VERIFICATION_TOKEN_SECRET = 'secret_m',
+  MAIL_VERIFICATION_TOKEN_SECRET = '',
 } = process.env;
 
 @Injectable()
@@ -47,15 +51,23 @@ export class AuthService {
     private mailService: MailService,
   ) {}
 
-  async generateLoginToken(payload: Record<string, any>) {
-    const accessToken = await generateJWT(payload, AUTH_TOKEN_SECRET, {
-      expiresIn: AUTH_TOKEN_LIFE,
-    });
+  async generateLoginToken(
+    payload: Record<string, any>,
+    authSecret?: string,
+    refreshAuthSecret?: string,
+  ) {
+    const accessToken = await generateJWT(
+      payload,
+      authSecret || AUTH_TOKEN_SECRET,
+      {
+        expiresIn: AUTH_TOKEN_LIFE,
+      },
+    );
     const refreshToken = await generateJWT(
       payload,
-      `${AUTH_TOKEN_SECRET}_REFRESH_`,
+      refreshAuthSecret || AUTH_TOKEN_SECRET_REFRESH,
       {
-        expiresIn: '30d',
+        expiresIn: AUTH_TOKEN_REFRESH_LIFE,
       },
     );
 
@@ -186,11 +198,15 @@ export class AuthService {
         'WRONG_CLIENT_API_KEY_OR_SECRET',
       );
 
-    const tokens = await this.generateLoginToken({
-      id: client.id,
-      name: client.name,
-      clientRole: client.clientRole,
-    });
+    const tokens = await this.generateLoginToken(
+      {
+        id: client.id,
+        name: client.name,
+        clientRole: client.clientRole,
+      },
+      CLIENT_AUTH_TOKEN_SECRET,
+      CLIENT_AUTH_TOKEN_SECRET_REFRESH,
+    );
 
     client.refreshToken = await bcrypt.hash(tokens.refreshToken, 10);
     await client.save();
@@ -202,7 +218,7 @@ export class AuthService {
     try {
       const payload = await verifyJWT(
         refreshToken,
-        `${AUTH_TOKEN_SECRET}_REFRESH_`,
+        CLIENT_AUTH_TOKEN_SECRET_REFRESH,
       );
 
       const client = await this.clientRepository.findOneOrFail({

@@ -13,10 +13,8 @@ import React, { FC, useState, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SidebarButton } from './SidebarButton';
 import PlanMeeting from '../../../layers/meeting/PlanMeeting';
-import CreateUpdateZone from '../../../layers/zone/CreateUpdateZone';
 import { logoutAction } from '../../../store/actions/auth.action';
-import { closeCreateMeetingLayerAction } from '../../../store/actions/meeting.action';
-import { closeCreateZoneLayerAction } from '../../../store/actions/zone.action';
+import { closePlanCreateMeetingLayerAction } from '../../../store/actions/meeting.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import AddContent from '../../../layers/add-content/AddContent';
 import ExtendedBox from '../../utils/ExtendedBox';
@@ -55,25 +53,16 @@ const Sidebar: FC = () => {
 
   const [showAddContent, setShowAddContent] = useState(false);
   const {
-    zone: {
-      createZone: { layerIsVisible: createZoneVisible },
-    },
-    meeting: {
-      createMeeting: { layerIsVisible: createMeetingVisible },
-    },
+    meeting: { showPlanMeetingLayer },
   } = useSelector((state: AppState) => state);
 
   const logout = () => dispatch(logoutAction());
 
   return (
     <Box gap={size === 'small' ? 'large' : 'small'}>
-      <CreateUpdateZone
-        visible={createZoneVisible}
-        onClose={() => dispatch(closeCreateZoneLayerAction)}
-      />
       <PlanMeeting
-        visible={createMeetingVisible}
-        onClose={() => dispatch(closeCreateMeetingLayerAction)}
+        visible={showPlanMeetingLayer}
+        onClose={() => dispatch(closePlanCreateMeetingLayerAction)}
       />
       {showAddContent && (
         <AddContent onDismiss={() => setShowAddContent(false)} />

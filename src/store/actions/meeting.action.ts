@@ -1,36 +1,27 @@
-import appHistory from '../../helpers/history';
 import {
   CLOSE_CREATE_MEETING_LAYER,
+  CLOSE_PLAN_A_MEETING_LAYER,
   CLOSE_UPDATE_MEETING_LAYER,
-  DELETE_MEETINGS_BY_ID_FAILED,
-  DELETE_MEETINGS_BY_ID_REQUESTED,
-  DELETE_MEETINGS_BY_ID_SUCCESS,
-  GET_ALL_MEETINGS_BY_USER_ZONE_ID_FAILED,
-  GET_ALL_MEETINGS_BY_USER_ZONE_ID_REQUESTED,
-  GET_ALL_MEETINGS_BY_USER_ZONE_ID_SUCCESS,
-  GET_ALL_MEETINGS_BY_USER_ID_FAILED,
-  GET_ALL_MEETINGS_BY_USER_ID_REQUESTED,
-  GET_ALL_MEETINGS_BY_USER_ID_SUCCESS,
-  GET_ALL_MEETINGS_FAILED,
-  GET_ALL_MEETINGS_REQUESTED,
-  GET_ALL_MEETINGS_SUCCESS,
-  GET_MEETINGS_BY_ID_FAILED,
-  GET_MEETINGS_BY_ID_REQUESTED,
-  GET_MEETINGS_BY_ID_SUCCESS,
+  GET_USER_MEETING_CONFIG_FAILED,
+  GET_USER_MEETING_CONFIG_REQUESTED,
+  GET_USER_MEETING_CONFIG_SUCCESS,
   MEETING_CREATE_FAILED,
   MEETING_CREATE_REQUESTED,
   MEETING_CREATE_SUCCESS,
   OPEN_CREATE_MEETING_LAYER,
+  OPEN_PLAN_A_MEETING_LAYER,
   OPEN_UPDATE_MEETING_LAYER,
-  UPDATE_MEETINGS_BY_ID_FAILED,
-  UPDATE_MEETINGS_BY_ID_REQUESTED,
-  UPDATE_MEETINGS_BY_ID_SUCCESS,
+  PLAN_A_MEETING_DIALOG_BACK,
+  PLAN_A_MEETING_DIALOG_FORWARD,
+  PLAN_A_MEETING_DIALOG_SET,
+  SET_INITIAL_MEETING_FORM,
+  SET_MEETING_FORM_FIELD,
 } from '../constants/meeting.constants';
 import * as MeetingService from '../services/meeting.service';
 import {
   CreateMeetingPayload,
   MeetingAction,
-  UpdateMeetingPayload,
+  MeetingActionParams,
 } from '../types/meeting.types';
 import { setToastAction } from './util.action';
 
@@ -46,14 +37,44 @@ export const createMeetingAction = (
       dispatch({
         type: MEETING_CREATE_SUCCESS,
       });
+      if (meeting.saveConfig && meeting.config) {
+        dispatch({
+          type: GET_USER_MEETING_CONFIG_SUCCESS,
+          payload: meeting.config,
+        });
+      }
+      if (typeof response === 'string') {
+        window.open(response, '_blank');
+        return;
+      }
+
       setToastAction(
         'ok',
-        `New meeting for zone ${response.title} been created successfully`
+        `New meeting with the id ${response.id} has been created successfully`
       )(dispatch);
-      appHistory.push(`/meetings/${response.zoneId}`);
     } catch (err) {
       dispatch({
         type: MEETING_CREATE_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const getUserMeetingConfigAction = (): MeetingAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: GET_USER_MEETING_CONFIG_REQUESTED,
+    });
+    try {
+      const response = await MeetingService.getUserMeetingConfig();
+      dispatch({
+        type: GET_USER_MEETING_CONFIG_SUCCESS,
+        payload: response,
+      });
+    } catch (err) {
+      dispatch({
+        type: GET_USER_MEETING_CONFIG_FAILED,
         payload: err?.response?.data,
       });
     }
@@ -64,8 +85,30 @@ export const openCreateMeetingLayerAction = {
   type: OPEN_CREATE_MEETING_LAYER,
 };
 
+export const setInitialMeetingFormAction = (
+  payload: CreateMeetingPayload
+): MeetingActionParams => ({
+  type: SET_INITIAL_MEETING_FORM,
+  payload,
+});
+
+export const setMeetingFormFieldAction = (
+  payload: Partial<CreateMeetingPayload>
+): MeetingActionParams => ({
+  type: SET_MEETING_FORM_FIELD,
+  payload,
+});
+
 export const closeCreateMeetingLayerAction = {
   type: CLOSE_CREATE_MEETING_LAYER,
+};
+
+export const openPlanCreateMeetingLayerAction = {
+  type: OPEN_PLAN_A_MEETING_LAYER,
+};
+
+export const closePlanCreateMeetingLayerAction = {
+  type: CLOSE_PLAN_A_MEETING_LAYER,
 };
 
 export const openUpdateMeetingLayerAction = {
@@ -76,140 +119,17 @@ export const closeUpdateMeetingLayerAction = {
   type: CLOSE_UPDATE_MEETING_LAYER,
 };
 
-export const getMultipleMeetingsAction = (): MeetingAction => {
-  return async (dispatch) => {
-    dispatch({
-      type: GET_ALL_MEETINGS_REQUESTED,
-    });
-    try {
-      const payload = await MeetingService.getMultipleMeetings();
-      dispatch({
-        type: GET_ALL_MEETINGS_SUCCESS,
-        payload,
-      });
-    } catch (err) {
-      dispatch({
-        type: GET_ALL_MEETINGS_FAILED,
-        payload: err?.response?.data,
-      });
-    }
-  };
+export const planMeetingDialogForwardAction = {
+  type: PLAN_A_MEETING_DIALOG_FORWARD,
 };
 
-export const getMultipleMeetingsByZoneIdAction = (
-  zoneId: number
-): MeetingAction => {
-  return async (dispatch) => {
-    dispatch({
-      type: GET_ALL_MEETINGS_BY_USER_ZONE_ID_REQUESTED,
-    });
-    try {
-      const payload = await MeetingService.getMultipleMeetingsByZoneId(zoneId);
-      dispatch({
-        type: GET_ALL_MEETINGS_BY_USER_ZONE_ID_SUCCESS,
-        payload,
-      });
-    } catch (err) {
-      dispatch({
-        type: GET_ALL_MEETINGS_BY_USER_ZONE_ID_FAILED,
-        payload: err?.response?.data,
-      });
-    }
-  };
+export const planMeetingDialogBackAction = {
+  type: PLAN_A_MEETING_DIALOG_BACK,
 };
 
-export const getMultipleMeetingsByUserIdAction = (): MeetingAction => {
-  return async (dispatch) => {
-    dispatch({
-      type: GET_ALL_MEETINGS_BY_USER_ID_REQUESTED,
-    });
-    try {
-      const payload = await MeetingService.getMultipleMeetingsByUserId();
-      dispatch({
-        type: GET_ALL_MEETINGS_BY_USER_ID_SUCCESS,
-        payload,
-      });
-    } catch (err) {
-      dispatch({
-        type: GET_ALL_MEETINGS_BY_USER_ID_FAILED,
-        payload: err?.response?.data,
-      });
-    }
-  };
-};
-
-export const getMeetingByIdAction = (
-  zoneId: number,
-  meetingId: number
-): MeetingAction => {
-  return async (dispatch) => {
-    dispatch({
-      type: GET_MEETINGS_BY_ID_REQUESTED,
-    });
-    try {
-      const payload = await MeetingService.getMeetingById(zoneId, meetingId);
-      dispatch({
-        type: GET_MEETINGS_BY_ID_SUCCESS,
-        payload,
-      });
-    } catch (err) {
-      dispatch({
-        type: GET_MEETINGS_BY_ID_FAILED,
-        payload: err?.response?.data,
-      });
-    }
-  };
-};
-
-export const deleteMeetingByIdAction = (id: number): MeetingAction => {
-  return async (dispatch) => {
-    dispatch({
-      type: DELETE_MEETINGS_BY_ID_REQUESTED,
-    });
-    try {
-      await MeetingService.deleteMeetingById(id);
-      dispatch({
-        type: DELETE_MEETINGS_BY_ID_SUCCESS,
-      });
-      setToastAction(
-        'ok',
-        `Meeting with the id ${id} has been deleted successfully`
-      )(dispatch);
-    } catch (err) {
-      dispatch({
-        type: DELETE_MEETINGS_BY_ID_FAILED,
-        payload: err?.response?.data,
-      });
-    }
-  };
-};
-
-export const updateMeetingByIdAction = (
-  id: number,
-  meeting: UpdateMeetingPayload
-): MeetingAction => {
-  return async (dispatch) => {
-    dispatch({
-      type: UPDATE_MEETINGS_BY_ID_REQUESTED,
-    });
-    try {
-      const respond = await MeetingService.updateMeetingById(id, meeting);
-      dispatch({
-        type: UPDATE_MEETINGS_BY_ID_SUCCESS,
-      });
-
-      getMultipleMeetingsByUserIdAction()(dispatch);
-      getMultipleMeetingsByZoneIdAction(respond.zoneId)(dispatch);
-
-      setToastAction(
-        'ok',
-        `Meeting with the id ${id} has been updated successfully`
-      )(dispatch);
-    } catch (err) {
-      dispatch({
-        type: UPDATE_MEETINGS_BY_ID_FAILED,
-        payload: err?.response?.data,
-      });
-    }
-  };
-};
+export const planMeetingDialogSetAction = (
+  index: number
+): MeetingActionParams => ({
+  type: PLAN_A_MEETING_DIALOG_SET,
+  payload: index,
+});

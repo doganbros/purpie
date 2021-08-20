@@ -1,12 +1,10 @@
-import { Controller, Get, Query, Delete } from '@nestjs/common';
+import { Controller, Get, Delete } from '@nestjs/common';
 import { ApiHeader, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 
 import { UserZone } from 'entities/UserZone.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
-import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
-import { PaginationQuery } from 'types/PaginationQuery';
 import { CurrentUserZone } from '../decorators/current-user-zone.decorator';
 import { UserZoneRole } from '../decorators/user-zone-role.decorator';
 import { ZoneService } from '../zone.service';
@@ -20,21 +18,27 @@ export class UserZoneController {
   @ApiOkResponse({
     description: "Get the list of current user's zones",
   })
-  @PaginationQueryParams()
   @IsAuthenticated()
-  @ApiHeader({
-    name: 'app-subdomain',
-    required: false,
-    description: 'Zone subdomain',
-  })
-  async getCurrentUserZones(
-    @CurrentUser() user: UserPayload,
-    @Query() paginatedQuery: PaginationQuery,
-  ) {
-    return this.zoneService.getCurrentUserZones(user, paginatedQuery);
+  async getCurrentUserZones(@CurrentUser() user: UserPayload) {
+    return this.zoneService.getCurrentUserZones(user);
   }
 
-  @Get('/detail/:userZoneId')
+  @Get('detail')
+  @ApiParam({
+    name: 'userZoneId',
+    description: 'User Zone Id',
+  })
+  @ApiHeader({
+    name: 'app-subdomain',
+    required: true,
+    description: 'Zone subdomain',
+  })
+  @UserZoneRole()
+  async getCurrentUserZone(@CurrentUserZone() currentUserZone: UserZone) {
+    return currentUserZone;
+  }
+
+  @Get('detail/:userZoneId')
   @ApiParam({
     name: 'userZoneId',
     description: 'User Zone Id',
@@ -44,7 +48,7 @@ export class UserZoneController {
     return currentUserZone;
   }
 
-  @Delete('/remove/:userZoneId')
+  @Delete('remove/:userZoneId')
   @ApiParam({
     name: 'userZoneId',
     description: 'User Zone Id',

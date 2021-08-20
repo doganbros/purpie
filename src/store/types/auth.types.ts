@@ -29,14 +29,21 @@ import {
 } from '../constants/auth.constants';
 import { UtilActionParams } from './util.types';
 
-export type UserRole = 'user' | 'admin' | 'superadmin';
+export type UserRoleCode = 'SUPER_ADMIN' | 'ADMIN' | 'NORMAL';
+
+export interface UserRole {
+  roleCode: UserRoleCode;
+  roleName: string;
+  canCreateZone: boolean;
+  canCreateClient: boolean;
+}
 
 export interface User {
   id: number;
   firstName: string;
   lastName: string;
   email: string;
-  role: UserRole;
+  userRole?: UserRole;
 }
 
 export interface AuthState {
