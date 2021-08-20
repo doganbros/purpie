@@ -83,14 +83,14 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
             height={`${topComponentHeight}px`}
             round={{ corner: 'top-left', size: 'large' }}
             background="white"
-            pad={{ left: 'large' }}
+            pad={{ horizontal: 'large' }}
           >
             <Box fill justify="center" overflow="auto">
               <ExtendedBox fill minWidth="min-content">
                 {topComponent}
               </ExtendedBox>
             </Box>
-            <Box fill="horizontal" pad={{ right: 'large' }}>
+            <Box fill="horizontal">
               <Divider />
             </Box>
           </ExtendedBox>
