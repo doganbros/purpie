@@ -1,5 +1,6 @@
 import React, { FC, ReactElement } from 'react';
 import { Button, Box, Text } from 'grommet';
+import { theme } from '../../config/app-config';
 
 interface AddContentButtonProps {
   icon: ReactElement;
@@ -26,8 +27,8 @@ const AddContentButton: FC<AddContentButtonProps> = ({
         round="small"
         background={
           hover
-            ? 'linear-gradient(180deg, #3D138D 0%, #643FBB 52.62%, #74C0BF 100%)'
-            : 'linear-gradient(180deg, #3D138D 0%, #7D4CDB 100%)'
+            ? `linear-gradient(180deg, ${theme.global?.colors?.['neutral-2']} 0%, #643FBB 52.62%, #74C0BF 100%)`
+            : `linear-gradient(180deg, ${theme.global?.colors?.['neutral-2']} 0%, ${theme.global?.colors?.['brand-2']} 100%)`
         }
       >
         {icon}
