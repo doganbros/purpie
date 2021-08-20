@@ -1,70 +1,53 @@
-import React, { FC, useState } from 'react';
-import { Box, Form } from 'grommet';
-import { CreateMeetingPayload } from '../../../store/types/meeting.types';
-import { FormSubmitEvent } from '../../../models/form-submit-event';
-import { UserZone } from '../../../store/types/zone.types';
+import React, { FC } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Box } from 'grommet';
 import SectionContainer from '../../../components/utils/SectionContainer';
 import MeetingCheckbox from '../components/MeetingCheckbox';
-
-interface Payload extends CreateMeetingPayload {
-  userZone: UserZone;
-}
+import { AppState } from '../../../store/reducers/root.reducer';
+import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action';
+import { camelToSentence } from '../../../helpers/utils';
 
 const MeetingMoreSetting: FC = () => {
-  const handleSubmit: FormSubmitEvent<Payload> = () => {};
+  const {
+    meeting: {
+      createMeeting: {
+        form: { payload: formPayload },
+      },
+    },
+  } = useSelector((state: AppState) => state);
 
-  const joinSection = Array(2)
-    .fill('')
-    .map((v, i) => ({ id: i + 1, title: 'Lorem Ipsum' }));
-  const streamSection = Array(8)
-    .fill('')
-    .map((v, i) => ({ id: i + 1, title: 'Lorem Ipsum' }));
-
-  const [joinSectionSwitches, setJoinSectionSwitches] = useState<boolean[]>([
-    false,
-    false,
-  ]);
-  const [streamSectionSwitches, setStreamSectionSwitches] = useState<boolean[]>(
-    [false, false, false, false, false, false, false, false]
-  );
+  const dispatch = useDispatch();
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <SectionContainer label="Lorem Ipsum">
-        <Box justify="between" direction="row" wrap>
-          {streamSection.map((item, i) => (
-            <MeetingCheckbox
-              title={item.title}
-              width="280px"
-              key={item.id}
-              onClick={() => {
-                const temp = streamSectionSwitches;
-                temp[i] = !temp[i];
-                setStreamSectionSwitches(temp);
-              }}
-            />
-          ))}
+    <>
+      <SectionContainer label="">
+        <Box justify="between" direction="row" overflow="auto" wrap>
+          {formPayload?.config &&
+            Object.keys(formPayload.config).map((setting) => {
+              if (typeof formPayload.config![setting] === 'boolean')
+                return (
+                  <MeetingCheckbox
+                    title={camelToSentence(setting)}
+                    width="280px"
+                    key={setting}
+                    value={!!formPayload.config?.[setting]}
+                    onChange={(v) => {
+                      dispatch(
+                        setMeetingFormFieldAction({
+                          config: {
+                            ...formPayload.config,
+                            [setting]: v,
+                          },
+                        })
+                      );
+                    }}
+                  />
+                );
+              return null;
+            })}
         </Box>
       </SectionContainer>
-      <Box height="20px" />
-      <SectionContainer label="Lorem Ipsum">
-        <Box justify="between" direction="row">
-          {joinSection.map((item, i) => (
-            <MeetingCheckbox
-              title={item.title}
-              width="280px"
-              key={item.id}
-              nopad
-              onClick={() => {
-                const temp = joinSectionSwitches;
-                temp[i] = !temp[i];
-                setJoinSectionSwitches(temp);
-              }}
-            />
-          ))}
-        </Box>
-      </SectionContainer>
-    </Form>
+    </>
   );
 };
 

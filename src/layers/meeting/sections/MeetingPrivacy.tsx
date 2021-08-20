@@ -1,95 +1,130 @@
-import React, { FC, useState } from 'react';
-import { Box, Form } from 'grommet';
-import { CreateMeetingPayload } from '../../../store/types/meeting.types';
-import { FormSubmitEvent } from '../../../models/form-submit-event';
-import { UserZone } from '../../../store/types/zone.types';
+import React, { FC } from 'react';
+import { Box, FormField, Select } from 'grommet';
+import { useDispatch, useSelector } from 'react-redux';
 import SectionContainer from '../../../components/utils/SectionContainer';
 import MeetingCheckbox from '../components/MeetingCheckbox';
+import { AppState } from '../../../store/reducers/root.reducer';
+import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action';
+import { validators } from '../../../helpers/validators';
 
-interface Payload extends CreateMeetingPayload {
-  userZone: UserZone;
-}
 const MeetingPrivacy: FC = () => {
-  const handleSubmit: FormSubmitEvent<Payload> = () => {};
+  const {
+    meeting: {
+      createMeeting: {
+        form: { payload: formPayload },
+      },
+    },
+    zone: { selectedUserZone },
+  } = useSelector((state: AppState) => state);
 
-  const joinSection = [
-    { id: 1, title: 'Private Meeting' },
-    { id: 2, title: 'Open for channel followers?' },
-  ];
-  const streamSection = [
-    { id: 1, title: 'Live stream the meeting?' },
-    { id: 2, title: 'Enable recording?' },
-  ];
-  const streamSubSection = [
-    { id: 1, title: 'Stream to the channel?' },
-    { id: 2, title: 'Stream to the zone?' },
-    { id: 3, title: 'Stream to public?' },
-  ];
-  const [joinSectionSwitches, setJoinSectionSwitches] = useState<boolean[]>([
-    false,
-    false,
-  ]);
-  const [streamSectionSwitches, setStreamSectionSwitches] = useState<boolean[]>(
-    [false, false]
-  );
-  const [streamSubSectionSwitches, setStreamSubSectionSwitches] = useState<
-    boolean[]
-  >([false, false, false]);
+  const dispatch = useDispatch();
+  const options = [
+    { label: 'option 1', value: 1 },
+    { label: 'option 2', value: 2 },
+    { label: 'option 3', value: 3 },
+  ]; // will be channels for the current zone later
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <>
       <SectionContainer label="Joining">
-        <Box justify="between" direction="row">
-          {joinSection.map((item, i) => (
+        {!selectedUserZone ? (
+          <Box justify="between" direction="row">
             <MeetingCheckbox
-              title={item.title}
+              title="Public Meeting"
               width="280px"
-              key={item.id}
               nopad
-              onClick={() => {
-                const temp = joinSectionSwitches;
-                temp[i] = !temp[i];
-                setJoinSectionSwitches(temp);
+              value={!!formPayload?.public}
+              onChange={(v) => {
+                dispatch(
+                  setMeetingFormFieldAction({
+                    public: v,
+                    userContactExclusive: false,
+                    channelId: null,
+                  })
+                );
               }}
             />
-          ))}
+            <MeetingCheckbox
+              title="Open To Contacts"
+              width="280px"
+              nopad
+              value={!!formPayload?.userContactExclusive}
+              onChange={(v) => {
+                dispatch(
+                  setMeetingFormFieldAction({
+                    userContactExclusive: v,
+                    public: false,
+                    channelId: null,
+                  })
+                );
+              }}
+            />
+          </Box>
+        ) : (
+          <Box justify="between" align="center" direction="row">
+            <FormField
+              label="Select Channel"
+              name="select"
+              validate={validators.required()}
+            >
+              <Select
+                name="select"
+                placeholder="Choose"
+                options={options}
+                labelKey="label"
+                valueKey="value"
+              />
+            </FormField>
+          </Box>
+        )}
+      </SectionContainer>
+      <Box height="20px" />
+      <SectionContainer label="Streaming &amp; Recording">
+        <Box justify="between" direction="row">
+          <MeetingCheckbox
+            title="Live stream the meeting?"
+            width="280px"
+            value={!!formPayload?.liveStream}
+            onChange={(v) => {
+              dispatch(
+                setMeetingFormFieldAction({
+                  liveStream: v,
+                })
+              );
+            }}
+          />
+          <MeetingCheckbox
+            title="Enable Recording?"
+            width="280px"
+            value={!!formPayload?.record}
+            onChange={(v) => {
+              dispatch(
+                setMeetingFormFieldAction({
+                  record: v,
+                })
+              );
+            }}
+          />
         </Box>
       </SectionContainer>
       <Box height="20px" />
-      <SectionContainer label="Streaming & Recording">
+      <SectionContainer label="Configuration Persistence">
         <Box justify="between" direction="row">
-          {streamSection.map((item, i) => (
-            <MeetingCheckbox
-              title={item.title}
-              width="280px"
-              key={item.id}
-              onClick={() => {
-                const temp = streamSectionSwitches;
-                temp[i] = !temp[i];
-                setStreamSectionSwitches(temp);
-              }}
-            />
-          ))}
-        </Box>
-        <Box
-          pad={{ left: 'small', top: 'xsmall' }}
-          border={{ color: '#8F9BB3', size: 'xsmall', side: 'left' }}
-        >
-          {streamSubSection.map((item, i) => (
-            <MeetingCheckbox
-              title={item.title}
-              key={item.id}
-              width="267px"
-              onClick={() => {
-                const temp = streamSubSectionSwitches;
-                temp[i] = !temp[i];
-                setStreamSubSectionSwitches(temp);
-              }}
-            />
-          ))}
+          <MeetingCheckbox
+            title="Save Configuration"
+            width="280px"
+            value={!!formPayload?.saveConfig}
+            onChange={(v) => {
+              dispatch(
+                setMeetingFormFieldAction({
+                  saveConfig: v,
+                })
+              );
+            }}
+          />
         </Box>
       </SectionContainer>
-    </Form>
+    </>
   );
 };
 

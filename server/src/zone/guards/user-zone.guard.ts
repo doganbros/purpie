@@ -28,6 +28,8 @@ export class UserZoneGuard implements CanActivate {
 
     const { userZoneId, zoneId } = req.params;
 
+    const subdomain = req.headers['app-subdomain'];
+
     if (zoneId) {
       req.userZone = await this.zoneService.getUserZone(req.user.id, {
         zoneId: Number.parseInt(zoneId, 10),
@@ -35,6 +37,10 @@ export class UserZoneGuard implements CanActivate {
     } else if (userZoneId) {
       req.userZone = await this.zoneService.getUserZone(req.user.id, {
         id: Number.parseInt(userZoneId, 10),
+      });
+    } else if (subdomain) {
+      req.userZone = await this.zoneService.getUserZone(req.user.id, {
+        subdomain,
       });
     }
 

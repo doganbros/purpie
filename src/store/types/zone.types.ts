@@ -1,87 +1,92 @@
-import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
+import { Category } from '../../models/utils';
 import {
-  USER_ZONE_CREATE_SUCCESS,
-  USER_ZONE_CREATE_FAILED,
-  USER_ZONE_CREATE_REQUESTED,
-  USER_ZONE_GET_ALL_SUCCESS,
-  USER_ZONE_GET_ALL_FAILED,
-  USER_ZONE_GET_ALL_REQUESTED,
-  USER_ZONE_GET_SUCCESS,
-  USER_ZONE_GET_FAILED,
-  USER_ZONE_GET_REQUESTED,
-  USER_ZONE_UPDATE_SUCCESS,
-  USER_ZONE_UPDATE_FAILED,
-  USER_ZONE_UPDATE_REQUESTED,
-  USER_ZONE_DELETE_SUCCESS,
-  USER_ZONE_DELETE_FAILED,
-  USER_ZONE_DELETE_REQUESTED,
-  OPEN_CREATE_USER_ZONE_LAYER,
-  CLOSE_CREATE_USER_ZONE_LAYER,
-  OPEN_UPDATE_USER_ZONE_LAYER,
-  OPEN_INVITE_PERSON_LAYER,
-  CLOSE_INVITE_PERSON_LAYER,
-  INVITE_PERSON_LAYER_REQUESTED,
-  CLOSE_UPDATE_USER_ZONE_LAYER,
+  CREATE_ZONE_FAILED,
+  CREATE_ZONE_REQUESTED,
+  DELETE_USER_ZONE_FAILED,
+  DELETE_USER_ZONE_REQUESTED,
+  DELETE_ZONE_FAILED,
+  DELETE_ZONE_REQUESTED,
+  GET_CURRENT_USER_ZONE_FAILED,
+  GET_CURRENT_USER_ZONE_REQUESTED,
+  GET_CURRENT_USER_ZONE_SUCCESS,
+  GET_USER_ZONES_FAILED,
+  GET_USER_ZONES_REQUESTED,
+  GET_USER_ZONES_SUCCESS,
+  GET_USER_ZONE_BY_ID_FAILED,
+  GET_USER_ZONE_BY_ID_REQUESTED,
+  GET_USER_ZONE_BY_ID_SUCCESS,
+  INVITE_TO_ZONE_FAILED,
+  INVITE_TO_ZONE_REQUESTED,
+  SET_CURRENT_USER_ZONE,
+  UPDATE_ZONE_FAILED,
+  UPDATE_ZONE_REQUESTED,
 } from '../constants/zone.constants';
-import { UtilActionParams } from './util.types';
+import { User } from './auth.types';
 
-export interface Zone {
+export interface ZoneListItem {
   id: number;
   name: string;
-  description: string;
   subdomain: string;
+  description: string;
   public: boolean;
-  adminId: number;
-  active: boolean;
-  createdAt: Date;
+  createdBy?: User;
+  category?: Category;
 }
 
-export interface UserZone {
+export type ZoneRoleCode = 'SUPER_ADMIN' | 'ADMIN' | 'EDITOR' | 'NORMAL';
+
+export interface ZoneRole {
+  roleCode: ZoneRoleCode;
+  roleName: string;
+  canCreateChannel: boolean;
+  canInvite: boolean;
+  canDelete: boolean;
+  canEdit: boolean;
+}
+
+export interface UserZoneListItem {
   id: number;
-  zone: Zone;
+  createdOn: Date;
+  zoneRole: ZoneRole;
+  zone: ZoneListItem;
+}
+
+export interface UserZoneDetail extends UserZoneListItem {
+  zone: Required<ZoneListItem>;
 }
 
 export interface CreateZonePayload {
   name: string;
-  description: string;
   subdomain: string;
-}
-export interface InviteZonePayload {
-  email: string;
+  description: string;
+  public?: boolean;
+  categoryId: number;
 }
 
 export type UpdateZonePayload = Partial<CreateZonePayload>;
 
+export type ZoneDetail = Required<ZoneListItem>;
+
 export interface ZoneState {
-  getMultipleUserZones: {
+  selectedUserZone: UserZoneListItem | null;
+  userZoneInitialized: boolean;
+
+  getUserZones: {
     loading: boolean;
-    total: number | null;
-    userZones: Array<UserZone> | null;
+    userZones: Array<UserZoneListItem> | null;
     error: ResponseError | null;
   };
-  getOneZone: {
+
+  getUserZoneDetailById: {
     loading: boolean;
-    userZone: UserZone | null;
+    userZone: UserZoneDetail | null;
     error: ResponseError | null;
   };
-  createZone: {
-    layerIsVisible: boolean;
+
+  getCurrentUserZoneDetail: {
     loading: boolean;
-    error: ResponseError | null;
-  };
-  updateZone: {
-    layerIsVisible: boolean;
-    loading: boolean;
-    error: ResponseError | null;
-  };
-  invitePersonZone: {
-    layerInviteIsVisible: boolean;
-    loading: boolean;
-    error: ResponseError | null;
-  };
-  deleteUserZone: {
-    loading: boolean;
+    userZone: UserZoneDetail | null;
     error: ResponseError | null;
   };
 }
@@ -89,45 +94,46 @@ export interface ZoneState {
 export type ZoneActionParams =
   | {
       type:
-        | typeof USER_ZONE_CREATE_SUCCESS
-        | typeof USER_ZONE_CREATE_REQUESTED
-        | typeof USER_ZONE_UPDATE_SUCCESS
-        | typeof USER_ZONE_DELETE_REQUESTED
-        | typeof USER_ZONE_GET_REQUESTED
-        | typeof USER_ZONE_GET_ALL_REQUESTED
-        | typeof USER_ZONE_UPDATE_REQUESTED
-        | typeof OPEN_CREATE_USER_ZONE_LAYER
-        | typeof CLOSE_CREATE_USER_ZONE_LAYER
-        | typeof OPEN_UPDATE_USER_ZONE_LAYER
-        | typeof CLOSE_INVITE_PERSON_LAYER
-        | typeof INVITE_PERSON_LAYER_REQUESTED
-        | typeof OPEN_INVITE_PERSON_LAYER
-        | typeof CLOSE_UPDATE_USER_ZONE_LAYER
-        | typeof USER_ZONE_DELETE_SUCCESS;
-    }
-  | {
-      type: typeof USER_ZONE_GET_SUCCESS;
-      payload: UserZone;
-    }
-  | {
-      type: typeof USER_ZONE_GET_ALL_SUCCESS;
-      payload: PaginatedResponse<UserZone>;
+        | typeof GET_USER_ZONES_REQUESTED
+        | typeof GET_USER_ZONE_BY_ID_REQUESTED
+        | typeof CREATE_ZONE_REQUESTED
+        | typeof UPDATE_ZONE_REQUESTED
+        | typeof DELETE_USER_ZONE_REQUESTED
+        | typeof GET_CURRENT_USER_ZONE_REQUESTED
+        | typeof INVITE_TO_ZONE_REQUESTED
+        | typeof DELETE_ZONE_REQUESTED;
     }
   | {
       type:
-        | typeof USER_ZONE_CREATE_FAILED
-        | typeof USER_ZONE_UPDATE_FAILED
-        | typeof USER_ZONE_DELETE_FAILED
-        | typeof CLOSE_INVITE_PERSON_LAYER
-        | typeof USER_ZONE_GET_FAILED
-        | typeof USER_ZONE_GET_ALL_FAILED;
+        | typeof GET_USER_ZONES_FAILED
+        | typeof GET_USER_ZONE_BY_ID_FAILED
+        | typeof CREATE_ZONE_FAILED
+        | typeof DELETE_USER_ZONE_FAILED
+        | typeof GET_CURRENT_USER_ZONE_FAILED
+        | typeof INVITE_TO_ZONE_FAILED
+        | typeof DELETE_ZONE_FAILED
+        | typeof UPDATE_ZONE_FAILED;
       payload: ResponseError;
+    }
+  | {
+      type: typeof GET_USER_ZONES_SUCCESS;
+      payload: Array<UserZoneListItem>;
+    }
+  | {
+      type:
+        | typeof GET_USER_ZONE_BY_ID_SUCCESS
+        | typeof GET_CURRENT_USER_ZONE_SUCCESS;
+      payload: UserZoneDetail;
+    }
+  | {
+      type: typeof SET_CURRENT_USER_ZONE;
+      payload: UserZoneListItem;
     };
 
 export interface ZoneDispatch {
-  (dispatch: ZoneActionParams | UtilActionParams): void;
+  (dispatch: ZoneActionParams): void;
 }
 
 export interface ZoneAction {
-  (dispatch: ZoneDispatch): Promise<void>;
+  (dispatch: ZoneDispatch): void | Promise<void>;
 }

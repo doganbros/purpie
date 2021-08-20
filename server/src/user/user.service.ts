@@ -2,7 +2,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from 'entities/Contact.entity';
 import { ContactInvitation } from 'entities/ContactInvitation.entity';
-import { Repository } from 'typeorm';
+import { User } from 'entities/User.entity';
+import { Brackets, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 
 @Injectable()
@@ -10,6 +11,8 @@ export class UserService {
   constructor(
     @InjectRepository(Contact)
     private contactRepository: Repository<Contact>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     @InjectRepository(ContactInvitation)
     private contactInvitation: Repository<ContactInvitation>,
   ) {}
@@ -25,6 +28,24 @@ export class UserService {
       { userId, contactUserId },
       { userId: contactUserId, contactUserId: userId },
     ]);
+  }
+
+  async searchUsers(excludeUserIds: Array<number>, query: PaginationQuery) {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .select(['user.id', 'user.firstName', 'user.lastName', 'user.email'])
+      .where(
+        new Brackets((qb) => {
+          qb.where(
+            `lower(CONCAT(user.firstName, ' ', user.lastName)) LIKE :name`,
+            {
+              name: `%${query.name.toLowerCase()}%`,
+            },
+          ).orWhere('user.email LIKE :email', { email: `%${query.name}%` });
+        }),
+      )
+      .andWhere('user.id not IN (:...excludeUserIds)', { excludeUserIds })
+      .paginate(query);
   }
 
   async createNewContactInvitation(inviterId: number, inviteeId: number) {

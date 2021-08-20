@@ -9,7 +9,6 @@ import pick from 'lodash.pick';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { MailService } from 'src/mail/mail.service';
 import { Repository } from 'typeorm';
-import { PaginationQuery } from 'types/PaginationQuery';
 import { CreateChannelDto } from './dto/create-channel.dto';
 
 const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
@@ -81,11 +80,7 @@ export class ChannelService {
     });
   }
 
-  async getCurrentUserZoneChannels(
-    zoneId: number,
-    userId: number,
-    query: PaginationQuery,
-  ) {
+  async getCurrentUserZoneChannels(zoneId: number, userId: number) {
     return this.userChannelRepository
       .createQueryBuilder('user_channel')
       .select([
@@ -107,7 +102,31 @@ export class ChannelService {
       .where('user_channel.userId = :userId', { userId })
       .andWhere('channel.zoneId = :zoneId', { zoneId })
       .orderBy('user_channel.createdOn', 'DESC')
-      .paginate(query);
+      .getMany();
+  }
+
+  async getCurrentUserChannels(userId: number) {
+    return this.userChannelRepository
+      .createQueryBuilder('user_channel')
+      .select([
+        'user_channel.id',
+        'user_channel.createdOn',
+        'channel.id',
+        'channel.createdOn',
+        'channel.name',
+        'channel.topic',
+        'channel.description',
+        'channel.active',
+        'channel.public',
+        'channel.createdById',
+        'channel.categoryId',
+        'channel.zoneId',
+      ])
+      .leftJoin('user_channel.channel', 'channel')
+      .leftJoinAndSelect('user_channel.channelRole', 'channel_role')
+      .where('user_channel.userId = :userId', { userId })
+      .orderBy('user_channel.createdOn', 'DESC')
+      .getMany();
   }
 
   async validateJoinPublicChannel(userId: number, channelId: number) {

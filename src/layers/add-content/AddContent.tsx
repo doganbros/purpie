@@ -9,7 +9,7 @@ import {
 } from 'grommet-icons';
 import { useDispatch } from 'react-redux';
 import AddContentButton from './AddContentButton';
-import { openCreateMeetingLayerAction } from '../../store/actions/meeting.action';
+import { openPlanCreateMeetingLayerAction } from '../../store/actions/meeting.action';
 
 interface AddContentProps {
   onDismiss: () => void;
@@ -53,7 +53,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
       onClick: () => {
-        dispatch(openCreateMeetingLayerAction);
+        dispatch(openPlanCreateMeetingLayerAction);
         onDismiss();
       },
     },

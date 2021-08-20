@@ -18,7 +18,6 @@ type ToolbarButton =
   | 'raisehand'
   | 'videoquality'
   | 'filmstrip'
-  | 'invite'
   | 'feedback'
   | 'stats'
   | 'shortcuts'
@@ -41,12 +40,6 @@ export class MeetingConfig {
 
   disableProfile?: boolean;
 
-  roomPasswordNumberOfDigits?: boolean;
-
-  enableInsecureRoomNameWarning?: boolean;
-
-  enableAutomaticUrlCopy?: boolean;
-
   disableRecordAudioNotification?: boolean;
 
   disableRemoteMute?: boolean;
@@ -63,8 +56,6 @@ export class MeetingConfig {
 
   hideConferenceTimer?: boolean;
 
-  inviteAppName?: string | null;
-
   fileRecordingsEnabled?: boolean;
 
   defaultLanguage?: string;
@@ -72,6 +63,10 @@ export class MeetingConfig {
   subject?: string;
 
   liveStreamingEnabled?: boolean;
+
+  autoCaptionOnRecord?: boolean;
+
+  disableShortcuts?: boolean;
 
   requireDisplayName?: boolean;
 
@@ -81,6 +76,8 @@ export class MeetingConfig {
 
   startWithVideoMuted?: boolean;
 
+  transcribingEnabled?: boolean;
+
   prejoinPageEnabled?: boolean;
 
   startAudioOnly?: boolean;
@@ -88,6 +85,8 @@ export class MeetingConfig {
   toolbarButtons?: Array<ToolbarButton>;
 
   disableAudioLevels?: boolean;
+
+  disableTileView?: boolean;
 
   audioLevelsInterval?: number;
 }

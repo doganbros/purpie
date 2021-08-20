@@ -1,0 +1,14 @@
+<h3>Hi Mr./Mrs {{firstName}} {{lastName}}</h3>
+<p>
+  {{#if creator}}
+    You created a new meeting with information below.
+
+   {{else}}
+    You are invited to the meeting with the following information.
+  {{/if}}
+</p>
+
+<p>Meeting Name: <strong>{{meeting.title}}</strong></p>
+<p>Meeting Description: <strong>{{meeting.description}}</strong></p>
+<p>Meeting Start Date And Time: <strong>{{meeting.startDate}}</strong></p>
+<p>Meeting Link: <strong>{{link}}</strong></p>

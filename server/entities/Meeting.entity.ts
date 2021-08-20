@@ -4,7 +4,6 @@ import { RecordEntity } from './base/RecordEntity';
 import { Channel } from './Channel.entity';
 import { baseMeetingConfig } from './data/base-meeting-config';
 import { User } from './User.entity';
-import { Zone } from './Zone.entity';
 
 @Entity()
 export class Meeting extends RecordEntity {
@@ -30,22 +29,21 @@ export class Meeting extends RecordEntity {
   @Column()
   createdById: number;
 
-  @ManyToOne(() => Zone, { nullable: true, onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'zoneId' })
-  zone: Zone;
-
   @ManyToOne(() => Channel, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'channelId' })
   channel: Channel;
-
-  @Column({ nullable: true })
-  zoneId: number;
 
   @Column({ nullable: true })
   channelId: number;
 
   @Column({ default: false })
   public: boolean;
+
+  @Column({ default: false })
+  liveStream: boolean;
+
+  @Column({ default: false })
+  record: boolean;
 
   @Column({ default: false })
   userContactExclusive: boolean;

@@ -8,11 +8,9 @@ import {
   OneToMany,
   OneToOne,
 } from 'typeorm';
-import { MeetingConfig } from 'types/Meeting';
 import { RecordEntity } from './base/RecordEntity';
 import { Category } from './Category.entity';
 import { Channel } from './Channel.entity';
-import { baseMeetingConfig } from './data/base-meeting-config';
 import { User } from './User.entity';
 import { UserZone } from './UserZone.entity';
 
@@ -35,9 +33,6 @@ export class Zone extends RecordEntity {
 
   @OneToMany(() => Channel, (channel) => channel.zone)
   channels: Channel;
-
-  @Column({ type: 'simple-json', default: baseMeetingConfig })
-  zoneMeetingConfig: MeetingConfig;
 
   @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'createdById' })

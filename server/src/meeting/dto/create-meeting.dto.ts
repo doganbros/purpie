@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsBoolean,
   IsDate,
   IsInt,
@@ -34,13 +35,6 @@ export class CreateMeetingDto {
 
   @ApiProperty()
   @ValidateIf((o) => {
-    return !o.public && !o.userContactExclusive && !o.channelId;
-  })
-  @IsInt()
-  zoneId?: number;
-
-  @ApiProperty()
-  @ValidateIf((o) => {
     return !o.zoneId && !o.userContactExclusive && !o.public;
   })
   @IsInt()
@@ -64,4 +58,24 @@ export class CreateMeetingDto {
   @IsOptional()
   @IsObject()
   config?: MeetingConfig;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsBoolean()
+  saveConfig?: boolean;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsBoolean()
+  liveStream?: boolean;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsBoolean()
+  record?: boolean;
+
+  @ApiProperty({ type: Number, isArray: true })
+  @IsOptional()
+  @IsArray()
+  invitationIds?: Array<number>;
 }

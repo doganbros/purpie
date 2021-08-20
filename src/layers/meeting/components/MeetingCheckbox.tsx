@@ -1,16 +1,21 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import { Box, Text, CheckBox } from 'grommet';
 
 interface Props {
   title: string;
-  onClick: () => void;
   width?: string;
   nopad?: boolean;
+  value: boolean;
+  onChange: (value: boolean) => void;
 }
 
-const MeetingCheckbox: FC<Props> = ({ title, onClick, width, nopad }) => {
-  const [value, setValue] = useState<boolean>(false);
-
+const MeetingCheckbox: FC<Props> = ({
+  title,
+  width,
+  nopad,
+  value = false,
+  onChange,
+}) => {
   return (
     <Box
       pad={nopad ? { bottom: 'none' } : { bottom: 'xsmall' }}
@@ -23,10 +28,9 @@ const MeetingCheckbox: FC<Props> = ({ title, onClick, width, nopad }) => {
         {title}
       </Text>
       <CheckBox
-        checked={value || false}
-        onChange={() => {
-          onClick();
-          setValue(!value);
+        checked={value}
+        onChange={(e) => {
+          onChange(e.target.checked);
         }}
       />
     </Box>

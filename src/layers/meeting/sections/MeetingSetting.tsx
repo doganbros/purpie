@@ -1,93 +1,67 @@
-import React, { FC, useState } from 'react';
-import { Box, Form, Select, Grommet } from 'grommet';
-import { CreateMeetingPayload } from '../../../store/types/meeting.types';
-import { FormSubmitEvent } from '../../../models/form-submit-event';
-import { UserZone } from '../../../store/types/zone.types';
+import React, { FC } from 'react';
+import { Box, Select, Text } from 'grommet';
+import { useDispatch, useSelector } from 'react-redux';
 import SectionContainer from '../../../components/utils/SectionContainer';
-import MeetingRadioButton from '../components/MeetingRadioButton';
-import MeetingCheckbox from '../components/MeetingCheckbox';
-import { theme } from '../../../config/app-config';
-
-interface Payload extends CreateMeetingPayload {
-  userZone: UserZone;
-}
+import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action';
+import { AppState } from '../../../store/reducers/root.reducer';
+import { baseMeetingConfig } from '../../../store/static/base-meeting-config';
 
 const MeetingSetting: FC = () => {
-  const handleSubmit: FormSubmitEvent<Payload> = () => {};
+  const {
+    meeting: {
+      userMeetingConfig,
+      createMeeting: {
+        form: { payload: formPayload },
+      },
+    },
+  } = useSelector((state: AppState) => state);
 
-  const [swtichActive, setSwtichActive] = useState(false);
-  const [firstSelect, setFirstSelect] = useState('Public');
-  const [secondSelect, setSecondSelect] = useState('10 Members');
-
-  const streamSection = [
-    ['Lorem Ipsum', 'Lorem Ipsum'],
-    ['Lorem Ipsum', 'Lorem Ipsum'],
-    ['Lorem Ipsum', 'Lorem Ipsum'],
-    ['Lorem Ipsum', 'Lorem Ipsum'],
-  ];
-  const firstSelectOptions = ['Public', 'Private'];
-  const secondSelectOptions = ['10 Members', '20 Members', '3m Members'];
-
-  const [streamSectionRadios, setStreamSectionRadios] = useState<number[]>([
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-    -1,
-  ]);
+  const dispatch = useDispatch();
 
   return (
-    <Grommet
-      theme={{
-        ...theme,
-        select: {},
-      }}
-    >
-      <Form onSubmit={handleSubmit}>
-        <Box direction="row" justify="between" margin={{ bottom: 'small' }}>
+    <>
+      {userMeetingConfig?.config && formPayload?.config && (
+        <SectionContainer label="Toolbars">
           <Select
-            options={firstSelectOptions}
-            value={firstSelect}
-            onChange={({ option }) => setFirstSelect(option)}
+            margin={{ bottom: 'small' }}
+            options={baseMeetingConfig.toolbarButtons}
+            multiple
+            messages={{
+              multiple: `${formPayload.config.toolbarButtons.length} selected`,
+            }}
+            value={formPayload.config.toolbarButtons}
+            placeholder="Choose"
+            closeOnChange={false}
+            onChange={({ value }) => {
+              dispatch(
+                setMeetingFormFieldAction({
+                  config: {
+                    ...formPayload.config,
+                    toolbarButtons: value,
+                  },
+                })
+              );
+            }}
           />
-          <Select
-            options={secondSelectOptions}
-            value={secondSelect}
-            onChange={({ option }) => setSecondSelect(option)}
-          />
-        </Box>
-        <MeetingCheckbox
-          title="Lorem Ipsum"
-          width="140px"
-          nopad
-          onClick={() => {
-            setSwtichActive(!swtichActive);
-          }}
-        />
-
-        {swtichActive && (
-          <SectionContainer label="Lorem Ipsum" margin={{ top: 'medium' }}>
-            <Box justify="between" direction="row" wrap>
-              {streamSection.map((item, i) => (
-                <MeetingRadioButton
-                  labels={item}
-                  width="490px"
-                  onClick={(index) => {
-                    const temp = streamSectionRadios;
-                    temp[i] = index;
-                    setStreamSectionRadios(temp);
-                  }}
-                  nopad={i === streamSection.length - 1 && true}
-                />
+          <Box wrap justify="between" direction="row" overflow="auto">
+            {formPayload.config &&
+              Array.isArray(formPayload.config.toolbarButtons) &&
+              formPayload.config.toolbarButtons.map((toolbarBtn: string) => (
+                <Box
+                  pad={{ bottom: 'xsmall' }}
+                  direction="row"
+                  key={toolbarBtn}
+                  gap="medium"
+                  width="150px"
+                  justify="between"
+                >
+                  <Text size="small">{toolbarBtn}</Text>
+                </Box>
               ))}
-            </Box>
-          </SectionContainer>
-        )}
-      </Form>
-    </Grommet>
+          </Box>
+        </SectionContainer>
+      )}
+    </>
   );
 };
 

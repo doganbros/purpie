@@ -1,255 +1,132 @@
+import { appSubdomain } from '../../helpers/app-subdomain';
 import {
-  CLOSE_CREATE_USER_ZONE_LAYER,
-  CLOSE_UPDATE_USER_ZONE_LAYER,
-  CLOSE_INVITE_PERSON_LAYER,
-  OPEN_CREATE_USER_ZONE_LAYER,
-  OPEN_UPDATE_USER_ZONE_LAYER,
-  OPEN_INVITE_PERSON_LAYER,
-  INVITE_PERSON_LAYER_REQUESTED,
-  USER_ZONE_CREATE_FAILED,
-  USER_ZONE_CREATE_REQUESTED,
-  USER_ZONE_CREATE_SUCCESS,
-  USER_ZONE_DELETE_FAILED,
-  USER_ZONE_DELETE_REQUESTED,
-  USER_ZONE_DELETE_SUCCESS,
-  USER_ZONE_GET_ALL_FAILED,
-  USER_ZONE_GET_ALL_REQUESTED,
-  USER_ZONE_GET_ALL_SUCCESS,
-  USER_ZONE_GET_FAILED,
-  USER_ZONE_GET_REQUESTED,
-  USER_ZONE_GET_SUCCESS,
-  USER_ZONE_UPDATE_FAILED,
-  USER_ZONE_UPDATE_REQUESTED,
-  USER_ZONE_UPDATE_SUCCESS,
+  GET_CURRENT_USER_ZONE_FAILED,
+  GET_CURRENT_USER_ZONE_REQUESTED,
+  GET_CURRENT_USER_ZONE_SUCCESS,
+  GET_USER_ZONES_FAILED,
+  GET_USER_ZONES_REQUESTED,
+  GET_USER_ZONES_SUCCESS,
+  GET_USER_ZONE_BY_ID_FAILED,
+  GET_USER_ZONE_BY_ID_REQUESTED,
+  GET_USER_ZONE_BY_ID_SUCCESS,
+  SET_CURRENT_USER_ZONE,
 } from '../constants/zone.constants';
 import { ZoneActionParams, ZoneState } from '../types/zone.types';
 
 const initialState: ZoneState = {
-  getMultipleUserZones: {
+  selectedUserZone: null,
+  userZoneInitialized: false,
+
+  getUserZones: {
     loading: false,
     userZones: null,
-    total: null,
     error: null,
   },
-  getOneZone: {
+
+  getUserZoneDetailById: {
     loading: false,
     userZone: null,
     error: null,
   },
-  createZone: {
-    layerIsVisible: false,
+
+  getCurrentUserZoneDetail: {
     loading: false,
-    error: null,
-  },
-  updateZone: {
-    layerIsVisible: false,
-    loading: false,
-    error: null,
-  },
-  invitePersonZone: {
-    layerInviteIsVisible: false,
-    loading: false,
-    error: null,
-  },
-  deleteUserZone: {
-    loading: false,
+    userZone: null,
     error: null,
   },
 };
 
-const tenantReducer = (
+const zoneReducer = (
   state = initialState,
   action: ZoneActionParams
 ): ZoneState => {
   switch (action.type) {
-    case OPEN_CREATE_USER_ZONE_LAYER:
+    case SET_CURRENT_USER_ZONE:
       return {
         ...state,
-        createZone: {
-          ...state.createZone,
-          layerIsVisible: true,
-        },
+        selectedUserZone: action.payload,
       };
-    case CLOSE_CREATE_USER_ZONE_LAYER:
+    case GET_USER_ZONES_REQUESTED:
       return {
         ...state,
-        createZone: {
-          ...state.createZone,
-          layerIsVisible: false,
-        },
-      };
-    case OPEN_UPDATE_USER_ZONE_LAYER:
-      return {
-        ...state,
-        updateZone: {
-          ...state.updateZone,
-          layerIsVisible: true,
-        },
-      };
-    case OPEN_INVITE_PERSON_LAYER:
-      return {
-        ...state,
-        invitePersonZone: {
-          ...state.invitePersonZone,
-          layerInviteIsVisible: true,
-          loading: false,
-        },
-      };
-    case CLOSE_INVITE_PERSON_LAYER:
-      return {
-        ...state,
-        invitePersonZone: {
-          ...state.invitePersonZone,
-          layerInviteIsVisible: false,
-          loading: false,
-        },
-      };
-    case INVITE_PERSON_LAYER_REQUESTED:
-      return {
-        ...state,
-        invitePersonZone: {
-          ...state.invitePersonZone,
+        getUserZones: {
+          ...state.getUserZones,
           loading: true,
         },
       };
-    case CLOSE_UPDATE_USER_ZONE_LAYER:
+    case GET_USER_ZONES_SUCCESS:
       return {
         ...state,
-        updateZone: {
-          ...state.updateZone,
-          layerIsVisible: false,
-        },
-      };
-    case USER_ZONE_CREATE_REQUESTED:
-      return {
-        ...state,
-        createZone: {
-          ...state.createZone,
-          loading: true,
-        },
-      };
-    case USER_ZONE_CREATE_SUCCESS:
-      return {
-        ...state,
-        createZone: {
-          layerIsVisible: false,
+        selectedUserZone: appSubdomain
+          ? action.payload.find(
+              (userZone) => userZone.zone.subdomain === appSubdomain
+            ) || null
+          : null,
+        userZoneInitialized: true,
+        getUserZones: {
           loading: false,
+          userZones: action.payload,
           error: null,
         },
       };
-    case USER_ZONE_CREATE_FAILED:
+    case GET_USER_ZONES_FAILED:
       return {
         ...state,
-        createZone: {
-          ...state.createZone,
+        getUserZones: {
           loading: false,
-          error: action.payload,
-        },
-      };
-
-    case USER_ZONE_UPDATE_REQUESTED:
-      return {
-        ...state,
-        updateZone: {
-          ...state.updateZone,
-          loading: true,
-        },
-      };
-    case USER_ZONE_UPDATE_SUCCESS:
-      return {
-        ...state,
-        updateZone: {
-          layerIsVisible: false,
-          loading: false,
-          error: null,
-        },
-      };
-    case USER_ZONE_UPDATE_FAILED:
-      return {
-        ...state,
-        updateZone: {
-          ...state.updateZone,
-          loading: false,
-          error: action.payload,
-        },
-      };
-
-    case USER_ZONE_GET_ALL_REQUESTED:
-      return {
-        ...state,
-        getMultipleUserZones: {
-          ...state.getMultipleUserZones,
-          loading: true,
-        },
-      };
-    case USER_ZONE_GET_ALL_SUCCESS:
-      return {
-        ...state,
-        getMultipleUserZones: {
-          userZones: action.payload.data,
-          total: action.payload.total,
-          loading: false,
-          error: null,
-        },
-      };
-    case USER_ZONE_GET_ALL_FAILED:
-      return {
-        ...state,
-        getMultipleUserZones: {
           userZones: null,
-          total: null,
-          loading: false,
           error: null,
         },
       };
-
-    case USER_ZONE_GET_REQUESTED:
+    case GET_USER_ZONE_BY_ID_REQUESTED:
       return {
         ...state,
-        getOneZone: {
-          ...state.getOneZone,
+        getUserZoneDetailById: {
+          ...state.getUserZoneDetailById,
           loading: true,
         },
       };
-    case USER_ZONE_GET_SUCCESS:
+    case GET_USER_ZONE_BY_ID_SUCCESS:
       return {
         ...state,
-        getOneZone: {
+        getUserZoneDetailById: {
+          loading: false,
           userZone: action.payload,
-          loading: false,
           error: null,
         },
       };
-    case USER_ZONE_GET_FAILED:
+    case GET_USER_ZONE_BY_ID_FAILED:
       return {
         ...state,
-        getOneZone: {
+        getUserZoneDetailById: {
+          loading: false,
           userZone: null,
-          loading: false,
-          error: null,
+          error: action.payload,
         },
       };
-    case USER_ZONE_DELETE_REQUESTED:
+    case GET_CURRENT_USER_ZONE_REQUESTED:
       return {
         ...state,
-        deleteUserZone: {
-          ...state.deleteUserZone,
+        getCurrentUserZoneDetail: {
+          ...state.getCurrentUserZoneDetail,
           loading: true,
         },
       };
-    case USER_ZONE_DELETE_SUCCESS:
+    case GET_CURRENT_USER_ZONE_SUCCESS:
       return {
         ...state,
-        deleteUserZone: {
+        getCurrentUserZoneDetail: {
           loading: false,
+          userZone: action.payload,
           error: null,
         },
       };
-    case USER_ZONE_DELETE_FAILED:
+    case GET_CURRENT_USER_ZONE_FAILED:
       return {
         ...state,
-        deleteUserZone: {
+        getCurrentUserZoneDetail: {
           loading: false,
+          userZone: null,
           error: action.payload,
         },
       };
@@ -259,4 +136,4 @@ const tenantReducer = (
   }
 };
 
-export default tenantReducer;
+export default zoneReducer;
