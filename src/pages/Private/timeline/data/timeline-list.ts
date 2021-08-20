@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 
-export const timeLineList = Array(30)
+export const timeLineList = Array(20)
   .fill(null)
   .map(() => ({
     id: nanoid(),
