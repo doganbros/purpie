@@ -20,7 +20,6 @@ import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
 import { ChannelIdParams } from 'src/channel/dto/channel-id.params';
-import { MeetingKey } from 'types/Meeting';
 import { UserZoneRole } from 'src/zone/decorators/user-zone-role.decorator';
 import { ZoneIdParams } from 'src/zone/dto/zone-id.params';
 import { UserChannelRole } from 'src/channel/decorators/user-channel-role.decorator';
@@ -49,50 +48,38 @@ export class MeetingController {
     const {
       public: publicMeeting,
       userContactExclusive,
-      zoneId,
       channelId,
+      config,
+      liveStream,
+      record,
     } = createMeetingInfo;
 
-    if (publicMeeting || userContactExclusive) {
-      meetingPayload.config = await this.meetingService.getCurrentUserConfig(
-        user.id,
-      );
-      if (!meetingPayload.config)
-        throw new NotFoundException('User not found', 'USER_NOT_FOUND');
-
+    if (channelId) {
+      await this.meetingService.validateUserChannel(user.id, channelId);
+      meetingPayload.channelId = channelId;
+    } else {
       meetingPayload.public = publicMeeting === true;
       meetingPayload.userContactExclusive =
         userContactExclusive === true && !publicMeeting;
-    } else if (zoneId) {
-      meetingPayload.config = await this.meetingService.getCurrentUserZoneConfig(
-        user.id,
-        zoneId,
-      );
-      if (!meetingPayload.config)
-        throw new NotFoundException('Zone not found', 'ZONE_NOT_FOUND');
-      meetingPayload.zoneId = zoneId;
-    } else if (channelId) {
-      meetingPayload.config = await this.meetingService.getCurrentUserChannelConfig(
-        user.id,
-        channelId,
-      );
-      if (!meetingPayload.config)
-        throw new NotFoundException('Channel not found', 'CHANNEL_NOT_FOUND');
-      meetingPayload.channelId = channelId;
     }
 
-    if (createMeetingInfo.config) {
-      for (const key in createMeetingInfo.config)
-        if (!(key in meetingPayload.config!))
-          delete createMeetingInfo.config![key as MeetingKey];
+    meetingPayload.config = await this.meetingService.getMeetingConfig(
+      user.id,
+      config,
+    );
 
-      meetingPayload.config = {
-        ...meetingPayload.config,
-        ...createMeetingInfo.config,
-      };
-    }
+    if (liveStream) meetingPayload.config.liveStreamingEnabled = true;
+    if (record) meetingPayload.config.fileRecordingsEnabled = true;
 
     const meeting = await this.meetingService.createNewMeeting(meetingPayload);
+
+    this.meetingService.sendMeetingInfoMail(user, meeting, true);
+
+    if (createMeetingInfo.saveConfig)
+      this.meetingService.saveCurrentUserMeetingConfig(
+        user.id,
+        meetingPayload.config,
+      );
 
     if (!createMeetingInfo.startDate)
       return this.meetingService.generateMeetingUrl(meeting, user, true);
@@ -142,6 +129,16 @@ export class MeetingController {
     @CurrentUser() user: UserPayload,
   ) {
     return this.meetingService.removeMeeting(meetingId, user.id);
+  }
+
+  @Get('config/user')
+  @IsAuthenticated()
+  async getCurrentUserMeetingConfig(@CurrentUser() user: UserPayload) {
+    const result = await this.meetingService.getCurrentUserConfig(user.id);
+
+    if (!result)
+      throw new NotFoundException('User Meeting configuration not found');
+    return result;
   }
 
   @Get('list/public')

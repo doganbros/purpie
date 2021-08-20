@@ -8,7 +8,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
@@ -17,6 +17,7 @@ import { PaginationQuery } from 'types/PaginationQuery';
 import { ContactIdParam } from '../dto/contact-id.param';
 import { ContactInvitationResponseDto } from '../dto/contact-invitation-response.dto';
 import { CreateContactDto } from '../dto/create-contact.dto';
+import { SearchUsersQuery } from '../dto/search-users.query';
 import { UserService } from '../user.service';
 
 @Controller({ path: 'user', version: '1' })
@@ -64,6 +65,28 @@ export class UserController {
     );
 
     return contactInvitation;
+  }
+
+  @Get('/search')
+  @IsAuthenticated()
+  @PaginationQueryParams()
+  @ApiQuery({
+    name: 'excludeCurrentUser',
+    description:
+      'Exclude current user in search. Specify false to disable this.',
+    type: String,
+    required: false,
+  })
+  async searchUsers(
+    @CurrentUser() currentUser: UserPayload,
+    @Query() query: SearchUsersQuery,
+  ) {
+    const users = await this.userService.searchUsers(
+      query.excludeCurrentUser === 'false' ? [] : [currentUser.id],
+      query as any,
+    );
+
+    return users;
   }
 
   @Get('/contact/invitation/list')

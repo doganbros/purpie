@@ -3,7 +3,6 @@ import pick from 'lodash.pick';
 import { URL } from 'url';
 import { IsNull, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaginationQuery } from 'types/PaginationQuery';
 import { Zone } from 'entities/Zone.entity';
 import { UserZoneRepository } from 'entities/repositories/UserZone.repository';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
@@ -120,7 +119,7 @@ export class ZoneService {
     });
   }
 
-  async getCurrentUserZones(user: UserPayload, query: PaginationQuery) {
+  async getCurrentUserZones(user: UserPayload) {
     return this.userZoneRepository
       .createQueryBuilder('user_zone')
       .select([
@@ -138,7 +137,7 @@ export class ZoneService {
       .leftJoinAndSelect('zone.category', 'category')
       .where('user_zone.userId = :userId', { userId: user.id })
       .orderBy('user_zone.createdOn', 'DESC')
-      .paginate(query);
+      .getMany();
   }
 
   async getUserZone(userId: number, params: Record<string, any>) {

@@ -1,14 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Form, TextInput, FormField, Box, Text } from 'grommet';
+import { TextInput, FormField, Box, Text } from 'grommet';
 import { Add, User } from 'grommet-icons';
-import { CreateMeetingPayload } from '../../../store/types/meeting.types';
-import { validators } from '../../../helpers/validators';
-import { FormSubmitEvent } from '../../../models/form-submit-event';
-import { UserZone } from '../../../store/types/zone.types';
-
-interface Payload extends CreateMeetingPayload {
-  userZone: UserZone;
-}
 
 const users = [
   'umit@doganbros.com',
@@ -23,8 +15,6 @@ const MeetingInvitation: FC = () => {
   const [suggestionsList, setSuggestionsList] = useState<string[]>(users);
   const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
   const [invitedUser, setInvitedUser] = useState<string>('');
-
-  const handleSubmit: FormSubmitEvent<Payload> = () => {};
 
   const onChange = (value: string) => {
     setInvitedUser(value);
@@ -44,12 +34,8 @@ const MeetingInvitation: FC = () => {
 
   useEffect(() => {}, [invitedUsers]);
   return (
-    <Form onSubmit={handleSubmit}>
-      <FormField
-        name="user"
-        htmlFor="userInput"
-        validate={validators.required()}
-      >
+    <>
+      <FormField name="user" htmlFor="userInput">
         <TextInput
           id="userInput"
           name="user"
@@ -125,7 +111,7 @@ const MeetingInvitation: FC = () => {
           ))}
         </Box>
       )}
-    </Form>
+    </>
   );
 };
 

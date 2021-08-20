@@ -5,11 +5,7 @@ import Register from './pages/Public/Register';
 import ForgotPassword from './pages/Public/ForgotPassword';
 import ResetPassword from './pages/Public/ResetPassword';
 import Timeline from './pages/Private/timeline/Timeline';
-import ZoneList from './pages/Private/zone/ZoneList';
 import Channels from './pages/Private/channels/Channels';
-import CreateMeeting from './pages/Private/meeting/CreateMeeting';
-import MeetingsByZone from './pages/Private/meeting/MeetingsByZone';
-import MeetingsByUser from './pages/Private/meeting/MeetingsByUser';
 import ThirdPartyAuth from './pages/Public/ThirdPartyAuth';
 import VerifyUserEmailInfo from './pages/Public/VerifyUserEmailInfo';
 import VerifyUserEmail from './pages/Public/VerifyUserEmail';
@@ -75,30 +71,6 @@ export const privateRoutes: Array<AppRoute> = [
     path: '/',
     component: Timeline,
     description: 'User views timeline',
-  },
-  {
-    id: nanoid(),
-    path: '/zone-list',
-    component: ZoneList,
-    description: 'User creates a new zone',
-  },
-  {
-    id: nanoid(),
-    path: '/create-meeting',
-    component: CreateMeeting,
-    description: 'User creates a new meeting',
-  },
-  {
-    id: nanoid(),
-    path: '/meetings/:zoneId',
-    component: MeetingsByZone,
-    description: 'User creates a new meeting',
-  },
-  {
-    id: nanoid(),
-    path: '/my-meetings',
-    component: MeetingsByUser,
-    description: 'User creates a new meeting and list meeting for just user',
   },
   {
     id: nanoid(),

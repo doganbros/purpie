@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { nanoid } from 'nanoid';
+import { appSubdomain } from '../helpers/app-subdomain';
 import { errorResponseMessage } from '../helpers/utils';
 import { REMOVE_TOAST } from '../store/constants/util.constants';
 import { store } from '../store/store';
@@ -7,37 +8,24 @@ import { store } from '../store/store';
 const {
   REACT_APP_API_VERSION = 'v1',
   REACT_APP_SERVER_HOST = 'http://localhost:8000',
-  REACT_APP_CLIENT_HOST = 'http://localhost:3000',
 } = process.env;
-
-const clientHostUrl = new URL(REACT_APP_CLIENT_HOST);
-
-const { hostname } = window.location;
-
-const subdomain = hostname.slice(
-  0,
-  hostname.lastIndexOf(clientHostUrl.hostname) - 1
-);
-const isValidSubDomain =
-  hostname !== clientHostUrl.hostname &&
-  hostname.lastIndexOf(clientHostUrl.hostname) >= 0 &&
-  subdomain &&
-  subdomain !== 'www';
 
 axios.defaults.baseURL = `${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}`;
 
 axios.defaults.withCredentials = true;
 
-axios.interceptors.request.use(
-  (config) => {
-    const { headers } = config;
+if (appSubdomain) {
+  axios.interceptors.request.use(
+    (config) => {
+      const { headers } = config;
 
-    if (isValidSubDomain) headers['App-Subdomain'] = subdomain;
+      headers['App-Subdomain'] = appSubdomain;
 
-    return config;
-  },
-  (err) => Promise.reject(err)
-);
+      return config;
+    },
+    (err) => Promise.reject(err)
+  );
+}
 
 axios.interceptors.response.use(
   (response) => response,

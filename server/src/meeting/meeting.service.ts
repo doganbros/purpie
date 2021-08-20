@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import crypto from 'crypto';
 
@@ -12,13 +16,16 @@ import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { generateLowerAlphaNumId, meetingConfigStringify } from 'helpers/utils';
 import { Contact } from 'entities/Contact.entity';
 import { PaginationQuery } from 'types/PaginationQuery';
-import { Zone } from 'entities/Zone.entity';
 import { Channel } from 'entities/Channel.entity';
-import slugify from 'slugify';
+import { baseMeetingConfig } from 'entities/data/base-meeting-config';
+import { MeetingConfig, MeetingKey } from 'types/Meeting';
+import { MailService } from 'src/mail/mail.service';
+import dayjs from 'dayjs';
 
 const {
   JITSI_SECRET = '',
   JITSI_DOMAIN = 'https://meet.doganbros.com',
+  REACT_APP_SERVER_HOST = '',
 } = process.env;
 
 @Injectable()
@@ -26,11 +33,30 @@ export class MeetingService {
   constructor(
     @InjectRepository(Meeting) private meetingRepository: Repository<Meeting>,
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(UserZone)
-    private userZoneRepository: Repository<UserZone>,
     @InjectRepository(UserChannel)
     private userChannelRepository: Repository<UserChannel>,
+    private mailService: MailService,
   ) {}
+
+  async validateUserChannel(userId: number, channelId: number) {
+    const userChannel = await this.userChannelRepository.findOne({
+      channelId,
+      userId,
+    });
+    if (!userChannel) throw new NotFoundException('User channel not found');
+  }
+
+  async getMeetingConfig(userId: number, config?: Record<string, any>) {
+    const meetingConfig =
+      (await this.getCurrentUserConfig(userId)) || baseMeetingConfig;
+
+    if (config) {
+      for (const key in config)
+        if (key in baseMeetingConfig)
+          meetingConfig[key as MeetingKey] = config[key];
+    }
+    return meetingConfig;
+  }
 
   async createNewMeeting(payload: DeepPartial<Meeting>) {
     const maxCreateAttempts = 5;
@@ -38,9 +64,7 @@ export class MeetingService {
 
     while (createAttempts < maxCreateAttempts) {
       try {
-        payload.slug = `${slugify(
-          payload.title!,
-        )}-${generateLowerAlphaNumId()}`.toLowerCase();
+        payload.slug = generateLowerAlphaNumId();
         const meeting = await this.meetingRepository.create(payload).save();
         return meeting;
       } catch (err) {
@@ -55,15 +79,32 @@ export class MeetingService {
     );
   }
 
+  async sendMeetingInfoMail(
+    user: UserPayload,
+    meeting: Meeting,
+    creator = false,
+  ) {
+    const context = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      creator,
+      meeting: {
+        ...meeting,
+        startDate: dayjs(meeting.startDate).format('DD.MM.YYYY h:mm a'),
+      },
+      link: `${REACT_APP_SERVER_HOST}/v1/meeting/join/${meeting.slug}`,
+    };
+    return this.mailService.sendMailByView(
+      user.email,
+      'Octopus Meeting',
+      'meeting-info',
+      context,
+    );
+  }
+
   currentUserJoinMeetingValidator(userId: number, slug: string) {
     return this.meetingRepository
       .createQueryBuilder('meeting')
-      .leftJoin(
-        UserZone,
-        'user_zone',
-        'meeting.zoneId = user_zone.zoneId AND user_zone.userId = :userId',
-        { userId },
-      )
       .leftJoin(
         UserChannel,
         'user_channel',
@@ -81,7 +122,6 @@ export class MeetingService {
       .andWhere(
         new Brackets((qb) => {
           qb.where('meeting.public = true')
-            .orWhere('user_zone.zoneId is not null')
             .orWhere('user_channel.channelId is not null')
             .orWhere(
               'contact.contactUserId is not null or meeting.createdById = :userId',
@@ -101,13 +141,8 @@ export class MeetingService {
       .then((result) => result?.userMeetingConfig);
   }
 
-  async getCurrentUserZoneConfig(userId: number, zoneId: number) {
-    return this.userZoneRepository
-      .findOne({
-        where: { userId, zoneId },
-        relations: ['zone'],
-      })
-      .then((result) => result?.zone.zoneMeetingConfig);
+  async saveCurrentUserMeetingConfig(userId: number, config: MeetingConfig) {
+    return this.userRepository.update(userId, { userMeetingConfig: config });
   }
 
   async getCurrentUserChannelConfig(userId: number, channelId: number) {
@@ -179,6 +214,9 @@ export class MeetingService {
         'meeting.description',
         'meeting.startDate',
         'meeting.public',
+        'meeting.channelId',
+        'meeting.record',
+        'meeting.liveStream',
         'createdBy.id',
         'createdBy.email',
         'createdBy.firstName',
@@ -188,6 +226,7 @@ export class MeetingService {
 
   async getPublicMeetings(query: PaginationQuery) {
     return this.meetingSelections
+      .innerJoin('meeting.createdBy', 'createdBy')
       .where('meeting.endDate is null')
       .andWhere('meeting.public = true')
       .orderBy('meeting.startDate', 'ASC')
@@ -196,19 +235,20 @@ export class MeetingService {
 
   async getUserMeetings(userId: number, query: PaginationQuery) {
     return this.meetingSelections
-      .leftJoin('meeting.createdBy', 'createdBy')
-      .leftJoin(
-        UserZone,
-        'user_zone',
-        'meeting.zoneId = user_zone.zoneId AND user_zone.userId = :userId',
-        { userId },
-      )
+      .addSelect([
+        'channel.id',
+        'channel.name',
+        'channel.topic',
+        'channel.description',
+      ])
+      .innerJoin('meeting.createdBy', 'createdBy')
       .leftJoin(
         UserChannel,
         'user_channel',
         'meeting.channelId = user_channel.channelId AND user_channel.userId = :userId',
         { userId },
       )
+      .leftJoin(Channel, 'channel', 'channel.id = user_channel.channelId')
       .leftJoin(
         Contact,
         'contact',
@@ -218,8 +258,7 @@ export class MeetingService {
       .where('meeting.endDate is null')
       .andWhere(
         new Brackets((qb) => {
-          qb.where('user_zone.zoneId is not null')
-            .orWhere('user_channel.channelId is not null')
+          qb.where('user_channel.channelId is not null')
             .orWhere('contact.contactUserId is not null')
             .orWhere('meeting.createdById = :userId', { userId });
         }),
@@ -234,15 +273,31 @@ export class MeetingService {
     query: PaginationQuery,
   ) {
     return this.meetingSelections
-      .leftJoin('meeting.createdBy', 'createdBy')
-      .innerJoin(Zone, 'zone', 'meeting.zoneId = zone.id')
+      .addSelect([
+        'channel.id',
+        'channel.name',
+        'channel.topic',
+        'channel.description',
+      ])
+      .innerJoin('meeting.createdBy', 'createdBy')
       .innerJoin(
         UserZone,
         'user_zone',
-        'zone.id = user_zone.zoneId AND user_zone.userId = :userId',
-        { userId },
+        'user_zone.zoneId = :zoneId and user_zone.userId = :userId',
+        {
+          userId,
+          zoneId,
+        },
       )
-      .where('zone.id = :zoneId', { zoneId })
+      .innerJoin(
+        UserChannel,
+        'user_channel',
+        'user_channel.channelId = meeting.channelId',
+      )
+      .innerJoin('meeting.channel', 'channel')
+      .where(
+        'channel.id = user_channel.channelId and meeting.channelId = channel.id',
+      )
       .andWhere('meeting.endDate is null')
       .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
@@ -254,8 +309,14 @@ export class MeetingService {
     query: PaginationQuery,
   ) {
     return this.meetingSelections
+      .addSelect([
+        'channel.id',
+        'channel.name',
+        'channel.topic',
+        'channel.description',
+      ])
       .leftJoin('meeting.createdBy', 'createdBy')
-      .innerJoin(Channel, 'channel', 'meeting.channelId = channel.id')
+      .innerJoin('meeting.channel', 'channel', 'meeting.channelId = channel.id')
       .innerJoin(
         UserChannel,
         'user_channel',
@@ -263,7 +324,7 @@ export class MeetingService {
         { userId },
       )
       .where('channel.id = :channelId', { channelId })
-      .where('meeting.endDate is null')
+      .andWhere('meeting.endDate is null')
       .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
   }

@@ -109,6 +109,16 @@ export class ActivityService {
         'meeting.description',
         'meeting.startDate',
         'meeting.public',
+        'meeting.channelId',
+        'meeting.liveStream',
+        'meeting.record',
+        'zone_meeting.id',
+        'zone_meeting.subdomain',
+        'zone_meeting.description',
+        'channel_meeting.id',
+        'channel_meeting.name',
+        'channel_meeting.topic',
+        'channel_meeting.description',
         'meetingCreatedBy.id',
         'meetingCreatedBy.email',
         'meetingCreatedBy.firstName',
@@ -116,14 +126,19 @@ export class ActivityService {
       ])
       .leftJoin(Meeting, 'meeting', 'meeting.endDate is null')
       .leftJoin(
-        UserZone,
-        'user_zone_meeting',
-        'user_zone_meeting.userId = user.id AND meeting.zoneId = user_zone_meeting.zoneId',
-      )
-      .leftJoin(
         UserChannel,
         'user_channel_meeting',
         'user_channel_meeting.userId = user.id AND meeting.channelId = user_channel_meeting.channelId',
+      )
+      .leftJoin(
+        Channel,
+        'channel_meeting',
+        'channel_meeting.id = user_channel_meeting.channelId',
+      )
+      .leftJoin(
+        Zone,
+        'zone_meeting',
+        'zone_meeting.id = channel_meeting.zoneId',
       )
       .leftJoin(
         Contact,
@@ -137,9 +152,9 @@ export class ActivityService {
           qb.where(
             new Brackets((qbi) => {
               qbi
-                .where('user_zone_meeting.id is not null')
                 .orWhere('user_channel_meeting.id is not null')
-                .orWhere('contact_meeting.contactUserId is not null');
+                .orWhere('contact_meeting.contactUserId is not null')
+                .orWhere('meeting.createdById = :userId', { userId });
             }),
           ); // other and where for videos and so on
         }),
@@ -157,13 +172,12 @@ export class ActivityService {
         'meeting.description',
         'meeting.startDate',
         'meeting.public',
+        'meeting.liveStream',
+        'meeting.record',
         'meetingCreatedBy.id',
         'meetingCreatedBy.email',
         'meetingCreatedBy.firstName',
         'meetingCreatedBy.lastName',
-        'zone.id',
-        'zone.name',
-        'zone.subdomain',
         'channel_meeting.id',
         'channel_meeting.name',
         'channel_meeting.topic',
@@ -176,14 +190,12 @@ export class ActivityService {
         'meeting.channelId = channel_meeting.id',
       )
       .leftJoin('meeting.createdBy', 'meetingCreatedBy')
-      .where('zone.id = :zoneId', { zoneId })
+      .where('channel_meeting.zoneId = :zoneId', { zoneId })
       .andWhere(
         new Brackets((qb) => {
           qb.where(
             new Brackets((qbi) => {
-              qbi
-                .where('meeting.zoneId = zone.id')
-                .orWhere('meeting.channelId = channel_meeting.id');
+              qbi.where('meeting.channelId = channel_meeting.id');
             }),
           ); // other and where for videos and so on
         }),
@@ -201,6 +213,8 @@ export class ActivityService {
         'meeting.description',
         'meeting.startDate',
         'meeting.public',
+        'meeting.liveStream',
+        'meeting.record',
         'meetingCreatedBy.id',
         'meetingCreatedBy.email',
         'meetingCreatedBy.firstName',
@@ -237,6 +251,8 @@ export class ActivityService {
         'meeting.slug',
         'meeting.description',
         'meeting.startDate',
+        'meeting.liveStream',
+        'meeting.record',
         'meeting.public',
         'meetingCreatedBy.id',
         'meetingCreatedBy.email',

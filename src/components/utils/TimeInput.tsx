@@ -1,58 +1,48 @@
-import { Box, MaskedInput } from 'grommet';
+import { Select } from 'grommet';
 import React, { FC } from 'react';
+import lodash from 'lodash';
 
 interface Props {
-  onChange: (val: string) => void;
-  value?: string | undefined;
+  onChange: (hourMinute: [number, number], display?: string) => void;
+  defaultValue?: [number, number];
 }
-const Switch: FC<Props> = ({ onChange, value }) => {
+
+const times = lodash.flatten(
+  Array(24)
+    .fill(null)
+    .map((_, i) => {
+      const labelNumber = (() => {
+        if (i === 0) return 12;
+        if (i > 12) return i - 12;
+        return i;
+      })();
+
+      return [
+        {
+          label: `${labelNumber}:00 ${i > 11 ? 'PM' : 'AM'}`,
+          value: `${i}:0`,
+        },
+        {
+          label: `${labelNumber}:30 ${i > 11 ? 'PM' : 'AM'}`,
+          value: `${i}:30`,
+        },
+      ];
+    })
+);
+
+const TimeInput: FC<Props> = ({ onChange, defaultValue }) => {
   return (
-    <Box>
-      <MaskedInput
-        plain
-        focusIndicator={false}
-        mask={[
-          {
-            length: [1, 2],
-            options: [
-              '1',
-              '2',
-              '3',
-              '4',
-              '5',
-              '6',
-              '7',
-              '8',
-              '9',
-              '10',
-              '11',
-              '12',
-            ],
-            regexp: /^1[1-2]$|^[0-9]$/,
-            placeholder: 'hh',
-          },
-          { fixed: ':' },
-          {
-            length: 2,
-            options: ['00', '15', '30', '45'],
-            regexp: /^[0-5][0-9]$|^[0-9]$/,
-            placeholder: 'mm',
-          },
-          { fixed: ' ' },
-          {
-            length: 2,
-            options: ['am', 'pm'],
-            regexp: /^[ap]m$|^[AP]M$|^[aApP]$/,
-            placeholder: 'ap',
-          },
-        ]}
-        value={value}
-        onChange={(e) => {
-          onChange(e.target.value);
-        }}
-      />
-    </Box>
+    <Select
+      options={times}
+      defaultValue={times.find((v) => v.value === defaultValue?.join(':'))}
+      labelKey="label"
+      placeholder="Pick Time"
+      valueKey="value"
+      onChange={({ option }) =>
+        onChange(option.value.split(':').map(Number), option.label)
+      }
+    />
   );
 };
 
-export default Switch;
+export default TimeInput;

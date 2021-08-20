@@ -1,31 +1,40 @@
-import React, { FC, useRef, useState } from 'react';
-import { Box, Form, TextInput, TextArea, DateInput, FormField } from 'grommet';
-import { CreateMeetingPayload } from '../../../store/types/meeting.types';
+import React, { FC } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Box, TextInput, TextArea, DateInput, FormField } from 'grommet';
+import dayjs from 'dayjs';
 import { validators } from '../../../helpers/validators';
-import { FormSubmitEvent } from '../../../models/form-submit-event';
-import { UserZone } from '../../../store/types/zone.types';
-import TimeInput from '../../../components/utils/TimeInput';
 import MeetingCheckbox from '../components/MeetingCheckbox';
-
-interface Payload extends CreateMeetingPayload {
-  userZone: UserZone;
-}
+import { AppState } from '../../../store/reducers/root.reducer';
+import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action';
+import TimeInput from '../../../components/utils/TimeInput';
 
 const MeetingDetails: FC = () => {
-  const [swtichActive, setSwtichActive] = useState(false);
-  const [time, setTime] = useState<string | undefined>(undefined);
-  const defaultDate = useRef(new Date().toISOString());
+  const dispatch = useDispatch();
 
-  const handleSubmit: FormSubmitEvent<Payload> = () => {};
+  const {
+    meeting: {
+      createMeeting: {
+        form: { payload: formPayload },
+      },
+    },
+  } = useSelector((state: AppState) => state);
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <>
       <FormField
         name="name"
         htmlFor="nameInput"
         validate={validators.required()}
       >
-        <TextInput id="nameInput" name="name" placeholder="Meeting Name" />
+        <TextInput
+          defaultValue={formPayload?.title}
+          id="nameInput"
+          name="name"
+          onBlur={(e) =>
+            dispatch(setMeetingFormFieldAction({ title: e.target.value }))
+          }
+          placeholder="Meeting Name"
+        />
       </FormField>
       <FormField
         name="description"
@@ -34,9 +43,12 @@ const MeetingDetails: FC = () => {
       >
         <TextArea
           id="descriptionInput"
+          defaultValue={formPayload?.description}
+          onBlur={(e) =>
+            dispatch(setMeetingFormFieldAction({ description: e.target.value }))
+          }
           name="description"
           resize={false}
-          style={{ height: 90 }}
           placeholder="Meeting Description"
         />
       </FormField>
@@ -44,32 +56,103 @@ const MeetingDetails: FC = () => {
         title="Plan for later"
         width="140px"
         nopad
-        onClick={() => {
-          setSwtichActive(!swtichActive);
+        value={!!formPayload?.planForLater}
+        onChange={(v) => {
+          dispatch(
+            setMeetingFormFieldAction({
+              planForLater: v,
+              startDate: v
+                ? dayjs().startOf('day').add(3, 'days').toISOString()
+                : null,
+            })
+          );
         }}
       />
-      {swtichActive && (
-        <Box direction="row" gap="small" margin={{ top: 'small' }}>
-          <FormField name="date" htmlFor="dateValue" fill="horizontal">
+      {formPayload?.planForLater && (
+        <Box
+          direction="row"
+          gap="small"
+          align="center"
+          margin={{ top: 'small' }}
+        >
+          <FormField
+            validate={validators.required()}
+            name="date"
+            htmlFor="dateValue"
+            fill="horizontal"
+          >
             <DateInput
               format="dd/mm/yyyy"
-              defaultValue={defaultDate.current}
+              value={formPayload.startDate || undefined}
               id="dateValue"
+              onChange={(e) => {
+                if (!formPayload.startDate)
+                  return dispatch(
+                    setMeetingFormFieldAction({
+                      startDate: dayjs(e.value as string)
+                        .startOf('day')
+                        .toISOString(),
+                    })
+                  );
+                const startDate = new Date(formPayload.startDate);
+                const [hour, minute] = [
+                  startDate.getHours(),
+                  startDate.getMinutes(),
+                ];
+
+                return dispatch(
+                  setMeetingFormFieldAction({
+                    startDate: dayjs(e.value as string)
+                      .startOf('day')
+                      .add(hour, 'hour')
+                      .add(minute, 'minute')
+                      .toISOString(),
+                  })
+                );
+              }}
               name="date"
               placeholder="Set Date"
             />
           </FormField>
           <FormField name="time" htmlFor="timeValue" fill="horizontal">
             <TimeInput
-              onChange={(val: string) => {
-                setTime(val);
+              defaultValue={
+                formPayload.startDate
+                  ? [
+                      new Date(formPayload.startDate).getHours(),
+                      new Date(formPayload.startDate).getMinutes(),
+                    ]
+                  : undefined
+              }
+              onChange={(v) => {
+                const [hour, minute] = v;
+                if (!formPayload.startDate)
+                  return dispatch(
+                    setMeetingFormFieldAction({
+                      startDate: dayjs()
+                        .add(3, 'days')
+                        .startOf('day')
+                        .add(hour, 'hours')
+                        .add(minute, 'minutes')
+                        .toISOString(),
+                    })
+                  );
+
+                return dispatch(
+                  setMeetingFormFieldAction({
+                    startDate: dayjs(formPayload.startDate)
+                      .startOf('day')
+                      .add(hour, 'hours')
+                      .add(minute, 'minutes')
+                      .toISOString(),
+                  })
+                );
               }}
-              value={time}
             />
           </FormField>
         </Box>
       )}
-    </Form>
+    </>
   );
 };
 
