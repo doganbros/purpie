@@ -95,7 +95,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
           wrap
         >
           {buttonProps.map(({ id, icon, title, description, onClick }) => (
-            <Box key={id} margin={{ right: 'xxsmall' }}>
+            <Box key={id} margin={{ right: 'small', bottom: 'small' }}>
               <AddContentButton
                 icon={icon}
                 title={title}
