@@ -7,9 +7,13 @@ import {
   Schedules,
   ShareOption,
 } from 'grommet-icons';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AddContentButton from './AddContentButton';
-import { openPlanCreateMeetingLayerAction } from '../../store/actions/meeting.action';
+import {
+  createMeetingAction,
+  openPlanCreateMeetingLayerAction,
+} from '../../store/actions/meeting.action';
+import { AppState } from '../../store/reducers/root.reducer';
 
 interface AddContentProps {
   onDismiss: () => void;
@@ -17,6 +21,17 @@ interface AddContentProps {
 
 const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
   const dispatch = useDispatch();
+  const {
+    meeting: {
+      createMeeting: {
+        form: { submitting },
+      },
+    },
+    zone: {
+      getCurrentUserZoneDetail: { userZone },
+    },
+  } = useSelector((state: AppState) => state);
+
   const iconProps = {
     size: 'large',
     color: 'white',
@@ -28,7 +43,15 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
       title: 'Meet!',
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
-      onClick: () => {},
+      onClick: () => {
+        if (!submitting)
+          dispatch(
+            createMeetingAction({
+              public: !userZone,
+            })
+          );
+        onDismiss();
+      },
     },
     {
       id: 1,
@@ -95,7 +118,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
           wrap
         >
           {buttonProps.map(({ id, icon, title, description, onClick }) => (
-            <Box key={id} margin={{ right: 'xxsmall' }}>
+            <Box key={id} margin={{ right: 'small', bottom: 'small' }}>
               <AddContentButton
                 icon={icon}
                 title={title}

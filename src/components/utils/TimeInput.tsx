@@ -4,7 +4,7 @@ import lodash from 'lodash';
 
 interface Props {
   onChange: (hourMinute: [number, number], display?: string) => void;
-  defaultValue?: [number, number];
+  defaultValue?: [number, number] | null;
 }
 
 const times = lodash.flatten(
@@ -34,7 +34,11 @@ const TimeInput: FC<Props> = ({ onChange, defaultValue }) => {
   return (
     <Select
       options={times}
-      defaultValue={times.find((v) => v.value === defaultValue?.join(':'))}
+      defaultValue={
+        defaultValue
+          ? times.find((v) => v.value === defaultValue?.join(':'))
+          : undefined
+      }
       labelKey="label"
       placeholder="Pick Time"
       valueKey="value"

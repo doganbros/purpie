@@ -48,6 +48,7 @@ export interface CreateMeetingPayload {
   planForLater?: boolean;
   record?: boolean;
   liveStream?: boolean;
+  timeZone?: string;
 }
 
 export type UpdateMeetingPayload = Partial<CreateMeetingPayload>;

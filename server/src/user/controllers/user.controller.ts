@@ -18,6 +18,7 @@ import { ContactIdParam } from '../dto/contact-id.param';
 import { ContactInvitationResponseDto } from '../dto/contact-invitation-response.dto';
 import { CreateContactDto } from '../dto/create-contact.dto';
 import { SearchUsersQuery } from '../dto/search-users.query';
+import { SetUserRoleDto } from '../dto/set-user-role.dto';
 import { UserService } from '../user.service';
 
 @Controller({ path: 'user', version: '1' })
@@ -102,6 +103,12 @@ export class UserController {
     );
 
     return contactInvitation;
+  }
+
+  @Post('/set/role')
+  @IsAuthenticated(['canSetRole'])
+  setRole(@Body() info: SetUserRoleDto) {
+    return this.userService.setUserRole(info);
   }
 
   @Get('/contact/list')

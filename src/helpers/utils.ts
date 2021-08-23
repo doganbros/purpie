@@ -22,15 +22,15 @@ export const thirtyIds = Array(30)
     id: nanoid(),
   }));
 
-export const padString = (
-  str: string,
-  padChar: string,
-  length: number,
-  padLeft = true
-): string => {
-  const pad = Array(length).fill(padChar);
+export const ceilTime = (time: Date | string | number, minutes = 30): Date => {
+  const timeToReturn = new Date(time);
 
-  if (padLeft) return (pad + str).slice(-pad.length);
-
-  return (str + pad).substring(0, pad.length);
+  timeToReturn.setMilliseconds(
+    Math.ceil(timeToReturn.getMilliseconds() / 1000) * 1000
+  );
+  timeToReturn.setSeconds(Math.ceil(timeToReturn.getSeconds() / 60) * 60);
+  timeToReturn.setMinutes(
+    Math.ceil((timeToReturn.getMinutes() + 1) / minutes) * minutes
+  );
+  return timeToReturn;
 };

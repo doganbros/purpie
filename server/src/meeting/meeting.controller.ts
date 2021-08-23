@@ -23,9 +23,12 @@ import { ChannelIdParams } from 'src/channel/dto/channel-id.params';
 import { UserZoneRole } from 'src/zone/decorators/user-zone-role.decorator';
 import { ZoneIdParams } from 'src/zone/dto/zone-id.params';
 import { UserChannelRole } from 'src/channel/decorators/user-channel-role.decorator';
+import { IsClientAuthenticated } from 'src/auth/decorators/client-auth.decorator';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { MeetingService } from './meeting.service';
 import { MeetingIdParams } from './dto/meeting-id.param';
+import { ClientMeetingEventDto } from './dto/client-meeting-event.dto';
+import { ClientVerifyMeetingAuthDto } from './dto/client-verify-meeting-auth.dto';
 
 @Controller({ path: 'meeting', version: '1' })
 @ApiTags('meeting')
@@ -52,6 +55,7 @@ export class MeetingController {
       config,
       liveStream,
       record,
+      timeZone,
     } = createMeetingInfo;
 
     if (channelId) {
@@ -70,6 +74,7 @@ export class MeetingController {
 
     if (liveStream) meetingPayload.config.liveStreamingEnabled = true;
     if (record) meetingPayload.config.fileRecordingsEnabled = true;
+    if (timeZone) meetingPayload.timeZone = timeZone;
 
     const meeting = await this.meetingService.createNewMeeting(meetingPayload);
 
@@ -178,5 +183,25 @@ export class MeetingController {
     @Param() { channelId }: ChannelIdParams,
   ) {
     return this.meetingService.getChannelMeetings(channelId, user.id, query);
+  }
+
+  @Post('/client/event')
+  @IsClientAuthenticated(['manageMeeting'])
+  async setMeetingStatus(@Body() info: ClientMeetingEventDto) {
+    return this.meetingService.setMeetingStatus(info);
+  }
+
+  @Post('/client/verify')
+  @IsClientAuthenticated(['manageMeeting'])
+  async verifyMeetingAuthorization(@Body() info: ClientVerifyMeetingAuthDto) {
+    const meeting = await this.meetingService.currentUserJoinMeetingValidator(
+      info.userId,
+      info.meetingTitle,
+    );
+
+    if (!meeting)
+      throw new NotFoundException('Meeting not found', 'MEETING_NOT_FOUND');
+
+    return 'OK';
   }
 }
