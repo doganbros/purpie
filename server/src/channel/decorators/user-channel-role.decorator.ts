@@ -1,5 +1,5 @@
 import { SetMetadata, UseGuards, applyDecorators } from '@nestjs/common';
-import { ApiBearerAuth, ApiNotFoundResponse } from '@nestjs/swagger';
+import { ApiNotFoundResponse } from '@nestjs/swagger';
 import { ChannelRole } from 'entities/ChannelRole.entity';
 import { UserRole } from 'entities/UserRole.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
@@ -14,7 +14,6 @@ export const UserChannelRole = (
     IsAuthenticated(userPermissions),
     SetMetadata('userChannelPermissions', permissions),
     UseGuards(UserChannelGuard),
-    ApiBearerAuth(),
     ApiNotFoundResponse({
       description: 'User Channel not found',
       status: 404,

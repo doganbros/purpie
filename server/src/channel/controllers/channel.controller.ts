@@ -6,14 +6,25 @@ import {
   Body,
   Delete,
   Put,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
+import { errorResponseDoc } from 'helpers/error-response-doc';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
+import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { CurrentUserZone } from 'src/zone/decorators/current-user-zone.decorator';
 import { UserZoneRole } from 'src/zone/decorators/user-zone-role.decorator';
 import { InvitationResponseDto } from 'src/zone/dto/invitation-response.dto';
@@ -36,8 +47,11 @@ export class ChannelController {
 
   @Post('/create/:userZoneId')
   @ApiCreatedResponse({
-    description: 'Current authenticated user adds a new channel to a zone',
+    description:
+      'Current authenticated user adds a new channel to a zone. User channel id is returned. User channel must have canCreateChannel permission',
+    schema: { type: 'integer' },
   })
+  @ValidationBadRequest()
   @ApiParam({
     name: 'userZoneId',
     description: 'user zone id',
@@ -60,12 +74,17 @@ export class ChannelController {
       currentUser,
     );
 
-    return userChannel;
+    return userChannel.id;
   }
 
   @Post('/join/:channelId')
+  @ApiCreatedResponse({
+    description:
+      "Current authenticated user joins a public channel. When the user doesn't belong to the zone he is added. The id of the user channel is returned",
+    schema: { type: 'integer' },
+  })
   @IsAuthenticated()
-  async joinPublicZone(
+  async joinPublicChannel(
     @CurrentUser() user: UserPayload,
     @Param() { channelId }: ChannelIdParams,
   ) {
@@ -91,12 +110,31 @@ export class ChannelController {
     );
     await this.channelService.removeInvitation(user.email, channel.id);
 
-    return userChannel;
+    return userChannel.id;
   }
 
   @Post('/invite/:channelId')
   @UserChannelRole(['canInvite'])
-  async inviteToJoinZone(
+  @ApiCreatedResponse({
+    description:
+      'Current authenticated invites a user to this channel. The id of the invitation is returned. User channel must have canInvite permission',
+    schema: { type: 'integer' },
+  })
+  @ApiNotFoundResponse({
+    description:
+      'Error thrown when the user is not eligible for the channel or the channel is not found',
+    schema: errorResponseDoc(404, 'Channel not found', 'CHANNEL_NOT_FOUND'),
+  })
+  @ApiBadRequestResponse({
+    description: 'Error thrown when the user is already invited',
+    schema: errorResponseDoc(
+      400,
+      `The user with the email '<email>' has already been invited to this channel`,
+      'USER_ALREADY_INVITED_TO_CHANNEL',
+    ),
+  })
+  @ValidationBadRequest()
+  async inviteToJoinChannel(
     @Param() { channelId }: ChannelIdParams,
     @Body() { email }: InviteToJoinChannelDto,
     @CurrentUserChannel() currentUserChannel: UserChannel,
@@ -125,8 +163,13 @@ export class ChannelController {
   }
 
   @Post('/invitation/response')
+  @ValidationBadRequest()
+  @ApiCreatedResponse({
+    description: 'User Responds to invitation',
+    schema: { type: 'string', example: 'OK' },
+  })
   @IsAuthenticated()
-  async respondToInvitationToJoinZone(
+  async respondToInvitationToJoinChannel(
     @Body() invitationResponse: InvitationResponseDto,
     @CurrentUser() currentUser: UserPayload,
   ) {
@@ -153,13 +196,13 @@ export class ChannelController {
         invitation.channel.zoneId,
       );
 
-    const userChannel = await this.channelService.addUserToChannel(
+    await this.channelService.addUserToChannel(
       currentUser.id,
       invitation.channelId,
     );
 
     await invitation.remove();
-    return userChannel;
+    return 'OK';
   }
 
   @Delete('/remove/:channelId')
@@ -167,12 +210,24 @@ export class ChannelController {
     name: 'channelId',
     description: 'The channel id',
   })
+  @ApiOkResponse({
+    description:
+      'User deletes a channel. User channel must have the canDelete permission',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @HttpCode(HttpStatus.OK)
   @UserChannelRole(['canDelete'])
   async deleteZone(@CurrentUserChannel() userChannel: UserChannel) {
-    return this.channelService.deleteByChannelId(userChannel.channel.id);
+    await this.channelService.deleteByChannelId(userChannel.channel.id);
+    return 'OK';
   }
 
   @Put('/update/:channelId')
+  @ApiCreatedResponse({
+    description:
+      'User updates a zone. User channel must have the canEdit permission',
+    schema: { type: 'string', example: 'OK' },
+  })
   @ApiParam({
     name: 'channelId',
     description: 'The channel id',
@@ -182,9 +237,7 @@ export class ChannelController {
     @CurrentUserChannel() userChannel: UserChannel,
     @Body() editInfo: EditChannelDto,
   ) {
-    return this.channelService.editChannelById(
-      userChannel.channel.id,
-      editInfo,
-    );
+    await this.channelService.editChannelById(userChannel.channel.id, editInfo);
+    return 'OK';
   }
 }

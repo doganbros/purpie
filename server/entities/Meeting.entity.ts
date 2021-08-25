@@ -22,6 +22,15 @@ export class Meeting extends RecordEntity {
   @Column({ nullable: true })
   endDate: Date;
 
+  @Column({ nullable: true })
+  conferenceStartDate: Date;
+
+  @Column({ nullable: true })
+  conferenceEndDate: Date;
+
+  @Column({ nullable: true })
+  timeZone: string;
+
   @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'createdById' })
   createdBy: User;

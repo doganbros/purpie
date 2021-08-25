@@ -13,7 +13,8 @@ export const IsAuthenticated = (
     SetMetadata('userPermissionsOptions', options),
     UseGuards(AuthGuard),
     ApiUnauthorizedResponse({
-      description: 'Unauthorized',
+      description:
+        "This is the error thrown when the user has not logged in. (Error Code: 'NOT_SIGNED_IN' is returned when jwt is not valid)",
       status: 401,
     }),
   );

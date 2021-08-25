@@ -50,7 +50,7 @@ export const createMeetingAction = (
 
       setToastAction(
         'ok',
-        `New meeting with the id ${response.id} has been created successfully`
+        `New meeting with the id ${response} has been created successfully`
       )(dispatch);
     } catch (err) {
       dispatch({

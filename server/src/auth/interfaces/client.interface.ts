@@ -17,7 +17,18 @@ export class ClientPayload {
   @ApiProperty()
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    type: 'object',
+    properties: {
+      roleCode: {
+        type: 'string',
+        example: 'SUPER_ADMIN',
+        enum: ['SUPER_ADMIN', 'ADMIN', 'NORMAL'],
+      },
+      roleName: { type: 'string', example: 'Super Admin' },
+      manageMeeting: { type: 'boolean' },
+    },
+  })
   clientRole: SoftEntity<ClientRole>;
 }
 

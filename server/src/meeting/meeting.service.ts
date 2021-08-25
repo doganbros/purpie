@@ -11,16 +11,27 @@ import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { generateJWT } from 'helpers/jwt';
-import { Brackets, DeepPartial, Repository } from 'typeorm';
+import { Brackets, DeepPartial, IsNull, Repository } from 'typeorm';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
-import { generateLowerAlphaNumId, meetingConfigStringify } from 'helpers/utils';
+import {
+  generateLowerAlphaNumId,
+  meetingConfigStringify,
+  separateString,
+} from 'helpers/utils';
 import { Contact } from 'entities/Contact.entity';
+import { MeetingAttendance } from 'entities/MeetingAttendance.entity';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { Channel } from 'entities/Channel.entity';
 import { baseMeetingConfig } from 'entities/data/base-meeting-config';
 import { MeetingConfig, MeetingKey } from 'types/Meeting';
 import { MailService } from 'src/mail/mail.service';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+import { ClientMeetingEventDto } from './dto/client-meeting-event.dto';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const {
   JITSI_SECRET = '',
@@ -33,6 +44,8 @@ export class MeetingService {
   constructor(
     @InjectRepository(Meeting) private meetingRepository: Repository<Meeting>,
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(MeetingAttendance)
+    private meetingAttendanceRepository: Repository<MeetingAttendance>,
     @InjectRepository(UserChannel)
     private userChannelRepository: Repository<UserChannel>,
     private mailService: MailService,
@@ -64,7 +77,7 @@ export class MeetingService {
 
     while (createAttempts < maxCreateAttempts) {
       try {
-        payload.slug = generateLowerAlphaNumId();
+        payload.slug = separateString(generateLowerAlphaNumId(9), 3);
         const meeting = await this.meetingRepository.create(payload).save();
         return meeting;
       } catch (err) {
@@ -90,7 +103,9 @@ export class MeetingService {
       creator,
       meeting: {
         ...meeting,
-        startDate: dayjs(meeting.startDate).format('DD.MM.YYYY h:mm a'),
+        startDate: dayjs(meeting.startDate)
+          .tz(meeting.timeZone || undefined)
+          .format('dddd D MMMM, YYYY h:mm A Z'),
       },
       link: `${REACT_APP_SERVER_HOST}/v1/meeting/join/${meeting.slug}`,
     };
@@ -123,10 +138,8 @@ export class MeetingService {
         new Brackets((qb) => {
           qb.where('meeting.public = true')
             .orWhere('user_channel.channelId is not null')
-            .orWhere(
-              'contact.contactUserId is not null or meeting.createdById = :userId',
-              { userId },
-            );
+            .orWhere('meeting.createdById = :userId', { userId })
+            .orWhere('contact.contactUserId is not null');
         }),
       )
       .getOne();
@@ -227,7 +240,7 @@ export class MeetingService {
   async getPublicMeetings(query: PaginationQuery) {
     return this.meetingSelections
       .innerJoin('meeting.createdBy', 'createdBy')
-      .where('meeting.endDate is null')
+      .where('meeting.conferenceEndDate is null')
       .andWhere('meeting.public = true')
       .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
@@ -255,7 +268,7 @@ export class MeetingService {
         'meeting.userContactExclusive = true AND meeting.createdById = contact.userId AND contact.contactUserId = :userId',
         { userId },
       )
-      .where('meeting.endDate is null')
+      .where('meeting.conferenceEndDate is null')
       .andWhere(
         new Brackets((qb) => {
           qb.where('user_channel.channelId is not null')
@@ -298,7 +311,7 @@ export class MeetingService {
       .where(
         'channel.id = user_channel.channelId and meeting.channelId = channel.id',
       )
-      .andWhere('meeting.endDate is null')
+      .andWhere('meeting.conferenceEndDate is null')
       .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
   }
@@ -324,8 +337,41 @@ export class MeetingService {
         { userId },
       )
       .where('channel.id = :channelId', { channelId })
-      .andWhere('meeting.endDate is null')
+      .andWhere('meeting.conferenceEndDate is null')
       .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
+  }
+
+  async setMeetingStatus(info: ClientMeetingEventDto) {
+    if (info.event === 'started') {
+      return this.meetingRepository.update(
+        { slug: info.meetingTitle, conferenceStartDate: IsNull() },
+        { conferenceStartDate: new Date() },
+      );
+    }
+
+    if (info.event === 'ended')
+      return this.meetingRepository.update(
+        { slug: info.meetingTitle, conferenceEndDate: IsNull() },
+        { conferenceEndDate: new Date() },
+      );
+
+    if (info.event === 'user_joined')
+      return this.meetingAttendanceRepository
+        .create({
+          userId: info.userId,
+          startDate: new Date(),
+          meetingSlug: info.meetingTitle,
+        })
+        .save();
+
+    return this.meetingAttendanceRepository.update(
+      {
+        userId: info.userId,
+        meetingSlug: info.meetingTitle,
+        endDate: IsNull(),
+      },
+      { endDate: new Date() },
+    );
   }
 }

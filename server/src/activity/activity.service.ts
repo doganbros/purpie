@@ -28,9 +28,7 @@ export class ActivityService {
         'channel.name',
         'channel.topic',
         'channel.description',
-        'channel.active',
         'channel.public',
-        'channel.categoryId',
         'category.id',
         'category.name',
         'zone.id',
@@ -66,7 +64,6 @@ export class ActivityService {
         'zone.name',
         'zone.subdomain',
         'zone.description',
-        'zone.active',
         'zone.createdOn',
         'zone.public',
         'category.id',
@@ -98,33 +95,41 @@ export class ActivityService {
       .paginateRaw(query);
   }
 
+  get baseActivitySelect() {
+    return [
+      'meeting.id',
+      'meeting.title',
+      'meeting.slug',
+      'meeting.description',
+      'meeting.startDate',
+      'meeting.public',
+      'meeting.channelId',
+      'meeting.liveStream',
+      'meeting.record',
+      'meetingCreatedBy.id',
+      'meetingCreatedBy.email',
+      'meetingCreatedBy.firstName',
+      'meetingCreatedBy.lastName',
+    ];
+  }
+
   getUserFeed(userId: number, query: PaginationQuery) {
     return this.userRepository
       .createQueryBuilder('user')
-      .select([
+      .select(this.baseActivitySelect)
+      .addSelect([
         'user.id',
-        'meeting.id',
-        'meeting.title',
-        'meeting.slug',
-        'meeting.description',
-        'meeting.startDate',
-        'meeting.public',
-        'meeting.channelId',
-        'meeting.liveStream',
-        'meeting.record',
         'zone_meeting.id',
+        'zone_meeting.name',
         'zone_meeting.subdomain',
-        'zone_meeting.description',
+        'zone_meeting.public',
         'channel_meeting.id',
         'channel_meeting.name',
         'channel_meeting.topic',
         'channel_meeting.description',
-        'meetingCreatedBy.id',
-        'meetingCreatedBy.email',
-        'meetingCreatedBy.firstName',
-        'meetingCreatedBy.lastName',
+        'channel_meeting.public',
       ])
-      .leftJoin(Meeting, 'meeting', 'meeting.endDate is null')
+      .leftJoin(Meeting, 'meeting', 'meeting.conferenceEndDate is null')
       .leftJoin(
         UserChannel,
         'user_channel_meeting',
@@ -165,29 +170,28 @@ export class ActivityService {
   getZoneFeed(zoneId: number, query: PaginationQuery) {
     return this.zoneRepository
       .createQueryBuilder('zone')
-      .select([
-        'meeting.id',
-        'meeting.title',
-        'meeting.slug',
-        'meeting.description',
-        'meeting.startDate',
-        'meeting.public',
-        'meeting.liveStream',
-        'meeting.record',
-        'meetingCreatedBy.id',
-        'meetingCreatedBy.email',
-        'meetingCreatedBy.firstName',
-        'meetingCreatedBy.lastName',
+      .select(this.baseActivitySelect)
+      .addSelect([
+        'zone_meeting.id',
+        'zone_meeting.name',
+        'zone_meeting.subdomain',
+        'zone_meeting.public',
         'channel_meeting.id',
         'channel_meeting.name',
         'channel_meeting.topic',
         'channel_meeting.description',
+        'channel_meeting.public',
       ])
-      .leftJoin(Meeting, 'meeting', 'meeting.endDate is null')
+      .leftJoin(Meeting, 'meeting', 'meeting.conferenceEndDate is null')
       .leftJoin(
         Channel,
         'channel_meeting',
         'meeting.channelId = channel_meeting.id',
+      )
+      .leftJoin(
+        Zone,
+        'zone_meeting',
+        'zone_meeting.id = channel_meeting.zoneId',
       )
       .leftJoin('meeting.createdBy', 'meetingCreatedBy')
       .where('channel_meeting.zoneId = :zoneId', { zoneId })
@@ -206,19 +210,8 @@ export class ActivityService {
   getChannelFeed(channelId: number, query: PaginationQuery) {
     return this.channelRepository
       .createQueryBuilder('channel')
-      .select([
-        'meeting.id',
-        'meeting.title',
-        'meeting.slug',
-        'meeting.description',
-        'meeting.startDate',
-        'meeting.public',
-        'meeting.liveStream',
-        'meeting.record',
-        'meetingCreatedBy.id',
-        'meetingCreatedBy.email',
-        'meetingCreatedBy.firstName',
-        'meetingCreatedBy.lastName',
+      .select(this.baseActivitySelect)
+      .addSelect([
         'channel.id',
         'channel.name',
         'channel.topic',
@@ -227,7 +220,7 @@ export class ActivityService {
       .leftJoin(
         Meeting,
         'meeting',
-        'meeting.endDate is null and meeting.channelId = channel.id',
+        'meeting.conferenceEndDate is null and meeting.channelId = channel.id',
       )
       .leftJoin('meeting.createdBy', 'meetingCreatedBy')
       .where('channel.id = :channelId', { channelId })
@@ -246,21 +239,9 @@ export class ActivityService {
   getPublicFeed(query: PaginationQuery) {
     return this.meetingRepository
       .createQueryBuilder('meeting')
-      .select([
-        'meeting.title',
-        'meeting.slug',
-        'meeting.description',
-        'meeting.startDate',
-        'meeting.liveStream',
-        'meeting.record',
-        'meeting.public',
-        'meetingCreatedBy.id',
-        'meetingCreatedBy.email',
-        'meetingCreatedBy.firstName',
-        'meetingCreatedBy.lastName',
-      ])
+      .select(this.baseActivitySelect)
       .leftJoin('meeting.createdBy', 'meetingCreatedBy')
-      .andWhere(
+      .where(
         new Brackets((qb) => {
           qb.where(
             new Brackets((qbi) => {

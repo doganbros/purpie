@@ -3,16 +3,28 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
   Post,
   Put,
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UserZone } from 'entities/UserZone.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { User } from 'entities/User.entity';
+import { Category } from 'entities/Category.entity';
+import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
+import { errorResponseDoc } from 'helpers/error-response-doc';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { CurrentUserZone } from '../decorators/current-user-zone.decorator';
 import { UserZoneRole } from '../decorators/user-zone-role.decorator';
@@ -30,8 +42,11 @@ export class ZoneController {
 
   @Post('create')
   @ApiCreatedResponse({
-    description: 'Current authenticated user adds a new zone.',
+    description:
+      'Current authenticated user adds a new zone. The id of the user zone is returned. User zone must have canCreateZone permission',
+    schema: { type: 'integer' },
   })
+  @ValidationBadRequest()
   @IsAuthenticated(['canCreateZone'])
   async createZone(
     @Body() createZoneInfo: CreateZoneDto,
@@ -44,10 +59,15 @@ export class ZoneController {
 
     this.zoneService.sendZoneInfoMail(userZone.zone, currentUser);
 
-    return userZone;
+    return userZone.id;
   }
 
   @Post('/join/:zoneId')
+  @ApiCreatedResponse({
+    description:
+      'Current authenticated user joins a public zone. The id of the user zone is returned',
+    schema: { type: 'integer' },
+  })
   @IsAuthenticated()
   async joinPublicZone(
     @CurrentUser() user: UserPayload,
@@ -60,10 +80,16 @@ export class ZoneController {
     const userZone = await this.zoneService.addUserToZone(user.id, zoneId);
 
     this.zoneService.removeInvitation(user.email, zone.id);
-    return userZone;
+    return userZone.id;
   }
 
   @Get('/categories/list')
+  @ApiOkResponse({
+    type: Category,
+    isArray: true,
+    description:
+      'Current authenticated lists categories eligible for zones. These are the categories presented while creating a zone',
+  })
   async getParentCategories() {
     return this.zoneService.getCategories();
   }
@@ -73,6 +99,12 @@ export class ZoneController {
     name: 'zoneId',
     description: 'The zone id',
   })
+  @ApiOkResponse({
+    type: Category,
+    isArray: true,
+    description:
+      'Current authenticated lists categories eligible for a channel under the passed zoneId. These are the categories presented while creating a channel',
+  })
   @UserZoneRole()
   async getZoneCategories(@CurrentUserZone() currentUserZone: UserZone) {
     return this.zoneService.getCategories(currentUserZone.zone.categoryId);
@@ -80,6 +112,25 @@ export class ZoneController {
 
   @Post('/invite/:zoneId')
   @UserZoneRole(['canInvite'])
+  @ApiCreatedResponse({
+    description:
+      'Current authenticated invites a user to this zone. The id of the invitation is returned. UserZone must have canInvite permission',
+    schema: { type: 'integer' },
+  })
+  @ApiNotFoundResponse({
+    description:
+      'Error thrown when the user is not eligible for the zone or the zone is not found',
+    schema: errorResponseDoc(404, 'Zone not found', 'ZONE_NOT_FOUND'),
+  })
+  @ApiBadRequestResponse({
+    description: 'Error thrown when the user is already invited',
+    schema: errorResponseDoc(
+      400,
+      `The user with the email '<email>' has already been invited to this zone`,
+      'USER_ALREADY_INVITED_TO_ZONE',
+    ),
+  })
+  @ValidationBadRequest()
   async inviteToJoinZone(
     @Param() { zoneId }: ZoneIdParams,
     @Body() { email }: InviteToJoinDto,
@@ -98,11 +149,16 @@ export class ZoneController {
 
     this.zoneService.sendZoneInvitationMail(currentUserZone.zone, email);
 
-    return invitation;
+    return invitation.id;
   }
 
   @Post('/invitation/response')
   @IsAuthenticated()
+  @ApiCreatedResponse({
+    description: 'User Responds to invitation',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @ValidationBadRequest()
   async respondToInvitationToJoinZone(
     @Body() invitationResponse: InvitationResponseDto,
     @CurrentUser() currentUser: UserPayload,
@@ -119,26 +175,35 @@ export class ZoneController {
       return 'OK';
     }
 
-    const userZone = await this.zoneService.addUserToZone(
-      currentUser.id,
-      invitation.zoneId,
-    );
+    await this.zoneService.addUserToZone(currentUser.id, invitation.zoneId);
 
     await invitation.remove();
-    return userZone;
+    return 'OK';
   }
 
   @Delete('/remove/:zoneId')
+  @ApiOkResponse({
+    description:
+      'User deletes a zone. UserZone must have the canDelete permission',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @HttpCode(HttpStatus.OK)
   @ApiParam({
     name: 'zoneId',
     description: 'The zone id',
   })
   @UserZoneRole(['canDelete'])
   async deleteZone(@CurrentUserZone() userZone: UserZone) {
-    return this.zoneService.deleteZoneById(userZone.zone.id);
+    await this.zoneService.deleteZoneById(userZone.zone.id);
+    return 'OK';
   }
 
   @Put('/update/:zoneId')
+  @ApiCreatedResponse({
+    description:
+      'User updates a zone. UserZone must have the canEdit permission',
+    schema: { type: 'string', example: 'OK' },
+  })
   @ApiParam({
     name: 'zoneId',
     description: 'The zone id',
@@ -148,6 +213,7 @@ export class ZoneController {
     @CurrentUserZone() userZone: UserZone,
     @Body() editInfo: EditZoneDto,
   ) {
-    return this.zoneService.editZoneById(userZone.zone.id, editInfo);
+    await this.zoneService.editZoneById(userZone.zone.id, editInfo);
+    return 'OK';
   }
 }

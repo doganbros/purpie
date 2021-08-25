@@ -7,6 +7,7 @@ import MeetingCheckbox from '../components/MeetingCheckbox';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action';
 import TimeInput from '../../../components/utils/TimeInput';
+import { ceilTime } from '../../../helpers/utils';
 
 const MeetingDetails: FC = () => {
   const dispatch = useDispatch();
@@ -21,11 +22,7 @@ const MeetingDetails: FC = () => {
 
   return (
     <>
-      <FormField
-        name="name"
-        htmlFor="nameInput"
-        validate={validators.required()}
-      >
+      <FormField name="name" htmlFor="nameInput">
         <TextInput
           defaultValue={formPayload?.title}
           id="nameInput"
@@ -36,11 +33,7 @@ const MeetingDetails: FC = () => {
           placeholder="Meeting Name"
         />
       </FormField>
-      <FormField
-        name="description"
-        htmlFor="description"
-        validate={validators.required()}
-      >
+      <FormField name="description" htmlFor="description">
         <TextArea
           id="descriptionInput"
           defaultValue={formPayload?.description}
@@ -61,9 +54,7 @@ const MeetingDetails: FC = () => {
           dispatch(
             setMeetingFormFieldAction({
               planForLater: v,
-              startDate: v
-                ? dayjs().startOf('day').add(3, 'days').toISOString()
-                : null,
+              startDate: v ? ceilTime(new Date(), 30).toISOString() : null,
             })
           );
         }}
@@ -122,7 +113,7 @@ const MeetingDetails: FC = () => {
                       new Date(formPayload.startDate).getHours(),
                       new Date(formPayload.startDate).getMinutes(),
                     ]
-                  : undefined
+                  : null
               }
               onChange={(v) => {
                 const [hour, minute] = v;

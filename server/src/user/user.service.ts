@@ -5,6 +5,7 @@ import { ContactInvitation } from 'entities/ContactInvitation.entity';
 import { User } from 'entities/User.entity';
 import { Brackets, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
+import { SetUserRoleDto } from './dto/set-user-role.dto';
 
 @Injectable()
 export class UserService {
@@ -116,5 +117,11 @@ export class UserService {
         id,
       })
       .execute();
+  }
+
+  async setUserRole(info: SetUserRoleDto) {
+    return this.userRepository.update(info.userId, {
+      userRoleCode: info.roleCode,
+    });
   }
 }

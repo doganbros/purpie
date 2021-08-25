@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
@@ -11,6 +11,12 @@ import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-par
 import { CurrentUserZone } from 'src/zone/decorators/current-user-zone.decorator';
 import { UserZoneRole } from 'src/zone/decorators/user-zone-role.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
+import {
+  MixedActivityFeedListResponse,
+  PublicActivityFeedListResponse,
+  PublicChannelSuggestionListResponse,
+  PublicZoneSuggestionListResponse,
+} from './activity.response';
 import { ActivityService } from './activity.service';
 
 @Controller({ path: 'activity', version: '1' })
@@ -19,6 +25,10 @@ export class ActivityController {
   constructor(private activityService: ActivityService) {}
 
   @Get('/list/suggestions/channels')
+  @ApiOkResponse({
+    description: 'User gets public channel suggestions',
+    type: PublicChannelSuggestionListResponse,
+  })
   @IsAuthenticated()
   @PaginationQueryParams()
   getPublicChannels(
@@ -29,6 +39,10 @@ export class ActivityController {
   }
 
   @Get('/list/suggestions/zone')
+  @ApiOkResponse({
+    description: 'User gets public zone suggestions',
+    type: PublicZoneSuggestionListResponse,
+  })
   @IsAuthenticated()
   @PaginationQueryParams()
   getPublicZones(
@@ -39,6 +53,10 @@ export class ActivityController {
   }
 
   @Get('/list/feed/public')
+  @ApiOkResponse({
+    description: 'User gets public feed',
+    type: PublicActivityFeedListResponse,
+  })
   @IsAuthenticated()
   @PaginationQueryParams()
   getPublicFeed(@Query() query: PaginationQuery) {
@@ -46,6 +64,10 @@ export class ActivityController {
   }
 
   @Get('/list/feed/user')
+  @ApiOkResponse({
+    description: 'User gets main feed from channels and from contacts',
+    type: MixedActivityFeedListResponse,
+  })
   @IsAuthenticated()
   @PaginationQueryParams()
   getUserFeed(
@@ -56,6 +78,10 @@ export class ActivityController {
   }
 
   @Get('/list/feed/zone/:zoneId')
+  @ApiOkResponse({
+    description: 'User gets feed for a zone from channels of this zone',
+    type: MixedActivityFeedListResponse,
+  })
   @UserZoneRole()
   @ApiParam({
     name: 'zoneId',
@@ -70,6 +96,10 @@ export class ActivityController {
   }
 
   @Get('/list/feed/channel/:channelId')
+  @ApiOkResponse({
+    description: 'User gets feed for this zone',
+    type: MixedActivityFeedListResponse,
+  })
   @UserChannelRole()
   @ApiParam({
     name: 'channelId',
