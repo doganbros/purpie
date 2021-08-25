@@ -19,6 +19,7 @@ import {
   separateString,
 } from 'helpers/utils';
 import { Contact } from 'entities/Contact.entity';
+import { MeetingAttendance } from 'entities/MeetingAttendance.entity';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { Channel } from 'entities/Channel.entity';
 import { baseMeetingConfig } from 'entities/data/base-meeting-config';
@@ -43,6 +44,8 @@ export class MeetingService {
   constructor(
     @InjectRepository(Meeting) private meetingRepository: Repository<Meeting>,
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(MeetingAttendance)
+    private meetingAttendanceRepository: Repository<MeetingAttendance>,
     @InjectRepository(UserChannel)
     private userChannelRepository: Repository<UserChannel>,
     private mailService: MailService,
@@ -237,7 +240,7 @@ export class MeetingService {
   async getPublicMeetings(query: PaginationQuery) {
     return this.meetingSelections
       .innerJoin('meeting.createdBy', 'createdBy')
-      .where('meeting.endDate is null')
+      .where('meeting.conferenceEndDate is null')
       .andWhere('meeting.public = true')
       .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
@@ -265,7 +268,7 @@ export class MeetingService {
         'meeting.userContactExclusive = true AND meeting.createdById = contact.userId AND contact.contactUserId = :userId',
         { userId },
       )
-      .where('meeting.endDate is null')
+      .where('meeting.conferenceEndDate is null')
       .andWhere(
         new Brackets((qb) => {
           qb.where('user_channel.channelId is not null')
@@ -308,7 +311,7 @@ export class MeetingService {
       .where(
         'channel.id = user_channel.channelId and meeting.channelId = channel.id',
       )
-      .andWhere('meeting.endDate is null')
+      .andWhere('meeting.conferenceEndDate is null')
       .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
   }
@@ -334,7 +337,7 @@ export class MeetingService {
         { userId },
       )
       .where('channel.id = :channelId', { channelId })
-      .andWhere('meeting.endDate is null')
+      .andWhere('meeting.conferenceEndDate is null')
       .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
   }
@@ -347,9 +350,28 @@ export class MeetingService {
       );
     }
 
-    return this.meetingRepository.update(
-      { slug: info.meetingTitle, conferenceEndDate: IsNull() },
-      { conferenceEndDate: new Date() },
+    if (info.event === 'ended')
+      return this.meetingRepository.update(
+        { slug: info.meetingTitle, conferenceEndDate: IsNull() },
+        { conferenceEndDate: new Date() },
+      );
+
+    if (info.event === 'user_joined')
+      return this.meetingAttendanceRepository
+        .create({
+          userId: info.userId,
+          startDate: new Date(),
+          meetingSlug: info.meetingTitle,
+        })
+        .save();
+
+    return this.meetingAttendanceRepository.update(
+      {
+        userId: info.userId,
+        meetingSlug: info.meetingTitle,
+        endDate: IsNull(),
+      },
+      { endDate: new Date() },
     );
   }
 }

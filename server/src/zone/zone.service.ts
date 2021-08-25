@@ -70,6 +70,7 @@ export class ZoneService {
     if (invitation)
       throw new BadRequestException(
         `The user with the email ${email} has already been invited to this zone`,
+        'USER_ALREADY_INVITED_TO_ZONE',
       );
 
     const zone = await this.zoneRepository
@@ -129,10 +130,14 @@ export class ZoneService {
         'zone.name',
         'zone.subdomain',
         'zone.description',
-        'zone.active',
         'zone.public',
+        'createdBy.id',
+        'createdBy.firstName',
+        'createdBy.lastName',
+        'createdBy.email',
       ])
       .leftJoin('user_zone.zone', 'zone')
+      .leftJoin('zone.createdBy', 'createdBy')
       .leftJoinAndSelect('user_zone.zoneRole', 'zone_role')
       .leftJoinAndSelect('zone.category', 'category')
       .where('user_zone.userId = :userId', { userId: user.id })

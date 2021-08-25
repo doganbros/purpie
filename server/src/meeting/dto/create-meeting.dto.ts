@@ -81,7 +81,7 @@ export class CreateMeetingDto {
   @IsArray()
   invitationIds?: Array<number>;
 
-  @ApiProperty()
+  @ApiProperty({ enum: timeZones })
   @IsOptional()
   @IsNotEmpty()
   @IsIn(timeZones, { message: 'Invalid timezone option specified' })

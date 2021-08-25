@@ -372,10 +372,7 @@ export class AuthService {
     const isValid = await bcrypt.compare(token, user.mailVerificationToken);
 
     if (!isValid)
-      throw new NotFoundException(
-        `Invalid email verification token`,
-        'INVALID_EMAIL_VERIFICATION_TOKEN',
-      );
+      throw new NotFoundException('User not found', 'USER_NOT_FOUND');
 
     user.emailConfirmed = true;
     user.mailVerificationToken = null!;

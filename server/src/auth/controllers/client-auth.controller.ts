@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../auth.service';
 import { IsAuthenticated } from '../decorators/auth.decorator';
@@ -43,8 +50,12 @@ export class ClientAuthController {
     return this.authService.authenticateClient(loginClientInfo);
   }
 
-  @Post('/logout')
+  @Post('logout')
   @IsClientAuthenticated()
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({
+    schema: { type: 'string', example: 'OK' },
+  })
   async logout(@CurrentClient() currentClient: ClientPayload) {
     await this.authService.removeClientRefreshToken(currentClient.id);
 
@@ -52,11 +63,22 @@ export class ClientAuthController {
   }
 
   @Post('refresh-token')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({
+    type: ClientTokens,
+    description:
+      'Authorized client retrieves access token and refresh token. Note: The secret is shown only this time.',
+  })
   refreshClientToken(@Body() refreshTokenInfo: RefreshClientTokenDto) {
     return this.authService.refreshClientTokens(refreshTokenInfo.refreshToken);
   }
 
   @Get('retrieve')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({
+    type: ClientPayload,
+    description: 'Authorized client information.',
+  })
   @IsClientAuthenticated()
   retrieveClient(@CurrentClient() currentClient: ClientPayload) {
     return currentClient;

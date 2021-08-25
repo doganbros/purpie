@@ -1,4 +1,4 @@
-import { Controller, Get, Delete } from '@nestjs/common';
+import { Controller, Get, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiHeader, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 
 import { UserZone } from 'entities/UserZone.entity';
@@ -7,6 +7,10 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { CurrentUserZone } from '../decorators/current-user-zone.decorator';
 import { UserZoneRole } from '../decorators/user-zone-role.decorator';
+import {
+  UserZoneListResponse,
+  UserZoneDetailResponse,
+} from '../responses/user-zone.response';
 import { ZoneService } from '../zone.service';
 
 @Controller({ path: 'user-zone', version: '1' })
@@ -16,6 +20,8 @@ export class UserZoneController {
 
   @Get('list')
   @ApiOkResponse({
+    type: UserZoneListResponse,
+    isArray: true,
     description: "Get the list of current user's zones",
   })
   @IsAuthenticated()
@@ -24,6 +30,11 @@ export class UserZoneController {
   }
 
   @Get('detail')
+  @ApiOkResponse({
+    type: UserZoneDetailResponse,
+    description:
+      "Get current user's zone detail, This is deduced from the current subdomain",
+  })
   @ApiParam({
     name: 'userZoneId',
     description: 'User Zone Id',
@@ -39,6 +50,10 @@ export class UserZoneController {
   }
 
   @Get('detail/:userZoneId')
+  @ApiOkResponse({
+    type: UserZoneDetailResponse,
+    description: 'Get user zone detail by user zone id',
+  })
   @ApiParam({
     name: 'userZoneId',
     description: 'User Zone Id',
@@ -49,10 +64,14 @@ export class UserZoneController {
   }
 
   @Delete('remove/:userZoneId')
+  @ApiOkResponse({
+    schema: { type: 'string', example: 'OK' },
+  })
   @ApiParam({
     name: 'userZoneId',
     description: 'User Zone Id',
   })
+  @HttpCode(HttpStatus.OK)
   @UserZoneRole()
   async deleteUserZoneById(@CurrentUserZone() currentUserZone: UserZone) {
     await currentUserZone.remove();

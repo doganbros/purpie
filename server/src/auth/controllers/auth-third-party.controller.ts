@@ -17,7 +17,7 @@ import { ApiParam, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from 'entities/User.entity';
 import { AuthByThirdPartyDto } from '../dto/auth-by-third-party.dto';
 import { ThirdPartyLoginParams } from '../dto/third-party-login.params';
-import { UserBasicWithToken } from '../interfaces/user.interface';
+import { UserPayload } from '../interfaces/user.interface';
 import { AuthService } from '../auth.service';
 
 const {
@@ -84,7 +84,7 @@ export class AuthThirdPartyController {
     type: String,
   })
   @ApiOkResponse({
-    type: UserBasicWithToken,
+    type: UserPayload,
     description: `User signs in with a third-party. `,
   })
   @HttpCode(HttpStatus.OK)
