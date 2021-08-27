@@ -1,6 +1,7 @@
 import React, { FC, useRef, useEffect } from 'react';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
+import '@videojs/themes/dist/fantasy/index.css';
 
 interface IVideoPlayerProps {
   options: videojs.PlayerOptions;
@@ -36,7 +37,7 @@ const VideoPlayer: FC<IVideoPlayerProps> = ({ options }) => {
   }, [options]);
 
   // eslint-disable-next-line jsx-a11y/media-has-caption
-  return <video ref={videoNode} className="video-js" />;
+  return <video ref={videoNode} className="video-js vjs-theme-fantasy" />;
 };
 
 export default VideoPlayer;

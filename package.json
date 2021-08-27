@@ -12,6 +12,7 @@
     "@nestjs/swagger": "^5.0.0",
     "@nestjs/typeorm": "^8.0.1",
     "@sendgrid/mail": "^7.4.5",
+    "@videojs/themes": "^1.0.1",
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.7.2",
