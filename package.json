@@ -53,7 +53,8 @@
     "styled-components": "^5.3.0",
     "swagger-ui-express": "^4.1.6",
     "typeorm": "^0.2.34",
-    "uuid": "^3.3.3"
+    "uuid": "^3.3.3",
+    "video.js": "^7.14.3"
   },
   "scripts": {
     "start:web": "cross-env PORT=3000 react-scripts start",
@@ -120,6 +121,7 @@
     "@types/redux-thunk": "^2.1.0",
     "@types/styled-components": "^5.1.10",
     "@types/supertest": "^2.0.10",
+    "@types/video.js": "^7.3.26",
     "@typescript-eslint/eslint-plugin": "4.11.1",
     "@typescript-eslint/parser": "4.11.1",
     "eslint": "7.17.0",

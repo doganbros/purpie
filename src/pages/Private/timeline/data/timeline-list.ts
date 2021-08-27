@@ -19,6 +19,8 @@ export const timeLineList = Array(20)
     userAvatarSrc: 'https://image.flaticon.com/icons/png/512/4721/4721623.png',
     userName: 'Jane Doe',
     videoTitle: 'Information About Octopuses',
-    onClickPlay: () => {},
+    onClickPlay: (history: any) => {
+      history.push(`video/${nanoid()}`);
+    },
     onClickSave: () => {},
   }));

@@ -1,4 +1,5 @@
 import React, { FC, useState, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -20,6 +21,7 @@ import { thirtyIds } from '../../../helpers/utils';
 
 const Timeline: FC = () => {
   const size = useContext(ResponsiveContext);
+  const history = useHistory();
 
   const [filters, setFilters] = useState([
     {
@@ -119,7 +121,7 @@ const Timeline: FC = () => {
                 createdAt={item.createdAt}
                 likes={item.likes}
                 live={item.live}
-                onClickPlay={item.onClickPlay}
+                onClickPlay={() => item.onClickPlay(history)}
                 onClickSave={item.onClickSave}
                 saved={item.saved}
                 tags={item.tags}
