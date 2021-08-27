@@ -6,7 +6,7 @@ export const videoPlayerOptions: videojs.PlayerOptions = {
   sources: [
     {
       src:
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        'https://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_1080p_h264.mov',
       type: 'video/mp4',
     },
   ],
@@ -23,4 +23,6 @@ export const videoMetadata = {
   likes: 721,
   comments: 402,
   views: 234290,
+  details:
+    'A large and lovable rabbit deals with three tiny bullies, led by a flying squirrel, who are determined to squelch his happiness.',
 };
