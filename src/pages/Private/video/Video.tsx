@@ -5,10 +5,9 @@ import { Chat, Favorite } from 'grommet-icons';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import VideoPlayer from '../../../components/utils/video/VideoPlayer';
 import VideoGridItem from '../../../components/utils/VideoGridItem';
-import MessageItem from '../../../components/utils/MessageItem';
 import { videoPlayerOptions, videoMetadata } from './data/video-data';
 import { recommendedVideos } from './data/recommended-videos';
-import { messages } from './data/messages';
+import Messages from './Messages';
 
 interface RouteParams {
   id: string;
@@ -20,25 +19,10 @@ const Video: FC<RouteComponentProps<RouteParams>> = ({
   },
 }) => {
   const size = useContext(ResponsiveContext);
-  // eslint-disable-next-line no-console
+
   console.log(id);
   return (
-    <PrivatePageLayout
-      title={videoMetadata.name}
-      rightComponent={
-        <Box pad={{ vertical: 'large', horizontal: 'medium' }} gap="large">
-          {messages.map(({ avatarSrc, id: messageId, message, name, side }) => (
-            <MessageItem
-              key={messageId}
-              avatarSrc={avatarSrc}
-              message={message}
-              name={name}
-              side={side}
-            />
-          ))}
-        </Box>
-      }
-    >
+    <PrivatePageLayout title={videoMetadata.name} rightComponent={<Messages />}>
       <Box gap="large" pad={{ vertical: 'medium' }}>
         <Box justify="between" direction="row">
           <Box>
