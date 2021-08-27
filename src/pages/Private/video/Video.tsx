@@ -46,7 +46,7 @@ const Video: FC<RouteComponentProps<RouteParams>> = ({
                 <Text color="status-disabled">{videoMetadata.comments}</Text>
               </Box>
             </Box>
-            <Text color="status-disabled">{`${videoMetadata.views} views`}</Text>
+            <Text color="status-disabled">{`${videoMetadata.views.toLocaleString()} views`}</Text>
           </Box>
         </Box>
         <Box fill="horizontal" overflow="auto">
