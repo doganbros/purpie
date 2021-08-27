@@ -1,13 +1,12 @@
-import React, { FC, useContext } from 'react';
+import React, { FC } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { Box, Grid, InfiniteScroll, Text, ResponsiveContext } from 'grommet';
+import { Box, Text } from 'grommet';
 import { Chat, Favorite } from 'grommet-icons';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import VideoPlayer from '../../../components/utils/video/VideoPlayer';
-import VideoGridItem from '../../../components/utils/VideoGridItem';
 import { videoPlayerOptions, videoMetadata } from './data/video-data';
-import { recommendedVideos } from './data/recommended-videos';
 import Messages from './Messages';
+import RecommendedVideos from './RecommendedVideos';
 
 interface RouteParams {
   id: string;
@@ -18,8 +17,6 @@ const Video: FC<RouteComponentProps<RouteParams>> = ({
     params: { id },
   },
 }) => {
-  const size = useContext(ResponsiveContext);
-
   console.log(id);
   return (
     <PrivatePageLayout title={videoMetadata.name} rightComponent={<Messages />}>
@@ -56,36 +53,7 @@ const Video: FC<RouteComponentProps<RouteParams>> = ({
           </Box>
         </Box>
         <Text color="status-disabled"> {videoMetadata.details} </Text>
-        <Box gap="small">
-          <Text size="large" weight="bold" color="brand">
-            Recommended Videos
-          </Text>
-          <Grid
-            columns={size !== 'small' ? 'medium' : '100%'}
-            gap={{ row: 'large', column: 'medium' }}
-          >
-            <InfiniteScroll items={recommendedVideos} step={6}>
-              {(item: typeof recommendedVideos[0]) => (
-                <VideoGridItem
-                  key={item.id}
-                  id={item.id}
-                  comments={item.comments}
-                  createdAt={item.createdAt}
-                  likes={item.likes}
-                  live={item.live}
-                  onClickPlay={item.onClickPlay}
-                  onClickSave={item.onClickSave}
-                  saved={item.saved}
-                  tags={item.tags}
-                  thumbnailSrc={item.thumbnailSrc}
-                  userAvatarSrc={item.userAvatarSrc}
-                  userName={item.userName}
-                  videoTitle={item.videoTitle}
-                />
-              )}
-            </InfiniteScroll>
-          </Grid>
-        </Box>
+        <RecommendedVideos />
       </Box>
     </PrivatePageLayout>
   );
