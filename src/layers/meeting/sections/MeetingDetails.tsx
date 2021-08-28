@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Box,
@@ -27,6 +27,8 @@ const MeetingDetails: FC = () => {
       },
     },
   } = useSelector((state: AppState) => state);
+
+  const [currentTimeZones, setCurrentTimeZones] = useState(timeZones);
 
   return (
     <>
@@ -227,8 +229,14 @@ const MeetingDetails: FC = () => {
               Time Zone
             </Text>
             <Select
-              options={timeZones}
+              options={currentTimeZones}
               defaultValue={formPayload.timeZone}
+              onClose={() => setCurrentTimeZones(timeZones)}
+              onSearch={(txt) =>
+                setCurrentTimeZones(
+                  timeZones.filter((v) => v.toLowerCase().includes(txt))
+                )
+              }
               onChange={({ option }) =>
                 dispatch(setMeetingFormFieldAction({ timeZone: option }))
               }
