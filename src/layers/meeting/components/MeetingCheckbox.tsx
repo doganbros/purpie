@@ -1,11 +1,13 @@
 import React, { FC } from 'react';
 import { Box, Text, CheckBox } from 'grommet';
+import { MarginType } from 'grommet/utils';
 
 interface Props {
   title: string;
   width?: string;
   nopad?: boolean;
   value: boolean;
+  margin?: MarginType;
   onChange: (value: boolean) => void;
 }
 
@@ -14,6 +16,7 @@ const MeetingCheckbox: FC<Props> = ({
   width,
   nopad,
   value = false,
+  margin,
   onChange,
 }) => {
   return (
@@ -21,6 +24,7 @@ const MeetingCheckbox: FC<Props> = ({
       pad={nopad ? { bottom: 'none' } : { bottom: 'xsmall' }}
       direction="row"
       gap="medium"
+      margin={margin}
       width={width || '280px'}
       justify="between"
     >

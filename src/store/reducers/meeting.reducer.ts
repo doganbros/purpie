@@ -1,9 +1,11 @@
 import {
+  ADD_USER_TO_INVITATION,
   CLOSE_CREATE_MEETING_LAYER,
   CLOSE_PLAN_A_MEETING_LAYER,
   GET_USER_MEETING_CONFIG_FAILED,
   GET_USER_MEETING_CONFIG_REQUESTED,
   GET_USER_MEETING_CONFIG_SUCCESS,
+  GET_USER_SUGGESTIONS_FOR_MEETING_SUCCESS,
   MEETING_CREATE_FAILED,
   MEETING_CREATE_REQUESTED,
   MEETING_CREATE_SUCCESS,
@@ -26,6 +28,8 @@ const initialState: MeetingState = {
     error: null,
   },
   createMeeting: {
+    invitedUsers: [],
+    userSuggestions: [],
     planDialogCurrentIndex: 0,
     form: {
       payload: null,
@@ -63,6 +67,22 @@ const meetingReducer = (
               ...action.payload,
             },
           },
+        },
+      };
+    case GET_USER_SUGGESTIONS_FOR_MEETING_SUCCESS:
+      return {
+        ...state,
+        createMeeting: {
+          ...state.createMeeting,
+          userSuggestions: action.payload,
+        },
+      };
+    case ADD_USER_TO_INVITATION:
+      return {
+        ...state,
+        createMeeting: {
+          ...state.createMeeting,
+          invitedUsers: [...state.createMeeting.invitedUsers, action.payload],
         },
       };
 

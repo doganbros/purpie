@@ -1,10 +1,12 @@
 import {
+  ADD_USER_TO_INVITATION,
   CLOSE_CREATE_MEETING_LAYER,
   CLOSE_PLAN_A_MEETING_LAYER,
   CLOSE_UPDATE_MEETING_LAYER,
   GET_USER_MEETING_CONFIG_FAILED,
   GET_USER_MEETING_CONFIG_REQUESTED,
   GET_USER_MEETING_CONFIG_SUCCESS,
+  GET_USER_SUGGESTIONS_FOR_MEETING_SUCCESS,
   MEETING_CREATE_FAILED,
   MEETING_CREATE_REQUESTED,
   MEETING_CREATE_SUCCESS,
@@ -81,6 +83,27 @@ export const getUserMeetingConfigAction = (): MeetingAction => {
   };
 };
 
+export const getUserSuggestionsForMeetingAction = (
+  name: string,
+  excludeIds?: Array<number>,
+  userContacts?: boolean | null,
+  channelId?: number | null
+): MeetingAction => {
+  return async (dispatch) => {
+    MeetingService.getUserSuggestionsForMeeting(
+      name,
+      excludeIds,
+      userContacts,
+      channelId
+    ).then((response) => {
+      dispatch({
+        type: GET_USER_SUGGESTIONS_FOR_MEETING_SUCCESS,
+        payload: response.data,
+      });
+    });
+  };
+};
+
 export const openCreateMeetingLayerAction = {
   type: OPEN_CREATE_MEETING_LAYER,
 };
@@ -132,4 +155,12 @@ export const planMeetingDialogSetAction = (
 ): MeetingActionParams => ({
   type: PLAN_A_MEETING_DIALOG_SET,
   payload: index,
+});
+
+export const addUserToInvitations = (user: {
+  label: string;
+  value: number;
+}): MeetingActionParams => ({
+  type: ADD_USER_TO_INVITATION,
+  payload: user,
 });

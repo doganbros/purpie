@@ -1,13 +1,21 @@
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, TextInput, TextArea, DateInput, FormField } from 'grommet';
+import {
+  Box,
+  TextInput,
+  TextArea,
+  DateInput,
+  FormField,
+  Text,
+  Select,
+} from 'grommet';
 import dayjs from 'dayjs';
-import { validators } from '../../../helpers/validators';
 import MeetingCheckbox from '../components/MeetingCheckbox';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action';
 import TimeInput from '../../../components/utils/TimeInput';
 import { ceilTime } from '../../../helpers/utils';
+import { timeZones } from '../../../store/static/time-zones';
 
 const MeetingDetails: FC = () => {
   const dispatch = useDispatch();
@@ -47,6 +55,7 @@ const MeetingDetails: FC = () => {
       </FormField>
       <MeetingCheckbox
         title="Plan for later"
+        margin={{ top: 'xsmall', bottom: 'small' }}
         width="140px"
         nopad
         value={!!formPayload?.planForLater}
@@ -55,92 +64,176 @@ const MeetingDetails: FC = () => {
             setMeetingFormFieldAction({
               planForLater: v,
               startDate: v ? ceilTime(new Date(), 30).toISOString() : null,
+              endDate: v
+                ? ceilTime(dayjs().add(2, 'hour').toDate(), 30).toISOString()
+                : null,
             })
           );
         }}
       />
       {formPayload?.planForLater && (
-        <Box
-          direction="row"
-          gap="small"
-          align="center"
-          margin={{ top: 'small' }}
-        >
-          <FormField
-            validate={validators.required()}
-            name="date"
-            htmlFor="dateValue"
-            fill="horizontal"
+        <Box direction="column" margin={{ top: '10px' }}>
+          <Box
+            direction="row"
+            gap="small"
+            align="center"
+            margin={{ top: 'small', bottom: 'small' }}
           >
-            <DateInput
-              format="dd/mm/yyyy"
-              value={formPayload.startDate || undefined}
-              id="dateValue"
-              onChange={(e) => {
-                if (!formPayload.startDate)
-                  return dispatch(
-                    setMeetingFormFieldAction({
-                      startDate: dayjs(e.value as string)
-                        .startOf('day')
-                        .toISOString(),
-                    })
-                  );
-                const startDate = new Date(formPayload.startDate);
-                const [hour, minute] = [
-                  startDate.getHours(),
-                  startDate.getMinutes(),
-                ];
+            <Box direction="column">
+              <Text size="xsmall" color="#8F9BB3" margin={{ bottom: '5px' }}>
+                Start Date
+              </Text>
+              <Box direction="row">
+                <FormField
+                  name="startDate"
+                  htmlFor="startDate"
+                  fill="horizontal"
+                >
+                  <DateInput
+                    format="dd/mm/yyyy"
+                    value={formPayload.startDate || undefined}
+                    calendarProps={{
+                      bounds: [
+                        new Date().toISOString(),
+                        dayjs(formPayload.endDate).add(30, 'day').toISOString(),
+                      ],
+                    }}
+                    id="startDate"
+                    onChange={(e) => {
+                      const startDate = new Date(
+                        formPayload.startDate ||
+                          dayjs(e.value as string)
+                            .startOf('day')
+                            .toDate()
+                      );
+                      const [hour, minute] = [
+                        startDate.getHours(),
+                        startDate.getMinutes(),
+                      ];
 
-                return dispatch(
-                  setMeetingFormFieldAction({
-                    startDate: dayjs(e.value as string)
-                      .startOf('day')
-                      .add(hour, 'hour')
-                      .add(minute, 'minute')
-                      .toISOString(),
-                  })
-                );
-              }}
-              name="date"
-              placeholder="Set Date"
-            />
-          </FormField>
-          <FormField name="time" htmlFor="timeValue" fill="horizontal">
-            <TimeInput
-              defaultValue={
-                formPayload.startDate
-                  ? [
-                      new Date(formPayload.startDate).getHours(),
-                      new Date(formPayload.startDate).getMinutes(),
-                    ]
-                  : null
+                      return dispatch(
+                        setMeetingFormFieldAction({
+                          startDate: dayjs(e.value as string)
+                            .startOf('day')
+                            .add(hour, 'hour')
+                            .add(minute, 'minute')
+                            .toISOString(),
+                        })
+                      );
+                    }}
+                    name="startDate"
+                    placeholder="Set Date"
+                  />
+                </FormField>
+                <FormField name="time" htmlFor="timeValue" fill="horizontal">
+                  <TimeInput
+                    defaultValue={
+                      formPayload.startDate
+                        ? [
+                            new Date(formPayload.startDate).getHours(),
+                            new Date(formPayload.startDate).getMinutes(),
+                          ]
+                        : null
+                    }
+                    onChange={(v) => {
+                      const [hour, minute] = v;
+                      return dispatch(
+                        setMeetingFormFieldAction({
+                          startDate: dayjs(formPayload.startDate)
+                            .startOf('day')
+                            .add(hour, 'hours')
+                            .add(minute, 'minutes')
+                            .toISOString(),
+                        })
+                      );
+                    }}
+                  />
+                </FormField>
+              </Box>
+            </Box>
+            <Box direction="column">
+              <Text size="xsmall" color="#8F9BB3" margin={{ bottom: '5px' }}>
+                End Date
+              </Text>
+              <Box direction="row">
+                <FormField name="endDate" htmlFor="dateValue" fill="horizontal">
+                  <DateInput
+                    format="dd/mm/yyyy"
+                    calendarProps={{
+                      bounds: [
+                        formPayload.startDate || new Date().toISOString(),
+                        dayjs(formPayload.endDate).add(90, 'day').toISOString(),
+                      ],
+                    }}
+                    value={formPayload.endDate || undefined}
+                    id="dateValue"
+                    onChange={(e) => {
+                      const endDate = new Date(
+                        formPayload.endDate ||
+                          dayjs(e.value as string)
+                            .startOf('day')
+                            .add(1, 'hour')
+                            .toDate()
+                      );
+
+                      const [hour, minute] = [
+                        endDate.getHours(),
+                        endDate.getMinutes(),
+                      ];
+
+                      return dispatch(
+                        setMeetingFormFieldAction({
+                          endDate: dayjs(e.value as string)
+                            .startOf('day')
+                            .add(hour, 'hour')
+                            .add(minute, 'minute')
+                            .toISOString(),
+                        })
+                      );
+                    }}
+                    name="endDate"
+                    placeholder="Set Date"
+                  />
+                </FormField>
+                <FormField name="time" htmlFor="timeValue" fill="horizontal">
+                  <TimeInput
+                    defaultValue={
+                      formPayload.endDate
+                        ? [
+                            new Date(formPayload.endDate).getHours(),
+                            new Date(formPayload.endDate).getMinutes(),
+                          ]
+                        : null
+                    }
+                    onChange={(v) => {
+                      const [hour, minute] = v;
+                      return dispatch(
+                        setMeetingFormFieldAction({
+                          endDate: dayjs(formPayload.endDate)
+                            .startOf('day')
+                            .add(hour, 'hours')
+                            .add(minute, 'minutes')
+                            .toISOString(),
+                        })
+                      );
+                    }}
+                  />
+                </FormField>
+              </Box>
+            </Box>
+          </Box>
+          <Box>
+            <Text size="xsmall" color="#8F9BB3" margin={{ bottom: '5px' }}>
+              Time Zone
+            </Text>
+            <Select
+              options={timeZones}
+              defaultValue={formPayload.timeZone}
+              onChange={({ option }) =>
+                dispatch(setMeetingFormFieldAction({ timeZone: option }))
               }
-              onChange={(v) => {
-                const [hour, minute] = v;
-                if (!formPayload.startDate)
-                  return dispatch(
-                    setMeetingFormFieldAction({
-                      startDate: dayjs()
-                        .add(3, 'days')
-                        .startOf('day')
-                        .add(hour, 'hours')
-                        .add(minute, 'minutes')
-                        .toISOString(),
-                    })
-                  );
-
-                return dispatch(
-                  setMeetingFormFieldAction({
-                    startDate: dayjs(formPayload.startDate)
-                      .startOf('day')
-                      .add(hour, 'hours')
-                      .add(minute, 'minutes')
-                      .toISOString(),
-                  })
-                );
-              }}
             />
-          </FormField>
+          </Box>
         </Box>
       )}
     </>
