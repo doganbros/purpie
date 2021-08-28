@@ -92,6 +92,10 @@ export class MeetingService {
     );
   }
 
+  getUsersById(ids: Array<number>) {
+    return this.userRepository.findByIds(ids);
+  }
+
   async sendMeetingInfoMail(
     user: UserPayload,
     meeting: Meeting,
@@ -103,6 +107,11 @@ export class MeetingService {
       creator,
       meeting: {
         ...meeting,
+        endDate: meeting.endDate
+          ? dayjs(meeting.endDate)
+              .tz(meeting.timeZone || undefined)
+              .format('dddd D MMMM, YYYY h:mm A Z')
+          : null,
         startDate: dayjs(meeting.startDate)
           .tz(meeting.timeZone || undefined)
           .format('dddd D MMMM, YYYY h:mm A Z'),

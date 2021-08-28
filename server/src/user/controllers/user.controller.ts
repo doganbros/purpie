@@ -1,12 +1,14 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
   HttpStatus,
   NotFoundException,
   Param,
+  ParseArrayPipe,
   Post,
   Query,
 } from '@nestjs/common';
@@ -21,6 +23,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
+import { emptyPaginatedResponse } from 'helpers/utils';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { ContactIdParam } from '../dto/contact-id.param';
 import { ContactInvitationResponseDto } from '../dto/contact-invitation-response.dto';
@@ -101,12 +104,32 @@ export class UserController {
   async searchUsers(
     @CurrentUser() currentUser: UserPayload,
     @Query() query: SearchUsersQuery,
+    @Query(
+      'excludeIds',
+      new DefaultValuePipe('-1'),
+      new ParseArrayPipe({ items: Number, separator: ',' }),
+    )
+    excludeIds: Array<number>,
   ) {
-    const users = await this.userService.searchUsers(
-      query.excludeCurrentUser === 'false' ? [] : [currentUser.id],
-      query as any,
-    );
-
+    if (!query.name.trim())
+      return emptyPaginatedResponse(query.limit, query.skip);
+    if (query.channelId) {
+      const users = await this.userService.searchInChannels(
+        query.channelId,
+        excludeIds,
+        query,
+      );
+      return users;
+    }
+    if (query.userContacts === 'true') {
+      const users = await this.userService.searchInUserContacts(
+        currentUser.id,
+        excludeIds,
+        query,
+      );
+      return users;
+    }
+    const users = await this.userService.searchUsers(excludeIds, query);
     return users;
   }
 

@@ -1,14 +1,38 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { CommaSeparatedIds } from 'src/utils/decorators/comma-separated-ids.decorator';
+import { Type } from 'class-transformer';
+import { PaginationQuery } from 'types/PaginationQuery';
 
-export class SearchUsersQuery {
+export class SearchUsersQuery implements PaginationQuery {
   @ApiProperty()
-  @IsNotEmpty()
   @IsString()
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+    type: String,
+    description:
+      'User ids to exclude while searching. Should be a comma separated ids',
+  })
   @IsOptional()
-  @IsBoolean()
-  excludeCurrentUser?: string;
+  @CommaSeparatedIds({ message: 'Please Enter a valid comma separated ids' })
+  excludeIds?: Array<number>;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  channelId?: number;
+
+  @ApiProperty({
+    required: false,
+    description: "specify true to search in current user's contacts",
+  })
+  @IsOptional()
+  userContacts?: string;
+
+  limit: number;
+
+  skip: number;
 }

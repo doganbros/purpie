@@ -69,3 +69,10 @@ export const separateString = (
   times: number,
   separator = '-',
 ): string => str.match(new RegExp(`.{${times}}`, 'g'))?.join(separator) || '';
+
+export const emptyPaginatedResponse = (limit: number, skip: number) => ({
+  data: [],
+  total: 0,
+  limit,
+  skip,
+});
