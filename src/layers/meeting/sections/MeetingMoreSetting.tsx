@@ -2,10 +2,10 @@ import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box } from 'grommet';
 import SectionContainer from '../../../components/utils/SectionContainer';
-import MeetingCheckbox from '../components/MeetingCheckbox';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action';
 import { camelToSentence } from '../../../helpers/utils';
+import Switch from '../../../components/utils/Switch';
 
 const MeetingMoreSetting: FC = () => {
   const {
@@ -26,9 +26,10 @@ const MeetingMoreSetting: FC = () => {
             Object.keys(formPayload.config).map((setting) => {
               if (typeof formPayload.config![setting] === 'boolean')
                 return (
-                  <MeetingCheckbox
-                    title={camelToSentence(setting)}
+                  <Switch
+                    label={camelToSentence(setting)}
                     width="280px"
+                    margin={{ bottom: 'xsmall' }}
                     key={setting}
                     value={!!formPayload.config?.[setting]}
                     onChange={(v) => {

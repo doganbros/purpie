@@ -5,7 +5,7 @@ import SectionContainer from '../../../components/utils/SectionContainer';
 import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { baseMeetingConfig } from '../../../store/static/base-meeting-config';
-import MeetingCheckbox from '../components/MeetingCheckbox';
+import Switch from '../../../components/utils/Switch';
 
 const MeetingSetting: FC = () => {
   const {
@@ -26,12 +26,11 @@ const MeetingSetting: FC = () => {
       <Box wrap justify="between" direction="row" overflow="auto">
         {formPayload.config.toolbarButtons &&
           baseMeetingConfig.toolbarButtons.map((toolbarBtn: string) => (
-            <MeetingCheckbox
-              title={toolbarBtn}
+            <Switch
+              label={toolbarBtn}
               key={toolbarBtn}
-              width="30%"
               margin={{ bottom: 'xsmall' }}
-              nopad
+              width="30%"
               value={formPayload.config!.toolbarButtons.includes(toolbarBtn)}
               onChange={(v) => {
                 dispatch(

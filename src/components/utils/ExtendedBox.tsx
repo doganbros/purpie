@@ -12,10 +12,14 @@ interface Props extends BoxProps {
   minWidth?: string;
   minHeight?: string;
   opacity?: string;
+  transition?: string;
+  transform?: string;
 }
 
 const ExtendedBoxCSS = css`
   position: ${(props: Props) => props.position};
+  transition: ${(props: Props) => props.transition};
+  transform: ${(props: Props) => props.transform};
   top: ${(props: Props) => props.top};
   left: ${(props: Props) => props.left};
   right: ${(props: Props) => props.right};
