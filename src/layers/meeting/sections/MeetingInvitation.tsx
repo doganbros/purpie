@@ -1,12 +1,13 @@
 import React, { FC, useRef } from 'react';
 import { TextInput, FormField, Box, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
-import { User } from 'grommet-icons';
+import { Close, User } from 'grommet-icons';
 import { useDebouncer } from '../../../hooks/useDebouncer';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
-  addUserToInvitations,
+  addUserToInvitationsAction,
   getUserSuggestionsForMeetingAction,
+  removeUserFromInvitationsAction,
 } from '../../../store/actions/meeting.action';
 
 const MeetingInvitation: FC = () => {
@@ -37,6 +38,10 @@ const MeetingInvitation: FC = () => {
     );
   };
 
+  const removeUserInvitation = (value: number) => {
+    dispatch(removeUserFromInvitationsAction(value));
+  };
+
   return (
     <>
       <FormField name="user" htmlFor="userInput">
@@ -51,7 +56,7 @@ const MeetingInvitation: FC = () => {
           }))}
           onChange={(e: any) => debouncer(() => onChange(e.target.value), 300)}
           onSuggestionSelect={(e) => {
-            dispatch(addUserToInvitations(e.suggestion));
+            dispatch(addUserToInvitationsAction(e.suggestion));
             if (textInput.current) textInput.current.value = '';
           }}
         />
@@ -73,6 +78,7 @@ const MeetingInvitation: FC = () => {
               direction="row"
               gap="medium"
               margin={{ top: 'small' }}
+              align="center"
               key={item.value}
             >
               <Box
@@ -87,9 +93,13 @@ const MeetingInvitation: FC = () => {
                 <Text color="black" size="small">
                   {item.label}
                 </Text>
-                <Text color="#8F9BB3" size="xsmall">
-                  Developer
-                </Text>
+              </Box>
+              <Box flex={{ grow: 1 }} align="end">
+                <Close
+                  size="small"
+                  cursor="pointer"
+                  onClick={() => removeUserInvitation(item.value)}
+                />
               </Box>
             </Box>
           ))}

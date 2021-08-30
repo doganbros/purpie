@@ -14,6 +14,7 @@ import {
   PLAN_A_MEETING_DIALOG_BACK,
   PLAN_A_MEETING_DIALOG_FORWARD,
   PLAN_A_MEETING_DIALOG_SET,
+  REMOVE_USER_FROM_INVITATION,
   SET_INITIAL_MEETING_FORM,
   SET_MEETING_FORM_FIELD,
 } from '../constants/meeting.constants';
@@ -83,6 +84,16 @@ const meetingReducer = (
         createMeeting: {
           ...state.createMeeting,
           invitedUsers: [...state.createMeeting.invitedUsers, action.payload],
+        },
+      };
+    case REMOVE_USER_FROM_INVITATION:
+      return {
+        ...state,
+        createMeeting: {
+          ...state.createMeeting,
+          invitedUsers: state.createMeeting.invitedUsers.filter(
+            (v) => v.value !== action.payload
+          ),
         },
       };
 

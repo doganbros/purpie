@@ -16,6 +16,7 @@ import {
   PLAN_A_MEETING_DIALOG_BACK,
   PLAN_A_MEETING_DIALOG_FORWARD,
   PLAN_A_MEETING_DIALOG_SET,
+  REMOVE_USER_FROM_INVITATION,
   SET_INITIAL_MEETING_FORM,
   SET_MEETING_FORM_FIELD,
 } from '../constants/meeting.constants';
@@ -157,10 +158,17 @@ export const planMeetingDialogSetAction = (
   payload: index,
 });
 
-export const addUserToInvitations = (user: {
+export const addUserToInvitationsAction = (user: {
   label: string;
   value: number;
 }): MeetingActionParams => ({
   type: ADD_USER_TO_INVITATION,
   payload: user,
+});
+
+export const removeUserFromInvitationsAction = (
+  id: number
+): MeetingActionParams => ({
+  type: REMOVE_USER_FROM_INVITATION,
+  payload: id,
 });
