@@ -23,6 +23,7 @@ import {
   GET_USER_SUGGESTIONS_FOR_MEETING_SUCCESS,
   GET_USER_SUGGESTIONS_FOR_MEETING_FAILED,
   ADD_USER_TO_INVITATION,
+  REMOVE_USER_FROM_INVITATION,
 } from '../constants/meeting.constants';
 import { User } from './auth.types';
 import { ChannelListItem } from './channel.types';
@@ -117,7 +118,7 @@ export type MeetingActionParams =
       payload: Record<string, any>;
     }
   | {
-      type: typeof PLAN_A_MEETING_DIALOG_SET;
+      type: typeof PLAN_A_MEETING_DIALOG_SET | typeof REMOVE_USER_FROM_INVITATION;
       payload: number;
     }
   | {

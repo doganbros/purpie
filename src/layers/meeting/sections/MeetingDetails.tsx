@@ -10,12 +10,12 @@ import {
   Select,
 } from 'grommet';
 import dayjs from 'dayjs';
-import MeetingCheckbox from '../components/MeetingCheckbox';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action';
 import TimeInput from '../../../components/utils/TimeInput';
 import { ceilTime } from '../../../helpers/utils';
 import { timeZones } from '../../../store/static/time-zones';
+import Switch from '../../../components/utils/Switch';
 
 const MeetingDetails: FC = () => {
   const dispatch = useDispatch();
@@ -55,12 +55,11 @@ const MeetingDetails: FC = () => {
           placeholder="Meeting Description"
         />
       </FormField>
-      <MeetingCheckbox
-        title="Plan for later"
+      <Switch
+        label="Plan For Later"
+        width="170px"
         margin={{ top: 'xsmall', bottom: 'small' }}
-        width="140px"
-        nopad
-        value={!!formPayload?.planForLater}
+        defaultValue={!!formPayload?.planForLater}
         onChange={(v) => {
           dispatch(
             setMeetingFormFieldAction({
@@ -82,7 +81,7 @@ const MeetingDetails: FC = () => {
             margin={{ top: 'small', bottom: 'small' }}
           >
             <Box direction="column">
-              <Text size="xsmall" color="#8F9BB3" margin={{ bottom: '5px' }}>
+              <Text size="xsmall" color="dark-6" margin={{ bottom: '5px' }}>
                 Start Date
               </Text>
               <Box direction="row">
@@ -154,7 +153,7 @@ const MeetingDetails: FC = () => {
               </Box>
             </Box>
             <Box direction="column">
-              <Text size="xsmall" color="#8F9BB3" margin={{ bottom: '5px' }}>
+              <Text size="xsmall" color="dark-6" margin={{ bottom: '5px' }}>
                 End Date
               </Text>
               <Box direction="row">
@@ -225,7 +224,7 @@ const MeetingDetails: FC = () => {
             </Box>
           </Box>
           <Box>
-            <Text size="xsmall" color="#8F9BB3" margin={{ bottom: '5px' }}>
+            <Text size="xsmall" color="dark-6" margin={{ bottom: '5px' }}>
               Time Zone
             </Text>
             <Select
