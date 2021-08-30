@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Meeting } from 'entities/Meeting.entity';
+import { MeetingAttendance } from 'entities/MeetingAttendance.entity';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { ChannelModule } from 'src/channel/channel.module';
@@ -11,7 +12,7 @@ import { MeetingService } from './meeting.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Meeting, User, UserChannel]),
+    TypeOrmModule.forFeature([Meeting, User, UserChannel, MeetingAttendance]),
     ZoneModule,
     MailModule,
     ChannelModule,

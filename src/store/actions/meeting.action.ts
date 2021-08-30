@@ -1,10 +1,12 @@
 import {
+  ADD_USER_TO_INVITATION,
   CLOSE_CREATE_MEETING_LAYER,
   CLOSE_PLAN_A_MEETING_LAYER,
   CLOSE_UPDATE_MEETING_LAYER,
   GET_USER_MEETING_CONFIG_FAILED,
   GET_USER_MEETING_CONFIG_REQUESTED,
   GET_USER_MEETING_CONFIG_SUCCESS,
+  GET_USER_SUGGESTIONS_FOR_MEETING_SUCCESS,
   MEETING_CREATE_FAILED,
   MEETING_CREATE_REQUESTED,
   MEETING_CREATE_SUCCESS,
@@ -14,6 +16,7 @@ import {
   PLAN_A_MEETING_DIALOG_BACK,
   PLAN_A_MEETING_DIALOG_FORWARD,
   PLAN_A_MEETING_DIALOG_SET,
+  REMOVE_USER_FROM_INVITATION,
   SET_INITIAL_MEETING_FORM,
   SET_MEETING_FORM_FIELD,
 } from '../constants/meeting.constants';
@@ -50,7 +53,7 @@ export const createMeetingAction = (
 
       setToastAction(
         'ok',
-        `New meeting with the id ${response.id} has been created successfully`
+        `New meeting with the id ${response} has been created successfully`
       )(dispatch);
     } catch (err) {
       dispatch({
@@ -78,6 +81,27 @@ export const getUserMeetingConfigAction = (): MeetingAction => {
         payload: err?.response?.data,
       });
     }
+  };
+};
+
+export const getUserSuggestionsForMeetingAction = (
+  name: string,
+  excludeIds?: Array<number>,
+  userContacts?: boolean | null,
+  channelId?: number | null
+): MeetingAction => {
+  return async (dispatch) => {
+    MeetingService.getUserSuggestionsForMeeting(
+      name,
+      excludeIds,
+      userContacts,
+      channelId
+    ).then((response) => {
+      dispatch({
+        type: GET_USER_SUGGESTIONS_FOR_MEETING_SUCCESS,
+        payload: response.data,
+      });
+    });
   };
 };
 
@@ -132,4 +156,19 @@ export const planMeetingDialogSetAction = (
 ): MeetingActionParams => ({
   type: PLAN_A_MEETING_DIALOG_SET,
   payload: index,
+});
+
+export const addUserToInvitationsAction = (user: {
+  label: string;
+  value: number;
+}): MeetingActionParams => ({
+  type: ADD_USER_TO_INVITATION,
+  payload: user,
+});
+
+export const removeUserFromInvitationsAction = (
+  id: number
+): MeetingActionParams => ({
+  type: REMOVE_USER_FROM_INVITATION,
+  payload: id,
 });

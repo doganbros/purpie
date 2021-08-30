@@ -3,8 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from 'entities/Contact.entity';
 import { ContactInvitation } from 'entities/ContactInvitation.entity';
 import { User } from 'entities/User.entity';
+import { UserChannel } from 'entities/UserChannel.entity';
 import { Brackets, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
+import { SetUserRoleDto } from './dto/set-user-role.dto';
 
 @Injectable()
 export class UserService {
@@ -30,7 +32,7 @@ export class UserService {
     ]);
   }
 
-  async searchUsers(excludeUserIds: Array<number>, query: PaginationQuery) {
+  userBaseSelect(excludeUserIds: Array<number>, query: PaginationQuery) {
     return this.userRepository
       .createQueryBuilder('user')
       .select(['user.id', 'user.firstName', 'user.lastName', 'user.email'])
@@ -39,12 +41,42 @@ export class UserService {
           qb.where(
             `lower(CONCAT(user.firstName, ' ', user.lastName)) LIKE :name`,
             {
-              name: `%${query.name.toLowerCase()}%`,
+              name: `${query.name.toLowerCase()}%`,
             },
           ).orWhere('user.email LIKE :email', { email: `%${query.name}%` });
         }),
       )
-      .andWhere('user.id not IN (:...excludeUserIds)', { excludeUserIds })
+      .andWhere('user.id not IN (:...excludeUserIds)', { excludeUserIds });
+  }
+
+  async searchUsers(excludeUserIds: Array<number>, query: PaginationQuery) {
+    return this.userBaseSelect(excludeUserIds, query).paginate(query);
+  }
+
+  async searchInUserContacts(
+    userId: number,
+    excludeUserIds: Array<number>,
+    query: PaginationQuery,
+  ) {
+    return this.userBaseSelect(excludeUserIds, query)
+      .innerJoin(Contact, 'contact', 'contact.userId = :userId', { userId })
+      .andWhere('user.id = contact.contactUserId')
+      .paginate(query);
+  }
+
+  async searchInChannels(
+    channelId: number,
+    excludeUserIds: Array<number>,
+    query: PaginationQuery,
+  ) {
+    return this.userBaseSelect(excludeUserIds, query)
+      .innerJoin(
+        UserChannel,
+        'user_channel',
+        'user_channel.channelId = :channelId',
+        { channelId },
+      )
+      .andWhere('user_channel.userId = user.id')
       .paginate(query);
   }
 
@@ -116,5 +148,11 @@ export class UserService {
         id,
       })
       .execute();
+  }
+
+  async setUserRole(info: SetUserRoleDto) {
+    return this.userRepository.update(info.userId, {
+      userRoleCode: info.roleCode,
+    });
   }
 }

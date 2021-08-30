@@ -2,10 +2,10 @@ import React, { FC } from 'react';
 import { Box, FormField, Select } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import SectionContainer from '../../../components/utils/SectionContainer';
-import MeetingCheckbox from '../components/MeetingCheckbox';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action';
 import { validators } from '../../../helpers/validators';
+import Switch from '../../../components/utils/Switch';
 
 const MeetingPrivacy: FC = () => {
   const {
@@ -29,10 +29,9 @@ const MeetingPrivacy: FC = () => {
       <SectionContainer label="Joining">
         {!selectedUserZone ? (
           <Box justify="between" direction="row">
-            <MeetingCheckbox
-              title="Public Meeting"
+            <Switch
+              label="Public Meeting"
               width="280px"
-              nopad
               value={!!formPayload?.public}
               onChange={(v) => {
                 dispatch(
@@ -44,10 +43,9 @@ const MeetingPrivacy: FC = () => {
                 );
               }}
             />
-            <MeetingCheckbox
-              title="Open To Contacts"
+            <Switch
+              label="Open To Contacts"
               width="280px"
-              nopad
               value={!!formPayload?.userContactExclusive}
               onChange={(v) => {
                 dispatch(
@@ -81,8 +79,8 @@ const MeetingPrivacy: FC = () => {
       <Box height="20px" />
       <SectionContainer label="Streaming &amp; Recording">
         <Box justify="between" direction="row">
-          <MeetingCheckbox
-            title="Live stream the meeting?"
+          <Switch
+            label="Live stream the meeting?"
             width="280px"
             value={!!formPayload?.liveStream}
             onChange={(v) => {
@@ -93,8 +91,8 @@ const MeetingPrivacy: FC = () => {
               );
             }}
           />
-          <MeetingCheckbox
-            title="Enable Recording?"
+          <Switch
+            label="Enable Recording?"
             width="280px"
             value={!!formPayload?.record}
             onChange={(v) => {
@@ -110,8 +108,8 @@ const MeetingPrivacy: FC = () => {
       <Box height="20px" />
       <SectionContainer label="Configuration Persistence">
         <Box justify="between" direction="row">
-          <MeetingCheckbox
-            title="Save Configuration"
+          <Switch
+            label="Save Configuration"
             width="280px"
             value={!!formPayload?.saveConfig}
             onChange={(v) => {

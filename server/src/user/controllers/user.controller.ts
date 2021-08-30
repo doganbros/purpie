@@ -1,23 +1,39 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
+  ParseArrayPipe,
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
+import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
+import { emptyPaginatedResponse } from 'helpers/utils';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { ContactIdParam } from '../dto/contact-id.param';
 import { ContactInvitationResponseDto } from '../dto/contact-invitation-response.dto';
+import {
+  ContactInvitationListResponse,
+  ContactListResponse,
+} from '../responses/user.reponse';
 import { CreateContactDto } from '../dto/create-contact.dto';
 import { SearchUsersQuery } from '../dto/search-users.query';
+import { SetUserRoleDto } from '../dto/set-user-role.dto';
 import { UserService } from '../user.service';
 
 @Controller({ path: 'user', version: '1' })
@@ -26,6 +42,10 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Post('/contact/invitation/response')
+  @ApiCreatedResponse({
+    description: 'User responds to contact invitation',
+    schema: { type: 'string', example: 'OK' },
+  })
   @IsAuthenticated()
   async contactInvitationResponse(
     @CurrentUser() currentUser: UserPayload,
@@ -54,6 +74,10 @@ export class UserController {
   }
 
   @Post('/contact/invitation/create')
+  @ApiCreatedResponse({
+    description: 'User creates a new contact invitation',
+    schema: { type: 'integer' },
+  })
   @IsAuthenticated()
   async createNewContactInvitation(
     @CurrentUser() currentUser: UserPayload,
@@ -64,7 +88,7 @@ export class UserController {
       userId,
     );
 
-    return contactInvitation;
+    return contactInvitation.id;
   }
 
   @Get('/search')
@@ -80,16 +104,40 @@ export class UserController {
   async searchUsers(
     @CurrentUser() currentUser: UserPayload,
     @Query() query: SearchUsersQuery,
+    @Query(
+      'excludeIds',
+      new DefaultValuePipe('-1'),
+      new ParseArrayPipe({ items: Number, separator: ',' }),
+    )
+    excludeIds: Array<number>,
   ) {
-    const users = await this.userService.searchUsers(
-      query.excludeCurrentUser === 'false' ? [] : [currentUser.id],
-      query as any,
-    );
-
+    if (!query.name.trim())
+      return emptyPaginatedResponse(query.limit, query.skip);
+    if (query.channelId) {
+      const users = await this.userService.searchInChannels(
+        query.channelId,
+        excludeIds,
+        query,
+      );
+      return users;
+    }
+    if (query.userContacts === 'true') {
+      const users = await this.userService.searchInUserContacts(
+        currentUser.id,
+        excludeIds,
+        query,
+      );
+      return users;
+    }
+    const users = await this.userService.searchUsers(excludeIds, query);
     return users;
   }
 
   @Get('/contact/invitation/list')
+  @ApiOkResponse({
+    description: 'User lists their contact invitation list',
+    type: ContactInvitationListResponse,
+  })
   @PaginationQueryParams()
   @IsAuthenticated()
   async getContactInvitations(
@@ -104,8 +152,24 @@ export class UserController {
     return contactInvitation;
   }
 
+  @Post('/set/role')
+  @ApiCreatedResponse({
+    description: 'User sets a role. User must have canSetRole permission',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @ValidationBadRequest()
+  @IsAuthenticated(['canSetRole'])
+  async setRole(@Body() info: SetUserRoleDto) {
+    await this.userService.setUserRole(info);
+    return 'OK';
+  }
+
   @Get('/contact/list')
   @PaginationQueryParams()
+  @ApiOkResponse({
+    description: 'User lists contact',
+    type: ContactListResponse,
+  })
   @IsAuthenticated()
   async listContacts(
     @CurrentUser() currentUser: UserPayload,
@@ -115,11 +179,17 @@ export class UserController {
   }
 
   @Delete('/contact/remove/:contactId')
+  @ApiOkResponse({
+    description: 'User removes a contact by id',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @HttpCode(HttpStatus.OK)
   @IsAuthenticated()
   async deleteContact(
     @CurrentUser() currentUser: UserPayload,
     @Param() { contactId }: ContactIdParam,
   ) {
-    return this.userService.deleteContact(currentUser.id, contactId);
+    await this.userService.deleteContact(currentUser.id, contactId);
+    return 'OK';
   }
 }

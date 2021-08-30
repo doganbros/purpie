@@ -2,6 +2,7 @@ import {
   IsArray,
   IsBoolean,
   IsDate,
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsObject,
@@ -13,11 +14,11 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { MeetingConfig } from 'types/Meeting';
+import { timeZones } from 'entities/data/time-zones';
 
 export class CreateMeetingDto {
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
   @IsOptional()
   title?: string;
 
@@ -32,6 +33,12 @@ export class CreateMeetingDto {
   @MinDate(new Date())
   @Type(() => Date)
   startDate?: Date;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  endDate?: Date;
 
   @ApiProperty()
   @ValidateIf((o) => {
@@ -78,4 +85,10 @@ export class CreateMeetingDto {
   @IsOptional()
   @IsArray()
   invitationIds?: Array<number>;
+
+  @ApiProperty({ enum: timeZones })
+  @IsOptional()
+  @IsNotEmpty()
+  @IsIn(timeZones, { message: 'Invalid timezone option specified' })
+  timeZone?: string;
 }

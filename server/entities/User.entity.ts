@@ -6,6 +6,7 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 import { MeetingConfig } from 'types/Meeting';
 import { UserRoleCode } from 'types/RoleCodes';
 import { RecordEntity } from './base/RecordEntity';
@@ -18,12 +19,15 @@ import { baseMeetingConfig } from './data/base-meeting-config';
 @Entity()
 export class User extends RecordEntity {
   @Column()
+  @ApiProperty()
   firstName: string;
 
   @Column()
+  @ApiProperty()
   lastName: string;
 
   @Column({ unique: true })
+  @ApiProperty()
   email: string;
 
   @Column({ default: false })

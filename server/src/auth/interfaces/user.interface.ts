@@ -15,7 +15,20 @@ export class UserPayload {
   @ApiProperty()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    type: 'object',
+    properties: {
+      roleCode: {
+        type: 'string',
+        example: 'SUPER_ADMIN',
+        enum: ['SUPER_ADMIN', 'ADMIN', 'NORMAL'],
+      },
+      roleName: { type: 'string', example: 'Super Admin' },
+      canCreateZone: { type: 'boolean' },
+      canCreateClient: { type: 'boolean' },
+      canSetRole: { type: 'boolean' },
+    },
+  })
   userRole: SoftEntity<UserRole>;
 }
 

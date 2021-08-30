@@ -14,4 +14,7 @@ export class UserRole extends BaseEntity {
 
   @Column({ default: false })
   canCreateClient: boolean;
+
+  @Column({ default: false })
+  canSetRole: boolean;
 }

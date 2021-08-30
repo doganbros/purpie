@@ -2,6 +2,9 @@ import React, { FC, useEffect } from 'react';
 import { Box, Button, Text, Layer, Form } from 'grommet';
 import { Close } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import MeetingDetails from './sections/MeetingDetails';
 import MeetingPrivacy from './sections/MeetingPrivacy';
 import MeetingInvitation from './sections/MeetingInvitation';
@@ -18,6 +21,9 @@ import {
 import { CreateMeetingPayload } from '../../store/types/meeting.types';
 import { appSubdomain } from '../../helpers/app-subdomain';
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 interface Props {
   visible: boolean;
   onClose: () => void;
@@ -32,6 +38,7 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
     meeting: {
       createMeeting: {
         planDialogCurrentIndex,
+        invitedUsers,
         form: { payload: formPayload, submitting },
       },
       userMeetingConfig,
@@ -46,8 +53,6 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
   useEffect(() => {
     if (userMeetingConfig.config && !formPayload && visible) {
       const initialPayload: CreateMeetingPayload = {
-        title: '',
-        description: '',
         startDate: null,
         config: userMeetingConfig.config,
         public: false,
@@ -55,6 +60,7 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
         planForLater: false,
         liveStream: false,
         record: false,
+        timeZone: dayjs.tz.guess(),
       };
 
       dispatch(setInitialMeetingFormAction(initialPayload));
@@ -64,7 +70,13 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
   if (!visible) return null;
 
   const submitMeeting = () => {
-    if (formPayload) dispatch(createMeetingAction(formPayload));
+    if (formPayload)
+      dispatch(
+        createMeetingAction({
+          ...formPayload,
+          invitationIds: invitedUsers.map((u) => u.value),
+        })
+      );
   };
 
   const content = [
@@ -139,8 +151,10 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
               </Box>
             ))}
           </Box>
-          <Box height="275px">
-            {formPayload && content[planDialogCurrentIndex]?.component}
+          <Box overflow="auto" height="100%">
+            <Box flex={false}>
+              {formPayload && content[planDialogCurrentIndex]?.component}
+            </Box>
           </Box>
           <Box direction="row" gap="small" justify="end">
             {planDialogCurrentIndex !== 0 && (

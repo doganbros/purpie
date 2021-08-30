@@ -16,10 +16,15 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiHeader,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
+  getSchemaPath,
 } from '@nestjs/swagger';
 import { Response } from 'express';
+import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
+import { errorResponseDoc } from 'helpers/error-response-doc';
 import { RegisterUserDto } from '../dto/register-user.dto';
 import { AuthService } from '../auth.service';
 import { UserBasic, UserPayload } from '../interfaces/user.interface';
@@ -35,7 +40,6 @@ const {
   MAIL_VERIFICATION_TOKEN_SECRET = 'secret_m',
   RESET_PASSWORD_TOKEN_SECRET = 'secret_r',
 } = process.env;
-
 @Controller({ path: 'auth', version: '1' })
 @ApiTags('auth')
 export class AuthController {
@@ -46,6 +50,7 @@ export class AuthController {
     type: UserBasic,
     description: 'Registers user and returns basic details',
   })
+  @ValidationBadRequest()
   async registerUser(
     @Body() registerUserDto: RegisterUserDto,
   ): Promise<UserBasic> {
@@ -59,6 +64,30 @@ export class AuthController {
     name: 'app-subdomain',
     required: false,
     description: 'Zone subdomain',
+  })
+  @ValidationBadRequest()
+  @ApiNotFoundResponse({
+    description: "Error thrown when user's email or password is invalid ",
+    schema: errorResponseDoc(
+      404,
+      'Error user name or password',
+      'ERROR_USERNAME_OR_PASSWORD',
+    ),
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Error thrown when email is not yet verified',
+    schema: errorResponseDoc(
+      401,
+      'Error user name or password',
+      'ERROR_USERNAME_OR_PASSWORD',
+      {
+        user: {
+          schema: {
+            $ref: getSchemaPath(UserPayload),
+          },
+        },
+      },
+    ),
   })
   @ApiOkResponse({
     type: UserPayload,
@@ -115,6 +144,8 @@ export class AuthController {
 
   @Post('/logout')
   @IsAuthenticated([], { removeAccessTokens: true })
+  @ApiOkResponse({ schema: { type: 'string', example: 'OK' } })
+  @HttpCode(HttpStatus.OK)
   async logout(
     @CurrentUser() currentUser: UserPayload,
     @Res({ passthrough: true }) res: Response,
@@ -127,6 +158,19 @@ export class AuthController {
   }
 
   @Post('/verify-email')
+  @ValidationBadRequest()
+  @ApiNotFoundResponse({
+    description: 'Error thrown when user is not found',
+    schema: errorResponseDoc(404, 'User not found', 'USER_NOT_FOUND'),
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Error thrown when jw used to verify the email is invalid',
+    schema: errorResponseDoc(
+      404,
+      'Email verification token is invalid',
+      'INVALID_JWT',
+    ),
+  })
   @ApiCreatedResponse({
     type: UserBasic,
     description: `User verifies email received from inbox. `,
@@ -150,6 +194,14 @@ export class AuthController {
   }
 
   @Post('resend-mail-verification-token/:userId')
+  @ApiCreatedResponse({
+    type: UserBasic,
+    description: 'Basic information about the user the email was sent to',
+  })
+  @ApiNotFoundResponse({
+    description: 'Error thrown when user is not found',
+    schema: errorResponseDoc(404, 'User not found', 'USER_NOT_FOUND'),
+  })
   async resendMailVerificationToken(@Param('userId') userId: string) {
     const userInfo = await this.authService.verifyResendMailVerificationToken(
       Number.parseInt(userId, 10),
@@ -161,14 +213,24 @@ export class AuthController {
 
   @Post('/reset-password-request')
   @ApiCreatedResponse({
+    schema: { type: 'string' },
     description: `User makes a password reset request. The email received is sent back.`,
   })
+  @ApiNotFoundResponse({
+    description: 'Error thrown when user with the email is not found',
+    schema: errorResponseDoc(
+      404,
+      "User with the email '<email>' doesn't exist",
+      'USER_NOT_FOUND',
+    ),
+  })
+  @ValidationBadRequest()
   async resetPasswordRequest(@Body() payload: ResetPasswordRequestDto) {
     const user = await this.authService.getUserByEmail(payload.email);
 
     if (!user)
       throw new NotFoundException(
-        `User with the email ${payload.email} doesn't exist`,
+        `User with the email '${payload.email}' doesn't exist`,
         'USER_NOT_FOUND',
       );
 
@@ -192,8 +254,18 @@ export class AuthController {
 
   @Put('/reset-password')
   @ApiCreatedResponse({
-    description: `User makes a password reset.`,
+    description: 'User makes a password reset.',
+    schema: { type: 'string', example: 'OK' },
   })
+  @ApiUnauthorizedResponse({
+    description: 'Error thrown when jwt used to verify the email is invalid',
+    schema: errorResponseDoc(
+      404,
+      'Password reset token is invalid',
+      'INVALID_JWT',
+    ),
+  })
+  @ValidationBadRequest()
   async resetPassword(
     @Body(
       'token',

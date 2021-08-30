@@ -80,7 +80,7 @@ export class ChannelService {
     });
   }
 
-  async getCurrentUserZoneChannels(zoneId: number, userId: number) {
+  get userChannelBaseSelect() {
     return this.userChannelRepository
       .createQueryBuilder('user_channel')
       .select([
@@ -91,13 +91,20 @@ export class ChannelService {
         'channel.name',
         'channel.topic',
         'channel.description',
-        'channel.active',
         'channel.public',
-        'channel.createdById',
-        'channel.categoryId',
         'channel.zoneId',
-      ])
+        'createdBy.id',
+        'createdBy.firstName',
+        'createdBy.lastName',
+        'createdBy.email',
+      ]);
+  }
+
+  async getCurrentUserZoneChannels(zoneId: number, userId: number) {
+    return this.userChannelBaseSelect
       .leftJoin('user_channel.channel', 'channel')
+      .leftJoin('channel.createdBy', 'createdBy')
+      .leftJoinAndSelect('channel.category', 'category')
       .leftJoinAndSelect('user_channel.channelRole', 'channel_role')
       .where('user_channel.userId = :userId', { userId })
       .andWhere('channel.zoneId = :zoneId', { zoneId })
@@ -106,23 +113,10 @@ export class ChannelService {
   }
 
   async getCurrentUserChannels(userId: number) {
-    return this.userChannelRepository
-      .createQueryBuilder('user_channel')
-      .select([
-        'user_channel.id',
-        'user_channel.createdOn',
-        'channel.id',
-        'channel.createdOn',
-        'channel.name',
-        'channel.topic',
-        'channel.description',
-        'channel.active',
-        'channel.public',
-        'channel.createdById',
-        'channel.categoryId',
-        'channel.zoneId',
-      ])
+    return this.userChannelBaseSelect
       .leftJoin('user_channel.channel', 'channel')
+      .leftJoin('channel.createdBy', 'createdBy')
+      .leftJoinAndSelect('channel.category', 'category')
       .leftJoinAndSelect('user_channel.channelRole', 'channel_role')
       .where('user_channel.userId = :userId', { userId })
       .orderBy('user_channel.createdOn', 'DESC')
@@ -165,6 +159,7 @@ export class ChannelService {
     if (invitation)
       throw new BadRequestException(
         `The user with the email ${email} has already been invited to this channel`,
+        'USER_ALREADY_INVITED_TO_CHANNEL',
       );
 
     const channel = await this.channelRepository

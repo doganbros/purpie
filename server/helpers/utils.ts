@@ -63,3 +63,16 @@ export const alphaNum = Array(10)
 export const generateLowerAlphaNumId = (size = 6) => {
   return customAlphabet(lowerAlphaNum, size)();
 };
+
+export const separateString = (
+  str: string,
+  times: number,
+  separator = '-',
+): string => str.match(new RegExp(`.{${times}}`, 'g'))?.join(separator) || '';
+
+export const emptyPaginatedResponse = (limit: number, skip: number) => ({
+  data: [],
+  total: 0,
+  limit,
+  skip,
+});
