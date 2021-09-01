@@ -1,4 +1,4 @@
-import { grommet, base } from 'grommet';
+import { grommet, base, ThemeType } from 'grommet';
 import { deepMerge } from 'grommet/utils';
 
 export const theme: typeof grommet = deepMerge(base, {
@@ -63,4 +63,4 @@ export const theme: typeof grommet = deepMerge(base, {
       },
     },
   },
-});
+} as ThemeType);

@@ -7,6 +7,7 @@ interface Props extends BoxProps {
   value?: boolean;
   defaultValue?: boolean;
   label?: string;
+  disabled?: boolean;
   onChange: (value: boolean) => void;
 }
 
@@ -14,6 +15,7 @@ const Switch: FC<Props> = ({
   label,
   onChange,
   value,
+  disabled,
   defaultValue,
   ...otherProps
 }) => {
@@ -25,6 +27,12 @@ const Switch: FC<Props> = ({
     if (value !== undefined) setCurrentValue(value);
   }, [value]);
 
+  const handleChange = () => {
+    const nextValue = !currentValue;
+    setCurrentValue(nextValue);
+    onChange(nextValue);
+  };
+
   return (
     <Box justify="between" align="center" direction="row" {...otherProps}>
       {label && (
@@ -33,34 +41,29 @@ const Switch: FC<Props> = ({
         </Text>
       )}
       <ExtendedBox
-        width="55px"
-        height="30px"
+        width="50px"
+        height="32px"
         background={currentValue ? 'brand' : 'light-6'}
         position="relative"
         transition="0.3s"
         round
-        onClick={() => {
-          const nextValue = !currentValue;
-          setCurrentValue(nextValue);
-          onChange(nextValue);
-        }}
+        onClick={disabled ? undefined : handleChange}
         direction="row"
       >
         <ExtendedBox
           round
           direction="row"
-          height="60%"
-          width="57%"
+          height="24px"
+          width="32px"
           justify="start"
+          draggable
           background="white"
-          left={currentValue ? '30%' : '10%'}
+          left={currentValue ? '25%' : '10%'}
           transition="0.3s"
           position="absolute"
           top="50%"
           transform="translateY(-50%)"
-        >
-          <Box />
-        </ExtendedBox>
+        />
       </ExtendedBox>
     </Box>
   );

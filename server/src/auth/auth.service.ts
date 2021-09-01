@@ -13,7 +13,7 @@ import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
 import { Response } from 'express';
 import { generateJWT, verifyJWT } from 'helpers/jwt';
-import { alphaNum } from 'helpers/utils';
+import { alphaNum, compareHash, hash } from 'helpers/utils';
 import { customAlphabet } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
 import { Not, Repository, IsNull } from 'typeorm';
@@ -208,7 +208,7 @@ export class AuthService {
       CLIENT_AUTH_TOKEN_SECRET_REFRESH,
     );
 
-    client.refreshToken = await bcrypt.hash(tokens.refreshToken, 10);
+    client.refreshToken = await hash(tokens.refreshToken);
     await client.save();
 
     return tokens;
@@ -226,19 +226,20 @@ export class AuthService {
         relations: ['clientRole'],
       });
 
-      const isValid =
-        client.refreshToken &&
-        (await bcrypt.compare(refreshToken, client.refreshToken));
+      const isValid = await compareHash(refreshToken, client.refreshToken!);
 
       if (!isValid) throw new Error('Not Valid');
 
-      const tokens = await this.generateLoginToken({
-        id: client.id,
-        name: client.name,
-        clientRole: client.clientRole,
-      });
-
-      client.refreshToken = await bcrypt.hash(tokens.refreshToken, 10);
+      const tokens = await this.generateLoginToken(
+        {
+          id: client.id,
+          name: client.name,
+          clientRole: client.clientRole,
+        },
+        CLIENT_AUTH_TOKEN_SECRET,
+        CLIENT_AUTH_TOKEN_SECRET_REFRESH,
+      );
+      client.refreshToken = await hash(tokens.refreshToken);
       await client.save();
       return tokens;
     } catch (err) {
