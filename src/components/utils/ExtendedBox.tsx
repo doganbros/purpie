@@ -1,9 +1,9 @@
-import { BoxProps, Box, Grommet } from 'grommet';
+import { Box, Grommet, BoxExtendedProps } from 'grommet';
 import React, { FC } from 'react';
 import { css } from 'styled-components';
 import { theme } from '../../config/app-config';
 
-interface Props extends BoxProps {
+interface Props extends BoxExtendedProps {
   position?: string;
   top?: string;
   left?: string;
