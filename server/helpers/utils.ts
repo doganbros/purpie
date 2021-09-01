@@ -1,5 +1,6 @@
 import dotEnv from 'dotenv';
 import { stringify } from 'querystring';
+import crypto from 'crypto';
 import path from 'path';
 import { MeetingConfig, MeetingKey } from 'types/Meeting';
 import { PaginationQuery } from 'types/PaginationQuery';
@@ -76,3 +77,27 @@ export const emptyPaginatedResponse = (limit: number, skip: number) => ({
   limit,
   skip,
 });
+
+export async function hash(value: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const salt = crypto.randomBytes(8).toString('hex');
+
+    crypto.scrypt(value, salt, 64, (err, derivedKey) => {
+      if (err) reject(err);
+      resolve(`${salt}:${derivedKey.toString('hex')}`);
+    });
+  });
+}
+
+export async function compareHash(
+  value: string,
+  hashValue: string,
+): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    const [salt, key] = hashValue.split(':');
+    crypto.scrypt(value, salt, 64, (err, derivedKey) => {
+      if (err) reject(err);
+      resolve(key === derivedKey.toString('hex'));
+    });
+  });
+}

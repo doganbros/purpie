@@ -34,6 +34,7 @@ const TimeInput: FC<Props> = ({ onChange, defaultValue }) => {
   return (
     <Select
       options={times}
+      plain
       defaultValue={
         defaultValue
           ? times.find((v) => v.value === defaultValue?.join(':'))
