@@ -1,9 +1,9 @@
 import { Box, BoxProps, Text } from 'grommet';
 import React, { FC, useEffect, useState } from 'react';
-import ExtendedBox from './ExtendedBox';
+import ReactSwitch from 'react-switch';
+import { theme } from '../../config/app-config';
 
 interface Props extends BoxProps {
-  //   checkboxWidth?: number;
   value?: boolean;
   defaultValue?: boolean;
   label?: string;
@@ -27,10 +27,9 @@ const Switch: FC<Props> = ({
     if (value !== undefined) setCurrentValue(value);
   }, [value]);
 
-  const handleChange = () => {
-    const nextValue = !currentValue;
-    setCurrentValue(nextValue);
-    onChange(nextValue);
+  const handleChange = (v: boolean) => {
+    setCurrentValue(v);
+    onChange(v);
   };
 
   return (
@@ -40,31 +39,17 @@ const Switch: FC<Props> = ({
           {label}
         </Text>
       )}
-      <ExtendedBox
-        width="50px"
-        height="32px"
-        background={currentValue ? 'brand' : 'light-6'}
-        position="relative"
-        transition="0.3s"
-        round
-        onClick={disabled ? undefined : handleChange}
-        direction="row"
-      >
-        <ExtendedBox
-          round
-          direction="row"
-          height="24px"
-          width="32px"
-          justify="start"
-          draggable
-          background="white"
-          left={currentValue ? '25%' : '10%'}
-          transition="0.3s"
-          position="absolute"
-          top="50%"
-          transform="translateY(-50%)"
-        />
-      </ExtendedBox>
+      <ReactSwitch
+        onChange={handleChange}
+        checked={currentValue}
+        onColor={theme.global?.colors?.brand?.toString()}
+        offColor={theme.global?.colors?.['light-6']?.toString()}
+        uncheckedIcon={false}
+        checkedIcon={false}
+        height={27}
+        width={43}
+        handleDiameter={20}
+      />
     </Box>
   );
 };

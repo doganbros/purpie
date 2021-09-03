@@ -305,6 +305,11 @@ export class MeetingController {
       'Client athenticates an octopus user for a meeting. Client must have manageMeeting permission.',
     schema: { type: 'string', example: 'OK' },
   })
+  @ApiNotFoundResponse({
+    description:
+      "Error thrown is meeting doesn't exist or current user doesn't have the priviledge to join",
+    schema: errorResponseDoc(404, 'Meeting not found', 'MEETING_NOT_FOUND'),
+  })
   @ValidationBadRequest()
   @IsClientAuthenticated(['manageMeeting'])
   async verifyMeetingAuthorization(@Body() info: ClientVerifyMeetingAuthDto) {
