@@ -14,6 +14,8 @@ interface Props extends BoxExtendedProps {
   opacity?: string;
   transition?: string;
   transform?: string;
+  userSelect?: string;
+  innerRef?: React.LegacyRef<HTMLDivElement>;
 }
 
 const ExtendedBoxCSS = css`
@@ -27,9 +29,10 @@ const ExtendedBoxCSS = css`
   min-width: ${(props: Props) => props.minWidth};
   min-height: ${(props: Props) => props.minWidth};
   opacity: ${(props: Props) => props.opacity};
+  user-select: ${(props: Props) => props.userSelect};
 `;
 
-const ExtendedBox: FC<Props> = (props) => {
+const ExtendedBox: FC<Props> = ({ innerRef, ...props }) => {
   return (
     <Grommet
       theme={{
@@ -39,7 +42,7 @@ const ExtendedBox: FC<Props> = (props) => {
         },
       }}
     >
-      <Box {...props} />
+      <Box ref={innerRef} {...props} />
     </Grommet>
   );
 };
