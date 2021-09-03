@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -365,7 +366,17 @@ export class MeetingService {
         { conferenceEndDate: new Date() },
       );
 
-    if (info.event === 'user_joined')
+    if (info.event === 'user_joined') {
+      const userJoined = await this.meetingAttendanceRepository.findOne({
+        userId: info.userId,
+        meetingSlug: info.meetingTitle,
+        endDate: IsNull(),
+      });
+      if (userJoined)
+        throw new BadRequestException(
+          'User already joined the meeting but has not left yet',
+          'USER_ALREADY_JOINED',
+        );
       return this.meetingAttendanceRepository
         .create({
           userId: info.userId,
@@ -373,6 +384,7 @@ export class MeetingService {
           meetingSlug: info.meetingTitle,
         })
         .save();
+    }
 
     return this.meetingAttendanceRepository.update(
       {
