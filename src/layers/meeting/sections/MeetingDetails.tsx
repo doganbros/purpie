@@ -58,7 +58,7 @@ const MeetingDetails: FC = () => {
       <Switch
         label="Plan For Later"
         width="170px"
-        margin={{ vertical: 'xsmall' }}
+        margin={{ bottom: 'xsmall' }}
         defaultValue={!!formPayload?.planForLater}
         onChange={(v) => {
           dispatch(
@@ -74,14 +74,9 @@ const MeetingDetails: FC = () => {
       />
       {formPayload?.planForLater && (
         <Box direction="column">
-          <Box
-            direction="row"
-            gap="small"
-            align="center"
-            margin={{ top: 'small', bottom: 'small' }}
-          >
+          <Box direction="row" gap="small" align="center">
             <Box direction="column">
-              <Text size="xsmall" color="dark-6" margin={{ bottom: '5px' }}>
+              <Text size="xsmall" color="dark-6" margin={{ bottom: 'xxsmall' }}>
                 Start Date
               </Text>
               <Box direction="row" gap="xsmall">
@@ -153,7 +148,7 @@ const MeetingDetails: FC = () => {
               </Box>
             </Box>
             <Box direction="column">
-              <Text size="xsmall" color="dark-6" margin={{ bottom: '5px' }}>
+              <Text size="xsmall" color="dark-6" margin={{ bottom: 'xxsmall' }}>
                 End Date
               </Text>
               <Box direction="row" gap="xsmall">
@@ -224,7 +219,7 @@ const MeetingDetails: FC = () => {
             </Box>
           </Box>
           <Box>
-            <Text size="xsmall" color="dark-6" margin={{ bottom: '5px' }}>
+            <Text size="xsmall" color="dark-6" margin={{ bottom: 'xxsmall' }}>
               Time Zone
             </Text>
             <Select
