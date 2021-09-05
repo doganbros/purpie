@@ -21,6 +21,8 @@ import {
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import { Meeting } from 'entities/Meeting.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
@@ -44,6 +46,9 @@ import {
   MixedMeetingListResponse,
   PublicMeetingListResponse,
 } from './responses/meeting.response';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 @Controller({ path: 'meeting', version: '1' })
 @ApiTags('meeting')
@@ -70,7 +75,19 @@ export class MeetingController {
     const meetingPayload: Partial<Meeting> = {
       title: createMeetingInfo.title || 'Untiltled Meeting',
       description: createMeetingInfo.description,
-      startDate: createMeetingInfo.startDate ?? new Date(),
+      startDate: createMeetingInfo.startDate
+        ? dayjs(createMeetingInfo.startDate)
+            .tz(createMeetingInfo.timeZone, true)
+            .toDate()
+        : dayjs().tz(createMeetingInfo.timeZone, true).toDate(),
+      endDate: createMeetingInfo.endDate
+        ? dayjs(createMeetingInfo.endDate)
+            .tz(createMeetingInfo.timeZone, true)
+            .toDate()
+        : dayjs(createMeetingInfo.startDate || new Date())
+            .add(2, 'hours')
+            .tz(createMeetingInfo.timeZone, true)
+            .toDate(),
       createdById: user.id,
     };
 
@@ -105,6 +122,19 @@ export class MeetingController {
     const meeting = await this.meetingService.createNewMeeting(meetingPayload);
 
     this.meetingService.sendMeetingInfoMail(user, meeting, true);
+
+    if (
+      createMeetingInfo.invitationIds &&
+      createMeetingInfo.invitationIds.length
+    ) {
+      const users = await this.meetingService.getUsersById(
+        createMeetingInfo.invitationIds,
+      );
+
+      users.forEach((u) => {
+        this.meetingService.sendMeetingInfoMail(u, meeting, false);
+      });
+    }
 
     if (createMeetingInfo.saveConfig)
       this.meetingService.saveCurrentUserMeetingConfig(
@@ -274,6 +304,11 @@ export class MeetingController {
     description:
       'Client athenticates an octopus user for a meeting. Client must have manageMeeting permission.',
     schema: { type: 'string', example: 'OK' },
+  })
+  @ApiNotFoundResponse({
+    description:
+      "Error thrown is meeting doesn't exist or current user doesn't have the priviledge to join",
+    schema: errorResponseDoc(404, 'Meeting not found', 'MEETING_NOT_FOUND'),
   })
   @ValidationBadRequest()
   @IsClientAuthenticated(['manageMeeting'])

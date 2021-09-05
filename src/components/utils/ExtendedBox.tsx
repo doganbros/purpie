@@ -1,9 +1,9 @@
-import { BoxProps, Box, Grommet } from 'grommet';
+import { Box, Grommet, BoxExtendedProps } from 'grommet';
 import React, { FC } from 'react';
 import { css } from 'styled-components';
 import { theme } from '../../config/app-config';
 
-interface Props extends BoxProps {
+interface Props extends BoxExtendedProps {
   position?: string;
   top?: string;
   left?: string;
@@ -12,10 +12,16 @@ interface Props extends BoxProps {
   minWidth?: string;
   minHeight?: string;
   opacity?: string;
+  transition?: string;
+  transform?: string;
+  userSelect?: string;
+  innerRef?: React.LegacyRef<HTMLDivElement>;
 }
 
 const ExtendedBoxCSS = css`
   position: ${(props: Props) => props.position};
+  transition: ${(props: Props) => props.transition};
+  transform: ${(props: Props) => props.transform};
   top: ${(props: Props) => props.top};
   left: ${(props: Props) => props.left};
   right: ${(props: Props) => props.right};
@@ -23,9 +29,10 @@ const ExtendedBoxCSS = css`
   min-width: ${(props: Props) => props.minWidth};
   min-height: ${(props: Props) => props.minWidth};
   opacity: ${(props: Props) => props.opacity};
+  user-select: ${(props: Props) => props.userSelect};
 `;
 
-const ExtendedBox: FC<Props> = (props) => {
+const ExtendedBox: FC<Props> = ({ innerRef, ...props }) => {
   return (
     <Grommet
       theme={{
@@ -35,7 +42,7 @@ const ExtendedBox: FC<Props> = (props) => {
         },
       }}
     >
-      <Box {...props} />
+      <Box ref={innerRef} {...props} />
     </Grommet>
   );
 };

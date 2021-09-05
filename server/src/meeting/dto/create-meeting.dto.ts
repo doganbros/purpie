@@ -19,7 +19,6 @@ import { timeZones } from 'entities/data/time-zones';
 export class CreateMeetingDto {
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
   @IsOptional()
   title?: string;
 
@@ -34,6 +33,12 @@ export class CreateMeetingDto {
   @MinDate(new Date())
   @Type(() => Date)
   startDate?: Date;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  endDate?: Date;
 
   @ApiProperty()
   @ValidateIf((o) => {

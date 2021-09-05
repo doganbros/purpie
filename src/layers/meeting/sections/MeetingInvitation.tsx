@@ -1,82 +1,66 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useRef } from 'react';
 import { TextInput, FormField, Box, Text } from 'grommet';
-import { Add, User } from 'grommet-icons';
-
-const users = [
-  'umit@doganbros.com',
-  'koray@doganbros.com',
-  'anas@doganbros.com',
-  'kusi@doganbros.com',
-  'tolga@doganbros.com',
-  'seyma@doganbros.com',
-];
+import { useDispatch, useSelector } from 'react-redux';
+import { Close, User } from 'grommet-icons';
+import { useDebouncer } from '../../../hooks/useDebouncer';
+import { AppState } from '../../../store/reducers/root.reducer';
+import {
+  addUserToInvitationsAction,
+  getUserSuggestionsForMeetingAction,
+  removeUserFromInvitationsAction,
+} from '../../../store/actions/meeting.action';
 
 const MeetingInvitation: FC = () => {
-  const [suggestionsList, setSuggestionsList] = useState<string[]>(users);
-  const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
-  const [invitedUser, setInvitedUser] = useState<string>('');
+  const debouncer = useDebouncer();
+  const textInput = useRef<HTMLInputElement>(null);
+
+  const dispatch = useDispatch();
+
+  const {
+    auth: { user: currentUser },
+    meeting: {
+      createMeeting: {
+        userSuggestions,
+        invitedUsers,
+        form: { payload },
+      },
+    },
+  } = useSelector((state: AppState) => state);
 
   const onChange = (value: string) => {
-    setInvitedUser(value);
-    const filteredUsers = users.filter((item) => item.includes(value));
-    setSuggestionsList(filteredUsers);
+    dispatch(
+      getUserSuggestionsForMeetingAction(
+        value,
+        [currentUser!.id, ...invitedUsers.map((v) => v.value)],
+        payload?.userContactExclusive,
+        payload?.channelId
+      )
+    );
   };
 
-  const addUser = () => {
-    if (!users.includes(invitedUser)) {
-      return;
-    }
-    const temp = JSON.parse(JSON.stringify(invitedUsers));
-    temp.push(invitedUser);
-    setInvitedUsers(temp);
-    setInvitedUser('');
+  const removeUserInvitation = (value: number) => {
+    dispatch(removeUserFromInvitationsAction(value));
   };
 
-  useEffect(() => {}, [invitedUsers]);
   return (
     <>
       <FormField name="user" htmlFor="userInput">
         <TextInput
           id="userInput"
+          ref={textInput}
           name="user"
           placeholder="Type a name or email"
-          suggestions={suggestionsList}
-          onChange={(e: any) => onChange(e.target.value)}
-          value={invitedUser}
+          suggestions={userSuggestions.map((user) => ({
+            value: user.id,
+            label: `${user.firstName} ${user.lastName} - ${user.email}`,
+          }))}
+          onChange={(e: any) => debouncer(() => onChange(e.target.value), 300)}
           onSuggestionSelect={(e) => {
-            setInvitedUser(e.suggestion);
+            dispatch(addUserToInvitationsAction(e.suggestion));
+            if (textInput.current) textInput.current.value = '';
           }}
         />
       </FormField>
-      <Box
-        direction="row"
-        align="center"
-        onClick={() => {
-          addUser();
-        }}
-        focusIndicator={false}
-      >
-        <Box
-          alignSelf="center"
-          width="min-content"
-          background="white"
-          border={{ size: 'small', color: 'brand' }}
-          round="large"
-          pad={{ vertical: 'xsmall', horizontal: 'xsmall' }}
-        >
-          <Add color="brand" size="small" />
-        </Box>
-        <Text
-          color="brand"
-          size="small"
-          margin={{ left: 'small', right: 'xsmall' }}
-        >
-          Add People
-        </Text>
-        <Text color="#8F9BB3" size="small">
-          from different channel
-        </Text>
-      </Box>
       {invitedUsers.length > 0 && (
         <Box
           overflow={{ vertical: 'scroll' }}
@@ -90,7 +74,13 @@ const MeetingInvitation: FC = () => {
           }}
         >
           {invitedUsers.map((item) => (
-            <Box direction="row" gap="medium" margin={{ top: 'small' }}>
+            <Box
+              direction="row"
+              gap="medium"
+              margin={{ top: 'small' }}
+              align="center"
+              key={item.value}
+            >
               <Box
                 border={{ size: 'small', color: 'black' }}
                 round="large"
@@ -101,11 +91,15 @@ const MeetingInvitation: FC = () => {
               </Box>
               <Box>
                 <Text color="black" size="small">
-                  {item}
+                  {item.label}
                 </Text>
-                <Text color="#8F9BB3" size="xsmall">
-                  Developer
-                </Text>
+              </Box>
+              <Box flex={{ grow: 1 }} align="end">
+                <Close
+                  size="small"
+                  cursor="pointer"
+                  onClick={() => removeUserInvitation(item.value)}
+                />
               </Box>
             </Box>
           ))}

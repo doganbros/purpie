@@ -38,6 +38,7 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
     meeting: {
       createMeeting: {
         planDialogCurrentIndex,
+        invitedUsers,
         form: { payload: formPayload, submitting },
       },
       userMeetingConfig,
@@ -69,7 +70,13 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
   if (!visible) return null;
 
   const submitMeeting = () => {
-    if (formPayload) dispatch(createMeetingAction(formPayload));
+    if (formPayload)
+      dispatch(
+        createMeetingAction({
+          ...formPayload,
+          invitationIds: invitedUsers.map((u) => u.value),
+        })
+      );
   };
 
   const content = [
@@ -144,8 +151,10 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
               </Box>
             ))}
           </Box>
-          <Box height="275px">
-            {formPayload && content[planDialogCurrentIndex]?.component}
+          <Box overflow="auto" height="100%">
+            <Box flex={false}>
+              {formPayload && content[planDialogCurrentIndex]?.component}
+            </Box>
           </Box>
           <Box direction="row" gap="small" justify="end">
             {planDialogCurrentIndex !== 0 && (
