@@ -1,14 +1,14 @@
 import React, { FC, useRef, useEffect } from 'react';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
-import '@videojs/themes/dist/fantasy/index.css';
+import './video-player.css';
 
 interface IVideoPlayerProps {
   options: videojs.PlayerOptions;
 }
 
 const initialOptions: videojs.PlayerOptions = {
-  autoplay: true,
+  autoplay: false,
   muted: false,
   controls: true,
   fluid: true,
@@ -37,7 +37,11 @@ const VideoPlayer: FC<IVideoPlayerProps> = ({ options }) => {
 
   return (
     // eslint-disable-next-line jsx-a11y/media-has-caption
-    <video ref={videoNode} className="video-js vjs-theme-fantasy" playsInline />
+    <video
+      ref={videoNode}
+      className="video-js vjs-big-play-centered octopus-player"
+      playsInline
+    />
   );
 };
 

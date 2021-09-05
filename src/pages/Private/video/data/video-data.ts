@@ -9,6 +9,7 @@ export const videoPlayerOptions: videojs.PlayerOptions = {
       type: 'video/mp4',
     },
   ],
+  poster: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Bbb-splash.png',
 };
 
 export const videoMetadata = {
