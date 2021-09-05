@@ -8,7 +8,8 @@ interface IVideoPlayerProps {
 }
 
 const initialOptions: videojs.PlayerOptions = {
-  // autoplay: true,
+  autoplay: true,
+  muted: false,
   controls: true,
   fluid: true,
   controlBar: {
@@ -26,9 +27,7 @@ const VideoPlayer: FC<IVideoPlayerProps> = ({ options }) => {
     player.current = videojs(videoNode.current || '', {
       ...initialOptions,
       ...options,
-    }).ready(() => {
-      // console.log('onPlayerReady');
-    });
+    }).ready(() => {});
     return () => {
       if (player.current) {
         player.current.dispose();
@@ -36,8 +35,10 @@ const VideoPlayer: FC<IVideoPlayerProps> = ({ options }) => {
     };
   }, [options]);
 
-  // eslint-disable-next-line jsx-a11y/media-has-caption
-  return <video ref={videoNode} className="video-js vjs-theme-fantasy" />;
+  return (
+    // eslint-disable-next-line jsx-a11y/media-has-caption
+    <video ref={videoNode} className="video-js vjs-theme-fantasy" playsInline />
+  );
 };
 
 export default VideoPlayer;
