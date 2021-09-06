@@ -3,11 +3,17 @@ import { Avatar, Box, Button, Text } from 'grommet';
 
 interface ChannelListItemProps {
   id: number;
+  zoneSubdomain: string;
   name: string;
   src: string;
 }
 
-const ChannelListItem: FC<ChannelListItemProps> = ({ id, name, src }) => (
+const ChannelListItem: FC<ChannelListItemProps> = ({
+  // id,
+  name,
+  src,
+  zoneSubdomain,
+}) => (
   <Box direction="row" justify="between" align="center">
     <Box direction="row" align="center" gap="small">
       <Avatar size="medium" src={src} />
@@ -16,7 +22,7 @@ const ChannelListItem: FC<ChannelListItemProps> = ({ id, name, src }) => (
           {name}
         </Text>
         <Text size="xsmall" color="status-disabled">
-          {id}
+          {zoneSubdomain}
         </Text>
       </Box>
     </Box>

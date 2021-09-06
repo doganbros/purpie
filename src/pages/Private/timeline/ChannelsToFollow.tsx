@@ -45,6 +45,7 @@ const ChannelsToFollow: FC = () => {
               <ChannelListItem
                 key={c.channel_id}
                 id={c.channel_id}
+                zoneSubdomain={c.zone_subdomain}
                 name={c.channel_name}
                 src={channelAvatarSrc[i % channelAvatarSrc.length]}
               />
