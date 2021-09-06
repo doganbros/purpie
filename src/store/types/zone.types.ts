@@ -18,6 +18,9 @@ import {
   GET_USER_ZONE_BY_ID_SUCCESS,
   INVITE_TO_ZONE_FAILED,
   INVITE_TO_ZONE_REQUESTED,
+  JOIN_ZONE_FAILED,
+  JOIN_ZONE_REQUESTED,
+  JOIN_ZONE_SUCCESS,
   SET_CURRENT_USER_ZONE,
   UPDATE_ZONE_FAILED,
   UPDATE_ZONE_REQUESTED,
@@ -77,7 +80,10 @@ export interface ZoneState {
     userZones: Array<UserZoneListItem> | null;
     error: ResponseError | null;
   };
-
+  joinZone: {
+    loading: boolean;
+    error: ResponseError | null;
+  };
   getUserZoneDetailById: {
     loading: boolean;
     userZone: UserZoneDetail | null;
@@ -101,7 +107,8 @@ export type ZoneActionParams =
         | typeof DELETE_USER_ZONE_REQUESTED
         | typeof GET_CURRENT_USER_ZONE_REQUESTED
         | typeof INVITE_TO_ZONE_REQUESTED
-        | typeof DELETE_ZONE_REQUESTED;
+        | typeof DELETE_ZONE_REQUESTED
+        | typeof JOIN_ZONE_SUCCESS;
     }
   | {
       type:
@@ -112,12 +119,17 @@ export type ZoneActionParams =
         | typeof GET_CURRENT_USER_ZONE_FAILED
         | typeof INVITE_TO_ZONE_FAILED
         | typeof DELETE_ZONE_FAILED
-        | typeof UPDATE_ZONE_FAILED;
+        | typeof UPDATE_ZONE_FAILED
+        | typeof JOIN_ZONE_FAILED;
       payload: ResponseError;
     }
   | {
       type: typeof GET_USER_ZONES_SUCCESS;
       payload: Array<UserZoneListItem>;
+    }
+  | {
+      type: typeof JOIN_ZONE_REQUESTED;
+      payload: number;
     }
   | {
       type:

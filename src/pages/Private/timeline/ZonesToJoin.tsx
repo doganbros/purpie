@@ -47,6 +47,7 @@ const ZonesToJoin: FC = () => {
             .map((z, i) => (
               <ZoneListItem
                 key={z.zone_id}
+                id={z.zone_id}
                 name={z.zone_name}
                 channelCount={+z.zone_channelCount}
                 memberCount={+z.zone_membersCount}

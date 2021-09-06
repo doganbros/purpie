@@ -9,6 +9,9 @@ import {
   GET_USER_ZONE_BY_ID_FAILED,
   GET_USER_ZONE_BY_ID_REQUESTED,
   GET_USER_ZONE_BY_ID_SUCCESS,
+  JOIN_ZONE_FAILED,
+  JOIN_ZONE_REQUESTED,
+  JOIN_ZONE_SUCCESS,
   SET_CURRENT_USER_ZONE,
 } from '../constants/zone.constants';
 import { ZoneActionParams, ZoneState } from '../types/zone.types';
@@ -16,7 +19,10 @@ import { ZoneActionParams, ZoneState } from '../types/zone.types';
 const initialState: ZoneState = {
   selectedUserZone: null,
   userZoneInitialized: false,
-
+  joinZone: {
+    error: null,
+    loading: false,
+  },
   getUserZones: {
     loading: false,
     userZones: null,
@@ -76,6 +82,30 @@ const zoneReducer = (
           loading: false,
           userZones: null,
           error: null,
+        },
+      };
+    case JOIN_ZONE_REQUESTED:
+      return {
+        ...state,
+        joinZone: {
+          loading: true,
+          error: null,
+        },
+      };
+    case JOIN_ZONE_SUCCESS:
+      return {
+        ...state,
+        joinZone: {
+          loading: false,
+          error: null,
+        },
+      };
+    case JOIN_ZONE_FAILED:
+      return {
+        ...state,
+        joinZone: {
+          loading: false,
+          error: action.payload,
         },
       };
     case GET_USER_ZONE_BY_ID_REQUESTED:
