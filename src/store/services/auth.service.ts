@@ -27,8 +27,11 @@ export const resetPassword = async ({
 
 export const verifyUserEmail = async ({
   token,
+  userName,
 }: VerifyEmailPayload): Promise<any> => {
-  return http.post('/auth/verify-email', { token }).then((res) => res.data);
+  return http
+    .post('/auth/verify-email', { token, userName })
+    .then((res) => res.data);
 };
 
 export const resendMailVerificationToken = async (
@@ -43,6 +46,15 @@ export const resetPasswordRequest = (email: string): Promise<any> =>
   http.post('/auth/reset-password-request', {
     email,
   });
+
+export const userNameExistsCheck = (
+  userName: string
+): Promise<{ exists: boolean; userName: string }> =>
+  http
+    .post('/user/user-name-check', {
+      userName,
+    })
+    .then((res) => res.data);
 
 export const authenticateWithThirdPartyCode = async (
   name: string,

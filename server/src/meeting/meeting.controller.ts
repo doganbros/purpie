@@ -231,6 +231,20 @@ export class MeetingController {
     return result;
   }
 
+  @Get('logs/list/:meetingSlug')
+  @ApiOkResponse({
+    description: 'User gets meeting logs',
+  })
+  @PaginationQueryParams()
+  @IsAuthenticated()
+  async getMeetingLogs(
+    @CurrentUser() user: UserPayload,
+    @Param('meetingSlug') meetingSlug: string,
+    @Query() query: PaginationQuery,
+  ) {
+    return this.meetingService.getMeetingLogs(user.id, meetingSlug, query);
+  }
+
   @Get('list/public')
   @ApiOkResponse({
     description: 'User lists public meetings',

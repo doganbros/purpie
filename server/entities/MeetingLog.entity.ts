@@ -1,20 +1,12 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { MeetingEvent } from 'types/MeetingEvent';
+import { RecordEntity } from './base/RecordEntity';
 import { Meeting } from './Meeting.entity';
 import { User } from './User.entity';
 
 @Entity()
-export class MeetingAttendance extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
+export class MeetingLog extends RecordEntity {
+  @Column({ nullable: true })
   userId: number;
 
   @Column()
@@ -29,8 +21,8 @@ export class MeetingAttendance extends BaseEntity {
   meeting: Meeting;
 
   @Column()
-  startDate: Date;
+  event: MeetingEvent;
 
-  @Column({ nullable: true })
-  endDate: Date;
+  @Column({ nullable: true, type: 'simple-json' })
+  extraInfo: string;
 }

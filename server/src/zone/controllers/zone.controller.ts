@@ -35,7 +35,7 @@ import { ZoneService } from '../zone.service';
 import { EditZoneDto } from '../dto/edit-zone.dto';
 import { CreateZoneDto } from '../dto/create-zone.dto';
 
-@Controller('zone')
+@Controller({ version: '1', path: 'zone' })
 @ApiTags('zone')
 export class ZoneController {
   constructor(private zoneService: ZoneService) {}

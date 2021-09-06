@@ -321,6 +321,18 @@ export class AuthService {
     });
   }
 
+  getUserByEmailOrUserName(value: string) {
+    return this.userRepository.findOne({
+      where: [
+        {
+          email: value,
+        },
+        { userName: value },
+      ],
+      relations: ['userRole'],
+    });
+  }
+
   async verifyResendMailVerificationToken(userId: number) {
     const user = await this.userRepository.findOne({
       where: {
@@ -359,7 +371,11 @@ export class AuthService {
     return user;
   }
 
-  async verifyUserEmail(email: string, token: string): Promise<UserBasic> {
+  async verifyUserEmail(
+    email: string,
+    userName: string,
+    token: string,
+  ): Promise<UserBasic> {
     const user = await this.userRepository.findOne({
       where: {
         email,
@@ -377,6 +393,7 @@ export class AuthService {
 
     user.emailConfirmed = true;
     user.mailVerificationToken = null!;
+    user.userName = userName;
     await user.save();
     return {
       firstName: user.firstName,
