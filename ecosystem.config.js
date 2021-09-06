@@ -25,7 +25,7 @@ module.exports = {
       {
         name: 'API_LOCAL',
         script: 'server/dist/src/main.js',
-        watch: true,
+        watch: false,
         exec_mode: 'fork',
         ignoreWatch: ['.idea/*', '.git/*'],
         log_date_format: 'DD-MM-YY HH:mm',
