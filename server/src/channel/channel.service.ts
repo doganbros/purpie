@@ -38,6 +38,7 @@ export class ChannelService {
           .create({
             name: createChannelInfo.name,
             zoneId,
+            public: createChannelInfo.public,
             description: createChannelInfo.description,
             topic: createChannelInfo.topic,
             categoryId: defaultChannel ? null : createChannelInfo.categoryId,

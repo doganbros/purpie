@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -20,7 +19,7 @@ import {
   separateString,
 } from 'helpers/utils';
 import { Contact } from 'entities/Contact.entity';
-import { MeetingAttendance } from 'entities/MeetingAttendance.entity';
+import { MeetingLog } from 'entities/MeetingLog.entity';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { Channel } from 'entities/Channel.entity';
 import { baseMeetingConfig } from 'entities/data/base-meeting-config';
@@ -44,9 +43,9 @@ const {
 export class MeetingService {
   constructor(
     @InjectRepository(Meeting) private meetingRepository: Repository<Meeting>,
+    @InjectRepository(MeetingLog)
+    private meetingLogRepository: Repository<MeetingLog>,
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(MeetingAttendance)
-    private meetingAttendanceRepository: Repository<MeetingAttendance>,
     @InjectRepository(UserChannel)
     private userChannelRepository: Repository<UserChannel>,
     private mailService: MailService,
@@ -256,6 +255,37 @@ export class MeetingService {
       .paginate(query);
   }
 
+  async getMeetingLogs(
+    userId: number,
+    meetingSlug: string,
+    query: PaginationQuery,
+  ) {
+    return this.meetingLogRepository
+      .createQueryBuilder('meeting_log')
+      .select([
+        'meeting_log.id',
+        'meeting_log.createdOn',
+        'meeting_log.extraInfo',
+        'meeting_log.event',
+        'meeting.id',
+        'meeting.title',
+        'meeting.slug',
+        'meeting.description',
+        'user.id',
+        'user.userName',
+        'user.email',
+        'user.firstName',
+        'user.lastName',
+      ])
+      .innerJoin('meeting_log.meeting', 'meeting')
+      .leftJoin('meeting_log.user', 'user')
+      .where(
+        'meeting.createdBy = :userId AND meeting_log.meetingSlug = :meetingSlug',
+        { userId, meetingSlug },
+      )
+      .paginate(query);
+  }
+
   async getUserMeetings(userId: number, query: PaginationQuery) {
     return this.meetingSelections
       .addSelect([
@@ -353,46 +383,30 @@ export class MeetingService {
   }
 
   async setMeetingStatus(info: ClientMeetingEventDto) {
+    const meetingLog = this.meetingLogRepository.create({
+      event: info.event,
+      meetingSlug: info.meetingTitle,
+    });
+
     if (info.event === 'started') {
-      return this.meetingRepository.update(
+      await this.meetingRepository.update(
         { slug: info.meetingTitle, conferenceStartDate: IsNull() },
         { conferenceStartDate: new Date() },
       );
     }
 
-    if (info.event === 'ended')
-      return this.meetingRepository.update(
+    if (info.event === 'ended') {
+      await this.meetingRepository.update(
         { slug: info.meetingTitle, conferenceEndDate: IsNull() },
         { conferenceEndDate: new Date() },
       );
-
-    if (info.event === 'user_joined') {
-      const userJoined = await this.meetingAttendanceRepository.findOne({
-        userId: info.userId,
-        meetingSlug: info.meetingTitle,
-        endDate: IsNull(),
-      });
-      if (userJoined)
-        throw new BadRequestException(
-          'User already joined the meeting but has not left yet',
-          'USER_ALREADY_JOINED',
-        );
-      return this.meetingAttendanceRepository
-        .create({
-          userId: info.userId,
-          startDate: new Date(),
-          meetingSlug: info.meetingTitle,
-        })
-        .save();
     }
 
-    return this.meetingAttendanceRepository.update(
-      {
-        userId: info.userId,
-        meetingSlug: info.meetingTitle,
-        endDate: IsNull(),
-      },
-      { endDate: new Date() },
-    );
+    // user events
+
+    if (['user_joined', 'user_left'].includes(info.event))
+      meetingLog.userId = info.userId!;
+
+    return meetingLog.save();
   }
 }

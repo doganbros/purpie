@@ -37,7 +37,7 @@ const MeetingPrivacy: FC = () => {
                 dispatch(
                   setMeetingFormFieldAction({
                     public: v,
-                    userContactExclusive: false,
+                    userContactExclusive: !v,
                     channelId: null,
                   })
                 );
@@ -51,7 +51,7 @@ const MeetingPrivacy: FC = () => {
                 dispatch(
                   setMeetingFormFieldAction({
                     userContactExclusive: v,
-                    public: false,
+                    public: !v,
                     channelId: null,
                   })
                 );

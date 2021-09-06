@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import { Box, Button, Text, Layer, Form } from 'grommet';
 import { Close } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,6 +20,7 @@ import {
 } from '../../store/actions/meeting.action';
 import { CreateMeetingPayload } from '../../store/types/meeting.types';
 import { appSubdomain } from '../../helpers/app-subdomain';
+import { useResponsive } from '../../hooks/useResponsive';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -33,6 +34,8 @@ interface Props {
 
 const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
   const dispatch = useDispatch();
+  const size = useResponsive();
+  const bar = useRef<HTMLDivElement>(null);
 
   const {
     meeting: {
@@ -108,7 +111,13 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
   ];
   return (
     <Layer onClickOutside={onClose}>
-      <Form onSubmit={() => dispatch(planMeetingDialogForwardAction)}>
+      <Form
+        onSubmit={() => {
+          if (size === 'small' && bar.current)
+            bar.current.scrollLeft = planDialogCurrentIndex * 100;
+          dispatch(planMeetingDialogForwardAction);
+        }}
+      >
         <Box
           width="750px"
           height="505px"
@@ -127,9 +136,22 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
               <Close color="brand" />
             </Button>
           </Box>
-          <Box direction="row" gap="small" justify="center">
+          <Box
+            direction="row"
+            gap="small"
+            width="750px"
+            flex={false}
+            overflow="auto"
+            ref={bar}
+          >
             {content.map((item, i) => (
-              <Box key={item.id} gap="small" direction="row" align="center">
+              <Box
+                key={item.id}
+                gap="small"
+                direction="row"
+                align="center"
+                flex={false}
+              >
                 <Text
                   size="small"
                   weight={planDialogCurrentIndex >= i ? 'bold' : 'normal'}
@@ -169,7 +191,11 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
                   height: 46,
                   fontWeight: 'bold',
                 }}
-                onClick={() => dispatch(planMeetingDialogBackAction)}
+                onClick={() => {
+                  if (size === 'small' && bar.current)
+                    bar.current.scrollLeft = planDialogCurrentIndex * 100 - 100;
+                  dispatch(planMeetingDialogBackAction);
+                }}
               />
             )}
             <Button

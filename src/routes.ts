@@ -6,6 +6,7 @@ import ForgotPassword from './pages/Public/ForgotPassword';
 import ResetPassword from './pages/Public/ResetPassword';
 import Timeline from './pages/Private/timeline/Timeline';
 import Channels from './pages/Private/channels/Channels';
+import Video from './pages/Private/video/Video';
 import ThirdPartyAuth from './pages/Public/ThirdPartyAuth';
 import VerifyUserEmailInfo from './pages/Public/VerifyUserEmailInfo';
 import VerifyUserEmail from './pages/Public/VerifyUserEmail';
@@ -77,5 +78,11 @@ export const privateRoutes: Array<AppRoute> = [
     path: '/channels',
     component: Channels,
     description: 'User views channels',
+  },
+  {
+    id: nanoid(),
+    path: '/video/:id',
+    component: Video,
+    description: 'User views a video',
   },
 ];

@@ -49,10 +49,12 @@ const MeetingInvitation: FC = () => {
           id="userInput"
           ref={textInput}
           name="user"
-          placeholder="Type a name or email"
+          placeholder="Type a name, username or email"
           suggestions={userSuggestions.map((user) => ({
             value: user.id,
-            label: `${user.firstName} ${user.lastName} - ${user.email}`,
+            label: `${user.firstName} ${user.lastName}${
+              user.userName ? ` @${user.userName}` : ''
+            }`,
           }))}
           onChange={(e: any) => debouncer(() => onChange(e.target.value), 300)}
           onSuggestionSelect={(e) => {
