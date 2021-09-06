@@ -80,7 +80,7 @@ export const validators = {
   numeric: (message?: string) => ruleWrapper(isNumeric, numericMsg, message),
   alpha: (message?: string) => ruleWrapper(isAlpha, alphaMsg, message),
   matches: (pattern: RegExp, message?: string) =>
-    ruleWrapper(matches(pattern), regexMsg, message),
+    ruleWrapper(matches(pattern), message || regexMsg),
   alphaNumeric: (message?: string) =>
     ruleWrapper(isAlphanumeric, alphaNumericMsg, message),
   int: (message?: string) => ruleWrapper(isInt, intMsg, message),

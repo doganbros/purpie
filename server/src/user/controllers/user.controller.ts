@@ -25,11 +25,13 @@ import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-par
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { emptyPaginatedResponse } from 'helpers/utils';
 import { PaginationQuery } from 'types/PaginationQuery';
+import { UserNameExistenceCheckDto } from 'src/meeting/dto/user-name-existence-check.dto';
 import { ContactIdParam } from '../dto/contact-id.param';
 import { ContactInvitationResponseDto } from '../dto/contact-invitation-response.dto';
 import {
   ContactInvitationListResponse,
   ContactListResponse,
+  UserNameExistenceCheckResponse,
 } from '../responses/user.reponse';
 import { CreateContactDto } from '../dto/create-contact.dto';
 import { SearchUsersQuery } from '../dto/search-users.query';
@@ -162,6 +164,17 @@ export class UserController {
   async setRole(@Body() info: SetUserRoleDto) {
     await this.userService.setUserRole(info);
     return 'OK';
+  }
+
+  @Post('user-name-check')
+  @ApiCreatedResponse({
+    description: 'Checks if user name provided has already been taken.',
+    type: UserNameExistenceCheckResponse,
+  })
+  @ValidationBadRequest()
+  async userNameExistenceCheck(@Body() info: UserNameExistenceCheckDto) {
+    const user = await this.userService.userNameExists(info.userName);
+    return { userName: info.userName, exists: !!user };
   }
 
   @Get('/contact/list')

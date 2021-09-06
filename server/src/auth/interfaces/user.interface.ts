@@ -15,6 +15,9 @@ export class UserPayload {
   @ApiProperty()
   email: string;
 
+  @ApiProperty()
+  userName?: string | null;
+
   @ApiProperty({
     type: 'object',
     properties: {

@@ -100,9 +100,14 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<UserPayload> {
     if (subdomain)
-      await this.authService.subdomainValidity(subdomain, loginUserDto.email);
+      await this.authService.subdomainValidity(
+        subdomain,
+        loginUserDto.emailOrUserName,
+      );
 
-    const user = await this.authService.getUserByEmail(loginUserDto.email);
+    const user = await this.authService.getUserByEmailOrUserName(
+      loginUserDto.emailOrUserName,
+    );
 
     if (!user)
       throw new NotFoundException(
@@ -126,6 +131,7 @@ export class AuthController {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      userName: user.userName,
       userRole: {
         ...user.userRole,
       },
@@ -187,9 +193,9 @@ export class AuthController {
       ),
     )
     { email }: UserBasic,
-    @Body() { token }: VerifyEmailDto,
+    @Body() { token, userName }: VerifyEmailDto,
   ) {
-    const user = await this.authService.verifyUserEmail(email, token);
+    const user = await this.authService.verifyUserEmail(email, userName, token);
     return user;
   }
 

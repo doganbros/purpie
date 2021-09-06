@@ -1,12 +1,13 @@
 import { IsIn, IsInt, IsNotEmpty, IsString, ValidateIf } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { MeetingEvent } from 'types/MeetingEvent';
 
 const events = ['ended', 'started', 'user_joined', 'user_left'];
 export class ClientMeetingEventDto {
   @ApiProperty({ enum: events })
   @IsIn(events)
   @IsNotEmpty()
-  event: 'ended' | 'started' | 'user_joined' | 'user_left';
+  event: MeetingEvent;
 
   @ApiProperty()
   @IsString()

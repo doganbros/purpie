@@ -77,3 +77,9 @@ export class ContactListResponse {
   @ApiProperty()
   skip: number;
 }
+
+export class UserNameExistenceCheckResponse {
+  userName: string;
+
+  exist: boolean;
+}

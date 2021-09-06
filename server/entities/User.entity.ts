@@ -24,6 +24,10 @@ export class User extends RecordEntity {
 
   @Column()
   @ApiProperty()
+  userName: string;
+
+  @Column()
+  @ApiProperty()
   lastName: string;
 
   @Column({ unique: true })
