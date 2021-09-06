@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Avatar, Box, Button, Text } from 'grommet';
 
 interface ChannelListItemProps {
-  id: string;
+  id: number;
   name: string;
   src: string;
 }
