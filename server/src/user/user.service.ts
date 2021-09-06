@@ -35,7 +35,13 @@ export class UserService {
   userBaseSelect(excludeUserIds: Array<number>, query: PaginationQuery) {
     return this.userRepository
       .createQueryBuilder('user')
-      .select(['user.id', 'user.firstName', 'user.lastName', 'user.email'])
+      .select([
+        'user.id',
+        'user.firstName',
+        'user.lastName',
+        'user.email',
+        'user.userName',
+      ])
       .where(
         new Brackets((qb) => {
           qb.where(
@@ -43,7 +49,13 @@ export class UserService {
             {
               name: `${query.name.toLowerCase()}%`,
             },
-          ).orWhere('user.email LIKE :email', { email: `%${query.name}%` });
+          )
+            .orWhere('user.email LIKE :email', {
+              email: `${query.name.toLowerCase()}%`,
+            })
+            .orWhere('user.userName LIKE :userName', {
+              userName: `${query.name.toLowerCase()}%`,
+            });
         }),
       )
       .andWhere('user.id not IN (:...excludeUserIds)', { excludeUserIds });
@@ -154,5 +166,9 @@ export class UserService {
     return this.userRepository.update(info.userId, {
       userRoleCode: info.roleCode,
     });
+  }
+
+  async userNameExists(userName: string) {
+    return this.userRepository.findOne({ where: { userName }, select: ['id'] });
   }
 }

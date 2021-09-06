@@ -41,6 +41,7 @@ export interface UserRole {
 export interface User {
   id: number;
   firstName: string;
+  userName?: string;
   lastName: string;
   email: string;
   userRole?: UserRole;
@@ -90,7 +91,7 @@ export interface AuthState {
 }
 
 export interface LoginPayload {
-  email: string;
+  emailOrUserName: string;
   password: string;
 }
 
@@ -108,6 +109,7 @@ export interface ResetPasswordPayload {
 
 export interface VerifyEmailPayload {
   token: string;
+  userName: string;
 }
 
 export type AuthActionParams =

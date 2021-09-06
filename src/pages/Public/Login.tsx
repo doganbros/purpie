@@ -66,12 +66,12 @@ const Login: FC = () => {
       <>
         <Form onSubmit={handleSubmit}>
           <FormField
-            name="email"
-            htmlFor="emailInput"
+            name="emailOrUserName"
+            htmlFor="emailOrUserNameInput"
             label="EMAIL"
-            validate={[validators.required(), validators.email()]}
+            validate={[validators.required()]}
           >
-            <TextInput id="emailInput" name="email" type="email" />
+            <TextInput id="emailOrUserNameInput" name="emailOrUserName" />
           </FormField>
           <FormField
             name="password"
