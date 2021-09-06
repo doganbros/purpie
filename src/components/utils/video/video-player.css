@@ -1,0 +1,102 @@
+.octopus-player {
+  font-size: 1em;
+  font-family: inherit;
+}
+
+.octopus-player .vjs-big-play-button {
+  color: white;
+  font-size: 7em;
+  background: none;
+  border: none;
+}
+
+.octopus-player.video-js:hover .vjs-big-play-button {
+  color: #9060eb;
+  background: none;
+  border: none;
+}
+
+.octopus-player .vjs-control-bar {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.octopus-player .vjs-progress-holder.vjs-slider.vjs-slider-horizontal {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.octopus-player .vjs-load-progress {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 1em;
+}
+
+.octopus-player .vjs-load-progress div {
+  background: none;
+}
+
+.octopus-player .vjs-progress-control:hover .vjs-progress-holder {
+  font-size: 1.5em;
+}
+
+.octopus-player .vjs-progress-control .vjs-progress-holder {
+  font-size: 1.5em;
+}
+
+.octopus-player .vjs-play-progress::before {
+  transform: scale(0, 0);
+}
+
+.octopus-player
+  .vjs-progress-control:hover
+  .vjs-progress-holder
+  .vjs-play-progress::before {
+  transform: scale(1, 1);
+}
+
+.octopus-player .vjs-progress-control .vjs-progress-holder {
+  border-radius: 1em;
+}
+
+.octopus-player .vjs-play-progress.vjs-slider-bar {
+  color: #9060eb;
+  background-color: #9060eb;
+  border-radius: 1em;
+  min-width: 0.3em;
+}
+
+.octopus-player .vjs-mouse-display .vjs-time-tooltip {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.octopus-player .vjs-progress-control .vjs-mouse-display {
+  background-color: white;
+  width: 2px;
+}
+
+.octopus-player .vjs-play-progress.vjs-slider-bar .vjs-time-tooltip {
+  background-color: #9060eb;
+  color: white;
+}
+
+.octopus-player .vjs-volume-control {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.octopus-player .vjs-volume-level {
+  color: #9060eb;
+  background-color: #9060eb;
+  border-radius: 1em;
+}
+.octopus-player .vjs-volume-bar {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 1em;
+}
+
+.octopus-player .vjs-volume-control .vjs-mouse-display {
+  background-color: white;
+  height: 2px;
+}
+
+.octopus-player .vjs-volume-vertical:hover .vjs-volume-tooltip {
+  left: 2em;
+  background-color: rgba(0, 0, 0, 0.7);
+}
