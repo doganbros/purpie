@@ -23,6 +23,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: sudo yarn install
       - run: sudo yarn build
-      - run: "sudo pm2 stop API_LOCAL || :"
-      - run: "sudo pm2 delete API_LOCAL || :"
+      - run: "sudo pm2 stop API || :"
+      - run: "sudo pm2 delete API || :"
       - run: sudo yarn start:server
