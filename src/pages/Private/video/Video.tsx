@@ -12,12 +12,7 @@ interface RouteParams {
   id: string;
 }
 
-const Video: FC<RouteComponentProps<RouteParams>> = ({
-  match: {
-    params: { id },
-  },
-}) => {
-  console.log(id);
+const Video: FC<RouteComponentProps<RouteParams>> = () => {
   return (
     <PrivatePageLayout title={videoMetadata.name} rightComponent={<Messages />}>
       <Box gap="large" pad={{ vertical: 'medium' }}>
