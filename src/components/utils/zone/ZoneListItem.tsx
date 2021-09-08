@@ -25,7 +25,7 @@ const ZoneListItem: FC<ZoneListItemProps> = ({
     },
   } = useSelector((state: AppState) => state);
 
-  const isFollowing = () =>
+  const isFollowing =
     !!userZones && userZones.filter((z) => z.zone.id === id).length > 0;
 
   return (
@@ -45,12 +45,12 @@ const ZoneListItem: FC<ZoneListItemProps> = ({
         </Box>
       </Box>
       <Button
-        primary={!isFollowing()}
+        primary={!isFollowing}
         onClick={() => {
           dispatch(joinZoneAction(id));
         }}
-        disabled={isFollowing()}
-        label={isFollowing() ? 'Joined' : 'Join'}
+        disabled={isFollowing}
+        label={isFollowing ? 'Joined' : 'Join'}
         size="small"
       />
     </Box>
