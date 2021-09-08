@@ -44,7 +44,7 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
           dispatch(joinChannelAction(id));
         }}
         disabled={isFollowing}
-        label={isFollowing ? 'Joined' : 'Join'}
+        label={isFollowing ? 'Following' : 'Follow'}
         size="small"
       />
     </Box>
