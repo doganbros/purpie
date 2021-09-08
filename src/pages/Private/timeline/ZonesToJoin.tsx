@@ -44,14 +44,14 @@ const ZonesToJoin: FC = () => {
         ) : (
           zoneSuggestions.data
             .slice(0, displayCount)
-            .map((z, i) => (
+            .map((z) => (
               <ZoneListItem
                 key={z.zone_id}
                 id={z.zone_id}
                 name={z.zone_name}
                 channelCount={+z.zone_channelCount}
                 memberCount={+z.zone_membersCount}
-                src={zoneAvatarSrc[i % zoneAvatarSrc.length]}
+                src={zoneAvatarSrc[z.zone_id % zoneAvatarSrc.length]}
               />
             ))
         ))}

@@ -8,6 +8,7 @@ import {
 } from '../constants/channel.constants';
 import * as ChannelService from '../services/channel.service';
 import { ChannelAction } from '../types/channel.types';
+import { getUserZonesAction } from './zone.action';
 
 export const getUserChannelsAction = (): ChannelAction => {
   return async (dispatch) => {
@@ -41,6 +42,7 @@ export const joinChannelAction = (id: number): ChannelAction => {
         type: JOIN_CHANNEL_SUCCESS,
       });
       getUserChannelsAction()(dispatch);
+      getUserZonesAction()(dispatch);
     } catch (err) {
       dispatch({
         type: JOIN_CHANNEL_FAILED,

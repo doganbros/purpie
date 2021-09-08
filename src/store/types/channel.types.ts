@@ -9,7 +9,7 @@ import {
   JOIN_CHANNEL_SUCCESS,
 } from '../constants/channel.constants';
 import { User } from './auth.types';
-import { ZoneListItem } from './zone.types';
+import { ZoneActionParams, ZoneListItem } from './zone.types';
 
 export interface ChannelListItem {
   id: number;
@@ -62,7 +62,7 @@ export type ChannelActionParams =
     };
 
 export interface ChannelDispatch {
-  (dispatch: ChannelActionParams): void;
+  (dispatch: ChannelActionParams | ZoneActionParams): void;
 }
 
 export interface ChannelAction {

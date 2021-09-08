@@ -16,7 +16,7 @@ import Profile from './Profile';
 import Searchbar from './Searchbar';
 import VideoGridItem from '../../../components/utils/VideoGridItem';
 import { timeLineList } from './data/timeline-list';
-import { thirtyIds } from '../../../helpers/utils';
+import ChannelList from './ChannelList';
 
 const Timeline: FC = () => {
   const size = useContext(ResponsiveContext);
@@ -62,25 +62,7 @@ const Timeline: FC = () => {
           <LastActivities />
         </Box>
       }
-      topComponent={
-        <Box
-          fill
-          direction="row"
-          align="center"
-          gap="medium"
-          pad={{ horizontal: 'small' }}
-        >
-          {thirtyIds.map((v) => (
-            <Box key={v.id} align="center">
-              <Box width="45px" height="45px" round="45px" background="#eee" />
-              <Text size="small">Channel</Text>
-              <Text size="xsmall" color="dark-1">
-                Subtitle
-              </Text>
-            </Box>
-          ))}
-        </Box>
-      }
+      topComponent={<ChannelList />}
     >
       <Box pad={{ vertical: 'medium' }} gap="medium">
         <Box direction="row" justify="between" align="center">

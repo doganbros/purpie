@@ -41,13 +41,13 @@ const ChannelsToFollow: FC = () => {
         ) : (
           channelSuggestions.data
             .slice(0, displayCount)
-            .map((c, i) => (
+            .map((c) => (
               <ChannelListItem
                 key={c.channel_id}
                 id={c.channel_id}
                 zoneSubdomain={c.zone_subdomain}
                 name={c.channel_name}
-                src={channelAvatarSrc[i % channelAvatarSrc.length]}
+                src={channelAvatarSrc[c.channel_id % channelAvatarSrc.length]}
               />
             ))
         ))}
