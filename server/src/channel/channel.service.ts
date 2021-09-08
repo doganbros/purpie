@@ -26,6 +26,7 @@ export class ChannelService {
 
   async createChannel(
     userId: number,
+    userZoneId: number,
     zoneId: number,
     createChannelInfo: CreateChannelDto,
     defaultChannel = false,
@@ -33,6 +34,7 @@ export class ChannelService {
     return this.userChannelRepository
       .create({
         userId,
+        userZoneId,
         channelRoleCode: 'SUPER_ADMIN',
         channel: await this.channelRepository
           .create({
@@ -142,12 +144,17 @@ export class ChannelService {
     return channel;
   }
 
-  async addUserToChannel(userId: number, channelId: number) {
+  async addUserToChannel(
+    userId: number,
+    userZoneId: number,
+    channelId: number,
+  ) {
     return this.userChannelRepository
       .create({
         userId,
         channelRoleCode: 'NORMAL',
         channelId,
+        userZoneId,
       })
       .save();
   }
