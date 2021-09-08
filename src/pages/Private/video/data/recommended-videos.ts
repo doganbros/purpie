@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 
-export const timeLineList = Array(20)
+export const recommendedVideos = Array(20)
   .fill(null)
   .map(() => ({
     id: nanoid(),
@@ -19,8 +19,6 @@ export const timeLineList = Array(20)
     userAvatarSrc: 'https://image.flaticon.com/icons/png/512/4721/4721623.png',
     userName: 'Jane Doe',
     videoTitle: 'Information About Octopuses',
-    onClickPlay: (history: any) => {
-      history.push(`video/${nanoid()}`);
-    },
+    onClickPlay: () => {},
     onClickSave: () => {},
   }));
