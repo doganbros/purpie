@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { Box, Button, Layer, Text } from 'grommet';
+import React, { FC, useContext } from 'react';
+import { Box, Button, Layer, ResponsiveContext, Text } from 'grommet';
 import {
   CirclePlay,
   Close,
@@ -21,6 +21,8 @@ interface AddContentProps {
 
 const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
   const dispatch = useDispatch();
+  const size = useContext(ResponsiveContext);
+
   const {
     meeting: {
       createMeeting: {
@@ -93,9 +95,10 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
   return (
     <Layer onClickOutside={onDismiss}>
       <Box
-        width="720px"
-        height="505px"
-        round="20px"
+        width={size !== 'small' ? '720px' : undefined}
+        height={size !== 'small' ? '505px' : undefined}
+        round={size !== 'small' ? '20px' : undefined}
+        fill={size === 'small' ? true : undefined}
         background="white"
         pad="medium"
         gap="medium"
