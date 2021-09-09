@@ -64,6 +64,7 @@ export class ChannelController {
   ) {
     const userChannel = await this.channelService.createChannel(
       currentUser.id,
+      currentUserZone.id,
       currentUserZone.zone.id,
       createChannelInfo,
     );
@@ -96,16 +97,17 @@ export class ChannelController {
     if (!channel)
       throw new NotFoundException('Channel not found', 'CHANNEL_NOT_FOUND');
 
-    const userZone = await this.zoneService.userExistsInZone(
+    let userZone = await this.zoneService.userExistsInZone(
       user.id,
       channel.zoneId,
     );
 
     if (!userZone)
-      await this.zoneService.addUserToZone(user.id, channel.zoneId);
+      userZone = await this.zoneService.addUserToZone(user.id, channel.zoneId);
 
     const userChannel = await this.channelService.addUserToChannel(
       user.id,
+      userZone.id,
       channel.id,
     );
     await this.channelService.removeInvitation(user.email, channel.id);
@@ -185,19 +187,20 @@ export class ChannelController {
       return 'OK';
     }
 
-    const userZone = await this.zoneService.userExistsInZone(
+    let userZone = await this.zoneService.userExistsInZone(
       currentUser.id,
       invitation.channel.zoneId,
     );
 
     if (!userZone)
-      await this.zoneService.addUserToZone(
+      userZone = await this.zoneService.addUserToZone(
         currentUser.id,
         invitation.channel.zoneId,
       );
 
     await this.channelService.addUserToChannel(
       currentUser.id,
+      userZone.id,
       invitation.channelId,
     );
 
