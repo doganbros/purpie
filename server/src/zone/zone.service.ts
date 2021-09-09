@@ -5,6 +5,7 @@ import { IsNull, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Zone } from 'entities/Zone.entity';
 import { UserZoneRepository } from 'entities/repositories/UserZone.repository';
+import { UserChannel } from 'entities/UserChannel.entity';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { Category } from 'entities/Category.entity';
 import { MailService } from 'src/mail/mail.service';
@@ -22,6 +23,8 @@ export class ZoneService {
     @InjectRepository(Zone) private zoneRepository: Repository<Zone>,
     @InjectRepository(UserZoneRepository)
     private userZoneRepository: UserZoneRepository,
+    @InjectRepository(UserChannel)
+    private userChannelRepository: Repository<UserChannel>,
     @InjectRepository(Invitation)
     private invitationRepository: Repository<Invitation>,
     @InjectRepository(Category)
