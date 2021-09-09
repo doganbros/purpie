@@ -20,8 +20,11 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
   const [showRightSidebar, setShowRightSidebar] = useState(false);
   return (
     <Box height="100vh">
-      <Header background="brand-2" pad="medium">
-        <Box direction="row" align="center" gap="medium">
+      <Header
+        background="brand-2"
+        pad={{ horizontal: 'medium', vertical: 'xsmall' }}
+      >
+        <Box direction="row" align="center" gap="medium" justify="between" fill>
           <Button
             onClick={() => {
               setShowLeftSidebar(true);
@@ -39,15 +42,17 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
               />
             }
           />
+          {rightComponent ? (
+            <Button
+              icon={<Previous size="medium" color="white" />}
+              onClick={() => {
+                setShowRightSidebar(true);
+              }}
+            />
+          ) : (
+            <Box pad="large" />
+          )}
         </Box>
-        {rightComponent && (
-          <Button
-            icon={<Previous size="medium" color="white" />}
-            onClick={() => {
-              setShowRightSidebar(true);
-            }}
-          />
-        )}
       </Header>
       {topComponent && (
         <ExtendedBox pad={{ horizontal: 'large' }} minHeight="min-content">
