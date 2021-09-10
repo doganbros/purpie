@@ -20,6 +20,9 @@ export const getUserChannelsByUserZoneId = (
 export const getUserChannelById = (id: number): Promise<any> =>
   http.get(`/user-channel/detail/${id}`).then((res) => res.data);
 
+export const joinChannel = (id: number): Promise<any> =>
+  http.post(`/channel/join/${id}`).then((res) => res.data);
+
 export const updateChannel = (
   channel: Record<string, any>,
   channelId: number

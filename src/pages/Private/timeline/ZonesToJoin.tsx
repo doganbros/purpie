@@ -1,113 +1,72 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Box, Button, Text } from 'grommet';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState } from '../../../store/reducers/root.reducer';
+import { getZoneSuggestionsAction } from '../../../store/actions/activity.action';
 import ZoneListItem from '../../../components/utils/zone/ZoneListItem';
+import { zoneAvatarSrc } from './data/zone-avatars';
+import {
+  SUGGESTION_AMOUNT_LESS,
+  SUGGESTION_AMOUNT_MORE,
+} from '../../../helpers/constants';
 
-const zones = [
-  {
-    id: '#Zone1',
-    name: 'Zone-1',
-    channelCount: 41,
-    memberCount: 245,
-    src: 'https://image.flaticon.com/icons/png/512/4568/4568785.png',
-  },
-  {
-    id: '#Zone2',
-    name: 'Zone-2',
-    channelCount: 31,
-    memberCount: 3245,
-    src: 'https://image.flaticon.com/icons/png/512/4568/4568755.png',
-  },
-
-  {
-    id: '#Zone3',
-    name: 'Zone-3',
-    channelCount: 44,
-    memberCount: 143,
-    src: 'https://image.flaticon.com/icons/png/512/4568/4568773.png',
-  },
-
-  {
-    id: '#Zone4',
-    name: 'Zone-4',
-    channelCount: 5,
-    memberCount: 23,
-    src: 'https://image.flaticon.com/icons/png/512/4569/4569967.png',
-  },
-
-  {
-    id: '#Zone5',
-    name: 'Zone-5',
-    channelCount: 48,
-    memberCount: 245,
-    src: 'https://image.flaticon.com/icons/png/512/4568/4568719.png',
-  },
-
-  {
-    id: '#Zone6',
-    name: 'Zone-6',
-    channelCount: 61,
-    memberCount: 245,
-    src: 'https://image.flaticon.com/icons/png/512/4568/4568857.png',
-  },
-  {
-    id: '#Zone7',
-    name: 'Zone-7',
-    channelCount: 41,
-    memberCount: 245,
-    src: 'https://image.flaticon.com/icons/png/512/4570/4570037.png',
-  },
-  {
-    id: '#Zone8',
-    name: 'Zone-8',
-    channelCount: 31,
-    memberCount: 3245,
-    src: 'https://image.flaticon.com/icons/png/512/4568/4568701.png',
-  },
-
-  {
-    id: '#Zone9',
-    name: 'Zone-9',
-    channelCount: 44,
-    memberCount: 143,
-    src: 'https://image.flaticon.com/icons/png/512/4570/4570032.png',
-  },
-
-  {
-    id: '#Zone10',
-    name: 'Zone-10',
-    channelCount: 5,
-    memberCount: 23,
-    src: 'https://image.flaticon.com/icons/png/512/4568/4568865.png',
-  },
-];
 const ZonesToJoin: FC = () => {
-  const [displayCount, setDisplayCount] = useState(3);
+  const dispatch = useDispatch();
+  const {
+    activity: { zoneSuggestions },
+  } = useSelector((state: AppState) => state);
+
+  useEffect(() => {
+    dispatch(getZoneSuggestionsAction(SUGGESTION_AMOUNT_MORE, 0));
+  }, []);
+
+  const [displayCount, setDisplayCount] = useState(SUGGESTION_AMOUNT_LESS);
   return (
     <Box gap="small">
       <Box direction="row" align="center" justify="between">
         <Text size="small" weight="bold">
           Zones to join
         </Text>
-        <Button
-          onClick={() => {
-            setDisplayCount((ps) => (ps === 3 ? 10 : 3));
-          }}
-        >
-          <Text size="small" color="brand">
-            {displayCount === 3 ? 'See more' : 'See less'}
-          </Text>
-        </Button>
+        {zoneSuggestions.data.length > SUGGESTION_AMOUNT_LESS && (
+          <Button
+            onClick={() => {
+              setDisplayCount((ps) =>
+                ps === SUGGESTION_AMOUNT_LESS
+                  ? SUGGESTION_AMOUNT_MORE
+                  : SUGGESTION_AMOUNT_LESS
+              );
+            }}
+          >
+            <Text size="small" color="brand">
+              {displayCount === SUGGESTION_AMOUNT_LESS
+                ? 'See more'
+                : 'See less'}
+            </Text>
+          </Button>
+        )}
       </Box>
-      {zones.slice(0, displayCount).map((z) => (
-        <ZoneListItem
-          key={z.id}
-          name={z.name}
-          channelCount={z.channelCount}
-          memberCount={z.memberCount}
-          src={z.src}
-        />
-      ))}
-      {displayCount > 3 && (
+
+      {zoneSuggestions.loading && <Text size="small">Loading</Text>}
+
+      {!zoneSuggestions.loading &&
+        (zoneSuggestions.data.length === 0 ? (
+          <Text size="small">No zones found</Text>
+        ) : (
+          zoneSuggestions.data
+            .slice(0, displayCount)
+            .map((z) => (
+              <ZoneListItem
+                key={z.zone_id}
+                id={z.zone_id}
+                name={z.zone_name}
+                channelCount={+z.zone_channelCount}
+                memberCount={+z.zone_membersCount}
+                src={zoneAvatarSrc[z.zone_id % zoneAvatarSrc.length]}
+              />
+            ))
+        ))}
+
+      {displayCount > SUGGESTION_AMOUNT_LESS && (
         <Button alignSelf="end">
           <Text size="small" color="brand">
             See all
