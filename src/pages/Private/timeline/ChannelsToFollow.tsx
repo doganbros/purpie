@@ -5,16 +5,20 @@ import ChannelListItem from '../../../components/utils/channel/ChannelListItem';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { channelAvatarSrc } from './data/channel-avatars';
 import { getChannelSuggestionsAction } from '../../../store/actions/activity.action';
+import {
+  SUGGESTION_AMOUNT_LESS,
+  SUGGESTION_AMOUNT_MORE,
+} from '../../../helpers/constants';
 
 const ChannelsToFollow: FC = () => {
   const dispatch = useDispatch();
   const {
     activity: { channelSuggestions },
   } = useSelector((state: AppState) => state);
-  const [displayCount, setDisplayCount] = useState(3);
+  const [displayCount, setDisplayCount] = useState(SUGGESTION_AMOUNT_LESS);
 
   useEffect(() => {
-    dispatch(getChannelSuggestionsAction(10, 0));
+    dispatch(getChannelSuggestionsAction(SUGGESTION_AMOUNT_MORE, 0));
   }, []);
   return (
     <Box gap="small">
@@ -22,14 +26,20 @@ const ChannelsToFollow: FC = () => {
         <Text size="small" weight="bold">
           Channels to follow
         </Text>
-        {channelSuggestions.data.length > 3 && (
+        {channelSuggestions.data.length > SUGGESTION_AMOUNT_LESS && (
           <Button
             onClick={() => {
-              setDisplayCount((ps) => (ps === 3 ? 10 : 3));
+              setDisplayCount((ps) =>
+                ps === SUGGESTION_AMOUNT_LESS
+                  ? SUGGESTION_AMOUNT_MORE
+                  : SUGGESTION_AMOUNT_LESS
+              );
             }}
           >
             <Text size="small" color="brand">
-              {displayCount === 3 ? 'See more' : 'See less'}
+              {displayCount === SUGGESTION_AMOUNT_LESS
+                ? 'See more'
+                : 'See less'}
             </Text>
           </Button>
         )}
@@ -52,7 +62,7 @@ const ChannelsToFollow: FC = () => {
             ))
         ))}
 
-      {displayCount > 3 && (
+      {displayCount > SUGGESTION_AMOUNT_LESS && (
         <Button alignSelf="end">
           <Text size="small" color="brand">
             See all

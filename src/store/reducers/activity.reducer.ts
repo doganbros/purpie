@@ -7,21 +7,16 @@ import {
   CHANNEL_SUGGESTIONS_FAILED,
 } from '../constants/activity.constants';
 import { ActivityActionParams, ActivityState } from '../types/activity.types';
+import { paginationInitialState } from '../../helpers/constants';
 
 const initialState: ActivityState = {
   zoneSuggestions: {
-    data: [],
-    limit: 0,
-    skip: 0,
-    total: 0,
+    ...paginationInitialState,
     loading: false,
     error: null,
   },
   channelSuggestions: {
-    data: [],
-    limit: 0,
-    skip: 0,
-    total: 0,
+    ...paginationInitialState,
     loading: false,
     error: null,
   },
