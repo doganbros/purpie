@@ -98,7 +98,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
         width={size !== 'small' ? '720px' : undefined}
         height={size !== 'small' ? '505px' : undefined}
         round={size !== 'small' ? '20px' : undefined}
-        fill={size === 'small' ? true : undefined}
+        fill={size === 'small'}
         background="white"
         pad="medium"
         gap="medium"

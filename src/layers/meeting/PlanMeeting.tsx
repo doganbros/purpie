@@ -119,12 +119,12 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
         }}
       >
         <Box
-          width="750px"
-          height="505px"
-          round="20px"
+          width={size !== 'small' ? '750px' : undefined}
+          height={size !== 'small' ? '505px' : '100vh'}
+          round={size !== 'small' ? '20px' : undefined}
           background="white"
           pad="medium"
-          gap="medium"
+          gap={size !== 'small' ? 'medium' : 'large'}
         >
           <Box direction="row" justify="between" align="start">
             <Box pad="xsmall">
