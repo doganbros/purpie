@@ -37,10 +37,10 @@ const ZoneListItem: FC<ZoneListItemProps> = ({
             {name}
           </Text>
           <Text size="xsmall" color="status-disabled">
-            {`${channelCount} channels`}
+            {channelCount} channels
           </Text>
           <Text size="xsmall" color="status-disabled">
-            {`${memberCount} members`}
+            {memberCount} members
           </Text>
         </Box>
       </Box>

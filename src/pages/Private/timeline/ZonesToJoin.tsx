@@ -5,6 +5,10 @@ import { AppState } from '../../../store/reducers/root.reducer';
 import { getZoneSuggestionsAction } from '../../../store/actions/activity.action';
 import ZoneListItem from '../../../components/utils/zone/ZoneListItem';
 import { zoneAvatarSrc } from './data/zone-avatars';
+import {
+  SUGGESTION_AMOUNT_LESS,
+  SUGGESTION_AMOUNT_MORE,
+} from '../../../helpers/constants';
 
 const ZonesToJoin: FC = () => {
   const dispatch = useDispatch();
@@ -13,24 +17,30 @@ const ZonesToJoin: FC = () => {
   } = useSelector((state: AppState) => state);
 
   useEffect(() => {
-    dispatch(getZoneSuggestionsAction(10, 0));
+    dispatch(getZoneSuggestionsAction(SUGGESTION_AMOUNT_MORE, 0));
   }, []);
 
-  const [displayCount, setDisplayCount] = useState(3);
+  const [displayCount, setDisplayCount] = useState(SUGGESTION_AMOUNT_LESS);
   return (
     <Box gap="small">
       <Box direction="row" align="center" justify="between">
         <Text size="small" weight="bold">
           Zones to join
         </Text>
-        {zoneSuggestions.data.length > 3 && (
+        {zoneSuggestions.data.length > SUGGESTION_AMOUNT_LESS && (
           <Button
             onClick={() => {
-              setDisplayCount((ps) => (ps === 3 ? 10 : 3));
+              setDisplayCount((ps) =>
+                ps === SUGGESTION_AMOUNT_LESS
+                  ? SUGGESTION_AMOUNT_MORE
+                  : SUGGESTION_AMOUNT_LESS
+              );
             }}
           >
             <Text size="small" color="brand">
-              {displayCount === 3 ? 'See more' : 'See less'}
+              {displayCount === SUGGESTION_AMOUNT_LESS
+                ? 'See more'
+                : 'See less'}
             </Text>
           </Button>
         )}
@@ -56,7 +66,7 @@ const ZonesToJoin: FC = () => {
             ))
         ))}
 
-      {displayCount > 3 && (
+      {displayCount > SUGGESTION_AMOUNT_LESS && (
         <Button alignSelf="end">
           <Text size="small" color="brand">
             See all

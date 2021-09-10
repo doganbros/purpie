@@ -1,6 +1,10 @@
 import React, { FC, useState } from 'react';
 import { Box, Button, Text } from 'grommet';
 import { Chat, Play, Favorite } from 'grommet-icons';
+import {
+  SUGGESTION_AMOUNT_LESS,
+  SUGGESTION_AMOUNT_MORE,
+} from '../../../helpers/constants';
 
 const activities = [
   {
@@ -68,7 +72,7 @@ const activities = [
 ];
 
 const LastActivities: FC = () => {
-  const [displayCount, setDisplayCount] = useState(3);
+  const [displayCount, setDisplayCount] = useState(SUGGESTION_AMOUNT_LESS);
   return (
     <Box gap="small">
       <Box direction="row" align="center" justify="between">
@@ -77,11 +81,15 @@ const LastActivities: FC = () => {
         </Text>
         <Button
           onClick={() => {
-            setDisplayCount((ps) => (ps === 3 ? 10 : 3));
+            setDisplayCount((ps) =>
+              ps === SUGGESTION_AMOUNT_LESS
+                ? SUGGESTION_AMOUNT_MORE
+                : SUGGESTION_AMOUNT_LESS
+            );
           }}
         >
           <Text size="small" color="brand">
-            {displayCount === 3 ? 'See more' : 'See less'}
+            {displayCount === SUGGESTION_AMOUNT_LESS ? 'See more' : 'See less'}
           </Text>
         </Button>
       </Box>
@@ -93,7 +101,7 @@ const LastActivities: FC = () => {
           </Box>
         </Box>
       ))}
-      {displayCount > 3 && (
+      {displayCount > SUGGESTION_AMOUNT_LESS && (
         <Button alignSelf="end">
           <Text size="small" color="brand">
             See all
