@@ -9,6 +9,9 @@ import {
 export const createZone = (zone: CreateZonePayload): Promise<any> =>
   http.post('/zone/create', zone).then((res) => res.data);
 
+export const joinZone = (id: number): Promise<any> =>
+  http.post(`/zone/join/${id}`).then((res) => res.data);
+
 export const getUserZones = (): Promise<Array<UserZoneListItem>> =>
   http.get('/user-zone/list').then((res) => res.data);
 
