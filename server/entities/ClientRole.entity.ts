@@ -11,4 +11,7 @@ export class ClientRole extends BaseEntity {
 
   @Column({ default: false })
   manageMeeting: boolean;
+
+  @Column({ default: false })
+  manageStream: boolean;
 }

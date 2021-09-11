@@ -17,6 +17,7 @@ import { UserModule } from './user/user.module';
 import { ChannelModule } from './channel/channel.module';
 import { MeetingModule } from './meeting/meeting.module';
 import { ActivityModule } from './activity/activity.module';
+import { StreamModule } from './stream/stream.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ActivityModule } from './activity/activity.module';
     ChannelModule,
     MeetingModule,
     ActivityModule,
+    StreamModule,
   ],
   providers: [
     {

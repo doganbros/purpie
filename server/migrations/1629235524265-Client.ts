@@ -6,25 +6,8 @@ import {
   TableColumn,
   TableForeignKey,
 } from 'typeorm';
+import { recordEntityColumns } from './data/record-entity';
 
-const recordEntityColumns = [
-  {
-    name: 'id',
-    type: 'int',
-    isPrimary: true,
-    isGenerated: true,
-  },
-  {
-    name: 'createdOn',
-    type: 'timestamp',
-    default: 'now()',
-  },
-  {
-    name: 'updatedOn',
-    type: 'timestamp',
-    isNullable: true,
-  },
-];
 
 export class Client1629235524265 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
