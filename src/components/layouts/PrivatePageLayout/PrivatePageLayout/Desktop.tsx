@@ -90,6 +90,24 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
                 {topComponent}
               </ExtendedBox>
             </Box>
+            <ExtendedBox
+              margin={{ left: 'large' }}
+              position="absolute"
+              top="0"
+              left="0"
+              height={`${topComponentHeight - 3}px`}
+              background="linear-gradient(to right, rgb(255, 255, 255), rgba(255, 255, 255, 0))"
+              width="24px"
+            />
+            <ExtendedBox
+              margin={{ right: 'large' }}
+              position="absolute"
+              top="0"
+              right="0"
+              height={`${topComponentHeight - 3}px`}
+              background="linear-gradient(to left, rgb(255, 255, 255), rgba(255, 255, 255, 0))"
+              width="24px"
+            />
             <Box fill="horizontal">
               <Divider />
             </Box>
