@@ -6,6 +6,7 @@ import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-par
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { ClientStreamEventDto } from './dto/client-stream-event.dto';
+import { StreamLogResponse } from './responses/stream.response';
 import { StreamService } from './stream.service';
 
 @Controller({ version: '1', path: 'stream' })
@@ -29,6 +30,7 @@ export class StreamController {
   @Get('logs/list/:slug')
   @ApiOkResponse({
     description: 'User gets stream logs',
+    type: StreamLogResponse,
   })
   @PaginationQueryParams()
   @IsAuthenticated()
@@ -40,6 +42,10 @@ export class StreamController {
   }
 
   @IsAuthenticated()
+  @ApiOkResponse({
+    description: 'Get number of people who have viewed the stream of this slug',
+    schema: { type: 'number', example: 4 },
+  })
   @Get('viewers/count/:slug')
   async getTotalViewers(@Param('slug') slug: string) {
     return this.streamService.getTotalViewers(slug);
