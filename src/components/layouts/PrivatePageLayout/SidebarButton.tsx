@@ -1,4 +1,4 @@
-import { Box, Tip, Button } from 'grommet';
+import { Tip, Button, Text, Box } from 'grommet';
 import { Icon } from 'grommet-icons';
 import React, { FC } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -20,24 +20,24 @@ export const SidebarButton: FC<Props> = ({
 
   return (
     <Tip
+      plain
       content={
-        <Box
-          flex={false}
-          background={{ color: 'accent-1' }}
-          pad="medium"
-          animation="slideRight"
-          round={{ size: 'medium', corner: 'right' }}
-        >
-          {title}
+        <Box pad="medium">
+          <Text color="accent-1">{title}</Text>
         </Box>
       }
-      dropProps={{ align: { left: 'right' } }}
+      dropProps={{
+        round: {
+          corner: 'right',
+          size: 'medium',
+        },
+        background: {
+          color: 'brand-2',
+        },
+        align: { left: 'right' },
+      }}
     >
-      <Button
-        hoverIndicator={{ color: 'accent-1', opacity: 0.9 }}
-        onClick={() => history.push(path)}
-        plain
-      >
+      <Button onClick={() => history.push(path)} plain>
         {({ hover }: any) => (
           <ExtendedBox
             opacity={location.pathname === path ? '1' : '0.5'}
@@ -45,7 +45,7 @@ export const SidebarButton: FC<Props> = ({
             pad={{ vertical: 'small' }}
             align="center"
           >
-            <IconComponent size="medium" color={hover ? 'dark-1' : 'white'} />
+            <IconComponent size="medium" color={hover ? 'accent-1' : 'white'} />
           </ExtendedBox>
         )}
       </Button>

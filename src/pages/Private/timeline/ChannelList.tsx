@@ -21,7 +21,7 @@ const ChannelList: FC = () => {
       direction="row"
       align="center"
       gap="medium"
-      pad={{ horizontal: 'small' }}
+      pad={{ horizontal: 'medium' }}
     >
       {userChannels.loading && <Text size="small">Loading</Text>}
       {!userChannels.loading &&
