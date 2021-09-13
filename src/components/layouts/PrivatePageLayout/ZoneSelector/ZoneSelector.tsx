@@ -2,15 +2,17 @@ import React, { FC, useContext } from 'react';
 import { Avatar, Box, DropButton, ResponsiveContext, Text } from 'grommet';
 import { Add, SettingsOption, User } from 'grommet-icons';
 import { useSelector } from 'react-redux';
+import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
+import { getZoneAvatarSrc } from '../../../../pages/Private/timeline/data/zone-avatars';
 import { AppState } from '../../../../store/reducers/root.reducer';
 import Divider from './Divider';
 import ZoneSelectorListItem from './ZoneSelectorListItem';
-import { zoneAvatarSrc } from '../../../../pages/Private/timeline/data/zone-avatars';
 
 const ZoneSelector: FC = () => {
   const {
     zone: {
       getUserZones: { userZones },
+      selectedUserZone,
     },
     auth: { user },
   } = useSelector((state: AppState) => state);
@@ -23,7 +25,10 @@ const ZoneSelector: FC = () => {
       dropContent={
         <Box width={{ min: '250px' }}>
           <ZoneSelectorListItem
-            selected
+            selected={!selectedUserZone}
+            onClick={() => {
+              navigateToSubdomain();
+            }}
             leftIcon={
               <Avatar background="accent-4" size="small">
                 <User size="small" />
@@ -34,11 +39,12 @@ const ZoneSelector: FC = () => {
           {userZones &&
             userZones.map((z) => (
               <ZoneSelectorListItem
+                selected={selectedUserZone?.id === z.id}
+                onClick={() => {
+                  navigateToSubdomain(z.zone.subdomain);
+                }}
                 leftIcon={
-                  <Avatar
-                    size="small"
-                    src={zoneAvatarSrc[z.zone.id % zoneAvatarSrc.length]}
-                  />
+                  <Avatar size="small" src={getZoneAvatarSrc(z.zone.id)} />
                 }
                 key={z.id}
                 label={z.zone.name}
@@ -78,14 +84,23 @@ const ZoneSelector: FC = () => {
         }}
         round="medium"
       >
-        <Avatar background="accent-4" size="medium">
-          <User />
-        </Avatar>
+        {selectedUserZone ? (
+          <Avatar
+            size="medium"
+            src={getZoneAvatarSrc(selectedUserZone.zone.id)}
+          />
+        ) : (
+          <Avatar background="accent-4" size="medium">
+            <User />
+          </Avatar>
+        )}
         <Box align="center">
           <Text weight="bold" size="xsmall" color="white">
-            {user?.firstName} {user?.lastName}
+            {selectedUserZone
+              ? selectedUserZone.zone.name
+              : `${user?.firstName} ${user?.lastName}`}
           </Text>
-          <Text size="xsmall">Zone</Text>
+          {selectedUserZone && <Text size="xsmall">Zone</Text>}
         </Box>
       </Box>
     </DropButton>

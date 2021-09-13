@@ -14,6 +14,7 @@ const ZoneSelectorListItem: FC<ZoneSelectorListItemProps> = ({
   rightIcon,
   leftIcon,
   selected,
+  onClick,
 }) => {
   const [hover, setHover] = useState(false);
   const size = useContext(ResponsiveContext);
@@ -26,6 +27,7 @@ const ZoneSelectorListItem: FC<ZoneSelectorListItemProps> = ({
 
   return (
     <Button
+      onClick={onClick}
       onMouseEnter={() => {
         setHover(true);
       }}
