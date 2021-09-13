@@ -1,5 +1,4 @@
-import { Select, Box, Text } from 'grommet';
-import { Down } from 'grommet-icons';
+import { Select, Box, Text, Avatar } from 'grommet';
 import React, { FC } from 'react';
 
 const ZoneSelector: FC = () => {
@@ -13,19 +12,20 @@ const ZoneSelector: FC = () => {
       icon={false}
       valueLabel={
         <Box
-          direction="row"
           align="center"
           justify="around"
           background="brand"
-          fill
-          pad="xsmall"
-          margin="xsmall"
-          round="xsmall"
+          gap="small"
+          pad="small"
+          round="medium"
         >
-          <Text size="xsmall" color="white">
-            {value}
-          </Text>
-          <Down size="small" color="white" />
+          <Avatar background="light-1" size="medium" />
+          <Box align="center">
+            <Text weight="bold" size="xsmall" color="white">
+              {value}
+            </Text>
+            <Text size="xsmall">Zone</Text>
+          </Box>
         </Box>
       }
       onChange={({ option }) => setValue(option)}
