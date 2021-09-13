@@ -4,7 +4,7 @@ import React, { FC } from 'react';
 import ExtendedBox from '../../../utils/ExtendedBox';
 import Logo from '../../../../assets/octopus-logo/logo-white.svg';
 import Sidebar from '../Sidebar';
-import ZoneSelector from '../ZoneSelector';
+import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import Divider from '../../../utils/Divider';
 
 interface Props {

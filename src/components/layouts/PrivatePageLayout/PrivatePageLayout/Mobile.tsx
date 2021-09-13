@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import React, { FC, useState } from 'react';
 import Sidebar from '../Sidebar';
 import Logo from '../../../../assets/octopus-logo/logo-white.svg';
-import ZoneSelector from '../ZoneSelector';
+import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import ExtendedBox from '../../../utils/ExtendedBox';
 import Divider from '../../../utils/Divider';
 
