@@ -1,18 +1,19 @@
-import React, { FC, useContext, useState } from 'react';
+import React, { FC, useContext } from 'react';
 import { Avatar, Box, DropButton, ResponsiveContext, Text } from 'grommet';
-import { Add, SettingsOption } from 'grommet-icons';
-import { nanoid } from 'nanoid';
+import { Add, SettingsOption, User } from 'grommet-icons';
+import { useSelector } from 'react-redux';
+import { AppState } from '../../../../store/reducers/root.reducer';
 import Divider from './Divider';
 import ZoneSelectorListItem from './ZoneSelectorListItem';
+import { zoneAvatarSrc } from '../../../../pages/Private/timeline/data/zone-avatars';
 
 const ZoneSelector: FC = () => {
-  const zones = [
-    { id: nanoid(), name: 'Interaction Design Master' },
-    { id: nanoid(), name: 'Course' },
-    { id: nanoid(), name: 'Doganbros' },
-    { id: nanoid(), name: 'Company' },
-  ];
-  const [value] = useState('Doganbros');
+  const {
+    zone: {
+      getUserZones: { userZones },
+    },
+    auth: { user },
+  } = useSelector((state: AppState) => state);
   const size = useContext(ResponsiveContext);
 
   return (
@@ -21,14 +22,28 @@ const ZoneSelector: FC = () => {
       dropAlign={{ left: 'left', top: 'bottom' }}
       dropContent={
         <Box width={{ min: '250px' }}>
-          {zones.map((z) => (
-            <ZoneSelectorListItem
-              leftIcon={<Avatar size="small" background="light-6" />}
-              selected={z.name === value}
-              key={z.id}
-              label={z.name}
-            />
-          ))}
+          <ZoneSelectorListItem
+            selected
+            leftIcon={
+              <Avatar background="accent-4" size="small">
+                <User size="small" />
+              </Avatar>
+            }
+            label={`${user?.firstName} ${user?.lastName}`}
+          />
+          {userZones &&
+            userZones.map((z) => (
+              <ZoneSelectorListItem
+                leftIcon={
+                  <Avatar
+                    size="small"
+                    src={zoneAvatarSrc[z.zone.id % zoneAvatarSrc.length]}
+                  />
+                }
+                key={z.id}
+                label={z.zone.name}
+              />
+            ))}
           <Divider />
           <ZoneSelectorListItem
             label="Create Channel"
@@ -63,10 +78,12 @@ const ZoneSelector: FC = () => {
         }}
         round="medium"
       >
-        <Avatar background="light-1" size="medium" />
+        <Avatar background="accent-4" size="medium">
+          <User />
+        </Avatar>
         <Box align="center">
           <Text weight="bold" size="xsmall" color="white">
-            {value}
+            {user?.firstName} {user?.lastName}
           </Text>
           <Text size="xsmall">Zone</Text>
         </Box>
