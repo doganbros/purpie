@@ -16,6 +16,9 @@ interface Props {
 const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
   const history = useHistory();
 
+  const topComponentHeight = 120;
+  const leftComponentWidth = 135;
+
   const [showLeftSidebar, setShowLeftSidebar] = useState(false);
   const [showRightSidebar, setShowRightSidebar] = useState(false);
   return (
@@ -55,8 +58,11 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
         </Box>
       </Header>
       {topComponent && (
-        <ExtendedBox pad={{ horizontal: 'large' }} minHeight="min-content">
+        <ExtendedBox pad={{ horizontal: 'large' }}>
           <ExtendedBox
+            direction="row"
+            align="center"
+            height={{ min: `${topComponentHeight}px` }}
             overflow={{ horizontal: 'auto' }}
             pad={{ vertical: 'medium' }}
           >
@@ -81,7 +87,7 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
           }}
         >
           <Box
-            width="135px"
+            width={`${leftComponentWidth}px`}
             pad={{
               vertical: 'large',
               horizontal: 'medium',

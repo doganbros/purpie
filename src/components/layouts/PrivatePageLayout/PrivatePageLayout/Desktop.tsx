@@ -32,7 +32,7 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
         align="center"
         width={`${leftComponentWidth + 100}px`}
       >
-        <Box>
+        <Box fill="horizontal">
           <Button
             margin={{ vertical: 'medium' }}
             onClick={() => history.push('/')}
