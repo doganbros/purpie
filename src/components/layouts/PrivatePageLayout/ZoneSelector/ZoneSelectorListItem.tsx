@@ -1,5 +1,5 @@
-import { Box, Button, ResponsiveContext, Text } from 'grommet';
-import React, { FC, ReactNode, useContext, useState } from 'react';
+import React, { FC, ReactNode, useState } from 'react';
+import { Box, Button, Text } from 'grommet';
 
 interface ZoneSelectorListItemProps {
   label: string;
@@ -17,7 +17,6 @@ const ZoneSelectorListItem: FC<ZoneSelectorListItemProps> = ({
   onClick,
 }) => {
   const [hover, setHover] = useState(false);
-  const size = useContext(ResponsiveContext);
 
   const setBackgroundColor = () => {
     if (selected) return 'status-disabled';
@@ -41,7 +40,7 @@ const ZoneSelectorListItem: FC<ZoneSelectorListItemProps> = ({
         fill
         direction="row"
         align="center"
-        pad={size === 'small' ? 'small' : 'xsmall'}
+        pad="small"
         gap="small"
         background={setBackgroundColor()}
       >

@@ -73,6 +73,7 @@ const ZoneSelector: FC = () => {
         dropProps={{
           margin: { vertical: 'small' },
           elevation: 'medium',
+          round: 'small',
         }}
       >
         <Box fill="horizontal">
