@@ -1,5 +1,9 @@
 import { appSubdomain } from '../../helpers/app-subdomain';
 import {
+  CLOSE_CREATE_ZONE_LAYER,
+  GET_CATEGORIES_FAILED,
+  GET_CATEGORIES_REQUESTED,
+  GET_CATEGORIES_SUCCESS,
   GET_CURRENT_USER_ZONE_FAILED,
   GET_CURRENT_USER_ZONE_REQUESTED,
   GET_CURRENT_USER_ZONE_SUCCESS,
@@ -12,6 +16,7 @@ import {
   JOIN_ZONE_FAILED,
   JOIN_ZONE_REQUESTED,
   JOIN_ZONE_SUCCESS,
+  OPEN_CREATE_ZONE_LAYER,
   SET_CURRENT_USER_ZONE,
 } from '../constants/zone.constants';
 import { ZoneActionParams, ZoneState } from '../types/zone.types';
@@ -19,6 +24,12 @@ import { ZoneActionParams, ZoneState } from '../types/zone.types';
 const initialState: ZoneState = {
   selectedUserZone: null,
   userZoneInitialized: false,
+  showCreateZoneLayer: false,
+  getCategories: {
+    categories: null,
+    error: null,
+    loading: false,
+  },
   joinZone: {
     error: null,
     loading: false,
@@ -160,7 +171,43 @@ const zoneReducer = (
           error: action.payload,
         },
       };
-
+    case OPEN_CREATE_ZONE_LAYER:
+      return {
+        ...state,
+        showCreateZoneLayer: true,
+      };
+    case CLOSE_CREATE_ZONE_LAYER:
+      return {
+        ...state,
+        showCreateZoneLayer: false,
+      };
+    case GET_CATEGORIES_REQUESTED:
+      return {
+        ...state,
+        getCategories: {
+          ...state.getCategories,
+          loading: true,
+          error: null,
+        },
+      };
+    case GET_CATEGORIES_SUCCESS:
+      return {
+        ...state,
+        getCategories: {
+          loading: false,
+          categories: action.payload,
+          error: null,
+        },
+      };
+    case GET_CATEGORIES_FAILED:
+      return {
+        ...state,
+        getCategories: {
+          ...state.getCategories,
+          loading: false,
+          error: action.payload,
+        },
+      };
     default:
       return state;
   }

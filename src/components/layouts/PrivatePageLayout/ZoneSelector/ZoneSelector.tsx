@@ -1,12 +1,13 @@
 import React, { FC, useContext, useState } from 'react';
 import { Avatar, Box, DropButton, ResponsiveContext, Text } from 'grommet';
 import { Add, SettingsOption, User } from 'grommet-icons';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
 import { getZoneAvatarSrc } from '../../../../pages/Private/timeline/data/zone-avatars';
 import { AppState } from '../../../../store/reducers/root.reducer';
 import Divider from './Divider';
 import ZoneSelectorListItem from './ZoneSelectorListItem';
+import { openCreateZoneLayerAction } from '../../../../store/actions/zone.action';
 
 const ZoneSelector: FC = () => {
   const {
@@ -16,8 +17,10 @@ const ZoneSelector: FC = () => {
     },
     auth: { user },
   } = useSelector((state: AppState) => state);
+  const dispatch = useDispatch();
   const size = useContext(ResponsiveContext);
   const [hover, setHover] = useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <Box fill="horizontal" pad={{ horizontal: 'small' }}>
@@ -30,6 +33,13 @@ const ZoneSelector: FC = () => {
         }}
         fill="horizontal"
         plain
+        open={open}
+        onOpen={() => {
+          setOpen(true);
+        }}
+        onClose={() => {
+          setOpen(false);
+        }}
         dropAlign={{ left: 'left', top: 'bottom' }}
         dropContent={
           <Box width={{ min: '250px' }}>
@@ -65,6 +75,10 @@ const ZoneSelector: FC = () => {
               rightIcon={<Add size="small" color="black" />}
             />
             <ZoneSelectorListItem
+              onClick={() => {
+                setOpen(false);
+                dispatch(openCreateZoneLayerAction());
+              }}
               label="Create Zone"
               rightIcon={<Add size="small" color="black" />}
             />

@@ -1,12 +1,16 @@
 import { ResponseError } from '../../models/response-error';
 import { Category } from '../../models/utils';
 import {
+  CLOSE_CREATE_ZONE_LAYER,
   CREATE_ZONE_FAILED,
   CREATE_ZONE_REQUESTED,
   DELETE_USER_ZONE_FAILED,
   DELETE_USER_ZONE_REQUESTED,
   DELETE_ZONE_FAILED,
   DELETE_ZONE_REQUESTED,
+  GET_CATEGORIES_FAILED,
+  GET_CATEGORIES_REQUESTED,
+  GET_CATEGORIES_SUCCESS,
   GET_CURRENT_USER_ZONE_FAILED,
   GET_CURRENT_USER_ZONE_REQUESTED,
   GET_CURRENT_USER_ZONE_SUCCESS,
@@ -21,6 +25,7 @@ import {
   JOIN_ZONE_FAILED,
   JOIN_ZONE_REQUESTED,
   JOIN_ZONE_SUCCESS,
+  OPEN_CREATE_ZONE_LAYER,
   SET_CURRENT_USER_ZONE,
   UPDATE_ZONE_FAILED,
   UPDATE_ZONE_REQUESTED,
@@ -74,7 +79,12 @@ export type ZoneDetail = Required<ZoneListItem>;
 export interface ZoneState {
   selectedUserZone: UserZoneListItem | null;
   userZoneInitialized: boolean;
-
+  showCreateZoneLayer: boolean;
+  getCategories: {
+    loading: boolean;
+    categories: Array<Category> | null;
+    error: ResponseError | null;
+  };
   getUserZones: {
     loading: boolean;
     userZones: Array<UserZoneListItem> | null;
@@ -108,7 +118,10 @@ export type ZoneActionParams =
         | typeof GET_CURRENT_USER_ZONE_REQUESTED
         | typeof INVITE_TO_ZONE_REQUESTED
         | typeof DELETE_ZONE_REQUESTED
-        | typeof JOIN_ZONE_SUCCESS;
+        | typeof JOIN_ZONE_SUCCESS
+        | typeof OPEN_CREATE_ZONE_LAYER
+        | typeof CLOSE_CREATE_ZONE_LAYER
+        | typeof GET_CATEGORIES_REQUESTED;
     }
   | {
       type:
@@ -120,7 +133,8 @@ export type ZoneActionParams =
         | typeof INVITE_TO_ZONE_FAILED
         | typeof DELETE_ZONE_FAILED
         | typeof UPDATE_ZONE_FAILED
-        | typeof JOIN_ZONE_FAILED;
+        | typeof JOIN_ZONE_FAILED
+        | typeof GET_CATEGORIES_FAILED;
       payload: ResponseError;
     }
   | {
@@ -140,6 +154,10 @@ export type ZoneActionParams =
   | {
       type: typeof SET_CURRENT_USER_ZONE;
       payload: UserZoneListItem;
+    }
+  | {
+      type: typeof GET_CATEGORIES_SUCCESS;
+      payload: Array<Category>;
     };
 
 export interface ZoneDispatch {
