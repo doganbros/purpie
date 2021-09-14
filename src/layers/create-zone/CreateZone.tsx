@@ -2,7 +2,9 @@ import React, { FC, useContext, useEffect, useState } from 'react';
 import {
   Box,
   Button,
+  CheckBox,
   Form,
+  FormExtendedEvent,
   FormField,
   Layer,
   ResponsiveContext,
@@ -12,9 +14,14 @@ import {
 } from 'grommet';
 import { Close } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from '../../store/reducers/root.reducer';
 import { Category } from '../../models/utils';
-import { getCategoriesAction } from '../../store/actions/zone.action';
+import {
+  closeCreateZoneLayerAction,
+  createZoneAction,
+  getCategoriesAction,
+} from '../../store/actions/zone.action';
+import { AppState } from '../../store/reducers/root.reducer';
+import { CreateZonePayload } from '../../store/types/zone.types';
 
 interface CreateZoneProps {
   onDismiss: () => void;
@@ -28,7 +35,10 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
     },
   } = useSelector((state: AppState) => state);
   const size = useContext(ResponsiveContext);
+
   const [category, setCategory] = useState<Category | undefined>();
+  const [valid, setValid] = useState(false);
+
   useEffect(() => {
     dispatch(getCategoriesAction());
   }, []);
@@ -55,36 +65,49 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
         </Box>
         <Box height="100%">
           <Form
-            onSubmit={({ value }) => {
-              console.log(value);
+            validate="change"
+            onValidate={(validationResults) => {
+              setValid(validationResults.valid);
+            }}
+            onSubmit={({ value }: FormExtendedEvent<CreateZonePayload>) => {
+              dispatch(createZoneAction(value));
+              dispatch(closeCreateZoneLayerAction());
             }}
           >
-            <Box>
-              <Box direction="row" justify="between">
-                <FormField name="name" label="Name">
+            <Box height="320px" flex={false} overflow="auto">
+              <Box height={{ min: 'min-content' }}>
+                <FormField required name="name" label="Name">
                   <TextInput name="name" />
                 </FormField>
-                <FormField name="subdomain" label="Subdomain">
+                <FormField required name="subdomain" label="Subdomain">
                   <TextInput name="subdomain" />
                 </FormField>
+                <FormField required name="description" label="Description">
+                  <TextInput name="description" />
+                </FormField>
+                <FormField name="public">
+                  <CheckBox
+                    toggle
+                    label="Public"
+                    name="public"
+                    defaultChecked
+                  />
+                </FormField>
+                <FormField required name="categoryId" label="Category">
+                  <Select
+                    name="categoryId"
+                    options={categories || []}
+                    labelKey="name"
+                    valueKey={{ key: 'id', reduce: true }}
+                    valueLabel={
+                      <Box pad="small">
+                        <Text>{category?.name || 'Select a category'}</Text>
+                      </Box>
+                    }
+                    onChange={({ option }) => setCategory(option)}
+                  />
+                </FormField>
               </Box>
-              <FormField name="description" label="Description">
-                <TextInput name="description" />
-              </FormField>
-              <FormField name="category" label="Category">
-                <Select
-                  name="category"
-                  options={categories || []}
-                  labelKey="name"
-                  valueKey={{ key: 'id', reduce: true }}
-                  valueLabel={
-                    <Box pad="small">
-                      <Text>{category?.name}</Text>
-                    </Box>
-                  }
-                  onChange={({ option }) => setCategory(option)}
-                />
-              </FormField>
             </Box>
             <Box
               direction="row"
@@ -92,7 +115,7 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
               justify="center"
               margin={{ top: 'medium' }}
             >
-              <Button type="submit" primary label="Create" />
+              <Button type="submit" disabled={!valid} primary label="Create" />
             </Box>
           </Form>
         </Box>

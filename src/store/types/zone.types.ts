@@ -4,6 +4,7 @@ import {
   CLOSE_CREATE_ZONE_LAYER,
   CREATE_ZONE_FAILED,
   CREATE_ZONE_REQUESTED,
+  CREATE_ZONE_SUCCESS,
   DELETE_USER_ZONE_FAILED,
   DELETE_USER_ZONE_REQUESTED,
   DELETE_ZONE_FAILED,
@@ -31,6 +32,7 @@ import {
   UPDATE_ZONE_REQUESTED,
 } from '../constants/zone.constants';
 import { User } from './auth.types';
+import { UtilActionParams, UtilDispatch } from './util.types';
 
 export interface ZoneListItem {
   id: number;
@@ -121,7 +123,8 @@ export type ZoneActionParams =
         | typeof JOIN_ZONE_SUCCESS
         | typeof OPEN_CREATE_ZONE_LAYER
         | typeof CLOSE_CREATE_ZONE_LAYER
-        | typeof GET_CATEGORIES_REQUESTED;
+        | typeof GET_CATEGORIES_REQUESTED
+        | typeof CREATE_ZONE_SUCCESS;
     }
   | {
       type:
@@ -161,7 +164,7 @@ export type ZoneActionParams =
     };
 
 export interface ZoneDispatch {
-  (dispatch: ZoneActionParams): void;
+  (dispatch: ZoneActionParams | UtilActionParams): void;
 }
 
 export interface ZoneAction {
