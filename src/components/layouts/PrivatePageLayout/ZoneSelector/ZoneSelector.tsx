@@ -105,7 +105,6 @@ const ZoneSelector: FC = () => {
                   ? selectedUserZone.zone.name
                   : `${user?.firstName} ${user?.lastName}`}
               </Text>
-              {selectedUserZone && <Text size="xsmall">Zone</Text>}
             </Box>
           </Box>
         </Box>
