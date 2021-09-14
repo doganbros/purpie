@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react';
+import React, { FC, useContext, useState } from 'react';
 import { Avatar, Box, DropButton, ResponsiveContext, Text } from 'grommet';
 import { Add, SettingsOption, User } from 'grommet-icons';
 import { useSelector } from 'react-redux';
@@ -17,10 +17,17 @@ const ZoneSelector: FC = () => {
     auth: { user },
   } = useSelector((state: AppState) => state);
   const size = useContext(ResponsiveContext);
+  const [hover, setHover] = useState(false);
 
   return (
     <Box fill="horizontal" pad={{ horizontal: 'small' }}>
       <DropButton
+        onMouseEnter={() => {
+          setHover(true);
+        }}
+        onMouseLeave={() => {
+          setHover(false);
+        }}
         fill="horizontal"
         plain
         dropAlign={{ left: 'left', top: 'bottom' }}
@@ -88,6 +95,7 @@ const ZoneSelector: FC = () => {
               vertical: size === 'small' ? 'medium' : 'small',
             }}
             round="medium"
+            elevation={hover ? 'medium' : 'none'}
           >
             {selectedUserZone ? (
               <Avatar

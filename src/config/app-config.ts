@@ -29,6 +29,9 @@ export const theme: typeof grommet = deepMerge(base, {
       light: {
         xlarge: '-5px 5px 30px #3D138D26',
       },
+      dark: {
+        medium: '0 5px 15px #3D138D35',
+      },
     },
     control: {
       border: {
