@@ -19,8 +19,8 @@ const ZoneSelectorListItem: FC<ZoneSelectorListItemProps> = ({
   const [hover, setHover] = useState(false);
 
   const setBackgroundColor = () => {
-    if (selected) return 'status-disabled';
-    if (hover) return 'brand';
+    if (selected) return 'brand';
+    if (hover) return 'status-disabled-light';
     return 'white';
   };
 
@@ -49,7 +49,7 @@ const ZoneSelectorListItem: FC<ZoneSelectorListItemProps> = ({
           <Text
             weight={selected ? 'bold' : 'normal'}
             size="small"
-            color={hover ? 'white' : 'black'}
+            color={selected ? 'white' : 'black'}
           >
             {label}
           </Text>
