@@ -8,6 +8,7 @@ import { AppState } from '../../../../store/reducers/root.reducer';
 import Divider from './Divider';
 import ZoneSelectorListItem from './ZoneSelectorListItem';
 import { openCreateZoneLayerAction } from '../../../../store/actions/zone.action';
+import { openCreateChannelLayerAction } from '../../../../store/actions/channel.action';
 
 const ZoneSelector: FC = () => {
   const {
@@ -71,6 +72,10 @@ const ZoneSelector: FC = () => {
               ))}
             <Divider />
             <ZoneSelectorListItem
+              onClick={() => {
+                setOpen(false);
+                dispatch(openCreateChannelLayerAction());
+              }}
               label="Create Channel"
               rightIcon={<Add size="small" color="black" />}
             />

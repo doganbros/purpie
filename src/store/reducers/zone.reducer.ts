@@ -4,6 +4,9 @@ import {
   GET_CATEGORIES_FAILED,
   GET_CATEGORIES_REQUESTED,
   GET_CATEGORIES_SUCCESS,
+  GET_ZONE_CATEGORIES_FAILED,
+  GET_ZONE_CATEGORIES_REQUESTED,
+  GET_ZONE_CATEGORIES_SUCCESS,
   GET_CURRENT_USER_ZONE_FAILED,
   GET_CURRENT_USER_ZONE_REQUESTED,
   GET_CURRENT_USER_ZONE_SUCCESS,
@@ -26,6 +29,12 @@ const initialState: ZoneState = {
   userZoneInitialized: false,
   showCreateZoneLayer: false,
   getCategories: {
+    categories: null,
+    error: null,
+    loading: false,
+  },
+  getZoneCategories: {
+    zoneId: null,
     categories: null,
     error: null,
     loading: false,
@@ -204,6 +213,38 @@ const zoneReducer = (
         ...state,
         getCategories: {
           ...state.getCategories,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case GET_ZONE_CATEGORIES_REQUESTED:
+      return {
+        ...state,
+        getZoneCategories: {
+          zoneId: null,
+          categories: null,
+          loading: true,
+          error: null,
+        },
+      };
+    case GET_ZONE_CATEGORIES_SUCCESS: {
+      const { zoneId, categories } = action.payload;
+      return {
+        ...state,
+        getZoneCategories: {
+          loading: false,
+          categories,
+          zoneId,
+          error: null,
+        },
+      };
+    }
+    case GET_ZONE_CATEGORIES_FAILED:
+      return {
+        ...state,
+        getZoneCategories: {
+          zoneId: null,
+          categories: null,
           loading: false,
           error: action.payload,
         },

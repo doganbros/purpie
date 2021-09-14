@@ -6,6 +6,9 @@ import {
   GET_CATEGORIES_FAILED,
   GET_CATEGORIES_REQUESTED,
   GET_CATEGORIES_SUCCESS,
+  GET_ZONE_CATEGORIES_FAILED,
+  GET_ZONE_CATEGORIES_REQUESTED,
+  GET_ZONE_CATEGORIES_SUCCESS,
   GET_USER_ZONES_FAILED,
   GET_USER_ZONES_REQUESTED,
   GET_USER_ZONES_SUCCESS,
@@ -91,6 +94,31 @@ export const getCategoriesAction = (): ZoneAction => {
     } catch (err) {
       dispatch({
         type: GET_CATEGORIES_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const getZoneCategoriesAction = (zoneId: number): ZoneAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: GET_ZONE_CATEGORIES_REQUESTED,
+      payload: zoneId,
+    });
+
+    try {
+      const categories = await ZoneService.getZoneCategories(zoneId);
+      dispatch({
+        type: GET_ZONE_CATEGORIES_SUCCESS,
+        payload: {
+          categories,
+          zoneId,
+        },
+      });
+    } catch (err) {
+      dispatch({
+        type: GET_ZONE_CATEGORIES_FAILED,
         payload: err?.response?.data,
       });
     }

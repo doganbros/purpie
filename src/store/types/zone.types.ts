@@ -12,6 +12,9 @@ import {
   GET_CATEGORIES_FAILED,
   GET_CATEGORIES_REQUESTED,
   GET_CATEGORIES_SUCCESS,
+  GET_ZONE_CATEGORIES_FAILED,
+  GET_ZONE_CATEGORIES_REQUESTED,
+  GET_ZONE_CATEGORIES_SUCCESS,
   GET_CURRENT_USER_ZONE_FAILED,
   GET_CURRENT_USER_ZONE_REQUESTED,
   GET_CURRENT_USER_ZONE_SUCCESS,
@@ -32,7 +35,7 @@ import {
   UPDATE_ZONE_REQUESTED,
 } from '../constants/zone.constants';
 import { User } from './auth.types';
-import { UtilActionParams, UtilDispatch } from './util.types';
+import { UtilActionParams } from './util.types';
 
 export interface ZoneListItem {
   id: number;
@@ -87,6 +90,12 @@ export interface ZoneState {
     categories: Array<Category> | null;
     error: ResponseError | null;
   };
+  getZoneCategories: {
+    loading: boolean;
+    categories: Array<Category> | null;
+    error: ResponseError | null;
+    zoneId: number | null;
+  };
   getUserZones: {
     loading: boolean;
     userZones: Array<UserZoneListItem> | null;
@@ -137,7 +146,8 @@ export type ZoneActionParams =
         | typeof DELETE_ZONE_FAILED
         | typeof UPDATE_ZONE_FAILED
         | typeof JOIN_ZONE_FAILED
-        | typeof GET_CATEGORIES_FAILED;
+        | typeof GET_CATEGORIES_FAILED
+        | typeof GET_ZONE_CATEGORIES_FAILED;
       payload: ResponseError;
     }
   | {
@@ -145,7 +155,7 @@ export type ZoneActionParams =
       payload: Array<UserZoneListItem>;
     }
   | {
-      type: typeof JOIN_ZONE_REQUESTED;
+      type: typeof JOIN_ZONE_REQUESTED | typeof GET_ZONE_CATEGORIES_REQUESTED;
       payload: number;
     }
   | {
@@ -161,6 +171,10 @@ export type ZoneActionParams =
   | {
       type: typeof GET_CATEGORIES_SUCCESS;
       payload: Array<Category>;
+    }
+  | {
+      type: typeof GET_ZONE_CATEGORIES_SUCCESS;
+      payload: { categories: Array<Category>; zoneId: number };
     };
 
 export interface ZoneDispatch {

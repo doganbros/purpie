@@ -14,7 +14,6 @@ import {
 } from 'grommet';
 import { Close } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { Category } from '../../models/utils';
 import {
   closeCreateZoneLayerAction,
   createZoneAction,
@@ -36,7 +35,6 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
   } = useSelector((state: AppState) => state);
   const size = useContext(ResponsiveContext);
 
-  const [category, setCategory] = useState<Category | undefined>();
   const [valid, setValid] = useState(false);
 
   useEffect(() => {
@@ -98,13 +96,8 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                     name="categoryId"
                     options={categories || []}
                     labelKey="name"
+                    placeholder="Select category"
                     valueKey={{ key: 'id', reduce: true }}
-                    valueLabel={
-                      <Box pad="small">
-                        <Text>{category?.name || 'Select a category'}</Text>
-                      </Box>
-                    }
-                    onChange={({ option }) => setCategory(option)}
                   />
                 </FormField>
               </Box>

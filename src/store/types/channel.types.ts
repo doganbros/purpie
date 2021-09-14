@@ -1,12 +1,17 @@
 import { ResponseError } from '../../models/response-error';
 import { Category } from '../../models/utils';
 import {
+  CLOSE_CREATE_CHANNEL_LAYER,
   GET_USER_CHANNELS_FAILED,
   GET_USER_CHANNELS_REQUESTED,
   GET_USER_CHANNELS_SUCCESS,
   JOIN_CHANNEL_FAILED,
   JOIN_CHANNEL_REQUESTED,
   JOIN_CHANNEL_SUCCESS,
+  OPEN_CREATE_CHANNEL_LAYER,
+  CREATE_CHANNEL_FAILED,
+  CREATE_CHANNEL_REQUESTED,
+  CREATE_CHANNEL_SUCCESS,
 } from '../constants/channel.constants';
 import { User } from './auth.types';
 import { UtilActionParams } from './util.types';
@@ -34,6 +39,7 @@ export interface UserChannelDetail extends UserChannelListItem {
 }
 
 export interface ChannelState {
+  showCreateChannelLayer: boolean;
   userChannels: {
     data: UserChannelListItem[];
     loading: boolean;
@@ -43,6 +49,14 @@ export interface ChannelState {
     loading: boolean;
     error: ResponseError | null;
   };
+}
+
+export interface CreateChannelPayload {
+  name: string;
+  topic: string;
+  categoryId: number;
+  description: string;
+  public: boolean;
 }
 
 export type ChannelActionParams =
@@ -55,10 +69,22 @@ export type ChannelActionParams =
       payload: number;
     }
   | {
-      type: typeof JOIN_CHANNEL_SUCCESS | typeof GET_USER_CHANNELS_REQUESTED;
+      type: typeof CREATE_CHANNEL_REQUESTED;
+      payload: CreateChannelPayload & { zoneId: number };
     }
   | {
-      type: typeof JOIN_CHANNEL_FAILED | typeof GET_USER_CHANNELS_FAILED;
+      type:
+        | typeof JOIN_CHANNEL_SUCCESS
+        | typeof GET_USER_CHANNELS_REQUESTED
+        | typeof OPEN_CREATE_CHANNEL_LAYER
+        | typeof CLOSE_CREATE_CHANNEL_LAYER
+        | typeof CREATE_CHANNEL_SUCCESS;
+    }
+  | {
+      type:
+        | typeof JOIN_CHANNEL_FAILED
+        | typeof GET_USER_CHANNELS_FAILED
+        | typeof CREATE_CHANNEL_FAILED;
       payload: ResponseError;
     };
 
@@ -67,5 +93,5 @@ export interface ChannelDispatch {
 }
 
 export interface ChannelAction {
-  (dispatch: ChannelDispatch): Promise<void>;
+  (dispatch: ChannelDispatch): void | Promise<void>;
 }
