@@ -15,3 +15,10 @@ const isValidSubDomain =
   subdomain !== 'www';
 
 export const appSubdomain = isValidSubDomain ? subdomain : null;
+
+export const navigateToSubdomain = (sub?: string): void => {
+  if (sub) {
+    clientHostUrl.hostname = sub.concat('.', clientHostUrl.hostname);
+  }
+  window.location.href = clientHostUrl.href;
+};

@@ -15,9 +15,13 @@ import { SidebarButton } from './SidebarButton';
 import PlanMeeting from '../../../layers/meeting/PlanMeeting';
 import { logoutAction } from '../../../store/actions/auth.action';
 import { closePlanCreateMeetingLayerAction } from '../../../store/actions/meeting.action';
+import { closeCreateZoneLayerAction } from '../../../store/actions/zone.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import AddContent from '../../../layers/add-content/AddContent';
 import ExtendedBox from '../../utils/ExtendedBox';
+import CreateZone from '../../../layers/create-zone/CreateZone';
+import CreateChannel from '../../../layers/create-channel/CreateChannel';
+import { closeCreateChannelLayerAction } from '../../../store/actions/channel.action';
 
 const sidebarBtns = [
   {
@@ -54,6 +58,8 @@ const Sidebar: FC = () => {
   const [showAddContent, setShowAddContent] = useState(false);
   const {
     meeting: { showPlanMeetingLayer },
+    zone: { showCreateZoneLayer },
+    channel: { showCreateChannelLayer },
   } = useSelector((state: AppState) => state);
 
   const logout = () => dispatch(logoutAction());
@@ -66,6 +72,14 @@ const Sidebar: FC = () => {
       />
       {showAddContent && (
         <AddContent onDismiss={() => setShowAddContent(false)} />
+      )}
+      {showCreateZoneLayer && (
+        <CreateZone onDismiss={() => dispatch(closeCreateZoneLayerAction())} />
+      )}
+      {showCreateChannelLayer && (
+        <CreateChannel
+          onDismiss={() => dispatch(closeCreateChannelLayerAction())}
+        />
       )}
       <Button
         onClick={() => {

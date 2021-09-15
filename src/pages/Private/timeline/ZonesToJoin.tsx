@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { getZoneSuggestionsAction } from '../../../store/actions/activity.action';
 import ZoneListItem from '../../../components/utils/zone/ZoneListItem';
-import { zoneAvatarSrc } from './data/zone-avatars';
+import { getZoneAvatarSrc } from './data/zone-avatars';
 import {
   SUGGESTION_AMOUNT_LESS,
   SUGGESTION_AMOUNT_MORE,
@@ -61,7 +61,7 @@ const ZonesToJoin: FC = () => {
                 name={z.zone_name}
                 channelCount={+z.zone_channelCount}
                 memberCount={+z.zone_membersCount}
-                src={zoneAvatarSrc[z.zone_id % zoneAvatarSrc.length]}
+                src={getZoneAvatarSrc(z.zone_id)}
               />
             ))
         ))}

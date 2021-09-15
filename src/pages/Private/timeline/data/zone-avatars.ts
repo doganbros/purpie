@@ -10,3 +10,6 @@ export const zoneAvatarSrc = [
   'https://image.flaticon.com/icons/png/512/4570/4570032.png',
   'https://image.flaticon.com/icons/png/512/4568/4568865.png',
 ];
+
+export const getZoneAvatarSrc = (id: number): string =>
+  zoneAvatarSrc[id % zoneAvatarSrc.length];

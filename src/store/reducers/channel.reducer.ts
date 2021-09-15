@@ -1,14 +1,17 @@
 import {
+  CLOSE_CREATE_CHANNEL_LAYER,
   GET_USER_CHANNELS_FAILED,
   GET_USER_CHANNELS_REQUESTED,
   GET_USER_CHANNELS_SUCCESS,
   JOIN_CHANNEL_FAILED,
   JOIN_CHANNEL_REQUESTED,
   JOIN_CHANNEL_SUCCESS,
+  OPEN_CREATE_CHANNEL_LAYER,
 } from '../constants/channel.constants';
 import { ChannelActionParams, ChannelState } from '../types/channel.types';
 
 const initialState: ChannelState = {
+  showCreateChannelLayer: false,
   userChannels: {
     data: [],
     loading: false,
@@ -75,6 +78,16 @@ const channelReducer = (
           loading: false,
           error: action.payload,
         },
+      };
+    case OPEN_CREATE_CHANNEL_LAYER:
+      return {
+        ...state,
+        showCreateChannelLayer: true,
+      };
+    case CLOSE_CREATE_CHANNEL_LAYER:
+      return {
+        ...state,
+        showCreateChannelLayer: false,
       };
     default:
       return state;
