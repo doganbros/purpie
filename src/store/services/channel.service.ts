@@ -1,12 +1,13 @@
 import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
+import { CreateChannelPayload } from '../types/channel.types';
 
 export const createChannel = (
-  userChannelId: number,
-  channelInfo: Record<string, any>
+  userZoneId: number,
+  channelInfo: CreateChannelPayload
 ): Promise<any> =>
   http
-    .post(`/channel/create/${userChannelId}`, channelInfo)
+    .post(`/channel/create/${userZoneId}`, channelInfo)
     .then((res) => res.data);
 
 export const getUserChannels = (): Promise<PaginatedResponse<any>> =>
