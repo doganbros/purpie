@@ -11,9 +11,9 @@ import { StreamEvent } from 'types/StreamEvent';
 
 const events = [
   'play_started',
-  'play_stopped',
+  'play_done',
   'publish_started',
-  'publish_ended',
+  'publish_done',
 ];
 
 const mediaTypes = ['video', 'audio'];
@@ -36,6 +36,6 @@ export class ClientStreamEventDto {
 
   @ApiProperty({ required: false })
   @IsInt()
-  @ValidateIf((o) => ['play_started', 'play_stopped'].includes(o.event))
+  @ValidateIf((o) => ['play_started', 'play_done'].includes(o.event))
   userId?: number;
 }
