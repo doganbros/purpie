@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useContext, useState } from 'react';
 import {
   Box,
   Button,
@@ -36,14 +36,13 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
   } = useSelector((state: AppState) => state);
   const size = useContext(ResponsiveContext);
   const [userZone, setUserZone] = useState();
-  const [zone, setZone] = useState<any>();
   const [category, setCategory] = useState();
-  const [valid, setValid] = useState(false);
+  const [name, setName] = useState('');
+  const [topic, setTopic] = useState('');
+  const [description, setDescription] = useState('');
+  const [publicChannel, setPublicChannel] = useState(true);
 
-  useEffect(() => {
-    setCategory(undefined);
-    if (zone) dispatch(getZoneCategoriesAction(zone));
-  }, [zone]);
+  const notValid = !name || !description || !topic || !category || !userZone;
 
   return (
     <Layer onClickOutside={onDismiss}>
@@ -67,10 +66,6 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
           </Button>
         </Box>
         <Form
-          validate="change"
-          onValidate={(validationResults) => {
-            setValid(validationResults.valid);
-          }}
           onSubmit={({
             value,
           }: FormExtendedEvent<CreateChannelPayload & { zoneId: number }>) => {
@@ -82,16 +77,36 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
           <Box height="320px" flex={false} overflow="auto">
             <Box height={{ min: 'min-content' }}>
               <FormField required name="name" label="Name">
-                <TextInput name="name" />
+                <TextInput
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  name="name"
+                />
               </FormField>
               <FormField required name="topic" label="Topic">
-                <TextInput name="topic" />
+                <TextInput
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  name="topic"
+                />
               </FormField>
               <FormField required name="description" label="Description">
-                <TextInput name="description" />
+                <TextInput
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  name="description"
+                />
               </FormField>
               <FormField name="public">
-                <CheckBox toggle label="Public" name="public" defaultChecked />
+                <CheckBox
+                  toggle
+                  label="Public"
+                  name="public"
+                  checked={publicChannel}
+                  onChange={(e) => {
+                    setPublicChannel(e.target.checked);
+                  }}
+                />
               </FormField>
               <FormField required name="zoneId" label="Zone">
                 <Select
@@ -111,7 +126,8 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                   placeholder="Select zone"
                   onChange={({ option }) => {
                     setUserZone(option.id);
-                    setZone(option.zoneId);
+                    setCategory(undefined);
+                    dispatch(getZoneCategoriesAction(option.zoneId));
                   }}
                 />
               </FormField>
@@ -135,12 +151,7 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
             justify="center"
             margin={{ top: 'medium' }}
           >
-            <Button
-              type="submit"
-              disabled={!valid || !category || !userZone}
-              primary
-              label="Create"
-            />
+            <Button type="submit" disabled={notValid} primary label="Create" />
           </Box>
         </Form>
       </Box>

@@ -35,11 +35,18 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
   } = useSelector((state: AppState) => state);
   const size = useContext(ResponsiveContext);
 
-  const [valid, setValid] = useState(false);
+  const [name, setName] = useState('');
+  const [subdomain, setSubdomain] = useState('');
+  const [description, setDescription] = useState('');
+  const [publicZone, setPublicZone] = useState(true);
+  const [category, setCategory] = useState();
+
+  const notValid = !name || !description || !subdomain || !category;
 
   useEffect(() => {
     dispatch(getCategoriesAction());
   }, []);
+
   return (
     <Layer onClickOutside={onDismiss}>
       <Box
@@ -63,10 +70,6 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
         </Box>
         <Box height="100%">
           <Form
-            validate="change"
-            onValidate={(validationResults) => {
-              setValid(validationResults.valid);
-            }}
             onSubmit={({ value }: FormExtendedEvent<CreateZonePayload>) => {
               dispatch(createZoneAction(value));
               dispatch(closeCreateZoneLayerAction());
@@ -75,20 +78,41 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
             <Box height="320px" flex={false} overflow="auto">
               <Box height={{ min: 'min-content' }}>
                 <FormField required name="name" label="Name">
-                  <TextInput name="name" />
+                  <TextInput
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                    }}
+                    name="name"
+                  />
                 </FormField>
                 <FormField required name="subdomain" label="Subdomain">
-                  <TextInput name="subdomain" />
+                  <TextInput
+                    value={subdomain}
+                    onChange={(e) => {
+                      setSubdomain(e.target.value);
+                    }}
+                    name="subdomain"
+                  />
                 </FormField>
                 <FormField required name="description" label="Description">
-                  <TextInput name="description" />
+                  <TextInput
+                    value={description}
+                    onChange={(e) => {
+                      setDescription(e.target.value);
+                    }}
+                    name="description"
+                  />
                 </FormField>
                 <FormField name="public">
                   <CheckBox
                     toggle
+                    checked={publicZone}
+                    onChange={(e) => {
+                      setPublicZone(e.target.checked);
+                    }}
                     label="Public"
                     name="public"
-                    defaultChecked
                   />
                 </FormField>
                 <FormField required name="categoryId" label="Category">
@@ -98,6 +122,10 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                     labelKey="name"
                     placeholder="Select category"
                     valueKey={{ key: 'id', reduce: true }}
+                    value={category}
+                    onChange={({ option }) => {
+                      setCategory(option.id);
+                    }}
                   />
                 </FormField>
               </Box>
@@ -108,7 +136,12 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
               justify="center"
               margin={{ top: 'medium' }}
             >
-              <Button type="submit" disabled={!valid} primary label="Create" />
+              <Button
+                type="submit"
+                disabled={notValid}
+                primary
+                label="Create"
+              />
             </Box>
           </Form>
         </Box>
