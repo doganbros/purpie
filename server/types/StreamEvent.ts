@@ -1,5 +1,5 @@
 export type StreamEvent =
   | 'play_started'
-  | 'play_stopped'
+  | 'play_done'
   | 'publish_started'
-  | 'publish_ended';
+  | 'publish_done';

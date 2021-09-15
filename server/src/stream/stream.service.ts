@@ -20,7 +20,7 @@ export class StreamService {
     });
 
     // user events
-    if (['play_started', 'play_stopped'].includes(info.event))
+    if (['play_started', 'play_done'].includes(info.event))
       streamLog.userId = info.userId!;
 
     return streamLog.save();

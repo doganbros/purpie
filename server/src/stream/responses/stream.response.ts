@@ -3,9 +3,9 @@ import { User } from 'entities/User.entity';
 
 const events = [
   'play_started',
-  'play_stopped',
+  'play_done',
   'publish_started',
-  'publish_ended',
+  'publish_done',
 ];
 
 const mediaTypes = ['video', 'audio'];
