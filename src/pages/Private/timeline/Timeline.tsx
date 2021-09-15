@@ -13,7 +13,6 @@ import Divider from '../../../components/utils/Divider';
 import ChannelsToFollow from './ChannelsToFollow';
 import ZonesToJoin from './ZonesToJoin';
 import LastActivities from './LastActivities';
-import Profile from './Profile';
 import Searchbar from './Searchbar';
 import VideoGridItem from '../../../components/utils/VideoGridItem';
 import { timeLineList } from './data/timeline-list';
@@ -55,8 +54,6 @@ const Timeline: FC = () => {
       title="Timeline"
       rightComponent={
         <Box pad="medium" gap="medium">
-          <Profile />
-          <Divider />
           <Searchbar />
           <ChannelsToFollow />
           <Divider />

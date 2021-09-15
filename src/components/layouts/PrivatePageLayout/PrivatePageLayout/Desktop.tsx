@@ -4,7 +4,7 @@ import React, { FC } from 'react';
 import ExtendedBox from '../../../utils/ExtendedBox';
 import Logo from '../../../../assets/octopus-logo/logo-white.svg';
 import Sidebar from '../Sidebar';
-import ZoneSelector from '../ZoneSelector';
+import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import Divider from '../../../utils/Divider';
 
 interface Props {
@@ -29,9 +29,10 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
         left="0"
         pad={{ right: '100px' }}
         justify="between"
+        align="center"
         width={`${leftComponentWidth + 100}px`}
       >
-        <Box>
+        <Box fill="horizontal">
           <Button
             margin={{ vertical: 'medium' }}
             onClick={() => history.push('/')}

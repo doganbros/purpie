@@ -9,11 +9,21 @@ const ChannelList: FC = () => {
   const dispatch = useDispatch();
   const {
     channel: { userChannels },
+    zone: { selectedUserZone },
   } = useSelector((state: AppState) => state);
 
   useEffect(() => {
     dispatch(getUserChannelsAction());
   }, []);
+
+  const userChannelsFiltered: typeof userChannels = selectedUserZone
+    ? {
+        ...userChannels,
+        data: userChannels.data.filter(
+          (c) => c.channel.zoneId === selectedUserZone.zone.id
+        ),
+      }
+    : userChannels;
 
   return (
     <Box
@@ -23,12 +33,14 @@ const ChannelList: FC = () => {
       gap="medium"
       pad={{ horizontal: 'medium' }}
     >
-      {userChannels.loading && <Text size="small">Loading</Text>}
-      {!userChannels.loading &&
-        (userChannels.data.length === 0 ? (
-          <Text size="small">No channels are followed</Text>
+      {userChannelsFiltered.loading && <Text size="small">Loading</Text>}
+      {!userChannelsFiltered.loading &&
+        (userChannelsFiltered.data.length === 0 ? (
+          <Text size="small">
+            No channels are followed{selectedUserZone ? ' on this zone' : ''}
+          </Text>
         ) : (
-          userChannels.data.map((c) => (
+          userChannelsFiltered.data.map((c) => (
             <Box key={c.channel.id} align="center">
               <Avatar
                 size="medium"
