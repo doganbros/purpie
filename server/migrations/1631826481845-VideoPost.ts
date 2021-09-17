@@ -79,7 +79,7 @@ export class VideoPost1631826481845 implements MigrationInterface {
       }),
     );
     await queryRunner.createForeignKey(
-      'channel',
+      'video_post',
       new TableForeignKey({
         columnNames: ['channelId'],
         referencedColumnNames: ['id'],
