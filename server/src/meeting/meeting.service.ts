@@ -308,7 +308,13 @@ export class MeetingService {
         'meeting.userContactExclusive = true AND meeting.createdById = contact.userId AND contact.contactUserId = :userId',
         { userId },
       )
-      .where('meeting.conferenceEndDate is null')
+      .where(
+        new Brackets((qb) => {
+          qb.where('meeting.conferenceEndDate is null').orWhere(
+            'meeting.telecastRepeatUrl is not null',
+          );
+        }),
+      )
       .andWhere(
         new Brackets((qb) => {
           qb.where('user_channel.channelId is not null')
@@ -345,13 +351,16 @@ export class MeetingService {
       .innerJoin(
         UserChannel,
         'user_channel',
-        'user_channel.channelId = meeting.channelId',
+        'user_channel.channelId = meeting.channelId and user_channel.userId = :userId',
+        { userId },
       )
       .innerJoin('meeting.channel', 'channel')
       .where(
         'channel.id = user_channel.channelId and meeting.channelId = channel.id',
       )
-      .andWhere('meeting.conferenceEndDate is null')
+      .andWhere(
+        'meeting.conferenceEndDate is null or meeting.telecastRepeatUrl is not null',
+      )
       .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
   }
@@ -377,7 +386,9 @@ export class MeetingService {
         { userId },
       )
       .where('channel.id = :channelId', { channelId })
-      .andWhere('meeting.conferenceEndDate is null')
+      .andWhere(
+        'meeting.conferenceEndDate is null or meeting.telecastRepeatUrl is not null',
+      )
       .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
   }
@@ -403,7 +414,6 @@ export class MeetingService {
     }
 
     // user events
-
     if (['user_joined', 'user_left'].includes(info.event))
       meetingLog.userId = info.userId!;
 

@@ -46,6 +46,9 @@ export class Meeting extends RecordEntity {
   channelId: number;
 
   @Column({ default: false })
+  streaming: boolean;
+
+  @Column({ default: false })
   public: boolean;
 
   @Column({ default: false })
@@ -53,6 +56,9 @@ export class Meeting extends RecordEntity {
 
   @Column({ default: false })
   record: boolean;
+
+  @Column({ nullable: true })
+  telecastRepeatUrl: string;
 
   @Column({ default: false })
   userContactExclusive: boolean;
