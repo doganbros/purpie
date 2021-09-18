@@ -22,11 +22,11 @@ export class Meeting extends RecordEntity {
   @Column({ nullable: true })
   endDate: Date;
 
-  @Column({ nullable: true })
-  conferenceStartDate: Date;
+  @Column({ nullable: true, type: Date })
+  conferenceStartDate: Date | null;
 
-  @Column({ nullable: true })
-  conferenceEndDate: Date;
+  @Column({ nullable: true, type: Date })
+  conferenceEndDate: Date | null;
 
   @Column({ nullable: true })
   timeZone: string;
@@ -46,6 +46,9 @@ export class Meeting extends RecordEntity {
   channelId: number;
 
   @Column({ default: false })
+  streaming: boolean;
+
+  @Column({ default: false })
   public: boolean;
 
   @Column({ default: false })
@@ -53,6 +56,9 @@ export class Meeting extends RecordEntity {
 
   @Column({ default: false })
   record: boolean;
+
+  @Column({ nullable: true })
+  telecastRepeatUrl: string;
 
   @Column({ default: false })
   userContactExclusive: boolean;

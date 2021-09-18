@@ -11,7 +11,7 @@ import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { generateJWT } from 'helpers/jwt';
-import { Brackets, DeepPartial, IsNull, Repository } from 'typeorm';
+import { Brackets, DeepPartial, Repository } from 'typeorm';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import {
   generateLowerAlphaNumId,
@@ -129,6 +129,7 @@ export class MeetingService {
   currentUserJoinMeetingValidator(userId: number, slug: string) {
     return this.meetingRepository
       .createQueryBuilder('meeting')
+      .innerJoin(User, 'user', 'user.id = :userId', { userId })
       .leftJoin(
         UserChannel,
         'user_channel',
@@ -143,6 +144,13 @@ export class MeetingService {
       )
 
       .where('meeting.slug = :slug', { slug })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            'meeting.conferenceEndDate is null',
+          ).orWhere('meeting.createdById = :userId', { userId });
+        }),
+      )
       .andWhere(
         new Brackets((qb) => {
           qb.where('meeting.public = true')
@@ -204,10 +212,10 @@ export class MeetingService {
           name: `${user.firstName} ${user.lastName}`,
           email: user.email,
           id: user.id,
-          moderator,
         },
         group: 'a122-123-456-789',
       },
+      moderator,
       exp: 1696284052,
       aud: 'doganbros-meet',
       iss: 'doganbros-meet',
@@ -308,7 +316,13 @@ export class MeetingService {
         'meeting.userContactExclusive = true AND meeting.createdById = contact.userId AND contact.contactUserId = :userId',
         { userId },
       )
-      .where('meeting.conferenceEndDate is null')
+      .where(
+        new Brackets((qb) => {
+          qb.where('meeting.conferenceEndDate is null').orWhere(
+            'meeting.telecastRepeatUrl is not null',
+          );
+        }),
+      )
       .andWhere(
         new Brackets((qb) => {
           qb.where('user_channel.channelId is not null')
@@ -345,13 +359,16 @@ export class MeetingService {
       .innerJoin(
         UserChannel,
         'user_channel',
-        'user_channel.channelId = meeting.channelId',
+        'user_channel.channelId = meeting.channelId and user_channel.userId = :userId',
+        { userId },
       )
       .innerJoin('meeting.channel', 'channel')
       .where(
         'channel.id = user_channel.channelId and meeting.channelId = channel.id',
       )
-      .andWhere('meeting.conferenceEndDate is null')
+      .andWhere(
+        'meeting.conferenceEndDate is null or meeting.telecastRepeatUrl is not null',
+      )
       .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
   }
@@ -377,7 +394,9 @@ export class MeetingService {
         { userId },
       )
       .where('channel.id = :channelId', { channelId })
-      .andWhere('meeting.conferenceEndDate is null')
+      .andWhere(
+        'meeting.conferenceEndDate is null or meeting.telecastRepeatUrl is not null',
+      )
       .orderBy('meeting.startDate', 'ASC')
       .paginate(query);
   }
@@ -390,20 +409,19 @@ export class MeetingService {
 
     if (info.event === 'started') {
       await this.meetingRepository.update(
-        { slug: info.meetingTitle, conferenceStartDate: IsNull() },
-        { conferenceStartDate: new Date() },
+        { slug: info.meetingTitle },
+        { conferenceStartDate: new Date(), conferenceEndDate: null },
       );
     }
 
     if (info.event === 'ended') {
       await this.meetingRepository.update(
-        { slug: info.meetingTitle, conferenceEndDate: IsNull() },
+        { slug: info.meetingTitle },
         { conferenceEndDate: new Date() },
       );
     }
 
     // user events
-
     if (['user_joined', 'user_left'].includes(info.event))
       meetingLog.userId = info.userId!;
 
