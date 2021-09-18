@@ -310,8 +310,14 @@ export class MeetingController {
   @ValidationBadRequest()
   @IsClientAuthenticated(['manageMeeting'])
   async setMeetingStatus(@Body() info: ClientMeetingEventDto) {
-    await this.meetingService.setMeetingStatus(info);
-    return 'OK';
+    try {
+      await this.meetingService.setMeetingStatus(info);
+      return 'OK';
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('meeting_event_error', err);
+      throw err;
+    }
   }
 
   @Post('/client/verify')
@@ -332,8 +338,6 @@ export class MeetingController {
       info.userId,
       info.meetingTitle,
     );
-    // eslint-disable-next-line no-console
-    console.log('meeting_verification_payload', info);
 
     if (!meeting)
       throw new NotFoundException('Meeting not found', 'MEETING_NOT_FOUND');
