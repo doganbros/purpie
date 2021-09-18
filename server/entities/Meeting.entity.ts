@@ -22,11 +22,11 @@ export class Meeting extends RecordEntity {
   @Column({ nullable: true })
   endDate: Date;
 
-  @Column({ nullable: true })
-  conferenceStartDate: Date;
+  @Column({ nullable: true, type: Date })
+  conferenceStartDate: Date | null;
 
-  @Column({ nullable: true })
-  conferenceEndDate: Date;
+  @Column({ nullable: true, type: Date })
+  conferenceEndDate: Date | null;
 
   @Column({ nullable: true })
   timeZone: string;

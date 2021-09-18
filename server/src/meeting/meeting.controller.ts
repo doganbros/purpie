@@ -182,11 +182,12 @@ export class MeetingController {
     if (!meeting)
       throw new NotFoundException('Meeting not found', 'MEETING_NOT_FOUND');
 
-    if (meeting.conferenceEndDate)
+    if (meeting.conferenceEndDate && meeting.createdById !== user.id) {
       throw new BadRequestException(
         'Meeting has already ended',
         'MEETING_ALREADY_ENDED',
       );
+    }
 
     if (dayjs().isBefore(meeting.startDate))
       throw new BadRequestException(
