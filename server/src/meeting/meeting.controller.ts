@@ -332,6 +332,8 @@ export class MeetingController {
       info.userId,
       info.meetingTitle,
     );
+    // eslint-disable-next-line no-console
+    console.log('meeting_verification_payload', info);
 
     if (!meeting)
       throw new NotFoundException('Meeting not found', 'MEETING_NOT_FOUND');
