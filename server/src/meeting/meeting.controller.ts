@@ -310,14 +310,8 @@ export class MeetingController {
   @ValidationBadRequest()
   @IsClientAuthenticated(['manageMeeting'])
   async setMeetingStatus(@Body() info: ClientMeetingEventDto) {
-    try {
-      await this.meetingService.setMeetingStatus(info);
-      return 'OK';
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error('meeting_event_error', err);
-      throw err;
-    }
+    await this.meetingService.setMeetingStatus(info);
+    return 'OK';
   }
 
   @Post('/client/verify')
