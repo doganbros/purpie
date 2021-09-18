@@ -328,16 +328,19 @@ export class MeetingController {
   @ValidationBadRequest()
   @IsClientAuthenticated(['manageMeeting'])
   async verifyMeetingAuthorization(@Body() info: ClientVerifyMeetingAuthDto) {
-    const meeting = await this.meetingService.currentUserJoinMeetingValidator(
-      info.userId,
-      info.meetingTitle,
-    );
-    // eslint-disable-next-line no-console
-    console.log('meeting_verification_payload', info);
+    try {
+      const meeting = await this.meetingService.currentUserJoinMeetingValidator(
+        info.userId,
+        info.meetingTitle,
+      );
+      if (!meeting)
+        throw new NotFoundException('Meeting not found', 'MEETING_NOT_FOUND');
 
-    if (!meeting)
-      throw new NotFoundException('Meeting not found', 'MEETING_NOT_FOUND');
-
-    return 'OK';
+      return 'OK';
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log('event_error', error);
+      throw error;
+    }
   }
 }
