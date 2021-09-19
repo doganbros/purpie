@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Meeting } from 'entities/Meeting.entity';
 import { StreamLog } from 'entities/StreamLog.entity';
 import { Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
@@ -10,6 +11,8 @@ export class StreamService {
   constructor(
     @InjectRepository(StreamLog)
     private streamLogRepo: Repository<StreamLog>,
+    @InjectRepository(Meeting)
+    private readonly meetingRepo: Repository<Meeting>,
   ) {}
 
   async setStreamEvent(info: ClientStreamEventDto) {
@@ -23,7 +26,21 @@ export class StreamService {
     if (['play_started', 'play_done'].includes(info.event))
       streamLog.userId = info.userId!;
 
-    return streamLog.save();
+    await streamLog.save();
+
+    if (
+      ['publish_started', 'publish_done'].includes(info.event) &&
+      (!info.postType || info.postType === 'meeting')
+    ) {
+      await this.meetingRepo.update(
+        {
+          slug: info.slug,
+        },
+        { streaming: info.event === 'publish_started' },
+      );
+    }
+
+    return streamLog;
   }
 
   async getStreamLogs(slug: string, query: PaginationQuery) {

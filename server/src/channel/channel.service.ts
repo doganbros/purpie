@@ -4,11 +4,12 @@ import { Channel } from 'entities/Channel.entity';
 import { Invitation } from 'entities/Invitation.entity';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
+import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
 import pick from 'lodash.pick';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { MailService } from 'src/mail/mail.service';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { CreateChannelDto } from './dto/create-channel.dto';
 
 const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
@@ -135,10 +136,20 @@ export class ChannelService {
         'user_channel.channelId = channel.id',
       )
       .leftJoin(User, 'user', 'user.id = user_channel.userId')
-
+      .leftJoin('channel.zone', 'zone')
+      .leftJoin(
+        UserZone,
+        'user_zone',
+        'user_zone.id = zone.id and user_zone.userId = user.id',
+      )
       .where('channel.public = true')
       .andWhere('channel.id = :channelId', { channelId })
       .andWhere('user.id <> :userId', { userId })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where('zone.public = true').orWhere('user_zone.id is not null');
+        }),
+      )
       .getOne();
 
     return channel;

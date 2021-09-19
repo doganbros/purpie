@@ -49,8 +49,18 @@ export class ActivityService {
         'user_channel.channelId = channel.id AND user_channel.userId = :userId',
         { userId },
       )
+      .leftJoin(
+        UserZone,
+        'user_zone',
+        'user_zone.zoneId = zone.id and user_zone.userId = :userId',
+        { userId },
+      )
       .where('channel.public = true')
-      .andWhere('zone.public = true')
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where('zone.public = true').orWhere('user_zone.id is not null');
+        }),
+      )
       .andWhere('user_channel.id is null')
       .orderBy('channel.createdOn', 'DESC')
       .paginateRaw(query);
@@ -129,7 +139,11 @@ export class ActivityService {
         'channel_meeting.description',
         'channel_meeting.public',
       ])
-      .leftJoin(Meeting, 'meeting', 'meeting.conferenceEndDate is null')
+      .leftJoin(
+        Meeting,
+        'meeting',
+        'meeting.conferenceEndDate is null or meeting.telecastRepeatUrl is not null',
+      )
       .leftJoin(
         UserChannel,
         'user_channel_meeting',
@@ -182,7 +196,11 @@ export class ActivityService {
         'channel_meeting.description',
         'channel_meeting.public',
       ])
-      .leftJoin(Meeting, 'meeting', 'meeting.conferenceEndDate is null')
+      .leftJoin(
+        Meeting,
+        'meeting',
+        'meeting.conferenceEndDate is null or meeting.telecastRepeatUrl is not null',
+      )
       .leftJoin(
         Channel,
         'channel_meeting',
@@ -194,14 +212,9 @@ export class ActivityService {
         'zone_meeting.id = channel_meeting.zoneId',
       )
       .leftJoin('meeting.createdBy', 'meetingCreatedBy')
-      .where('channel_meeting.zoneId = :zoneId', { zoneId })
-      .andWhere(
+      .where(
         new Brackets((qb) => {
-          qb.where(
-            new Brackets((qbi) => {
-              qbi.where('meeting.channelId = channel_meeting.id');
-            }),
-          ); // other and where for videos and so on
+          qb.where('channel_meeting.zoneId = :zoneId', { zoneId });
         }),
       )
       .paginateRaw(query, false);
@@ -217,18 +230,20 @@ export class ActivityService {
         'channel.topic',
         'channel.description',
       ])
-      .leftJoin(
-        Meeting,
-        'meeting',
-        'meeting.conferenceEndDate is null and meeting.channelId = channel.id',
-      )
+      .leftJoin(Meeting, 'meeting', 'meeting.channelId = channel.id')
       .leftJoin('meeting.createdBy', 'meetingCreatedBy')
       .where('channel.id = :channelId', { channelId })
       .andWhere(
         new Brackets((qb) => {
           qb.where(
             new Brackets((qbi) => {
-              qbi.where('meeting.channelId = channel.id');
+              qbi.where('meeting.channelId = channel.id').andWhere(
+                new Brackets((qbii) => {
+                  qbii
+                    .where('meeting.conferenceEndDate is null')
+                    .orWhere('meeting.telecastRepeatUrl is not null');
+                }),
+              );
             }),
           ); // other and where for videos and so on
         }),
@@ -245,7 +260,13 @@ export class ActivityService {
         new Brackets((qb) => {
           qb.where(
             new Brackets((qbi) => {
-              qbi.where('meeting.public = true');
+              qbi.where('meeting.public = true').andWhere(
+                new Brackets((qbii) => {
+                  qbii
+                    .where('meeting.conferenceEndDate is null')
+                    .orWhere('meeting.telecastRepeatUrl is not null');
+                }),
+              );
             }),
           ); // other and where for videos and so on
         }),

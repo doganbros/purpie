@@ -7,27 +7,33 @@ import {
   ValidateIf,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { StreamEvent } from 'types/StreamEvent';
 
 const events = [
   'play_started',
   'play_done',
   'publish_started',
   'publish_done',
-];
+] as const;
 
-const mediaTypes = ['video', 'audio'];
+const mediaTypes = ['video', 'audio'] as const;
+
+const postTypes = ['meeting'] as const;
 
 export class ClientStreamEventDto {
   @ApiProperty({ enum: events })
   @IsIn(events)
   @IsNotEmpty()
-  event: StreamEvent;
+  event: typeof events[number];
 
-  @ApiProperty({ enum: mediaTypes })
+  @ApiProperty({ enum: mediaTypes, required: false })
   @IsOptional()
   @IsIn(mediaTypes)
-  mediaType?: 'video' | 'audio';
+  mediaType?: typeof mediaTypes[number];
+
+  @ApiProperty({ enum: postTypes, required: false })
+  @IsOptional()
+  @IsIn(postTypes)
+  postType?: typeof postTypes[number];
 
   @ApiProperty()
   @IsString()
