@@ -189,7 +189,7 @@ export class MeetingController {
       );
     }
 
-    if (dayjs().isBefore(meeting.startDate))
+    if (dayjs().isBefore(meeting.startDate) && meeting.createdById !== user.id)
       throw new BadRequestException(
         'Meeting has not started yet',
         'MEETING_NOT_STARTED',

@@ -1,6 +1,9 @@
 import { Grommet } from 'grommet';
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { login as loginToMattermost } from 'mattermost-redux/actions/users';
+import { setUrl } from 'mattermost-redux/actions/general';
+import { Client4 } from 'mattermost-redux/client';
 import { Route, Router, Switch } from 'react-router-dom';
 import AppToast from './components/utils/AppToast';
 import Loader from './components/utils/Loader';
@@ -32,7 +35,13 @@ const App: FC = () => {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated) dispatch(getUserZonesAction());
+    if (isAuthenticated) {
+      dispatch(getUserZonesAction());
+      setUrl('http://octopus.localhost:8065');
+      Client4.serverVersion =
+        '5.38.1.5.38.1.b435ad32a7d67197fdb0b9a16f34a71a.false';
+      dispatch(loginToMattermost('johndoe', 'johndoe'));
+    }
   }, [isAuthenticated]);
 
   return (

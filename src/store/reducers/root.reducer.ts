@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import mattermostReducers from 'mattermost-redux/reducers';
 import activityReducer from './activity.reducer';
 import authReducer from './auth.reducer';
 import channelReducer from './channel.reducer';
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   zone: zoneReducer,
   meeting: meetingReducer,
   util: utilReducer,
+  ...mattermostReducers,
 });
 
 export type AppState = ReturnType<typeof rootReducer>;
