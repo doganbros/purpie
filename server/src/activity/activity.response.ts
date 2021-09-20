@@ -121,6 +121,9 @@ class BaseActivityFeedList {
   meeting_public: boolean;
 
   @ApiProperty()
+  meeting_userContactExclusive: boolean;
+
+  @ApiProperty()
   meeting_liveStream: boolean;
 
   @ApiProperty()

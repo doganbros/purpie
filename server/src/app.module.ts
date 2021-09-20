@@ -18,6 +18,7 @@ import { ChannelModule } from './channel/channel.module';
 import { MeetingModule } from './meeting/meeting.module';
 import { ActivityModule } from './activity/activity.module';
 import { StreamModule } from './stream/stream.module';
+import { VideoPostModule } from './video-post/video-post.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { StreamModule } from './stream/stream.module';
     MeetingModule,
     ActivityModule,
     StreamModule,
+    VideoPostModule,
   ],
   providers: [
     {

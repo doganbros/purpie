@@ -243,6 +243,7 @@ export class MeetingService {
         'meeting.slug',
         'meeting.description',
         'meeting.startDate',
+        'meeting.userContactExclusive',
         'meeting.public',
         'meeting.channelId',
         'meeting.record',

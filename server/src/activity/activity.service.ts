@@ -113,6 +113,7 @@ export class ActivityService {
       'meeting.description',
       'meeting.startDate',
       'meeting.public',
+      'meeting.userContactExclusive',
       'meeting.channelId',
       'meeting.liveStream',
       'meeting.record',

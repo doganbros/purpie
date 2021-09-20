@@ -42,21 +42,21 @@ export class CreateMeetingDto {
 
   @ApiProperty()
   @ValidateIf((o) => {
-    return !o.zoneId && !o.userContactExclusive && !o.public;
+    return !o.userContactExclusive && !o.public;
   })
   @IsInt()
   channelId?: number;
 
   @ApiProperty()
   @ValidateIf((o) => {
-    return !o.zoneId && !o.userContactExclusive && !o.channelId;
+    return !o.userContactExclusive && !o.channelId;
   })
   @IsBoolean()
   public?: boolean;
 
   @ApiProperty()
   @ValidateIf((o) => {
-    return !o.zoneId && !o.channelId && !o.public;
+    return !o.channelId && !o.public;
   })
   @IsBoolean()
   userContactExclusive?: boolean;
