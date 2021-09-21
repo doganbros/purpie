@@ -21,6 +21,7 @@ import {
 import { CreateMeetingPayload } from '../../store/types/meeting.types';
 import { appSubdomain } from '../../helpers/app-subdomain';
 import { useResponsive } from '../../hooks/useResponsive';
+import PlanMeetingTheme from './custom-theme';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -110,126 +111,129 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
     },
   ];
   return (
-    <Layer onClickOutside={onClose}>
-      <Form
-        onSubmit={() => {
-          if (size === 'small' && bar.current)
-            bar.current.scrollLeft = planDialogCurrentIndex * 100;
-          dispatch(planMeetingDialogForwardAction);
-        }}
-      >
-        <Box
-          width={size !== 'small' ? '750px' : undefined}
-          height={size !== 'small' ? '505px' : '100vh'}
-          round={size !== 'small' ? '20px' : undefined}
-          background="white"
-          pad="medium"
-          gap={size !== 'small' ? 'medium' : 'large'}
+    <PlanMeetingTheme>
+      <Layer onClickOutside={onClose}>
+        <Form
+          onSubmit={() => {
+            if (size === 'small' && bar.current)
+              bar.current.scrollLeft = planDialogCurrentIndex * 100;
+            dispatch(planMeetingDialogForwardAction);
+          }}
         >
-          <Box direction="row" justify="between" align="start">
-            <Box pad="xsmall">
-              <Text size="large" weight="bold">
-                Plan A Meeting
-              </Text>
-            </Box>
-            <Button plain onClick={onClose}>
-              <Close color="brand" />
-            </Button>
-          </Box>
           <Box
-            direction="row"
-            gap="small"
-            width="750px"
-            flex={false}
-            overflow="auto"
-            ref={bar}
+            width={size !== 'small' ? '750px' : undefined}
+            height={size !== 'small' ? '505px' : '100vh'}
+            round={size !== 'small' ? '20px' : undefined}
+            background="white"
+            pad="medium"
+            gap={size !== 'small' ? 'medium' : 'large'}
           >
-            {content.map((item, i) => (
-              <Box
-                key={item.id}
-                gap="small"
-                direction="row"
-                align="center"
-                flex={false}
-              >
-                <Text
-                  size="small"
-                  weight={planDialogCurrentIndex >= i ? 'bold' : 'normal'}
-                  color={
-                    planDialogCurrentIndex >= i ? 'brand' : 'status-disabled'
-                  }
-                >
-                  {item.title}
+            <Box direction="row" justify="between" align="start">
+              <Box pad="xsmall">
+                <Text size="large" weight="bold">
+                  Plan A Meeting
                 </Text>
-                {i + 1 !== content.length && (
-                  <Box
-                    background={
-                      planDialogCurrentIndex > i ? 'brand' : 'status-disabled'
-                    }
-                    height={planDialogCurrentIndex >= i ? '2px' : '1px'}
-                    width="48px"
-                  />
-                )}
               </Box>
-            ))}
-          </Box>
-          <Box overflow="auto" height="100%">
-            <Box flex={false}>
-              {formPayload && content[planDialogCurrentIndex]?.component}
+              <Button plain onClick={onClose}>
+                <Close color="brand" />
+              </Button>
             </Box>
-          </Box>
-          <Box direction="row" gap="small" justify="end">
-            {planDialogCurrentIndex !== 0 && (
+            <Box
+              direction="row"
+              gap="small"
+              width="750px"
+              flex={false}
+              overflow="auto"
+              ref={bar}
+            >
+              {content.map((item, i) => (
+                <Box
+                  key={item.id}
+                  gap="small"
+                  direction="row"
+                  align="center"
+                  flex={false}
+                >
+                  <Text
+                    size="small"
+                    weight={planDialogCurrentIndex >= i ? 'bold' : 'normal'}
+                    color={
+                      planDialogCurrentIndex >= i ? 'brand' : 'status-disabled'
+                    }
+                  >
+                    {item.title}
+                  </Text>
+                  {i + 1 !== content.length && (
+                    <Box
+                      background={
+                        planDialogCurrentIndex > i ? 'brand' : 'status-disabled'
+                      }
+                      height={planDialogCurrentIndex >= i ? '2px' : '1px'}
+                      width="48px"
+                    />
+                  )}
+                </Box>
+              ))}
+            </Box>
+            <Box overflow="auto" height="100%">
+              <Box flex={false}>
+                {formPayload && content[planDialogCurrentIndex]?.component}
+              </Box>
+            </Box>
+            <Box direction="row" gap="small" justify="end">
+              {planDialogCurrentIndex !== 0 && (
+                <Button
+                  primary
+                  size="small"
+                  label="Back"
+                  color="status-disabled"
+                  style={{
+                    width: 240,
+                    borderRadius: 10,
+                    height: 46,
+                    fontWeight: 'bold',
+                  }}
+                  onClick={() => {
+                    if (size === 'small' && bar.current)
+                      bar.current.scrollLeft =
+                        planDialogCurrentIndex * 100 - 100;
+                    dispatch(planMeetingDialogBackAction);
+                  }}
+                />
+              )}
               <Button
                 primary
                 size="small"
-                label="Back"
-                color="status-disabled"
+                label={!submitting ? 'Go!' : 'Creating Meeting...'}
+                color="accent-1"
+                style={{
+                  color: 'brand',
+                  width: 240,
+                  borderRadius: 10,
+                  height: 46,
+                  fontWeight: 'bold',
+                }}
+                disabled={submitting}
+                onClick={submitMeeting}
+              />
+              <Button
+                primary
+                size="small"
+                label="Next"
+                type="submit"
                 style={{
                   width: 240,
                   borderRadius: 10,
                   height: 46,
                   fontWeight: 'bold',
                 }}
-                onClick={() => {
-                  if (size === 'small' && bar.current)
-                    bar.current.scrollLeft = planDialogCurrentIndex * 100 - 100;
-                  dispatch(planMeetingDialogBackAction);
-                }}
+                disabled={planDialogCurrentIndex === content.length - 1}
               />
-            )}
-            <Button
-              primary
-              size="small"
-              label={!submitting ? 'Go!' : 'Creating Meeting...'}
-              color="accent-1"
-              style={{
-                color: 'brand',
-                width: 240,
-                borderRadius: 10,
-                height: 46,
-                fontWeight: 'bold',
-              }}
-              disabled={submitting}
-              onClick={submitMeeting}
-            />
-            <Button
-              primary
-              size="small"
-              label="Next"
-              type="submit"
-              style={{
-                width: 240,
-                borderRadius: 10,
-                height: 46,
-                fontWeight: 'bold',
-              }}
-              disabled={planDialogCurrentIndex === content.length - 1}
-            />
+            </Box>
           </Box>
-        </Box>
-      </Form>
-    </Layer>
+        </Form>
+      </Layer>
+    </PlanMeetingTheme>
   );
 };
 
