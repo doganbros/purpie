@@ -127,7 +127,12 @@ const ZoneSelector: FC = () => {
               </Avatar>
             )}
             <Box align="center">
-              <Text weight="bold" size="xsmall" color="white">
+              <Text
+                textAlign="center"
+                weight="bold"
+                size="xsmall"
+                color="white"
+              >
                 {selectedUserZone
                   ? selectedUserZone.zone.name
                   : `${user?.firstName} ${user?.lastName}`}
