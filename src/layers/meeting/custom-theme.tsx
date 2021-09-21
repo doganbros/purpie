@@ -3,6 +3,9 @@ import { ThemeContext, ThemeType } from 'grommet';
 
 const theme: ThemeType = {
   formField: {
+    border: {
+      color: 'brand',
+    },
     round: 'small',
   },
 };
