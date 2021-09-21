@@ -10,7 +10,7 @@ import Video from './pages/Private/video/Video';
 import ThirdPartyAuth from './pages/Public/ThirdPartyAuth';
 import VerifyUserEmailInfo from './pages/Public/VerifyUserEmailInfo';
 import VerifyUserEmail from './pages/Public/VerifyUserEmail';
-// import Chat from './components/utils/Chat';
+import Chat from './components/utils/mattermost/Chat';
 
 interface AppRoute {
   id: string;
@@ -86,10 +86,10 @@ export const privateRoutes: Array<AppRoute> = [
     component: Video,
     description: 'User views a video',
   },
-  // {
-  //   id: nanoid(),
-  //   path: '/messages',
-  //   component: Chat,
-  //   description: 'Chat',
-  // },
+  {
+    id: nanoid(),
+    path: '/messages/:channelId',
+    component: Chat,
+    description: 'Chat',
+  },
 ];

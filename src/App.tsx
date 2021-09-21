@@ -1,9 +1,6 @@
 import { Grommet } from 'grommet';
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { login as loginToMattermost } from 'mattermost-redux/actions/users';
-import { setUrl } from 'mattermost-redux/actions/general';
-import { Client4 } from 'mattermost-redux/client';
 import { Route, Router, Switch } from 'react-router-dom';
 import AppToast from './components/utils/AppToast';
 import Loader from './components/utils/Loader';
@@ -14,6 +11,10 @@ import appHistory from './helpers/history';
 import NotFound from './pages/Private/NotFound';
 import { privateRoutes, publicRoutes } from './routes';
 import { retrieveUserAction } from './store/actions/auth.action';
+import {
+  fetchMyMattermostChannelsAction,
+  initializeMattermostAction,
+} from './store/actions/mattermost.action';
 import { removeToastAction } from './store/actions/util.action';
 import { getUserZonesAction } from './store/actions/zone.action';
 import { AppState } from './store/reducers/root.reducer';
@@ -26,8 +27,9 @@ const App: FC = () => {
       isAuthenticated,
       retrieveUser: { loading },
     },
-    zone: { userZoneInitialized },
+    zone: { userZoneInitialized, selectedUserZone },
     util: { toast },
+    mattermost: { currentUser: mattermostCurrentUser },
   } = useSelector((state: AppState) => state);
 
   useEffect(() => {
@@ -37,12 +39,17 @@ const App: FC = () => {
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(getUserZonesAction());
-      setUrl('http://octopus.localhost:8065');
-      Client4.serverVersion =
-        '5.38.1.5.38.1.b435ad32a7d67197fdb0b9a16f34a71a.false';
-      dispatch(loginToMattermost('johndoe', 'johndoe'));
+      dispatch(initializeMattermostAction('ry7fxbox6fncmxkqe9qwynwqtc'));
     }
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (userZoneInitialized) {
+      if (!selectedUserZone)
+        dispatch(fetchMyMattermostChannelsAction('nbrzi74m4fyszk9dh75gesajfo'));
+      // else fetch the team with that zone
+    }
+  }, [userZoneInitialized]);
 
   return (
     <Grommet theme={theme}>
@@ -52,7 +59,8 @@ const App: FC = () => {
         message={toast.message}
         onClose={() => dispatch(removeToastAction)}
       />
-      {loading || (isAuthenticated && !userZoneInitialized) ? (
+      {loading ||
+      (isAuthenticated && !(userZoneInitialized && mattermostCurrentUser)) ? (
         <Loader />
       ) : (
         <Router history={appHistory}>
