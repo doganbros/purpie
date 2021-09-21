@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { Box } from 'grommet';
+import React, { FC, useContext } from 'react';
+import { Grid, ResponsiveContext } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import SectionContainer from '../../../components/utils/SectionContainer';
 import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action';
@@ -18,19 +18,22 @@ const MeetingSetting: FC = () => {
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
+  const size = useContext(ResponsiveContext);
 
   if (!(userMeetingConfig?.config && formPayload?.config)) return null;
 
   return (
     <SectionContainer label="Toolbars">
-      <Box wrap justify="between" direction="row" overflow="auto">
+      <Grid
+        columns={size === 'small' ? '100%' : { count: 2, size: 'small' }}
+        gap={{ column: 'large' }}
+      >
         {formPayload.config.toolbarButtons &&
           baseMeetingConfig.toolbarButtons.map((toolbarBtn: string) => (
             <Switch
               label={toolbarBtn}
               key={toolbarBtn}
               margin={{ bottom: 'xsmall' }}
-              width="30%"
               value={formPayload.config!.toolbarButtons.includes(toolbarBtn)}
               onChange={(v) => {
                 dispatch(
@@ -48,7 +51,7 @@ const MeetingSetting: FC = () => {
               }}
             />
           ))}
-      </Box>
+      </Grid>
     </SectionContainer>
   );
 };
