@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useRef } from 'react';
-import { Box, Button, Text, Layer, Form } from 'grommet';
+import React, { FC, useEffect } from 'react';
+import { Box, Button, Text, Layer, Tabs, Tab } from 'grommet';
 import { Close } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
@@ -14,8 +14,7 @@ import { AppState } from '../../store/reducers/root.reducer';
 import {
   createMeetingAction,
   getUserMeetingConfigAction,
-  planMeetingDialogBackAction,
-  planMeetingDialogForwardAction,
+  planMeetingDialogSetAction,
   setInitialMeetingFormAction,
 } from '../../store/actions/meeting.action';
 import { CreateMeetingPayload } from '../../store/types/meeting.types';
@@ -36,7 +35,6 @@ interface Props {
 const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
   const dispatch = useDispatch();
   const size = useResponsive();
-  const bar = useRef<HTMLDivElement>(null);
 
   const {
     meeting: {
@@ -113,125 +111,96 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
   return (
     <PlanMeetingTheme>
       <Layer onClickOutside={onClose}>
-        <Form
-          onSubmit={() => {
-            if (size === 'small' && bar.current)
-              bar.current.scrollLeft = planDialogCurrentIndex * 100;
-            dispatch(planMeetingDialogForwardAction);
-          }}
+        <Box
+          width={size !== 'small' ? '750px' : undefined}
+          height={size !== 'small' ? '505px' : '100vh'}
+          round={size !== 'small' ? '20px' : undefined}
+          background="white"
+          pad="medium"
+          gap={size !== 'small' ? 'medium' : 'large'}
+          align="stretch"
         >
           <Box
-            width={size !== 'small' ? '750px' : undefined}
-            height={size !== 'small' ? '505px' : '100vh'}
-            round={size !== 'small' ? '20px' : undefined}
-            background="white"
-            pad="medium"
-            gap={size !== 'small' ? 'medium' : 'large'}
+            fill="horizontal"
+            direction="row"
+            justify="between"
+            align="start"
           >
-            <Box direction="row" justify="between" align="start">
-              <Box pad="xsmall">
-                <Text size="large" weight="bold">
-                  Plan A Meeting
-                </Text>
-              </Box>
-              <Button plain onClick={onClose}>
-                <Close color="brand" />
-              </Button>
+            <Box pad="xsmall">
+              <Text size="large" weight="bold">
+                Plan A Meeting
+              </Text>
             </Box>
-            <Box
-              direction="row"
-              gap="small"
-              width="750px"
-              flex={false}
-              overflow="auto"
-              ref={bar}
-            >
-              {content.map((item, i) => (
-                <Box
-                  key={item.id}
-                  gap="small"
-                  direction="row"
-                  align="center"
-                  flex={false}
-                >
-                  <Text
-                    size="small"
-                    weight={planDialogCurrentIndex >= i ? 'bold' : 'normal'}
-                    color={
-                      planDialogCurrentIndex >= i ? 'brand' : 'status-disabled'
-                    }
-                  >
-                    {item.title}
-                  </Text>
-                  {i + 1 !== content.length && (
-                    <Box
-                      background={
-                        planDialogCurrentIndex > i ? 'brand' : 'status-disabled'
-                      }
-                      height={planDialogCurrentIndex >= i ? '2px' : '1px'}
-                      width="48px"
-                    />
-                  )}
-                </Box>
-              ))}
-            </Box>
-            <Box overflow="auto" height="100%">
-              <Box flex={false}>
-                {formPayload && content[planDialogCurrentIndex]?.component}
-              </Box>
-            </Box>
-            <Box direction="row" gap="small" justify="end">
-              {planDialogCurrentIndex !== 0 && (
-                <Button
-                  primary
-                  size="small"
-                  label="Back"
-                  color="status-disabled"
-                  style={{
-                    width: 240,
-                    borderRadius: 10,
-                    height: 46,
-                    fontWeight: 'bold',
-                  }}
-                  onClick={() => {
-                    if (size === 'small' && bar.current)
-                      bar.current.scrollLeft =
-                        planDialogCurrentIndex * 100 - 100;
-                    dispatch(planMeetingDialogBackAction);
-                  }}
-                />
-              )}
-              <Button
-                primary
-                size="small"
-                label={!submitting ? 'Go!' : 'Creating Meeting...'}
-                color="accent-1"
-                style={{
-                  color: 'brand',
-                  width: 240,
-                  borderRadius: 10,
-                  height: 46,
-                  fontWeight: 'bold',
-                }}
-                disabled={submitting}
-                onClick={submitMeeting}
-              />
-              <Button
-                primary
-                size="small"
-                label="Next"
-                type="submit"
-                style={{
-                  width: 240,
-                  borderRadius: 10,
-                  height: 46,
-                  fontWeight: 'bold',
-                }}
-                disabled={planDialogCurrentIndex === content.length - 1}
-              />
-            </Box>
+            <Button plain onClick={onClose}>
+              <Close color="brand" />
+            </Button>
           </Box>
-        </Form>
+          <Tabs
+            flex
+            activeIndex={planDialogCurrentIndex}
+            onActive={(i) => {
+              dispatch(planMeetingDialogSetAction(i));
+            }}
+          >
+            {content.map((item, i) => (
+              <Tab
+                key={item.id}
+                plain
+                title={
+                  <Box
+                    border={{
+                      side: 'bottom',
+                      size: 'small',
+                      color:
+                        planDialogCurrentIndex === i
+                          ? 'brand'
+                          : 'status-disabled',
+                    }}
+                    pad={{ horizontal: 'xsmall' }}
+                    margin={{
+                      bottom: size === 'small' ? 'medium' : 'none',
+                      horizontal: size === 'small' ? 'medium' : 'none',
+                    }}
+                  >
+                    <Text
+                      size="medium"
+                      weight="bold"
+                      color={
+                        planDialogCurrentIndex === i
+                          ? 'brand'
+                          : 'status-disabled'
+                      }
+                    >
+                      {item.title}
+                    </Text>
+                  </Box>
+                }
+              >
+                <Box overflow="auto" fill>
+                  <Box flex={false}>{formPayload && content[i]?.component}</Box>
+                </Box>
+              </Tab>
+            ))}
+          </Tabs>
+
+          <Box direction="row" gap="small" justify="center">
+            <Button
+              primary
+              size="small"
+              label={!submitting ? 'Go!' : 'Creating Meeting...'}
+              color="accent-1"
+              style={{
+                color: 'brand',
+                width: 240,
+                borderRadius: 10,
+                height: 46,
+                fontWeight: 'bold',
+              }}
+              disabled={submitting}
+              onClick={submitMeeting}
+            />
+          </Box>
+        </Box>
       </Layer>
     </PlanMeetingTheme>
   );

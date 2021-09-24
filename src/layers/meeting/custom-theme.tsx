@@ -1,17 +1,27 @@
-import React, { FC } from 'react';
-import { ThemeContext, ThemeType } from 'grommet';
+import React, { FC, useContext } from 'react';
+import { ResponsiveContext, ThemeContext, ThemeType } from 'grommet';
+import { theme as globalTheme } from '../../config/app-config';
 
-const theme: ThemeType = {
-  formField: {
-    border: {
-      color: 'brand',
+const PlanMeetingTheme: FC = ({ children }) => {
+  const size = useContext(ResponsiveContext);
+  const theme: ThemeType = {
+    formField: {
+      border: {
+        color: 'brand',
+      },
+      round: 'small',
     },
-    round: 'small',
-  },
-};
+    tabs: {
+      header: {
+        extend: `
+          justify-content: ${size === 'small' ? 'center' : 'space-between'};
+          margin-bottom: ${globalTheme.global?.edgeSize?.medium};
+        `,
+      },
+    },
+  };
 
-const PlanMeetingTheme: FC = ({ children }) => (
-  <ThemeContext.Extend value={theme}>{children}</ThemeContext.Extend>
-);
+  return <ThemeContext.Extend value={theme}>{children}</ThemeContext.Extend>;
+};
 
 export default PlanMeetingTheme;
