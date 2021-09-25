@@ -44,7 +44,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 const {
-  S3_VIDEO_POST_BUCKET_NAME = '',
+  S3_VIDEO_BUCKET_NAME = '',
   S3_VIDEO_MEETING_RECORDING_DIR = '',
 } = process.env;
 
@@ -298,7 +298,7 @@ export class MeetingController {
         throw new NotFoundException('File not found', 'FILE_NOT_FOUND');
 
       const creds = {
-        Bucket: S3_VIDEO_POST_BUCKET_NAME,
+        Bucket: S3_VIDEO_BUCKET_NAME,
         Key: `${S3_VIDEO_MEETING_RECORDING_DIR}${recording.meetingSlug}/${recording.fileName}`,
       };
       const head = await s3HeadObject(creds);

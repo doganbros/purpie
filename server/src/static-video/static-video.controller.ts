@@ -27,7 +27,7 @@ import { VideoIdParams } from './dto/video-id.params';
 import { VideoUploadClientFeedbackDto } from './dto/video-upload-client-feedback.dto';
 import { VideoSlugParams } from './dto/video-slug.params';
 
-const { S3_VIDEO_POST_DIR = '', S3_VIDEO_POST_BUCKET_NAME = '' } = process.env;
+const { S3_VIDEO_POST_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 
 @Controller({ path: 'static-video', version: '1' })
 @ApiTags('static-video')
@@ -117,7 +117,7 @@ export class StaticVideoController {
         throw new NotFoundException('Video not found', 'VIDEO_NOT_FOUND');
 
       const creds = {
-        Bucket: S3_VIDEO_POST_BUCKET_NAME,
+        Bucket: S3_VIDEO_BUCKET_NAME,
         Key: `${S3_VIDEO_POST_DIR}${videoPost.slug}`,
       };
       const head = await s3HeadObject(creds);
@@ -150,7 +150,7 @@ export class StaticVideoController {
 
     s3.deleteObject({
       Key: `${S3_VIDEO_POST_DIR}${videoPost.slug}`,
-      Bucket: S3_VIDEO_POST_BUCKET_NAME,
+      Bucket: S3_VIDEO_BUCKET_NAME,
     });
 
     return 'OK';
