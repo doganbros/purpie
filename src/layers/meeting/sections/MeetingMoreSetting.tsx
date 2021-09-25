@@ -1,6 +1,6 @@
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box } from 'grommet';
+import { Grid, ResponsiveContext } from 'grommet';
 import SectionContainer from '../../../components/utils/SectionContainer';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action';
@@ -18,17 +18,21 @@ const MeetingMoreSetting: FC = () => {
 
   const dispatch = useDispatch();
 
+  const size = useContext(ResponsiveContext);
+
   return (
     <>
       <SectionContainer label="">
-        <Box justify="between" direction="row" overflow="auto" wrap>
+        <Grid
+          columns={size === 'small' ? '100%' : { count: 2, size: 'small' }}
+          gap={{ column: 'large' }}
+        >
           {formPayload?.config &&
             Object.keys(formPayload.config).map((setting) => {
               if (typeof formPayload.config![setting] === 'boolean')
                 return (
                   <Switch
                     label={camelToSentence(setting)}
-                    width="280px"
                     margin={{ bottom: 'xsmall' }}
                     key={setting}
                     value={!!formPayload.config?.[setting]}
@@ -46,7 +50,7 @@ const MeetingMoreSetting: FC = () => {
                 );
               return null;
             })}
-        </Box>
+        </Grid>
       </SectionContainer>
     </>
   );

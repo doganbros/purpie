@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Meeting } from 'entities/Meeting.entity';
+import { Post } from 'entities/Post.entity';
 import { StreamLog } from 'entities/StreamLog.entity';
 import { StreamController } from './stream.controller';
 import { StreamService } from './stream.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([StreamLog, Meeting])],
+  imports: [TypeOrmModule.forFeature([StreamLog, Post])],
   controllers: [StreamController],
   providers: [StreamService],
 })

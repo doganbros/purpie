@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Meeting } from 'entities/Meeting.entity';
+import { Post } from 'entities/Post.entity';
 import { StreamLog } from 'entities/StreamLog.entity';
 import { Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
@@ -11,8 +11,8 @@ export class StreamService {
   constructor(
     @InjectRepository(StreamLog)
     private streamLogRepo: Repository<StreamLog>,
-    @InjectRepository(Meeting)
-    private readonly meetingRepo: Repository<Meeting>,
+    @InjectRepository(Post)
+    private readonly meetingRepo: Repository<Post>,
   ) {}
 
   async setStreamEvent(info: ClientStreamEventDto) {

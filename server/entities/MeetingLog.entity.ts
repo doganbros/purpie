@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { MeetingEvent } from 'types/MeetingEvent';
 import { RecordEntity } from './base/RecordEntity';
-import { Meeting } from './Meeting.entity';
+import { Post } from './Post.entity';
 import { User } from './User.entity';
 
 @Entity()
@@ -16,9 +16,9 @@ export class MeetingLog extends RecordEntity {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Meeting, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Post, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'meetingSlug', referencedColumnName: 'slug' })
-  meeting: Meeting;
+  meeting: Post;
 
   @Column()
   event: MeetingEvent;

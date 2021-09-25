@@ -118,7 +118,9 @@ export type MeetingActionParams =
       payload: Record<string, any>;
     }
   | {
-      type: typeof PLAN_A_MEETING_DIALOG_SET | typeof REMOVE_USER_FROM_INVITATION;
+      type:
+        | typeof PLAN_A_MEETING_DIALOG_SET
+        | typeof REMOVE_USER_FROM_INVITATION;
       payload: number;
     }
   | {
