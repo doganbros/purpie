@@ -1,7 +1,8 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Box, Button, Text, Layer, Tabs, Tab } from 'grommet';
 import { Close } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
+import _ from 'lodash';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -16,11 +17,13 @@ import {
   getUserMeetingConfigAction,
   planMeetingDialogSetAction,
   setInitialMeetingFormAction,
+  setMeetingFormFieldAction,
 } from '../../store/actions/meeting.action';
 import { CreateMeetingPayload } from '../../store/types/meeting.types';
 import { appSubdomain } from '../../helpers/app-subdomain';
 import { useResponsive } from '../../hooks/useResponsive';
 import PlanMeetingTheme from './custom-theme';
+import Switch from '../../components/utils/Switch';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -35,6 +38,7 @@ interface Props {
 const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
   const dispatch = useDispatch();
   const size = useResponsive();
+  const [showPersistance, setShowPersistance] = useState(false);
 
   const {
     meeting: {
@@ -72,13 +76,22 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
   if (!visible) return null;
 
   const submitMeeting = () => {
-    if (formPayload)
-      dispatch(
-        createMeetingAction({
-          ...formPayload,
-          invitationIds: invitedUsers.map((u) => u.value),
-        })
+    if (formPayload) {
+      const configChanged = !_.isEqual(
+        formPayload.config,
+        userMeetingConfig.config
       );
+      if (!showPersistance && configChanged) {
+        setShowPersistance(true);
+      } else {
+        dispatch(
+          createMeetingAction({
+            ...formPayload,
+            invitationIds: invitedUsers.map((u) => u.value),
+          })
+        );
+      }
+    }
   };
 
   const content = [
@@ -135,54 +148,69 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
               <Close color="brand" />
             </Button>
           </Box>
-          <Tabs
-            flex
-            activeIndex={planDialogCurrentIndex}
-            onActive={(i) => {
-              dispatch(planMeetingDialogSetAction(i));
-            }}
-          >
-            {content.map((item, i) => (
-              <Tab
-                key={item.id}
-                plain
-                title={
-                  <Box
-                    border={{
-                      side: 'bottom',
-                      size: 'small',
-                      color:
-                        planDialogCurrentIndex === i
-                          ? 'brand'
-                          : 'status-disabled',
-                    }}
-                    pad={{ horizontal: 'xsmall' }}
-                    margin={{
-                      bottom: size === 'small' ? 'medium' : 'none',
-                      horizontal: size === 'small' ? 'medium' : 'none',
-                    }}
-                  >
-                    <Text
-                      size="medium"
-                      weight="bold"
-                      color={
-                        planDialogCurrentIndex === i
-                          ? 'brand'
-                          : 'status-disabled'
-                      }
+          {showPersistance ? (
+            <Box flex gap="medium" align="center" justify="center">
+              <Box direction="row" gap="large" pad="medium">
+                <Text weight="bold">Save meeting configuration?</Text>
+                <Switch
+                  value={formPayload?.saveConfig}
+                  onChange={(value) =>
+                    dispatch(setMeetingFormFieldAction({ saveConfig: value }))
+                  }
+                />
+              </Box>
+            </Box>
+          ) : (
+            <Tabs
+              flex
+              activeIndex={planDialogCurrentIndex}
+              onActive={(i) => {
+                dispatch(planMeetingDialogSetAction(i));
+              }}
+            >
+              {content.map((item, i) => (
+                <Tab
+                  key={item.id}
+                  plain
+                  title={
+                    <Box
+                      border={{
+                        side: 'bottom',
+                        size: 'small',
+                        color:
+                          planDialogCurrentIndex === i
+                            ? 'brand'
+                            : 'status-disabled',
+                      }}
+                      pad={{ horizontal: 'xsmall' }}
+                      margin={{
+                        bottom: size === 'small' ? 'medium' : 'none',
+                        horizontal: size === 'small' ? 'medium' : 'none',
+                      }}
                     >
-                      {item.title}
-                    </Text>
+                      <Text
+                        size="medium"
+                        weight="bold"
+                        color={
+                          planDialogCurrentIndex === i
+                            ? 'brand'
+                            : 'status-disabled'
+                        }
+                      >
+                        {item.title}
+                      </Text>
+                    </Box>
+                  }
+                >
+                  <Box overflow="auto" fill>
+                    <Box flex={false}>
+                      {formPayload && content[i]?.component}
+                    </Box>
                   </Box>
-                }
-              >
-                <Box overflow="auto" fill>
-                  <Box flex={false}>{formPayload && content[i]?.component}</Box>
-                </Box>
-              </Tab>
-            ))}
-          </Tabs>
-
+                </Tab>
+              ))}
+            </Tabs>
+          )}
           <Box direction="row" gap="small" justify="center">
             <Button
               primary
