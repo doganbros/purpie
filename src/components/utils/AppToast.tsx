@@ -1,24 +1,26 @@
 import { Box, Button, Image, Layer, Stack, Text } from 'grommet';
 import { FormClose } from 'grommet-icons';
 import React, { FC } from 'react';
-import OkBadge from '../../assets/toast/ok/badge.svg';
-import OkBubbles from '../../assets/toast/ok/bubbles.svg';
-import WarnBadge from '../../assets/toast/warn/badge.svg';
-import WarnBubbles from '../../assets/toast/warn/bubbles.svg';
+import { useDispatch } from 'react-redux';
 import ErrorBadge from '../../assets/toast/error/badge.svg';
 import ErrorBubbles from '../../assets/toast/error/bubbles.svg';
 import InfoBadge from '../../assets/toast/info/badge.svg';
 import InfoBubbles from '../../assets/toast/info/bubbles.svg';
+import OkBadge from '../../assets/toast/ok/badge.svg';
+import OkBubbles from '../../assets/toast/ok/bubbles.svg';
+import WarnBadge from '../../assets/toast/warn/badge.svg';
+import WarnBubbles from '../../assets/toast/warn/bubbles.svg';
+import { removeToastAction } from '../../store/actions/util.action';
 
 interface Props {
+  id?: string;
   message?: string;
   status?: 'error' | 'ok' | 'info' | 'warn';
   visible: boolean;
-  onClose: () => void;
 }
 
-const AppToast: FC<Props> = ({ status = 'ok', message, visible, onClose }) => {
-  if (!visible) return null;
+const AppToast: FC<Props> = ({ status = 'ok', message, visible, id }) => {
+  const dispatch = useDispatch();
 
   const title = {
     error: 'Error!',
@@ -48,6 +50,7 @@ const AppToast: FC<Props> = ({ status = 'ok', message, visible, onClose }) => {
     ok: 'status-ok',
   }[status];
 
+  if (!visible) return null;
   return (
     <Layer
       position="top-right"
@@ -56,9 +59,9 @@ const AppToast: FC<Props> = ({ status = 'ok', message, visible, onClose }) => {
       responsive={false}
       plain
     >
-      <Stack>
+      <Stack interactiveChild="first">
         <Box pad={{ top: '22px' }} round="medium">
-          <Stack anchor="bottom-left">
+          <Stack anchor="bottom-left" interactiveChild="first">
             <Box
               width="450px"
               height={{ min: '87px' }}
@@ -74,7 +77,7 @@ const AppToast: FC<Props> = ({ status = 'ok', message, visible, onClose }) => {
                   </Text>
                   <Button
                     icon={<FormClose color="white" />}
-                    onClick={onClose}
+                    onClick={() => id && dispatch(removeToastAction(id))}
                     plain
                   />
                 </Box>
