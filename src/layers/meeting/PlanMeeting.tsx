@@ -216,21 +216,21 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
             </Tabs>
           )}
           <Box direction="row" gap="small" justify="center">
-            <Button
-              primary
-              size="small"
-              label={!submitting ? 'Go!' : 'Creating Meeting...'}
-              color="accent-1"
-              style={{
-                color: 'brand',
-                width: 240,
-                borderRadius: 10,
-                height: 46,
-                fontWeight: 'bold',
+            <Box
+              background="accent-1"
+              round="small"
+              justify="center"
+              align="center"
+              onClick={() => {
+                if (!submitting) submitMeeting();
               }}
-              disabled={submitting}
-              onClick={submitMeeting}
-            />
+              width="240px"
+              height="46px"
+            >
+              <Text weight="bold" size="small" color="white">
+                {!submitting ? 'Go!' : 'Creating Meeting...'}
+              </Text>
+            </Box>
           </Box>
         </Box>
       </Layer>
