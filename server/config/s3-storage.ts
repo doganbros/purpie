@@ -1,7 +1,8 @@
-import aws from 'aws-sdk';
+import aws, { AWSError, S3 } from 'aws-sdk';
 import path from 'path';
 import multerS3 from 'multer-s3';
 import uuid from 'uuid';
+import { promisify } from 'util';
 
 const {
   S3_ACCESS_KEY_ID = '',
@@ -18,6 +19,13 @@ export const s3 = new aws.S3({
     secretAccessKey: S3_SECRET_ACCESS_KEY,
   },
 });
+
+export const s3HeadObject = promisify(
+  (
+    params: S3.Types.HeadObjectRequest,
+    cb: (err: AWSError, data: S3.Types.HeadObjectOutput) => void,
+  ) => s3.headObject(params, cb),
+);
 
 export const s3Storage = multerS3({
   s3,

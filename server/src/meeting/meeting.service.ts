@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -6,10 +7,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import crypto from 'crypto';
 
-import { Meeting } from 'entities/Meeting.entity';
+import { Post } from 'entities/Post.entity';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
-import { UserZone } from 'entities/UserZone.entity';
+import { MeetingRecording } from 'entities/MeetingRecording.entity';
 import { generateJWT } from 'helpers/jwt';
 import { Brackets, DeepPartial, Repository } from 'typeorm';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
@@ -21,8 +22,8 @@ import {
 import { Contact } from 'entities/Contact.entity';
 import { MeetingLog } from 'entities/MeetingLog.entity';
 import { PaginationQuery } from 'types/PaginationQuery';
-import { Channel } from 'entities/Channel.entity';
 import { baseMeetingConfig } from 'entities/data/base-meeting-config';
+import { PostTag } from 'entities/PostTag.entity';
 import { MeetingConfig, MeetingKey } from 'types/Meeting';
 import { MailService } from 'src/mail/mail.service';
 import dayjs from 'dayjs';
@@ -36,18 +37,23 @@ dayjs.extend(timezone);
 const {
   JITSI_SECRET = '',
   JITSI_DOMAIN = 'https://meet.doganbros.com',
+  RTMP_INGRESS_URL = '',
   REACT_APP_SERVER_HOST = '',
 } = process.env;
 
 @Injectable()
 export class MeetingService {
   constructor(
-    @InjectRepository(Meeting) private meetingRepository: Repository<Meeting>,
+    @InjectRepository(Post) private postRepository: Repository<Post>,
     @InjectRepository(MeetingLog)
     private meetingLogRepository: Repository<MeetingLog>,
+    @InjectRepository(MeetingRecording)
+    private meetingRecordingRepository: Repository<MeetingRecording>,
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(UserChannel)
     private userChannelRepository: Repository<UserChannel>,
+    @InjectRepository(PostTag)
+    private postTagRepository: Repository<PostTag>,
     private mailService: MailService,
   ) {}
 
@@ -71,14 +77,14 @@ export class MeetingService {
     return meetingConfig;
   }
 
-  async createNewMeeting(payload: DeepPartial<Meeting>) {
+  async createNewMeeting(payload: DeepPartial<Post>) {
     const maxCreateAttempts = 5;
     let createAttempts = 0;
 
     while (createAttempts < maxCreateAttempts) {
       try {
         payload.slug = separateString(generateLowerAlphaNumId(9), 3);
-        const meeting = await this.meetingRepository.create(payload).save();
+        const meeting = await this.postRepository.create(payload).save();
         return meeting;
       } catch (err) {
         if (createAttempts === maxCreateAttempts) throw err;
@@ -92,15 +98,17 @@ export class MeetingService {
     );
   }
 
+  async createMeetingTags(tags: Array<string>, meetingId: number) {
+    return this.postTagRepository.insert(
+      tags.map((v) => ({ value: v, postId: meetingId })),
+    );
+  }
+
   getUsersById(ids: Array<number>) {
     return this.userRepository.findByIds(ids);
   }
 
-  async sendMeetingInfoMail(
-    user: UserPayload,
-    meeting: Meeting,
-    creator = false,
-  ) {
+  async sendMeetingInfoMail(user: UserPayload, meeting: Post, creator = false) {
     const context = {
       firstName: user.firstName,
       lastName: user.lastName,
@@ -126,8 +134,8 @@ export class MeetingService {
     );
   }
 
-  currentUserJoinMeetingValidator(userId: number, slug: string) {
-    return this.meetingRepository
+  currentUserMeetingBaseValidator(userId: number, slug: string) {
+    return this.postRepository
       .createQueryBuilder('meeting')
       .innerJoin(User, 'user', 'user.id = :userId', { userId })
       .leftJoin(
@@ -144,13 +152,7 @@ export class MeetingService {
       )
 
       .where('meeting.slug = :slug', { slug })
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where(
-            'meeting.conferenceEndDate is null',
-          ).orWhere('meeting.createdById = :userId', { userId });
-        }),
-      )
+      .andWhere('meeting.type = :type', { type: 'meeting' })
       .andWhere(
         new Brackets((qb) => {
           qb.where('meeting.public = true')
@@ -158,7 +160,51 @@ export class MeetingService {
             .orWhere('meeting.createdById = :userId', { userId })
             .orWhere('contact.contactUserId is not null');
         }),
+      );
+  }
+
+  async currentUserRecordingValidator(userId: number, slug: string) {
+    const result = await this.currentUserMeetingBaseValidator(
+      userId,
+      slug,
+    ).getOne();
+
+    if (!result)
+      throw new NotFoundException('Meeting not found', 'MEETING_NOT_FOUND');
+
+    if (!result.record)
+      throw new BadRequestException(
+        'Recording was not enabled for meeting',
+        'MEETING_RECORDING_NOT_ENABLED',
+      );
+
+    return result;
+  }
+
+  async getMeetingRecordingList(slug: string, query: PaginationQuery) {
+    return this.meetingRecordingRepository
+      .createQueryBuilder('meetingRecording')
+      .where('meetingRecording.meetingSlug = :slug', { slug })
+      .paginate(query);
+  }
+
+  currentUserJoinMeetingValidator(userId: number, slug: string) {
+    return this.currentUserMeetingBaseValidator(userId, slug)
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            'meeting.conferenceEndDate is null',
+          ).orWhere('meeting.createdById = :userId', { userId });
+        }),
       )
+      .getOne();
+  }
+
+  async getMeetingRecording(meetingSlug: string, fileName: string) {
+    return this.meetingRecordingRepository
+      .createQueryBuilder('meetingRecording')
+      .where('meetingRecording.meetingSlug = :slug', { meetingSlug })
+      .andWhere('meetingRecording.fileName = :fileName', { fileName })
       .getOne();
   }
 
@@ -185,20 +231,30 @@ export class MeetingService {
   }
 
   async generateMeetingUrl(
-    meeting: Meeting,
+    meeting: Post,
     user: UserPayload,
     moderator: boolean,
   ) {
     const token = await this.generateMeetingToken(meeting, user, moderator);
 
     meeting.config.subject = meeting.title;
-    const meetingConfig = meetingConfigStringify(meeting.config);
+    const otherConfig: Record<string, any> = {
+      autoRecord: meeting.record,
+      autoStream: meeting.liveStream,
+    };
+
+    if (meeting.liveStream)
+      otherConfig.ingressUrl = `${RTMP_INGRESS_URL}/${
+        meeting.record ? 'stream-and-rec' : 'stream'
+      }/${meeting.title}?uid=${meeting.createdById}`;
+
+    const meetingConfig = meetingConfigStringify(meeting.config, otherConfig);
 
     return `${JITSI_DOMAIN}/${meeting.slug}?jwt=${token}#${meetingConfig}`;
   }
 
   async generateMeetingToken(
-    meeting: Meeting,
+    meeting: Post,
     user: UserPayload,
     moderator: boolean,
   ) {
@@ -228,14 +284,14 @@ export class MeetingService {
   }
 
   async removeMeeting(meetingId: number, userId: number) {
-    return this.meetingRepository.delete({
+    return this.postRepository.delete({
       id: meetingId,
       createdById: userId,
     });
   }
 
   get meetingSelections() {
-    return this.meetingRepository
+    return this.postRepository
       .createQueryBuilder('meeting')
       .select([
         'meeting.id',
@@ -253,15 +309,6 @@ export class MeetingService {
         'createdBy.firstName',
         'createdBy.lastName',
       ]);
-  }
-
-  async getPublicMeetings(query: PaginationQuery) {
-    return this.meetingSelections
-      .innerJoin('meeting.createdBy', 'createdBy')
-      .where('meeting.conferenceEndDate is null')
-      .andWhere('meeting.public = true')
-      .orderBy('meeting.startDate', 'ASC')
-      .paginate(query);
   }
 
   async getMeetingLogs(
@@ -295,113 +342,6 @@ export class MeetingService {
       .paginate(query);
   }
 
-  async getUserMeetings(userId: number, query: PaginationQuery) {
-    return this.meetingSelections
-      .addSelect([
-        'channel.id',
-        'channel.name',
-        'channel.topic',
-        'channel.description',
-      ])
-      .innerJoin('meeting.createdBy', 'createdBy')
-      .leftJoin(
-        UserChannel,
-        'user_channel',
-        'meeting.channelId = user_channel.channelId AND user_channel.userId = :userId',
-        { userId },
-      )
-      .leftJoin(Channel, 'channel', 'channel.id = user_channel.channelId')
-      .leftJoin(
-        Contact,
-        'contact',
-        'meeting.userContactExclusive = true AND meeting.createdById = contact.userId AND contact.contactUserId = :userId',
-        { userId },
-      )
-      .where(
-        new Brackets((qb) => {
-          qb.where('meeting.conferenceEndDate is null').orWhere(
-            'meeting.telecastRepeatUrl is not null',
-          );
-        }),
-      )
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where('user_channel.channelId is not null')
-            .orWhere('contact.contactUserId is not null')
-            .orWhere('meeting.createdById = :userId', { userId });
-        }),
-      )
-      .orderBy('meeting.startDate', 'ASC')
-      .paginate(query);
-  }
-
-  async getZoneMeetings(
-    zoneId: number,
-    userId: number,
-    query: PaginationQuery,
-  ) {
-    return this.meetingSelections
-      .addSelect([
-        'channel.id',
-        'channel.name',
-        'channel.topic',
-        'channel.description',
-      ])
-      .innerJoin('meeting.createdBy', 'createdBy')
-      .innerJoin(
-        UserZone,
-        'user_zone',
-        'user_zone.zoneId = :zoneId and user_zone.userId = :userId',
-        {
-          userId,
-          zoneId,
-        },
-      )
-      .innerJoin(
-        UserChannel,
-        'user_channel',
-        'user_channel.channelId = meeting.channelId and user_channel.userId = :userId',
-        { userId },
-      )
-      .innerJoin('meeting.channel', 'channel')
-      .where(
-        'channel.id = user_channel.channelId and meeting.channelId = channel.id',
-      )
-      .andWhere(
-        'meeting.conferenceEndDate is null or meeting.telecastRepeatUrl is not null',
-      )
-      .orderBy('meeting.startDate', 'ASC')
-      .paginate(query);
-  }
-
-  async getChannelMeetings(
-    channelId: number,
-    userId: number,
-    query: PaginationQuery,
-  ) {
-    return this.meetingSelections
-      .addSelect([
-        'channel.id',
-        'channel.name',
-        'channel.topic',
-        'channel.description',
-      ])
-      .leftJoin('meeting.createdBy', 'createdBy')
-      .innerJoin('meeting.channel', 'channel', 'meeting.channelId = channel.id')
-      .innerJoin(
-        UserChannel,
-        'user_channel',
-        'channel.id = user_channel.channelId AND user_channel.userId = :userId',
-        { userId },
-      )
-      .where('channel.id = :channelId', { channelId })
-      .andWhere(
-        'meeting.conferenceEndDate is null or meeting.telecastRepeatUrl is not null',
-      )
-      .orderBy('meeting.startDate', 'ASC')
-      .paginate(query);
-  }
-
   async setMeetingStatus(info: ClientMeetingEventDto) {
     const meetingLog = this.meetingLogRepository.create({
       event: info.event,
@@ -409,14 +349,14 @@ export class MeetingService {
     });
 
     if (info.event === 'started') {
-      await this.meetingRepository.update(
+      await this.postRepository.update(
         { slug: info.meetingTitle },
         { conferenceStartDate: new Date(), conferenceEndDate: null },
       );
     }
 
     if (info.event === 'ended') {
-      await this.meetingRepository.update(
+      await this.postRepository.update(
         { slug: info.meetingTitle },
         { conferenceEndDate: new Date() },
       );

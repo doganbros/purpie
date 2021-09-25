@@ -91,4 +91,8 @@ export class CreateMeetingDto {
   @IsNotEmpty()
   @IsIn(timeZones, { message: 'Invalid timezone option specified' })
   timeZone?: string;
+
+  @ApiProperty({ type: String, isArray: true })
+  @IsOptional()
+  tags?: Array<string>;
 }

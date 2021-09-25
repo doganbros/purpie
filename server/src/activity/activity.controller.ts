@@ -1,15 +1,9 @@
-import { Controller, Get, Query } from '@nestjs/common';
-import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
-import { UserChannel } from 'entities/UserChannel.entity';
-import { UserZone } from 'entities/UserZone.entity';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import { ApiOkResponse, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
-import { CurrentUserChannel } from 'src/channel/decorators/current-user-channel.decorator';
-import { UserChannelRole } from 'src/channel/decorators/user-channel-role.decorator';
 import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
-import { CurrentUserZone } from 'src/zone/decorators/current-user-zone.decorator';
-import { UserZoneRole } from 'src/zone/decorators/user-zone-role.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
 import {
   MixedActivityFeedListResponse,
@@ -53,6 +47,12 @@ export class ActivityController {
   }
 
   @Get('/list/feed/public')
+  @ApiQuery({
+    name: 'postType',
+    description: 'The post type to return. By default it returns all posts. ',
+    enum: ['meeting', 'static-video'],
+    required: false,
+  })
   @ApiOkResponse({
     description: 'User gets public feed',
     type: PublicActivityFeedListResponse,
@@ -64,6 +64,12 @@ export class ActivityController {
   }
 
   @Get('/list/feed/user')
+  @ApiQuery({
+    name: 'postType',
+    description: 'The post type to return. By default it returns all posts. ',
+    enum: ['meeting', 'static-video'],
+    required: false,
+  })
   @ApiOkResponse({
     description: 'User gets main feed from channels and from contacts',
     type: MixedActivityFeedListResponse,
@@ -78,11 +84,17 @@ export class ActivityController {
   }
 
   @Get('/list/feed/zone/:zoneId')
+  @ApiQuery({
+    name: 'postType',
+    description: 'The post type to return. By default it returns all posts. ',
+    enum: ['meeting', 'static-video'],
+    required: false,
+  })
   @ApiOkResponse({
     description: 'User gets feed for a zone from channels of this zone',
     type: MixedActivityFeedListResponse,
   })
-  @UserZoneRole()
+  @IsAuthenticated()
   @ApiParam({
     name: 'zoneId',
     type: Number,
@@ -90,17 +102,28 @@ export class ActivityController {
   @PaginationQueryParams()
   getZoneFeed(
     @Query() query: PaginationQuery,
-    @CurrentUserZone() userZone: UserZone,
+    @CurrentUser() user: UserPayload,
+    @Param('zoneId') zoneId: string,
   ) {
-    return this.activityService.getZoneFeed(userZone.zoneId, query);
+    return this.activityService.getZoneFeed(
+      Number.parseInt(zoneId, 10),
+      user.id,
+      query,
+    );
   }
 
   @Get('/list/feed/channel/:channelId')
+  @ApiQuery({
+    name: 'postType',
+    description: 'The post type to return. By default it returns all posts. ',
+    enum: ['meeting', 'static-video'],
+    required: false,
+  })
   @ApiOkResponse({
     description: 'User gets feed for this zone',
     type: MixedActivityFeedListResponse,
   })
-  @UserChannelRole()
+  @IsAuthenticated()
   @ApiParam({
     name: 'channelId',
     type: Number,
@@ -108,8 +131,13 @@ export class ActivityController {
   @PaginationQueryParams()
   getChannelFeed(
     @Query() query: PaginationQuery,
-    @CurrentUserChannel() userChannel: UserChannel,
+    @CurrentUser() user: UserPayload,
+    @Param('channelId') channelId: string,
   ) {
-    return this.activityService.getChannelFeed(userChannel.channelId, query);
+    return this.activityService.getChannelFeed(
+      Number.parseInt(channelId, 10),
+      user.id,
+      query,
+    );
   }
 }

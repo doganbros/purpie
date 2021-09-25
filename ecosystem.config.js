@@ -27,25 +27,4 @@ module.exports = {
       },
     },
   ],
-
-  /**
-   * Deployment section
-   * http://pm2.keymetrics.io/docs/usage/deployment/
-   */
-  deploy: {
-    dev: {
-      user: 'ubuntu',
-      host: 'host',
-      key: 'path to pem',
-      ref: 'git@github.com:DenisRupp/API-express-starter.git',
-      path: '/var/www/API-express-starter',
-      ssh_options: 'ForwardAgent=yes',
-      'post-deploy':
-        'cp ../shared/.env .env && yarn && yarn docs-examples && yarn start',
-      'pre-setup':
-        'npm install -g yarn && npm install -g pm2 && npm install -g apidoc ',
-      'post-setup':
-        'yarn && cp server/database/config.example.js server/database/config.js',
-    },
-  },
 };

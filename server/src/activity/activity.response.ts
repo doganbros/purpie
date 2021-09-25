@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from 'entities/User.entity';
+import { PostType } from 'types/Post';
 
 class PublicChannelSuggestionList {
   @ApiProperty()
@@ -100,75 +102,61 @@ export class PublicZoneSuggestionListResponse {
 
 class BaseActivityFeedList {
   @ApiProperty()
-  meeting_id: number;
+  id: number;
 
   @ApiProperty()
-  meeting_title: string;
+  title: string;
 
   @ApiProperty()
-  meeting_description: string;
+  description: string;
 
   @ApiProperty()
-  meeting_slug: string;
+  slug: string;
 
   @ApiProperty()
-  meeting_startDate: Date;
+  startDate: Date;
+
+  @ApiProperty({ enum: ['meeting', 'static-video'], example: 'meeting' })
+  type: PostType;
 
   @ApiProperty({ nullable: true })
-  meeting_channelId: number;
+  channelId: number;
 
   @ApiProperty()
-  meeting_public: boolean;
+  public: boolean;
 
   @ApiProperty()
-  meeting_userContactExclusive: boolean;
+  liveStream: boolean;
 
   @ApiProperty()
-  meeting_liveStream: boolean;
+  record: boolean;
 
   @ApiProperty()
-  meeting_record: boolean;
+  userContactExclusive: boolean;
+
+  @ApiProperty({ type: User })
+  createdBy: User;
+
+  @ApiProperty({ isArray: true, type: String })
+  tags: Array<string>;
+}
+
+class ActivityFeedChannel {
+  @ApiProperty()
+  id: number;
 
   @ApiProperty()
-  meetingCreatedBy_id: number;
+  name: string;
 
   @ApiProperty()
-  meetingCreatedBy_firstName: string;
+  topic: string;
 
   @ApiProperty()
-  meetingCreatedBy_lastName: string;
-
-  @ApiProperty()
-  meetingCreatedBy_email: string;
+  description: string;
 }
 
 class MixedActivityFeedList extends BaseActivityFeedList {
-  @ApiProperty()
-  channel_meeting_id: number;
-
-  @ApiProperty()
-  channel_meeting_name: string;
-
-  @ApiProperty()
-  channel_meeting_topic: string;
-
-  @ApiProperty()
-  channel_meeting_description: string;
-
-  @ApiProperty()
-  channel_meeting_public: boolean;
-
-  @ApiProperty()
-  zone_meeting_id: boolean;
-
-  @ApiProperty()
-  zone_meeting_name: string;
-
-  @ApiProperty()
-  zone_meeting_subdomain: string;
-
-  @ApiProperty()
-  zone_meeting_public: boolean;
+  channel: ActivityFeedChannel;
 }
 
 export class MixedActivityFeedListResponse {

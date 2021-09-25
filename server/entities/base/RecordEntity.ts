@@ -4,7 +4,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BaseEntity,
-  // FindManyOptions,
 } from 'typeorm';
 
 export abstract class RecordEntity extends BaseEntity {
