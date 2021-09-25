@@ -216,6 +216,23 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
             </Tabs>
           )}
           <Box direction="row" gap="small" justify="center">
+            {showPersistance && (
+              <Box
+                background="status-disabled"
+                round="small"
+                justify="center"
+                align="center"
+                onClick={() => {
+                  setShowPersistance(false);
+                }}
+                width="240px"
+                height="46px"
+              >
+                <Text weight="bold" size="small" color="white">
+                  Back
+                </Text>
+              </Box>
+            )}
             <Box
               background="accent-1"
               round="small"
