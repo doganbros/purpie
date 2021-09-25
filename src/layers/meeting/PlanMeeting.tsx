@@ -1,7 +1,8 @@
-import React, { FC, useEffect, useRef } from 'react';
-import { Box, Button, Text, Layer, Form } from 'grommet';
+import React, { FC, useEffect, useState } from 'react';
+import { Box, Button, Text, Layer, Tabs, Tab } from 'grommet';
 import { Close } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
+import _ from 'lodash';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -14,13 +15,15 @@ import { AppState } from '../../store/reducers/root.reducer';
 import {
   createMeetingAction,
   getUserMeetingConfigAction,
-  planMeetingDialogBackAction,
-  planMeetingDialogForwardAction,
+  planMeetingDialogSetAction,
   setInitialMeetingFormAction,
+  setMeetingFormFieldAction,
 } from '../../store/actions/meeting.action';
 import { CreateMeetingPayload } from '../../store/types/meeting.types';
 import { appSubdomain } from '../../helpers/app-subdomain';
 import { useResponsive } from '../../hooks/useResponsive';
+import PlanMeetingTheme from './custom-theme';
+import Switch from '../../components/utils/Switch';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -35,7 +38,7 @@ interface Props {
 const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
   const dispatch = useDispatch();
   const size = useResponsive();
-  const bar = useRef<HTMLDivElement>(null);
+  const [showPersistance, setShowPersistance] = useState(false);
 
   const {
     meeting: {
@@ -70,16 +73,29 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
     }
   }, [userMeetingConfig.config, visible]);
 
+  useEffect(() => {
+    setShowPersistance(false);
+  }, [visible]);
+
   if (!visible) return null;
 
   const submitMeeting = () => {
-    if (formPayload)
-      dispatch(
-        createMeetingAction({
-          ...formPayload,
-          invitationIds: invitedUsers.map((u) => u.value),
-        })
+    if (formPayload) {
+      const configChanged = !_.isEqual(
+        formPayload.config,
+        userMeetingConfig.config
       );
+      if (!showPersistance && configChanged) {
+        setShowPersistance(true);
+      } else {
+        dispatch(
+          createMeetingAction({
+            ...formPayload,
+            invitationIds: invitedUsers.map((u) => u.value),
+          })
+        );
+      }
+    }
   };
 
   const content = [
@@ -110,14 +126,8 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
     },
   ];
   return (
-    <Layer onClickOutside={onClose}>
-      <Form
-        onSubmit={() => {
-          if (size === 'small' && bar.current)
-            bar.current.scrollLeft = planDialogCurrentIndex * 100;
-          dispatch(planMeetingDialogForwardAction);
-        }}
-      >
+    <PlanMeetingTheme>
+      <Layer onClickOutside={onClose}>
         <Box
           width={size !== 'small' ? '750px' : undefined}
           height={size !== 'small' ? '505px' : '100vh'}
@@ -125,8 +135,14 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
           background="white"
           pad="medium"
           gap={size !== 'small' ? 'medium' : 'large'}
+          align="stretch"
         >
-          <Box direction="row" justify="between" align="start">
+          <Box
+            fill="horizontal"
+            direction="row"
+            justify="between"
+            align="start"
+          >
             <Box pad="xsmall">
               <Text size="large" weight="bold">
                 Plan A Meeting
@@ -136,100 +152,108 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
               <Close color="brand" />
             </Button>
           </Box>
-          <Box
-            direction="row"
-            gap="small"
-            width="750px"
-            flex={false}
-            overflow="auto"
-            ref={bar}
-          >
-            {content.map((item, i) => (
-              <Box
-                key={item.id}
-                gap="small"
-                direction="row"
-                align="center"
-                flex={false}
-              >
-                <Text
-                  size="small"
-                  weight={planDialogCurrentIndex >= i ? 'bold' : 'normal'}
-                  color={
-                    planDialogCurrentIndex >= i ? 'brand' : 'status-disabled'
+          {showPersistance ? (
+            <Box flex gap="medium" align="center" justify="center">
+              <Box direction="row" gap="large" pad="medium" align="center">
+                <Text color="status-disabled" size="small">
+                  Save meeting configuration?
+                </Text>
+                <Switch
+                  value={formPayload?.saveConfig}
+                  onChange={(value) =>
+                    dispatch(setMeetingFormFieldAction({ saveConfig: value }))
+                  }
+                />
+              </Box>
+            </Box>
+          ) : (
+            <Tabs
+              flex
+              activeIndex={planDialogCurrentIndex}
+              onActive={(i) => {
+                dispatch(planMeetingDialogSetAction(i));
+              }}
+            >
+              {content.map((item, i) => (
+                <Tab
+                  key={item.id}
+                  plain
+                  title={
+                    <Box
+                      border={{
+                        side: 'bottom',
+                        size: 'small',
+                        color:
+                          planDialogCurrentIndex === i
+                            ? 'brand'
+                            : 'status-disabled',
+                      }}
+                      pad={{ horizontal: 'xsmall' }}
+                      margin={{
+                        bottom: size === 'small' ? 'medium' : 'none',
+                        horizontal: size === 'small' ? 'medium' : 'none',
+                      }}
+                    >
+                      <Text
+                        size="medium"
+                        weight="bold"
+                        color={
+                          planDialogCurrentIndex === i
+                            ? 'brand'
+                            : 'status-disabled'
+                        }
+                      >
+                        {item.title}
+                      </Text>
+                    </Box>
                   }
                 >
-                  {item.title}
+                  <Box overflow="auto" fill>
+                    <Box flex={false}>
+                      {formPayload && content[i]?.component}
+                    </Box>
+                  </Box>
+                </Tab>
+              ))}
+            </Tabs>
+          )}
+          <Box direction="row" gap="small" justify="center">
+            {showPersistance && (
+              <Box
+                background="status-disabled"
+                round="small"
+                justify="center"
+                align="center"
+                onClick={() => {
+                  setShowPersistance(false);
+                }}
+                width="240px"
+                height="46px"
+              >
+                <Text weight="bold" size="small" color="white">
+                  Back
                 </Text>
-                {i + 1 !== content.length && (
-                  <Box
-                    background={
-                      planDialogCurrentIndex > i ? 'brand' : 'status-disabled'
-                    }
-                    height={planDialogCurrentIndex >= i ? '2px' : '1px'}
-                    width="48px"
-                  />
-                )}
               </Box>
-            ))}
-          </Box>
-          <Box overflow="auto" height="100%">
-            <Box flex={false}>
-              {formPayload && content[planDialogCurrentIndex]?.component}
+            )}
+            <Box
+              background="accent-1"
+              round="small"
+              justify="center"
+              align="center"
+              onClick={() => {
+                if (!submitting) submitMeeting();
+              }}
+              width="240px"
+              height="46px"
+            >
+              <Text weight="bold" size="small" color="white">
+                {!submitting ? 'Go!' : 'Creating Meeting...'}
+              </Text>
             </Box>
           </Box>
-          <Box direction="row" gap="small" justify="end">
-            {planDialogCurrentIndex !== 0 && (
-              <Button
-                primary
-                size="small"
-                label="Back"
-                color="status-disabled"
-                style={{
-                  width: 240,
-                  borderRadius: 10,
-                  height: 46,
-                  fontWeight: 'bold',
-                }}
-                onClick={() => {
-                  if (size === 'small' && bar.current)
-                    bar.current.scrollLeft = planDialogCurrentIndex * 100 - 100;
-                  dispatch(planMeetingDialogBackAction);
-                }}
-              />
-            )}
-            <Button
-              primary
-              size="small"
-              label={!submitting ? 'Go!' : 'Creating Meeting...'}
-              color="accent-1"
-              style={{
-                color: 'brand',
-                width: 240,
-                borderRadius: 10,
-                height: 46,
-                fontWeight: 'bold',
-              }}
-              disabled={submitting}
-              onClick={submitMeeting}
-            />
-            <Button
-              primary
-              size="small"
-              label="Next"
-              type="submit"
-              style={{
-                width: 240,
-                borderRadius: 10,
-                height: 46,
-                fontWeight: 'bold',
-              }}
-              disabled={planDialogCurrentIndex === content.length - 1}
-            />
-          </Box>
         </Box>
-      </Form>
-    </Layer>
+      </Layer>
+    </PlanMeetingTheme>
   );
 };
 

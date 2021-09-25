@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { Box, FormField, Select } from 'grommet';
+import React, { FC, useContext } from 'react';
+import { Box, FormField, Grid, ResponsiveContext, Select } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import SectionContainer from '../../../components/utils/SectionContainer';
 import { AppState } from '../../../store/reducers/root.reducer';
@@ -18,6 +18,7 @@ const MeetingPrivacy: FC = () => {
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
+  const size = useContext(ResponsiveContext);
   const options = [
     { label: 'option 1', value: 1 },
     { label: 'option 2', value: 2 },
@@ -28,10 +29,13 @@ const MeetingPrivacy: FC = () => {
     <>
       <SectionContainer label="Joining">
         {!selectedUserZone ? (
-          <Box justify="between" direction="row">
+          <Grid
+            columns={size === 'small' ? 'full' : { count: 2, size: 'small' }}
+            gap={{ column: 'xlarge', row: 'small' }}
+          >
             <Switch
               label="Public Meeting"
-              width="280px"
+              fill="vertical"
               value={!!formPayload?.public}
               onChange={(v) => {
                 dispatch(
@@ -45,7 +49,7 @@ const MeetingPrivacy: FC = () => {
             />
             <Switch
               label="Open To Contacts"
-              width="280px"
+              fill="vertical"
               value={!!formPayload?.userContactExclusive}
               onChange={(v) => {
                 dispatch(
@@ -57,7 +61,7 @@ const MeetingPrivacy: FC = () => {
                 );
               }}
             />
-          </Box>
+          </Grid>
         ) : (
           <Box justify="between" align="center" direction="row">
             <FormField
@@ -78,10 +82,13 @@ const MeetingPrivacy: FC = () => {
       </SectionContainer>
       <Box height="20px" />
       <SectionContainer label="Streaming &amp; Recording">
-        <Box justify="between" direction="row">
+        <Grid
+          columns={size === 'small' ? 'full' : { count: 2, size: 'small' }}
+          gap={{ column: 'xlarge', row: 'small' }}
+        >
           <Switch
             label="Live stream the meeting?"
-            width="280px"
+            fill="vertical"
             value={!!formPayload?.liveStream}
             onChange={(v) => {
               dispatch(
@@ -93,7 +100,7 @@ const MeetingPrivacy: FC = () => {
           />
           <Switch
             label="Enable Recording?"
-            width="280px"
+            fill="vertical"
             value={!!formPayload?.record}
             onChange={(v) => {
               dispatch(
@@ -103,7 +110,7 @@ const MeetingPrivacy: FC = () => {
               );
             }}
           />
-        </Box>
+        </Grid>
       </SectionContainer>
       <Box height="20px" />
       <SectionContainer label="Configuration Persistence">

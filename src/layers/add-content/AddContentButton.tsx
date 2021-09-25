@@ -1,6 +1,7 @@
 import React, { FC, ReactElement } from 'react';
-import { Button, Box, Text } from 'grommet';
+import { Button, Text } from 'grommet';
 import { theme } from '../../config/app-config';
+import ExtendedBox from '../../components/utils/ExtendedBox';
 
 interface AddContentButtonProps {
   icon: ReactElement;
@@ -17,7 +18,7 @@ const AddContentButton: FC<AddContentButtonProps> = ({
 }) => (
   <Button onClick={onClick} plain>
     {({ hover }: any) => (
-      <Box
+      <ExtendedBox
         elevation="small"
         pad="small"
         gap="small"
@@ -25,6 +26,8 @@ const AddContentButton: FC<AddContentButtonProps> = ({
         width="151px"
         height="250px"
         round="small"
+        transition="all 0.1s"
+        transform={hover ? 'scale(1.05)' : 'scale(1)'}
         background={
           hover
             ? `linear-gradient(180deg, ${theme.global?.colors?.['neutral-2']} 0%, #643FBB 52.62%, #74C0BF 100%)`
@@ -36,7 +39,7 @@ const AddContentButton: FC<AddContentButtonProps> = ({
         <Text size="xsmall" color="white">
           {description}
         </Text>
-      </Box>
+      </ExtendedBox>
     )}
   </Button>
 );
