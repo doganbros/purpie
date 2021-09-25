@@ -9,6 +9,7 @@ import Divider from './Divider';
 import ZoneSelectorListItem from './ZoneSelectorListItem';
 import { openCreateZoneLayerAction } from '../../../../store/actions/zone.action';
 import { openCreateChannelLayerAction } from '../../../../store/actions/channel.action';
+import { logoutAction } from '../../../../store/actions/auth.action';
 
 const ZoneSelector: FC = () => {
   const {
@@ -93,7 +94,10 @@ const ZoneSelector: FC = () => {
               rightIcon={<SettingsOption size="small" color="black" />}
             />
             <Divider />
-            <ZoneSelectorListItem label="Sign Out" />
+            <ZoneSelectorListItem
+              onClick={() => dispatch(logoutAction())}
+              label="Sign Out"
+            />
           </Box>
         }
         dropProps={{
