@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useContext, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Box,
@@ -8,6 +8,8 @@ import {
   FormField,
   Text,
   Select,
+  ResponsiveContext,
+  Grid,
 } from 'grommet';
 import dayjs from 'dayjs';
 import { AppState } from '../../../store/reducers/root.reducer';
@@ -28,6 +30,7 @@ const MeetingDetails: FC = () => {
     },
   } = useSelector((state: AppState) => state);
 
+  const size = useContext(ResponsiveContext);
   const [currentTimeZones, setCurrentTimeZones] = useState(timeZones);
 
   return (
@@ -43,7 +46,11 @@ const MeetingDetails: FC = () => {
           placeholder="Meeting Name"
         />
       </FormField>
-      <FormField name="description" htmlFor="description">
+      <FormField
+        margin={{ top: size === 'small' ? 'medium' : 'small' }}
+        name="description"
+        htmlFor="description"
+      >
         <TextArea
           id="descriptionInput"
           defaultValue={formPayload?.description}
@@ -57,8 +64,8 @@ const MeetingDetails: FC = () => {
       </FormField>
       <Switch
         label="Plan For Later"
-        width="170px"
-        margin={{ bottom: 'xsmall' }}
+        width={size === 'small' ? '100%' : '170px'}
+        margin={{ vertical: size === 'small' ? 'large' : 'medium' }}
         defaultValue={!!formPayload?.planForLater}
         onChange={(v) => {
           dispatch(
@@ -73,13 +80,16 @@ const MeetingDetails: FC = () => {
         }}
       />
       {formPayload?.planForLater && (
-        <Box direction="column">
-          <Box direction="row" gap="small" align="center">
-            <Box direction="column">
+        <Box gap={size === 'small' ? 'large' : 'small'}>
+          <Grid
+            columns={{ count: size === 'small' ? 1 : 2, size: 'small' }}
+            gap={{ column: 'xsmall', row: 'medium' }}
+          >
+            <Box>
               <Text size="xsmall" color="dark-6" margin={{ bottom: 'xxsmall' }}>
                 Start Date
               </Text>
-              <Box direction="row" gap="xsmall">
+              <Box direction="row" gap={size === 'small' ? 'medium' : 'xsmall'}>
                 <FormField
                   name="startDate"
                   htmlFor="startDate"
@@ -147,11 +157,11 @@ const MeetingDetails: FC = () => {
                 </FormField>
               </Box>
             </Box>
-            <Box direction="column">
+            <Box>
               <Text size="xsmall" color="dark-6" margin={{ bottom: 'xxsmall' }}>
                 End Date
               </Text>
-              <Box direction="row" gap="xsmall">
+              <Box direction="row" gap={size === 'small' ? 'medium' : 'xsmall'}>
                 <FormField name="endDate" htmlFor="dateValue" fill="horizontal">
                   <DateInput
                     format="dd/mm/yyyy"
@@ -217,7 +227,7 @@ const MeetingDetails: FC = () => {
                 </FormField>
               </Box>
             </Box>
-          </Box>
+          </Grid>
           <Box>
             <Text size="xsmall" color="dark-6" margin={{ bottom: 'xxsmall' }}>
               Time Zone
