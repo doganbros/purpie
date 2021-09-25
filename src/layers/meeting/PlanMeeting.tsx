@@ -73,6 +73,10 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
     }
   }, [userMeetingConfig.config, visible]);
 
+  useEffect(() => {
+    setShowPersistance(false);
+  }, [visible]);
+
   if (!visible) return null;
 
   const submitMeeting = () => {
