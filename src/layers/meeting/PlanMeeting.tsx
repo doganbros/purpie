@@ -154,8 +154,10 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
           </Box>
           {showPersistance ? (
             <Box flex gap="medium" align="center" justify="center">
-              <Box direction="row" gap="large" pad="medium">
-                <Text weight="bold">Save meeting configuration?</Text>
+              <Box direction="row" gap="large" pad="medium" align="center">
+                <Text color="status-disabled" size="small">
+                  Save meeting configuration?
+                </Text>
                 <Switch
                   value={formPayload?.saveConfig}
                   onChange={(value) =>
