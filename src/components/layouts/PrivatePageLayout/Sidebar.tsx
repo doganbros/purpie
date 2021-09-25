@@ -1,24 +1,13 @@
-import { Box, Button, Menu, ResponsiveContext } from 'grommet';
-import {
-  Add,
-  Bookmark,
-  Channel,
-  Chat,
-  Group,
-  Home,
-  Logout,
-  SettingsOption,
-} from 'grommet-icons';
+import { Box, Button, ResponsiveContext } from 'grommet';
+import { Add, Bookmark, Channel, Chat, Group, Home } from 'grommet-icons';
 import React, { FC, useState, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SidebarButton } from './SidebarButton';
 import PlanMeeting from '../../../layers/meeting/PlanMeeting';
-import { logoutAction } from '../../../store/actions/auth.action';
 import { closePlanCreateMeetingLayerAction } from '../../../store/actions/meeting.action';
 import { closeCreateZoneLayerAction } from '../../../store/actions/zone.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import AddContent from '../../../layers/add-content/AddContent';
-import ExtendedBox from '../../utils/ExtendedBox';
 import CreateZone from '../../../layers/create-zone/CreateZone';
 import CreateChannel from '../../../layers/create-channel/CreateChannel';
 import { closeCreateChannelLayerAction } from '../../../store/actions/channel.action';
@@ -62,8 +51,6 @@ const Sidebar: FC = () => {
     channel: { showCreateChannelLayer },
   } = useSelector((state: AppState) => state);
 
-  const logout = () => dispatch(logoutAction());
-
   return (
     <Box gap={size === 'small' ? 'large' : 'small'}>
       <PlanMeeting
@@ -102,30 +89,6 @@ const Sidebar: FC = () => {
       {sidebarBtns.map((v) => (
         <SidebarButton key={v.title} {...v} />
       ))}
-      <ExtendedBox opacity="0.5">
-        <Box
-          alignSelf="center"
-          background="white"
-          width="30px"
-          height="3px"
-          margin={
-            size === 'small'
-              ? { top: 'small', bottom: 'large' }
-              : { vertical: 'medium' }
-          }
-        />
-        <Menu
-          alignSelf="center"
-          items={[
-            {
-              label: <Box pad={{ left: 'xsmall' }}>Logout</Box>,
-              onClick: logout,
-              icon: <Logout />,
-            },
-          ]}
-          icon={<SettingsOption color="white" />}
-        />
-      </ExtendedBox>
     </Box>
   );
 };
