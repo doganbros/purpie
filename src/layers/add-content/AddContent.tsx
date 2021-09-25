@@ -115,7 +115,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
         </Box>
         <Box
           direction="row"
-          justify="start"
+          justify={size === 'small' ? 'center' : 'start'}
           height="min-content"
           overflow="auto"
           wrap
