@@ -100,10 +100,9 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
         round={size !== 'small' ? '20px' : undefined}
         fill={size === 'small'}
         background="white"
-        pad="medium"
         gap="medium"
       >
-        <Box direction="row" justify="between" align="start">
+        <Box direction="row" justify="between" align="start" pad="medium">
           <Box pad="xsmall">
             <Text size="large" weight="bold">
               Take Your Pick
@@ -119,6 +118,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
           height="min-content"
           overflow="auto"
           wrap
+          pad="medium"
         >
           {buttonProps.map(({ id, icon, title, description, onClick }) => (
             <Box key={id} margin={{ right: 'small', bottom: 'small' }}>
