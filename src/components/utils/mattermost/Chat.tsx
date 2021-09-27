@@ -11,8 +11,8 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import dayjs from 'dayjs';
 import PrivatePageLayout from '../../layouts/PrivatePageLayout/PrivatePageLayout';
 import { AppState } from '../../../store/reducers/root.reducer';
-import MessageItem from '../MessageItem';
 import MattermostChannelList from './MattermostChannelList';
+import PostItem from './PostItem';
 
 interface Params {
   channelId: string;
@@ -24,6 +24,7 @@ const Chat: FC = () => {
   const [posts, setPosts] = useState<Array<Post>>([]);
   const containerId = useRef(nanoid());
   const [page, setPage] = useState(0);
+  const rootPosts = useRef<Record<string, Post>>({});
 
   const {
     mattermost: {
@@ -42,23 +43,37 @@ const Chat: FC = () => {
       if (!posts.length || posts[posts.length - 1].id !== post.id)
         setPosts((p) => [...p, post]);
     }
+
+    if (
+      websocketEvent?.event === 'post_edited' &&
+      websocketEvent?.broadcast.channel_id === channelId
+    ) {
+      const post = JSON.parse(websocketEvent.data.post) as Post;
+
+      if (rootPosts.current[post.id]) rootPosts.current[post.id] = post;
+      if (posts.length)
+        setPosts((p) =>
+          p.map((cp) => {
+            if (cp.id === post.id) return post;
+            return cp;
+          })
+        );
+    }
   }, [websocketEvent]);
 
   const selectedChannel = channels[channelId];
 
   const fetchMore = async () => {
-    if (posts.length >= (selectedChannel.channel as any).total_msg_count_root) {
+    if (posts.length >= (selectedChannel.channel as any).total_msg_count) {
       return setHasMore(false);
     }
     const result = !posts.length
-      ? await Client4.getPosts(channelId, page, 60, false, true)
+      ? await Client4.getPosts(channelId, page, 61)
       : await Client4.getPostsBefore(
           channelId,
           posts[posts.length - 1].id,
           page,
-          60,
-          false,
-          true
+          60
         );
 
     if (!result.order.length) return setHasMore(false);
@@ -66,7 +81,16 @@ const Chat: FC = () => {
     const populatedPosts: any = [];
 
     result.order.reverse().forEach((postId) => {
-      populatedPosts.push((result.posts as any)[postId]);
+      const currentPost = (result.posts as any)[postId];
+
+      if (currentPost.root_id) {
+        if (!rootPosts.current[currentPost.root_id])
+          rootPosts.current[currentPost.root_id] = (result.posts as any)[
+            currentPost.root_id
+          ];
+      }
+
+      populatedPosts.push(currentPost);
     });
 
     setPosts((v) => [...populatedPosts, ...v]);
@@ -98,12 +122,9 @@ const Chat: FC = () => {
         <>
           <Box
             id={containerId.current}
-            style={{
-              height: '90vh',
-              overflow: 'auto',
-              display: 'flex',
-              flexDirection: 'column-reverse',
-            }}
+            height="90vh"
+            overflow="auto"
+            direction="column-reverse"
           >
             <InfiniteScroll
               dataLength={posts.length}
@@ -129,26 +150,23 @@ const Chat: FC = () => {
                         <hr />
                       </>
                     ) : null}
-                    <MessageItem
+                    <PostItem
+                      id={post.id}
                       key={post.id}
-                      avatarSrc=""
                       message={post.message}
-                      name={`${
+                      rootPost={rootPosts.current[post.root_id]}
+                      editedDate={post.edit_at}
+                      date={post.create_at}
+                      name={
                         selectedChannel.metaData?.users?.[post.user_id]
                           ?.username || ''
-                      } ${dayjs(post.create_at).format('hh:mm:a')}`}
+                      }
                       side={
                         currentMattermostUser?.id === post.user_id
                           ? 'right'
                           : 'left'
                       }
-                    >
-                      {post.reply_count ? (
-                        <Box gap="small">
-                          <Text size="small"> {post.reply_count} replies </Text>
-                        </Box>
-                      ) : null}
-                    </MessageItem>
+                    />
                   </Fragment>
                 );
                 lastDate = post.create_at;

@@ -10,7 +10,6 @@ interface MessageItemProps {
 
 const MessageItem: FC<MessageItemProps> = ({
   side,
-  children,
   avatarSrc,
   name,
   message,
@@ -28,7 +27,6 @@ const MessageItem: FC<MessageItemProps> = ({
       >
         {message}
       </Text>
-      {children}
     </Box>
   </Box>
 );
