@@ -18,6 +18,7 @@ import { Post as PostEntity } from 'entities/Post.entity';
 import { Express, Response } from 'express';
 import { s3HeadObject, s3, s3Storage } from 'config/s3-storage';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { IsClientAuthenticated } from 'src/auth/decorators/client-auth.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
@@ -157,6 +158,7 @@ export class StaticVideoController {
   }
 
   @Post('client/feedback')
+  @IsClientAuthenticated(['manageStream'])
   @ApiOkResponse({
     description:
       "Client sends a feedback about any video processing, it could be a notification to octopus that a meeting's video has been stored. Created is sent to client when the record is created, OK otherwise",

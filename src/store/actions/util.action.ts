@@ -30,6 +30,10 @@ export const setToastAction = (
   };
 };
 
-export const removeToastAction = {
-  type: REMOVE_TOAST,
+export const removeToastAction = (id: string): UtilAction => {
+  return (dispatch) =>
+    dispatch({
+      type: REMOVE_TOAST,
+      payload: id,
+    });
 };
