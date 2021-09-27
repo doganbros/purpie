@@ -238,7 +238,7 @@ Even though developers can still use localhost but if another subdomain is visit
 │   ├── entities
 │   │   ├── Channel.entity.ts
 │   │   ├── Invitation.entity.ts
-│   │   ├── Meeting.entity.ts
+│   │   ├── Post.entity.ts
 │   │   ├── User.entity.ts
 │   │   ├── UserChannel.entity.ts
 │   │   ├── UserChannelPermission.entity.ts
@@ -273,7 +273,7 @@ Even though developers can still use localhost but if another subdomain is visit
 │   ├── tsconfig.json
 │   ├── tsconfig.tsbuildinfo
 │   └── types
-│       ├── Meeting.ts
+│       ├── Post.ts
 │       ├── PaginationQuery.ts
 │       ├── UserPayloadRequest.ts
 │       └── UserZoneRequest.ts

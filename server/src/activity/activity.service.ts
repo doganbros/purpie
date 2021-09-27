@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from 'entities/Channel.entity';
 import { Contact } from 'entities/Contact.entity';
-import { Meeting } from 'entities/Meeting.entity';
-import { User } from 'entities/User.entity';
+import { Post } from 'entities/Post.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
@@ -13,10 +12,9 @@ import { PaginationQuery } from 'types/PaginationQuery';
 @Injectable()
 export class ActivityService {
   constructor(
-    @InjectRepository(Meeting) private meetingRepository: Repository<Meeting>,
+    @InjectRepository(Post) private postRepository: Repository<Post>,
     @InjectRepository(Zone) private zoneRepository: Repository<Zone>,
     @InjectRepository(Channel) private channelRepository: Repository<Channel>,
-    @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
   getPublicChannelSuggestions(userId: number, query: PaginationQuery) {
@@ -105,172 +103,152 @@ export class ActivityService {
       .paginateRaw(query);
   }
 
-  get baseActivitySelect() {
-    return [
-      'meeting.id',
-      'meeting.title',
-      'meeting.slug',
-      'meeting.description',
-      'meeting.startDate',
-      'meeting.public',
-      'meeting.channelId',
-      'meeting.liveStream',
-      'meeting.record',
-      'meetingCreatedBy.id',
-      'meetingCreatedBy.email',
-      'meetingCreatedBy.firstName',
-      'meetingCreatedBy.lastName',
-    ];
+  baseActivity(query: Record<string, any>) {
+    const builder = this.postRepository
+      .createQueryBuilder('post')
+      .select([
+        'post.id',
+        'post.title',
+        'post.slug',
+        'post.description',
+        'post.startDate',
+        'post.type',
+        'post.public',
+        'tags.value',
+        'post.userContactExclusive',
+        'post.channelId',
+        'post.liveStream',
+        'post.record',
+        'postCreatedBy.id',
+        'postCreatedBy.email',
+        'postCreatedBy.firstName',
+        'postCreatedBy.lastName',
+      ])
+      .leftJoin('post.createdBy', 'postCreatedBy')
+      .leftJoin('post.tags', 'tags')
+      .where(
+        new Brackets((qb) => {
+          qb.where(
+            new Brackets((qbi) => {
+              qbi
+                .where('post.type = :meetingType', { meetingType: 'meeting' })
+                .andWhere(
+                  new Brackets((qbii) => {
+                    qbii
+                      .where('post.conferenceEndDate is null')
+                      .orWhere('post.telecastRepeatUrl is not null');
+                  }),
+                );
+            }),
+          ).orWhere('post.type = :staticVideoType', {
+            staticVideoType: 'static-video',
+          });
+        }),
+      )
+      .orderBy('post.id', 'DESC');
+
+    if (query.title)
+      builder.andWhere('post.title = :title', { title: query.title });
+    if (query.postType)
+      builder.andWhere('post.type = :postType', {
+        postType: query.postType,
+      });
+    return builder;
   }
 
   getUserFeed(userId: number, query: PaginationQuery) {
-    return this.userRepository
-      .createQueryBuilder('user')
-      .select(this.baseActivitySelect)
+    return this.baseActivity(query)
       .addSelect([
-        'user.id',
-        'zone_meeting.id',
-        'zone_meeting.name',
-        'zone_meeting.subdomain',
-        'zone_meeting.public',
-        'channel_meeting.id',
-        'channel_meeting.name',
-        'channel_meeting.topic',
-        'channel_meeting.description',
-        'channel_meeting.public',
+        'zone.id',
+        'zone.name',
+        'zone.subdomain',
+        'zone.public',
+        'channel.id',
+        'channel.name',
+        'channel.topic',
+        'channel.description',
+        'channel.public',
       ])
-      .leftJoin(
-        Meeting,
-        'meeting',
-        'meeting.conferenceEndDate is null or meeting.telecastRepeatUrl is not null',
-      )
+      .leftJoin('post.channel', 'channel')
       .leftJoin(
         UserChannel,
-        'user_channel_meeting',
-        'user_channel_meeting.userId = user.id AND meeting.channelId = user_channel_meeting.channelId',
+        'userChannel',
+        'userChannel.channelId = channel.id and userChannel.userId = :userId',
+        { userId },
       )
-      .leftJoin(
-        Channel,
-        'channel_meeting',
-        'channel_meeting.id = user_channel_meeting.channelId',
-      )
-      .leftJoin(
-        Zone,
-        'zone_meeting',
-        'zone_meeting.id = channel_meeting.zoneId',
-      )
+      .leftJoin('channel.zone', 'zone')
       .leftJoin(
         Contact,
-        'contact_meeting',
-        'meeting.userContactExclusive = true AND contact_meeting.userId = meeting.createdById AND contact_meeting.contactUserId = user.id',
+        'contact',
+        'post.userContactExclusive = true AND contact.userId = post.createdById AND contact.contactUserId = :userId',
+        { userId },
       )
-      .leftJoin('meeting.createdBy', 'meetingCreatedBy')
-      .where('user.id = :userId', { userId })
       .andWhere(
         new Brackets((qb) => {
           qb.where(
             new Brackets((qbi) => {
               qbi
-                .orWhere('user_channel_meeting.id is not null')
-                .orWhere('contact_meeting.contactUserId is not null')
-                .orWhere('meeting.createdById = :userId', { userId });
+                .orWhere('userChannel.id is not null')
+                .orWhere('contact.contactUserId is not null')
+                .orWhere('post.createdById = :userId', { userId });
             }),
-          ); // other and where for videos and so on
+          );
         }),
       )
-      .paginateRaw(query, false);
+      .paginate(query);
   }
 
-  getZoneFeed(zoneId: number, query: PaginationQuery) {
-    return this.zoneRepository
-      .createQueryBuilder('zone')
-      .select(this.baseActivitySelect)
+  getZoneFeed(zoneId: number, userId: number, query: PaginationQuery) {
+    return this.baseActivity(query)
       .addSelect([
-        'zone_meeting.id',
-        'zone_meeting.name',
-        'zone_meeting.subdomain',
-        'zone_meeting.public',
-        'channel_meeting.id',
-        'channel_meeting.name',
-        'channel_meeting.topic',
-        'channel_meeting.description',
-        'channel_meeting.public',
+        'zone.id',
+        'zone.name',
+        'zone.subdomain',
+        'zone.public',
+        'channel.id',
+        'channel.name',
+        'channel.topic',
+        'channel.description',
+        'channel.public',
       ])
-      .leftJoin(
-        Meeting,
-        'meeting',
-        'meeting.conferenceEndDate is null or meeting.telecastRepeatUrl is not null',
+      .innerJoin('post.channel', 'channel')
+      .innerJoin(
+        UserChannel,
+        'user_channel',
+        'user_channel.channelId = channel.id and user_channel.userId = :userId',
+        { userId },
       )
-      .leftJoin(
-        Channel,
-        'channel_meeting',
-        'meeting.channelId = channel_meeting.id',
-      )
-      .leftJoin(
-        Zone,
-        'zone_meeting',
-        'zone_meeting.id = channel_meeting.zoneId',
-      )
-      .leftJoin('meeting.createdBy', 'meetingCreatedBy')
-      .where(
-        new Brackets((qb) => {
-          qb.where('channel_meeting.zoneId = :zoneId', { zoneId });
-        }),
-      )
-      .paginateRaw(query, false);
+      .innerJoin('channel.zone', 'zone')
+      .andWhere('channel.zoneId = :zoneId', { zoneId })
+      .paginate(query);
   }
 
-  getChannelFeed(channelId: number, query: PaginationQuery) {
-    return this.channelRepository
-      .createQueryBuilder('channel')
-      .select(this.baseActivitySelect)
+  getChannelFeed(channelId: number, userId: number, query: PaginationQuery) {
+    return this.baseActivity(query)
       .addSelect([
+        'zone.id',
+        'zone.name',
+        'zone.subdomain',
+        'zone.public',
         'channel.id',
         'channel.name',
         'channel.topic',
         'channel.description',
       ])
-      .leftJoin(Meeting, 'meeting', 'meeting.channelId = channel.id')
-      .leftJoin('meeting.createdBy', 'meetingCreatedBy')
-      .where('channel.id = :channelId', { channelId })
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where(
-            new Brackets((qbi) => {
-              qbi.where('meeting.channelId = channel.id').andWhere(
-                new Brackets((qbii) => {
-                  qbii
-                    .where('meeting.conferenceEndDate is null')
-                    .orWhere('meeting.telecastRepeatUrl is not null');
-                }),
-              );
-            }),
-          ); // other and where for videos and so on
-        }),
+      .innerJoin('post.channel', 'channel')
+      .innerJoin('channel.zone', 'zone')
+      .innerJoin(
+        UserChannel,
+        'userChannel',
+        'userChannel.channelId = :channelId and userChannel.userId = :userId',
+        { userId, channelId },
       )
-      .paginateRaw(query, false);
+      .paginate(query);
   }
 
   getPublicFeed(query: PaginationQuery) {
-    return this.meetingRepository
-      .createQueryBuilder('meeting')
-      .select(this.baseActivitySelect)
-      .leftJoin('meeting.createdBy', 'meetingCreatedBy')
-      .where(
-        new Brackets((qb) => {
-          qb.where(
-            new Brackets((qbi) => {
-              qbi.where('meeting.public = true').andWhere(
-                new Brackets((qbii) => {
-                  qbii
-                    .where('meeting.conferenceEndDate is null')
-                    .orWhere('meeting.telecastRepeatUrl is not null');
-                }),
-              );
-            }),
-          ); // other and where for videos and so on
-        }),
-      )
-      .paginateRaw(query, false);
+    return this.baseActivity(query)
+      .andWhere('post.public = true')
+      .paginate(query);
   }
 }

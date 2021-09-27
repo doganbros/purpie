@@ -23,32 +23,30 @@ import { Response } from 'express';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import { Meeting } from 'entities/Meeting.entity';
+import { Post as PostEntity } from 'entities/Post.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
-import { ChannelIdParams } from 'src/channel/dto/channel-id.params';
+import { s3, s3HeadObject } from 'config/s3-storage';
 import { MeetingConfig } from 'types/Meeting';
-import { UserZoneRole } from 'src/zone/decorators/user-zone-role.decorator';
 import { errorResponseDoc } from 'helpers/error-response-doc';
-import { ZoneIdParams } from 'src/zone/dto/zone-id.params';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
-import { UserChannelRole } from 'src/channel/decorators/user-channel-role.decorator';
 import { IsClientAuthenticated } from 'src/auth/decorators/client-auth.decorator';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { MeetingService } from './meeting.service';
 import { MeetingIdParams } from './dto/meeting-id.param';
 import { ClientMeetingEventDto } from './dto/client-meeting-event.dto';
 import { ClientVerifyMeetingAuthDto } from './dto/client-verify-meeting-auth.dto';
-import {
-  MixedMeetingListResponse,
-  PublicMeetingListResponse,
-} from './responses/meeting.response';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+const {
+  S3_VIDEO_BUCKET_NAME = '',
+  S3_VIDEO_MEETING_RECORDING_DIR = '',
+} = process.env;
 
 @Controller({ path: 'meeting', version: '1' })
 @ApiTags('meeting')
@@ -72,9 +70,10 @@ export class MeetingController {
     @Body() createMeetingInfo: CreateMeetingDto,
     @CurrentUser() user: UserPayload,
   ) {
-    const meetingPayload: Partial<Meeting> = {
+    const meetingPayload: Partial<PostEntity> = {
       title: createMeetingInfo.title || 'Untiltled Meeting',
       description: createMeetingInfo.description,
+      type: 'meeting',
       startDate: createMeetingInfo.startDate
         ? dayjs(createMeetingInfo.startDate)
             .tz(createMeetingInfo.timeZone, true)
@@ -120,6 +119,13 @@ export class MeetingController {
     if (timeZone) meetingPayload.timeZone = timeZone;
 
     const meeting = await this.meetingService.createNewMeeting(meetingPayload);
+
+    if (createMeetingInfo.tags?.length) {
+      await this.meetingService.createMeetingTags(
+        createMeetingInfo.tags,
+        meeting.id,
+      );
+    }
 
     this.meetingService.sendMeetingInfoMail(user, meeting, true);
 
@@ -246,59 +252,67 @@ export class MeetingController {
     return this.meetingService.getMeetingLogs(user.id, meetingSlug, query);
   }
 
-  @Get('list/public')
+  @Get('recordings/list/:meetingSlug')
   @ApiOkResponse({
-    description: 'User lists public meetings',
-    type: PublicMeetingListResponse,
+    description: 'User gets meeting recordings',
   })
   @PaginationQueryParams()
   @IsAuthenticated()
-  async getPublicMeetings(@Query() query: PaginationQuery) {
-    return this.meetingService.getPublicMeetings(query);
+  async getMeetingRecordings(
+    @CurrentUser() user: UserPayload,
+    @Param('meetingSlug') meetingSlug: string,
+    @Query() query: PaginationQuery,
+  ) {
+    await this.meetingService.currentUserRecordingValidator(
+      user.id,
+      meetingSlug,
+    );
+
+    return this.meetingService.getMeetingRecordingList(meetingSlug, query);
   }
 
-  @Get('list/user')
+  @Get('recordings/file/:meetingSlug/:fileName')
   @ApiOkResponse({
-    description: 'User lists meetings from their contacts and channels',
-    type: MixedMeetingListResponse,
+    description: 'User gets meeting recording file (streamed)',
   })
   @PaginationQueryParams()
   @IsAuthenticated()
-  async getUserMeetings(
+  async getMeetingRecordingFile(
     @CurrentUser() user: UserPayload,
-    @Query() query: PaginationQuery,
+    @Param('meetingSlug') meetingSlug: string,
+    @Param('fileName') fileName: string,
+    @Res() res: Response,
   ) {
-    return this.meetingService.getUserMeetings(user.id, query);
-  }
+    try {
+      await this.meetingService.currentUserRecordingValidator(
+        user.id,
+        meetingSlug,
+      );
 
-  @Get('list/zone/:zoneId')
-  @ApiOkResponse({
-    description: 'User lists meetings from channels of this zone',
-    type: MixedMeetingListResponse,
-  })
-  @PaginationQueryParams()
-  @UserZoneRole()
-  async getZoneMeetings(
-    @CurrentUser() user: UserPayload,
-    @Query() query: PaginationQuery,
-    @Param() { zoneId }: ZoneIdParams,
-  ) {
-    return this.meetingService.getZoneMeetings(zoneId, user.id, query);
-  }
+      const recording = await this.meetingService.getMeetingRecording(
+        meetingSlug,
+        fileName,
+      );
 
-  @Get('list/channel/:channelId')
-  @ApiOkResponse({
-    description: 'User lists meetings from this channel',
-    type: MixedMeetingListResponse,
-  })
-  @PaginationQueryParams()
-  @UserChannelRole()
-  async getChannelMeetings(
-    @CurrentUser() user: UserPayload,
-    @Query() query: PaginationQuery,
-    @Param() { channelId }: ChannelIdParams,
-  ) {
-    return this.meetingService.getChannelMeetings(channelId, user.id, query);
+      if (!recording)
+        throw new NotFoundException('File not found', 'FILE_NOT_FOUND');
+
+      const creds = {
+        Bucket: S3_VIDEO_BUCKET_NAME,
+        Key: `${S3_VIDEO_MEETING_RECORDING_DIR}${recording.meetingSlug}/${recording.fileName}`,
+      };
+      const head = await s3HeadObject(creds);
+      const objectStream = s3.getObject(creds).createReadStream();
+
+      res.setHeader('Content-Disposition', `filename=${recording.fileName}`);
+      if (head.ContentType) res.setHeader('Content-Type', head.ContentType);
+
+      return objectStream.pipe(res);
+    } catch (err) {
+      return res
+        .status(err.statusCode || HttpStatus.INTERNAL_SERVER_ERROR)
+        .json(err);
+    }
   }
 
   @Post('/client/event')

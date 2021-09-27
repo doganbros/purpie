@@ -30,14 +30,17 @@ const setConfigProperty = (value: unknown) => {
   return JSON.stringify(value);
 };
 
-export const meetingConfigStringify = (meetingConfig: MeetingConfig) =>
+export const meetingConfigStringify = (
+  meetingConfig: MeetingConfig,
+  additionalParams: Record<string, any> = {},
+) =>
   stringify(
     (Object.keys(meetingConfig) as Array<MeetingKey>).reduce(
       (acc, v) => ({
         ...acc,
         [`config.${v}`]: setConfigProperty(meetingConfig[v]),
       }),
-      {},
+      additionalParams,
     ) as any,
   );
 

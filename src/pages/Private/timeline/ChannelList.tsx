@@ -41,7 +41,7 @@ const ChannelList: FC = () => {
           </Text>
         ) : (
           userChannelsFiltered.data.map((c) => (
-            <Box key={c.channel.id} align="center">
+            <Box key={c.channel.id} align="center" flex={{ shrink: 0 }}>
               <Avatar
                 size="medium"
                 src={channelAvatarSrc[c.channel.id % channelAvatarSrc.length]}

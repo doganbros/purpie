@@ -42,21 +42,21 @@ export class CreateMeetingDto {
 
   @ApiProperty()
   @ValidateIf((o) => {
-    return !o.zoneId && !o.userContactExclusive && !o.public;
+    return !o.userContactExclusive && !o.public;
   })
   @IsInt()
   channelId?: number;
 
   @ApiProperty()
   @ValidateIf((o) => {
-    return !o.zoneId && !o.userContactExclusive && !o.channelId;
+    return !o.userContactExclusive && !o.channelId;
   })
   @IsBoolean()
   public?: boolean;
 
   @ApiProperty()
   @ValidateIf((o) => {
-    return !o.zoneId && !o.channelId && !o.public;
+    return !o.channelId && !o.public;
   })
   @IsBoolean()
   userContactExclusive?: boolean;
@@ -91,4 +91,8 @@ export class CreateMeetingDto {
   @IsNotEmpty()
   @IsIn(timeZones, { message: 'Invalid timezone option specified' })
   timeZone?: string;
+
+  @ApiProperty({ type: String, isArray: true })
+  @IsOptional()
+  tags?: Array<string>;
 }

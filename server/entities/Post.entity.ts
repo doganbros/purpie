@@ -1,12 +1,13 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { MeetingConfig } from 'types/Meeting';
+import { PostType } from 'types/Post';
 import { RecordEntity } from './base/RecordEntity';
 import { Channel } from './Channel.entity';
-import { baseMeetingConfig } from './data/base-meeting-config';
+import { PostTag } from './PostTag.entity';
 import { User } from './User.entity';
 
 @Entity()
-export class Meeting extends RecordEntity {
+export class Post extends RecordEntity {
   @Column()
   title: string;
 
@@ -16,7 +17,7 @@ export class Meeting extends RecordEntity {
   @Column({ unique: true })
   slug: string;
 
-  @Column()
+  @Column({ nullable: true })
   startDate: Date;
 
   @Column({ nullable: true })
@@ -31,11 +32,14 @@ export class Meeting extends RecordEntity {
   @Column({ nullable: true })
   timeZone: string;
 
+  @Column({ default: 'meeting' })
+  type: PostType;
+
   @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'createdById' })
   createdBy: User;
 
-  @Column()
+  @Column({ nullable: true })
   createdById: number;
 
   @ManyToOne(() => Channel, { nullable: true, onDelete: 'CASCADE' })
@@ -57,12 +61,15 @@ export class Meeting extends RecordEntity {
   @Column({ default: false })
   record: boolean;
 
+  @OneToMany(() => PostTag, (postTag) => postTag.post)
+  tags: Array<PostTag>;
+
   @Column({ nullable: true })
   telecastRepeatUrl: string;
 
   @Column({ default: false })
   userContactExclusive: boolean;
 
-  @Column({ type: 'simple-json', default: baseMeetingConfig })
+  @Column({ type: 'simple-json', nullable: true })
   config: MeetingConfig;
 }
