@@ -7,7 +7,7 @@ export class CreateClientDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: ['SUPER_ADMIN', 'ADMIN', 'NORMAL'] })
   @IsIn(['SUPER_ADMIN', 'ADMIN', 'NORMAL'])
   @IsNotEmpty()
   roleCode: ClientRoleCode;

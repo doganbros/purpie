@@ -11,7 +11,6 @@ import appHistory from './helpers/history';
 import NotFound from './pages/Private/NotFound';
 import { privateRoutes, publicRoutes } from './routes';
 import { retrieveUserAction } from './store/actions/auth.action';
-import { removeToastAction } from './store/actions/util.action';
 import { getUserZonesAction } from './store/actions/zone.action';
 import { AppState } from './store/reducers/root.reducer';
 
@@ -41,7 +40,7 @@ const App: FC = () => {
         visible={toast.visible}
         status={toast.status}
         message={toast.message}
-        onClose={() => dispatch(removeToastAction)}
+        id={toast.toastId}
       />
       {loading || (isAuthenticated && !userZoneInitialized) ? (
         <Loader />

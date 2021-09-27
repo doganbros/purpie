@@ -45,7 +45,7 @@ export class StaticVideoService {
           'dddd D MMMM, YYYY h:mm A Z',
         ),
       },
-      link: `${REACT_APP_CLIENT_HOST}/video/${videoPost.id}`,
+      link: `${REACT_APP_CLIENT_HOST}/video/${videoPost.slug}`,
     };
     return this.mailService.sendMailByView(
       user.email,

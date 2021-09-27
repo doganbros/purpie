@@ -275,7 +275,6 @@ export class MeetingController {
   @ApiOkResponse({
     description: 'User gets meeting recording file (streamed)',
   })
-  @PaginationQueryParams()
   @IsAuthenticated()
   async getMeetingRecordingFile(
     @CurrentUser() user: UserPayload,
