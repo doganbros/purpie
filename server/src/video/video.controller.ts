@@ -22,18 +22,18 @@ import { IsClientAuthenticated } from 'src/auth/decorators/client-auth.decorator
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
-import { CreateStaticVideo } from './dto/create-static-video.dto';
-import { StaticVideoService } from './static-video.service';
+import { CreateVideoDto } from './dto/create-video.dto';
+import { VideoService } from './video.service';
 import { VideoIdParams } from './dto/video-id.params';
 import { VideoUploadClientFeedbackDto } from './dto/video-upload-client-feedback.dto';
 import { VideoSlugParams } from './dto/video-slug.params';
 
 const { S3_VIDEO_POST_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 
-@Controller({ path: 'static-video', version: '1' })
-@ApiTags('static-video')
-export class StaticVideoController {
-  constructor(private staticVideoService: StaticVideoService) {}
+@Controller({ path: 'video', version: '1' })
+@ApiTags('video')
+export class VideoController {
+  constructor(private staticVideoService: VideoService) {}
 
   @Post('create')
   @ApiConsumes('multipart/form-data')
@@ -45,23 +45,19 @@ export class StaticVideoController {
   @IsAuthenticated()
   @ValidationBadRequest()
   async createVideoPost(
-    @Body() staticVideo: CreateStaticVideo,
+    @Body() videoInfo: CreateVideoDto,
     @CurrentUser() user: UserPayload,
     @UploadedFile() file: Express.MulterS3.File,
   ) {
     const videoPostPayload: Partial<PostEntity> = {
-      title: staticVideo.title,
-      description: staticVideo.description,
-      type: 'static-video',
+      title: videoInfo.title,
+      description: videoInfo.description,
+      type: 'video',
       slug: file.key.replace(S3_VIDEO_POST_DIR, ''),
       createdById: user.id,
     };
 
-    const {
-      public: publicVideo,
-      userContactExclusive,
-      channelId,
-    } = staticVideo;
+    const { public: publicVideo, userContactExclusive, channelId } = videoInfo;
 
     if (channelId) {
       await this.staticVideoService.validateUserChannel(user.id, channelId);

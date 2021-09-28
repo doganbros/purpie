@@ -140,8 +140,8 @@ export class ActivityService {
                   }),
                 );
             }),
-          ).orWhere('post.type = :staticVideoType', {
-            staticVideoType: 'static-video',
+          ).orWhere('post.type = :videoType', {
+            videoType: 'video',
           });
         }),
       )

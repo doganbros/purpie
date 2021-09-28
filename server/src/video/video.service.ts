@@ -12,7 +12,7 @@ import { Brackets, Repository } from 'typeorm';
 const { REACT_APP_CLIENT_HOST } = process.env;
 
 @Injectable()
-export class StaticVideoService {
+export class VideoService {
   constructor(
     @InjectRepository(UserChannel)
     private userChannelRepository: Repository<UserChannel>,
@@ -95,7 +95,7 @@ export class StaticVideoService {
         'videoPost.userContactExclusive = true AND videoPost.createdById = contact.userId AND contact.contactUserId = :userId',
         { userId },
       )
-      .where('videoPost.type = :type', { type: 'static-video' })
+      .where('videoPost.type = :type', { type: 'video' })
       .andWhere(
         new Brackets((qb) => {
           qb.where('videoPost.public = true')
