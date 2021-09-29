@@ -22,6 +22,7 @@ import {
   ApiUnauthorizedResponse,
   getSchemaPath,
 } from '@nestjs/swagger';
+import { UtilsService } from 'src/utils/utils.service';
 import { Response } from 'express';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { errorResponseDoc } from 'helpers/error-response-doc';
@@ -43,7 +44,10 @@ const {
 @Controller({ path: 'auth', version: '1' })
 @ApiTags('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private utilService: UtilsService,
+  ) {}
 
   @Post('register')
   @ApiCreatedResponse({
@@ -320,6 +324,7 @@ export class AuthController {
     if (subdomain) {
       await this.authService.subdomainValidity(subdomain, currentUser.email);
     }
+
     return currentUser;
   }
 }

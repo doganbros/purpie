@@ -31,6 +31,7 @@
     "grommet": "^2.17.3",
     "grommet-icons": "^4.6.0",
     "helmet": "^4.6.0",
+    "isomorphic-fetch": "^3.0.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "lodash.pick": "^4.4.0",
@@ -60,7 +61,8 @@
     "swagger-ui-express": "^4.1.6",
     "typeorm": "^0.2.34",
     "uuid": "^3.3.3",
-    "video.js": "^7.14.3"
+    "video.js": "^7.14.3",
+    "ws": "^8.2.2"
   },
   "scripts": {
     "start:web": "cross-env PORT=3000 react-scripts start",
@@ -114,6 +116,7 @@
     "@types/cors": "^2.8.10",
     "@types/express": "^4.17.11",
     "@types/express-handlebars": "^5.3.1",
+    "@types/isomorphic-fetch": "^0.0.35",
     "@types/jest": "^26.0.22",
     "@types/jsonwebtoken": "^8.5.3",
     "@types/lodash.pick": "^4.4.6",

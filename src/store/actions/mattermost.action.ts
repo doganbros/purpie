@@ -9,12 +9,14 @@ import { store } from '../store';
 import { MattermostAction } from '../types/mattermost.types';
 import { setToastAction } from './util.action';
 
-const { MATTERMOST_SERVER_URL = 'http://octopus.localhost:8065' } = process.env;
+const {
+  REACT_APP_MM_SERVER_URL = 'http://octopus.localhost:8065',
+} = process.env;
 
 export const initializeMattermostAction = (token: string): MattermostAction => {
   return async (dispatch) => {
     try {
-      Client4.setUrl(MATTERMOST_SERVER_URL);
+      Client4.setUrl(REACT_APP_MM_SERVER_URL);
       Client4.setToken(token);
 
       const me = await Client4.getMe();
