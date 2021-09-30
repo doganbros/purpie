@@ -21,6 +21,7 @@ import {
 } from '../../store/actions/zone.action';
 import { AppState } from '../../store/reducers/root.reducer';
 import { CreateZonePayload } from '../../store/types/zone.types';
+import { nameToSubdomain } from '../../helpers/utils';
 
 interface CreateZoneProps {
   onDismiss: () => void;
@@ -37,6 +38,7 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
 
   const [name, setName] = useState('');
   const [subdomain, setSubdomain] = useState('');
+  const [subdomainInputFocus, setSubdomainInputFocus] = useState(false);
   const [description, setDescription] = useState('');
   const [publicZone, setPublicZone] = useState(true);
   const [category, setCategory] = useState();
@@ -80,18 +82,25 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                 <FormField required name="name" label="Name">
                   <TextInput
                     value={name}
-                    onChange={(e) => {
-                      setName(e.target.value);
+                    onChange={({ target: { value } }) => {
+                      setName(value);
+                      setSubdomain(nameToSubdomain(value));
                     }}
                     name="name"
                   />
                 </FormField>
-                <FormField required name="subdomain" label="Subdomain">
+                <FormField required name="subdomain" label="Zone Address">
                   <TextInput
-                    value={subdomain}
+                    value={
+                      subdomainInputFocus || !subdomain
+                        ? subdomain
+                        : `${subdomain}.octopus.com`
+                    }
                     onChange={(e) => {
                       setSubdomain(e.target.value);
                     }}
+                    onFocus={() => setSubdomainInputFocus(true)}
+                    onBlur={() => setSubdomainInputFocus(false)}
                     name="subdomain"
                   />
                 </FormField>
@@ -102,17 +111,6 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                       setDescription(e.target.value);
                     }}
                     name="description"
-                  />
-                </FormField>
-                <FormField name="public">
-                  <CheckBox
-                    toggle
-                    checked={publicZone}
-                    onChange={(e) => {
-                      setPublicZone(e.target.checked);
-                    }}
-                    label="Public"
-                    name="public"
                   />
                 </FormField>
                 <FormField required name="categoryId" label="Category">
@@ -126,6 +124,17 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                     onChange={({ option }) => {
                       setCategory(option.id);
                     }}
+                  />
+                </FormField>
+                <FormField name="public">
+                  <CheckBox
+                    toggle
+                    checked={publicZone}
+                    onChange={(e) => {
+                      setPublicZone(e.target.checked);
+                    }}
+                    label="Public"
+                    name="public"
                   />
                 </FormField>
               </Box>
