@@ -5,7 +5,7 @@ import React, { FC } from 'react';
 
 interface Props {
   id: string;
-  message: string;
+  message: React.ReactNode;
   name: string;
   date: number | Date;
   editedDate: number | Date;
@@ -40,7 +40,7 @@ const PostItem: FC<Props> = ({
           .map((v) => v.charAt(0)?.toUpperCase() || '')
           .join('')}
       </Avatar>
-      <Box direction="column" width={{ min: '200px', width: '40%' }}>
+      <Box direction="column" width={{ min: '300px', width: '50%' }}>
         <Box direction="row" justify="between" align="center">
           <Box direction="row">
             <Text size="small" margin={{ right: 'xsmall' }} weight="bold">
@@ -61,7 +61,7 @@ const PostItem: FC<Props> = ({
               </Anchor>
             </Text>
           ) : null}
-          <Text size="small">{message}</Text>
+          {message}
           {editedDate ? <Text size="xsmall">(edited)</Text> : null}
           {children}
         </Box>

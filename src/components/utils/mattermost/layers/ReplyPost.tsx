@@ -57,7 +57,7 @@ const ReplyPost: FC<Props> = ({ onDismiss, post, name }) => {
         </Box>
         <PostItem
           id={post.id}
-          message={post.message}
+          message={<Text size="small">{post.message}</Text>}
           editedDate={post.edit_at}
           date={post.create_at}
           name={name}

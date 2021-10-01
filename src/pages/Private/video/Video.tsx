@@ -1,20 +1,36 @@
 import React, { FC } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { Box, Text } from 'grommet';
-import { Chat, Favorite } from 'grommet-icons';
+import { Favorite, Chat as ChatIcon } from 'grommet-icons';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import VideoPlayer from '../../../components/utils/video/VideoPlayer';
 import { videoPlayerOptions, videoMetadata } from './data/video-data';
-import Messages from './Messages';
 import RecommendedVideos from './RecommendedVideos';
+import Chat from '../../../components/utils/mattermost/Chat';
+import { AppState } from '../../../store/reducers/root.reducer';
+import Messages from './Messages';
 
 interface RouteParams {
   id: string;
 }
 
 const Video: FC<RouteComponentProps<RouteParams>> = () => {
+  const {
+    mattermost: { channels },
+  } = useSelector((state: AppState) => state);
+
+  const selectedChannel = Object.values(channels).find(
+    (channel) => channel.channel.name === 'off-topic'
+  )?.channel;
+
   return (
-    <PrivatePageLayout title={videoMetadata.name} rightComponent={<Messages />}>
+    <PrivatePageLayout
+      title={videoMetadata.name}
+      rightComponent={
+        selectedChannel ? <Chat channelId={selectedChannel.id} /> : <Messages />
+      }
+    >
       <Box gap="large" pad={{ vertical: 'medium' }}>
         <Box justify="between" direction="row">
           <Box>
@@ -40,7 +56,7 @@ const Video: FC<RouteComponentProps<RouteParams>> = () => {
                 <Text color="status-disabled">{videoMetadata.likes}</Text>
               </Box>
               <Box direction="row" gap="xsmall">
-                <Chat color="status-disabled" />
+                <ChatIcon color="status-disabled" />
                 <Text color="status-disabled">{videoMetadata.comments}</Text>
               </Box>
             </Box>

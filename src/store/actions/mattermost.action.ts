@@ -104,12 +104,24 @@ export const setUserProfilesFromPostAction = (
   posts: Record<string, Post>
 ): MattermostAction => {
   return async (dispatch) => {
+    setUserProfilesIfNotExistsAction(
+      Object.values(posts).map((post) => post.user_id),
+      'Error occured while fetching users for post'
+    )(dispatch);
+  };
+};
+
+export const setUserProfilesIfNotExistsAction = (
+  ids: Array<string>,
+  errorMessage?: string
+): MattermostAction => {
+  return async (dispatch) => {
     try {
       const currentUsers = store.getState().mattermost.userProfiles;
 
-      const userProfileIdsToFetch = Array.from(
-        new Set(Object.values(posts).map((post) => post.user_id))
-      ).filter((userId) => !currentUsers[userId]);
+      const userProfileIdsToFetch = Array.from(new Set(ids)).filter(
+        (userId) => !currentUsers[userId]
+      );
 
       if (userProfileIdsToFetch.length) {
         const profiles = await Client4.getProfilesByIds(userProfileIdsToFetch);
@@ -118,10 +130,10 @@ export const setUserProfilesFromPostAction = (
           payload: profiles,
         });
       }
-    } catch (error) {
+    } catch (err) {
       setToastAction(
         'error',
-        `Error occured while fetching users for post`
+        errorMessage ?? 'Error occured while fetching users'
       )(dispatch);
     }
   };
