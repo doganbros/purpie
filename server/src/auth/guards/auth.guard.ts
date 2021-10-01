@@ -52,6 +52,7 @@ export class AuthGuard implements CanActivate {
             'lastName',
             'email',
             'userRole',
+            'mattermostId',
           ]);
 
           const isValid = await this.authService.verifyRefreshToken(

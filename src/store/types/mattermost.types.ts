@@ -3,6 +3,7 @@ import { UserProfile } from 'mattermost-redux/types/users';
 import {
   SET_MATTERMOST_CHANNEL_INFO,
   SET_MATTERMOST_CURRENT_USER,
+  SET_MATTERMOST_USER_PROFILES,
   SET_MATTERMOST_WEBSOCKET_EVENT,
 } from '../constants/mattermost.constants';
 import { UtilActionParams } from './util.types';
@@ -10,6 +11,7 @@ import { UtilActionParams } from './util.types';
 interface MattermostWebSocketEvent {
   event: string;
   data: Record<string, any>;
+  seq: number;
   broadcast: {
     omit_users: any;
     user_id: string;
@@ -32,6 +34,7 @@ export interface MattermostState {
   } | null;
   websocketEvent: MattermostWebSocketEvent | null;
   channels: Record<string, { channel: Channel; metaData: ChannelMetaData }>;
+  userProfiles: Record<string, UserProfile>;
 }
 
 export type MattermostActionParams =
@@ -46,6 +49,10 @@ export type MattermostActionParams =
   | {
       type: typeof SET_MATTERMOST_CHANNEL_INFO;
       payload: { channel: Channel; metaData: ChannelMetaData };
+    }
+  | {
+      type: typeof SET_MATTERMOST_USER_PROFILES;
+      payload: Array<UserProfile>;
     };
 
 export interface MattermostDispatch {

@@ -22,7 +22,6 @@ import {
   ApiUnauthorizedResponse,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { UtilsService } from 'src/utils/utils.service';
 import { Response } from 'express';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { errorResponseDoc } from 'helpers/error-response-doc';
@@ -44,10 +43,7 @@ const {
 @Controller({ path: 'auth', version: '1' })
 @ApiTags('auth')
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-    private utilService: UtilsService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
   @Post('register')
   @ApiCreatedResponse({
@@ -102,7 +98,7 @@ export class AuthController {
     @Body() loginUserDto: LoginUserDto,
     @Headers('app-subdomain') subdomain: string,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<UserPayload> {
+  ) {
     if (subdomain)
       await this.authService.subdomainValidity(
         subdomain,
@@ -136,6 +132,7 @@ export class AuthController {
       lastName: user.lastName,
       email: user.email,
       userName: user.userName,
+      mattermostId: user.mattermostId,
       userRole: {
         ...user.userRole,
       },
@@ -149,7 +146,10 @@ export class AuthController {
       });
 
     await this.authService.setAccessTokens(userPayload, res);
-    return userPayload;
+    const token = await this.authService.createMattermostPersonalTokenForUser(
+      user.mattermostId!,
+    );
+    return { ...userPayload, mattermostToken: token };
   }
 
   @Post('/logout')
@@ -325,6 +325,10 @@ export class AuthController {
       await this.authService.subdomainValidity(subdomain, currentUser.email);
     }
 
-    return currentUser;
+    const mattermostToken = await this.authService.createMattermostPersonalTokenForUser(
+      currentUser.mattermostId!,
+    );
+
+    return { ...currentUser, mattermostToken };
   }
 }

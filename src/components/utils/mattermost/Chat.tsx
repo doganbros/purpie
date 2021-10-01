@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { useParams } from 'react-router-dom';
 import React, { FC, Fragment, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Post } from 'mattermost-redux/types/posts';
 import { nanoid } from 'nanoid';
 import { Client4 } from 'mattermost-redux/client';
@@ -9,6 +9,7 @@ import { Box, Header, Menu, Text, TextArea } from 'grommet';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { MoreVertical } from 'grommet-icons';
 import dayjs from 'dayjs';
+import webSocketClient from 'mattermost-redux/client/websocket_client';
 import PrivatePageLayout from '../../layouts/PrivatePageLayout/PrivatePageLayout';
 import { AppState } from '../../../store/reducers/root.reducer';
 import MattermostChannelList from './MattermostChannelList';
@@ -17,6 +18,8 @@ import EditPost from './layers/EditPost';
 import ReplyPost from './layers/ReplyPost';
 import PlanMeetingTheme from '../../../layers/meeting/custom-theme';
 import { setToastAction } from '../../../store/actions/util.action';
+import { setUserProfilesFromPostAction } from '../../../store/actions/mattermost.action';
+import { useThrottle } from '../../../hooks/useThrottle';
 
 interface Params {
   channelId: string;
@@ -24,18 +27,27 @@ interface Params {
 
 const Chat: FC = () => {
   const { channelId } = useParams<Params>();
+  const throttle = useThrottle();
   const [hasMore, setHasMore] = useState(true);
-  const [posts, setPosts] = useState<Array<Post>>([]);
   const containerId = useRef(nanoid());
   const [page, setPage] = useState(0);
-  const rootPosts = useRef<Record<string, Post>>({});
   const [editedPost, setEditedPost] = useState<Post | null>(null);
   const [repliedPost, setRepliedPost] = useState<Post | null>(null);
+  const [userTyping, setUserTyping] = useState<{
+    id: string;
+    seq: number;
+  } | null>(null);
+  const [currentPosts, setCurrentPosts] = useState<{
+    order: Array<string>;
+    posts: Record<string, Post>;
+  }>({ order: [], posts: {} });
+  const dispatch = useDispatch();
 
   const {
     mattermost: {
       channels,
       currentUser: currentMattermostUser,
+      userProfiles,
       websocketEvent,
     },
   } = useSelector((state: AppState) => state);
@@ -45,36 +57,55 @@ const Chat: FC = () => {
       websocketEvent?.event === 'posted' &&
       websocketEvent?.broadcast.channel_id === channelId
     ) {
-      const post = JSON.parse(websocketEvent.data.post);
-      if (!posts.length || posts[posts.length - 1].id !== post.id)
-        setPosts((p) => [...p, post]);
+      const post = JSON.parse(websocketEvent.data.post) as Post;
+
+      dispatch(setUserProfilesFromPostAction({ [post.id]: post }));
+
+      if (!currentPosts.posts[post.id]) {
+        setCurrentPosts((v) => ({
+          ...v,
+          order: [...v.order, post.id],
+          posts: { ...v.posts, [post.id]: post },
+        }));
+      }
     } else if (
       websocketEvent?.event === 'post_edited' &&
       websocketEvent?.broadcast.channel_id === channelId
     ) {
       const post = JSON.parse(websocketEvent.data.post) as Post;
 
-      if (rootPosts.current[post.id]) rootPosts.current[post.id] = post;
-      if (posts.length)
-        setPosts((p) =>
-          p.map((cp) => {
-            if (cp.id === post.id) return post;
-            return cp;
-          })
-        );
+      setCurrentPosts((v) => ({
+        ...v,
+        posts: { ...v.posts, [post.id]: post },
+      }));
     } else if (
       websocketEvent?.event === 'post_deleted' &&
       websocketEvent?.broadcast.channel_id === channelId
     ) {
       const post = JSON.parse(websocketEvent.data.post) as Post;
-      setPosts((p) =>
-        p.map((cp) => {
-          if (cp.id === post.id) {
-            post.message = '(message deleted)';
-            return post;
-          }
-          return cp;
-        })
+      setCurrentPosts((v) => ({
+        ...v,
+        posts: {
+          ...v.posts,
+          [post.id]: { ...post, message: '(message deleted)' },
+        },
+      }));
+    } else if (
+      websocketEvent?.event === 'typing' &&
+      websocketEvent?.broadcast.channel_id === channelId &&
+      websocketEvent?.data.user_id !== currentMattermostUser?.id
+    ) {
+      setUserTyping({
+        id: websocketEvent.data.user_id,
+        seq: websocketEvent.seq,
+      });
+
+      setTimeout(
+        (seq: number) => {
+          if (seq === websocketEvent.seq) setUserTyping(null);
+        },
+        10000,
+        websocketEvent.seq
       );
     }
   }, [websocketEvent]);
@@ -82,36 +113,29 @@ const Chat: FC = () => {
   const selectedChannel = channels[channelId];
 
   const fetchMore = async () => {
-    if (posts.length >= (selectedChannel.channel as any).total_msg_count) {
+    const postLength = Object.keys(currentPosts.posts).length;
+    if (postLength >= (selectedChannel.channel as any).total_msg_count) {
       return setHasMore(false);
     }
-    const result = !posts.length
+    const result = !postLength
       ? await Client4.getPosts(channelId, page, 61)
       : await Client4.getPostsBefore(
           channelId,
-          posts[posts.length - 1].id,
+          currentPosts.order[currentPosts.order.length - 1],
           page,
           60
         );
 
     if (!result.order.length) return setHasMore(false);
 
-    const populatedPosts: any = [];
+    dispatch(setUserProfilesFromPostAction(result.posts as any));
 
-    result.order.reverse().forEach((postId) => {
-      const currentPost = (result.posts as any)[postId];
+    setCurrentPosts((v) => ({
+      ...v,
+      order: [...v.order, ...result.order.reverse()],
+      posts: { ...v.posts, ...(result.posts as any) },
+    }));
 
-      if (currentPost.root_id) {
-        if (!rootPosts.current[currentPost.root_id])
-          rootPosts.current[currentPost.root_id] = (result.posts as any)[
-            currentPost.root_id
-          ];
-      }
-
-      populatedPosts.push(currentPost);
-    });
-
-    setPosts((v) => [...populatedPosts, ...v]);
     return setPage((v) => v + 1);
   };
 
@@ -124,7 +148,7 @@ const Chat: FC = () => {
   let lastDate: number | null = null;
 
   const parseDateToString = (date: number) => {
-    const diff = dayjs().diff(date, 'day');
+    const diff = dayjs().startOf('day').diff(dayjs(date).startOf('day'), 'day');
     if (diff === 0) return 'Today';
 
     if (diff === 1) return 'Yesterday';
@@ -163,14 +187,16 @@ const Chat: FC = () => {
               direction="column-reverse"
             >
               <InfiniteScroll
-                dataLength={posts.length}
+                dataLength={currentPosts.order.length}
                 inverse
                 hasMore={hasMore}
                 next={fetchMore}
                 loader={<h4>Loading...</h4>}
                 scrollableTarget={containerId.current}
               >
-                {posts.map((post) => {
+                {currentPosts.order.map((postId) => {
+                  const post = currentPosts.posts[postId];
+
                   const isCurrentUserPost =
                     currentMattermostUser?.id === post.user_id;
 
@@ -237,13 +263,10 @@ const Chat: FC = () => {
                           />
                         }
                         message={post.message}
-                        rootPost={rootPosts.current[post.root_id]}
+                        rootPost={currentPosts.posts[post.root_id]}
                         editedDate={post.edit_at}
                         date={post.create_at}
-                        name={
-                          selectedChannel.metaData?.users?.[post.user_id]
-                            ?.username || ''
-                        }
+                        name={userProfiles?.[post.user_id]?.username ?? '...'}
                         side={isCurrentUserPost ? 'right' : 'left'}
                       />
                     </Fragment>
@@ -269,9 +292,20 @@ const Chat: FC = () => {
                     channel_id: channelId,
                   } as any);
                   e.currentTarget.value = '';
+                  return null;
                 }
+                return throttle(() => {
+                  console.log('entered func');
+                  webSocketClient.userTyping(channelId, '');
+                }, 2000);
               }}
             />
+            {userTyping ? (
+              <span>
+                {userProfiles[userTyping.id]?.username || 'Someone'} is
+                typing...
+              </span>
+            ) : null}
           </>
         ) : null}
       </PlanMeetingTheme>

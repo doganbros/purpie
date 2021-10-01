@@ -24,9 +24,10 @@ const App: FC = () => {
   const {
     auth: {
       isAuthenticated,
+      user,
       retrieveUser: { loading },
     },
-    zone: { userZoneInitialized, selectedUserZone },
+    zone: { userZoneInitialized },
     util: { toast },
     mattermost: { currentUser: mattermostCurrentUser },
   } = useSelector((state: AppState) => state);
@@ -38,15 +39,13 @@ const App: FC = () => {
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(getUserZonesAction());
-      dispatch(initializeMattermostAction('ry7fxbox6fncmxkqe9qwynwqtc'));
+      dispatch(initializeMattermostAction(user!.mattermostToken));
     }
   }, [isAuthenticated]);
 
   useEffect(() => {
     if (userZoneInitialized) {
-      if (!selectedUserZone)
-        dispatch(fetchMyMattermostChannelsAction('nbrzi74m4fyszk9dh75gesajfo'));
-      // else fetch the team with that zone
+      dispatch(fetchMyMattermostChannelsAction('octopus-app'));
     }
   }, [userZoneInitialized]);
 

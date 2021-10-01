@@ -61,8 +61,7 @@
     "swagger-ui-express": "^4.1.6",
     "typeorm": "^0.2.34",
     "uuid": "^3.3.3",
-    "video.js": "^7.14.3",
-    "ws": "^8.2.2"
+    "video.js": "^7.14.3"
   },
   "scripts": {
     "start:web": "cross-env PORT=3000 react-scripts start",

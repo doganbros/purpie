@@ -104,3 +104,14 @@ export async function compareHash(
     });
   });
 }
+
+export const fetchOrProduceNull = async <T>(
+  request: () => Promise<T>,
+): Promise<T | null> => {
+  try {
+    const result = await request();
+    return result;
+  } catch (err) {
+    return null;
+  }
+};
