@@ -116,7 +116,7 @@ class BaseActivityFeedList {
   @ApiProperty()
   startDate: Date;
 
-  @ApiProperty({ enum: ['meeting', 'static-video'], example: 'meeting' })
+  @ApiProperty({ enum: ['meeting', 'video'], example: 'meeting' })
   type: PostType;
 
   @ApiProperty({ nullable: true })

@@ -8,7 +8,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 
-export class CreateStaticVideo {
+export class CreateVideoDto {
   @ApiProperty()
   @IsString()
   title: string;

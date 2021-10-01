@@ -1,1 +1,1 @@
-export type PostType = 'meeting' | 'static-video' | 'livestream';
+export type PostType = 'meeting' | 'video' | 'livestream';

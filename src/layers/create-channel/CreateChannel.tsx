@@ -32,17 +32,18 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
     zone: {
       getZoneCategories: { categories },
       getUserZones: { userZones },
+      selectedUserZone,
     },
   } = useSelector((state: AppState) => state);
   const size = useContext(ResponsiveContext);
-  const [userZone, setUserZone] = useState();
+  const [userZone, setUserZone] = useState<any>(selectedUserZone?.id);
   const [category, setCategory] = useState();
   const [name, setName] = useState('');
   const [topic, setTopic] = useState('');
   const [description, setDescription] = useState('');
   const [publicChannel, setPublicChannel] = useState(true);
 
-  const notValid = !name || !description || !topic || !category || !userZone;
+  const notValid = !name || !description || !topic || !userZone;
 
   return (
     <Layer onClickOutside={onDismiss}>
@@ -97,17 +98,6 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                   name="description"
                 />
               </FormField>
-              <FormField name="public">
-                <CheckBox
-                  toggle
-                  label="Public"
-                  name="public"
-                  checked={publicChannel}
-                  onChange={(e) => {
-                    setPublicChannel(e.target.checked);
-                  }}
-                />
-              </FormField>
               <FormField required name="zoneId" label="Zone">
                 <Select
                   name="zoneId"
@@ -131,7 +121,7 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                   }}
                 />
               </FormField>
-              <FormField required name="categoryId" label="Category">
+              <FormField name="categoryId" label="Category">
                 <Select
                   options={categories || []}
                   disabled={!userZone}
@@ -141,6 +131,17 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                   valueKey={{ key: 'id', reduce: true }}
                   value={category}
                   onChange={({ value }) => setCategory(value)}
+                />
+              </FormField>
+              <FormField name="public">
+                <CheckBox
+                  toggle
+                  label="Public"
+                  name="public"
+                  checked={publicChannel}
+                  onChange={(e) => {
+                    setPublicChannel(e.target.checked);
+                  }}
                 />
               </FormField>
             </Box>

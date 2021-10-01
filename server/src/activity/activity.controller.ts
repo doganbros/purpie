@@ -50,7 +50,7 @@ export class ActivityController {
   @ApiQuery({
     name: 'postType',
     description: 'The post type to return. By default it returns all posts. ',
-    enum: ['meeting', 'static-video'],
+    enum: ['meeting', 'video'],
     required: false,
   })
   @ApiOkResponse({
@@ -67,7 +67,7 @@ export class ActivityController {
   @ApiQuery({
     name: 'postType',
     description: 'The post type to return. By default it returns all posts. ',
-    enum: ['meeting', 'static-video'],
+    enum: ['meeting', 'video'],
     required: false,
   })
   @ApiOkResponse({
@@ -87,7 +87,7 @@ export class ActivityController {
   @ApiQuery({
     name: 'postType',
     description: 'The post type to return. By default it returns all posts. ',
-    enum: ['meeting', 'static-video'],
+    enum: ['meeting', 'video'],
     required: false,
   })
   @ApiOkResponse({
@@ -116,7 +116,7 @@ export class ActivityController {
   @ApiQuery({
     name: 'postType',
     description: 'The post type to return. By default it returns all posts. ',
-    enum: ['meeting', 'static-video'],
+    enum: ['meeting', 'video'],
     required: false,
   })
   @ApiOkResponse({
