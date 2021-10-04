@@ -114,6 +114,7 @@ export class ActivityService {
         'post.startDate',
         'post.type',
         'post.public',
+        'post.videoName',
         'tags.value',
         'post.userContactExclusive',
         'post.channelId',
@@ -136,7 +137,7 @@ export class ActivityService {
                   new Brackets((qbii) => {
                     qbii
                       .where('post.conferenceEndDate is null')
-                      .orWhere('post.telecastRepeatUrl is not null');
+                      .orWhere('post.videoName is not null');
                   }),
                 );
             }),

@@ -15,6 +15,7 @@ import {
 import { ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Post as PostEntity } from 'entities/Post.entity';
+import path from 'path';
 import { Express, Response } from 'express';
 import { s3HeadObject, s3, s3Storage } from 'config/s3-storage';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
@@ -26,7 +27,6 @@ import { CreateVideoDto } from './dto/create-video.dto';
 import { VideoService } from './video.service';
 import { VideoIdParams } from './dto/video-id.params';
 import { VideoUploadClientFeedbackDto } from './dto/video-upload-client-feedback.dto';
-import { VideoSlugParams } from './dto/video-slug.params';
 
 const { S3_VIDEO_POST_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 
@@ -53,7 +53,10 @@ export class VideoController {
       title: videoInfo.title,
       description: videoInfo.description,
       type: 'video',
-      slug: file.key.replace(S3_VIDEO_POST_DIR, ''),
+      slug: file.key
+        .replace(S3_VIDEO_POST_DIR, '')
+        .replace(path.extname(file.originalname), ''),
+      videoName: file.key.replace(S3_VIDEO_POST_DIR, ''),
       createdById: user.id,
     };
 
@@ -101,13 +104,13 @@ export class VideoController {
   @IsAuthenticated()
   async viewVideoPost(
     @CurrentUser() user: UserPayload,
-    @Param() info: VideoSlugParams,
+    @Param('slug') slug: string,
     @Res() res: Response,
   ) {
     try {
       const videoPost = await this.staticVideoService.getVideoPostForUserBySlug(
         user.id,
-        info.slug,
+        slug,
       );
 
       if (!videoPost)
@@ -115,12 +118,12 @@ export class VideoController {
 
       const creds = {
         Bucket: S3_VIDEO_BUCKET_NAME,
-        Key: `${S3_VIDEO_POST_DIR}${videoPost.slug}`,
+        Key: `${S3_VIDEO_POST_DIR}${videoPost.videoName}`,
       };
       const head = await s3HeadObject(creds);
       const objectStream = s3.getObject(creds).createReadStream();
 
-      res.setHeader('Content-Disposition', `filename=${videoPost.slug}`);
+      res.setHeader('Content-Disposition', `filename=${videoPost.videoName}`);
       if (head.ContentType) res.setHeader('Content-Type', head.ContentType);
 
       return objectStream.pipe(res);

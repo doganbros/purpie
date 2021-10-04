@@ -65,7 +65,7 @@ export class Post extends RecordEntity {
   tags: Array<PostTag>;
 
   @Column({ nullable: true })
-  telecastRepeatUrl: string;
+  videoName: string;
 
   @Column({ default: false })
   userContactExclusive: boolean;

@@ -130,7 +130,7 @@ export class VideoService {
   async setMeetingRecordingFile(slug: string, fileName: string) {
     const result = await this.postRepository.update(
       { slug, type: 'meeting' },
-      { telecastRepeatUrl: fileName },
+      { videoName: fileName },
     );
 
     if (result.affected) {
