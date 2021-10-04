@@ -26,7 +26,6 @@ interface Props {
   canDelete?: boolean;
   canEdit?: boolean;
   canReply?: boolean;
-  canSave?: boolean;
   renderMessage?: (post: Post) => React.ReactNode;
   height?: HeightType;
 }
