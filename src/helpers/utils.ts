@@ -34,3 +34,6 @@ export const ceilTime = (time: Date | string | number, minutes = 30): Date => {
   );
   return timeToReturn;
 };
+
+export const nameToSubdomain = (name: string): string =>
+  name.toLowerCase().replaceAll(' ', '-');
