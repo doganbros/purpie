@@ -104,3 +104,6 @@ export async function compareHash(
     });
   });
 }
+
+export const booleanValue = (value: string | boolean | number) =>
+  [true, 'true', 1].includes(value);

@@ -1,8 +1,8 @@
 import { IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class VideoSlugParams {
+export class VideoNameParams {
   @ApiProperty()
   @IsString()
-  slug: string;
+  videoName: string;
 }

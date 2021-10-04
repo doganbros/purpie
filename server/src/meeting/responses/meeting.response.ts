@@ -21,6 +21,9 @@ class BaseMeetingList {
   public: boolean;
 
   @ApiProperty()
+  videoName: string;
+
+  @ApiProperty()
   record: boolean;
 
   @ApiProperty()

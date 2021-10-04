@@ -63,6 +63,7 @@ export class VideoService {
         'videoPost.slug',
         'videoPost.description',
         'videoPost.public',
+        'videoPost.videoName',
         'videoPost.userContactExclusive',
         'tags.value',
         'createdBy.id',
@@ -130,7 +131,7 @@ export class VideoService {
   async setMeetingRecordingFile(slug: string, fileName: string) {
     const result = await this.postRepository.update(
       { slug, type: 'meeting' },
-      { telecastRepeatUrl: fileName },
+      { videoName: fileName },
     );
 
     if (result.affected) {
