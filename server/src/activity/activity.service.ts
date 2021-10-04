@@ -6,6 +6,7 @@ import { Post } from 'entities/Post.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
+import { booleanValue } from 'helpers/utils';
 import { Brackets, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 
@@ -153,6 +154,10 @@ export class ActivityService {
     if (query.postType)
       builder.andWhere('post.type = :postType', {
         postType: query.postType,
+      });
+    if (query.streaming)
+      builder.andWhere('post.streaming = :streaming', {
+        streaming: booleanValue(query.streaming),
       });
     return builder;
   }

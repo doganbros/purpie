@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -40,6 +41,29 @@ export class VideoController {
   @UseInterceptors(
     FileInterceptor('videoFile', {
       storage: s3Storage,
+      fileFilter(_: any, file, cb) {
+        const { mimetype } = file;
+
+        const isValid = [
+          'video/3gpp',
+          'video/mp4',
+          'video/quicktime',
+          'video/webm',
+          'video/x-flv',
+          'video/mpeg',
+        ].includes(mimetype);
+
+        if (!isValid)
+          return cb(
+            new BadRequestException(
+              'Please upload a valid video format',
+              'FILE_FORMAT_MUST_BE_VIDEO',
+            ),
+            false,
+          );
+
+        return cb(null, true);
+      },
     }),
   )
   @IsAuthenticated()

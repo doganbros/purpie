@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiOkResponse, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
@@ -12,6 +12,7 @@ import {
   PublicZoneSuggestionListResponse,
 } from './activity.response';
 import { ActivityService } from './activity.service';
+import { ActivityListDecorator } from './decorator/activity-list.decorator';
 
 @Controller({ path: 'activity', version: '1' })
 @ApiTags('activity')
@@ -47,12 +48,7 @@ export class ActivityController {
   }
 
   @Get('/list/feed/public')
-  @ApiQuery({
-    name: 'postType',
-    description: 'The post type to return. By default it returns all posts. ',
-    enum: ['meeting', 'video'],
-    required: false,
-  })
+  @ActivityListDecorator()
   @ApiOkResponse({
     description: 'User gets public feed',
     type: PublicActivityFeedListResponse,
@@ -64,12 +60,7 @@ export class ActivityController {
   }
 
   @Get('/list/feed/user')
-  @ApiQuery({
-    name: 'postType',
-    description: 'The post type to return. By default it returns all posts. ',
-    enum: ['meeting', 'video'],
-    required: false,
-  })
+  @ActivityListDecorator()
   @ApiOkResponse({
     description: 'User gets main feed from channels and from contacts',
     type: MixedActivityFeedListResponse,
@@ -84,12 +75,7 @@ export class ActivityController {
   }
 
   @Get('/list/feed/zone/:zoneId')
-  @ApiQuery({
-    name: 'postType',
-    description: 'The post type to return. By default it returns all posts. ',
-    enum: ['meeting', 'video'],
-    required: false,
-  })
+  @ActivityListDecorator()
   @ApiOkResponse({
     description: 'User gets feed for a zone from channels of this zone',
     type: MixedActivityFeedListResponse,
@@ -113,12 +99,7 @@ export class ActivityController {
   }
 
   @Get('/list/feed/channel/:channelId')
-  @ApiQuery({
-    name: 'postType',
-    description: 'The post type to return. By default it returns all posts. ',
-    enum: ['meeting', 'video'],
-    required: false,
-  })
+  @ActivityListDecorator()
   @ApiOkResponse({
     description: 'User gets feed for this zone',
     type: MixedActivityFeedListResponse,

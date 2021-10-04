@@ -63,6 +63,7 @@ export class VideoService {
         'videoPost.slug',
         'videoPost.description',
         'videoPost.public',
+        'videoPost.videoName',
         'videoPost.userContactExclusive',
         'tags.value',
         'createdBy.id',
