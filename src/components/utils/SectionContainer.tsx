@@ -4,12 +4,11 @@ import { Box, Stack, Text } from 'grommet';
 interface Props {
   children: any;
   label: string;
-  margin?: any;
 }
 
-const SectionContainer: FC<Props> = ({ children, label, margin }) => {
+const SectionContainer: FC<Props> = ({ children, label }) => {
   return (
-    <Box margin={margin}>
+    <Box>
       <Stack interactiveChild="first" anchor="top-left">
         <Box
           margin={{ top: '9px' }}
