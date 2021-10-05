@@ -9,8 +9,7 @@ import timezone from 'dayjs/plugin/timezone';
 import MeetingDetails from './sections/MeetingDetails';
 import MeetingPrivacy from './sections/MeetingPrivacy';
 import MeetingInvitation from './sections/MeetingInvitation';
-import MeetingSetting from './sections/MeetingSetting';
-import MeetingMoreSetting from './sections/MeetingMoreSetting';
+import MeetingConfiguration from './sections/MeetingConfiguration';
 import { AppState } from '../../store/reducers/root.reducer';
 import {
   createMeetingAction,
@@ -116,13 +115,8 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
     },
     {
       id: 4,
-      title: 'More Settings',
-      component: <MeetingSetting />,
-    },
-    {
-      id: 5,
-      title: 'Even More Settings',
-      component: <MeetingMoreSetting />,
+      title: 'Configuration',
+      component: <MeetingConfiguration />,
     },
   ];
   return (
