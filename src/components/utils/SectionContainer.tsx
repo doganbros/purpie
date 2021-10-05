@@ -3,7 +3,7 @@ import { Box, Stack, Text } from 'grommet';
 
 interface Props {
   children: any;
-  label: string;
+  label?: string;
 }
 
 const SectionContainer: FC<Props> = ({ children, label }) => {
@@ -18,15 +18,17 @@ const SectionContainer: FC<Props> = ({ children, label }) => {
         >
           {children}
         </Box>
-        <Box
-          margin={{ left: 'small' }}
-          pad={{ horizontal: 'small' }}
-          background="white"
-        >
-          <Text size="small" color="brand" textAlign="center">
-            {label}
-          </Text>
-        </Box>
+        {label && (
+          <Box
+            margin={{ left: 'small' }}
+            pad={{ horizontal: 'small' }}
+            background="white"
+          >
+            <Text size="small" color="brand" textAlign="center">
+              {label}
+            </Text>
+          </Box>
+        )}
       </Stack>
     </Box>
   );

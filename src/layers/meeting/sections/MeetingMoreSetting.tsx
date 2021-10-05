@@ -22,7 +22,7 @@ const MeetingMoreSetting: FC = () => {
 
   return (
     <>
-      <SectionContainer label="">
+      <SectionContainer>
         <Grid
           columns={size === 'small' ? '100%' : { count: 2, size: 'small' }}
           gap={{ column: 'large' }}
