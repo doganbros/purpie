@@ -1,5 +1,5 @@
 import React, { FC, useContext } from 'react';
-import { Grid, ResponsiveContext } from 'grommet';
+import { Box, Grid, ResponsiveContext } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import SectionContainer from '../../../components/utils/SectionContainer';
 import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action';
@@ -24,7 +24,7 @@ const MeetingConfiguration: FC = () => {
   if (!(userMeetingConfig?.config && formPayload?.config)) return null;
 
   return (
-    <>
+    <Box gap="medium">
       <SectionContainer label="Toolbars">
         <Grid
           columns={size === 'small' ? '100%' : { count: 2, size: 'small' }}
@@ -55,7 +55,7 @@ const MeetingConfiguration: FC = () => {
             ))}
         </Grid>
       </SectionContainer>
-      <SectionContainer>
+      <SectionContainer label="Advanced">
         <Grid
           columns={size === 'small' ? '100%' : { count: 2, size: 'small' }}
           gap={{ column: 'large' }}
@@ -85,7 +85,7 @@ const MeetingConfiguration: FC = () => {
             })}
         </Grid>
       </SectionContainer>
-    </>
+    </Box>
   );
 };
 
