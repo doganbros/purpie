@@ -238,8 +238,9 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
               }}
               width="240px"
               height="46px"
+              margin={{ bottom: size === 'small' ? 'medium' : 'none' }}
             >
-              <Text weight="bold" size="small" color="white">
+              <Text weight="bold" size="small" color="dark-1">
                 {!submitting ? 'Go!' : 'Creating Meeting...'}
               </Text>
             </Box>
