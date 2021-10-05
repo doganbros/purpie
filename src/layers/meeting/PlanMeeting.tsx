@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Box, Button, Text, Layer, Tabs, Tab } from 'grommet';
+import { Box, Button, Text, Layer, Grid } from 'grommet';
 import { Close } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
@@ -161,19 +161,22 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
               </Box>
             </Box>
           ) : (
-            <Tabs
-              flex
-              activeIndex={planDialogCurrentIndex}
-              onActive={(i) => {
-                dispatch(planMeetingDialogSetAction(i));
-              }}
-            >
-              {content.map((item, i) => (
-                <Tab
-                  key={item.id}
-                  plain
-                  title={
+            <>
+              <Grid
+                columns={size === 'small' ? '1/2' : '1/4'}
+                gap={{ column: 'medium', row: 'small' }}
+                margin={{ bottom: size === 'small' ? 'large' : 'medium' }}
+              >
+                {content.map((item, i) => (
+                  <Button
+                    onClick={() => {
+                      dispatch(planMeetingDialogSetAction(i));
+                    }}
+                    key={item.id}
+                    plain
+                  >
                     <Box
+                      align="center"
                       border={{
                         side: 'bottom',
                         size: 'small',
@@ -183,10 +186,6 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
                             : 'status-disabled',
                       }}
                       pad={{ horizontal: 'xsmall' }}
-                      margin={{
-                        bottom: size === 'small' ? 'medium' : 'none',
-                        horizontal: size === 'small' ? 'medium' : 'none',
-                      }}
                     >
                       <Text
                         size="medium"
@@ -200,17 +199,17 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
                         {item.title}
                       </Text>
                     </Box>
-                  }
-                >
-                  <Box overflow="auto" fill>
-                    <Box flex={false}>
-                      {formPayload && content[i]?.component}
-                    </Box>
-                  </Box>
-                </Tab>
-              ))}
-            </Tabs>
+                  </Button>
+                ))}
+              </Grid>
+              <Box overflow="auto" fill>
+                <Box flex={false}>
+                  {formPayload && content[planDialogCurrentIndex]?.component}
+                </Box>
+              </Box>
+            </>
           )}
+
           <Box direction="row" gap="small" justify="center">
             {showPersistance && (
               <Box
