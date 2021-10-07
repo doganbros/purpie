@@ -70,6 +70,16 @@ export class MeetingController {
     @Body() createMeetingInfo: CreateMeetingDto,
     @CurrentUser() user: UserPayload,
   ) {
+    const {
+      public: publicMeeting,
+      userContactExclusive,
+      channelId,
+      config,
+      liveStream,
+      record,
+      timeZone,
+    } = createMeetingInfo;
+
     const meetingPayload: Partial<PostEntity> = {
       title: createMeetingInfo.title || 'Untiltled Meeting',
       description: createMeetingInfo.description,
@@ -88,17 +98,9 @@ export class MeetingController {
             .tz(createMeetingInfo.timeZone, true)
             .toDate(),
       createdById: user.id,
-    };
-
-    const {
-      public: publicMeeting,
-      userContactExclusive,
-      channelId,
-      config,
-      liveStream,
       record,
-      timeZone,
-    } = createMeetingInfo;
+      liveStream,
+    };
 
     if (channelId) {
       await this.meetingService.validateUserChannel(user.id, channelId);
