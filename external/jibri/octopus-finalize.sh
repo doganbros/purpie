@@ -2,7 +2,7 @@
 
 DATE="$(date)"
 source /home/finalize/token.txt
-source /home/finalize/environ.txt
+source /home/finalize/octopus-finalize.conf
 # AWS credentials
 AWS_ACCESS_KEY=$AWS_ACCESS_KEY
 AWS_SECRET_KEY=$AWS_SECRET_KEY
