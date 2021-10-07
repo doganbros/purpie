@@ -203,7 +203,7 @@ export class MeetingService {
   async getMeetingRecording(meetingSlug: string, fileName: string) {
     return this.meetingRecordingRepository
       .createQueryBuilder('meetingRecording')
-      .where('meetingRecording.meetingSlug = :slug', { meetingSlug })
+      .where('meetingRecording.meetingSlug = :meetingSlug', { meetingSlug })
       .andWhere('meetingRecording.fileName = :fileName', { fileName })
       .getOne();
   }
