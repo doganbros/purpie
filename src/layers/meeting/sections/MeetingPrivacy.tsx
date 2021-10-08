@@ -112,23 +112,6 @@ const MeetingPrivacy: FC = () => {
           />
         </Grid>
       </SectionContainer>
-      <Box height="20px" />
-      <SectionContainer label="Configuration Persistence">
-        <Box justify="between" direction="row">
-          <Switch
-            label="Save Configuration"
-            width="280px"
-            value={!!formPayload?.saveConfig}
-            onChange={(v) => {
-              dispatch(
-                setMeetingFormFieldAction({
-                  saveConfig: v,
-                })
-              );
-            }}
-          />
-        </Box>
-      </SectionContainer>
     </>
   );
 };
