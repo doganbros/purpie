@@ -25,7 +25,7 @@ const MeetingConfiguration: FC = () => {
 
   return (
     <Box gap="medium">
-      <SectionContainer label="Toolbars">
+      <SectionContainer label="Toolbar Settings">
         <Grid
           columns={size === 'small' ? '100%' : { count: 2, size: 'small' }}
           gap={{ column: 'large' }}
