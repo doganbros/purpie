@@ -104,4 +104,12 @@ export class UtilsService implements OnModuleInit {
       );
     }
   }
+
+  async broadcastPost(post: Record<string, any>) {
+    return this.mattermostClient.createPost({
+      message: 'OCTOPUS_BROADCAST',
+      props: post,
+      channel_id: this.octopusBroadcastChannel!.id,
+    } as any);
+  }
 }
