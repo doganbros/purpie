@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { Box, Button, Text, Layer, Grid } from 'grommet';
 import { Close } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import _ from 'lodash';
+import { isEqual } from 'lodash';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -57,14 +57,21 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
 
   useEffect(() => {
     if (userMeetingConfig.config && !formPayload && visible) {
+      const {
+        public: publicMeeting,
+        userContactExclusive,
+        liveStream,
+        record,
+      } = userMeetingConfig.config.privacyConfig;
+
       const initialPayload: CreateMeetingPayload = {
         startDate: null,
-        config: userMeetingConfig.config,
-        public: false,
-        userContactExclusive: !appSubdomain,
+        config: userMeetingConfig.config.jitsiConfig,
+        public: !appSubdomain && publicMeeting,
+        userContactExclusive: !appSubdomain && userContactExclusive,
         planForLater: false,
-        liveStream: false,
-        record: false,
+        liveStream,
+        record,
         timeZone: dayjs.tz.guess(),
       };
 
@@ -79,11 +86,30 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
   if (!visible) return null;
 
   const submitMeeting = () => {
-    if (formPayload) {
-      const configChanged = !_.isEqual(
-        formPayload.config,
-        userMeetingConfig.config
-      );
+    if (formPayload && userMeetingConfig.config) {
+      const {
+        public: publicMeeting,
+        userContactExclusive,
+        liveStream,
+        record,
+      } = userMeetingConfig.config.privacyConfig;
+
+      const configChanged =
+        !isEqual(formPayload.config, userMeetingConfig.config.jitsiConfig) ||
+        !isEqual(
+          {
+            public: formPayload.public,
+            userContactExclusive: formPayload.userContactExclusive,
+            liveStream: formPayload.liveStream,
+            record: formPayload.record,
+          },
+          {
+            public: !appSubdomain && publicMeeting,
+            userContactExclusive: !appSubdomain && userContactExclusive,
+            liveStream,
+            record,
+          }
+        );
       if (!showPersistance && configChanged) {
         setShowPersistance(true);
       } else {

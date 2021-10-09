@@ -9,12 +9,13 @@ import bcrypt from 'bcryptjs';
 import dayjs from 'dayjs';
 import { Client } from 'entities/Client.entity';
 import { User } from 'entities/User.entity';
+import { UserRefreshToken } from 'entities/UserRefreshToken.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
 import { Response } from 'express';
 import { generateJWT, verifyJWT } from 'helpers/jwt';
 import { alphaNum, compareHash, hash } from 'helpers/utils';
-import { customAlphabet } from 'nanoid';
+import { customAlphabet, nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
 import { Not, Repository, IsNull } from 'typeorm';
 import { CreateClientDto } from './dto/create-client.dto';
@@ -48,6 +49,8 @@ export class AuthService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Client) private clientRepository: Repository<Client>,
+    @InjectRepository(UserRefreshToken)
+    private userRefreshTokenRepository: Repository<UserRefreshToken>,
     private mailService: MailService,
   ) {}
 
@@ -56,15 +59,18 @@ export class AuthService {
     authSecret?: string,
     refreshAuthSecret?: string,
   ) {
+    const refreshTokenId = nanoid();
+    const jwtPayload = { ...payload, refreshTokenId };
     const accessToken = await generateJWT(
-      payload,
+      jwtPayload,
       authSecret || AUTH_TOKEN_SECRET,
       {
         expiresIn: AUTH_TOKEN_LIFE,
       },
     );
+
     const refreshToken = await generateJWT(
-      payload,
+      jwtPayload,
       refreshAuthSecret || AUTH_TOKEN_SECRET_REFRESH,
       {
         expiresIn: AUTH_TOKEN_REFRESH_LIFE,
@@ -74,6 +80,7 @@ export class AuthService {
     return {
       accessToken,
       refreshToken,
+      refreshTokenId,
     };
   }
 
@@ -84,14 +91,24 @@ export class AuthService {
   }
 
   async setAccessTokens(userPayload: UserPayload, res: Response) {
-    const { accessToken, refreshToken } = await this.generateLoginToken(
-      userPayload,
-    );
+    await this.userRefreshTokenRepository.delete({
+      userId: userPayload.id,
+      id: userPayload.refreshTokenId,
+    });
 
-    await this.userRepository.update(
-      { id: userPayload.id },
-      { refreshAccessToken: await bcrypt.hash(refreshToken, 10) },
-    );
+    const {
+      accessToken,
+      refreshToken,
+      refreshTokenId,
+    } = await this.generateLoginToken(userPayload);
+
+    await this.userRefreshTokenRepository
+      .create({
+        id: refreshTokenId,
+        userId: userPayload.id,
+        token: await hash(refreshToken),
+      })
+      .save();
 
     res.cookie('OCTOPUS_ACCESS_TOKEN', accessToken, {
       expires: dayjs().add(30, 'days').toDate(),
@@ -103,6 +120,7 @@ export class AuthService {
       domain: `.${new URL(REACT_APP_SERVER_HOST).hostname}`,
       httpOnly: true,
     });
+    return refreshTokenId;
   }
 
   removeAccessTokens(res: Response) {
@@ -119,23 +137,31 @@ export class AuthService {
   }
 
   async verifyRefreshToken(userPayload: UserPayload, refreshToken: string) {
-    const user = await this.userRepository.findOne({ id: userPayload.id });
+    const userRefreshToken = await this.userRefreshTokenRepository.findOne({
+      where: {
+        id: userPayload.refreshTokenId,
+      },
+      relations: ['user', 'user.userRole'],
+    });
 
-    if (!user) throw new NotFoundException('User not found', 'USER_NOT_FOUND');
+    if (!userRefreshToken)
+      throw new NotFoundException('User not found', 'USER_NOT_FOUND');
 
-    if (!user.refreshAccessToken)
+    const isValid = await compareHash(refreshToken, userRefreshToken.token);
+    if (!isValid)
       throw new UnauthorizedException(
         'You not authorized to use this route',
         'NOT_SIGNED_IN',
       );
-    return bcrypt.compare(refreshToken, user.refreshAccessToken);
+
+    return userRefreshToken.user;
   }
 
-  async removeRefreshToken(userId: number) {
-    await this.userRepository.update(
-      { id: userId },
-      { refreshAccessToken: null },
-    );
+  async removeRefreshToken(userId: number, refreshTokenId: string) {
+    return this.userRefreshTokenRepository.delete({
+      userId,
+      id: refreshTokenId,
+    });
   }
 
   async registerUser({

@@ -18,6 +18,8 @@ export class UserPayload {
   @ApiProperty()
   userName?: string | null;
 
+  refreshTokenId?: string;
+
   @ApiProperty({
     type: 'object',
     properties: {

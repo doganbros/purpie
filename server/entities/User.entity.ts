@@ -55,9 +55,6 @@ export class User extends RecordEntity {
   @Column({ type: 'simple-json', default: baseMeetingConfig })
   userMeetingConfig: MeetingConfig;
 
-  @Column({ nullable: true, type: String })
-  refreshAccessToken: string | null;
-
   @OneToOne(() => UserRole)
   @JoinColumn({ name: 'userRoleCode', referencedColumnName: 'roleCode' })
   userRole: UserRole;

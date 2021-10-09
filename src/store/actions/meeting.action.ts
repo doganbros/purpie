@@ -43,7 +43,15 @@ export const createMeetingAction = (
       if (meeting.saveConfig && meeting.config) {
         dispatch({
           type: GET_USER_MEETING_CONFIG_SUCCESS,
-          payload: meeting.config,
+          payload: {
+            jitsiConfig: meeting.config,
+            privacyConfig: {
+              public: meeting.public!,
+              userContactExclusive: meeting.userContactExclusive!,
+              liveStream: meeting.liveStream!,
+              record: meeting.record!,
+            },
+          },
         });
       }
       if (typeof response === 'string') {

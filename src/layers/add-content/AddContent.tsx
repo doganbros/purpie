@@ -29,9 +29,6 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
         form: { submitting },
       },
     },
-    zone: {
-      getCurrentUserZoneDetail: { userZone },
-    },
   } = useSelector((state: AppState) => state);
 
   const iconProps = {
@@ -46,12 +43,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
       onClick: () => {
-        if (!submitting)
-          dispatch(
-            createMeetingAction({
-              public: !userZone,
-            })
-          );
+        if (!submitting) dispatch(createMeetingAction({}));
         onDismiss();
       },
     },

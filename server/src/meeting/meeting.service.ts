@@ -24,12 +24,13 @@ import { MeetingLog } from 'entities/MeetingLog.entity';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { baseMeetingConfig } from 'entities/data/base-meeting-config';
 import { PostTag } from 'entities/PostTag.entity';
-import { MeetingConfig, MeetingKey } from 'types/Meeting';
+import { JitsiConfigKey, MeetingConfig } from 'types/Meeting';
 import { MailService } from 'src/mail/mail.service';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { ClientMeetingEventDto } from './dto/client-meeting-event.dto';
+import { CreateMeetingDto } from './dto/create-meeting.dto';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -65,15 +66,35 @@ export class MeetingService {
     if (!userChannel) throw new NotFoundException('User channel not found');
   }
 
-  async getMeetingConfig(userId: number, config?: Record<string, any>) {
-    const meetingConfig =
-      (await this.getCurrentUserConfig(userId)) || baseMeetingConfig;
+  async getMeetingConfig(userId: number, createMeetingInfo: CreateMeetingDto) {
+    const meetingConfig = (await this.getCurrentUserConfig(userId)) || {
+      jitsiConfig: baseMeetingConfig,
+      privacyConfig: {},
+    };
 
-    if (config) {
-      for (const key in config)
-        if (key in baseMeetingConfig)
-          meetingConfig[key as MeetingKey] = config[key];
+    if (createMeetingInfo.config) {
+      for (const key in createMeetingInfo.config)
+        if (key in baseMeetingConfig) {
+          meetingConfig.jitsiConfig[key as JitsiConfigKey] = createMeetingInfo
+            .config[key as JitsiConfigKey] as any;
+        }
     }
+
+    meetingConfig.privacyConfig = {
+      public:
+        createMeetingInfo.public ?? meetingConfig.privacyConfig.public ?? true,
+      userContactExclusive:
+        createMeetingInfo.userContactExclusive ??
+        meetingConfig.privacyConfig.userContactExclusive ??
+        false,
+      liveStream:
+        createMeetingInfo.liveStream ??
+        meetingConfig.privacyConfig.liveStream ??
+        false,
+      record:
+        createMeetingInfo.record ?? meetingConfig.privacyConfig.record ?? false,
+    };
+
     return meetingConfig;
   }
 
@@ -219,15 +240,6 @@ export class MeetingService {
 
   async saveCurrentUserMeetingConfig(userId: number, config: MeetingConfig) {
     return this.userRepository.update(userId, { userMeetingConfig: config });
-  }
-
-  async getCurrentUserChannelConfig(userId: number, channelId: number) {
-    return this.userChannelRepository
-      .findOne({
-        where: { userId, channelId },
-        relations: ['zone'],
-      })
-      .then((result) => result?.channel.channelMeetingConfig);
   }
 
   async generateMeetingUrl(

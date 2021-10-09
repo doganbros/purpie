@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { MeetingConfig } from 'types/Meeting';
+import { JitsiConfig } from 'types/Meeting';
 import { PostType } from 'types/Post';
 import { RecordEntity } from './base/RecordEntity';
 import { Channel } from './Channel.entity';
@@ -71,5 +71,5 @@ export class Post extends RecordEntity {
   userContactExclusive: boolean;
 
   @Column({ type: 'simple-json', nullable: true })
-  config: MeetingConfig;
+  config: JitsiConfig;
 }

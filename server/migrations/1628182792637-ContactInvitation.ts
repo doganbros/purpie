@@ -93,13 +93,6 @@ export class ContactInvitation1628182792637 implements MigrationInterface {
     await queryRunner.dropColumn('channel', 'defaultChannel');
     await queryRunner.dropColumn('zone', 'defaultZone');
     
-    await queryRunner.manager.update(
-      Channel,
-      {},
-      {
-        channelMeetingConfig: baseMeetingConfig,
-      },
-    );
     await queryRunner.changeColumn(
       'channel',
       'channelMeetingConfig',

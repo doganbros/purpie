@@ -60,12 +60,28 @@ export interface CreateMeetingPayload {
 
 export type UpdateMeetingPayload = Partial<CreateMeetingPayload>;
 
+interface MeetingPrivacyConfig {
+  public: boolean;
+
+  userContactExclusive: boolean;
+
+  liveStream: boolean;
+
+  record: boolean;
+}
+
+export interface UserMeetingConfig {
+  jitsiConfig: Record<string, any>;
+
+  privacyConfig: MeetingPrivacyConfig;
+}
+
 export interface MeetingState {
   showPlanMeetingLayer: boolean;
   showMeetNowLayer: boolean;
   userMeetingConfig: {
     loading: boolean;
-    config: Record<string, any> | null;
+    config: UserMeetingConfig | null;
     error: ResponseError | null;
   };
   createMeeting: {
@@ -115,7 +131,7 @@ export type MeetingActionParams =
     }
   | {
       type: typeof GET_USER_MEETING_CONFIG_SUCCESS;
-      payload: Record<string, any>;
+      payload: UserMeetingConfig;
     }
   | {
       type:

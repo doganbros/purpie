@@ -35,12 +35,7 @@ export class MeetingChanges1629374777122 implements MigrationInterface {
     await queryRunner.manager.update(
       User,
       {},
-      { userMeetingConfig: baseMeetingConfig },
-    );
-    await queryRunner.manager.update(
-      Channel,
-      {},
-      { channelMeetingConfig: baseMeetingConfig },
+      { userMeetingConfig: baseMeetingConfig as any },
     );
   }
 
