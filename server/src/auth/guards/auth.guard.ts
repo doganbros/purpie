@@ -52,22 +52,30 @@ export class AuthGuard implements CanActivate {
             'lastName',
             'email',
             'userRole',
+            'refreshTokenId',
           ]);
 
-          const isValid = await this.authService.verifyRefreshToken(
+          const refreshedUser = await this.authService.verifyRefreshToken(
             userPayload,
             refreshToken,
           );
 
-          if (!isValid)
-            throw new UnauthorizedException(
-              'You not authorized to use this route',
-              'NOT_SIGNED_IN',
-            );
+          const refreshedUserPayload = {
+            ...userPayload,
+            firstName: refreshedUser.firstName,
+            lastName: refreshedUser.lastName,
+            email: refreshedUser.email,
+            userRole: refreshedUser.userRole,
+          };
 
-          await this.authService.setAccessTokens(userPayload, res);
+          const newRefreshTokenId = await this.authService.setAccessTokens(
+            refreshedUserPayload,
+            res,
+          );
 
-          req.user = refreshPayload;
+          refreshedUserPayload.refreshTokenId = newRefreshTokenId;
+
+          req.user = refreshedUserPayload;
         } catch (err) {
           if (userPermissionOptions.removeAccessTokens)
             this.authService.removeAccessTokens(res);

@@ -1,6 +1,6 @@
-import { MeetingConfig } from 'types/Meeting';
+import { JitsiConfig } from 'types/Meeting';
 
-export const baseMeetingConfig: MeetingConfig = {
+export const baseMeetingConfig: JitsiConfig = {
   disableAudioLevels: false,
   audioLevelsInterval: 200,
   enableNoAudioDetection: true,

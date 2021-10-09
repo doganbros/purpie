@@ -70,15 +70,25 @@ export class MeetingController {
     @Body() createMeetingInfo: CreateMeetingDto,
     @CurrentUser() user: UserPayload,
   ) {
+    const { channelId, timeZone } = createMeetingInfo;
+
     const {
-      public: publicMeeting,
-      userContactExclusive,
-      channelId,
-      config,
-      liveStream,
-      record,
-      timeZone,
-    } = createMeetingInfo;
+      jitsiConfig,
+      privacyConfig,
+    } = await this.meetingService.getMeetingConfig(user.id, createMeetingInfo);
+
+    if (
+      createMeetingInfo.public === true &&
+      createMeetingInfo.userContactExclusive === true
+    )
+      createMeetingInfo.userContactExclusive = false;
+
+    const userContactExclusive =
+      createMeetingInfo.userContactExclusive ??
+      privacyConfig.userContactExclusive;
+    const publicMeeting = createMeetingInfo.public ?? privacyConfig.public;
+    const liveStream = createMeetingInfo.liveStream ?? privacyConfig.liveStream;
+    const record = createMeetingInfo.record ?? privacyConfig.record;
 
     const meetingPayload: Partial<PostEntity> = {
       title: createMeetingInfo.title || 'Untiltled Meeting',
@@ -108,13 +118,10 @@ export class MeetingController {
     } else {
       meetingPayload.public = publicMeeting === true;
       meetingPayload.userContactExclusive =
-        userContactExclusive === true && !publicMeeting;
+        userContactExclusive === true && !meetingPayload.public;
     }
 
-    meetingPayload.config = await this.meetingService.getMeetingConfig(
-      user.id,
-      config,
-    );
+    meetingPayload.config = jitsiConfig;
 
     if (liveStream) meetingPayload.config.liveStreamingEnabled = true;
     if (record) meetingPayload.config.fileRecordingsEnabled = true;
@@ -145,10 +152,10 @@ export class MeetingController {
     }
 
     if (createMeetingInfo.saveConfig)
-      this.meetingService.saveCurrentUserMeetingConfig(
-        user.id,
-        meetingPayload.config,
-      );
+      this.meetingService.saveCurrentUserMeetingConfig(user.id, {
+        jitsiConfig,
+        privacyConfig,
+      });
 
     if (!createMeetingInfo.startDate)
       return this.meetingService.generateMeetingUrl(meeting, user, true);
