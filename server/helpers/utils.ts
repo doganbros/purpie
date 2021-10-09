@@ -2,7 +2,7 @@ import dotEnv from 'dotenv';
 import { stringify } from 'querystring';
 import crypto from 'crypto';
 import path from 'path';
-import { MeetingConfig, MeetingKey } from 'types/Meeting';
+import { JitsiConfig, JitsiConfigKey } from 'types/Meeting';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { customAlphabet } from 'nanoid';
 
@@ -31,11 +31,11 @@ const setConfigProperty = (value: unknown) => {
 };
 
 export const meetingConfigStringify = (
-  meetingConfig: MeetingConfig,
+  meetingConfig: JitsiConfig,
   additionalParams: Record<string, any> = {},
 ) =>
   stringify(
-    (Object.keys(meetingConfig) as Array<MeetingKey>).reduce(
+    (Object.keys(meetingConfig) as Array<JitsiConfigKey>).reduce(
       (acc, v) => ({
         ...acc,
         [`config.${v}`]: setConfigProperty(meetingConfig[v]),
@@ -115,3 +115,5 @@ export const fetchOrProduceNull = async <T>(
     return null;
   }
 };
+export const booleanValue = (value: string | boolean | number) =>
+  [true, 'true', 1].includes(value);

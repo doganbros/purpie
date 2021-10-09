@@ -160,7 +160,10 @@ export class AuthController {
     @CurrentUser() currentUser: UserPayload,
     @Res({ passthrough: true }) res: Response,
   ) {
-    await this.authService.removeRefreshToken(currentUser.id);
+    await this.authService.removeRefreshToken(
+      currentUser.id,
+      currentUser.refreshTokenId!,
+    );
 
     this.authService.removeAccessTokens(res);
 

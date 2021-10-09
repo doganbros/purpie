@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Category } from 'entities/Category.entity';
 import { ChannelRole } from 'entities/ChannelRole.entity';
 import { User } from 'entities/User.entity';
-import { MeetingConfig } from 'types/Meeting';
 
 class ChannelForUserChannelList {
   @ApiProperty()
@@ -44,6 +43,4 @@ export class UserChannelListResponse {
   channelRole: ChannelRole;
 }
 
-export class UserChannelDetailResponse extends UserChannelListResponse {
-  channelMeetingConfig: MeetingConfig;
-}
+export type UserChannelDetailResponse = UserChannelListResponse;

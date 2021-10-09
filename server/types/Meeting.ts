@@ -29,7 +29,7 @@ type ToolbarButton =
   | 'mute-video-everyone'
   | 'security';
 
-export class MeetingConfig {
+export class JitsiConfig {
   startWithAudioMuted?: boolean;
 
   enableNoisyMicDetection?: boolean;
@@ -90,5 +90,24 @@ export class MeetingConfig {
 
   audioLevelsInterval?: number;
 }
+
+class PrivacyConfig {
+  public?: boolean;
+
+  userContactExclusive?: boolean;
+
+  liveStream?: boolean;
+
+  record?: boolean;
+}
+
+export class MeetingConfig {
+  jitsiConfig: JitsiConfig;
+
+  privacyConfig: PrivacyConfig;
+}
+
+export type JitsiConfigKey = keyof JitsiConfig;
+export type PrivacyConfigKey = keyof PrivacyConfig;
 
 export type MeetingKey = keyof MeetingConfig;

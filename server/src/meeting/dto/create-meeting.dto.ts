@@ -13,7 +13,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { MeetingConfig } from 'types/Meeting';
+import { JitsiConfig } from 'types/Meeting';
 import { timeZones } from 'entities/data/time-zones';
 
 export class CreateMeetingDto {
@@ -64,7 +64,7 @@ export class CreateMeetingDto {
   @ApiProperty()
   @IsOptional()
   @IsObject()
-  config?: MeetingConfig;
+  config?: JitsiConfig;
 
   @ApiProperty()
   @IsOptional()

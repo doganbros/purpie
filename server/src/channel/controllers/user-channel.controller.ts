@@ -11,10 +11,7 @@ import { UserZoneRole } from 'src/zone/decorators/user-zone-role.decorator';
 import { ChannelService } from '../channel.service';
 import { CurrentUserChannel } from '../decorators/current-user-channel.decorator';
 import { UserChannelRole } from '../decorators/user-channel-role.decorator';
-import {
-  UserChannelDetailResponse,
-  UserChannelListResponse,
-} from '../responses/user-channel.response';
+import { UserChannelListResponse } from '../responses/user-channel.response';
 
 @Controller({ path: 'user-channel', version: '1' })
 @ApiTags('user-channel')
@@ -55,7 +52,7 @@ export class UserChannelController {
 
   @Get('detail/:userChannelId')
   @ApiOkResponse({
-    type: UserChannelDetailResponse,
+    type: UserChannelListResponse,
     description:
       'Get channel details by user channel id. This endpoint include channel meeting config.',
   })
