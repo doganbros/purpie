@@ -13,10 +13,7 @@ import { privateRoutes, publicRoutes } from './routes';
 import { retrieveUserAction } from './store/actions/auth.action';
 import { getUserZonesAction } from './store/actions/zone.action';
 import { AppState } from './store/reducers/root.reducer';
-import {
-  fetchMyMattermostChannelsAction,
-  initializeMattermostAction,
-} from './store/actions/mattermost.action';
+import { initializeMattermostAction } from './store/actions/mattermost.action';
 
 const App: FC = () => {
   const dispatch = useDispatch();
@@ -29,7 +26,7 @@ const App: FC = () => {
     },
     zone: { userZoneInitialized },
     util: { toast },
-    mattermost: { currentUser: mattermostCurrentUser },
+    mattermost: { currentUser: mattermostCurrentUser, currentTeam },
   } = useSelector((state: AppState) => state);
 
   useEffect(() => {
@@ -39,15 +36,11 @@ const App: FC = () => {
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(getUserZonesAction());
-      dispatch(initializeMattermostAction(user!.mattermostToken));
+      dispatch(
+        initializeMattermostAction(user!.mattermostToken, 'octopus-app')
+      );
     }
   }, [isAuthenticated]);
-
-  useEffect(() => {
-    if (userZoneInitialized) {
-      dispatch(fetchMyMattermostChannelsAction('octopus-app'));
-    }
-  }, [userZoneInitialized]);
 
   return (
     <Grommet theme={theme}>
@@ -58,7 +51,8 @@ const App: FC = () => {
         id={toast.toastId}
       />
       {loading ||
-      (isAuthenticated && !(userZoneInitialized && mattermostCurrentUser)) ? (
+      (isAuthenticated &&
+        !(userZoneInitialized && mattermostCurrentUser && currentTeam)) ? (
         <Loader />
       ) : (
         <Router history={appHistory}>

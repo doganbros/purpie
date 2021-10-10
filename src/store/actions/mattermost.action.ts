@@ -1,8 +1,11 @@
 import { Client4 } from 'mattermost-redux/client';
 import webSocketClient from 'mattermost-redux/client/websocket_client';
 import { Post } from 'mattermost-redux/types/posts';
+import { fetchOrProduceNull } from '../../helpers/utils';
 import {
+  REMOVE_USER_FROM_CHANNEL,
   SET_MATTERMOST_CHANNEL_INFO,
+  SET_MATTERMOST_CURRENT_TEAM,
   SET_MATTERMOST_CURRENT_USER,
   SET_MATTERMOST_USER_PROFILES,
   SET_MATTERMOST_WEBSOCKET_EVENT,
@@ -15,14 +18,24 @@ const {
   REACT_APP_MM_SERVER_URL = 'http://octopus.localhost:8065',
 } = process.env;
 
-export const initializeMattermostAction = (token: string): MattermostAction => {
+const getTeam = () => store.getState().mattermost.currentTeam!;
+
+export const initializeMattermostAction = (
+  token: string,
+  teamName: string
+): MattermostAction => {
   return async (dispatch) => {
     try {
       Client4.setUrl(REACT_APP_MM_SERVER_URL);
       Client4.setToken(token);
 
-      const me = await Client4.getMe();
+      const team = await Client4.getTeamByName(teamName);
+      dispatch({
+        type: SET_MATTERMOST_CURRENT_TEAM,
+        payload: team,
+      });
 
+      const me = await Client4.getMe();
       dispatch({
         type: SET_MATTERMOST_CURRENT_USER,
         payload: {
@@ -36,6 +49,15 @@ export const initializeMattermostAction = (token: string): MattermostAction => {
           type: SET_MATTERMOST_WEBSOCKET_EVENT,
           payload: event,
         });
+
+        if (event.event === 'user_removed' && event.broadcast.user_id === me.id)
+          dispatch({
+            type: REMOVE_USER_FROM_CHANNEL,
+            payload: event.data.channel_id,
+          });
+
+        if (event.event === 'user_added' && event.data.user_id === me.id)
+          setChannelByIdAction(event.broadcast.channel_id)(dispatch);
       });
       webSocketClient.initialize(token, {
         connectionUrl: Client4.getWebSocketUrl().replace('http', 'ws'),
@@ -43,59 +65,49 @@ export const initializeMattermostAction = (token: string): MattermostAction => {
     } catch (err) {
       setToastAction(
         'error',
-        `Error occured while fetching mattermost user`
+        `Error occured while fetching mattermost user or team`
       )(dispatch);
     }
   };
 };
 
-export const fetchMyMattermostChannelsAction = (
-  teamName: string
+export const setChannelByIdAction = (channelId: string): MattermostAction => {
+  return async (dispatch) => {
+    const channelExists = store.getState().mattermost.channels[channelId];
+
+    if (!channelExists) {
+      const channel = await fetchOrProduceNull(() =>
+        Client4.getChannel(channelId)
+      );
+
+      if (channel)
+        dispatch({
+          type: SET_MATTERMOST_CHANNEL_INFO,
+          payload: channel,
+        });
+    }
+  };
+};
+
+export const setChannelByNameAction = (
+  channelName: string
 ): MattermostAction => {
   return async (dispatch) => {
-    try {
-      const team = await Client4.getTeamByName(teamName);
-      const channels = await Client4.getMyChannels(team.id, false);
+    const channelExists = Object.values(
+      store.getState().mattermost.channels
+    ).find((channel) => channel.channel.name === channelName);
 
-      const me = store.getState().mattermost.currentUser!.profile;
-      channels.forEach((channel) => {
-        if (channel.type === 'D') {
-          Client4.getProfilesInChannel(channel.id).then((channelMembers) => {
-            const otherUser = channelMembers.find((m) => m.id !== me.id);
+    if (!channelExists) {
+      const team = getTeam();
+      const channel = await fetchOrProduceNull(() =>
+        Client4.getChannelByName(team.id, channelName)
+      );
 
-            dispatch({
-              type: SET_MATTERMOST_CHANNEL_INFO,
-              payload: {
-                channel,
-                metaData: {
-                  me,
-                  otherUser,
-                  displayName: otherUser!.username || channel.display_name,
-                  users: {
-                    [me.id]: me,
-                    [otherUser!.id]: otherUser!,
-                  },
-                },
-              },
-            });
-          });
-        } else {
-          dispatch({
-            type: SET_MATTERMOST_CHANNEL_INFO,
-            payload: {
-              channel,
-              metaData: {
-                displayName: channel.display_name,
-              },
-            },
-          });
-        }
-      });
-    } catch (err) {
-      setToastAction(
-        'error',
-        `Error occured while fetching your channels `
-      )(dispatch);
+      if (channel)
+        dispatch({
+          type: SET_MATTERMOST_CHANNEL_INFO,
+          payload: channel,
+        });
     }
   };
 };

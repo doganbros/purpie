@@ -1,7 +1,10 @@
 import { Channel } from 'mattermost-redux/types/channels';
+import { Team } from 'mattermost-redux/types/teams';
 import { UserProfile } from 'mattermost-redux/types/users';
 import {
+  REMOVE_USER_FROM_CHANNEL,
   SET_MATTERMOST_CHANNEL_INFO,
+  SET_MATTERMOST_CURRENT_TEAM,
   SET_MATTERMOST_CURRENT_USER,
   SET_MATTERMOST_USER_PROFILES,
   SET_MATTERMOST_WEBSOCKET_EVENT,
@@ -21,10 +24,7 @@ interface MattermostWebSocketEvent {
 }
 
 interface ChannelMetaData {
-  me?: UserProfile;
-  otherUser?: UserProfile;
-  displayName: string;
-  users?: Record<string, UserProfile>;
+  extraInfo?: Record<string, any>;
 }
 
 export interface MattermostState {
@@ -35,6 +35,7 @@ export interface MattermostState {
   websocketEvent: MattermostWebSocketEvent | null;
   channels: Record<string, { channel: Channel; metaData: ChannelMetaData }>;
   userProfiles: Record<string, UserProfile>;
+  currentTeam: Team | null;
 }
 
 export type MattermostActionParams =
@@ -48,11 +49,19 @@ export type MattermostActionParams =
     }
   | {
       type: typeof SET_MATTERMOST_CHANNEL_INFO;
-      payload: { channel: Channel; metaData: ChannelMetaData };
+      payload: Channel;
     }
   | {
       type: typeof SET_MATTERMOST_USER_PROFILES;
       payload: Array<UserProfile>;
+    }
+  | {
+      type: typeof SET_MATTERMOST_CURRENT_TEAM;
+      payload: Team;
+    }
+  | {
+      type: typeof REMOVE_USER_FROM_CHANNEL;
+      payload: string;
     };
 
 export interface MattermostDispatch {

@@ -16,14 +16,16 @@ import ReplyPost from './layers/ReplyPost';
 import PlanMeetingTheme from '../../../layers/meeting/custom-theme';
 import { setToastAction } from '../../../store/actions/util.action';
 import {
+  setChannelByNameAction,
   setUserProfilesFromPostAction,
   setUserProfilesIfNotExistsAction,
 } from '../../../store/actions/mattermost.action';
 import { useThrottle } from '../../../hooks/useThrottle';
 
 interface Props {
-  channelId: string;
+  channelName: string;
   canDelete?: boolean;
+  handleTypingEvent?: boolean;
   canEdit?: boolean;
   canReply?: boolean;
   renderMessage?: (post: Post) => React.ReactNode;
@@ -32,8 +34,9 @@ interface Props {
 
 const Chat: FC<Props> = ({
   canDelete = true,
+  handleTypingEvent = true,
   canEdit = true,
-  channelId,
+  channelName,
   canReply = true,
   height = '90vh',
   renderMessage,
@@ -41,6 +44,7 @@ const Chat: FC<Props> = ({
   const PER_PAGE = 60;
   const USER_TYPING_SEND_EVENT_INTERVAL = 8000;
   const TYPING_THROTTLE_INTERVAL = 2000;
+  const [channelId, setChannelId] = useState('');
 
   const throttle = useThrottle();
   const [hasMore, setHasMore] = useState(true);
@@ -66,6 +70,23 @@ const Chat: FC<Props> = ({
       websocketEvent,
     },
   } = useSelector((state: AppState) => state);
+
+  useEffect(() => {
+    setChannelId('');
+    dispatch(setChannelByNameAction(channelName));
+  }, [channelName]);
+
+  useEffect(() => {
+    if (!channelId) {
+      const channel = Object.values(channels).find(
+        (c) => c.channel.name === channelName
+      );
+
+      if (channel) {
+        setChannelId(channel.channel.id);
+      }
+    }
+  }, [channels]);
 
   useEffect(() => {
     if (
@@ -107,6 +128,7 @@ const Chat: FC<Props> = ({
         },
       }));
     } else if (
+      handleTypingEvent &&
       websocketEvent?.event === 'typing' &&
       websocketEvent?.broadcast.channel_id === channelId &&
       websocketEvent?.data.user_id !== currentMattermostUser?.id
@@ -129,13 +151,13 @@ const Chat: FC<Props> = ({
 
   const selectedChannel = channels[channelId];
 
-  const fetchMore = async () => {
-    const postLength = currentPosts.order.length;
-    if (postLength >= (selectedChannel.channel as any).total_msg_count) {
+  const fetchMore = async (reset?: boolean) => {
+    const postLength = reset ? 0 : currentPosts.order.length;
+    if (postLength >= selectedChannel.channel.total_msg_count) {
       return setHasMore(false);
     }
     const result = !postLength
-      ? await Client4.getPosts(channelId, page, PER_PAGE + 1)
+      ? await Client4.getPosts(channelId, 0, PER_PAGE + 1)
       : await Client4.getPostsBefore(
           channelId,
           currentPosts.order[currentPosts.order.length - 1],
@@ -144,21 +166,24 @@ const Chat: FC<Props> = ({
         );
 
     if (!result.order.length) return setHasMore(false);
+    const p = result.posts as any;
 
-    dispatch(setUserProfilesFromPostAction(result.posts as any));
+    dispatch(setUserProfilesFromPostAction(p));
 
     setCurrentPosts((v) => ({
       ...v,
-      order: [...result.order.reverse(), ...v.order],
-      posts: { ...v.posts, ...(result.posts as any) },
+      order: reset
+        ? result.order.reverse()
+        : [...result.order.reverse(), ...v.order],
+      posts: reset ? p : { ...v.posts, ...p },
     }));
 
-    return setPage((v) => v + 1);
+    return setPage((v) => (reset ? 1 : v + 1));
   };
 
   useEffect(() => {
     if (selectedChannel) {
-      fetchMore();
+      fetchMore(true);
     }
   }, [selectedChannel]);
 
@@ -304,7 +329,7 @@ const Chat: FC<Props> = ({
           </InfiniteScroll>
         </Box>
         <TextArea
-          placeholder={`Write to ${selectedChannel.metaData?.displayName}`}
+          placeholder={`Write to ${selectedChannel.channel.display_name}`}
           resize="vertical"
           fill
           onKeyDown={(e) => {
@@ -321,9 +346,11 @@ const Chat: FC<Props> = ({
               e.currentTarget.value = '';
               return null;
             }
-            return throttle(() => {
-              webSocketClient.userTyping(channelId, '');
-            }, TYPING_THROTTLE_INTERVAL);
+            if (handleTypingEvent)
+              return throttle(() => {
+                webSocketClient.userTyping(channelId, '');
+              }, TYPING_THROTTLE_INTERVAL);
+            return null;
           }}
         />
         {userTyping ? (

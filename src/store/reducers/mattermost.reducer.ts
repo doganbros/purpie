@@ -1,5 +1,7 @@
 import {
+  REMOVE_USER_FROM_CHANNEL,
   SET_MATTERMOST_CHANNEL_INFO,
+  SET_MATTERMOST_CURRENT_TEAM,
   SET_MATTERMOST_CURRENT_USER,
   SET_MATTERMOST_USER_PROFILES,
   SET_MATTERMOST_WEBSOCKET_EVENT,
@@ -14,6 +16,7 @@ const initialState: MattermostState = {
   websocketEvent: null,
   channels: {},
   userProfiles: {},
+  currentTeam: null,
 };
 
 const mattermostReducer = (
@@ -45,13 +48,30 @@ const mattermostReducer = (
           ),
         },
       };
+    case SET_MATTERMOST_CURRENT_TEAM:
+      return {
+        ...state,
+        currentTeam: action.payload,
+      };
     case SET_MATTERMOST_CHANNEL_INFO:
       return {
         ...state,
         channels: {
           ...state.channels,
-          [action.payload.channel.id]: action.payload,
+          [action.payload.id]: {
+            channel: action.payload,
+            metaData: {},
+          },
         },
+      };
+    case REMOVE_USER_FROM_CHANNEL:
+      return {
+        ...state,
+        channels: Object.keys(state.channels).reduce((acc, channelId) => {
+          if (channelId !== action.payload)
+            acc[channelId] = state.channels[channelId];
+          return acc;
+        }, {} as Record<string, any>),
       };
 
     default:

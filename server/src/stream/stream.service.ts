@@ -17,6 +17,8 @@ export class StreamService {
     private streamLogRepo: Repository<StreamLog>,
     @InjectRepository(Post)
     private readonly postRepo: Repository<Post>,
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
     @InjectRepository(CurrentStreamViewer)
     private readonly currentStreamViewerRepo: Repository<CurrentStreamViewer>,
     private readonly utilService: UtilsService,
@@ -107,9 +109,6 @@ export class StreamService {
     return this.currentStreamViewerRepo
       .createQueryBuilder('current_stream_viewer')
       .select('COUNT(current_stream_viewer.userId) AS total')
-      .addSelect('user.id AS userId')
-      .addSelect('user.mattermostId AS mattermostUserId')
-      .innerJoin(User, 'user', 'user.id = current_stream_viewer.userId')
       .where('current_stream_viewer.slug = :slug', { slug })
       .getRawOne();
   }
@@ -121,30 +120,31 @@ export class StreamService {
       event: 'LIVE_STREAM_VIEWER_COUNT_CHANGE',
       slug,
       count: stat.total,
-      userId,
-      mattermostUserId: stat.mattermostUserId,
     });
 
     const channel = await this.handleCreateStreamChannel(slug);
 
     if (channel) {
-      fetchOrProduceNull(() =>
-        this.utilService.mattermostClient.addToChannel(
-          stat.mattermostUserId,
-          channel.id,
-        ),
-      );
+      const user = await this.userRepo.findOne({ where: { id: userId } });
+
+      if (user) {
+        fetchOrProduceNull(() =>
+          this.utilService.mattermostClient.addToChannel(
+            user.mattermostId,
+            channel.id,
+          ),
+        );
+      }
     }
   }
 
   async handleCreateStreamChannel(slug: string) {
-    const channel = fetchOrProduceNull(() =>
+    const channel = await fetchOrProduceNull(() =>
       this.utilService.mattermostClient.getChannelByName(
         this.utilService.octopusAppTeam!.id,
         slug,
       ),
     );
-
     if (channel) return channel;
 
     const octopusPost = await this.postRepo.findOne({ slug });
