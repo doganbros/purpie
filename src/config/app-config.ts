@@ -17,6 +17,13 @@ export const theme: typeof grommet = deepMerge(base, {
     },
     drop: {
       background: 'white',
+      extend: () => `
+        font-size: ${base.text?.small?.size};
+        & > * > * > *:hover {
+          font-weight: bold;
+          background: #E4E9F2;
+        };
+      `,
     },
     input: {
       extend: 'color: grey;',
