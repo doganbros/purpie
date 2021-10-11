@@ -6,7 +6,7 @@ import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/Pri
 import VideoPlayer from '../../../components/utils/video/VideoPlayer';
 import { videoPlayerOptions, videoMetadata } from './data/video-data';
 import RecommendedVideos from './RecommendedVideos';
-import Chat from '../../../components/utils/mattermost/Chat';
+import Chat from '../../../components/mattermost/Chat';
 
 interface RouteParams {
   id: string;

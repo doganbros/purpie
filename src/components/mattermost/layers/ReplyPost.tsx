@@ -4,7 +4,7 @@ import { Client4 } from 'mattermost-redux/client';
 import { Post } from 'mattermost-redux/types/posts';
 import React, { FC, useContext } from 'react';
 import { useDispatch } from 'react-redux';
-import { setToastAction } from '../../../../store/actions/util.action';
+import { setToastAction } from '../../../store/actions/util.action';
 import PostItem from '../PostItem';
 
 interface Props {

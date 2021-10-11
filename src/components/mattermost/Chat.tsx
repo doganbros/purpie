@@ -9,18 +9,18 @@ import { HeightType } from 'grommet/utils';
 import { MoreVertical } from 'grommet-icons';
 import dayjs from 'dayjs';
 import webSocketClient from 'mattermost-redux/client/websocket_client';
-import { AppState } from '../../../store/reducers/root.reducer';
+import { AppState } from '../../store/reducers/root.reducer';
 import PostItem from './PostItem';
 import EditPost from './layers/EditPost';
 import ReplyPost from './layers/ReplyPost';
-import PlanMeetingTheme from '../../../layers/meeting/custom-theme';
-import { setToastAction } from '../../../store/actions/util.action';
+import PlanMeetingTheme from '../../layers/meeting/custom-theme';
+import { setToastAction } from '../../store/actions/util.action';
 import {
   setChannelByNameAction,
   setUserProfilesFromPostAction,
   setUserProfilesIfNotExistsAction,
-} from '../../../store/actions/mattermost.action';
-import { useThrottle } from '../../../hooks/useThrottle';
+} from '../../store/actions/mattermost.action';
+import { useThrottle } from '../../hooks/useThrottle';
 
 interface Props {
   channelName: string;
