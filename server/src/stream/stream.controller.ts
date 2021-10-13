@@ -48,7 +48,9 @@ export class StreamController {
   })
   @Get('viewers/total/count/:slug')
   async getTotalViewers(@Param('slug') slug: string) {
-    return this.streamService.getTotalViewers(slug);
+    const result = await this.streamService.getTotalViewers(slug);
+
+    return result.total;
   }
 
   @IsAuthenticated()

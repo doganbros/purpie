@@ -17,6 +17,7 @@ import { generateJWT, verifyJWT } from 'helpers/jwt';
 import { alphaNum, compareHash, hash } from 'helpers/utils';
 import { customAlphabet, nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
+import { UtilsService } from 'src/utils/utils.service';
 import { Not, Repository, IsNull } from 'typeorm';
 import { CreateClientDto } from './dto/create-client.dto';
 import { LoginClientDto } from './dto/login-client.dto';
@@ -52,6 +53,7 @@ export class AuthService {
     @InjectRepository(UserRefreshToken)
     private userRefreshTokenRepository: Repository<UserRefreshToken>,
     private mailService: MailService,
+    private utilService: UtilsService,
   ) {}
 
   async generateLoginToken(
@@ -421,6 +423,9 @@ export class AuthService {
     user.mailVerificationToken = null!;
     user.userName = userName;
     await user.save();
+
+    await this.createMattermostUserAndJoinDefaults(user);
+
     return {
       firstName: user.firstName,
       lastName: user.lastName,
@@ -510,5 +515,45 @@ export class AuthService {
       'reset-password',
       context,
     );
+  }
+
+  async createMattermostPersonalTokenForUser(mattermostId: string) {
+    await this.utilService.mattermostClient.revokeAllSessionsForUser(
+      mattermostId,
+    );
+    const {
+      token,
+    } = await this.utilService.mattermostClient.createUserAccessToken(
+      mattermostId,
+      'Mattermost personal token for user created in octopus',
+    );
+    return token;
+  }
+
+  async createMattermostUserAndJoinDefaults(user: UserPayload) {
+    const profile = await this.utilService.mattermostClient.createUser(
+      {
+        email: user.email,
+        username: user.userName,
+        first_name: user.firstName,
+        last_name: user.lastName,
+        auth_service: 'google',
+      } as any,
+      '',
+      '',
+      '',
+    );
+
+    await this.utilService.mattermostClient.addUsersToTeam(
+      this.utilService.octopusAppTeam!.id,
+      [profile.id],
+    );
+
+    await this.utilService.mattermostClient.addToChannel(
+      profile.id,
+      this.utilService.octopusBroadcastChannel!.id,
+    );
+
+    return profile;
   }
 }

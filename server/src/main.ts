@@ -1,3 +1,4 @@
+import 'isomorphic-fetch';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';

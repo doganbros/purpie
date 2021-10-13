@@ -52,6 +52,7 @@ export class AuthGuard implements CanActivate {
             'lastName',
             'email',
             'userRole',
+            'mattermostId',
             'refreshTokenId',
           ]);
 

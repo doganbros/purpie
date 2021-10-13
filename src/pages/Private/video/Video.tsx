@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { Box, Text } from 'grommet';
-import { Chat, Favorite } from 'grommet-icons';
+import { Favorite, Chat as ChatIcon } from 'grommet-icons';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import VideoPlayer from '../../../components/utils/video/VideoPlayer';
 import { videoPlayerOptions, videoMetadata } from './data/video-data';
-import Messages from './Messages';
 import RecommendedVideos from './RecommendedVideos';
+import Chat from '../../../components/mattermost/Chat';
 
 interface RouteParams {
   id: string;
@@ -14,7 +14,10 @@ interface RouteParams {
 
 const Video: FC<RouteComponentProps<RouteParams>> = () => {
   return (
-    <PrivatePageLayout title={videoMetadata.name} rightComponent={<Messages />}>
+    <PrivatePageLayout
+      title={videoMetadata.name}
+      rightComponent={<Chat channelName="off-topic" />}
+    >
       <Box gap="large" pad={{ vertical: 'medium' }}>
         <Box justify="between" direction="row">
           <Box>
@@ -40,7 +43,7 @@ const Video: FC<RouteComponentProps<RouteParams>> = () => {
                 <Text color="status-disabled">{videoMetadata.likes}</Text>
               </Box>
               <Box direction="row" gap="xsmall">
-                <Chat color="status-disabled" />
+                <ChatIcon color="status-disabled" />
                 <Text color="status-disabled">{videoMetadata.comments}</Text>
               </Box>
             </Box>

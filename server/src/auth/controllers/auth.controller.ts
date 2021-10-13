@@ -98,7 +98,7 @@ export class AuthController {
     @Body() loginUserDto: LoginUserDto,
     @Headers('app-subdomain') subdomain: string,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<UserPayload> {
+  ) {
     if (subdomain)
       await this.authService.subdomainValidity(
         subdomain,
@@ -132,6 +132,7 @@ export class AuthController {
       lastName: user.lastName,
       email: user.email,
       userName: user.userName,
+      mattermostId: user.mattermostId,
       userRole: {
         ...user.userRole,
       },
@@ -145,7 +146,10 @@ export class AuthController {
       });
 
     await this.authService.setAccessTokens(userPayload, res);
-    return userPayload;
+    const token = await this.authService.createMattermostPersonalTokenForUser(
+      user.mattermostId!,
+    );
+    return { ...userPayload, mattermostToken: token };
   }
 
   @Post('/logout')
@@ -323,6 +327,11 @@ export class AuthController {
     if (subdomain) {
       await this.authService.subdomainValidity(subdomain, currentUser.email);
     }
-    return currentUser;
+
+    const mattermostToken = await this.authService.createMattermostPersonalTokenForUser(
+      currentUser.mattermostId!,
+    );
+
+    return { ...currentUser, mattermostToken };
   }
 }

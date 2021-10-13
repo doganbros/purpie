@@ -13,6 +13,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { UtilsService } from 'src/utils/utils.service';
 import { ApiParam, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from 'entities/User.entity';
 import { AuthByThirdPartyDto } from '../dto/auth-by-third-party.dto';
@@ -29,7 +30,10 @@ const {
 @Controller({ path: 'auth/third-party', version: '1' })
 @ApiTags('auth-third-party')
 export class AuthThirdPartyController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private utilService: UtilsService,
+  ) {}
 
   @Get('/:name')
   @ApiParam({
@@ -94,6 +98,7 @@ export class AuthThirdPartyController {
     @Res({ passthrough: true }) res: Response,
   ) {
     let user: User | undefined;
+    let userExistsAlready = false;
     if (name === 'google') {
       const accessToken = await this.authService.getGoogleAuthAccessToken(code);
       const userInfo = await this.authService.getGoogleUserInfo(accessToken);
@@ -101,6 +106,7 @@ export class AuthThirdPartyController {
       user = await this.authService.getUserByEmail(userInfo.email);
 
       if (user) {
+        userExistsAlready = true;
         if (!user.googleId) {
           user.googleId = userInfo.id;
           user = await user.save();
@@ -122,6 +128,7 @@ export class AuthThirdPartyController {
       user = await this.authService.getUserByEmail(userInfo.email);
 
       if (user) {
+        userExistsAlready = true;
         if (!user.facebookId) {
           user.facebookId = userInfo.id;
           user = await user.save();
@@ -144,12 +151,26 @@ export class AuthThirdPartyController {
         lastName: user.lastName,
         email: user.email,
         userName: user.userName,
+        mattermostId: user.mattermostId,
         userRole: {
           ...user.userRole,
         },
       };
+      if (!userExistsAlready) {
+        const profile = await this.authService.createMattermostUserAndJoinDefaults(
+          user,
+        );
+        user.mattermostId = profile.id;
+        userPayload.mattermostId = profile.id;
+        await user.save();
+      }
+
+      const token = await this.authService.createMattermostPersonalTokenForUser(
+        user.mattermostId,
+      );
+
       await this.authService.setAccessTokens(userPayload, res);
-      return userPayload;
+      return { mattermostToken: token, ...userPayload };
     }
 
     throw new InternalServerErrorException(

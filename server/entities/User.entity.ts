@@ -41,6 +41,9 @@ export class User extends RecordEntity {
   password: string;
 
   @Column({ nullable: true })
+  mattermostId: string;
+
+  @Column({ nullable: true })
   googleId: string;
 
   @Column({ nullable: true })

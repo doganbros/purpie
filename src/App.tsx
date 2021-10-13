@@ -13,6 +13,7 @@ import { privateRoutes, publicRoutes } from './routes';
 import { retrieveUserAction } from './store/actions/auth.action';
 import { getUserZonesAction } from './store/actions/zone.action';
 import { AppState } from './store/reducers/root.reducer';
+import { initializeMattermostAction } from './store/actions/mattermost.action';
 
 const App: FC = () => {
   const dispatch = useDispatch();
@@ -20,10 +21,12 @@ const App: FC = () => {
   const {
     auth: {
       isAuthenticated,
+      user,
       retrieveUser: { loading },
     },
     zone: { userZoneInitialized },
     util: { toast },
+    mattermost: { currentUser: mattermostCurrentUser, currentTeam },
   } = useSelector((state: AppState) => state);
 
   useEffect(() => {
@@ -31,7 +34,12 @@ const App: FC = () => {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated) dispatch(getUserZonesAction());
+    if (isAuthenticated) {
+      dispatch(getUserZonesAction());
+      dispatch(
+        initializeMattermostAction(user!.mattermostToken, 'octopus-app')
+      );
+    }
   }, [isAuthenticated]);
 
   return (
@@ -42,7 +50,9 @@ const App: FC = () => {
         message={toast.message}
         id={toast.toastId}
       />
-      {loading || (isAuthenticated && !userZoneInitialized) ? (
+      {loading ||
+      (isAuthenticated &&
+        !(userZoneInitialized && mattermostCurrentUser && currentTeam)) ? (
         <Loader />
       ) : (
         <Router history={appHistory}>

@@ -44,6 +44,8 @@ export interface User {
   userName?: string;
   lastName: string;
   email: string;
+  mattermostId: string;
+  mattermostToken: string;
   userRole?: UserRole;
 }
 
