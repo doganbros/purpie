@@ -37,3 +37,14 @@ export const ceilTime = (time: Date | string | number, minutes = 30): Date => {
 
 export const nameToSubdomain = (name: string): string =>
   name.toLowerCase().replaceAll(' ', '-');
+
+export const fetchOrProduceNull = async <T>(
+  request: () => Promise<T>
+): Promise<T | null> => {
+  try {
+    const result = await request();
+    return result;
+  } catch (err) {
+    return null;
+  }
+};

@@ -16,6 +16,9 @@ export class UserPayload {
   email: string;
 
   @ApiProperty()
+  mattermostId: string | null;
+
+  @ApiProperty()
   userName?: string | null;
 
   refreshTokenId?: string;

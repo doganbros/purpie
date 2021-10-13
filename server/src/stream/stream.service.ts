@@ -3,6 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CurrentStreamViewer } from 'entities/CurrentStreamViewer.entity';
 import { Post } from 'entities/Post.entity';
 import { StreamLog } from 'entities/StreamLog.entity';
+import { User } from 'entities/User.entity';
+import { fetchOrProduceNull } from 'helpers/utils';
+import { UtilsService } from 'src/utils/utils.service';
 import { Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { ClientStreamEventDto } from './dto/client-stream-event.dto';
@@ -13,9 +16,12 @@ export class StreamService {
     @InjectRepository(StreamLog)
     private streamLogRepo: Repository<StreamLog>,
     @InjectRepository(Post)
-    private readonly meetingRepo: Repository<Post>,
+    private readonly postRepo: Repository<Post>,
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
     @InjectRepository(CurrentStreamViewer)
     private readonly currentStreamViewerRepo: Repository<CurrentStreamViewer>,
+    private readonly utilService: UtilsService,
   ) {}
 
   async setStreamEvent(info: ClientStreamEventDto) {
@@ -43,6 +49,7 @@ export class StreamService {
             slug: info.slug,
           });
         }
+        this.handleStreamViewerChange(info.slug, info.userId!);
       } catch (error) {
         //
       }
@@ -54,13 +61,16 @@ export class StreamService {
       ['publish_started', 'publish_done'].includes(info.event) &&
       (!info.postType || info.postType === 'meeting')
     ) {
-      await this.meetingRepo.update(
+      await this.postRepo.update(
         {
           slug: info.slug,
         },
         { streaming: info.event === 'publish_started' },
       );
     }
+
+    if (info.event === 'publish_started')
+      await this.handleCreateStreamChannel(info.slug);
 
     return streamLog;
   }
@@ -101,5 +111,54 @@ export class StreamService {
       .select('COUNT(current_stream_viewer.userId) AS total')
       .where('current_stream_viewer.slug = :slug', { slug })
       .getRawOne();
+  }
+
+  async handleStreamViewerChange(slug: string, userId: number) {
+    const stat = await this.getCurrentTotalViewers(slug);
+
+    this.utilService.broadcastPost({
+      event: 'LIVE_STREAM_VIEWER_COUNT_CHANGE',
+      slug,
+      count: stat.total,
+    });
+
+    const channel = await this.handleCreateStreamChannel(slug);
+
+    if (channel) {
+      const user = await this.userRepo.findOne({ where: { id: userId } });
+
+      if (user) {
+        fetchOrProduceNull(() =>
+          this.utilService.mattermostClient.addToChannel(
+            user.mattermostId,
+            channel.id,
+          ),
+        );
+      }
+    }
+  }
+
+  async handleCreateStreamChannel(slug: string) {
+    const channel = await fetchOrProduceNull(() =>
+      this.utilService.mattermostClient.getChannelByName(
+        this.utilService.octopusAppTeam!.id,
+        slug,
+      ),
+    );
+    if (channel) return channel;
+
+    const octopusPost = await this.postRepo.findOne({ slug });
+
+    if (octopusPost) {
+      return this.utilService.mattermostClient.createChannel({
+        name: slug,
+        display_name: octopusPost.title,
+        team_id: this.utilService.octopusAppTeam!.id,
+        type: 'P',
+        purpose: `Livestream channel for ${octopusPost.title} post`,
+      } as any);
+    }
+
+    return null;
   }
 }

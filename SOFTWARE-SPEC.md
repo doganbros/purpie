@@ -33,6 +33,10 @@
 - [Swagger](https://swagger.io/)
 - Monitoring with [pm2](https://github.com/Unitech/pm2)
 
+## Open Source Technologies used
+- [Jitsi](https://jitsi.org)
+- [Mattermost](https://mattermost.com)
+
 # Requirements
 
 - [Node.js](https://nodejs.org/en/download/) (>= 10.13.0, except for v13)
@@ -220,6 +224,41 @@ Since this app allows users to create subdomains, it needs to persist authentica
 Even though developers can still use localhost but if another subdomain is visited, authentication would be required again. Developers can therefore set a different domain other than localhost in `/etc/host` ( or ` C:\Windows\System32\Drivers\etc\hosts` for windows) file. The domain recommended is octopus.localhost. This is because it allows all subdomains to see the cookie as well.
 
 
+## Mattermost
+
+[Mattermost](https://mattermost.com) is an open source platform used for real-time communication in this application. It is used to provide feedbacks to front-end clients about events. This app also takes advantage of mattermost's channels for real-time chats between two or more people.
+
+### Mattermost Setup and Configuration
+
+Please follow the steps below to get a development mattermost server running. The easiest way to use [docker](https://www.docker.com/).
+
+1. Make sure you have docker installed on your computer. If you do not have docker already on your computer, Go to https://www.docker.com/get-started, choose your platform and click download. Follow the simple steps to get docker installed on your computer.
+2. Open your terminal (command prompt or preferably powershell on windows).
+3. Enter the command `docker run --name mattermost-preview -d --publish 8065:8065 --add-host dockerhost:127.0.0.1 mattermost/mattermost-preview`
+4. If you want to change the port where mattermost runs by default, replace `<port>:8065` by your prefered port while typing the command.
+5. Wait for some few minutes for the mattermost server to bootup.
+6. To view the logs enter the command `docker logs mattermost-preview --follow`
+7. You can run multiple instances by just changing the port of your host like above.
+8. Launch mattermost on your browser by visiting `http://localhost:8065` or the port that you used above.
+9. Type in the system administrator's email, username and password. **Note** that you are supposed to use a username and email different from your account in octopus. This is because octopus will try to create an account for you when you setup everything up.
+10. You will be asked to create a new team. Create a new team called `app`.
+11. *You will be signed in to the dashboard of mattermost.*
+12. Press the hamburger menu just beside the team name. Then click System Console. 
+13. Search for `Integration Management`. 
+14. Under Integration Management, scroll to the bottom and set Enable Personal Access Tokens to true.
+15. Search for `Bot Accounts`.
+16. Under Bot Accounts, set Enable Bot Account Creation to true.
+17. Now click the hamburger menu and again and click switch back to app
+18. Press the hamburger menu just beside the team name. Then click Integrations
+19. Click Bot Accounts and the Add Bot Account at the top right of the screen.
+20. Create a bot with the username `octopus-app`. Type in any display name of your choice (Optional). Type in a description (Optional) and select `System Admin` as the role. Then Click Create Bot Account.
+21. You will get a setup successful prompt when everything went well. You will also be provided with a token. Please save this token at a secure place because this will be the token octopus will be using to login as the bot.
+22. Make sure you update all your environment variables for octopus. 
+23. You can find examples at the .env.example file. `REACT_APP_MM_SERVER_URL, MM_SERVER_URL, MM_BOT_TOKEN`. The `MM_BOT_TOKEN` is the token you received while creating a bot account.
+24. If you already had a valid session at octopus please logout and login again.
+
+
+
 # Application Structure
 
 ```
@@ -284,6 +323,7 @@ Even though developers can still use localhost but if another subdomain is visit
 │   │   └── logo.png
 │   ├── components
 │   │   ├── layouts
+│   │   ├── mattermost
 │   │   └── utils
 │   ├── config
 │   │   ├── app-config.ts
