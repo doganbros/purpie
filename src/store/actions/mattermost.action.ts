@@ -27,6 +27,7 @@ export const initializeMattermostAction = (
   return async (dispatch) => {
     try {
       Client4.setUrl(REACT_APP_MM_SERVER_URL);
+      Client4.setIncludeCookies(false);
       Client4.setToken(token);
 
       const team = await Client4.getTeamByName(teamName);
