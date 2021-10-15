@@ -9,6 +9,7 @@ import {
   getUserSuggestionsForMeetingAction,
   removeUserFromInvitationsAction,
 } from '../../../store/actions/meeting.action';
+import Divider from '../../../components/utils/Divider';
 
 const MeetingInvitation: FC = () => {
   const debouncer = useDebouncer();
@@ -68,13 +69,8 @@ const MeetingInvitation: FC = () => {
           overflow={{ vertical: 'scroll' }}
           margin={{ top: 'small' }}
           height="180px"
-          border={{
-            side: 'top',
-            color: '#8F9BB3',
-            size: 'xsmall',
-            style: 'dashed',
-          }}
         >
+          <Divider dashed color="status-disabled" />
           {invitedUsers.map((item) => (
             <Box
               direction="row"
