@@ -1,5 +1,5 @@
 import React, { FC, useRef } from 'react';
-import { TextInput, FormField, Box, Text } from 'grommet';
+import { TextInput, FormField, Box, Text, Avatar } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { Close, User } from 'grommet-icons';
 import { useDebouncer } from '../../../hooks/useDebouncer';
@@ -74,19 +74,14 @@ const MeetingInvitation: FC = () => {
           {invitedUsers.map((item) => (
             <Box
               direction="row"
-              gap="medium"
+              gap="small"
               margin={{ top: 'small' }}
               align="center"
               key={item.value}
             >
-              <Box
-                border={{ size: 'small', color: 'black' }}
-                round="large"
-                background="black"
-                pad={{ vertical: 'xsmall', horizontal: 'xsmall' }}
-              >
+              <Avatar round background="black">
                 <User color="white" size="medium" />
-              </Box>
+              </Avatar>
               <Box>
                 <Text color="black" size="small">
                   {item.label}
