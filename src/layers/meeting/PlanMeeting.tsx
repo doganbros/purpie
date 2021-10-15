@@ -90,7 +90,7 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
         dispatch(
           createMeetingAction({
             ...formPayload,
-            invitationIds: invitedUsers.map((u) => u.value),
+            invitationIds: invitedUsers.map((u) => u.id),
           })
         );
       }

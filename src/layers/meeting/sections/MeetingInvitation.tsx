@@ -1,5 +1,5 @@
 import React, { FC, useRef } from 'react';
-import { TextInput, FormField, Box, Text, Avatar } from 'grommet';
+import { TextInput, FormField, Box, Text, Avatar, Button } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { Close, User } from 'grommet-icons';
 import { useDebouncer } from '../../../hooks/useDebouncer';
@@ -32,15 +32,15 @@ const MeetingInvitation: FC = () => {
     dispatch(
       getUserSuggestionsForMeetingAction(
         value,
-        [currentUser!.id, ...invitedUsers.map((v) => v.value)],
+        [currentUser!.id, ...invitedUsers.map((v) => v.id)],
         payload?.userContactExclusive,
         payload?.channelId
       )
     );
   };
 
-  const removeUserInvitation = (value: number) => {
-    dispatch(removeUserFromInvitationsAction(value));
+  const removeUserInvitation = (id: number) => {
+    dispatch(removeUserFromInvitationsAction(id));
   };
 
   return (
@@ -52,14 +52,14 @@ const MeetingInvitation: FC = () => {
           name="user"
           placeholder="Type a name, username or email"
           suggestions={userSuggestions.map((user) => ({
-            value: user.id,
+            value: user,
             label: `${user.firstName} ${user.lastName}${
               user.userName ? ` @${user.userName}` : ''
             }`,
           }))}
           onChange={(e: any) => debouncer(() => onChange(e.target.value), 300)}
           onSuggestionSelect={(e) => {
-            dispatch(addUserToInvitationsAction(e.suggestion));
+            dispatch(addUserToInvitationsAction(e.suggestion.value));
             if (textInput.current) textInput.current.value = '';
           }}
         />
@@ -74,24 +74,27 @@ const MeetingInvitation: FC = () => {
           {invitedUsers.map((item) => (
             <Box
               direction="row"
-              gap="small"
+              gap="medium"
               margin={{ top: 'small' }}
               align="center"
-              key={item.value}
+              key={item.id}
             >
-              <Avatar round background="black">
+              <Avatar round background="dark-1">
                 <User color="white" size="medium" />
               </Avatar>
               <Box>
-                <Text color="black" size="small">
-                  {item.label}
+                <Text size="small" weight="bold">
+                  {item.firstName} {item.lastName}
+                </Text>
+                <Text size="xsmall">
+                  {item.userName && `@${item.userName}`}
                 </Text>
               </Box>
               <Box flex={{ grow: 1 }} align="end">
-                <Close
-                  size="small"
-                  cursor="pointer"
-                  onClick={() => removeUserInvitation(item.value)}
+                <Button
+                  plain
+                  onClick={() => removeUserInvitation(item.id)}
+                  icon={<Close color="status-disabled" />}
                 />
               </Box>
             </Box>
