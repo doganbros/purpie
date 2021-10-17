@@ -543,6 +543,10 @@ export class AuthService {
       '',
       '',
     );
+    await this.userRepository.update(
+      { id: user.id },
+      { mattermostId: profile.id },
+    );
 
     await this.utilService.mattermostClient.addUsersToTeam(
       this.utilService.octopusAppTeam!.id,

@@ -67,7 +67,9 @@ export class MeetingLog1630864840485 implements MigrationInterface {
       }),
     );
 
-    const users = await queryRunner.manager.find(User);
+    const users = await queryRunner.manager.find(User, {
+      select: ['firstName', 'lastName', 'id'],
+    });
 
     for (const { firstName, lastName, id } of users) {
       const userName = `${firstName} ${lastName}`
