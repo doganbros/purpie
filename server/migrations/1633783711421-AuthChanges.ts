@@ -50,7 +50,9 @@ export class AuthChanges1633783711421 implements MigrationInterface {
     await queryRunner.dropColumn('user', 'refreshAccessToken');
     await queryRunner.dropColumn('channel', 'channelMeetingConfig');
 
-    const users = await queryRunner.manager.find(User);
+    const users = await queryRunner.manager.find(User, {
+      select: ['userMeetingConfig', 'id'],
+    });
 
     for (const user of users) {
       const oldConfig = user.userMeetingConfig as Record<string, any>;
