@@ -25,27 +25,32 @@ const MeetingConfiguration: FC = () => {
 
   return (
     <Box gap="medium">
-      <SectionContainer label="Toolbars">
+      <SectionContainer label="Toolbar Settings">
         <Grid
           columns={size === 'small' ? '100%' : { count: 2, size: 'small' }}
           gap={{ column: 'large' }}
         >
           {formPayload.config.toolbarButtons &&
-            baseMeetingConfig.toolbarButtons.map((toolbarBtn: string) => (
+            baseMeetingConfig.toolbarButtons.map((toolbarBtn) => (
               <Switch
-                label={toolbarBtn}
-                key={toolbarBtn}
+                label={toolbarBtn.label}
+                key={toolbarBtn.setting}
                 margin={{ bottom: 'xsmall' }}
-                value={formPayload.config!.toolbarButtons.includes(toolbarBtn)}
+                value={formPayload.config!.toolbarButtons.includes(
+                  toolbarBtn.setting
+                )}
                 onChange={(v) => {
                   dispatch(
                     setMeetingFormFieldAction({
                       config: {
                         ...formPayload.config,
                         toolbarButtons: v
-                          ? [...formPayload.config!.toolbarButtons, toolbarBtn]
+                          ? [
+                              ...formPayload.config!.toolbarButtons,
+                              toolbarBtn.setting,
+                            ]
                           : formPayload.config!.toolbarButtons.filter(
-                              (t: string) => t !== toolbarBtn
+                              (t: string) => t !== toolbarBtn.setting
                             ),
                       },
                     })
