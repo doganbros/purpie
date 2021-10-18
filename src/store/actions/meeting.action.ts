@@ -21,6 +21,7 @@ import {
   SET_MEETING_FORM_FIELD,
 } from '../constants/meeting.constants';
 import * as MeetingService from '../services/meeting.service';
+import { User } from '../types/auth.types';
 import {
   CreateMeetingPayload,
   MeetingAction,
@@ -166,10 +167,9 @@ export const planMeetingDialogSetAction = (
   payload: index,
 });
 
-export const addUserToInvitationsAction = (user: {
-  label: string;
-  value: number;
-}): MeetingActionParams => ({
+export const addUserToInvitationsAction = (
+  user: User
+): MeetingActionParams => ({
   type: ADD_USER_TO_INVITATION,
   payload: user,
 });

@@ -85,7 +85,7 @@ export interface MeetingState {
     error: ResponseError | null;
   };
   createMeeting: {
-    invitedUsers: Array<{ label: string; value: number }>;
+    invitedUsers: Array<User>;
     userSuggestions: Array<User>;
     planDialogCurrentIndex: number;
     form: {
@@ -127,7 +127,7 @@ export type MeetingActionParams =
     }
   | {
       type: typeof ADD_USER_TO_INVITATION;
-      payload: { label: string; value: number };
+      payload: User;
     }
   | {
       type: typeof GET_USER_MEETING_CONFIG_SUCCESS;

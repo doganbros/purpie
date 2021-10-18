@@ -92,7 +92,7 @@ const meetingReducer = (
         createMeeting: {
           ...state.createMeeting,
           invitedUsers: state.createMeeting.invitedUsers.filter(
-            (v) => v.value !== action.payload
+            (v) => v.id !== action.payload
           ),
         },
       };
