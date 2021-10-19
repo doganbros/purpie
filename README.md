@@ -50,20 +50,48 @@ git clone https://github.com/doganbros/octopus # Clone Repository
 cd octopus
 ```
 
-Install dependencies:
+## Install dependencies:
 
 ```bash
 yarn install
 ```
 
-Create Database if it doesn't exist
+## Create Postgres database
 
-```bash
-#eg with postgresql
-createdb octopus # use these credentials in your .env variable
-```
 
-Set environment variables into .env file:
+## Setup your Mattermost server:
+
+Please follow the steps below to get a development mattermost server running. The easiest way to use [docker](https://www.docker.com/).
+
+1. Make sure you have docker installed on your computer. If you do not have docker already on your computer, Go to https://www.docker.com/get-started, choose your platform and click download. Follow the simple steps to get docker installed on your computer.
+2. Open your terminal (command prompt or preferably powershell on windows).
+3. Enter the command `docker run --name mattermost-preview -d --publish 8065:8065 --add-host dockerhost:127.0.0.1 mattermost/mattermost-preview`
+4. If you want to change the port where mattermost runs by default, replace `<port>:8065` by your prefered port while typing the command.
+5. Wait for some few minutes for the mattermost server to bootup.
+6. To view the logs enter the command `docker logs mattermost-preview --follow`
+7. You can run multiple instances by just changing the port of your host like above.
+8. Launch mattermost on your browser by visiting `http://localhost:8065` or the port that you used above.
+9. Type in the system administrator's email, username and password. **Note** that you are supposed to use a username and email different from your account in octopus. This is because octopus will try to create an account for you when you setup everything up.
+10. You will be asked to create a new team. Create a new team called `octopus`.
+11. *You will be signed in to the dashboard of mattermost.*
+12. Press the 9 squares menu icon (similiar to grid view icon) on the top left corner. Then click System Console. 
+13. Search for `Integration Management`. 
+14. Under Integration Management, scroll to the bottom and set Enable Personal Access Tokens to true.
+15. Search for `Bot Accounts`.
+16. Under Bot Accounts, set Enable Bot Account Creation to true.
+17. Now click the hamburger menu on the top left and click `Switch to octopus`
+18. Press the 9 squares menu icon on the top left corner again and then click `Integrations`
+19. Click Bot Accounts and the Add Bot Account at the top right of the screen.
+20. Create a bot with the username `octopus-bot`. Type in any display name of your choice (Optional). Type in a description (Optional) and select `System Admin` as the role. Then Click Create Bot Account.
+21. You will get a setup successful prompt when everything went well. You will also be provided with a token. Please save this token at a secure place because this will be the token octopus will be using to login as the bot.
+22. Make sure you update all your environment variables for octopus. 
+23. You can find examples at the .env.example file. `REACT_APP_MM_SERVER_URL, MM_SERVER_URL, MM_BOT_TOKEN`. The `MM_BOT_TOKEN` is the token you received while creating a bot account.
+24. If you already had a valid session at octopus please logout and login again.
+
+
+
+
+## Set environment variables into .env file:
 
 ```bash
 cp .env.example .env # Then make changes to the boilerplate provided
@@ -74,6 +102,14 @@ cp .env.example .env # Then make changes to the boilerplate provided
 ```bash
 yarn server:start:dev # Runs backend side in dev mode
 yarn start:web # Runs frontend side
+```
+
+## Setting web server and routing
+
+If Octopus is installed on your local you will need to add following line to your hosts file. On Unix based systems including MacOS hosts file is /etc/hosts where as on Windows it is C:\windows\system32\drivers\etc\hosts .
+
+```bash
+127.0.0.1	octopus.localhost
 ```
 
 ## Available Scripts
