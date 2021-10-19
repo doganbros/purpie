@@ -57,6 +57,15 @@ yarn install
 ```
 
 ## Create Postgres database
+Please follow the steps below to get a development Postgres server running. The easiest way to use [docker](https://www.docker.com/). If you have running Postgres database server you can skip these steps and simply create an Octopus database.
+
+1. Make sure you have docker installed on your computer. If you do not have docker already on your computer, Go to https://www.docker.com/get-started, choose your platform and click download. Follow the simple steps to get docker installed on your computer.
+2. Open your terminal (command prompt or preferably powershell on windows).
+3. Enter the command `docker run --name octopus-dev -e POSTGRES_PASSWORD=YOUR_POSTGRES_PASSWORD -p 5432:5432 -d postgres` Postgres docker image will be downloaded and Postgres Docker container with the name `octopus-dev` will up and serve from port 5432 after this command.
+4. Run `docker ps` to get ID of the running Postgres Docker container.
+5. Run `docker exec -it DOCKER_ID psql -U postgres` to connect your Postgres database.
+6. Run 'CREATE DATABASE octopus' to create your Octopus database.
+7. Run `\q` to quit from Psql and Docker container.
 
 
 ## Setup your Mattermost server:
