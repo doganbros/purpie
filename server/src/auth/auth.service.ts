@@ -19,6 +19,10 @@ import { customAlphabet, nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
 import { UtilsService } from 'src/utils/utils.service';
 import { Not, Repository, IsNull } from 'typeorm';
+import {
+  MAIL_VERIFICATION_TYPE,
+  PASSWORD_VERIFICATION_TYPE,
+} from './constants/auth.constants';
 import { CreateClientDto } from './dto/create-client.dto';
 import { LoginClientDto } from './dto/login-client.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
@@ -31,18 +35,15 @@ import {
 const {
   AUTH_TOKEN_SECRET = '',
   AUTH_TOKEN_SECRET_REFRESH = '',
-  CLIENT_AUTH_TOKEN_SECRET = '',
-  CLIENT_AUTH_TOKEN_SECRET_REFRESH = '',
   GOOGLE_OAUTH_CLIENT_SECRET = '',
   GOOGLE_OAUTH_CLIENT_ID = '',
   FACEBOOK_OAUTH_CLIENT_ID = '',
   FACEBOOK_OAUTH_CLIENT_SECRET = '',
   AUTH_TOKEN_LIFE = '1h',
   AUTH_TOKEN_REFRESH_LIFE = '30d',
-  RESET_PASSWORD_TOKEN_SECRET = '',
   REACT_APP_CLIENT_HOST = '',
   REACT_APP_SERVER_HOST = '',
-  MAIL_VERIFICATION_TOKEN_SECRET = '',
+  VERIFICATION_TOKEN_SECRET = '',
 } = process.env;
 
 @Injectable()
@@ -87,9 +88,13 @@ export class AuthService {
   }
 
   async generateResetPasswordToken(email: string) {
-    return generateJWT({ email }, RESET_PASSWORD_TOKEN_SECRET, {
-      expiresIn: '1h',
-    });
+    return generateJWT(
+      { email, verificationType: PASSWORD_VERIFICATION_TYPE },
+      VERIFICATION_TOKEN_SECRET,
+      {
+        expiresIn: '1h',
+      },
+    );
   }
 
   async setAccessTokens(userPayload: UserPayload, res: Response) {
@@ -226,15 +231,11 @@ export class AuthService {
         'WRONG_CLIENT_API_KEY_OR_SECRET',
       );
 
-    const tokens = await this.generateLoginToken(
-      {
-        id: client.id,
-        name: client.name,
-        clientRole: client.clientRole,
-      },
-      CLIENT_AUTH_TOKEN_SECRET,
-      CLIENT_AUTH_TOKEN_SECRET_REFRESH,
-    );
+    const tokens = await this.generateLoginToken({
+      id: client.id,
+      name: client.name,
+      clientRole: client.clientRole,
+    });
 
     client.refreshToken = await hash(tokens.refreshToken);
     await client.save();
@@ -244,10 +245,7 @@ export class AuthService {
 
   async refreshClientTokens(refreshToken: string) {
     try {
-      const payload = await verifyJWT(
-        refreshToken,
-        CLIENT_AUTH_TOKEN_SECRET_REFRESH,
-      );
+      const payload = await verifyJWT(refreshToken, AUTH_TOKEN_SECRET_REFRESH);
 
       const client = await this.clientRepository.findOneOrFail({
         where: { id: payload.id, refreshToken: Not(IsNull()) },
@@ -258,15 +256,11 @@ export class AuthService {
 
       if (!isValid) throw new Error('Not Valid');
 
-      const tokens = await this.generateLoginToken(
-        {
-          id: client.id,
-          name: client.name,
-          clientRole: client.clientRole,
-        },
-        CLIENT_AUTH_TOKEN_SECRET,
-        CLIENT_AUTH_TOKEN_SECRET_REFRESH,
-      );
+      const tokens = await this.generateLoginToken({
+        id: client.id,
+        name: client.name,
+        clientRole: client.clientRole,
+      });
       client.refreshToken = await hash(tokens.refreshToken);
       await client.save();
       return tokens;
@@ -287,12 +281,13 @@ export class AuthService {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      verificationType: MAIL_VERIFICATION_TYPE,
     };
-    const token = await generateJWT(userInfo, MAIL_VERIFICATION_TOKEN_SECRET, {
+    const token = await generateJWT(userInfo, VERIFICATION_TOKEN_SECRET, {
       expiresIn: '1h',
     });
 
-    user.mailVerificationToken = await bcrypt.hash(token, 10);
+    user.mailVerificationToken = await hash(token);
 
     await user.save();
     return {
@@ -388,7 +383,7 @@ export class AuthService {
         'INVALID_PASSWORD_RESET_TOKEN',
       );
 
-    const isValid = await bcrypt.compare(token, user.forgotPasswordToken);
+    const isValid = await compareHash(token, user.forgotPasswordToken);
 
     if (!isValid)
       throw new NotFoundException(
@@ -414,7 +409,7 @@ export class AuthService {
 
     if (!user) throw new NotFoundException('User not found', 'USER_NOT_FOUND');
 
-    const isValid = await bcrypt.compare(token, user.mailVerificationToken);
+    const isValid = await compareHash(token, user.mailVerificationToken);
 
     if (!isValid)
       throw new NotFoundException('User not found', 'USER_NOT_FOUND');

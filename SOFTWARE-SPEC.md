@@ -241,7 +241,7 @@ Please follow the steps below to get a development mattermost server running. Th
 7. You can run multiple instances by just changing the port of your host like above.
 8. Launch mattermost on your browser by visiting `http://localhost:8065` or the port that you used above.
 9. Type in the system administrator's email, username and password. **Note** that you are supposed to use a username and email different from your account in octopus. This is because octopus will try to create an account for you when you setup everything up.
-10. You will be asked to create a new team. Create a new team called `octopus`.
+10. You will be asked to create a new team. Create a new team called `octopus-app` (or any team name of your choice. this will be used in the .env file).
 11. *You will be signed in to the dashboard of mattermost.*
 12. Press the 9 squares menu icon (similiar to grid view icon) on the top left corner. Then click System Console. 
 13. Search for `Integration Management`. 
@@ -251,10 +251,10 @@ Please follow the steps below to get a development mattermost server running. Th
 17. Now click the hamburger menu on the top left and click `Switch to octopus`
 18. Press the 9 squares menu icon on the top left corner again and then click `Integrations`
 19. Click Bot Accounts and the Add Bot Account at the top right of the screen.
-20. Create a bot with the username `octopus-bot`. Type in any display name of your choice (Optional). Type in a description (Optional) and select `System Admin` as the role. Then Click Create Bot Account.
+20. Create a bot with the username `octopus-bot` (or any username of your choice). Type in any display name of your choice (Optional). Type in a description (Optional) and select `System Admin` as the role. Then Click Create Bot Account.
 21. You will get a setup successful prompt when everything went well. You will also be provided with a token. Please save this token at a secure place because this will be the token octopus will be using to login as the bot.
 22. Make sure you update all your environment variables for octopus. 
-23. You can find examples at the .env.example file. `REACT_APP_MM_SERVER_URL, MM_SERVER_URL, MM_BOT_TOKEN`. The `MM_BOT_TOKEN` is the token you received while creating a bot account.
+23. You can find examples at the .env.example file. `REACT_APP_MM_SERVER_URL, MM_SERVER_URL, MM_BOT_TOKEN, REACT_APP_MM_TEAM_NAME`. The `MM_BOT_TOKEN` is the token you received while creating a bot account. The `REACT_APP_MM_TEAM_NAME` is the team name you used in step 10.
 24. If you already had a valid session at octopus please logout and login again.
 
 

@@ -7,7 +7,11 @@ import { verifyJWT } from 'helpers/jwt';
 
 @Injectable()
 export class ParseTokenPipe implements PipeTransform {
-  constructor(private secret: string, private invalidTokenMessage: string) {}
+  constructor(
+    private secret: string,
+    private invalidTokenMessage: string,
+    private validateToken?: (payload: Record<string, any>) => boolean,
+  ) {}
 
   async transform(token: string) {
     if (!token)
@@ -15,6 +19,12 @@ export class ParseTokenPipe implements PipeTransform {
 
     try {
       const payload = await verifyJWT(token, this.secret);
+
+      if (this.validateToken && !this.validateToken(payload))
+        throw new UnauthorizedException(
+          this.invalidTokenMessage,
+          'INVALID_JWT',
+        );
 
       return payload;
     } catch (err) {

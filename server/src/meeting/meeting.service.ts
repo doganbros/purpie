@@ -37,7 +37,7 @@ dayjs.extend(timezone);
 
 const {
   JITSI_SECRET = '',
-  JITSI_DOMAIN = 'https://meet.doganbros.com',
+  JITSI_DOMAIN = '',
   RTMP_INGRESS_URL = '',
   REACT_APP_SERVER_HOST = '',
 } = process.env;

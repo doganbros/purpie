@@ -7,6 +7,11 @@ import { User } from 'entities/User.entity';
 import { Channel } from 'mattermost-redux/types/channels';
 import { fetchOrProduceNull } from '../../helpers/utils';
 
+const {
+  MM_SERVER_URL = '',
+  MM_BOT_TOKEN = '',
+  REACT_APP_MM_TEAM_NAME = '',
+} = process.env;
 @Injectable()
 export class UtilsService implements OnModuleInit {
   constructor(
@@ -20,18 +25,11 @@ export class UtilsService implements OnModuleInit {
 
   public octopusBroadcastChannel: Channel | null;
 
-  private readonly OCTOPUS_APP_TEAM_NAME = 'octopus-app';
-
   private readonly OCTOPUS_APP_BROADCAST_CHANNEL_NAME =
     'octopus-app-broadcaster';
 
   async onModuleInit() {
     this.mattermostClient = Client4;
-
-    const {
-      MM_SERVER_URL = 'http://localhost:8065',
-      MM_BOT_TOKEN = '',
-    } = process.env;
 
     this.mattermostClient.setUrl(MM_SERVER_URL);
     this.mattermostClient.setToken(MM_BOT_TOKEN);
@@ -39,12 +37,12 @@ export class UtilsService implements OnModuleInit {
     await this.mattermostClient.ping();
 
     this.octopusAppTeam = await fetchOrProduceNull(() =>
-      this.mattermostClient.getTeamByName(this.OCTOPUS_APP_TEAM_NAME),
+      this.mattermostClient.getTeamByName(REACT_APP_MM_TEAM_NAME),
     );
 
     if (!this.octopusAppTeam) {
       this.octopusAppTeam = await this.mattermostClient.createTeam({
-        name: this.OCTOPUS_APP_TEAM_NAME,
+        name: REACT_APP_MM_TEAM_NAME,
         display_name: 'Octopus App',
         type: 'O',
         description: 'The main team used to manage octopus',
@@ -53,7 +51,7 @@ export class UtilsService implements OnModuleInit {
 
     this.octopusBroadcastChannel = await fetchOrProduceNull(() =>
       this.mattermostClient.getChannelByNameAndTeamName(
-        this.OCTOPUS_APP_TEAM_NAME,
+        REACT_APP_MM_TEAM_NAME,
         this.OCTOPUS_APP_BROADCAST_CHANNEL_NAME,
       ),
     );

@@ -15,6 +15,8 @@ import { getUserZonesAction } from './store/actions/zone.action';
 import { AppState } from './store/reducers/root.reducer';
 import { initializeMattermostAction } from './store/actions/mattermost.action';
 
+const { REACT_APP_MM_TEAM_NAME = '' } = process.env;
+
 const App: FC = () => {
   const dispatch = useDispatch();
 
@@ -37,7 +39,10 @@ const App: FC = () => {
     if (isAuthenticated) {
       dispatch(getUserZonesAction());
       dispatch(
-        initializeMattermostAction(user!.mattermostToken, 'octopus-app')
+        initializeMattermostAction(
+          user!.mattermostToken,
+          REACT_APP_MM_TEAM_NAME
+        )
       );
     }
   }, [isAuthenticated]);
