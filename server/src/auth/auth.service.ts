@@ -21,6 +21,7 @@ import { UtilsService } from 'src/utils/utils.service';
 import { Not, Repository, IsNull } from 'typeorm';
 import {
   MAIL_VERIFICATION_TYPE,
+  OCTOPUS_CLIENT_AUTH_TYPE,
   PASSWORD_VERIFICATION_TYPE,
 } from './constants/auth.constants';
 import { CreateClientDto } from './dto/create-client.dto';
@@ -235,6 +236,7 @@ export class AuthService {
       id: client.id,
       name: client.name,
       clientRole: client.clientRole,
+      authType: OCTOPUS_CLIENT_AUTH_TYPE,
     });
 
     client.refreshToken = await hash(tokens.refreshToken);
