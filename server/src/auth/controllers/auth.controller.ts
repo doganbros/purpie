@@ -25,6 +25,7 @@ import {
 import { Response } from 'express';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { errorResponseDoc } from 'helpers/error-response-doc';
+import { hash } from 'helpers/utils';
 import { RegisterUserDto } from '../dto/register-user.dto';
 import { AuthService } from '../auth.service';
 import { UserBasic, UserPayload } from '../interfaces/user.interface';
@@ -35,11 +36,12 @@ import { VerifyEmailDto } from '../dto/verify-email.dto';
 import { ResetPasswordDto } from '../dto/reset-password.dto';
 import { IsAuthenticated } from '../decorators/auth.decorator';
 import { CurrentUser } from '../decorators/current-user.decorator';
+import {
+  MAIL_VERIFICATION_TYPE,
+  PASSWORD_VERIFICATION_TYPE,
+} from '../constants/auth.constants';
 
-const {
-  MAIL_VERIFICATION_TOKEN_SECRET = 'secret_m',
-  RESET_PASSWORD_TOKEN_SECRET = 'secret_r',
-} = process.env;
+const { VERIFICATION_TOKEN_SECRET = '' } = process.env;
 @Controller({ path: 'auth', version: '1' })
 @ApiTags('auth')
 export class AuthController {
@@ -195,8 +197,9 @@ export class AuthController {
     @Body(
       'token',
       new ParseTokenPipe(
-        MAIL_VERIFICATION_TOKEN_SECRET,
+        VERIFICATION_TOKEN_SECRET,
         'Email verification token is invalid',
+        (payload) => payload.verificationType === MAIL_VERIFICATION_TYPE,
       ),
     )
     { email }: UserBasic,
@@ -250,7 +253,7 @@ export class AuthController {
     const token = await this.authService.generateResetPasswordToken(
       payload.email,
     );
-    user.forgotPasswordToken = await bcrypt.hash(token, 10);
+    user.forgotPasswordToken = await hash(token);
     await user.save();
 
     const userBasicWithToken = {
@@ -283,8 +286,9 @@ export class AuthController {
     @Body(
       'token',
       new ParseTokenPipe(
-        RESET_PASSWORD_TOKEN_SECRET,
+        VERIFICATION_TOKEN_SECRET,
         'Password reset token is invalid',
+        (payload) => payload.verificationType === PASSWORD_VERIFICATION_TYPE,
       ),
     )
     {

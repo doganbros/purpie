@@ -7,7 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { verifyJWT } from 'helpers/jwt';
 
-const { CLIENT_AUTH_TOKEN_SECRET = '' } = process.env;
+const { AUTH_TOKEN_SECRET = '' } = process.env;
 
 @Injectable()
 export class ClientAuthGuard implements CanActivate {
@@ -29,7 +29,7 @@ export class ClientAuthGuard implements CanActivate {
       );
 
     try {
-      req.client = await verifyJWT(token, CLIENT_AUTH_TOKEN_SECRET);
+      req.client = await verifyJWT(token, AUTH_TOKEN_SECRET);
     } catch (err) {
       throw new UnauthorizedException(
         'You not authorized to use this route',
