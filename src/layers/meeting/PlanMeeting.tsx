@@ -62,11 +62,11 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
         userContactExclusive,
         liveStream,
         record,
-      } = userMeetingConfig.config.privacyConfig;
+      } = userMeetingConfig.config.privacyConfig || {};
 
       const initialPayload: CreateMeetingPayload = {
         startDate: null,
-        config: userMeetingConfig.config.jitsiConfig,
+        config: userMeetingConfig.config,
         public: !appSubdomain && publicMeeting,
         userContactExclusive: !appSubdomain && userContactExclusive,
         planForLater: false,
@@ -92,7 +92,7 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
         userContactExclusive,
         liveStream,
         record,
-      } = userMeetingConfig.config.privacyConfig;
+      } = userMeetingConfig.config.privacyConfig || {};
 
       const configChanged =
         !isEqual(formPayload.config, userMeetingConfig.config.jitsiConfig) ||

@@ -1,5 +1,6 @@
-import React, { FC, useState, useContext } from 'react';
+import React, { FC, useState, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Box,
   Button,
@@ -8,6 +9,8 @@ import {
   ResponsiveContext,
   Text,
 } from 'grommet';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
 import ChannelsToFollow from './ChannelsToFollow';
@@ -15,12 +18,28 @@ import ZonesToJoin from './ZonesToJoin';
 import LastActivities from './LastActivities';
 import Searchbar from './Searchbar';
 import VideoGridItem from '../../../components/utils/VideoGridItem';
-import { timeLineList } from './data/timeline-list';
 import ChannelList from './ChannelList';
+import { AppState } from '../../../store/reducers/root.reducer';
+import {
+  getPublicFeedAction,
+  getUserFeedAction,
+} from '../../../store/actions/activity.action';
+import { randomInt } from '../../../helpers/utils';
+
+dayjs.extend(relativeTime);
+
+const thumbnailSrc =
+  'https://images.unsplash.com/photo-1601511902608-bd1d92d0edb5?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&dl=stephanie-harlacher-cBHt4js8nVQ-unsplash.jpg&w=1920';
+const userAvatarSrc =
+  'https://image.flaticon.com/icons/png/512/4721/4721623.png';
 
 const Timeline: FC = () => {
   const size = useContext(ResponsiveContext);
   const history = useHistory();
+  const dispatch = useDispatch();
+  const {
+    activity: { feed },
+  } = useSelector((state: AppState) => state);
 
   const [filters, setFilters] = useState([
     {
@@ -49,6 +68,17 @@ const Timeline: FC = () => {
       active: false,
     },
   ]);
+
+  useEffect(() => {
+    const activeFilterId = filters.find((f) => f.active)?.id;
+    switch (activeFilterId) {
+      case 3 || 4:
+        dispatch(getPublicFeedAction(30, 0));
+        break;
+      default:
+        dispatch(getUserFeedAction(30, 0));
+    }
+  }, [filters]);
   return (
     <PrivatePageLayout
       title="Timeline"
@@ -91,23 +121,23 @@ const Timeline: FC = () => {
           columns={size !== 'small' ? 'medium' : '100%'}
           gap={{ row: 'large', column: 'medium' }}
         >
-          <InfiniteScroll items={timeLineList} step={6}>
-            {(item: typeof timeLineList[0]) => (
+          <InfiniteScroll items={feed.data} step={6}>
+            {(item: typeof feed.data[0]) => (
               <VideoGridItem
-                key={item.id}
-                id={item.id}
-                comments={item.comments}
-                createdAt={item.createdAt}
-                likes={item.likes}
-                live={item.live}
-                onClickPlay={() => item.onClickPlay(history)}
-                onClickSave={item.onClickSave}
-                saved={item.saved}
-                tags={item.tags}
-                thumbnailSrc={item.thumbnailSrc}
-                userAvatarSrc={item.userAvatarSrc}
-                userName={item.userName}
-                videoTitle={item.videoTitle}
+                key={item.slug}
+                id={item.slug}
+                comments={randomInt(100)}
+                createdAt={dayjs(item.startDate).fromNow()}
+                likes={randomInt(100)}
+                live={item.liveStream}
+                onClickPlay={() => history.push(`video/${item.slug}`)}
+                onClickSave={() => {}}
+                saved={false}
+                tags={item.tags.map((t, i) => ({ id: i, title: t }))}
+                thumbnailSrc={thumbnailSrc}
+                userAvatarSrc={userAvatarSrc}
+                userName={`${item.createdBy.firstName} ${item.createdBy.lastName}`}
+                videoTitle={item.title}
               />
             )}
           </InfiniteScroll>

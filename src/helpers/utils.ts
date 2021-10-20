@@ -48,3 +48,6 @@ export const fetchOrProduceNull = async <T>(
     return null;
   }
 };
+
+export const randomInt = (max: number): number =>
+  Math.floor(Math.random() * max);
