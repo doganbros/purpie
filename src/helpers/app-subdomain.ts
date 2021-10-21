@@ -2,7 +2,7 @@ const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
 
 const clientHostUrl = new URL(REACT_APP_CLIENT_HOST);
 
-const { hostname } = window.location;
+export const { hostname } = window.location;
 
 const subdomain = hostname.slice(
   0,

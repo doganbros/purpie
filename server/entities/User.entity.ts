@@ -55,7 +55,18 @@ export class User extends RecordEntity {
   @Column({ nullable: true })
   mailVerificationToken: string;
 
-  @Column({ type: 'simple-json', default: baseMeetingConfig })
+  @Column({
+    type: 'simple-json',
+    default: {
+      jitsiConfig: baseMeetingConfig,
+      privacyConfig: {
+        public: true,
+        userContactExclusive: false,
+        record: false,
+        liveStream: false,
+      },
+    } as MeetingConfig,
+  })
   userMeetingConfig: MeetingConfig;
 
   @OneToOne(() => UserRole)
