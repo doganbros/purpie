@@ -55,8 +55,11 @@ export class ActivityController {
   })
   @IsAuthenticated()
   @PaginationQueryParams()
-  getPublicFeed(@Query() query: PaginationQuery) {
-    return this.activityService.getPublicFeed(query);
+  getPublicFeed(
+    @Query() query: PaginationQuery,
+    @CurrentUser() user: UserPayload,
+  ) {
+    return this.activityService.getPublicFeed(query, user.id);
   }
 
   @Get('/list/feed/user')
