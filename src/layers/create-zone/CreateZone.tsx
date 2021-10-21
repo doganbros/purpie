@@ -22,6 +22,7 @@ import {
 import { AppState } from '../../store/reducers/root.reducer';
 import { CreateZonePayload } from '../../store/types/zone.types';
 import { nameToSubdomain } from '../../helpers/utils';
+import { hostname } from '../../helpers/app-subdomain';
 
 interface CreateZoneProps {
   onDismiss: () => void;
@@ -73,7 +74,7 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
         <Box height="100%">
           <Form
             onSubmit={({ value }: FormExtendedEvent<CreateZonePayload>) => {
-              dispatch(createZoneAction(value));
+              dispatch(createZoneAction({ ...value, subdomain }));
               dispatch(closeCreateZoneLayerAction());
             }}
           >
@@ -94,7 +95,7 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                     value={
                       subdomainInputFocus || !subdomain
                         ? subdomain
-                        : `${subdomain}.octopus.com`
+                        : `${subdomain}.${hostname}`
                     }
                     onChange={(e) => {
                       setSubdomain(e.target.value);
