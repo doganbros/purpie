@@ -19,6 +19,7 @@ import { MeetingModule } from './meeting/meeting.module';
 import { ActivityModule } from './activity/activity.module';
 import { StreamModule } from './stream/stream.module';
 import { VideoModule } from './video/video.module';
+import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { VideoModule } from './video/video.module';
     ActivityModule,
     StreamModule,
     VideoModule,
+    PostModule,
   ],
   providers: [
     {

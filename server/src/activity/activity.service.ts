@@ -104,7 +104,7 @@ export class ActivityService {
       .paginateRaw(query);
   }
 
-  baseActivity(query: Record<string, any>) {
+  baseActivity(query: Record<string, any>, userId: number) {
     const builder = this.postRepository
       .createQueryBuilder('post')
       .select([
@@ -114,6 +114,7 @@ export class ActivityService {
         'post.description',
         'post.startDate',
         'post.type',
+        'post.createdOn',
         'post.public',
         'post.videoName',
         'tags.value',
@@ -121,12 +122,16 @@ export class ActivityService {
         'post.channelId',
         'post.liveStream',
         'post.record',
-        'postCreatedBy.id',
-        'postCreatedBy.email',
-        'postCreatedBy.firstName',
-        'postCreatedBy.lastName',
+        'createdBy.id',
+        'createdBy.email',
+        'createdBy.firstName',
+        'createdBy.lastName',
+        '(select count(*) from post_like where "postId" = post.id) AS "post_likesCount"',
+        '(select count(*) from post_comment where "postId" = post.id) AS "post_commentsCount"',
+        'COALESCE((select cast(id as boolean) from post_like where post.id = "post_like"."postId" and "post_like"."userId" = :currentUserId limit 1), false) AS "post_liked"',
       ])
-      .leftJoin('post.createdBy', 'postCreatedBy')
+      .setParameter('currentUserId', userId)
+      .leftJoin('post.createdBy', 'createdBy')
       .leftJoin('post.tags', 'tags')
       .where(
         new Brackets((qb) => {
@@ -163,7 +168,7 @@ export class ActivityService {
   }
 
   getUserFeed(userId: number, query: PaginationQuery) {
-    return this.baseActivity(query)
+    return this.baseActivity(query, userId)
       .addSelect([
         'zone.id',
         'zone.name',
@@ -174,6 +179,9 @@ export class ActivityService {
         'channel.topic',
         'channel.description',
         'channel.public',
+      ])
+      .addSelect([
+        '(select case when id is null then false else true end from post_like ) AS "post_liked"',
       ])
       .leftJoin('post.channel', 'channel')
       .leftJoin(
@@ -201,11 +209,14 @@ export class ActivityService {
           );
         }),
       )
-      .paginate(query);
+      .paginateRaw(query, {
+        primaryAlias: 'post',
+        aliases: ['channel', 'zone', 'tags'],
+      });
   }
 
   getZoneFeed(zoneId: number, userId: number, query: PaginationQuery) {
-    return this.baseActivity(query)
+    return this.baseActivity(query, userId)
       .addSelect([
         'zone.id',
         'zone.name',
@@ -226,11 +237,14 @@ export class ActivityService {
       )
       .innerJoin('channel.zone', 'zone')
       .andWhere('channel.zoneId = :zoneId', { zoneId })
-      .paginate(query);
+      .paginateRaw(query, {
+        primaryAlias: 'post',
+        aliases: ['channel', 'zone', 'tags'],
+      });
   }
 
   getChannelFeed(channelId: number, userId: number, query: PaginationQuery) {
-    return this.baseActivity(query)
+    return this.baseActivity(query, userId)
       .addSelect([
         'zone.id',
         'zone.name',
@@ -249,12 +263,18 @@ export class ActivityService {
         'userChannel.channelId = :channelId and userChannel.userId = :userId',
         { userId, channelId },
       )
-      .paginate(query);
+      .paginateRaw(query, {
+        primaryAlias: 'post',
+        aliases: ['channel', 'zone', 'tags'],
+      });
   }
 
-  getPublicFeed(query: PaginationQuery) {
-    return this.baseActivity(query)
+  getPublicFeed(query: PaginationQuery, userId: number) {
+    return this.baseActivity(query, userId)
       .andWhere('post.public = true')
-      .paginate(query);
+      .paginateRaw(query, {
+        primaryAlias: 'post',
+        aliases: ['createdBy', 'tags'],
+      });
   }
 }

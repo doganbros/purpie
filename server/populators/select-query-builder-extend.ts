@@ -1,3 +1,4 @@
+import { parseRawMany } from 'helpers/parseTypeOrmRaw';
 import { paginate } from 'helpers/utils';
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
 import { PaginationQuery, PaginationResponse } from 'types/PaginationQuery';
@@ -12,7 +13,10 @@ declare module 'typeorm/query-builder/SelectQueryBuilder' {
     paginateRaw(
       this: SelectQueryBuilder<Entity>,
       query: PaginationQuery,
-      primaryCount?: boolean,
+      parseRawOptions?: {
+        primaryAlias: string;
+        aliases?: Array<string>;
+      },
     ): Promise<PaginationResponse<Record<string, any>>>;
   }
 }
@@ -31,18 +35,24 @@ SelectQueryBuilder.prototype.paginate = async function <Entity>(
 SelectQueryBuilder.prototype.paginateRaw = async function <Entity>(
   this: SelectQueryBuilder<Entity>,
   query: PaginationQuery,
-  primaryCount = true,
+  parseRawOptions: {
+    primaryAlias: string;
+    aliases?: Array<string>;
+  },
 ): Promise<PaginationResponse<Record<string, any>>> {
   const result = await Promise.all([
     this.offset(query.skip).limit(query.limit).getRawMany(),
-    primaryCount
-      ? this.getCount()
-      : this.select('count(*)', 'totalRecords')
-          .limit(undefined)
-          .offset(undefined)
-          .getRawOne()
-          .then((res) => res && Number.parseInt(res.totalRecords, 10)),
+
+    this.getCount(),
   ]);
+
+  if (parseRawOptions) {
+    result[0] = parseRawMany(
+      result[0],
+      parseRawOptions.primaryAlias,
+      parseRawOptions.aliases || [],
+    );
+  }
 
   return paginate<Record<string, any>>(result as any, query);
 };
