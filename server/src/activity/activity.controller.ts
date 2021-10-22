@@ -1,4 +1,10 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
@@ -6,6 +12,7 @@ import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
 import {
+  MixedActivityFeedDetail,
   MixedActivityFeedListResponse,
   PublicActivityFeedListResponse,
   PublicChannelSuggestionListResponse,
@@ -104,7 +111,7 @@ export class ActivityController {
   @Get('/list/feed/channel/:channelId')
   @ActivityListDecorator()
   @ApiOkResponse({
-    description: 'User gets feed for this zone',
+    description: 'User gets feed for this channel',
     type: MixedActivityFeedListResponse,
   })
   @IsAuthenticated()
@@ -123,5 +130,30 @@ export class ActivityController {
       user.id,
       query,
     );
+  }
+
+  @Get('/detail/feed/:postId')
+  @ApiOkResponse({
+    description: 'User gets post by id',
+    type: MixedActivityFeedDetail,
+  })
+  @IsAuthenticated()
+  @ApiParam({
+    name: 'postId',
+    type: Number,
+  })
+  async getFeedById(
+    @Param('postId') postId: string,
+    @CurrentUser() user: UserPayload,
+  ) {
+    const result = await this.activityService.getPostById(
+      user.id,
+      Number(postId),
+    );
+
+    if (!result)
+      throw new NotFoundException('Post not found', 'POST_NOT_FOUND');
+
+    return result;
   }
 }

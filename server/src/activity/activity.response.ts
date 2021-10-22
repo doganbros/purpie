@@ -138,7 +138,7 @@ class BaseActivityFeedList {
   createdBy: User;
 
   @ApiProperty({ isArray: true, type: String })
-  tags: Array<string>;
+  tags: Array<{ id: number; value: string }>;
 }
 
 class ActivityFeedChannel {
@@ -158,6 +158,8 @@ class ActivityFeedChannel {
 class MixedActivityFeedList extends BaseActivityFeedList {
   channel: ActivityFeedChannel;
 }
+
+export const MixedActivityFeedDetail = MixedActivityFeedList;
 
 export class MixedActivityFeedListResponse {
   @ApiProperty({ isArray: true })

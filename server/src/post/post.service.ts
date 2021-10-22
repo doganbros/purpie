@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from 'entities/Contact.entity';
 import { Post } from 'entities/Post.entity';
 import { PostComment } from 'entities/PostComment.entity';
 import { PostLike } from 'entities/PostLike.entity';
+import { PostVideo } from 'entities/PostVideo.entity';
 import { SavedPost } from 'entities/SavedPost.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { Brackets, IsNull, Repository } from 'typeorm';
@@ -22,9 +23,11 @@ export class PostService {
     private postCommentRepository: Repository<PostComment>,
     @InjectRepository(SavedPost)
     private savedPostRepository: Repository<SavedPost>,
+    @InjectRepository(PostVideo)
+    private postVideoRepository: Repository<PostVideo>,
   ) {}
 
-  getPostById(userId: number, postId: number) {
+  getOnePost(userId: number, identity: number | string) {
     return this.postRepository
       .createQueryBuilder('post')
       .select([
@@ -48,7 +51,14 @@ export class PostService {
         'post.userContactExclusive = true AND contact.userId = post.createdById AND contact.contactUserId = :userId',
         { userId },
       )
-      .where('post.id = :postId', { postId })
+      .where(
+        `${
+          typeof identity === 'string'
+            ? 'post.slug = :identity'
+            : 'post.id = :identity'
+        }`,
+        { identity },
+      )
       .andWhere(
         new Brackets((qb) => {
           qb.where(
@@ -188,9 +198,10 @@ export class PostService {
         'post.description',
         'post.startDate',
         'post.type',
+        'post.createdOn',
         'post.public',
         'post.videoName',
-        'post.createdOn',
+        'tags.id',
         'tags.value',
         'post.userContactExclusive',
         'post.channelId',
@@ -200,19 +211,33 @@ export class PostService {
         'createdBy.email',
         'createdBy.firstName',
         'createdBy.lastName',
-        'zone.id',
-        'zone.name',
-        'zone.subdomain',
-        'zone.public',
-        'channel.id',
-        'channel.name',
-        'channel.topic',
-        'channel.description',
-        'channel.public',
-        '(select count(*) from post_like where "postId" = post.id) AS "post_likesCount"',
-        '(select count(*) from post_comment where "postId" = post.id) AS "post_commentsCount"',
-        'COALESCE((select cast(id as boolean) from post_like where post.id = "post_like"."postId" and "post_like"."userId" = :currentUserId limit 1), false) AS "post_liked"',
       ])
+      .addSelect(
+        (sq) =>
+          sq
+            .select('count(*)')
+            .from(PostLike, 'post_like')
+            .where('post_like.postId = post.id'),
+        'post_likesCount',
+      )
+      .addSelect(
+        (sq) =>
+          sq
+            .select('count(*)')
+            .from(PostComment, 'post_comment')
+            .where('post_comment.postId = post.id'),
+        'post_commentsCount',
+      )
+      .addSelect(
+        (sq) =>
+          sq
+            .select('count(*) > 0')
+            .from(PostLike, 'user_post_like')
+            .where('user_post_like.postId = post.id')
+            .andWhere('user_post_like.userId = :currentUserId'),
+        'post_liked',
+      )
+      .setParameter('currentUserId', userId)
       .innerJoin('savedPost.post', 'post')
       .leftJoin('post.createdBy', 'createdBy')
       .leftJoin('post.tags', 'tags')
@@ -245,9 +270,37 @@ export class PostService {
       )
 
       .orderBy('savedPost.id', 'DESC')
-      .paginateRaw(query, {
-        primaryAlias: 'savedPost',
-        aliases: ['channel', 'zone', 'createdBy', 'tags'],
-      });
+      .paginateRawAndEntities(
+        {
+          otherFields: ['likesCount', 'commentsCount', 'liked'],
+          primaryTableAliasName: 'savedPost',
+          primaryColumnName: 'id',
+        },
+        query,
+      );
+  }
+
+  async getPostVideoForUserBySlugAndFileName(
+    userId: number,
+    slug: string,
+    fileName: string,
+  ) {
+    const post = await this.getOnePost(userId, slug);
+
+    if (!post)
+      throw new NotFoundException('Video not found', 'VIDEO_NOT_FOUND');
+
+    return this.postVideoRepository
+      .createQueryBuilder('postVideo')
+      .select([
+        'postVideo.id',
+        'postVideo.slug',
+        'postVideo.fileName',
+        'post.type',
+      ])
+      .innerJoin('postVideo.post', 'post')
+      .where('postVideo.slug = :slug', { slug })
+      .andWhere('postVideo.fileName = :fileName', { fileName })
+      .getOne();
   }
 }

@@ -8,7 +8,9 @@ import {
   Post,
   Put,
   Query,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import {
   ApiCreatedResponse,
   ApiNotFoundResponse,
@@ -16,6 +18,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { s3, s3HeadObject } from 'config/s3-storage';
 import { errorResponseDoc } from 'helpers/error-response-doc';
 import { MixedActivityFeedListResponse } from 'src/activity/activity.response';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
@@ -34,13 +37,19 @@ import {
   PostLikeListResponse,
 } from './response/post.response';
 
+const {
+  S3_VIDEO_POST_DIR = '',
+  S3_VIDEO_BUCKET_NAME = '',
+  S3_VIDEO_MEETING_RECORDING_DIR = '',
+} = process.env;
+
 @Controller({ version: '1', path: 'post' })
 @ApiTags('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
   async validatePost(userId: number, postId: number) {
-    const post = await this.postService.getPostById(userId, postId);
+    const post = await this.postService.getOnePost(userId, postId);
 
     if (!post) throw new NotFoundException('Post not found', 'POST_NOT_FOUND');
   }
@@ -329,5 +338,42 @@ export class PostController {
     const savedPost = await this.postService.createSavedPost(user.id, info);
 
     return savedPost.id;
+  }
+
+  @Get('video/view/:slug/:fileName')
+  @IsAuthenticated()
+  async viewVideoPost(
+    @CurrentUser() user: UserPayload,
+    @Param('slug') slug: string,
+    @Param('fileName') fileName: string,
+    @Res() res: Response,
+  ) {
+    try {
+      const postVideo = await this.postService.getPostVideoForUserBySlugAndFileName(
+        user.id,
+        slug,
+        fileName,
+      );
+
+      if (!postVideo)
+        throw new NotFoundException('Video not found', 'VIDEO_NOT_FOUND');
+
+      const creds = {
+        Bucket: S3_VIDEO_BUCKET_NAME,
+        Key:
+          postVideo.post.type === 'meeting'
+            ? `${S3_VIDEO_MEETING_RECORDING_DIR}${slug}/${postVideo.fileName}`
+            : `${S3_VIDEO_POST_DIR}${postVideo.fileName}`,
+      };
+      const head = await s3HeadObject(creds);
+      const objectStream = s3.getObject(creds).createReadStream();
+
+      res.setHeader('Content-Disposition', `filename=${postVideo.fileName}`);
+      if (head.ContentType) res.setHeader('Content-Type', head.ContentType);
+
+      return objectStream.pipe(res);
+    } catch (err: any) {
+      return res.status(err.statusCode || 500).json(err);
+    }
   }
 }

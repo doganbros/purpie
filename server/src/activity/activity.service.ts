@@ -3,6 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from 'entities/Channel.entity';
 import { Contact } from 'entities/Contact.entity';
 import { Post } from 'entities/Post.entity';
+import { PostComment } from 'entities/PostComment.entity';
+import { PostLike } from 'entities/PostLike.entity';
+import { SavedPost } from 'entities/SavedPost.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
@@ -117,6 +120,7 @@ export class ActivityService {
         'post.createdOn',
         'post.public',
         'post.videoName',
+        'tags.id',
         'tags.value',
         'post.userContactExclusive',
         'post.channelId',
@@ -126,10 +130,42 @@ export class ActivityService {
         'createdBy.email',
         'createdBy.firstName',
         'createdBy.lastName',
-        '(select count(*) from post_like where "postId" = post.id) AS "post_likesCount"',
-        '(select count(*) from post_comment where "postId" = post.id) AS "post_commentsCount"',
-        'COALESCE((select cast(id as boolean) from post_like where post.id = "post_like"."postId" and "post_like"."userId" = :currentUserId limit 1), false) AS "post_liked"',
       ])
+      .addSelect(
+        (sq) =>
+          sq
+            .select('count(*)')
+            .from(PostLike, 'post_like')
+            .where('post_like.postId = post.id'),
+        'post_likesCount',
+      )
+      .addSelect(
+        (sq) =>
+          sq
+            .select('count(*)')
+            .from(PostComment, 'post_comment')
+            .where('post_comment.postId = post.id'),
+        'post_commentsCount',
+      )
+      .addSelect(
+        (sq) =>
+          sq
+            .select('count(*) > 0')
+            .from(PostLike, 'user_post_like')
+            .where('user_post_like.postId = post.id')
+            .andWhere('user_post_like.userId = :currentUserId'),
+        'post_liked',
+      )
+      .addSelect(
+        (sq) =>
+          sq
+            .select('count(*) > 0')
+            .from(SavedPost, 'user_saved_post')
+            .where('user_saved_post.postId = post.id')
+            .andWhere('user_saved_post.userId = :currentUserId'),
+        'post_saved',
+      )
+
       .setParameter('currentUserId', userId)
       .leftJoin('post.createdBy', 'createdBy')
       .leftJoin('post.tags', 'tags')
@@ -167,7 +203,11 @@ export class ActivityService {
     return builder;
   }
 
-  getUserFeed(userId: number, query: PaginationQuery) {
+  getUserFeedSelection(
+    userId: number,
+    query: Record<string, any> = {},
+    includePublic = false,
+  ) {
     return this.baseActivity(query, userId)
       .addSelect([
         'zone.id',
@@ -179,9 +219,6 @@ export class ActivityService {
         'channel.topic',
         'channel.description',
         'channel.public',
-      ])
-      .addSelect([
-        '(select case when id is null then false else true end from post_like ) AS "post_liked"',
       ])
       .leftJoin('post.channel', 'channel')
       .leftJoin(
@@ -201,6 +238,7 @@ export class ActivityService {
         new Brackets((qb) => {
           qb.where(
             new Brackets((qbi) => {
+              if (includePublic) qbi.orWhere('post.public = true');
               qbi
                 .orWhere('userChannel.id is not null')
                 .orWhere('contact.contactUserId is not null')
@@ -208,11 +246,27 @@ export class ActivityService {
             }),
           );
         }),
-      )
-      .paginateRaw(query, {
-        primaryAlias: 'post',
-        aliases: ['channel', 'zone', 'tags'],
-      });
+      );
+  }
+
+  getUserFeed(userId: number, query: PaginationQuery) {
+    return this.getUserFeedSelection(userId, query).paginateRawAndEntities(
+      {
+        otherFields: ['commentsCount', 'likesCount', 'liked', 'saved'],
+        primaryColumnName: 'id',
+        primaryTableAliasName: 'post',
+      },
+      query,
+    );
+  }
+
+  getPostById(userId: number, postId: number) {
+    return this.getUserFeedSelection(userId, {}, true)
+      .andWhere('post.id = :postId', { postId })
+      .getRawOneAndEntity(
+        ['commentsCount', 'likesCount', 'liked', 'saved'],
+        'post',
+      );
   }
 
   getZoneFeed(zoneId: number, userId: number, query: PaginationQuery) {
@@ -237,10 +291,14 @@ export class ActivityService {
       )
       .innerJoin('channel.zone', 'zone')
       .andWhere('channel.zoneId = :zoneId', { zoneId })
-      .paginateRaw(query, {
-        primaryAlias: 'post',
-        aliases: ['channel', 'zone', 'tags'],
-      });
+      .paginateRawAndEntities(
+        {
+          otherFields: ['commentsCount', 'likesCount', 'liked', 'saved'],
+          primaryColumnName: 'id',
+          primaryTableAliasName: 'post',
+        },
+        query,
+      );
   }
 
   getChannelFeed(channelId: number, userId: number, query: PaginationQuery) {
@@ -263,18 +321,26 @@ export class ActivityService {
         'userChannel.channelId = :channelId and userChannel.userId = :userId',
         { userId, channelId },
       )
-      .paginateRaw(query, {
-        primaryAlias: 'post',
-        aliases: ['channel', 'zone', 'tags'],
-      });
+      .paginateRawAndEntities(
+        {
+          otherFields: ['commentsCount', 'likesCount', 'liked', 'saved'],
+          primaryColumnName: 'id',
+          primaryTableAliasName: 'post',
+        },
+        query,
+      );
   }
 
   getPublicFeed(query: PaginationQuery, userId: number) {
     return this.baseActivity(query, userId)
       .andWhere('post.public = true')
-      .paginateRaw(query, {
-        primaryAlias: 'post',
-        aliases: ['createdBy', 'tags'],
-      });
+      .paginateRawAndEntities(
+        {
+          otherFields: ['commentsCount', 'likesCount', 'liked', 'saved'],
+          primaryColumnName: 'id',
+          primaryTableAliasName: 'post',
+        },
+        query,
+      );
   }
 }

@@ -16,8 +16,25 @@ declare module 'typeorm/query-builder/SelectQueryBuilder' {
       parseRawOptions?: {
         primaryAlias: string;
         aliases?: Array<string>;
+        idColumnName?: string;
+        arrayAliases?: Array<string>;
       },
     ): Promise<PaginationResponse<Record<string, any>>>;
+
+    paginateRawAndEntities(
+      this: SelectQueryBuilder<Entity>,
+      options: {
+        otherFields: Array<string>;
+        primaryColumnName: string;
+        primaryTableAliasName: string;
+      },
+      query: PaginationQuery,
+    ): Promise<PaginationResponse<Record<string, any>>>;
+
+    getRawOneAndEntity(
+      otherFields: Array<string>,
+      primaryTableAliasName: string,
+    ): Promise<Record<string, any> | null>;
   }
 }
 
@@ -38,6 +55,8 @@ SelectQueryBuilder.prototype.paginateRaw = async function <Entity>(
   parseRawOptions: {
     primaryAlias: string;
     aliases?: Array<string>;
+    idColumnName?: string;
+    arrayAliases?: Array<string>;
   },
 ): Promise<PaginationResponse<Record<string, any>>> {
   const result = await Promise.all([
@@ -51,8 +70,70 @@ SelectQueryBuilder.prototype.paginateRaw = async function <Entity>(
       result[0],
       parseRawOptions.primaryAlias,
       parseRawOptions.aliases || [],
+      parseRawOptions.idColumnName || 'id',
+      parseRawOptions.arrayAliases || [],
     );
   }
 
-  return paginate<Record<string, any>>(result as any, query);
+  return paginate<Record<string, any>>(result, query);
+};
+
+SelectQueryBuilder.prototype.paginateRawAndEntities = async function <Entity>(
+  this: SelectQueryBuilder<Entity>,
+  options: {
+    otherFields: Array<string>;
+    primaryColumnName: string;
+    primaryTableAliasName: string;
+  },
+  query: PaginationQuery,
+): Promise<PaginationResponse<Entity>> {
+  const { otherFields, primaryColumnName, primaryTableAliasName } = options;
+  const [rawAndEntities, total] = await Promise.all([
+    this.skip(query.skip).take(query.limit).getRawAndEntities(),
+    this.getCount(),
+  ]);
+
+  const result: [data: Entity[], total: number] = [
+    rawAndEntities.entities.map((v) => ({
+      ...v,
+      ...otherFields.reduce(
+        (acc, otherField) => ({
+          ...acc,
+          [otherField]: rawAndEntities.raw.find(
+            (re: any) =>
+              re[`${primaryTableAliasName}_${primaryColumnName}`] ===
+              (v as any)[primaryColumnName],
+          )?.[`${primaryTableAliasName}_${otherField}`],
+        }),
+        {},
+      ),
+    })),
+    total,
+  ];
+
+  return paginate<Entity>(result, query);
+};
+
+SelectQueryBuilder.prototype.getRawOneAndEntity = async function <Entity>(
+  this: SelectQueryBuilder<Entity>,
+  otherFields: Array<string>,
+  primaryTableAliasName: string,
+): Promise<Record<string, any> | null> {
+  const [entityResult, rawResult] = await Promise.all([
+    this.getOne(),
+    this.getRawOne(),
+  ]);
+
+  if (!entityResult) return null;
+
+  return {
+    ...entityResult,
+    ...otherFields.reduce(
+      (acc, otherField) => ({
+        ...acc,
+        [otherField]: rawResult?.[`${primaryTableAliasName}_${otherField}`],
+      }),
+      {},
+    ),
+  };
 };

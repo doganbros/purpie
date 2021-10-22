@@ -29,7 +29,6 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
-import { s3, s3HeadObject } from 'config/s3-storage';
 import { MeetingConfig } from 'types/Meeting';
 import { errorResponseDoc } from 'helpers/error-response-doc';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
@@ -42,12 +41,6 @@ import { ClientVerifyMeetingAuthDto } from './dto/client-verify-meeting-auth.dto
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
-
-const {
-  S3_VIDEO_BUCKET_NAME = '',
-  S3_VIDEO_MEETING_RECORDING_DIR = '',
-} = process.env;
-
 @Controller({ path: 'meeting', version: '1' })
 @ApiTags('meeting')
 export class MeetingController {
@@ -278,49 +271,6 @@ export class MeetingController {
     );
 
     return this.meetingService.getMeetingRecordingList(meetingSlug, query);
-  }
-
-  @Get('recordings/file/:meetingSlug/:fileName')
-  @ApiOkResponse({
-    description: 'User gets meeting recording file (streamed)',
-  })
-  @IsAuthenticated()
-  async getMeetingRecordingFile(
-    @CurrentUser() user: UserPayload,
-    @Param('meetingSlug') meetingSlug: string,
-    @Param('fileName') fileName: string,
-    @Res() res: Response,
-  ) {
-    try {
-      await this.meetingService.currentUserRecordingValidator(
-        user.id,
-        meetingSlug,
-      );
-
-      const recording = await this.meetingService.getMeetingRecording(
-        meetingSlug,
-        fileName,
-      );
-
-      if (!recording)
-        throw new NotFoundException('File not found', 'FILE_NOT_FOUND');
-
-      const creds = {
-        Bucket: S3_VIDEO_BUCKET_NAME,
-        Key: `${S3_VIDEO_MEETING_RECORDING_DIR}${recording.meetingSlug}/${recording.fileName}`,
-      };
-      const head = await s3HeadObject(creds);
-      const objectStream = s3.getObject(creds).createReadStream();
-
-      res.setHeader('Content-Disposition', `filename=${recording.fileName}`);
-      if (head.ContentType) res.setHeader('Content-Type', head.ContentType);
-
-      return objectStream.pipe(res);
-    } catch (err: any) {
-      return res
-        .status(err.statusCode || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json(err);
-    }
   }
 
   @Post('/client/event')

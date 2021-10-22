@@ -10,7 +10,7 @@ import crypto from 'crypto';
 import { Post } from 'entities/Post.entity';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
-import { MeetingRecording } from 'entities/MeetingRecording.entity';
+import { PostVideo } from 'entities/PostVideo.entity';
 import { generateJWT } from 'helpers/jwt';
 import { Brackets, DeepPartial, Repository } from 'typeorm';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
@@ -48,8 +48,8 @@ export class MeetingService {
     @InjectRepository(Post) private postRepository: Repository<Post>,
     @InjectRepository(MeetingLog)
     private meetingLogRepository: Repository<MeetingLog>,
-    @InjectRepository(MeetingRecording)
-    private meetingRecordingRepository: Repository<MeetingRecording>,
+    @InjectRepository(PostVideo)
+    private postVideoRepository: Repository<PostVideo>,
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(UserChannel)
     private userChannelRepository: Repository<UserChannel>,
@@ -203,9 +203,9 @@ export class MeetingService {
   }
 
   async getMeetingRecordingList(slug: string, query: PaginationQuery) {
-    return this.meetingRecordingRepository
+    return this.postVideoRepository
       .createQueryBuilder('meetingRecording')
-      .where('meetingRecording.meetingSlug = :slug', { slug })
+      .where('meetingRecording.slug = :slug', { slug })
       .paginate(query);
   }
 
@@ -221,10 +221,10 @@ export class MeetingService {
       .getOne();
   }
 
-  async getMeetingRecording(meetingSlug: string, fileName: string) {
-    return this.meetingRecordingRepository
+  async getMeetingRecording(id: number, fileName: string) {
+    return this.postVideoRepository
       .createQueryBuilder('meetingRecording')
-      .where('meetingRecording.meetingSlug = :meetingSlug', { meetingSlug })
+      .where('meetingRecording.postId = :id', { id })
       .andWhere('meetingRecording.fileName = :fileName', { fileName })
       .getOne();
   }
