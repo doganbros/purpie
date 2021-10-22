@@ -12,8 +12,8 @@ interface VideoGridItemProps {
   userName: string;
   createdAt: string;
   videoTitle: string;
-  likes: number;
-  comments: number;
+  likes: string;
+  comments: string;
   tags: { id: number; title: string }[];
   onClickPlay: (id: string) => any;
   onClickSave: (id: string) => any;

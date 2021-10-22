@@ -24,7 +24,6 @@ import {
   getPublicFeedAction,
   getUserFeedAction,
 } from '../../../store/actions/activity.action';
-import { randomInt } from '../../../helpers/utils';
 
 dayjs.extend(relativeTime);
 
@@ -126,17 +125,17 @@ const Timeline: FC = () => {
               <VideoGridItem
                 key={item.slug}
                 id={item.slug}
-                comments={randomInt(100)}
-                createdAt={dayjs(item.startDate).fromNow()}
-                likes={randomInt(100)}
+                comments={item.commentsCount}
+                createdAt={dayjs(item.createdOn).fromNow()}
+                likes={item.likesCount}
                 live={item.liveStream}
                 onClickPlay={() => history.push(`video/${item.slug}`)}
                 onClickSave={() => {}}
                 saved={false}
-                tags={item.tags.map((t, i) => ({ id: i, title: t }))}
+                tags={[]}
                 thumbnailSrc={thumbnailSrc}
                 userAvatarSrc={userAvatarSrc}
-                userName={`${item.createdBy.firstName} ${item.createdBy.lastName}`}
+                userName={`${item.createdBy?.firstName} ${item.createdBy?.lastName}`}
                 videoTitle={item.title}
               />
             )}

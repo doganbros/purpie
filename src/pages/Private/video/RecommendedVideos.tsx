@@ -19,9 +19,9 @@ const RecommendedVideos: FC = () => {
             <VideoGridItem
               key={item.id}
               id={item.id}
-              comments={item.comments}
+              comments={item.comments.toString()}
               createdAt={item.createdAt}
-              likes={item.likes}
+              likes={item.likes.toString()}
               live={item.live}
               onClickPlay={item.onClickPlay}
               onClickSave={item.onClickSave}

@@ -21,6 +21,8 @@ import {
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
 import { UserBasic } from './auth.types';
+import { ChannelBasic } from './channel.types';
+import { ZoneBasic } from './zone.types';
 
 export interface ZoneSuggestionListItem {
   zone_id: number;
@@ -57,17 +59,23 @@ export enum PostType {
 
 export interface Post {
   id: number;
+  createdOn: Date;
   title: string;
   description: string;
   slug: string;
-  startDate: Date;
+  startDate?: Date;
   type: PostType;
-  channelId: number;
+  channelId?: number;
   public: boolean;
   liveStream: boolean;
   record: boolean;
   userContactExclusive: boolean;
   createdBy: UserBasic;
+  likesCount: string;
+  commentsCount: string;
+  liked?: boolean;
+  channel: ChannelBasic;
+  zone: ZoneBasic;
   tags: string[];
 }
 
