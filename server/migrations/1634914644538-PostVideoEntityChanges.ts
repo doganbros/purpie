@@ -56,8 +56,8 @@ export class PostVideoEntityChanges1634914644538 implements MigrationInterface {
 
     for (const recording of recordings) {
       await queryRunner.query(
-        'INSERT INTO post_video ("slug", "fileName", "createdOn") values ($1 , $2, $3)',
-        [recording.slug, recording.fileName, recording.createdOn],
+        'INSERT INTO post_video ("slug", "fileName") values ($1 , $2)',
+        [recording.slug, recording.fileName],
       );
     }
 
@@ -68,8 +68,8 @@ export class PostVideoEntityChanges1634914644538 implements MigrationInterface {
 
     for (const videoPost of videoPosts) {
       await queryRunner.query(
-        'INSERT INTO post_video ("slug", "fileName", "createdOn") values ($1, $2, $3)',
-        [videoPost.slug, videoPost.videoName, videoPost.createdOn],
+        'INSERT INTO post_video ("slug", "fileName") values ($1, $2)',
+        [videoPost.slug, videoPost.videoName],
       );
     }
 
