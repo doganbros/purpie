@@ -72,3 +72,6 @@ export const getChannelFeed = (
       params: { limit, skip, postType, streaming },
     })
     .then((res) => res.data);
+
+export const getPostDetail = (postId: number): Promise<Post> =>
+  http.get(`/activity/detail/feed/${postId}`).then((res) => res.data);

@@ -133,11 +133,12 @@ const Timeline: FC = () => {
                 onClickPlay={() => history.push(`video/${item.id}`)}
                 onClickSave={() => {}}
                 saved={false}
-                tags={[]}
+                tags={item.tags}
                 thumbnailSrc={thumbnailSrc}
                 userAvatarSrc={userAvatarSrc}
                 userName={`${item.createdBy?.firstName} ${item.createdBy?.lastName}`}
                 videoTitle={item.title}
+                videoName={item.videoName}
               />
             )}
           </InfiniteScroll>

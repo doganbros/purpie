@@ -17,6 +17,9 @@ import {
   CHANNEL_FEED_REQUESTED,
   CHANNEL_FEED_SUCCESS,
   CHANNEL_FEED_FAILED,
+  POST_DETAIL_REQUESTED,
+  POST_DETAIL_SUCCESS,
+  POST_DETAIL_FAILED,
 } from '../constants/activity.constants';
 
 import * as ActivityService from '../services/activity.service';
@@ -188,6 +191,27 @@ export const getChannelFeedAction = (
     } catch (err) {
       dispatch({
         type: CHANNEL_FEED_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const getPostDetailAction = (postId: number): ActivityAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: POST_DETAIL_REQUESTED,
+      payload: { postId },
+    });
+    try {
+      const payload = await ActivityService.getPostDetail(postId);
+      dispatch({
+        type: POST_DETAIL_SUCCESS,
+        payload,
+      });
+    } catch (err) {
+      dispatch({
+        type: POST_DETAIL_FAILED,
         payload: err?.response?.data,
       });
     }

@@ -17,6 +17,9 @@ import {
   CHANNEL_FEED_REQUESTED,
   CHANNEL_FEED_SUCCESS,
   CHANNEL_FEED_FAILED,
+  POST_DETAIL_REQUESTED,
+  POST_DETAIL_SUCCESS,
+  POST_DETAIL_FAILED,
 } from '../constants/activity.constants';
 import { ActivityActionParams, ActivityState } from '../types/activity.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -34,6 +37,11 @@ const initialState: ActivityState = {
   },
   feed: {
     ...paginationInitialState,
+    loading: false,
+    error: null,
+  },
+  postDetail: {
+    data: null,
     loading: false,
     error: null,
   },
@@ -204,6 +212,33 @@ const activityReducer = (
         ...state,
         feed: {
           ...state.feed,
+          loading: false,
+          error: null,
+        },
+      };
+    case POST_DETAIL_REQUESTED:
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          loading: true,
+          error: null,
+        },
+      };
+    case POST_DETAIL_SUCCESS:
+      return {
+        ...state,
+        postDetail: {
+          data: action.payload,
+          loading: false,
+          error: null,
+        },
+      };
+    case POST_DETAIL_FAILED:
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
           loading: false,
           error: null,
         },

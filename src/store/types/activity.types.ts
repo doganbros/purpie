@@ -17,12 +17,14 @@ import {
   CHANNEL_FEED_REQUESTED,
   CHANNEL_FEED_SUCCESS,
   CHANNEL_FEED_FAILED,
+  POST_DETAIL_REQUESTED,
+  POST_DETAIL_SUCCESS,
+  POST_DETAIL_FAILED,
 } from '../constants/activity.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
 import { UserBasic } from './auth.types';
 import { ChannelBasic } from './channel.types';
-import { ZoneBasic } from './zone.types';
 
 export interface ZoneSuggestionListItem {
   zone_id: number;
@@ -56,27 +58,32 @@ export enum PostType {
   meeting = 'meeting',
   video = 'video',
 }
+export interface Tag {
+  id: number;
+  value: string;
+}
 
 export interface Post {
-  id: number;
+  channel?: ChannelBasic;
+  channelId?: number;
+  commentsCount: string;
+  createdBy: UserBasic;
   createdOn: Date;
-  title: string;
   description: string;
+  id: number;
+  liked: boolean;
+  likesCount: string;
+  liveStream: boolean;
+  public: boolean;
+  record: boolean;
+  saved: boolean;
   slug: string;
   startDate?: Date;
+  tags: Tag[];
+  title: string;
   type: PostType;
-  channelId?: number;
-  public: boolean;
-  liveStream: boolean;
-  record: boolean;
   userContactExclusive: boolean;
-  createdBy: UserBasic;
-  likesCount: string;
-  commentsCount: string;
-  liked?: boolean;
-  channel: ChannelBasic;
-  zone: ZoneBasic;
-  tags: string[];
+  videoName: string;
 }
 
 export interface ActivityState {
@@ -91,6 +98,11 @@ export interface ActivityState {
   feed: PaginatedResponse<Post> & {
     loading: boolean;
     error: ResponseError | null;
+  };
+  postDetail: {
+    loading: boolean;
+    error: ResponseError | null;
+    data: Post | null;
   };
 }
 
@@ -115,6 +127,12 @@ export type ActivityActionParams =
       };
     }
   | {
+      type: typeof POST_DETAIL_REQUESTED;
+      payload: {
+        postId: number;
+      };
+    }
+  | {
       type: typeof ZONE_SUGGESTIONS_SUCCESS;
       payload: PaginatedResponse<ZoneSuggestionListItem>;
     }
@@ -131,13 +149,18 @@ export type ActivityActionParams =
       payload: PaginatedResponse<Post>;
     }
   | {
+      type: typeof POST_DETAIL_SUCCESS;
+      payload: Post;
+    }
+  | {
       type:
         | typeof CHANNEL_SUGGESTIONS_FAILED
         | typeof ZONE_SUGGESTIONS_FAILED
         | typeof PUBLIC_FEED_FAILED
         | typeof USER_FEED_FAILED
         | typeof ZONE_FEED_FAILED
-        | typeof CHANNEL_FEED_FAILED;
+        | typeof CHANNEL_FEED_FAILED
+        | typeof POST_DETAIL_FAILED;
       payload: ResponseError;
     };
 

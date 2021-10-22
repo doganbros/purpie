@@ -32,6 +32,7 @@ const RecommendedVideos: FC = () => {
               userAvatarSrc={item.userAvatarSrc}
               userName={item.userName}
               videoTitle={item.videoTitle}
+              videoName={item.id}
             />
           )}
         </InfiniteScroll>

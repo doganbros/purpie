@@ -15,9 +15,10 @@ interface VideoGridItemProps {
   userName: string;
   createdAt: string;
   videoTitle: string;
+  videoName: string;
   likes: string;
   comments: string;
-  tags: { id: number; title: string }[];
+  tags: { id: number; value: string }[];
   onClickPlay: (id: number) => any;
   onClickSave: (id: number) => any;
 }
@@ -31,6 +32,7 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
   userName,
   createdAt,
   videoTitle,
+  videoName,
   likes,
   comments,
   tags,
@@ -38,7 +40,6 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
   onClickSave,
 }) => {
   const [hover, setHover] = React.useState(false);
-  const src = http.defaults.baseURL?.concat('/video/view/').concat(slug);
   return (
     <Box
       onMouseEnter={() => {
@@ -56,19 +57,15 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
     >
       <ExtendedBox position="relative">
         <VideoPlayer
-          options={
-            src
-              ? {
-                  autoplay: false,
-                  sources: [
-                    {
-                      src,
-                      type: 'video/mp4',
-                    },
-                  ],
-                }
-              : {}
-          }
+          options={{
+            autoplay: false,
+            sources: [
+              {
+                src: `${http.defaults.baseURL}/post/video/view/${slug}/${videoName}`,
+                type: 'video/mp4',
+              },
+            ],
+          }}
         />
         <ExtendedBox
           position="absolute"
@@ -148,7 +145,7 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
       <Box direction="row" gap="small">
         {tags.map((t) => (
           <Text key={t.id} color="status-disabled" size="small">
-            {t.title}
+            {t.value}
           </Text>
         ))}
       </Box>
