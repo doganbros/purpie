@@ -110,6 +110,7 @@ cp .env.example .env # Then make changes to the boilerplate provided
 
 ```bash
 yarn server:start:dev # Runs backend side in dev mode
+yarn start:server # Runs backend in production
 yarn start:web # Runs frontend side
 ```
 
