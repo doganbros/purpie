@@ -316,7 +316,7 @@ export class MeetingController {
       if (head.ContentType) res.setHeader('Content-Type', head.ContentType);
 
       return objectStream.pipe(res);
-    } catch (err) {
+    } catch (err: any) {
       return res
         .status(err.statusCode || HttpStatus.INTERNAL_SERVER_ERROR)
         .json(err);

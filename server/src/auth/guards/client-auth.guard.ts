@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { verifyJWT } from 'helpers/jwt';
+import { OCTOPUS_CLIENT_AUTH_TYPE } from '../constants/auth.constants';
 
 const { AUTH_TOKEN_SECRET = '' } = process.env;
 
@@ -30,6 +31,9 @@ export class ClientAuthGuard implements CanActivate {
 
     try {
       req.client = await verifyJWT(token, AUTH_TOKEN_SECRET);
+
+      if (req.client.authType !== OCTOPUS_CLIENT_AUTH_TYPE)
+        throw new Error('Invalid auth type');
     } catch (err) {
       throw new UnauthorizedException(
         'You not authorized to use this route',

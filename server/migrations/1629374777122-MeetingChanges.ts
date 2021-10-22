@@ -35,7 +35,17 @@ export class MeetingChanges1629374777122 implements MigrationInterface {
     await queryRunner.manager.update(
       User,
       {},
-      { userMeetingConfig: baseMeetingConfig as any },
+      {
+        userMeetingConfig: {
+          jitsiConfig: baseMeetingConfig,
+          privacyConfig: {
+            liveStream: false,
+            record: false,
+            public: true,
+            userContactExclusive: false,
+          },
+        },
+      },
     );
   }
 
