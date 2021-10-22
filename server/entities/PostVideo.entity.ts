@@ -3,14 +3,14 @@ import { RecordEntity } from './base/RecordEntity';
 import { Post } from './Post.entity';
 
 @Entity()
-@Unique(['meetingSlug', 'fileName'])
-export class MeetingRecording extends RecordEntity {
+@Unique(['slug', 'fileName'])
+export class PostVideo extends RecordEntity {
   @Column()
-  meetingSlug: string;
+  slug: string;
 
   @ManyToOne(() => Post, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'meetingSlug', referencedColumnName: 'slug' })
-  meeting: Post;
+  @JoinColumn({ name: 'slug', referencedColumnName: 'slug' })
+  post: Post;
 
   @Column()
   fileName: string;
