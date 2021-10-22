@@ -129,7 +129,7 @@ const Timeline: FC = () => {
                 createdAt={dayjs(item.createdOn).fromNow()}
                 likes={item.likesCount}
                 live={item.liveStream}
-                onClickPlay={() => history.push(`video/${item.slug}`)}
+                onClickPlay={() => history.push(`video/${item.id}`)}
                 onClickSave={() => {}}
                 saved={false}
                 tags={[]}

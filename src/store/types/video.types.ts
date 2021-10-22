@@ -27,7 +27,7 @@ export interface VideoDetail {
   videoName: string;
   userContactExclusive: boolean;
   createdBy: UserBasic;
-  tags: string[];
+  tags: { value: string }[];
   channel?: ChannelBasic;
 }
 
