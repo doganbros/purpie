@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import dayjs from 'dayjs';
 import { Contact } from 'entities/Contact.entity';
 import { Post } from 'entities/Post.entity';
-import { MeetingRecording } from 'entities/MeetingRecording.entity';
+import { PostVideo } from 'entities/PostVideo.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { MailService } from 'src/mail/mail.service';
@@ -18,8 +18,8 @@ export class VideoService {
     private userChannelRepository: Repository<UserChannel>,
     @InjectRepository(Post)
     private postRepository: Repository<Post>,
-    @InjectRepository(MeetingRecording)
-    private meetingRecordingRepository: Repository<MeetingRecording>,
+    @InjectRepository(PostVideo)
+    private postVideoRepository: Repository<PostVideo>,
     private mailService: MailService,
   ) {}
 
@@ -32,7 +32,15 @@ export class VideoService {
   }
 
   async createNewVideoPost(payload: Partial<Post>) {
-    return this.postRepository.create(payload).save();
+    const videoPost = await this.postRepository.create(payload).save();
+    await this.postVideoRepository
+      .create({
+        slug: payload.slug,
+        fileName: payload.videoName,
+      })
+      .save();
+
+    return videoPost;
   }
 
   async sendVideoInfoMail(user: UserPayload, videoPost: Post) {
@@ -128,20 +136,16 @@ export class VideoService {
       .then((res) => !!res.affected);
   }
 
-  async setMeetingRecordingFile(slug: string, fileName: string) {
-    const result = await this.postRepository.update(
-      { slug, type: 'meeting' },
-      { videoName: fileName },
-    );
+  async setPostVideoFile(slug: string, fileName: string) {
+    const post = await this.postRepository.findOne({ where: { slug } });
 
-    if (result.affected) {
-      return this.meetingRecordingRepository
-        .create({
-          meetingSlug: slug,
-          fileName,
-        })
-        .save();
-    }
-    return null;
+    if (!post) return null;
+
+    post.videoName = fileName;
+    await post.save();
+
+    return this.postVideoRepository
+      .create({ slug: post.slug, fileName })
+      .save();
   }
 }

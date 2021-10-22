@@ -3,13 +3,11 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
   HttpCode,
   HttpStatus,
   NotFoundException,
   Param,
   Post,
-  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -17,8 +15,8 @@ import { ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Post as PostEntity } from 'entities/Post.entity';
 import path from 'path';
-import { Express, Response } from 'express';
-import { s3HeadObject, s3, s3Storage } from 'config/s3-storage';
+import { Express } from 'express';
+import { s3, s3Storage } from 'config/s3-storage';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { IsClientAuthenticated } from 'src/auth/decorators/client-auth.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
@@ -104,58 +102,6 @@ export class VideoController {
     return videoPost.id;
   }
 
-  @Get('detail/:videoId')
-  @IsAuthenticated()
-  async getVideoPost(
-    @CurrentUser() user: UserPayload,
-    @Param() info: VideoIdParams,
-  ) {
-    const videoPost = await this.staticVideoService.getVideoPostForUserById(
-      user.id,
-      info.videoId,
-    );
-
-    if (!videoPost)
-      throw new NotFoundException(
-        'Video post not found',
-        'VIDEO_POST_NOT_FOUND',
-      );
-
-    return videoPost;
-  }
-
-  @Get('view/:slug')
-  @IsAuthenticated()
-  async viewVideoPost(
-    @CurrentUser() user: UserPayload,
-    @Param('slug') slug: string,
-    @Res() res: Response,
-  ) {
-    try {
-      const videoPost = await this.staticVideoService.getVideoPostForUserBySlug(
-        user.id,
-        slug,
-      );
-
-      if (!videoPost)
-        throw new NotFoundException('Video not found', 'VIDEO_NOT_FOUND');
-
-      const creds = {
-        Bucket: S3_VIDEO_BUCKET_NAME,
-        Key: `${S3_VIDEO_POST_DIR}${videoPost.videoName}`,
-      };
-      const head = await s3HeadObject(creds);
-      const objectStream = s3.getObject(creds).createReadStream();
-
-      res.setHeader('Content-Disposition', `filename=${videoPost.videoName}`);
-      if (head.ContentType) res.setHeader('Content-Type', head.ContentType);
-
-      return objectStream.pipe(res);
-    } catch (err) {
-      return res.status(err.statusCode || 500).json(err);
-    }
-  }
-
   @Delete('remove/:videoId')
   @IsAuthenticated()
   async removeVideoPost(
@@ -190,7 +136,7 @@ export class VideoController {
   @HttpCode(HttpStatus.OK)
   async videoUploadClientFeedback(@Body() info: VideoUploadClientFeedbackDto) {
     if (!info.type || info.type === 'meeting-recording') {
-      const result = await this.staticVideoService.setMeetingRecordingFile(
+      const result = await this.staticVideoService.setPostVideoFile(
         info.id,
         info.fileName,
       );
