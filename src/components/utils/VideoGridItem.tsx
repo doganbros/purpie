@@ -145,7 +145,7 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
       <Box direction="row" gap="small">
         {tags.map((t) => (
           <Text key={t.id} color="status-disabled" size="small">
-            {t.value}
+            #{t.value}
           </Text>
         ))}
       </Box>
