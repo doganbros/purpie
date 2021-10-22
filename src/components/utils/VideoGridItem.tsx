@@ -1,10 +1,13 @@
 import React, { FC } from 'react';
-import { Avatar, Box, Image, Text } from 'grommet';
-import { Bookmark, Chat, Favorite, PlayFill } from 'grommet-icons';
+import { Avatar, Box, Text } from 'grommet';
+import { Bookmark, Chat, Favorite } from 'grommet-icons';
 import ExtendedBox from './ExtendedBox';
+import VideoPlayer from './video/VideoPlayer';
+import { http } from '../../config/http';
 
 interface VideoGridItemProps {
-  id: string;
+  id: number;
+  slug: string;
   thumbnailSrc: string;
   live: boolean;
   saved: boolean;
@@ -15,13 +18,13 @@ interface VideoGridItemProps {
   likes: string;
   comments: string;
   tags: { id: number; title: string }[];
-  onClickPlay: (id: string) => any;
-  onClickSave: (id: string) => any;
+  onClickPlay: (id: number) => any;
+  onClickSave: (id: number) => any;
 }
 
 const VideoGridItem: FC<VideoGridItemProps> = ({
   id,
-  thumbnailSrc,
+  slug,
   live,
   saved,
   userAvatarSrc,
@@ -35,6 +38,7 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
   onClickSave,
 }) => {
   const [hover, setHover] = React.useState(false);
+  const src = http.defaults.baseURL?.concat('/video/view/').concat(slug);
   return (
     <Box
       onMouseEnter={() => {
@@ -51,18 +55,21 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
       gap="small"
     >
       <ExtendedBox position="relative">
-        <ExtendedBox
-          position="absolute"
-          top="0"
-          bottom="0"
-          left="0"
-          right="0"
-          margin="auto"
-          justify="center"
-          align="center"
-        >
-          {hover && <PlayFill size="xlarge" color="white" />}
-        </ExtendedBox>
+        <VideoPlayer
+          options={
+            src
+              ? {
+                  autoplay: false,
+                  sources: [
+                    {
+                      src,
+                      type: 'video/mp4',
+                    },
+                  ],
+                }
+              : {}
+          }
+        />
         <ExtendedBox
           position="absolute"
           top="0"
@@ -98,8 +105,6 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
             )}
           </Box>
         </ExtendedBox>
-
-        <Image src={thumbnailSrc} />
       </ExtendedBox>
 
       <ExtendedBox

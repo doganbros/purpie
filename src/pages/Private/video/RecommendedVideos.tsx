@@ -18,7 +18,8 @@ const RecommendedVideos: FC = () => {
           {(item: typeof recommendedVideos[0]) => (
             <VideoGridItem
               key={item.id}
-              id={item.id}
+              id={+item.id}
+              slug={item.id.toString()}
               comments={item.comments.toString()}
               createdAt={item.createdAt}
               likes={item.likes.toString()}

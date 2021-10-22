@@ -124,7 +124,8 @@ const Timeline: FC = () => {
             {(item: typeof feed.data[0]) => (
               <VideoGridItem
                 key={item.slug}
-                id={item.slug}
+                slug={item.slug}
+                id={item.id}
                 comments={item.commentsCount}
                 createdAt={dayjs(item.createdOn).fromNow()}
                 likes={item.likesCount}
