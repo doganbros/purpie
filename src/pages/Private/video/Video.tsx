@@ -1,5 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { Box, Layer, Spinner, Text } from 'grommet';
 import { Chat as ChatIcon, Favorite } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +12,7 @@ import { http } from '../../../config/http';
 import { getPostDetailAction } from '../../../store/actions/activity.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 
+dayjs.extend(relativeTime);
 interface RouteParams {
   id: string;
 }
