@@ -23,6 +23,7 @@ import { AppState } from '../../../store/reducers/root.reducer';
 import {
   getPublicFeedAction,
   getUserFeedAction,
+  getZoneFeedAction,
 } from '../../../store/actions/activity.action';
 
 dayjs.extend(relativeTime);
@@ -33,6 +34,7 @@ const Timeline: FC = () => {
   const dispatch = useDispatch();
   const {
     activity: { feed },
+    zone: { selectedUserZone },
   } = useSelector((state: AppState) => state);
 
   const [filters, setFilters] = useState([
@@ -66,11 +68,16 @@ const Timeline: FC = () => {
   useEffect(() => {
     const activeFilterId = filters.find((f) => f.active)?.id;
     switch (activeFilterId) {
-      case 3 || 4:
+      case 3:
+      case 4:
         dispatch(getPublicFeedAction(30, 0));
         break;
       default:
-        dispatch(getUserFeedAction(30, 0));
+        if (selectedUserZone) {
+          dispatch(getZoneFeedAction(selectedUserZone.zone.id, 30, 0));
+        } else {
+          dispatch(getUserFeedAction(30, 0));
+        }
     }
   }, [filters]);
   return (
