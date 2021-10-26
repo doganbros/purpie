@@ -67,17 +67,20 @@ const Timeline: FC = () => {
 
   useEffect(() => {
     const activeFilterId = filters.find((f) => f.active)?.id;
-    switch (activeFilterId) {
-      case 3:
-      case 4:
-        dispatch(getPublicFeedAction(30, 0));
-        break;
-      default:
-        if (selectedUserZone) {
-          dispatch(getZoneFeedAction(selectedUserZone.zone.id, 30, 0));
-        } else {
-          dispatch(getUserFeedAction(30, 0));
-        }
+    if (activeFilterId === 3 || activeFilterId === 4) {
+      dispatch(getPublicFeedAction(30, 0));
+    } else if (selectedUserZone) {
+      dispatch(
+        getZoneFeedAction(
+          selectedUserZone.zone.id,
+          30,
+          0,
+          undefined,
+          activeFilterId === 2
+        )
+      );
+    } else {
+      dispatch(getUserFeedAction(30, 0, undefined, activeFilterId === 2));
     }
   }, [filters]);
   return (
