@@ -8,7 +8,6 @@ import { http } from '../../config/http';
 interface VideoGridItemProps {
   id: number;
   slug: string;
-  thumbnailSrc: string;
   live: boolean;
   saved: boolean;
   userAvatarSrc: string;

@@ -28,7 +28,6 @@ const RecommendedVideos: FC = () => {
               onClickSave={item.onClickSave}
               saved={item.saved}
               tags={item.tags}
-              thumbnailSrc={item.thumbnailSrc}
               userAvatarSrc={item.userAvatarSrc}
               userName={item.userName}
               videoTitle={item.videoTitle}

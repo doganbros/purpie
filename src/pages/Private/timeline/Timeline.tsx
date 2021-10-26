@@ -27,8 +27,6 @@ import {
 
 dayjs.extend(relativeTime);
 
-const thumbnailSrc =
-  'https://images.unsplash.com/photo-1601511902608-bd1d92d0edb5?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&dl=stephanie-harlacher-cBHt4js8nVQ-unsplash.jpg&w=1920';
 const userAvatarSrc =
   'https://image.flaticon.com/icons/png/512/4721/4721623.png';
 
@@ -134,7 +132,6 @@ const Timeline: FC = () => {
                 onClickSave={() => {}}
                 saved={false}
                 tags={item.tags}
-                thumbnailSrc={thumbnailSrc}
                 userAvatarSrc={userAvatarSrc}
                 userName={`${item.createdBy?.firstName} ${item.createdBy?.lastName}`}
                 videoTitle={item.title}
