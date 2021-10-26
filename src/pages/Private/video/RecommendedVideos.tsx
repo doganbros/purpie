@@ -29,7 +29,7 @@ const RecommendedVideos: FC = () => {
               saved={item.saved}
               tags={item.tags}
               userAvatarSrc={item.userAvatarSrc}
-              userName={item.userName}
+              createdBy={item.createdBy}
               videoTitle={item.videoTitle}
               videoName={item.id}
             />

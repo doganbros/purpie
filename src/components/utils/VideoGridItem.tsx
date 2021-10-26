@@ -4,14 +4,16 @@ import { Bookmark, Chat, Favorite } from 'grommet-icons';
 import ExtendedBox from './ExtendedBox';
 import VideoPlayer from './video/VideoPlayer';
 import { http } from '../../config/http';
+import { UserBasic } from '../../store/types/auth.types';
+import InitialsAvatar from './InitialsAvatar';
 
 interface VideoGridItemProps {
   id: number;
   slug: string;
   live: boolean;
   saved: boolean;
-  userAvatarSrc: string;
-  userName: string;
+  userAvatarSrc?: string;
+  createdBy: UserBasic;
   createdAt: string;
   videoTitle: string;
   videoName: string;
@@ -28,7 +30,7 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
   live,
   saved,
   userAvatarSrc,
-  userName,
+  createdBy,
   createdAt,
   videoTitle,
   videoName,
@@ -116,9 +118,15 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
             round="large"
             border={{ size: 'large', color: 'white' }}
           >
-            <Avatar round src={userAvatarSrc} />
+            {userAvatarSrc ? (
+              <Avatar round src={userAvatarSrc} />
+            ) : (
+              <InitialsAvatar user={createdBy} />
+            )}
           </Box>
-          <Text color="status-disabled">{userName}</Text>
+          <Text color="status-disabled">
+            {createdBy?.firstName} {createdBy?.lastName}
+          </Text>
         </Box>
         <Text color="status-disabled">{createdAt}</Text>
       </ExtendedBox>

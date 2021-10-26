@@ -27,9 +27,6 @@ import {
 
 dayjs.extend(relativeTime);
 
-const userAvatarSrc =
-  'https://image.flaticon.com/icons/png/512/4721/4721623.png';
-
 const Timeline: FC = () => {
   const size = useContext(ResponsiveContext);
   const history = useHistory();
@@ -132,8 +129,7 @@ const Timeline: FC = () => {
                 onClickSave={() => {}}
                 saved={false}
                 tags={item.tags}
-                userAvatarSrc={userAvatarSrc}
-                userName={`${item.createdBy?.firstName} ${item.createdBy?.lastName}`}
+                createdBy={item.createdBy}
                 videoTitle={item.title}
                 videoName={item.videoName}
               />
