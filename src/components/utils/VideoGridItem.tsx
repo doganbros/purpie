@@ -1,6 +1,6 @@
-import React, { FC } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import { Avatar, Box, Text } from 'grommet';
-import { Bookmark, Chat, Favorite } from 'grommet-icons';
+import { Bookmark, Chat, Favorite, PlayFill } from 'grommet-icons';
 import ExtendedBox from './ExtendedBox';
 import VideoPlayer from './video/VideoPlayer';
 import { http } from '../../config/http';
@@ -40,14 +40,22 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
   onClickPlay,
   onClickSave,
 }) => {
-  const [hover, setHover] = React.useState(false);
+  const [hover, setHover] = useState(false);
+  const player = useRef<HTMLVideoElement | null>(null);
   return (
     <Box
       onMouseEnter={() => {
         setHover(true);
+        if (player.current) {
+          player.current.play();
+        }
       }}
       onMouseLeave={() => {
         setHover(false);
+        if (player.current) {
+          player.current.pause();
+          player.current.currentTime = 0;
+        }
       }}
       onClick={() => {
         onClickPlay(id);
@@ -58,8 +66,12 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
     >
       <ExtendedBox position="relative">
         <VideoPlayer
+          ref={player}
           options={{
             autoplay: false,
+            muted: true,
+            controlBar: false,
+            controls: false,
             sources: [
               {
                 src: `${http.defaults.baseURL}/post/video/view/${slug}/${videoName}`,
@@ -68,6 +80,18 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
             ],
           }}
         />
+        <ExtendedBox
+          position="absolute"
+          top="0"
+          bottom="0"
+          left="0"
+          right="0"
+          margin="auto"
+          justify="center"
+          align="center"
+        >
+          {hover && <PlayFill size="xlarge" color="brand" />}
+        </ExtendedBox>
         <ExtendedBox
           position="absolute"
           top="0"
