@@ -145,7 +145,7 @@ export class AuthThirdPartyController {
       }
     }
     if (user) {
-      const userPayload = {
+      const userPayload: UserPayload = {
         id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
@@ -165,9 +165,14 @@ export class AuthThirdPartyController {
         await user.save();
       }
 
-      const token = await this.authService.createMattermostPersonalTokenForUser(
+      const {
+        token,
+        id,
+      } = await this.authService.createMattermostPersonalTokenForUser(
         user.mattermostId,
       );
+
+      userPayload.mattermostTokenId = id;
 
       await this.authService.setAccessTokens(userPayload, res);
       return { mattermostToken: token, ...userPayload };

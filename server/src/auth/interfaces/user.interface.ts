@@ -19,6 +19,9 @@ export class UserPayload {
   mattermostId: string | null;
 
   @ApiProperty()
+  mattermostTokenId?: string | null;
+
+  @ApiProperty()
   userName?: string | null;
 
   refreshTokenId?: string;

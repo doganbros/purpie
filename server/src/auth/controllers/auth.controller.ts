@@ -128,7 +128,7 @@ export class AuthController {
         'ERROR_USERNAME_OR_PASSWORD',
       );
 
-    const userPayload = {
+    const userPayload: UserPayload = {
       id: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
@@ -147,10 +147,15 @@ export class AuthController {
         user: userPayload,
       });
 
-    await this.authService.setAccessTokens(userPayload, res);
-    const token = await this.authService.createMattermostPersonalTokenForUser(
+    const {
+      token,
+      id,
+    } = await this.authService.createMattermostPersonalTokenForUser(
       user.mattermostId!,
     );
+    userPayload.mattermostTokenId = id;
+    await this.authService.setAccessTokens(userPayload, res);
+
     return { ...userPayload, mattermostToken: token };
   }
 
@@ -332,10 +337,6 @@ export class AuthController {
       await this.authService.subdomainValidity(subdomain, currentUser.email);
     }
 
-    const mattermostToken = await this.authService.createMattermostPersonalTokenForUser(
-      currentUser.mattermostId!,
-    );
-
-    return { ...currentUser, mattermostToken };
+    return currentUser;
   }
 }
