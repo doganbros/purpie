@@ -20,8 +20,8 @@ import {
 } from '@nestjs/swagger';
 import { s3, s3HeadObject } from 'config/s3-storage';
 import { errorResponseDoc } from 'helpers/error-response-doc';
-import { MixedActivityFeedListResponse } from 'src/activity/activity.response';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
+import { PostListFeedDecorator } from 'src/activity/decorator/activity-list.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
@@ -36,6 +36,10 @@ import {
   PostCommentListResponse,
   PostLikeListResponse,
 } from './response/post.response';
+import {
+  MixedPostFeedDetail,
+  MixedPostFeedListResponse,
+} from './response/post-list-feed.response';
 
 const {
   S3_VIDEO_POST_DIR = '',
@@ -285,7 +289,7 @@ export class PostController {
   @IsAuthenticated()
   @ApiOkResponse({
     description: 'User gets posts saved',
-    type: MixedActivityFeedListResponse,
+    type: MixedPostFeedListResponse,
   })
   @PaginationQueryParams()
   async getSavedPostList(
@@ -375,5 +379,75 @@ export class PostController {
     } catch (err: any) {
       return res.status(err.statusCode || 500).json(err);
     }
+  }
+
+  @Get('/list/feed/zone/:zoneId')
+  @PostListFeedDecorator()
+  @ApiOkResponse({
+    description: 'User gets feed for a zone from channels of this zone',
+    type: MixedPostFeedListResponse,
+  })
+  @IsAuthenticated()
+  @ApiParam({
+    name: 'zoneId',
+    type: Number,
+  })
+  @PaginationQueryParams()
+  getZoneFeed(
+    @Query() query: PaginationQuery,
+    @CurrentUser() user: UserPayload,
+    @Param('zoneId') zoneId: string,
+  ) {
+    return this.postService.getZoneFeed(
+      Number.parseInt(zoneId, 10),
+      user.id,
+      query,
+    );
+  }
+
+  @Get('/list/feed/channel/:channelId')
+  @PostListFeedDecorator()
+  @ApiOkResponse({
+    description: 'User gets feed for this channel',
+    type: MixedPostFeedListResponse,
+  })
+  @IsAuthenticated()
+  @ApiParam({
+    name: 'channelId',
+    type: Number,
+  })
+  @PaginationQueryParams()
+  getChannelFeed(
+    @Query() query: PaginationQuery,
+    @CurrentUser() user: UserPayload,
+    @Param('channelId') channelId: string,
+  ) {
+    return this.postService.getChannelFeed(
+      Number.parseInt(channelId, 10),
+      user.id,
+      query,
+    );
+  }
+
+  @Get('/detail/feed/:postId')
+  @ApiOkResponse({
+    description: 'User gets post by id',
+    type: MixedPostFeedDetail,
+  })
+  @IsAuthenticated()
+  @ApiParam({
+    name: 'postId',
+    type: Number,
+  })
+  async getFeedById(
+    @Param('postId') postId: string,
+    @CurrentUser() user: UserPayload,
+  ) {
+    const result = await this.postService.getPostById(user.id, Number(postId));
+
+    if (!result)
+      throw new NotFoundException('Post not found', 'POST_NOT_FOUND');
+
+    return result;
   }
 }
