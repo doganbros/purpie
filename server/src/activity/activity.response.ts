@@ -1,6 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from 'entities/User.entity';
-import { PostType } from 'types/Post';
 
 class PublicChannelSuggestionList {
   @ApiProperty()
@@ -89,95 +87,6 @@ export class PublicChannelSuggestionListResponse {
 export class PublicZoneSuggestionListResponse {
   @ApiProperty({ isArray: true })
   data: PublicZoneSuggestionList;
-
-  @ApiProperty()
-  total: number;
-
-  @ApiProperty()
-  limit: number;
-
-  @ApiProperty()
-  skip: number;
-}
-
-class BaseActivityFeedList {
-  @ApiProperty()
-  id: number;
-
-  @ApiProperty()
-  title: string;
-
-  @ApiProperty()
-  description: string;
-
-  @ApiProperty()
-  slug: string;
-
-  @ApiProperty()
-  startDate: Date;
-
-  @ApiProperty({ enum: ['meeting', 'video'], example: 'meeting' })
-  type: PostType;
-
-  @ApiProperty({ nullable: true })
-  channelId: number;
-
-  @ApiProperty()
-  public: boolean;
-
-  @ApiProperty()
-  liveStream: boolean;
-
-  @ApiProperty()
-  record: boolean;
-
-  @ApiProperty()
-  userContactExclusive: boolean;
-
-  @ApiProperty({ type: User })
-  createdBy: User;
-
-  @ApiProperty({ isArray: true, type: String })
-  tags: Array<{ id: number; value: string }>;
-}
-
-class ActivityFeedChannel {
-  @ApiProperty()
-  id: number;
-
-  @ApiProperty()
-  name: string;
-
-  @ApiProperty()
-  topic: string;
-
-  @ApiProperty()
-  description: string;
-}
-
-class MixedActivityFeedList extends BaseActivityFeedList {
-  channel: ActivityFeedChannel;
-}
-
-export const MixedActivityFeedDetail = MixedActivityFeedList;
-
-export class MixedActivityFeedListResponse {
-  @ApiProperty({ isArray: true })
-  data: MixedActivityFeedList;
-
-  @ApiProperty()
-  total: number;
-
-  @ApiProperty()
-  limit: number;
-
-  @ApiProperty()
-  skip: number;
-}
-
-export class PublicActivityFeedListResponse {
-  @ApiProperty({ isArray: true })
-  data: BaseActivityFeedList;
 
   @ApiProperty()
   total: number;

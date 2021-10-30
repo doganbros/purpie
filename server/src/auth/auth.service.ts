@@ -14,10 +14,10 @@ import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
 import { Response } from 'express';
 import { generateJWT, verifyJWT } from 'helpers/jwt';
-import { alphaNum, compareHash, hash } from 'helpers/utils';
+import { alphaNum, compareHash, fetchOrProduceNull, hash } from 'helpers/utils';
 import { customAlphabet, nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
-import { UtilsService } from 'src/utils/utils.service';
+import { MattermostService } from 'src/utils/mattermost.service';
 import { Not, Repository, IsNull } from 'typeorm';
 import {
   MAIL_VERIFICATION_TYPE,
@@ -55,7 +55,7 @@ export class AuthService {
     @InjectRepository(UserRefreshToken)
     private userRefreshTokenRepository: Repository<UserRefreshToken>,
     private mailService: MailService,
-    private utilService: UtilsService,
+    private mattermostService: MattermostService,
   ) {}
 
   async generateLoginToken(
@@ -114,6 +114,7 @@ export class AuthService {
       .create({
         id: refreshTokenId,
         userId: userPayload.id,
+        mattermostTokenId: userPayload.mattermostTokenId,
         token: await hash(refreshToken),
       })
       .save();
@@ -166,10 +167,20 @@ export class AuthService {
   }
 
   async removeRefreshToken(userId: number, refreshTokenId: string) {
-    return this.userRefreshTokenRepository.delete({
-      userId,
-      id: refreshTokenId,
+    const userRefreshToken = await this.userRefreshTokenRepository.findOne({
+      where: { id: refreshTokenId, userId },
     });
+
+    if (userRefreshToken) {
+      if (userRefreshToken.mattermostTokenId) {
+        fetchOrProduceNull(() =>
+          this.mattermostService.mattermostClient.revokeUserAccessToken(
+            userRefreshToken.mattermostTokenId!,
+          ),
+        );
+      }
+      userRefreshToken.remove();
+    }
   }
 
   async registerUser({
@@ -515,20 +526,18 @@ export class AuthService {
   }
 
   async createMattermostPersonalTokenForUser(mattermostId: string) {
-    await this.utilService.mattermostClient.revokeAllSessionsForUser(
-      mattermostId,
-    );
     const {
+      id,
       token,
-    } = await this.utilService.mattermostClient.createUserAccessToken(
+    } = await this.mattermostService.mattermostClient.createUserAccessToken(
       mattermostId,
       'Mattermost personal token for user created in octopus',
     );
-    return token;
+    return { id, token };
   }
 
   async createMattermostUserAndJoinDefaults(user: UserPayload) {
-    const profile = await this.utilService.mattermostClient.createUser(
+    const profile = await this.mattermostService.mattermostClient.createUser(
       {
         email: user.email,
         username: user.userName,
@@ -545,14 +554,14 @@ export class AuthService {
       { mattermostId: profile.id },
     );
 
-    await this.utilService.mattermostClient.addUsersToTeam(
-      this.utilService.octopusAppTeam!.id,
+    await this.mattermostService.mattermostClient.addUsersToTeam(
+      this.mattermostService.octopusAppTeam!.id,
       [profile.id],
     );
 
-    await this.utilService.mattermostClient.addToChannel(
+    await this.mattermostService.mattermostClient.addToChannel(
       profile.id,
-      this.utilService.octopusBroadcastChannel!.id,
+      this.mattermostService.octopusBroadcastChannel!.id,
     );
 
     return profile;
