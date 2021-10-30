@@ -17,7 +17,7 @@ import { generateJWT, verifyJWT } from 'helpers/jwt';
 import { alphaNum, compareHash, hash } from 'helpers/utils';
 import { customAlphabet, nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
-import { UtilsService } from 'src/utils/utils.service';
+import { MattermostService } from 'src/utils/mattermost.service';
 import { Not, Repository, IsNull } from 'typeorm';
 import {
   MAIL_VERIFICATION_TYPE,
@@ -55,7 +55,7 @@ export class AuthService {
     @InjectRepository(UserRefreshToken)
     private userRefreshTokenRepository: Repository<UserRefreshToken>,
     private mailService: MailService,
-    private utilService: UtilsService,
+    private utilService: MattermostService,
   ) {}
 
   async generateLoginToken(

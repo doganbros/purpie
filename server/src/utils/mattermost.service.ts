@@ -13,7 +13,7 @@ const {
   REACT_APP_MM_TEAM_NAME = '',
 } = process.env;
 @Injectable()
-export class UtilsService implements OnModuleInit {
+export class MattermostService implements OnModuleInit {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
