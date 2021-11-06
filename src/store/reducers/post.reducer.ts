@@ -17,6 +17,8 @@ import {
   CREATE_VIDEO_REQUESTED,
   CREATE_VIDEO_SUCCESS,
   CREATE_VIDEO_FAILED,
+  OPEN_CREATE_VIDEO_LAYER,
+  CLOSE_CREATE_VIDEO_LAYER,
 } from '../constants/post.constants';
 import { PostActionParams, PostState } from '../types/post.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -33,6 +35,7 @@ const initialState: PostState = {
     error: null,
   },
   createVideo: {
+    showCreateVideoLayer: false,
     uploading: false,
     error: null,
   },
@@ -182,6 +185,7 @@ const postReducer = (
       return {
         ...state,
         createVideo: {
+          ...state.createVideo,
           uploading: true,
           error: null,
         },
@@ -190,6 +194,7 @@ const postReducer = (
       return {
         ...state,
         createVideo: {
+          ...state.createVideo,
           uploading: false,
           error: null,
         },
@@ -198,8 +203,25 @@ const postReducer = (
       return {
         ...state,
         createVideo: {
+          ...state.createVideo,
           uploading: false,
           error: action.payload,
+        },
+      };
+    case OPEN_CREATE_VIDEO_LAYER:
+      return {
+        ...state,
+        createVideo: {
+          ...state.createVideo,
+          showCreateVideoLayer: true,
+        },
+      };
+    case CLOSE_CREATE_VIDEO_LAYER:
+      return {
+        ...state,
+        createVideo: {
+          ...state.createVideo,
+          showCreateVideoLayer: false,
         },
       };
     default:

@@ -17,6 +17,8 @@ import {
   CREATE_VIDEO_REQUESTED,
   CREATE_VIDEO_SUCCESS,
   CREATE_VIDEO_FAILED,
+  OPEN_CREATE_VIDEO_LAYER,
+  CLOSE_CREATE_VIDEO_LAYER,
 } from '../constants/post.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
@@ -61,7 +63,7 @@ export interface CreateVideoPayload {
   channelId?: number;
   public?: boolean;
   userContactExclusive?: boolean;
-  videoFile: Buffer;
+  videoFile: File;
 }
 
 export interface PostState {
@@ -75,6 +77,7 @@ export interface PostState {
     data: Post | null;
   };
   createVideo: {
+    showCreateVideoLayer: boolean;
     uploading: boolean;
     error: ResponseError | null;
   };
@@ -119,7 +122,10 @@ export type PostActionParams =
       payload: Post;
     }
   | {
-      type: typeof CREATE_VIDEO_SUCCESS;
+      type:
+        | typeof CREATE_VIDEO_SUCCESS
+        | typeof OPEN_CREATE_VIDEO_LAYER
+        | typeof CLOSE_CREATE_VIDEO_LAYER;
     }
   | {
       type:
@@ -137,5 +143,5 @@ export interface PostDispatch {
 }
 
 export interface PostAction {
-  (dispatch: PostDispatch): Promise<void>;
+  (dispatch: PostDispatch): void | Promise<void>;
 }

@@ -17,6 +17,8 @@ import {
   CREATE_VIDEO_REQUESTED,
   CREATE_VIDEO_SUCCESS,
   CREATE_VIDEO_FAILED,
+  OPEN_CREATE_VIDEO_LAYER,
+  CLOSE_CREATE_VIDEO_LAYER,
 } from '../constants/post.constants';
 
 import * as PostService from '../services/post.service';
@@ -186,5 +188,21 @@ export const createVideoAction = (payload: CreateVideoPayload): PostAction => {
         payload: err?.response?.data,
       });
     }
+  };
+};
+
+export const openCreateVideoLayerAction = (): PostAction => {
+  return (dispatch) => {
+    dispatch({
+      type: OPEN_CREATE_VIDEO_LAYER,
+    });
+  };
+};
+
+export const closeCreateVideoLayerAction = (): PostAction => {
+  return (dispatch) => {
+    dispatch({
+      type: CLOSE_CREATE_VIDEO_LAYER,
+    });
   };
 };

@@ -14,6 +14,7 @@ import {
   openPlanCreateMeetingLayerAction,
 } from '../../store/actions/meeting.action';
 import { AppState } from '../../store/reducers/root.reducer';
+import { openCreateVideoLayerAction } from '../../store/actions/post.action';
 
 interface AddContentProps {
   onDismiss: () => void;
@@ -61,7 +62,10 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
       title: 'Share a Video',
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
-      onClick: () => {},
+      onClick: () => {
+        dispatch(openCreateVideoLayerAction());
+        onDismiss();
+      },
     },
     {
       id: 3,
