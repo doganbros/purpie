@@ -39,6 +39,7 @@ import {
 import {
   MixedPostFeedDetail,
   MixedPostFeedListResponse,
+  PublicPostFeedListResponse,
 } from './response/post-list-feed.response';
 
 const {
@@ -379,6 +380,36 @@ export class PostController {
     } catch (err: any) {
       return res.status(err.statusCode || 500).json(err);
     }
+  }
+
+  @Get('/list/feed/public')
+  @PostListFeedDecorator()
+  @ApiOkResponse({
+    description: 'User gets public feed',
+    type: PublicPostFeedListResponse,
+  })
+  @IsAuthenticated()
+  @PaginationQueryParams()
+  getPublicFeed(
+    @Query() query: PaginationQuery,
+    @CurrentUser() user: UserPayload,
+  ) {
+    return this.postService.getPublicFeed(query, user.id);
+  }
+
+  @Get('/list/feed/user')
+  @PostListFeedDecorator()
+  @ApiOkResponse({
+    description: 'User gets main feed from channels and from contacts',
+    type: MixedPostFeedListResponse,
+  })
+  @IsAuthenticated()
+  @PaginationQueryParams()
+  getUserFeed(
+    @Query() query: PaginationQuery,
+    @CurrentUser() user: UserPayload,
+  ) {
+    return this.postService.getUserFeed(user.id, query);
   }
 
   @Get('/list/feed/zone/:zoneId')
