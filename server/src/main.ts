@@ -2,7 +2,7 @@ import 'isomorphic-fetch';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import cors from 'cors';
 import { initApp } from 'populators/init-app';
 import { NestFactory } from '@nestjs/core';
@@ -39,7 +39,9 @@ async function bootstrap() {
     }),
   );
 
-  const { PORT = 8000 } = process.env;
+  const logger = new Logger('Main');
+
+  const { SERVER_PORT = 8000 } = process.env;
 
   const config = new DocumentBuilder()
     .setTitle('Octopus')
@@ -55,7 +57,8 @@ async function bootstrap() {
     },
   });
 
-  // eslint-disable-next-line no-console
-  app.listen(PORT).then(() => console.log(`Server started on port ${PORT}`));
+  app
+    .listen(SERVER_PORT)
+    .then(() => logger.log(`Server started on port ${SERVER_PORT}`));
 }
 bootstrap();

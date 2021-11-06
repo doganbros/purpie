@@ -7,3 +7,4 @@ server/*.log
 server/dist
 .DS_Store
 uploads
+.env-*
