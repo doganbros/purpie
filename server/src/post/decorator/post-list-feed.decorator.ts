@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 
-export const PostListFeedDecorator = () =>
+export const ActivityListDecorator = () =>
   applyDecorators(
     ApiQuery({
       name: 'postType',

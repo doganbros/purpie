@@ -13,7 +13,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { UtilsService } from 'src/utils/utils.service';
+import { MattermostService } from 'src/utils/mattermost.service';
 import { ApiParam, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from 'entities/User.entity';
 import { AuthByThirdPartyDto } from '../dto/auth-by-third-party.dto';
@@ -32,7 +32,7 @@ const {
 export class AuthThirdPartyController {
   constructor(
     private authService: AuthService,
-    private utilService: UtilsService,
+    private utilService: MattermostService,
   ) {}
 
   @Get('/:name')
@@ -145,7 +145,7 @@ export class AuthThirdPartyController {
       }
     }
     if (user) {
-      const userPayload = {
+      const userPayload: UserPayload = {
         id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
@@ -165,9 +165,14 @@ export class AuthThirdPartyController {
         await user.save();
       }
 
-      const token = await this.authService.createMattermostPersonalTokenForUser(
+      const {
+        token,
+        id,
+      } = await this.authService.createMattermostPersonalTokenForUser(
         user.mattermostId,
       );
+
+      userPayload.mattermostTokenId = id;
 
       await this.authService.setAccessTokens(userPayload, res);
       return { mattermostToken: token, ...userPayload };

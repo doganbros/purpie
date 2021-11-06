@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Client4 } from 'mattermost-redux/client';
 import { IsNull, Repository } from 'typeorm';
+import { UserProfile } from 'mattermost-redux/types/users';
 import { Team } from 'mattermost-redux/types/teams';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'entities/User.entity';
@@ -9,11 +10,15 @@ import { fetchOrProduceNull } from '../../helpers/utils';
 
 const {
   MM_SERVER_URL = '',
-  MM_BOT_TOKEN = '',
+  MM_SYS_ADMIN_USERNAME = '',
+  MM_SYS_ADMIN_EMAIL = '',
+  MM_SYS_ADMIN_PASSWORD = '',
+  MM_BOT_USERNAME = '',
+
   REACT_APP_MM_TEAM_NAME = '',
 } = process.env;
 @Injectable()
-export class UtilsService implements OnModuleInit {
+export class MattermostService implements OnModuleInit {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -32,9 +37,91 @@ export class UtilsService implements OnModuleInit {
     this.mattermostClient = Client4;
 
     this.mattermostClient.setUrl(MM_SERVER_URL);
-    this.mattermostClient.setToken(MM_BOT_TOKEN);
 
-    await this.mattermostClient.ping();
+    await fetchOrProduceNull(() =>
+      this.mattermostClient.createUser(
+        {
+          username: MM_SYS_ADMIN_USERNAME,
+          email: MM_SYS_ADMIN_EMAIL,
+          password: MM_SYS_ADMIN_PASSWORD,
+          auth_service: 'email',
+        } as any,
+        '',
+        '',
+        '',
+      ),
+    );
+
+    const loginResponse = await fetchOrProduceNull(() =>
+      this.mattermostClient.doFetchWithResponse<UserProfile>(
+        `${this.mattermostClient.getUsersRoute()}/login`,
+        {
+          method: 'post',
+          body: JSON.stringify({
+            login_id: MM_SYS_ADMIN_EMAIL,
+            password: MM_SYS_ADMIN_PASSWORD,
+          }),
+        },
+      ),
+    );
+
+    if (!loginResponse)
+      throw new Error(
+        'Error initializing system admin user. Please make sure you mattermost setup is set up correctly.',
+      );
+
+    this.mattermostClient.setToken(loginResponse.headers.get('Token')!);
+
+    const currentConfig = await this.mattermostClient.getConfig();
+
+    if (
+      !currentConfig.ServiceSettings.EnableUserAccessTokens ||
+      !currentConfig.ServiceSettings.EnableBotAccountCreation
+    ) {
+      await this.mattermostClient.updateConfig({
+        ...currentConfig,
+        ServiceSettings: {
+          ...currentConfig.ServiceSettings,
+          EnableUserAccessTokens: true,
+          EnableBotAccountCreation: true,
+        },
+      });
+    }
+
+    const createBotResult = await fetchOrProduceNull(() =>
+      this.mattermostClient.createBot({
+        username: MM_BOT_USERNAME,
+        description: 'Bot used to interact with octopus',
+      } as any),
+    );
+
+    if (createBotResult) {
+      await this.mattermostClient.updateUserRoles(
+        createBotResult.user_id,
+        'system_user system_admin',
+      );
+    }
+
+    const botUser = await fetchOrProduceNull(() =>
+      this.mattermostClient.getUserByUsername(MM_BOT_USERNAME),
+    );
+
+    if (!botUser) throw new Error('Bot user not found');
+
+    const allTokens = await this.mattermostClient.getUserAccessTokensForUser(
+      botUser.id,
+    );
+
+    for (const t of allTokens) {
+      await this.mattermostClient.revokeUserAccessToken(t.id);
+    }
+
+    const token = await this.mattermostClient.createUserAccessToken(
+      botUser.id,
+      'Access Token used to interact with octopus',
+    );
+
+    this.mattermostClient.setToken(token.token!);
 
     this.octopusAppTeam = await fetchOrProduceNull(() =>
       this.mattermostClient.getTeamByName(REACT_APP_MM_TEAM_NAME),

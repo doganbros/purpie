@@ -5,7 +5,7 @@ import { Post } from 'entities/Post.entity';
 import { StreamLog } from 'entities/StreamLog.entity';
 import { User } from 'entities/User.entity';
 import { fetchOrProduceNull } from 'helpers/utils';
-import { UtilsService } from 'src/utils/utils.service';
+import { MattermostService } from 'src/utils/mattermost.service';
 import { Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { ClientStreamEventDto } from './dto/client-stream-event.dto';
@@ -21,7 +21,7 @@ export class StreamService {
     private readonly userRepo: Repository<User>,
     @InjectRepository(CurrentStreamViewer)
     private readonly currentStreamViewerRepo: Repository<CurrentStreamViewer>,
-    private readonly utilService: UtilsService,
+    private readonly utilService: MattermostService,
   ) {}
 
   async setStreamEvent(info: ClientStreamEventDto) {
