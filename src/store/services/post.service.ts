@@ -1,6 +1,6 @@
 import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
-import { Post, PostType } from '../types/post.types';
+import { CreateVideoPayload, Post, PostType } from '../types/post.types';
 
 export const getPublicFeed = (
   limit: number,
@@ -54,3 +54,6 @@ export const getChannelFeed = (
 
 export const getPostDetail = (postId: number): Promise<Post> =>
   http.get(`/post/detail/feed/${postId}`).then((res) => res.data);
+
+export const createVideo = (payload: CreateVideoPayload): Promise<any> =>
+  http.post('video/create/', { params: payload }).then((res) => res.data);

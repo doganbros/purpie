@@ -14,6 +14,9 @@ import {
   POST_DETAIL_REQUESTED,
   POST_DETAIL_SUCCESS,
   POST_DETAIL_FAILED,
+  CREATE_VIDEO_REQUESTED,
+  CREATE_VIDEO_SUCCESS,
+  CREATE_VIDEO_FAILED,
 } from '../constants/post.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
@@ -52,6 +55,15 @@ export interface Post {
   videoName: string;
 }
 
+export interface CreateVideoPayload {
+  title: string;
+  description?: string;
+  channelId?: number;
+  public?: boolean;
+  userContactExclusive?: boolean;
+  videoFile: Buffer;
+}
+
 export interface PostState {
   feed: PaginatedResponse<Post> & {
     loading: boolean;
@@ -61,6 +73,10 @@ export interface PostState {
     loading: boolean;
     error: ResponseError | null;
     data: Post | null;
+  };
+  createVideo: {
+    uploading: boolean;
+    error: ResponseError | null;
   };
 }
 
@@ -87,6 +103,10 @@ export type PostActionParams =
       };
     }
   | {
+      type: typeof CREATE_VIDEO_REQUESTED;
+      payload: CreateVideoPayload;
+    }
+  | {
       type:
         | typeof PUBLIC_FEED_SUCCESS
         | typeof USER_FEED_SUCCESS
@@ -99,12 +119,16 @@ export type PostActionParams =
       payload: Post;
     }
   | {
+      type: typeof CREATE_VIDEO_SUCCESS;
+    }
+  | {
       type:
         | typeof PUBLIC_FEED_FAILED
         | typeof USER_FEED_FAILED
         | typeof ZONE_FEED_FAILED
         | typeof CHANNEL_FEED_FAILED
-        | typeof POST_DETAIL_FAILED;
+        | typeof POST_DETAIL_FAILED
+        | typeof CREATE_VIDEO_FAILED;
       payload: ResponseError;
     };
 

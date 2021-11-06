@@ -14,6 +14,9 @@ import {
   POST_DETAIL_REQUESTED,
   POST_DETAIL_SUCCESS,
   POST_DETAIL_FAILED,
+  CREATE_VIDEO_REQUESTED,
+  CREATE_VIDEO_SUCCESS,
+  CREATE_VIDEO_FAILED,
 } from '../constants/post.constants';
 import { PostActionParams, PostState } from '../types/post.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -27,6 +30,10 @@ const initialState: PostState = {
   postDetail: {
     data: null,
     loading: false,
+    error: null,
+  },
+  createVideo: {
+    uploading: false,
     error: null,
   },
 };
@@ -60,7 +67,7 @@ const postReducer = (
         feed: {
           ...state.feed,
           loading: false,
-          error: null,
+          error: action.payload,
         },
       };
     case USER_FEED_REQUESTED:
@@ -87,7 +94,7 @@ const postReducer = (
         feed: {
           ...state.feed,
           loading: false,
-          error: null,
+          error: action.payload,
         },
       };
     case ZONE_FEED_REQUESTED:
@@ -114,7 +121,7 @@ const postReducer = (
         feed: {
           ...state.feed,
           loading: false,
-          error: null,
+          error: action.payload,
         },
       };
     case CHANNEL_FEED_REQUESTED:
@@ -141,7 +148,7 @@ const postReducer = (
         feed: {
           ...state.feed,
           loading: false,
-          error: null,
+          error: action.payload,
         },
       };
     case POST_DETAIL_REQUESTED:
@@ -168,7 +175,31 @@ const postReducer = (
         postDetail: {
           ...state.postDetail,
           loading: false,
+          error: action.payload,
+        },
+      };
+    case CREATE_VIDEO_REQUESTED:
+      return {
+        ...state,
+        createVideo: {
+          uploading: true,
           error: null,
+        },
+      };
+    case CREATE_VIDEO_SUCCESS:
+      return {
+        ...state,
+        createVideo: {
+          uploading: false,
+          error: null,
+        },
+      };
+    case CREATE_VIDEO_FAILED:
+      return {
+        ...state,
+        createVideo: {
+          uploading: false,
+          error: action.payload,
         },
       };
     default:

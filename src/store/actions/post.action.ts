@@ -14,10 +14,13 @@ import {
   POST_DETAIL_REQUESTED,
   POST_DETAIL_SUCCESS,
   POST_DETAIL_FAILED,
+  CREATE_VIDEO_REQUESTED,
+  CREATE_VIDEO_SUCCESS,
+  CREATE_VIDEO_FAILED,
 } from '../constants/post.constants';
 
 import * as PostService from '../services/post.service';
-import { PostAction, PostType } from '../types/post.types';
+import { CreateVideoPayload, PostAction, PostType } from '../types/post.types';
 
 export const getPublicFeedAction = (
   limit: number,
@@ -160,6 +163,26 @@ export const getPostDetailAction = (postId: number): PostAction => {
     } catch (err) {
       dispatch({
         type: POST_DETAIL_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const createVideoAction = (payload: CreateVideoPayload): PostAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: CREATE_VIDEO_REQUESTED,
+      payload,
+    });
+    try {
+      await PostService.createVideo(payload);
+      dispatch({
+        type: CREATE_VIDEO_SUCCESS,
+      });
+    } catch (err) {
+      dispatch({
+        type: CREATE_VIDEO_FAILED,
         payload: err?.response?.data,
       });
     }
