@@ -9,7 +9,7 @@ import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/Pri
 import Chat from '../../../components/mattermost/Chat';
 import VideoPlayer from '../../../components/utils/video/VideoPlayer';
 import { http } from '../../../config/http';
-import { getPostDetailAction } from '../../../store/actions/activity.action';
+import { getPostDetailAction } from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 
 dayjs.extend(relativeTime);
@@ -21,7 +21,7 @@ const Video: FC = () => {
   const params = useParams<RouteParams>();
   const dispatch = useDispatch();
   const {
-    activity: {
+    post: {
       postDetail: { data, loading },
     },
   } = useSelector((state: AppState) => state);

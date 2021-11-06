@@ -24,7 +24,7 @@ import {
   getPublicFeedAction,
   getUserFeedAction,
   getZoneFeedAction,
-} from '../../../store/actions/activity.action';
+} from '../../../store/actions/post.action';
 
 dayjs.extend(relativeTime);
 
@@ -33,7 +33,7 @@ const Timeline: FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const {
-    activity: { feed },
+    post: { feed },
     zone: { selectedUserZone },
   } = useSelector((state: AppState) => state);
 

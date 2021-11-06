@@ -3,8 +3,6 @@ import { PaginatedResponse } from '../../models/paginated-response';
 import {
   ZoneSuggestionListItem,
   ChannelSuggestionListItem,
-  PostType,
-  Post,
 } from '../types/activity.types';
 
 export const getZoneSuggestions = (
@@ -22,56 +20,3 @@ export const getChannelSuggestions = (
   http
     .get('/activity/list/suggestions/channels', { params: { limit, skip } })
     .then((res) => res.data);
-
-export const getPublicFeed = (
-  limit: number,
-  skip: number,
-  postType?: PostType,
-  streaming?: boolean
-): Promise<PaginatedResponse<Post>> =>
-  http
-    .get('/activity/list/feed/public', {
-      params: { limit, skip, postType, streaming },
-    })
-    .then((res) => res.data);
-
-export const getUserFeed = (
-  limit: number,
-  skip: number,
-  postType?: PostType,
-  streaming?: boolean
-): Promise<PaginatedResponse<Post>> =>
-  http
-    .get('/activity/list/feed/user', {
-      params: { limit, skip, postType, streaming },
-    })
-    .then((res) => res.data);
-
-export const getZoneFeed = (
-  zoneId: number,
-  limit: number,
-  skip: number,
-  postType?: PostType,
-  streaming?: boolean
-): Promise<PaginatedResponse<Post>> =>
-  http
-    .get(`/activity/list/feed/zone/${zoneId}`, {
-      params: { limit, skip, postType, streaming },
-    })
-    .then((res) => res.data);
-
-export const getChannelFeed = (
-  channelId: number,
-  limit: number,
-  skip: number,
-  postType?: PostType,
-  streaming?: boolean
-): Promise<PaginatedResponse<Post>> =>
-  http
-    .get(`/activity/list/feed/channel/${channelId}`, {
-      params: { limit, skip, postType, streaming },
-    })
-    .then((res) => res.data);
-
-export const getPostDetail = (postId: number): Promise<Post> =>
-  http.get(`/activity/detail/feed/${postId}`).then((res) => res.data);
