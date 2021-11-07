@@ -161,8 +161,8 @@ export class PostService {
       .paginate(query);
   }
 
-  removePostLike(userId: number, likeId: number) {
-    return this.postLikeRepository.delete({ userId, id: likeId });
+  removePostLike(userId: number, postId: number) {
+    return this.postLikeRepository.delete({ userId, postId });
   }
 
   removePostComment(userId: number, commentId: number) {
