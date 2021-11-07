@@ -2,7 +2,6 @@ import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { IsClientAuthenticated } from 'src/auth/decorators/client-auth.decorator';
-import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { ClientStreamEventDto } from './dto/client-stream-event.dto';
@@ -32,7 +31,6 @@ export class StreamController {
     description: 'User gets stream logs',
     type: StreamLogResponse,
   })
-  @PaginationQueryParams()
   @IsAuthenticated()
   async getMeetingLogs(
     @Param('slug') slug: string,

@@ -4,7 +4,7 @@ import { CommaSeparatedIds } from 'src/utils/decorators/comma-separated-ids.deco
 import { Type } from 'class-transformer';
 import { PaginationQuery } from 'types/PaginationQuery';
 
-export class SearchUsersQuery implements PaginationQuery {
+export class SearchUsersQuery extends PaginationQuery {
   @ApiProperty()
   @IsString()
   name: string;
@@ -31,8 +31,4 @@ export class SearchUsersQuery implements PaginationQuery {
   })
   @IsOptional()
   userContacts?: string;
-
-  limit: number;
-
-  skip: number;
 }

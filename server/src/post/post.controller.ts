@@ -21,10 +21,8 @@ import {
 import { s3, s3HeadObject } from 'config/s3-storage';
 import { errorResponseDoc } from 'helpers/error-response-doc';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
-import { PostListFeedDecorator } from 'src/activity/decorator/activity-list.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
-import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { CreatePostCommentDto } from './dto/create-post-comment.dto';
@@ -41,6 +39,7 @@ import {
   MixedPostFeedListResponse,
   PublicPostFeedListResponse,
 } from './response/post-list-feed.response';
+import { ListPostFeedQuery } from './dto/list-post-feed.query';
 
 const {
   S3_VIDEO_POST_DIR = '',
@@ -103,7 +102,6 @@ export class PostController {
       'Error thrown when the post is not found or user does not have the right to access',
     schema: errorResponseDoc(404, 'Post not found', 'POST_NOT_FOUND'),
   })
-  @PaginationQueryParams()
   @IsAuthenticated()
   async getPostComments(
     @Query() query: PaginationQuery,
@@ -222,7 +220,6 @@ export class PostController {
     type: PostLikeListResponse,
     description: 'User gets the likes belonging to the postId',
   })
-  @PaginationQueryParams()
   @ApiNotFoundResponse({
     description:
       'Error thrown when the post is not found or user does not have the right to access',
@@ -292,7 +289,6 @@ export class PostController {
     description: 'User gets posts saved',
     type: MixedPostFeedListResponse,
   })
-  @PaginationQueryParams()
   async getSavedPostList(
     @CurrentUser() user: UserPayload,
     @Query() query: PaginationQuery,
@@ -383,37 +379,32 @@ export class PostController {
   }
 
   @Get('/list/feed/public')
-  @PostListFeedDecorator()
   @ApiOkResponse({
     description: 'User gets public feed',
     type: PublicPostFeedListResponse,
   })
   @IsAuthenticated()
-  @PaginationQueryParams()
   getPublicFeed(
-    @Query() query: PaginationQuery,
+    @Query() query: ListPostFeedQuery,
     @CurrentUser() user: UserPayload,
   ) {
     return this.postService.getPublicFeed(query, user.id);
   }
 
   @Get('/list/feed/user')
-  @PostListFeedDecorator()
   @ApiOkResponse({
     description: 'User gets main feed from channels and from contacts',
     type: MixedPostFeedListResponse,
   })
   @IsAuthenticated()
-  @PaginationQueryParams()
   getUserFeed(
-    @Query() query: PaginationQuery,
+    @Query() query: ListPostFeedQuery,
     @CurrentUser() user: UserPayload,
   ) {
     return this.postService.getUserFeed(user.id, query);
   }
 
   @Get('/list/feed/zone/:zoneId')
-  @PostListFeedDecorator()
   @ApiOkResponse({
     description: 'User gets feed for a zone from channels of this zone',
     type: MixedPostFeedListResponse,
@@ -423,9 +414,8 @@ export class PostController {
     name: 'zoneId',
     type: Number,
   })
-  @PaginationQueryParams()
   getZoneFeed(
-    @Query() query: PaginationQuery,
+    @Query() query: ListPostFeedQuery,
     @CurrentUser() user: UserPayload,
     @Param('zoneId') zoneId: string,
   ) {
@@ -437,7 +427,6 @@ export class PostController {
   }
 
   @Get('/list/feed/channel/:channelId')
-  @PostListFeedDecorator()
   @ApiOkResponse({
     description: 'User gets feed for this channel',
     type: MixedPostFeedListResponse,
@@ -447,9 +436,8 @@ export class PostController {
     name: 'channelId',
     type: Number,
   })
-  @PaginationQueryParams()
   getChannelFeed(
-    @Query() query: PaginationQuery,
+    @Query() query: ListPostFeedQuery,
     @CurrentUser() user: UserPayload,
     @Param('channelId') channelId: string,
   ) {

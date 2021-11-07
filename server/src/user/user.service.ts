@@ -6,6 +6,7 @@ import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { Brackets, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
+import { SearchUsersQuery } from './dto/search-users.query';
 import { SetUserRoleDto } from './dto/set-user-role.dto';
 
 @Injectable()
@@ -32,7 +33,7 @@ export class UserService {
     ]);
   }
 
-  userBaseSelect(excludeUserIds: Array<number>, query: PaginationQuery) {
+  userBaseSelect(excludeUserIds: Array<number>, query: SearchUsersQuery) {
     return this.userRepository
       .createQueryBuilder('user')
       .select([
@@ -61,14 +62,14 @@ export class UserService {
       .andWhere('user.id not IN (:...excludeUserIds)', { excludeUserIds });
   }
 
-  async searchUsers(excludeUserIds: Array<number>, query: PaginationQuery) {
+  async searchUsers(excludeUserIds: Array<number>, query: SearchUsersQuery) {
     return this.userBaseSelect(excludeUserIds, query).paginate(query);
   }
 
   async searchInUserContacts(
     userId: number,
     excludeUserIds: Array<number>,
-    query: PaginationQuery,
+    query: SearchUsersQuery,
   ) {
     return this.userBaseSelect(excludeUserIds, query)
       .innerJoin(Contact, 'contact', 'contact.userId = :userId', { userId })
@@ -79,7 +80,7 @@ export class UserService {
   async searchInChannels(
     channelId: number,
     excludeUserIds: Array<number>,
-    query: PaginationQuery,
+    query: SearchUsersQuery,
   ) {
     return this.userBaseSelect(excludeUserIds, query)
       .innerJoin(

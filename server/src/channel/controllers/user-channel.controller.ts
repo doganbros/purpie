@@ -5,7 +5,6 @@ import { UserZone } from 'entities/UserZone.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
-import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
 import { CurrentUserZone } from 'src/zone/decorators/current-user-zone.decorator';
 import { UserZoneRole } from 'src/zone/decorators/user-zone-role.decorator';
 import { ChannelService } from '../channel.service';
@@ -38,7 +37,6 @@ export class UserChannelController {
     name: 'userZoneId',
     description: 'user zone id',
   })
-  @PaginationQueryParams()
   @UserZoneRole()
   async getCurrentUserZoneChannels(
     @CurrentUser() user: UserPayload,

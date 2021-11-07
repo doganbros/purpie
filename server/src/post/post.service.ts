@@ -4,6 +4,7 @@ import { Contact } from 'entities/Contact.entity';
 import { Post } from 'entities/Post.entity';
 import { PostComment } from 'entities/PostComment.entity';
 import { PostLike } from 'entities/PostLike.entity';
+import { PostTag } from 'entities/PostTag.entity';
 import { PostVideo } from 'entities/PostVideo.entity';
 import { SavedPost } from 'entities/SavedPost.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
@@ -13,6 +14,7 @@ import { PaginationQuery } from 'types/PaginationQuery';
 import { CreatePostCommentDto } from './dto/create-post-comment.dto';
 import { CreatePostLikeDto } from './dto/create-post-like.dto';
 import { CreateSavedPostDto } from './dto/create-saved-post.dto';
+import { ListPostFeedQuery } from './dto/list-post-feed.query';
 
 @Injectable()
 export class PostService {
@@ -202,8 +204,6 @@ export class PostService {
         'post.createdOn',
         'post.public',
         'post.videoName',
-        'tags.id',
-        'tags.value',
         'post.userContactExclusive',
         'post.channelId',
         'post.liveStream',
@@ -241,7 +241,6 @@ export class PostService {
       .setParameter('currentUserId', userId)
       .innerJoin('savedPost.post', 'post')
       .leftJoin('post.createdBy', 'createdBy')
-      .leftJoin('post.tags', 'tags')
       .leftJoin('post.channel', 'channel')
       .leftJoin(
         UserChannel,
@@ -305,7 +304,7 @@ export class PostService {
       .getOne();
   }
 
-  basePost(query: Record<string, any>, userId: number) {
+  basePost(query: Partial<ListPostFeedQuery>, userId: number) {
     const builder = this.postRepository
       .createQueryBuilder('post')
       .select([
@@ -318,8 +317,6 @@ export class PostService {
         'post.createdOn',
         'post.public',
         'post.videoName',
-        'tags.id',
-        'tags.value',
         'post.userContactExclusive',
         'post.channelId',
         'post.liveStream',
@@ -366,7 +363,6 @@ export class PostService {
 
       .setParameter('currentUserId', userId)
       .leftJoin('post.createdBy', 'createdBy')
-      .leftJoin('post.tags', 'tags')
       .where(
         new Brackets((qb) => {
           qb.where(
@@ -385,11 +381,8 @@ export class PostService {
             videoType: 'video',
           });
         }),
-      )
-      .orderBy('post.id', 'DESC');
+      );
 
-    if (query.title)
-      builder.andWhere('post.title = :title', { title: query.title });
     if (query.postType)
       builder.andWhere('post.type = :postType', {
         postType: query.postType,
@@ -398,12 +391,40 @@ export class PostService {
       builder.andWhere('post.streaming = :streaming', {
         streaming: booleanValue(query.streaming),
       });
+    if (query.tags) {
+      const tags = query.tags.split(',').map((v) => v.trim());
+
+      if (tags.length) {
+        builder.andWhere((qb) => {
+          const subQuery = qb
+            .subQuery()
+            .select('postTag.postId')
+            .from(PostTag, 'postTag')
+            .where('postTag.value IN (:...postTagValues)', {
+              postTagValues: tags,
+            })
+            .andWhere('postTag.postId = post.id')
+            .limit(1)
+            .getQuery();
+
+          return `post.id = ${subQuery}`;
+        });
+      }
+    }
+
+    if (query.sortBy === 'popularity')
+      builder
+        .orderBy('"post_likesCount"', query.sortDirection ?? 'DESC')
+        .addOrderBy('"post_commentsCount"', query.sortDirection ?? 'DESC')
+        .addOrderBy('post.id', query.sortDirection ?? 'DESC');
+    else builder.orderBy('post.id', query.sortDirection ?? 'DESC');
+
     return builder;
   }
 
   getUserFeedSelection(
     userId: number,
-    query: Record<string, any> = {},
+    query: Partial<ListPostFeedQuery>,
     includePublic = false,
   ) {
     return this.basePost(query, userId)
@@ -447,7 +468,7 @@ export class PostService {
       );
   }
 
-  getUserFeed(userId: number, query: PaginationQuery) {
+  getUserFeed(userId: number, query: ListPostFeedQuery) {
     return this.getUserFeedSelection(userId, query).paginateRawAndEntities(
       {
         otherFields: ['commentsCount', 'likesCount', 'liked', 'saved'],
@@ -467,7 +488,7 @@ export class PostService {
       );
   }
 
-  getZoneFeed(zoneId: number, userId: number, query: PaginationQuery) {
+  getZoneFeed(zoneId: number, userId: number, query: ListPostFeedQuery) {
     return this.basePost(query, userId)
       .addSelect([
         'zone.id',
