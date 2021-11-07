@@ -48,16 +48,3 @@ export const fetchOrProduceNull = async <T>(
     return null;
   }
 };
-
-export const readAsBinaryString = (
-  file: File
-): Promise<string | null | ArrayBuffer> => {
-  const reader = new FileReader();
-  return new Promise((resolve, reject) => {
-    reader.readAsBinaryString(file);
-    reader.onload = () => {
-      resolve(reader.result);
-    };
-    reader.onerror = (error) => reject(error);
-  });
-};
