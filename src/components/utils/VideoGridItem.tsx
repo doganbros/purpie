@@ -1,8 +1,8 @@
-import React, { FC, useRef, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { Avatar, Box, Text } from 'grommet';
 import { Bookmark, Chat, Favorite, PlayFill } from 'grommet-icons';
 import ExtendedBox from './ExtendedBox';
-import VideoPlayer from './video/VideoPlayer';
+import { useVideoJS } from '../../hooks/useVideoJS';
 import { http } from '../../config/http';
 import { UserBasic } from '../../store/types/auth.types';
 import InitialsAvatar from './InitialsAvatar';
@@ -41,20 +41,33 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
   onClickSave,
 }) => {
   const [hover, setHover] = useState(false);
-  const player = useRef<HTMLVideoElement | null>(null);
+
+  const { Video, player } = useVideoJS({
+    autoplay: false,
+    muted: true,
+    controlBar: false,
+    controls: false,
+    sources: [
+      {
+        src: `${http.defaults.baseURL}/post/video/view/${slug}/${videoName}`,
+        type: 'video/mp4',
+      },
+    ],
+  });
+
   return (
     <Box
       onMouseEnter={() => {
         setHover(true);
-        if (player.current) {
-          player.current.play();
+        if (player) {
+          player.play();
         }
       }}
       onMouseLeave={() => {
         setHover(false);
-        if (player.current) {
-          player.current.pause();
-          player.current.currentTime = 0;
+        if (player) {
+          player.pause();
+          player.currentTime(0);
         }
       }}
       onClick={() => {
@@ -65,21 +78,7 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
       gap="small"
     >
       <ExtendedBox position="relative">
-        <VideoPlayer
-          ref={player}
-          options={{
-            autoplay: false,
-            muted: true,
-            controlBar: false,
-            controls: false,
-            sources: [
-              {
-                src: `${http.defaults.baseURL}/post/video/view/${slug}/${videoName}`,
-                type: 'video/mp4',
-              },
-            ],
-          }}
-        />
+        <Video />
         <ExtendedBox
           position="absolute"
           top="0"

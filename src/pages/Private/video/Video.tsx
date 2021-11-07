@@ -7,10 +7,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Chat from '../../../components/mattermost/Chat';
-import VideoPlayer from '../../../components/utils/video/VideoPlayer';
-import { http } from '../../../config/http';
 import { getPostDetailAction } from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
+import VideoPlayer from '../../../components/utils/VideoPlayer';
 
 dayjs.extend(relativeTime);
 interface RouteParams {
@@ -57,16 +56,7 @@ const Video: FC = () => {
             <Text weight="bold">{dayjs(data.createdOn).fromNow()}</Text>
           </Box>
           <Box gap="medium">
-            <VideoPlayer
-              options={{
-                sources: [
-                  {
-                    src: `${http.defaults.baseURL}/post/video/view/${data.slug}/${data.videoName}`,
-                    type: 'video/mp4',
-                  },
-                ],
-              }}
-            />
+            <VideoPlayer slug={data.slug} videoName={data.videoName} />
             <Box direction="row" justify="between">
               <Box direction="row" gap="medium">
                 <Box direction="row" gap="xsmall">
