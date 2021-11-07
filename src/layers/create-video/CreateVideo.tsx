@@ -163,7 +163,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
                   return 'Uploading';
                 }
                 if (!uploading && !error && uplaodStarted) {
-                  return 'Upload completed!';
+                  return 'Upload complete!';
                 }
                 return 'Share';
               })()}
