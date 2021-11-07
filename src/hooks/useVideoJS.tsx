@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
-import '../scss/video-player.css';
+import '../scss/video-player.scss';
 
 const defaultOptions: videojs.PlayerOptions = {
   autoplay: false,
