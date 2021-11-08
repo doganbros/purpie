@@ -84,6 +84,7 @@ export class MattermostService implements OnModuleInit {
           ...currentConfig.ServiceSettings,
           EnableUserAccessTokens: true,
           EnableBotAccountCreation: true,
+          AllowCorsFrom: '*',
         },
       });
     }

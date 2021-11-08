@@ -21,7 +21,6 @@ import {
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
-import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { emptyPaginatedResponse } from 'helpers/utils';
 import { PaginationQuery } from 'types/PaginationQuery';
@@ -95,7 +94,6 @@ export class UserController {
 
   @Get('/search')
   @IsAuthenticated()
-  @PaginationQueryParams()
   @ApiQuery({
     name: 'excludeCurrentUser',
     description:
@@ -140,7 +138,6 @@ export class UserController {
     description: 'User lists their contact invitation list',
     type: ContactInvitationListResponse,
   })
-  @PaginationQueryParams()
   @IsAuthenticated()
   async getContactInvitations(
     @CurrentUser() currentUser: UserPayload,
@@ -178,7 +175,6 @@ export class UserController {
   }
 
   @Get('/contact/list')
-  @PaginationQueryParams()
   @ApiOkResponse({
     description: 'User lists contact',
     type: ContactListResponse,

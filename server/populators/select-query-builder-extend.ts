@@ -27,6 +27,7 @@ declare module 'typeorm/query-builder/SelectQueryBuilder' {
         otherFields: Array<string>;
         primaryColumnName: string;
         primaryTableAliasName: string;
+        skipAndTake?: boolean;
       },
       query: PaginationQuery,
     ): Promise<PaginationResponse<Record<string, any>>>;
@@ -83,13 +84,21 @@ SelectQueryBuilder.prototype.paginateRawAndEntities = async function <Entity>(
   options: {
     otherFields: Array<string>;
     primaryColumnName: string;
+    skipAndTake?: boolean;
     primaryTableAliasName: string;
   },
   query: PaginationQuery,
 ): Promise<PaginationResponse<Entity>> {
-  const { otherFields, primaryColumnName, primaryTableAliasName } = options;
+  const {
+    skipAndTake,
+    otherFields,
+    primaryColumnName,
+    primaryTableAliasName,
+  } = options;
   const [rawAndEntities, total] = await Promise.all([
-    this.skip(query.skip).take(query.limit).getRawAndEntities(),
+    skipAndTake
+      ? this.skip(query.skip).take(query.limit).getRawAndEntities()
+      : this.offset(query.skip).limit(query.limit).getRawAndEntities(),
     this.getCount(),
   ]);
 

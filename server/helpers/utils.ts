@@ -117,3 +117,9 @@ export const fetchOrProduceNull = async <T>(
 };
 export const booleanValue = (value: string | boolean | number) =>
   [true, 'true', 1].includes(value);
+
+export const parsePostTags = (description?: string) => {
+  if (!description?.trim()) return null;
+
+  return description.match(/#\w+/gmu)?.map((v) => v.slice(1));
+};

@@ -1,6 +1,7 @@
 node_modules
 yarn.lock
 .env
+.env-*
 .vscode
 server/logs
 server/*.log
