@@ -1,15 +1,20 @@
 import React, { FC, useEffect } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Box, Layer, Spinner, Text } from 'grommet';
+import { Box, Button, Layer, Spinner, Text } from 'grommet';
 import { Chat as ChatIcon, Favorite } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Chat from '../../../components/mattermost/Chat';
-import { getPostDetailAction } from '../../../store/actions/post.action';
+import {
+  createPostLikeAction,
+  getPostDetailAction,
+  removePostLikeAction,
+} from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import VideoPlayer from '../../../components/utils/VideoPlayer';
+import { FavoriteFill } from '../../../components/utils/CustomIcons';
 
 dayjs.extend(relativeTime);
 interface RouteParams {
@@ -53,7 +58,21 @@ const Video: FC = () => {
             <Box direction="row" justify="between">
               <Box direction="row" gap="medium">
                 <Box direction="row" gap="xsmall">
-                  <Favorite color="status-disabled" />
+                  <Button
+                    plain
+                    onClick={() =>
+                      data.liked
+                        ? dispatch(removePostLikeAction({ postId: data.id }))
+                        : dispatch(createPostLikeAction({ postId: data.id }))
+                    }
+                    icon={
+                      data.liked ? (
+                        <FavoriteFill color="brand" />
+                      ) : (
+                        <Favorite color="status-disabled" />
+                      )
+                    }
+                  />
                   <Text color="status-disabled">{data.likesCount}</Text>
                 </Box>
                 <Box direction="row" gap="xsmall">

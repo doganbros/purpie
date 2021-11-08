@@ -19,6 +19,12 @@ import {
   CREATE_VIDEO_FAILED,
   OPEN_CREATE_VIDEO_LAYER,
   CLOSE_CREATE_VIDEO_LAYER,
+  CREATE_POST_LIKE_REQUESTED,
+  CREATE_POST_LIKE_SUCCESS,
+  CREATE_POST_LIKE_FAILED,
+  REMOVE_POST_LIKE_REQUESTED,
+  REMOVE_POST_LIKE_SUCCESS,
+  REMOVE_POST_LIKE_FAILED,
 } from '../constants/post.constants';
 
 import * as PostService from '../services/post.service';
@@ -204,5 +210,49 @@ export const closeCreateVideoLayerAction = (): PostAction => {
     dispatch({
       type: CLOSE_CREATE_VIDEO_LAYER,
     });
+  };
+};
+
+export const createPostLikeAction = (payload: {
+  postId: number;
+}): PostAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: CREATE_POST_LIKE_REQUESTED,
+      payload,
+    });
+    try {
+      await PostService.createPostLike(payload.postId);
+      dispatch({
+        type: CREATE_POST_LIKE_SUCCESS,
+      });
+    } catch (err) {
+      dispatch({
+        type: CREATE_POST_LIKE_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const removePostLikeAction = (payload: {
+  postId: number;
+}): PostAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: REMOVE_POST_LIKE_REQUESTED,
+      payload,
+    });
+    try {
+      await PostService.removePostLike(payload.postId);
+      dispatch({
+        type: REMOVE_POST_LIKE_SUCCESS,
+      });
+    } catch (err) {
+      dispatch({
+        type: REMOVE_POST_LIKE_FAILED,
+        payload: err?.response?.data,
+      });
+    }
   };
 };

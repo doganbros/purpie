@@ -19,6 +19,8 @@ import {
   CREATE_VIDEO_FAILED,
   OPEN_CREATE_VIDEO_LAYER,
   CLOSE_CREATE_VIDEO_LAYER,
+  CREATE_POST_LIKE_SUCCESS,
+  REMOVE_POST_LIKE_SUCCESS,
 } from '../constants/post.constants';
 import { PostActionParams, PostState } from '../types/post.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -224,6 +226,35 @@ const postReducer = (
           showCreateVideoLayer: false,
         },
       };
+    case CREATE_POST_LIKE_SUCCESS:
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          data: state.postDetail.data
+            ? {
+                ...state.postDetail.data,
+                liked: true,
+                likesCount: String(+state.postDetail.data.likesCount + 1),
+              }
+            : state.postDetail.data,
+        },
+      };
+    case REMOVE_POST_LIKE_SUCCESS:
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          data: state.postDetail.data
+            ? {
+                ...state.postDetail.data,
+                liked: false,
+                likesCount: String(+state.postDetail.data.likesCount - 1),
+              }
+            : state.postDetail.data,
+        },
+      };
+
     default:
       return state;
   }

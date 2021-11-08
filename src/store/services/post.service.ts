@@ -65,3 +65,12 @@ export const createVideo = (data: CreateVideoPayload): Promise<any> =>
       },
     })
     .then((res) => res.data);
+
+export const create = (postId: number): Promise<Post> =>
+  http.get(`/post/detail/feed/${postId}`).then((res) => res.data);
+
+export const createPostLike = (postId: number): Promise<Post> =>
+  http.post('/post/like/create', { postId }).then((res) => res.data);
+
+export const removePostLike = (postId: number): Promise<Post> =>
+  http.delete(`/post/like/remove/${postId}`).then((res) => res.data);

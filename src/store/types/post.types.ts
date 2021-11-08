@@ -19,6 +19,12 @@ import {
   CREATE_VIDEO_FAILED,
   OPEN_CREATE_VIDEO_LAYER,
   CLOSE_CREATE_VIDEO_LAYER,
+  CREATE_POST_LIKE_REQUESTED,
+  CREATE_POST_LIKE_SUCCESS,
+  CREATE_POST_LIKE_FAILED,
+  REMOVE_POST_LIKE_REQUESTED,
+  REMOVE_POST_LIKE_SUCCESS,
+  REMOVE_POST_LIKE_FAILED,
 } from '../constants/post.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
@@ -95,7 +101,10 @@ export type PostActionParams =
       };
     }
   | {
-      type: typeof POST_DETAIL_REQUESTED;
+      type:
+        | typeof POST_DETAIL_REQUESTED
+        | typeof CREATE_POST_LIKE_REQUESTED
+        | typeof REMOVE_POST_LIKE_REQUESTED;
       payload: {
         postId: number;
       };
@@ -120,7 +129,9 @@ export type PostActionParams =
       type:
         | typeof CREATE_VIDEO_SUCCESS
         | typeof OPEN_CREATE_VIDEO_LAYER
-        | typeof CLOSE_CREATE_VIDEO_LAYER;
+        | typeof CLOSE_CREATE_VIDEO_LAYER
+        | typeof CREATE_POST_LIKE_SUCCESS
+        | typeof REMOVE_POST_LIKE_SUCCESS;
     }
   | {
       type:
@@ -129,7 +140,9 @@ export type PostActionParams =
         | typeof ZONE_FEED_FAILED
         | typeof CHANNEL_FEED_FAILED
         | typeof POST_DETAIL_FAILED
-        | typeof CREATE_VIDEO_FAILED;
+        | typeof CREATE_VIDEO_FAILED
+        | typeof CREATE_POST_LIKE_FAILED
+        | typeof REMOVE_POST_LIKE_FAILED;
       payload: ResponseError;
     };
 
