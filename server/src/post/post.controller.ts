@@ -260,7 +260,7 @@ export class PostController {
     return this.postService.getPostLikeCount(Number(postId));
   }
 
-  @Delete('like/remove/:likeId')
+  @Delete('like/remove/:postId')
   @ApiCreatedResponse({
     description:
       'User unlikes a post. Returns Created when some rows are affected and OK otherwise',
@@ -269,15 +269,16 @@ export class PostController {
   @IsAuthenticated()
   @ApiParam({
     type: Number,
-    name: 'likeId',
+    description: 'The post id to unlike',
+    name: 'postId',
   })
   async removePostLike(
     @CurrentUser() user: UserPayload,
-    @Param('likeId') likeId: string,
+    @Param('postId') postId: string,
   ) {
     const result = await this.postService.removePostLike(
       user.id,
-      Number(likeId),
+      Number(postId),
     );
 
     return result.affected === 0 ? 'OK' : 'Created';
