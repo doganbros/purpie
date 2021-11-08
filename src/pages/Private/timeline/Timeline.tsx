@@ -67,20 +67,29 @@ const Timeline: FC = () => {
 
   useEffect(() => {
     const activeFilterId = filters.find((f) => f.active)?.id;
-    if (activeFilterId === 3 || activeFilterId === 4) {
-      dispatch(getPublicFeedAction(30, 0));
-    } else if (selectedUserZone) {
-      dispatch(
-        getZoneFeedAction(
-          selectedUserZone.zone.id,
-          30,
-          0,
-          undefined,
-          activeFilterId === 2
-        )
-      );
-    } else {
-      dispatch(getUserFeedAction(30, 0, undefined, activeFilterId === 2));
+    switch (activeFilterId) {
+      case 0:
+      case 1:
+      case 2:
+        if (selectedUserZone) {
+          dispatch(
+            getZoneFeedAction({
+              zoneId: selectedUserZone.zone.id,
+              streaming: activeFilterId === 2,
+            })
+          );
+        } else {
+          dispatch(getUserFeedAction({ streaming: activeFilterId === 2 }));
+        }
+        break;
+      case 3:
+        dispatch(getPublicFeedAction({ sortBy: 'time' }));
+        break;
+      case 4:
+        dispatch(getPublicFeedAction({ sortBy: 'popularity' }));
+        break;
+      default:
+        break;
     }
   }, [filters]);
   return (

@@ -66,6 +66,15 @@ export interface CreateVideoPayload {
   userContactExclusive?: boolean;
   videoFile: File;
 }
+export interface FeedPayload {
+  limit?: number;
+  skip?: number;
+  postType?: PostType;
+  streaming?: boolean;
+  sortBy?: 'time' | 'popularity';
+  sortDirection?: 'ASC' | 'DESC';
+  tags?: string;
+}
 
 export interface PostState {
   feed: PaginatedResponse<Post> & {
@@ -87,16 +96,17 @@ export interface PostState {
 export type PostActionParams =
   | {
       type: typeof PUBLIC_FEED_REQUESTED | typeof USER_FEED_REQUESTED;
+      payload: FeedPayload;
     }
   | {
       type: typeof CHANNEL_FEED_REQUESTED;
-      payload: {
+      payload: FeedPayload & {
         channelId: number;
       };
     }
   | {
       type: typeof ZONE_FEED_REQUESTED;
-      payload: {
+      payload: FeedPayload & {
         zoneId: number;
       };
     }

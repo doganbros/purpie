@@ -28,28 +28,23 @@ import {
 } from '../constants/post.constants';
 
 import * as PostService from '../services/post.service';
-import { CreateVideoPayload, PostAction, PostType } from '../types/post.types';
+import {
+  CreateVideoPayload,
+  FeedPayload,
+  PostAction,
+} from '../types/post.types';
 
-export const getPublicFeedAction = (
-  limit: number,
-  skip: number,
-  postType?: PostType,
-  streaming?: boolean
-): PostAction => {
+export const getPublicFeedAction = (payload: FeedPayload): PostAction => {
   return async (dispatch) => {
     dispatch({
       type: PUBLIC_FEED_REQUESTED,
+      payload,
     });
     try {
-      const payload = await PostService.getPublicFeed(
-        limit,
-        skip,
-        postType,
-        streaming
-      );
+      const response = await PostService.getPublicFeed(payload);
       dispatch({
         type: PUBLIC_FEED_SUCCESS,
-        payload,
+        payload: response,
       });
     } catch (err) {
       dispatch({
@@ -60,26 +55,17 @@ export const getPublicFeedAction = (
   };
 };
 
-export const getUserFeedAction = (
-  limit: number,
-  skip: number,
-  postType?: PostType,
-  streaming?: boolean
-): PostAction => {
+export const getUserFeedAction = (payload: FeedPayload): PostAction => {
   return async (dispatch) => {
     dispatch({
       type: USER_FEED_REQUESTED,
+      payload,
     });
     try {
-      const payload = await PostService.getUserFeed(
-        limit,
-        skip,
-        postType,
-        streaming
-      );
+      const response = await PostService.getUserFeed(payload);
       dispatch({
         type: USER_FEED_SUCCESS,
-        payload,
+        payload: response,
       });
     } catch (err) {
       dispatch({
@@ -91,28 +77,18 @@ export const getUserFeedAction = (
 };
 
 export const getZoneFeedAction = (
-  zoneId: number,
-  limit: number,
-  skip: number,
-  postType?: PostType,
-  streaming?: boolean
+  payload: FeedPayload & { zoneId: number }
 ): PostAction => {
   return async (dispatch) => {
     dispatch({
       type: ZONE_FEED_REQUESTED,
-      payload: { zoneId },
+      payload,
     });
     try {
-      const payload = await PostService.getZoneFeed(
-        zoneId,
-        limit,
-        skip,
-        postType,
-        streaming
-      );
+      const response = await PostService.getZoneFeed(payload);
       dispatch({
         type: ZONE_FEED_SUCCESS,
-        payload,
+        payload: response,
       });
     } catch (err) {
       dispatch({
@@ -124,28 +100,18 @@ export const getZoneFeedAction = (
 };
 
 export const getChannelFeedAction = (
-  channelId: number,
-  limit: number,
-  skip: number,
-  postType?: PostType,
-  streaming?: boolean
+  payload: FeedPayload & { channelId: number }
 ): PostAction => {
   return async (dispatch) => {
     dispatch({
       type: CHANNEL_FEED_REQUESTED,
-      payload: { channelId },
+      payload,
     });
     try {
-      const payload = await PostService.getChannelFeed(
-        channelId,
-        limit,
-        skip,
-        postType,
-        streaming
-      );
+      const response = await PostService.getChannelFeed(payload);
       dispatch({
         type: CHANNEL_FEED_SUCCESS,
-        payload,
+        payload: response,
       });
     } catch (err) {
       dispatch({

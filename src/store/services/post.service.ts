@@ -2,57 +2,47 @@ import { serialize } from 'object-to-formdata';
 import { nanoid } from 'nanoid';
 import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
-import { CreateVideoPayload, Post, PostType } from '../types/post.types';
+import { CreateVideoPayload, FeedPayload, Post } from '../types/post.types';
 
 export const getPublicFeed = (
-  limit: number,
-  skip: number,
-  postType?: PostType,
-  streaming?: boolean
+  params: FeedPayload
 ): Promise<PaginatedResponse<Post>> =>
   http
     .get('/post/list/feed/public', {
-      params: { limit, skip, postType, streaming },
+      params,
     })
     .then((res) => res.data);
 
 export const getUserFeed = (
-  limit: number,
-  skip: number,
-  postType?: PostType,
-  streaming?: boolean
+  params: FeedPayload
 ): Promise<PaginatedResponse<Post>> =>
   http
     .get('/post/list/feed/user', {
-      params: { limit, skip, postType, streaming },
+      params,
     })
     .then((res) => res.data);
 
 export const getZoneFeed = (
-  zoneId: number,
-  limit: number,
-  skip: number,
-  postType?: PostType,
-  streaming?: boolean
-): Promise<PaginatedResponse<Post>> =>
-  http
+  payload: FeedPayload & { zoneId: number }
+): Promise<PaginatedResponse<Post>> => {
+  const { zoneId, ...params } = payload;
+  return http
     .get(`/post/list/feed/zone/${zoneId}`, {
-      params: { limit, skip, postType, streaming },
+      params,
     })
     .then((res) => res.data);
+};
 
 export const getChannelFeed = (
-  channelId: number,
-  limit: number,
-  skip: number,
-  postType?: PostType,
-  streaming?: boolean
-): Promise<PaginatedResponse<Post>> =>
-  http
+  payload: FeedPayload & { channelId: number }
+): Promise<PaginatedResponse<Post>> => {
+  const { channelId, ...params } = payload;
+  return http
     .get(`/post/list/feed/channel/${channelId}`, {
-      params: { limit, skip, postType, streaming },
+      params,
     })
     .then((res) => res.data);
+};
 
 export const getPostDetail = (postId: number): Promise<Post> =>
   http.get(`/post/detail/feed/${postId}`).then((res) => res.data);
