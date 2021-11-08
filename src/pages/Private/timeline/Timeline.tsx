@@ -138,7 +138,6 @@ const Timeline: FC = () => {
                 onClickPlay={() => history.push(`video/${item.id}`)}
                 onClickSave={() => {}}
                 saved={false}
-                tags={item.tags}
                 createdBy={item.createdBy}
                 videoTitle={item.title}
                 videoName={item.videoName}

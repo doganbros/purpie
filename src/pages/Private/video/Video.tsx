@@ -45,13 +45,6 @@ const Video: FC = () => {
               <Text weight="bold" size="large">
                 {data.title}
               </Text>
-              <Box direction="row" gap="small">
-                {data.tags.map((m) => (
-                  <Text key={m.value} color="brand">
-                    {`#${m.value}`}
-                  </Text>
-                ))}
-              </Box>
             </Box>
             <Text weight="bold">{dayjs(data.createdOn).fromNow()}</Text>
           </Box>

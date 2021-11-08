@@ -19,7 +19,6 @@ interface VideoGridItemProps {
   videoName: string;
   likes: string;
   comments: string;
-  tags: { id: number; value: string }[];
   onClickPlay: (id: number) => any;
   onClickSave: (id: number) => any;
 }
@@ -36,7 +35,6 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
   videoName,
   likes,
   comments,
-  tags,
   onClickPlay,
   onClickSave,
 }) => {
@@ -171,13 +169,6 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
           <Chat color="status-disabled" />
           <Text color="status-disabled">{comments}</Text>
         </Box>
-      </Box>
-      <Box direction="row" gap="small">
-        {tags.map((t) => (
-          <Text key={t.id} color="status-disabled" size="small">
-            #{t.value}
-          </Text>
-        ))}
       </Box>
     </Box>
   );

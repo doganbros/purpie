@@ -27,7 +27,6 @@ const RecommendedVideos: FC = () => {
               onClickPlay={item.onClickPlay}
               onClickSave={item.onClickSave}
               saved={item.saved}
-              tags={item.tags}
               userAvatarSrc={item.userAvatarSrc}
               createdBy={item.createdBy}
               videoTitle={item.videoTitle}

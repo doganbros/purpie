@@ -29,10 +29,6 @@ export enum PostType {
   meeting = 'meeting',
   video = 'video',
 }
-export interface Tag {
-  id: number;
-  value: string;
-}
 
 export interface Post {
   channel?: ChannelBasic;
@@ -50,7 +46,6 @@ export interface Post {
   saved: boolean;
   slug: string;
   startDate?: Date;
-  tags: Tag[];
   title: string;
   type: PostType;
   userContactExclusive: boolean;
