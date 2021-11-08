@@ -3,7 +3,6 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
-import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
 import {
   PublicChannelSuggestionListResponse,
@@ -22,7 +21,6 @@ export class ActivityController {
     type: PublicChannelSuggestionListResponse,
   })
   @IsAuthenticated()
-  @PaginationQueryParams()
   getPublicChannels(
     @Query() query: PaginationQuery,
     @CurrentUser() user: UserPayload,
@@ -36,7 +34,6 @@ export class ActivityController {
     type: PublicZoneSuggestionListResponse,
   })
   @IsAuthenticated()
-  @PaginationQueryParams()
   getPublicZones(
     @Query() query: PaginationQuery,
     @CurrentUser() user: UserPayload,
