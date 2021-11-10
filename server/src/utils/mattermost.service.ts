@@ -72,23 +72,6 @@ export class MattermostService implements OnModuleInit {
 
     this.mattermostClient.setToken(loginResponse.headers.get('Token')!);
 
-    const currentConfig = await this.mattermostClient.getConfig();
-
-    if (
-      !currentConfig.ServiceSettings.EnableUserAccessTokens ||
-      !currentConfig.ServiceSettings.EnableBotAccountCreation
-    ) {
-      await this.mattermostClient.updateConfig({
-        ...currentConfig,
-        ServiceSettings: {
-          ...currentConfig.ServiceSettings,
-          EnableUserAccessTokens: true,
-          EnableBotAccountCreation: true,
-          AllowCorsFrom: '*',
-        },
-      });
-    }
-
     const createBotResult = await fetchOrProduceNull(() =>
       this.mattermostClient.createBot({
         username: MM_BOT_USERNAME,
