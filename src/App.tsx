@@ -23,7 +23,6 @@ const App: FC = () => {
   const {
     auth: {
       isAuthenticated,
-      user,
       retrieveUser: { loading },
     },
     zone: { userZoneInitialized },
@@ -38,12 +37,7 @@ const App: FC = () => {
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(getUserZonesAction());
-      dispatch(
-        initializeMattermostAction(
-          user!.mattermostToken,
-          REACT_APP_MM_TEAM_NAME
-        )
-      );
+      dispatch(initializeMattermostAction(REACT_APP_MM_TEAM_NAME));
     }
   }, [isAuthenticated]);
 

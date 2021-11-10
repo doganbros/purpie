@@ -154,9 +154,9 @@ export class AuthController {
       user.mattermostId!,
     );
     userPayload.mattermostTokenId = id;
-    await this.authService.setAccessTokens(userPayload, res);
+    await this.authService.setAccessTokens(userPayload, res, token);
 
-    return { ...userPayload, mattermostToken: token };
+    return userPayload;
   }
 
   @Post('/logout')
