@@ -64,9 +64,8 @@
     "video.js": "^7.14.3"
   },
   "scripts": {
-    "start:web": "cross-env PORT=3000 react-scripts start",
-    "start:concurrent:dev": "npm-run-all --parallel server:start:dev start:web:noport ",
-    "start:web:noport": "react-scripts start",
+    "start:web": "react-scripts start",
+    "start:concurrent:dev": "npm-run-all --parallel server:start:dev start:web",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
