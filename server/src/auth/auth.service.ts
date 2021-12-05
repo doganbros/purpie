@@ -98,7 +98,11 @@ export class AuthService {
     );
   }
 
-  async setAccessTokens(userPayload: UserPayload, res: Response) {
+  async setAccessTokens(
+    userPayload: UserPayload,
+    res: Response,
+    mattermostToken?: string,
+  ) {
     await this.userRefreshTokenRepository.delete({
       userId: userPayload.id,
       id: userPayload.refreshTokenId,
@@ -123,12 +127,22 @@ export class AuthService {
       expires: dayjs().add(30, 'days').toDate(),
       domain: `.${new URL(REACT_APP_SERVER_HOST).hostname}`,
       httpOnly: true,
+      secure: true,
     });
     res.cookie('OCTOPUS_REFRESH_ACCESS_TOKEN', refreshToken, {
       expires: dayjs().add(30, 'days').toDate(),
       domain: `.${new URL(REACT_APP_SERVER_HOST).hostname}`,
       httpOnly: true,
+      secure: true,
     });
+    if (mattermostToken) {
+      res.cookie('MM_ACCESS_TOKEN', mattermostToken, {
+        secure: true,
+        expires: dayjs().add(30, 'days').toDate(),
+        httpOnly: false,
+        domain: `.${new URL(REACT_APP_SERVER_HOST).hostname}`,
+      });
+    }
     return refreshTokenId;
   }
 

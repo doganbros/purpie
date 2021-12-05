@@ -48,7 +48,7 @@ export const loginAction = (user: LoginPayload): AuthAction => {
         type: LOGIN_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: LOGIN_FAILED,
         payload: err?.response?.data,
@@ -68,7 +68,7 @@ export const retrieveUserAction = (): AuthAction => {
         type: USER_RETRIEVED_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: USER_RETRIEVED_FAILED,
         payload: err?.response?.data,
@@ -93,7 +93,7 @@ export const verifyUserEmailAction = (body: VerifyEmailPayload): AuthAction => {
         type: VERIFY_USER_EMAIL_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: VERIFY_USER_EMAIL_FAILED,
         payload: err?.response?.data,
@@ -126,7 +126,7 @@ export const authenticateWithThirdPartyCodeAction = (
         type: THIRD_PARTY_AUTH_WITH_CODE_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: THIRD_PARTY_AUTH_WITH_CODE_FAILED,
         payload: err?.response?.data,
@@ -157,7 +157,7 @@ export const registerAction = (user: RegisterPayload): AuthAction => {
         payload,
       });
       appHistory.push(`/verify-email-info/${payload.id}`);
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: REGISTER_FAILED,
         payload: err?.response?.data,
@@ -181,7 +181,7 @@ export const resetPasswordRequestAction = (email: string): AuthAction => {
         `A password reset link has been sent to ${email}`
       )(dispatch);
       appHistory.replace('/login');
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: FORGOT_PASSWORD_FAILED,
         payload: err?.response?.data,
@@ -205,7 +205,7 @@ export const resetPasswordAction = (body: ResetPasswordPayload): AuthAction => {
         'Your password has been reset successfully'
       )(dispatch);
       appHistory.replace('/login');
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: RESET_PASSWORD_FAILED,
         payload: err?.response?.data,
@@ -230,7 +230,7 @@ export const resendMailVerificationTokenAction = (
         'Your email verification link has successfully been sent to your email'
       )(dispatch);
       appHistory.replace('/login');
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: RESEND_MAIL_VERIFICATION_TOKEN_FAILED,
         payload: err?.response?.data,

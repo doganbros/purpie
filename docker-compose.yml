@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  octopus:
+    image: "doganbros/octopus:octopus"
+    extra_hosts:
+      - "octopus.localhost:127.0.0.1"
+    depends_on:
+      - mattermost
+      - postgres
+    ports:
+      - "${PORT}:${PORT}"
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    env_file:
+      - .env
+    volumes:
+      - ./:/octopus:ro
+      - octopus-modules:/octopus/node_modules
+      - octopus-server-dist:/octopus/server/dist
+
+  mattermost:
+    image: "doganbros/octopus:mattermost-preview"
+    ports:
+      - "${MATTERMOST_PORT:-8065}:8065"
+      
+  postgres:
+    image: postgres:14.0-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DB_DATABASE}"
+    ports:
+      - "5430:5432"
+
+volumes:
+  octopus-modules:
+  octopus-server-dist:

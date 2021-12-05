@@ -16,7 +16,7 @@ export class PostTag extends BaseEntity {
   @Column()
   value: string;
 
-  @ManyToOne(() => Post, (post) => post.tags, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Post, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'postId' })
   post: Post;
 

@@ -1,9 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { JitsiConfig } from 'types/Meeting';
 import { PostType } from 'types/Post';
 import { RecordEntity } from './base/RecordEntity';
 import { Channel } from './Channel.entity';
-import { PostTag } from './PostTag.entity';
 import { User } from './User.entity';
 
 @Entity()
@@ -60,9 +59,6 @@ export class Post extends RecordEntity {
 
   @Column({ default: false })
   record: boolean;
-
-  @OneToMany(() => PostTag, (postTag) => postTag.post)
-  tags: Array<PostTag>;
 
   @Column({ nullable: true })
   videoName: string;

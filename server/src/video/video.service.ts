@@ -3,8 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import dayjs from 'dayjs';
 import { Contact } from 'entities/Contact.entity';
 import { Post } from 'entities/Post.entity';
+import { PostTag } from 'entities/PostTag.entity';
 import { PostVideo } from 'entities/PostVideo.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
+import { parsePostTags } from 'helpers/utils';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { MailService } from 'src/mail/mail.service';
 import { Brackets, Repository } from 'typeorm';
@@ -20,6 +22,8 @@ export class VideoService {
     private postRepository: Repository<Post>,
     @InjectRepository(PostVideo)
     private postVideoRepository: Repository<PostVideo>,
+    @InjectRepository(PostTag)
+    private postTagRepository: Repository<PostTag>,
     private mailService: MailService,
   ) {}
 
@@ -33,6 +37,7 @@ export class VideoService {
 
   async createNewVideoPost(payload: Partial<Post>) {
     const videoPost = await this.postRepository.create(payload).save();
+    // There could be multiple videos in the future
     await this.postVideoRepository
       .create({
         slug: payload.slug,
@@ -41,6 +46,17 @@ export class VideoService {
       .save();
 
     return videoPost;
+  }
+
+  async createVideoTags(videoId: number, description?: string) {
+    const tags = parsePostTags(description);
+
+    if (tags?.length) {
+      return this.postTagRepository.insert(
+        tags.map((v) => ({ value: v, postId: videoId })),
+      );
+    }
+    return null;
   }
 
   async sendVideoInfoMail(user: UserPayload, videoPost: Post) {

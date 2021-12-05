@@ -1,3 +1,5 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsInt } from 'class-validator';
 import { Request } from 'express';
 
 export interface Pagination {
@@ -5,8 +7,22 @@ export interface Pagination {
   skip: number;
 }
 
-export interface PaginationQuery extends Pagination {
-  [key: string]: any;
+export class PaginationQuery implements Pagination {
+  @ApiProperty({
+    required: false,
+    description: 'The number of zones to get. Defaults to 30',
+  })
+  @IsOptional()
+  @IsInt()
+  limit: number;
+
+  @ApiProperty({
+    required: false,
+    description: 'The number of records to skip. Defaults to 0',
+  })
+  @IsOptional()
+  @IsInt()
+  skip: number;
 }
 
 export interface PaginationResponse<T> {

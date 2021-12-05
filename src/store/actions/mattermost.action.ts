@@ -1,7 +1,7 @@
 import { Client4 } from 'mattermost-redux/client';
 import webSocketClient from 'mattermost-redux/client/websocket_client';
 import { Post } from 'mattermost-redux/types/posts';
-import { fetchOrProduceNull } from '../../helpers/utils';
+import { fetchOrProduceNull, getCookie } from '../../helpers/utils';
 import {
   REMOVE_USER_FROM_CHANNEL,
   SET_MATTERMOST_CHANNEL_INFO,
@@ -21,13 +21,21 @@ const {
 const getTeam = () => store.getState().mattermost.currentTeam!;
 
 export const initializeMattermostAction = (
-  token: string,
   teamName: string
 ): MattermostAction => {
   return async (dispatch) => {
     try {
       Client4.setUrl(REACT_APP_MM_SERVER_URL);
       Client4.setIncludeCookies(false);
+
+      const token = getCookie('MM_ACCESS_TOKEN');
+      if (!token) {
+        return setToastAction(
+          'error',
+          `Couldn't login into mattermost`
+        )(dispatch);
+      }
+
       Client4.setToken(token);
 
       const team = await Client4.getTeamByName(teamName);
@@ -60,11 +68,11 @@ export const initializeMattermostAction = (
         if (event.event === 'user_added' && event.data.user_id === me.id)
           setChannelByIdAction(event.broadcast.channel_id)(dispatch);
       });
-      webSocketClient.initialize(token, {
+      return webSocketClient.initialize(token, {
         connectionUrl: Client4.getWebSocketUrl().replace('http', 'ws'),
       });
     } catch (err) {
-      setToastAction(
+      return setToastAction(
         'error',
         `Error occured while fetching mattermost user or team`
       )(dispatch);

@@ -38,9 +38,6 @@ class BasePostFeedList {
 
   @ApiProperty({ type: User })
   createdBy: User;
-
-  @ApiProperty({ isArray: true, type: String })
-  tags: Array<{ id: number; value: string }>;
 }
 
 class PostFeedChannel {

@@ -17,6 +17,7 @@ import { UserPayload } from 'src/auth/interfaces/user.interface';
 import {
   generateLowerAlphaNumId,
   meetingConfigStringify,
+  parsePostTags,
   separateString,
 } from 'helpers/utils';
 import { Contact } from 'entities/Contact.entity';
@@ -119,10 +120,15 @@ export class MeetingService {
     );
   }
 
-  async createMeetingTags(tags: Array<string>, meetingId: number) {
-    return this.postTagRepository.insert(
-      tags.map((v) => ({ value: v, postId: meetingId })),
-    );
+  async createMeetingTags(meetingId: number, description?: string) {
+    const tags = parsePostTags(description);
+
+    if (tags?.length) {
+      return this.postTagRepository.insert(
+        tags.map((v) => ({ value: v, postId: meetingId })),
+      );
+    }
+    return null;
   }
 
   getUsersById(ids: Array<number>) {

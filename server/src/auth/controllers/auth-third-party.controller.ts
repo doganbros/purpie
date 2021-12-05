@@ -174,7 +174,7 @@ export class AuthThirdPartyController {
 
       userPayload.mattermostTokenId = id;
 
-      await this.authService.setAccessTokens(userPayload, res);
+      await this.authService.setAccessTokens(userPayload, res, token);
       return { mattermostToken: token, ...userPayload };
     }
 

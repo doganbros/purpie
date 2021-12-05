@@ -28,7 +28,6 @@ import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { PaginationQuery } from 'types/PaginationQuery';
-import { PaginationQueryParams } from 'src/utils/decorators/pagination-query-params.decorator';
 import { MeetingConfig } from 'types/Meeting';
 import { errorResponseDoc } from 'helpers/error-response-doc';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
@@ -122,12 +121,10 @@ export class MeetingController {
 
     const meeting = await this.meetingService.createNewMeeting(meetingPayload);
 
-    if (createMeetingInfo.tags?.length) {
-      await this.meetingService.createMeetingTags(
-        createMeetingInfo.tags,
-        meeting.id,
-      );
-    }
+    await this.meetingService.createMeetingTags(
+      meeting.id,
+      meeting.description,
+    );
 
     this.meetingService.sendMeetingInfoMail(user, meeting, true);
 
@@ -244,7 +241,6 @@ export class MeetingController {
   @ApiOkResponse({
     description: 'User gets meeting logs',
   })
-  @PaginationQueryParams()
   @IsAuthenticated()
   async getMeetingLogs(
     @CurrentUser() user: UserPayload,
@@ -258,7 +254,6 @@ export class MeetingController {
   @ApiOkResponse({
     description: 'User gets meeting recordings',
   })
-  @PaginationQueryParams()
   @IsAuthenticated()
   async getMeetingRecordings(
     @CurrentUser() user: UserPayload,
