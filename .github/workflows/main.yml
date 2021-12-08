@@ -25,4 +25,4 @@ jobs:
       - run: sudo yarn build
       - run: "sudo pm2 stop API || :"
       - run: "sudo pm2 delete API || :"
-      - run: sudo yarn start:server
+      - run: sudo yarn server:start:pm2
