@@ -1,0 +1,73 @@
+#user  nobody;
+worker_processes  1;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+rtmp {
+    server {
+        listen 1935;
+        application live {
+            live on;
+            dash on;
+            dash_path /tmp/dash;
+            dash_fragment 15s;
+            exec_play bash -c "/home/octopus/octopus-rtmp.sh play_started $args $name";
+            exec_play_done bash -c "/home/octopus/octopus-rtmp.sh play_done $args $name";
+            exec_publish bash -c "/home/octopus/octopus-rtmp.sh publish_started $args $name";
+            exec_publish_done bash -c "/home/octopus/octopus-rtmp.sh publish_done $args $name";
+            exec_record_done bash -c "/home/octopus/octopus-rtmp.sh record-done $args $name";
+        }
+
+        application stream-and-rec {
+            live on;
+            record all;
+            record_path /home/recordings/$name;
+            record_suffix -%d-%b-%y-%T.mp4;
+            dash on;
+#            dash_path /tmp/dash;
+            dash_fragment 15s;
+            exec_play bash -c "/home/octopus/octopus-rtmp.sh play-started $args $pageurl $name $arg_uid";
+            exec_play_done bash -c "/home/octopus/octopus-rtmp.sh play-done $args $pageurl $name $arg_uid";
+            exec_publish bash -c "/home/octopus/octopus-rtmp.sh publish-started $args $pageurl $name $arg_uid";
+            exec_publish_done bash -c "/home/octopus/octopus-rtmp.sh publish-done $args $pageurl $name $arg_uid";
+            exec_record_done bash -c "/home/octopus/octopus-rtmp.sh record-done $args $name $filename";
+        }
+
+        application encoder{
+            live on;
+            notify_method get;
+            exec ffmpeg -i rtmp://localhost:1935/$app/$name -c:a aac -strict -2 -b:a 256k -c:v libx264 -x264opts bitrate=1024:vbv-maxrate=1024:vbv-bufsize=1024 -rtbufsize 100M -bufsize 1024k -preset veryfast -f flv rtmp://lo>;
+        }
+
+        application hls{
+            live on;
+            hls on;
+            hls_path /home/hls;
+            hls_nested on;
+            hls_fragment 2s;
+        }
+    }
+}
+
+http {
+    server {
+        listen 80;
+        location /tv {
+            root /tmp/dash;
+        }
+    }
+
+    types {
+        text/html html;
+        application/dash+xml mpd;
+    }
+}

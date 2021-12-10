@@ -6,7 +6,7 @@ import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
-import pick from 'lodash.pick';
+import { pick } from 'lodash';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { MailService } from 'src/mail/mail.service';
 import { Brackets, Repository } from 'typeorm';

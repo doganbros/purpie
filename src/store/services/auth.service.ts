@@ -1,5 +1,4 @@
 import { http } from '../../config/http';
-import { MM_ACCESS_TOKEN } from '../../helpers/constants';
 import {
   LoginPayload,
   RegisterPayload,
@@ -9,28 +8,13 @@ import {
 } from '../types/auth.types';
 
 export const login = async (user: LoginPayload): Promise<User> =>
-  http.post('/auth/login', user).then((res) => {
-    localStorage.removeItem(MM_ACCESS_TOKEN);
-    localStorage.setItem(MM_ACCESS_TOKEN, res.data.mattermostToken);
-    return {
-      mattermostToken: res.data.mattermostToken,
-      ...res.data,
-    };
-  });
+  http.post('/auth/login', user).then((res) => res.data);
 
 export const retrieveUser = async (): Promise<User> =>
-  http.post('/auth/retrieve').then(({ data }) => {
-    return {
-      mattermostToken: localStorage.getItem(MM_ACCESS_TOKEN),
-      ...data,
-    };
-  });
+  http.post('/auth/retrieve').then((res) => res.data);
 
 export const logOut = (): Promise<any> =>
-  http.post('/auth/logout').then((res) => {
-    localStorage.removeItem(MM_ACCESS_TOKEN);
-    return res.data;
-  });
+  http.post('/auth/logout').then((res) => res.data);
 
 export const register = async (user: RegisterPayload): Promise<User> =>
   http.post('/auth/register', user).then((res) => res.data);
