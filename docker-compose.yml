@@ -14,7 +14,7 @@ services:
         env_file:
             - .env
         volumes:
-            - ./:/octopus
+            - ./:/octopus:ro
             - octopus-modules:/octopus/node_modules
             - octopus-server-dist:/octopus/server/dist
 
