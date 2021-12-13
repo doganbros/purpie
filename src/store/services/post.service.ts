@@ -1,5 +1,4 @@
 import { serialize } from 'object-to-formdata';
-import { nanoid } from 'nanoid';
 import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { CreateVideoPayload, FeedPayload, Post } from '../types/post.types';
@@ -48,13 +47,7 @@ export const getPostDetail = (postId: number): Promise<Post> =>
   http.get(`/post/detail/feed/${postId}`).then((res) => res.data);
 
 export const createVideo = (data: CreateVideoPayload): Promise<any> =>
-  http
-    .post('video/create/', serialize(data), {
-      headers: {
-        'Content-Type': `multipart/form-data; boundary=---WebKitFormBoundary${nanoid()}`,
-      },
-    })
-    .then((res) => res.data);
+  http.post('video/create/', serialize(data)).then((res) => res.data);
 
 export const create = (postId: number): Promise<Post> =>
   http.get(`/post/detail/feed/${postId}`).then((res) => res.data);
