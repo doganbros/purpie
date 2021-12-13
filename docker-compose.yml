@@ -28,6 +28,8 @@ services:
             - ./docker/ssl:/etc/nginx/ssl
         depends_on:
             - octopus
+        env_file:
+            - .env
 
     postgres:
         image: postgres:14.0-alpine
