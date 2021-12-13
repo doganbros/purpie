@@ -21,7 +21,8 @@ services:
     octopus-router:
         image: "nginx:1.21.4"
         ports: 
-            - ${SERVER_PORT}:${PORT}
+            - 443:443
+            - ${SERVER_PORT}:${SERVER_PORT}
             - ${MATTERMOST_PORT}:${MATTERMOST_PORT}
         volumes:
             - ./docker/nginx/templates:/etc/nginx/templates
