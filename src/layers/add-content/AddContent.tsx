@@ -43,7 +43,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
       onClick: () => {
-        if (!submitting) dispatch(createMeetingAction({}));
+        if (!submitting) dispatch(createMeetingAction({ public: true }));
         onDismiss();
       },
     },
