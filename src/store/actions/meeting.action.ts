@@ -64,7 +64,7 @@ export const createMeetingAction = (
         'ok',
         `New meeting with the id ${response} has been created successfully`
       )(dispatch);
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: MEETING_CREATE_FAILED,
         payload: err?.response?.data,
@@ -84,7 +84,7 @@ export const getUserMeetingConfigAction = (): MeetingAction => {
         type: GET_USER_MEETING_CONFIG_SUCCESS,
         payload: response,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: GET_USER_MEETING_CONFIG_FAILED,
         payload: err?.response?.data,
