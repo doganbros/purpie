@@ -29,6 +29,6 @@ export class Client extends RecordEntity {
   @JoinColumn({ name: 'createdById', referencedColumnName: 'id' })
   createdBy: User;
 
-  @Column()
+  @Column({ nullable: true })
   createdById: number;
 }
