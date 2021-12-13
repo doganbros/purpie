@@ -8,9 +8,6 @@ services:
         depends_on:
             - mattermost
             - postgres
-        ports:
-            - "${PORT}:${PORT}"
-            - "${SERVER_PORT}:${SERVER_PORT}"
         env_file:
             - .env
         volumes:
@@ -20,8 +17,15 @@ services:
 
     mattermost:
         image: "doganbros/octopus:mattermost-preview"
-        ports:
-            - "${MATTERMOST_PORT:-8065}:8065"
+
+    octopus-router:
+        image: "nginx:1.21.4"
+        ports: 
+            - ${SERVER_PORT}:${PORT}
+            - ${MATTERMOST_PORT}:${MATTERMOST_PORT}
+        volumes:
+            - ./docker/nginx/templates:/etc/nginx/templates
+            - ./docker/ssl:/etc/nginx/ssl
 
     postgres:
         image: postgres:14.0-alpine
@@ -42,6 +46,7 @@ services:
             - ${CONFIG}/web:/config:Z
             - ${CONFIG}/web/crontabs:/var/spool/cron/crontabs:Z
             - ${CONFIG}/transcripts:/usr/share/jitsi-meet/transcripts:Z
+            - ./docker/ssl:/config/keys
         environment:
             - AMPLITUDE_ID
             - ANALYTICS_SCRIPT_URLS

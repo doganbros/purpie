@@ -1,0 +1,50 @@
+server {
+    listen 443 ssl;
+    server_name frontend;
+
+    ssl_certificate     /etc/nginx/ssl/cert.crt;
+    ssl_certificate_key    /etc/nginx/ssl/cert.key;
+
+
+    location / {
+        proxy_pass http://octopus:${PORT};
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Connection 'upgrade';
+    }
+}
+
+server {
+    listen ${SERVER_PORT} ssl;
+    server_name backend;
+
+    ssl_certificate     /etc/nginx/ssl/cert.crt;
+    ssl_certificate_key    /etc/nginx/ssl/cert.key;
+
+
+    location / {
+        proxy_pass http://octopus:${SERVER_PORT};
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Connection 'upgrade';
+    }
+}
+
+server {
+    listen ${MATTERMOST_PORT} ssl;
+    server_name mattermost;
+
+    ssl_certificate     /etc/nginx/ssl/cert.crt;
+    ssl_certificate_key    /etc/nginx/ssl/cert.key;
+
+
+    location / {
+        proxy_pass http://mattermost:${MATTERMOST_PORT};
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Connection 'upgrade';
+    }
+}
