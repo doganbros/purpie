@@ -17,6 +17,8 @@ services:
 
     mattermost:
         image: "doganbros/octopus:mattermost-preview"
+        volumes:
+          - ./docker/mattermost/data:/mm/mattermost-data
 
     octopus-router:
         image: "nginx:1.21.4"
@@ -40,7 +42,9 @@ services:
             POSTGRES_PASSWORD: "${DB_PASSWORD}"
             POSTGRES_DB: "${DB_DATABASE}"
         ports:
-            - "5430:5432" # Frontend
+            - "5430:5432"
+        volumes:
+          - ./docker/postgres/data:/var/lib/postgresql/data
     web:
         image: jitsi/web:stable-6433
         restart: ${RESTART_POLICY}
