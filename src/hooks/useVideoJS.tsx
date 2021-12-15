@@ -1,4 +1,5 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import { nanoid } from 'nanoid';
+import React, { useRef, useEffect, useState, useCallback, FC } from 'react';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 import '../scss/video-player.scss';
@@ -19,13 +20,14 @@ export const useVideoJS = (
   videoJsOptions: videojs.PlayerOptions,
   classNames = ''
 ): {
-  Video: ({ children, ...props }: any) => JSX.Element;
+  Video: FC;
   ready: boolean;
   player: videojs.Player | null;
 } => {
   const videoNode = useRef<HTMLVideoElement | null>(null);
   const [ready, setReady] = useState(false);
-  const changedKey = JSON.stringify({ ...defaultOptions, ...videoJsOptions });
+  const [videoKey, setVideoKey] = useState(nanoid());
+  const options = JSON.stringify({ ...defaultOptions, ...videoJsOptions });
   const player = useRef<videojs.Player | null>(null);
   useEffect(() => {
     player.current = videojs(videoNode.current || '', {
@@ -35,22 +37,23 @@ export const useVideoJS = (
     player.current.ready(() => {
       setReady(true);
     });
+    setVideoKey(nanoid());
     return () => {
       if (player.current) player.current.dispose();
     };
-  }, [changedKey]);
+  }, [options]);
 
   const Video = useCallback(
     ({ ...props }) => (
       // eslint-disable-next-line jsx-a11y/media-has-caption
       <video
-        key={changedKey}
+        key={videoKey}
         ref={videoNode}
         className={`video-js vjs-big-play-centered octopus-player ${classNames}`}
         {...props}
       />
     ),
-    [changedKey]
+    [options]
   );
   return { Video, ready, player: player.current };
 };
