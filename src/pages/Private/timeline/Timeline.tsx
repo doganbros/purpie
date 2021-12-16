@@ -1,5 +1,6 @@
-import React, { FC, useState, useContext } from 'react';
+import React, { FC, useState, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Box,
   Button,
@@ -8,6 +9,8 @@ import {
   ResponsiveContext,
   Text,
 } from 'grommet';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
 import ChannelsToFollow from './ChannelsToFollow';
@@ -15,12 +18,24 @@ import ZonesToJoin from './ZonesToJoin';
 import LastActivities from './LastActivities';
 import Searchbar from './Searchbar';
 import VideoGridItem from '../../../components/utils/VideoGridItem';
-import { timeLineList } from './data/timeline-list';
 import ChannelList from './ChannelList';
+import { AppState } from '../../../store/reducers/root.reducer';
+import {
+  getPublicFeedAction,
+  getUserFeedAction,
+  getZoneFeedAction,
+} from '../../../store/actions/post.action';
+
+dayjs.extend(relativeTime);
 
 const Timeline: FC = () => {
   const size = useContext(ResponsiveContext);
   const history = useHistory();
+  const dispatch = useDispatch();
+  const {
+    post: { feed },
+    zone: { selectedUserZone },
+  } = useSelector((state: AppState) => state);
 
   const [filters, setFilters] = useState([
     {
@@ -49,6 +64,34 @@ const Timeline: FC = () => {
       active: false,
     },
   ]);
+
+  useEffect(() => {
+    const activeFilterId = filters.find((f) => f.active)?.id;
+    switch (activeFilterId) {
+      case 0:
+      case 1:
+      case 2:
+        if (selectedUserZone) {
+          dispatch(
+            getZoneFeedAction({
+              zoneId: selectedUserZone.zone.id,
+              streaming: activeFilterId === 2,
+            })
+          );
+        } else {
+          dispatch(getUserFeedAction({ streaming: activeFilterId === 2 }));
+        }
+        break;
+      case 3:
+        dispatch(getPublicFeedAction({ sortBy: 'time' }));
+        break;
+      case 4:
+        dispatch(getPublicFeedAction({ sortBy: 'popularity' }));
+        break;
+      default:
+        break;
+    }
+  }, [filters]);
   return (
     <PrivatePageLayout
       title="Timeline"
@@ -91,23 +134,22 @@ const Timeline: FC = () => {
           columns={size !== 'small' ? 'medium' : '100%'}
           gap={{ row: 'large', column: 'medium' }}
         >
-          <InfiniteScroll items={timeLineList} step={6}>
-            {(item: typeof timeLineList[0]) => (
+          <InfiniteScroll items={feed.data} step={6}>
+            {(item: typeof feed.data[0]) => (
               <VideoGridItem
-                key={item.id}
+                key={item.slug}
+                slug={item.slug}
                 id={item.id}
-                comments={item.comments}
-                createdAt={item.createdAt}
-                likes={item.likes}
-                live={item.live}
-                onClickPlay={() => item.onClickPlay(history)}
-                onClickSave={item.onClickSave}
-                saved={item.saved}
-                tags={item.tags}
-                thumbnailSrc={item.thumbnailSrc}
-                userAvatarSrc={item.userAvatarSrc}
-                userName={item.userName}
-                videoTitle={item.videoTitle}
+                comments={item.commentsCount}
+                createdAt={dayjs(item.createdOn).fromNow()}
+                likes={item.likesCount}
+                live={item.liveStream}
+                onClickPlay={() => history.push(`video/${item.id}`)}
+                onClickSave={() => {}}
+                saved={false}
+                createdBy={item.createdBy}
+                videoTitle={item.title}
+                videoName={item.videoName}
               />
             )}
           </InfiniteScroll>

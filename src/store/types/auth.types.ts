@@ -38,12 +38,15 @@ export interface UserRole {
   canCreateClient: boolean;
 }
 
-export interface User {
+export interface UserBasic {
   id: number;
   firstName: string;
   userName?: string;
   lastName: string;
   email: string;
+}
+
+export interface User extends UserBasic {
   mattermostId: string;
   mattermostToken: string;
   userRole?: UserRole;

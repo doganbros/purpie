@@ -1,47 +1,72 @@
-import React, { FC } from 'react';
-import { Avatar, Box, Image, Text } from 'grommet';
+import React, { FC, useState } from 'react';
+import { Avatar, Box, Text } from 'grommet';
 import { Bookmark, Chat, Favorite, PlayFill } from 'grommet-icons';
 import ExtendedBox from './ExtendedBox';
+import { useVideoJS } from '../../hooks/useVideoJS';
+import { http } from '../../config/http';
+import { UserBasic } from '../../store/types/auth.types';
+import InitialsAvatar from './InitialsAvatar';
 
 interface VideoGridItemProps {
-  id: string;
-  thumbnailSrc: string;
+  id: number;
+  slug: string;
   live: boolean;
   saved: boolean;
-  userAvatarSrc: string;
-  userName: string;
+  userAvatarSrc?: string;
+  createdBy: UserBasic;
   createdAt: string;
   videoTitle: string;
-  likes: number;
-  comments: number;
-  tags: { id: number; title: string }[];
-  onClickPlay: (id: string) => any;
-  onClickSave: (id: string) => any;
+  videoName: string;
+  likes: string;
+  comments: string;
+  onClickPlay: (id: number) => any;
+  onClickSave: (id: number) => any;
 }
 
 const VideoGridItem: FC<VideoGridItemProps> = ({
   id,
-  thumbnailSrc,
+  slug,
   live,
   saved,
   userAvatarSrc,
-  userName,
+  createdBy,
   createdAt,
   videoTitle,
+  videoName,
   likes,
   comments,
-  tags,
   onClickPlay,
   onClickSave,
 }) => {
-  const [hover, setHover] = React.useState(false);
+  const [hover, setHover] = useState(false);
+
+  const { Video, player } = useVideoJS({
+    autoplay: false,
+    muted: true,
+    controlBar: false,
+    controls: false,
+    sources: [
+      {
+        src: `${http.defaults.baseURL}/post/video/view/${slug}/${videoName}`,
+        type: 'video/mp4',
+      },
+    ],
+  });
+
   return (
     <Box
       onMouseEnter={() => {
         setHover(true);
+        if (player) {
+          player.play();
+        }
       }}
       onMouseLeave={() => {
         setHover(false);
+        if (player) {
+          player.pause();
+          player.currentTime(0);
+        }
       }}
       onClick={() => {
         onClickPlay(id);
@@ -51,6 +76,7 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
       gap="small"
     >
       <ExtendedBox position="relative">
+        <Video />
         <ExtendedBox
           position="absolute"
           top="0"
@@ -61,7 +87,7 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
           justify="center"
           align="center"
         >
-          {hover && <PlayFill size="xlarge" color="white" />}
+          {hover && <PlayFill size="xlarge" color="brand" />}
         </ExtendedBox>
         <ExtendedBox
           position="absolute"
@@ -98,8 +124,6 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
             )}
           </Box>
         </ExtendedBox>
-
-        <Image src={thumbnailSrc} />
       </ExtendedBox>
 
       <ExtendedBox
@@ -115,9 +139,15 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
             round="large"
             border={{ size: 'large', color: 'white' }}
           >
-            <Avatar round src={userAvatarSrc} />
+            {userAvatarSrc ? (
+              <Avatar round src={userAvatarSrc} />
+            ) : (
+              <InitialsAvatar user={createdBy} />
+            )}
           </Box>
-          <Text color="status-disabled">{userName}</Text>
+          <Text color="status-disabled">
+            {createdBy?.firstName} {createdBy?.lastName}
+          </Text>
         </Box>
         <Text color="status-disabled">{createdAt}</Text>
       </ExtendedBox>
@@ -139,13 +169,6 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
           <Chat color="status-disabled" />
           <Text color="status-disabled">{comments}</Text>
         </Box>
-      </Box>
-      <Box direction="row" gap="small">
-        {tags.map((t) => (
-          <Text key={t.id} color="status-disabled" size="small">
-            {t.title}
-          </Text>
-        ))}
       </Box>
     </Box>
   );

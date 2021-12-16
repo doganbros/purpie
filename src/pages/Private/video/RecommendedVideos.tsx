@@ -18,19 +18,19 @@ const RecommendedVideos: FC = () => {
           {(item: typeof recommendedVideos[0]) => (
             <VideoGridItem
               key={item.id}
-              id={item.id}
-              comments={item.comments}
+              id={+item.id}
+              slug={item.id.toString()}
+              comments={item.comments.toString()}
               createdAt={item.createdAt}
-              likes={item.likes}
+              likes={item.likes.toString()}
               live={item.live}
               onClickPlay={item.onClickPlay}
               onClickSave={item.onClickSave}
               saved={item.saved}
-              tags={item.tags}
-              thumbnailSrc={item.thumbnailSrc}
               userAvatarSrc={item.userAvatarSrc}
-              userName={item.userName}
+              createdBy={item.createdBy}
               videoTitle={item.videoTitle}
+              videoName={item.id}
             />
           )}
         </InfiniteScroll>

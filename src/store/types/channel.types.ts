@@ -17,12 +17,15 @@ import { User } from './auth.types';
 import { UtilActionParams } from './util.types';
 import { ZoneActionParams } from './zone.types';
 
-export interface ChannelListItem {
+export interface ChannelBasic {
   id: number;
   name: string;
   topic: string;
   description: string;
   public: boolean;
+}
+
+export interface ChannelListItem extends ChannelBasic {
   createdBy?: User;
   category?: Category;
   zoneId: number;

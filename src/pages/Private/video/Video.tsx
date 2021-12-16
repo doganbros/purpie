@@ -1,58 +1,92 @@
-import React, { FC } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
-import { Box, Text } from 'grommet';
-import { Favorite, Chat as ChatIcon } from 'grommet-icons';
+import React, { FC, useEffect } from 'react';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { Box, Button, Layer, Spinner, Text } from 'grommet';
+import { Chat as ChatIcon, Favorite } from 'grommet-icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
-import VideoPlayer from '../../../components/utils/video/VideoPlayer';
-import { videoPlayerOptions, videoMetadata } from './data/video-data';
-import RecommendedVideos from './RecommendedVideos';
 import Chat from '../../../components/mattermost/Chat';
+import {
+  createPostLikeAction,
+  getPostDetailAction,
+  removePostLikeAction,
+} from '../../../store/actions/post.action';
+import { AppState } from '../../../store/reducers/root.reducer';
+import VideoPlayer from '../../../components/utils/VideoPlayer';
+import { FavoriteFill } from '../../../components/utils/CustomIcons';
 
+dayjs.extend(relativeTime);
 interface RouteParams {
   id: string;
 }
 
-const Video: FC<RouteComponentProps<RouteParams>> = () => {
+const Video: FC = () => {
+  const params = useParams<RouteParams>();
+  const dispatch = useDispatch();
+  const {
+    post: {
+      postDetail: { data, loading },
+    },
+  } = useSelector((state: AppState) => state);
+
+  useEffect(() => {
+    dispatch(getPostDetailAction(+params.id));
+  }, []);
+
   return (
     <PrivatePageLayout
-      title={videoMetadata.name}
-      rightComponent={<Chat channelName="off-topic" />}
+      title={data?.title || 'Loading'}
+      rightComponent={!loading && <Chat channelName="off-topic" />}
     >
-      <Box gap="large" pad={{ vertical: 'medium' }}>
-        <Box justify="between" direction="row">
-          <Box>
-            <Text weight="bold" size="large">
-              {videoMetadata.name}
-            </Text>
-            <Box direction="row" gap="small">
-              {videoMetadata.tags.map((m) => (
-                <Text key={m.id} color="brand">
-                  {m.name}
-                </Text>
-              ))}
+      {loading || !data ? (
+        <Layer responsive={false} plain>
+          <Spinner />
+        </Layer>
+      ) : (
+        <Box gap="large" pad={{ vertical: 'medium' }}>
+          <Box justify="between" direction="row">
+            <Box>
+              <Text weight="bold" size="large">
+                {data.title}
+              </Text>
+            </Box>
+            <Text weight="bold">{dayjs(data.createdOn).fromNow()}</Text>
+          </Box>
+          <Box gap="medium">
+            <VideoPlayer slug={data.slug} videoName={data.videoName} />
+            <Box direction="row" justify="between">
+              <Box direction="row" gap="medium">
+                <Box direction="row" gap="xsmall">
+                  <Button
+                    plain
+                    onClick={() =>
+                      data.liked
+                        ? dispatch(removePostLikeAction({ postId: data.id }))
+                        : dispatch(createPostLikeAction({ postId: data.id }))
+                    }
+                    icon={
+                      data.liked ? (
+                        <FavoriteFill color="brand" />
+                      ) : (
+                        <Favorite color="status-disabled" />
+                      )
+                    }
+                  />
+                  <Text color="status-disabled">{data.likesCount}</Text>
+                </Box>
+                <Box direction="row" gap="xsmall">
+                  <ChatIcon color="status-disabled" />
+                  <Text color="status-disabled">{data.commentsCount}</Text>
+                </Box>
+              </Box>
+              <Text color="status-disabled">VIEW_COUNT_MISSING</Text>
             </Box>
           </Box>
-          <Text weight="bold">{videoMetadata.date}</Text>
+          <Text color="status-disabled"> {data.description} </Text>
+          {/* <RecommendedVideos /> */}
         </Box>
-        <Box gap="medium">
-          <VideoPlayer options={videoPlayerOptions} />
-          <Box direction="row" justify="between">
-            <Box direction="row" gap="medium">
-              <Box direction="row" gap="xsmall">
-                <Favorite color="status-disabled" />
-                <Text color="status-disabled">{videoMetadata.likes}</Text>
-              </Box>
-              <Box direction="row" gap="xsmall">
-                <ChatIcon color="status-disabled" />
-                <Text color="status-disabled">{videoMetadata.comments}</Text>
-              </Box>
-            </Box>
-            <Text color="status-disabled">{`${videoMetadata.views.toLocaleString()} views`}</Text>
-          </Box>
-        </Box>
-        <Text color="status-disabled"> {videoMetadata.details} </Text>
-        <RecommendedVideos />
-      </Box>
+      )}
     </PrivatePageLayout>
   );
 };

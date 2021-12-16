@@ -11,6 +11,8 @@ import AddContent from '../../../layers/add-content/AddContent';
 import CreateZone from '../../../layers/create-zone/CreateZone';
 import CreateChannel from '../../../layers/create-channel/CreateChannel';
 import { closeCreateChannelLayerAction } from '../../../store/actions/channel.action';
+import CreateVideo from '../../../layers/create-video/CreateVideo';
+import { closeCreateVideoLayerAction } from '../../../store/actions/post.action';
 
 const sidebarBtns = [
   {
@@ -49,6 +51,9 @@ const Sidebar: FC = () => {
     meeting: { showPlanMeetingLayer },
     zone: { showCreateZoneLayer },
     channel: { showCreateChannelLayer },
+    post: {
+      createVideo: { showCreateVideoLayer },
+    },
   } = useSelector((state: AppState) => state);
 
   return (
@@ -68,6 +73,12 @@ const Sidebar: FC = () => {
           onDismiss={() => dispatch(closeCreateChannelLayerAction())}
         />
       )}
+      {showCreateVideoLayer && (
+        <CreateVideo
+          onDismiss={() => dispatch(closeCreateVideoLayerAction())}
+        />
+      )}
+      {}
       <Button
         onClick={() => {
           setShowAddContent(true);
