@@ -1,5 +1,4 @@
-import { nanoid } from 'nanoid';
-import React, { useRef, useEffect, useState, useCallback, FC } from 'react';
+import React, { useRef, useEffect, useState, FC, useCallback } from 'react';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 import '../styles/video-player.scss';
@@ -17,7 +16,8 @@ const defaultOptions: videojs.PlayerOptions = {
 };
 
 export const useVideoJS = (
-  videoJsOptions: videojs.PlayerOptions,
+  videoKey: string | number,
+  options: videojs.PlayerOptions,
   classNames = ''
 ): {
   Video: FC;
@@ -26,26 +26,24 @@ export const useVideoJS = (
 } => {
   const videoNode = useRef<HTMLVideoElement | null>(null);
   const [ready, setReady] = useState(false);
-  const [videoKey, setVideoKey] = useState(nanoid());
-  const options = JSON.stringify({ ...defaultOptions, ...videoJsOptions });
   const player = useRef<videojs.Player | null>(null);
   useEffect(() => {
-    player.current = videojs(videoNode.current || '', {
-      ...defaultOptions,
-      ...videoJsOptions,
-    });
-    player.current.ready(() => {
-      setReady(true);
-    });
-    setVideoKey(nanoid());
+    if (videoNode.current) {
+      player.current = videojs(videoNode.current, {
+        ...defaultOptions,
+        ...options,
+      });
+      player.current.ready(() => {
+        setReady(true);
+      });
+    }
     return () => {
       if (player.current) player.current.dispose();
     };
-  }, [options]);
+  }, [videoKey]);
 
   const Video = useCallback(
     ({ ...props }) => (
-      // eslint-disable-next-line jsx-a11y/media-has-caption
       <video
         key={videoKey}
         ref={videoNode}
@@ -53,7 +51,12 @@ export const useVideoJS = (
         {...props}
       />
     ),
-    [options]
+    [videoKey]
   );
-  return { Video, ready, player: player.current };
+
+  return {
+    Video,
+    ready,
+    player: player.current,
+  };
 };

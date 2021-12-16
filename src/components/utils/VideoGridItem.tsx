@@ -1,4 +1,5 @@
 import React, { FC, useState } from 'react';
+import { nanoid } from 'nanoid';
 import { Avatar, Box, Text } from 'grommet';
 import { Bookmark, Chat, Favorite, PlayFill } from 'grommet-icons';
 import ExtendedBox from './ExtendedBox';
@@ -39,8 +40,9 @@ const VideoGridItem: FC<VideoGridItemProps> = ({
   onClickSave,
 }) => {
   const [hover, setHover] = useState(false);
+  const [videoKey] = useState(() => nanoid());
 
-  const { Video, player } = useVideoJS({
+  const { Video, player } = useVideoJS(videoKey, {
     autoplay: false,
     muted: true,
     controlBar: false,
