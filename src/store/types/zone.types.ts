@@ -37,12 +37,15 @@ import {
 import { User } from './auth.types';
 import { UtilActionParams } from './util.types';
 
-export interface ZoneListItem {
+export interface ZoneBasic {
   id: number;
   name: string;
   subdomain: string;
-  description: string;
   public: boolean;
+}
+
+export interface ZoneListItem extends ZoneBasic {
+  description: string;
   createdBy?: User;
   category?: Category;
 }

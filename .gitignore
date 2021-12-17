@@ -9,3 +9,5 @@ server/dist
 .DS_Store
 uploads
 .env-*
+docker/ssl/cert.crt
+docker/ssl/cert.key
