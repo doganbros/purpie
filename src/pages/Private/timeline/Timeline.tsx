@@ -17,7 +17,7 @@ import ChannelsToFollow from './ChannelsToFollow';
 import ZonesToJoin from './ZonesToJoin';
 import LastActivities from './LastActivities';
 import Searchbar from './Searchbar';
-import VideoGridItem from '../../../components/utils/VideoGridItem';
+import PostGridItem from '../../../components/utils/PostGridItem/PostGridItem';
 import ChannelList from './ChannelList';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
@@ -136,7 +136,7 @@ const Timeline: FC = () => {
         >
           <InfiniteScroll items={feed.data} step={6}>
             {(item: typeof feed.data[0]) => (
-              <VideoGridItem
+              <PostGridItem
                 key={item.slug}
                 slug={item.slug}
                 id={item.id}

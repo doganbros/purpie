@@ -1,7 +1,7 @@
 import React, { FC, useContext } from 'react';
 import { Box, Grid, InfiniteScroll, ResponsiveContext, Text } from 'grommet';
 import { recommendedVideos } from './data/recommended-videos';
-import VideoGridItem from '../../../components/utils/VideoGridItem';
+import PostGridItem from '../../../components/utils/PostGridItem/PostGridItem';
 
 const RecommendedVideos: FC = () => {
   const size = useContext(ResponsiveContext);
@@ -16,7 +16,7 @@ const RecommendedVideos: FC = () => {
       >
         <InfiniteScroll items={recommendedVideos} step={6}>
           {(item: typeof recommendedVideos[0]) => (
-            <VideoGridItem
+            <PostGridItem
               key={item.id}
               id={+item.id}
               slug={item.id.toString()}
