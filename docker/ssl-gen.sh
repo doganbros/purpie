@@ -1,12 +1,9 @@
 #!/bin/bash
-source ../.env
-
-# remove whitespace
-DOMAIN="$REACT_APP_CLIENT_HOST"
-
-
 echo "--------------SSL Certificate Generation Started-------------"
 ​
+echo -n "Enter your FQDN of your domain "
+read DOMAIN
+
 echo -n "Enter your email and press [ENTER]: "
 read EMAIL
 ​
