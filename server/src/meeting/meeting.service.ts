@@ -41,6 +41,7 @@ const {
   JITSI_DOMAIN = '',
   RTMP_INGRESS_URL = '',
   REACT_APP_SERVER_HOST = '',
+  JWT_APP_ID = 'doganbros-meet',
 } = process.env;
 
 @Injectable()
@@ -291,8 +292,8 @@ export class MeetingService {
       },
       moderator,
       exp: 1696284052,
-      aud: 'doganbros-meet',
-      iss: 'doganbros-meet',
+      aud: JWT_APP_ID,
+      iss: JWT_APP_ID,
       nbf: 1596197652,
       room: meeting.slug,
       sub: new URL(JITSI_DOMAIN).hostname,
