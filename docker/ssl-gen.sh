@@ -44,5 +44,5 @@ CERT_CRT="/etc/letsencrypt/live/$DOMAIN/fullchain.pem"
 --agree-tos --email $EMAIL
 
 
-ln -s "$CERT_CRT" ./ssl/cert.crt
-ln -s "$CERT_KEY" ./ssl/cert.key
+cp "$CERT_CRT" ./ssl/cert.crt
+cp "$CERT_KEY" ./ssl/cert.key
