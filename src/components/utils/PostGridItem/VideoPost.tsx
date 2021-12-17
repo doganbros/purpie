@@ -1,5 +1,6 @@
 import { Box } from 'grommet';
 import { Bookmark, PlayFill } from 'grommet-icons';
+import { nanoid } from 'nanoid';
 import React, { FC, useState } from 'react';
 import { http } from '../../../config/http';
 import { useVideoJS } from '../../../hooks/useVideoJS';
@@ -22,19 +23,18 @@ export const VideoPost: FC<VideoPostProps> = ({
   saved,
   onClickSave,
 }) => {
-  const { Video, player } = useVideoJS({
+  const [videoKey] = useState(nanoid());
+  const { Video, player } = useVideoJS(videoKey, {
     autoplay: false,
     muted: true,
     controlBar: false,
     controls: false,
-    sources: videoName
-      ? [
-          {
-            src: `${http.defaults.baseURL}/post/video/view/${slug}/${videoName}`,
-            type: 'video/mp4',
-          },
-        ]
-      : undefined,
+    sources: [
+      {
+        src: `${http.defaults.baseURL}/post/video/view/${slug}/${videoName}`,
+        type: 'video/mp4',
+      },
+    ],
   });
   const [hover, setHover] = useState(false);
 

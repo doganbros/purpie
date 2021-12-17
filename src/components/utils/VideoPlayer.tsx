@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import { nanoid } from 'nanoid';
+import React, { FC, useState } from 'react';
 import { http } from '../../config/http';
 import { useVideoJS } from '../../hooks/useVideoJS';
 
@@ -8,7 +9,9 @@ interface VideoPlayerProps {
 }
 
 const VideoPlayer: FC<VideoPlayerProps> = ({ slug, videoName }) => {
-  const { Video } = useVideoJS({
+  const [videoKey] = useState(() => nanoid());
+
+  const { Video } = useVideoJS(videoKey, {
     sources: [
       {
         src: `${http.defaults.baseURL}/post/video/view/${slug}/${videoName}`,

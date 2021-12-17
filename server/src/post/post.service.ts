@@ -185,8 +185,8 @@ export class PostService {
       .save();
   }
 
-  removeSavedPost(userId: number, savedPostId: number) {
-    return this.savedPostRepository.delete({ userId, id: savedPostId });
+  removeSavedPost(userId: number, postId: number) {
+    return this.savedPostRepository.delete({ userId, postId });
   }
 
   getSavedPosts(userId: number, query: PaginationQuery) {

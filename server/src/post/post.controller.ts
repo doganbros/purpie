@@ -297,7 +297,7 @@ export class PostController {
     return this.postService.getSavedPosts(user.id, query);
   }
 
-  @Delete('saved/remove/:savedPostId')
+  @Delete('saved/remove/:postId')
   @ApiCreatedResponse({
     description:
       'User unlikes a post. Returns Created when some rows are affected and OK otherwise',
@@ -306,15 +306,15 @@ export class PostController {
   @IsAuthenticated()
   @ApiParam({
     type: Number,
-    name: 'savedPostId',
+    name: 'postId',
   })
   async removeSavedPost(
     @CurrentUser() user: UserPayload,
-    @Param('savedPostId') savedPostId: string,
+    @Param('postId') postId: string,
   ) {
     const result = await this.postService.removeSavedPost(
       user.id,
-      Number(savedPostId),
+      Number(postId),
     );
     return result.affected === 0 ? 'OK' : 'Created';
   }

@@ -8,20 +8,31 @@ services:
         depends_on:
             - mattermost
             - postgres
-        ports:
-            - "${PORT}:${PORT}"
-            - "${SERVER_PORT}:${SERVER_PORT}"
         env_file:
             - .env
         volumes:
-            - ./:/octopus:ro
+            - ./:/octopus
             - octopus-modules:/octopus/node_modules
             - octopus-server-dist:/octopus/server/dist
 
     mattermost:
         image: "doganbros/octopus:mattermost-preview"
-        ports:
-            - "${MATTERMOST_PORT:-8065}:8065"
+        volumes:
+          - ./docker/mattermost/data:/mm/mattermost-data
+
+    octopus-router:
+        image: "nginx:1.21.4"
+        ports: 
+            - 443:443
+            - ${SERVER_PORT}:${SERVER_PORT}
+            - ${MATTERMOST_PORT}:${MATTERMOST_PORT}
+        volumes:
+            - ./docker/nginx/templates:/etc/nginx/templates
+            - ./docker/ssl:/etc/nginx/ssl
+        depends_on:
+            - octopus
+        env_file:
+            - .env
 
     postgres:
         image: postgres:14.0-alpine
@@ -30,8 +41,11 @@ services:
             POSTGRES_USER: "${DB_USER}"
             POSTGRES_PASSWORD: "${DB_PASSWORD}"
             POSTGRES_DB: "${DB_DATABASE}"
+            PGDATA: "/var/lib/postgresql/data/pgdata"
         ports:
-            - "5430:5432" # Frontend
+            - "5430:5432"
+        volumes:
+          - ./docker/postgres/data:/var/lib/postgresql/data
     web:
         image: jitsi/web:stable-6433
         restart: ${RESTART_POLICY}
@@ -42,6 +56,7 @@ services:
             - ${CONFIG}/web:/config:Z
             - ${CONFIG}/web/crontabs:/var/spool/cron/crontabs:Z
             - ${CONFIG}/transcripts:/usr/share/jitsi-meet/transcripts:Z
+            - ./docker/ssl:/config/keys
         environment:
             - AMPLITUDE_ID
             - ANALYTICS_SCRIPT_URLS
@@ -73,6 +88,7 @@ services:
             - DYNAMIC_BRANDING_URL
             - ENABLE_AUDIO_PROCESSING
             - ENABLE_AUTH
+            - ENABLE_BREAKOUT_ROOMS
             - ENABLE_CALENDAR
             - ENABLE_COLIBRI_WEBSOCKET
             - ENABLE_FILE_RECORDING_SERVICE
@@ -87,6 +103,65 @@ services:
             - ENABLE_NO_AUDIO_DETECTION
             - ENABLE_NOISY_MIC_DETECTION
             - ENABLE_PREJOIN_PAGE
+            - ENABLE_P2P
+            - ENABLE_WELCOME_PAGE
+            - ENABLE_CLOSE_PAGE
+            - ENABLE_RECORDING
+            - ENABLE_REMB
+            - ENABLE_REQUIRE_DISPLAY_NAME
+            - ENABLE_SIMULCAST
+            - ENABLE_STATS_ID
+            - ENABLE_STEREO
+            - ENABLE_SUBDOMAINS
+            - ENABLE_TALK_WHILE_MUTED
+            - ENABLE_TCC
+            - ENABLE_TRANSCRIPTIONS
+            - ENABLE_XMPP_WEBSOCKET
+            - ETHERPAD_PUBLIC_URL
+            - ETHERPAD_URL_BASE
+            - GOOGLE_ANALYTICS_ID
+            - GOOGLE_API_APP_CLIENT_ID
+            - INVITE_SERVICE_URL
+            - JICOFO_AUTH_USER
+            - LETSENCRYPT_DOMAIN
+            - LETSENCRYPT_EMAIL
+            - LETSENCRYPT_USE_STAGING
+            - MATOMO_ENDPOINT
+            - MATOMO_SITE_ID
+            - MICROSOFT_API_APP_CLIENT_ID
+            - NGINX_RESOLVER
+            - NGINX_WORKER_PROCESSES
+            - NGINX_WORKER_CONNECTIONS
+            - PEOPLE_SEARCH_URL
+            - PUBLIC_URL
+            - P2P_PREFERRED_CODEC
+            - RESOLUTION
+            - RESOLUTION_MIN
+            - RESOLUTION_WIDTH
+            - RESOLUTION_WIDTH_MIN
+            - START_AUDIO_MUTED
+            - START_AUDIO_ONLY
+            - START_BITRATE
+            - START_SILENT
+            - START_WITH_AUDIO_MUTED
+            - START_VIDEO_MUTED
+            - START_WITH_VIDEO_MUTED
+            - TESTING_CAP_SCREENSHARE_BITRATE
+            - TESTING_OCTO_PROBABILITY
+            - TOKEN_AUTH_URL
+            - TZ
+            - VIDEOQUALITY_BITRATE_H264_LOW
+            - VIDEOQUALITY_BITRATE_H264_STANDARD
+            - VIDEOQUALITY_BITRATE_H264_HIGH
+            - VIDEOQUALITY_BITRATE_VP8_LOW
+            - VIDEOQUALITY_BITRATE_VP8_STANDARD
+            - VIDEOQUALITY_BITRATE_VP8_HIGH
+            - VIDEOQUALITY_BITRATE_VP9_LOW
+            - VIDEOQUALITY_BITRATE_VP9_STANDARD
+            - VIDEOQUALITY_BITRATE_VP9_HIGH
+            - VIDEOQUALITY_ENFORCE_PREFERRED_CODEC
+            - VIDEOQUALITY_PREFERRED_CODEC
+            - XMPP_AUTH_DOMAIN
             - XMPP_BOSH_URL_BASE
             - XMPP_DOMAIN
             - XMPP_GUEST_DOMAIN
