@@ -17,8 +17,6 @@ services:
 
     mattermost:
         image: "doganbros/octopus:mattermost-preview"
-        volumes:
-          - ./docker/mattermost/data:/mm/mattermost-data
 
     octopus-router:
         image: "nginx:1.21.4"
