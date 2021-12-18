@@ -12,7 +12,9 @@ local http_headers = {
 };
 local http_timeout = 30;
 local storage = module:open_store();
-local octopusBaseUrl = module:get_option_string('octopusAPIBaseUrl');
+local octopusBaseUrl = os.getenv("OCTOPUS_URL");
+local octopusApiKey = os.getenv("OCTOPUS_API_KEY");
+local octopusApiSecret = os.getenv("OCTOPUS_API_SECRET");
 
 module:log("info", "loading Octopus module")
 
@@ -89,8 +91,8 @@ function authenticate_octopus()
    
     if response == 401 or response == 403 or response == 400 then
       body = {};
-      body["apiKey"] = module:get_option_string('octopusApiKey');
-      body["apiSecret"] =  module:get_option_string('octopusApiSecret');
+      body["apiKey"] = octopusApiKey;
+      body["apiSecret"] =  octopusApiSecret;
       credJson = json.encode(body);
 
       response = http_post_with_retry(octopusBaseUrl .. 'auth/client/login', 1, credJson);
