@@ -1,8 +1,7 @@
 #!/bin/bash
 
 DATE="$(date)"
-source /home/octopus/token.txt
-source /home/octopus/environ.txt
+
 EVENT_TYPE=$1
 TEMP_ID=$2
 USER_ID=$(cut -d "=" -f2-<<< $TEMP_ID)

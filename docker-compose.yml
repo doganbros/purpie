@@ -347,6 +347,7 @@ services:
         volumes:
             - ${CONFIG}/jibri:/config:Z
             - /dev/shm:/dev/shm
+            - ./docker/scripts/jibri/finalize.sh:/config/finalize.sh
         cap_add:
             - SYS_ADMIN
             - NET_BIND_SERVICE
