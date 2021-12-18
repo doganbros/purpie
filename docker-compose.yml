@@ -172,7 +172,7 @@ services:
 
                  # XMPP server
     prosody:
-        image: doganbros/octopus:prosody
+        image: jitsi/prosody:stable-6433
         restart: ${RESTART_POLICY}
         expose:
             - '5222'
@@ -180,7 +180,7 @@ services:
             - '5280'
         volumes:
             - ${CONFIG}/prosody/config:/config:Z
-            - ${CONFIG}/prosody/prosody-plugins-custom:/prosody-plugins-custom:Z
+            - ./docker/scripts/prosody-plugins-custom:/prosody-plugins-custom:Z
         environment:
             - AUTH_TYPE
             - DISABLE_POLLS
@@ -348,6 +348,7 @@ services:
         restart: ${RESTART_POLICY}
         volumes:
             - ${CONFIG}/jibri:/config:Z
+            - /dev/shm:/dev/shm
         cap_add:
             - SYS_ADMIN
             - NET_BIND_SERVICE
@@ -378,6 +379,8 @@ services:
             - XMPP_DOMAIN
             - XMPP_INTERNAL_MUC_DOMAIN
             - XMPP_RECORDER_DOMAIN
+            - XMPP_SERVER
+            - XMPP_TRUST_ALL_CERTS
             - OCTOPUS_URL
             - OCTOPUS_API_KEY
             - OCTOPUS_API_SECRET
@@ -394,8 +397,8 @@ services:
         restart: unless-stopped
         volumes:
 
-            - ${CONFIG}/rtmp/sites-available:/etc/nginx/sites-available
-            - ${CONFIG}/rtmp/finalize-script:/home/octopus
+            - ./docker/scripts/rtmp/sites-available:/etc/nginx/sites-available
+            - ./docker/scripts/rtmp/finalize-script:/home/octopus
         environment:
             - OCTOPUS_URL
             - OCTOPUS_API_KEY
