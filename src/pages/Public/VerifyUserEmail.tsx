@@ -11,6 +11,7 @@ import Banner from '../../assets/forgotten-password-bg/banner.png';
 import { useResponsive } from '../../hooks/useResponsive';
 import { userNameExistsCheck } from '../../store/services/auth.service';
 import { useDebouncer } from '../../hooks/useDebouncer';
+import { theme } from '../../config/app-config';
 
 interface Params {
   token: string;
@@ -26,7 +27,7 @@ const VerifyUserEmail: FC = () => {
   const [existenceResult, setExistenceResult] = useState<{
     userName: string;
     exists: boolean;
-  }>();
+  } | null>(null);
 
   const handleSubmit: FormSubmitEvent<{ userName: string }> = ({
     value: { userName },
@@ -42,6 +43,8 @@ const VerifyUserEmail: FC = () => {
 
         setExistenceResult(result);
       }, 300);
+    } else {
+      setExistenceResult(null);
     }
   };
 
@@ -80,10 +83,35 @@ const VerifyUserEmail: FC = () => {
             name="userName"
             htmlFor="userNameInput"
             label="User Name"
+            error={
+              existenceResult &&
+              existenceResult.exists &&
+              `User Name ${existenceResult.userName} already exists!`
+            }
+            info={
+              existenceResult &&
+              !existenceResult.exists && (
+                <Text color="status-ok" size="small">
+                  User Name {existenceResult.userName} can be used!
+                </Text>
+              )
+            }
             validate={[
               validators.required(),
               validators.matches(/^[a-z0-9_]{1,25}$/, 'User Name is invalid'),
             ]}
+            contentProps={
+              existenceResult && !existenceResult.exists
+                ? {
+                    background: {
+                      color: `${theme.global?.colors?.[
+                        'status-ok'
+                      ]?.toString()}1A`,
+                    },
+                    border: { color: 'status-ok' },
+                  }
+                : undefined
+            }
           >
             <TextInput
               onChange={handleChange}

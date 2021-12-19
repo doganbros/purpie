@@ -69,8 +69,8 @@ export const theme: typeof grommet = deepMerge(base, {
     },
     round: 'large',
     label: {
-      margin: { horizontal: '8px' },
-      size: '14px',
+      margin: { horizontal: 'small' },
+      size: 'small',
       color: {
         light: '#202631',
       },
