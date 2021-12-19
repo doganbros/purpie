@@ -19,7 +19,7 @@ services:
         image: "doganbros/octopus:mattermost-preview"
         volumes:
           - ./docker/mattermost/data:/mm/mattermost-data
-          - ./docker/mattermost/mattermost-data:/mm/mattermost/mattermost-data
+          - ./docker/mattermost/mysql:/var/lib/mysql
 
     octopus-router:
         image: "nginx:1.21.4"
