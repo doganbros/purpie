@@ -2,10 +2,6 @@
 
 DATE="$(date)"
 # AWS credentials
-AWS_ACCESS_KEY=$AWS_ACCESS_KEY
-AWS_SECRET_KEY=$AWS_SECRET_KEY
-AWS_DEFAULT_REGION=$AWS_REGION
-S3_BUCKET_NAME=$AWS_BUCKET
 FINAL_STATUS=null
 RECORDINGS_DIR=$1
 echo "Uploading the recording to S3 Recording... Dir $1" 
