@@ -391,6 +391,7 @@ services:
             - S3_BUCKET_NAME=${S3_VIDEO_BUCKET_NAME}
         depends_on:
             - prosody
+            - jicofo
         networks:
             meet.jitsi:  # Custom RTMP Server
     rtmp:
