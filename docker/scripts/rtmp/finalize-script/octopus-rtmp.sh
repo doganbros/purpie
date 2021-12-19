@@ -10,8 +10,9 @@ fi
 if ! command -v aws &> /dev/null
 then
     echo "Installing AWS"
-    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-    unzip awscliv2.zip
+    sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "./awscliv2.zip"
+    sudo unzip ./awscliv2.zip
+    chmod +x ./aws/install
     ./aws/install
 fi
 
