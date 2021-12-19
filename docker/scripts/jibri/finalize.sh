@@ -38,7 +38,7 @@ STATUS_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
 if [[ ${STATUS_CODE} == 401 || ${STATUS_CODE} == 403 || ${STATUS_CODE} == 400 ]]
  then
   echo "$DATE --- Refresh Token has expired. Logging in to Octopus..." 
-  RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"apiKey": "'"$API_KEY"'", "apiSecret": "'"$API_SECRET"'"}' ${OCTOPUS_URL}auth/client/login)
+  RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"apiKey": "'"$OCTOPUS_API_KEY"'", "apiSecret": "'"$OCTOPUS_API_SECRET"'"}' ${OCTOPUS_URL}auth/client/login)
   STATUS_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
   if [ ${STATUS_CODE} == 401 ]; then
    echo "$DATE --- Error While Logging In: Not Authorized" 
