@@ -6,8 +6,8 @@ import AuthLayout from '../../components/layouts/AuthLayout';
 import { validators } from '../../helpers/validators';
 import { FormSubmitEvent } from '../../models/form-submit-event';
 import { verifyUserEmailAction } from '../../store/actions/auth.action';
-import Figure from '../../assets/forgotten-password-bg/figure-1.png';
-import Banner from '../../assets/forgotten-password-bg/banner.png';
+import Figure from '../../assets/verify-email-bg/figure-2.svg';
+import Banner from '../../assets/verify-email-bg/banner.png';
 import { useResponsive } from '../../hooks/useResponsive';
 import { userNameExistsCheck } from '../../store/services/auth.service';
 import { useDebouncer } from '../../hooks/useDebouncer';
@@ -119,13 +119,6 @@ const VerifyUserEmail: FC = () => {
               name="userName"
             />
           </FormField>
-          {existenceResult && (
-            <Text color={existenceResult.exists ? 'red' : 'green'}>
-              {existenceResult.exists
-                ? `User Name ${existenceResult.userName} already exists!`
-                : `User Name ${existenceResult.userName} can be used!`}
-            </Text>
-          )}
           <Button
             fill="horizontal"
             primary
