@@ -400,6 +400,8 @@ services:
     rtmp:
         image: doganbros/octopus:rtmp
         restart: unless-stopped
+        ports:
+            - 1935:1935
         volumes:
 
             - ./docker/scripts/rtmp/sites-available:/etc/nginx/sites-available
