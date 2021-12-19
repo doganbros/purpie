@@ -19,6 +19,7 @@ services:
         image: "doganbros/octopus:mattermost-preview"
         volumes:
           - ./docker/mattermost/data:/mm/mattermost-data
+          - ./docker/mattermost/mysql:/var/lib/mysql
 
     octopus-router:
         image: "nginx:1.21.4"
@@ -172,7 +173,7 @@ services:
 
                  # XMPP server
     prosody:
-        image: doganbros/octopus:prosody
+        image: jitsi/prosody:stable-6433
         restart: ${RESTART_POLICY}
         expose:
             - '5222'
@@ -180,7 +181,7 @@ services:
             - '5280'
         volumes:
             - ${CONFIG}/prosody/config:/config:Z
-            - ${CONFIG}/prosody/prosody-plugins-custom:/prosody-plugins-custom:Z
+            - ./docker/scripts/prosody-plugins-custom:/prosody-plugins-custom:Z
         environment:
             - AUTH_TYPE
             - DISABLE_POLLS
@@ -204,6 +205,7 @@ services:
             - JVB_AUTH_PASSWORD
             - JWT_APP_ID
             - JWT_APP_SECRET
+            - ENABLE_RECORDING
             - JWT_ACCEPTED_ISSUERS
             - JWT_ACCEPTED_AUDIENCES
             - JWT_ASAP_KEYSERVER
@@ -344,10 +346,12 @@ services:
 
                  # Jibri Component
     jibri:
-        image: jitsi/jibri:stable-6433
+        image: doganbros/octopus:jibri
         restart: ${RESTART_POLICY}
         volumes:
             - ${CONFIG}/jibri:/config:Z
+            - /dev/shm:/dev/shm
+            - ./docker/scripts/jibri/finalize.sh:/config/finalize.sh
         cap_add:
             - SYS_ADMIN
             - NET_BIND_SERVICE
@@ -378,24 +382,30 @@ services:
             - XMPP_DOMAIN
             - XMPP_INTERNAL_MUC_DOMAIN
             - XMPP_RECORDER_DOMAIN
+            - XMPP_SERVER
+            - ENABLE_RECORDING
+            - XMPP_TRUST_ALL_CERTS
             - OCTOPUS_URL
             - OCTOPUS_API_KEY
             - OCTOPUS_API_SECRET
             - AWS_ACCESS_KEY=${S3_ACCESS_KEY_ID}
-            - AWS_ACCESS_SECRET=${S3_SECRET_ACCESS_KEY}
+            - AWS_SECRET_KEY=${S3_SECRET_ACCESS_KEY}
             - AWS_DEFAULT_REGION=${S3_REGION}
             - S3_BUCKET_NAME=${S3_VIDEO_BUCKET_NAME}
         depends_on:
             - prosody
+            - jicofo
         networks:
             meet.jitsi:  # Custom RTMP Server
     rtmp:
         image: doganbros/octopus:rtmp
         restart: unless-stopped
+        ports:
+            - 1935:1935
         volumes:
 
-            - ${CONFIG}/rtmp/sites-available:/etc/nginx/sites-available
-            - ${CONFIG}/rtmp/finalize-script:/home/octopus
+            - ./docker/scripts/rtmp/sites-available:/etc/nginx/sites-available
+            - ./docker/scripts/rtmp/finalize-script:/home/octopus
         environment:
             - OCTOPUS_URL
             - OCTOPUS_API_KEY
