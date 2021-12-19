@@ -1,5 +1,14 @@
 #!/bin/bash
 
+if ! command -v aws &> /dev/null
+then
+    echo "Installing AWS"
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    unzip awscliv2.zip
+    ./aws/install
+fi
+
+
 DATE="$(date)"
 # AWS credentials
 AWS_ACCESS_KEY=$AWS_ACCESS_KEY
