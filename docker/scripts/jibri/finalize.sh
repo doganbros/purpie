@@ -1,13 +1,5 @@
 #!/bin/bash
 
-
-if ! command -v aws &> /dev/null
-then
-    echo "Installing AWS"
-    apt-get install awscli -y
-fi
-
-
 DATE="$(date)"
 # AWS credentials
 AWS_ACCESS_KEY=$AWS_ACCESS_KEY

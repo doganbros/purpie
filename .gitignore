@@ -14,3 +14,4 @@ docker/ssl/cert.key
 docker/postgres/data/pgdata
 docker/jitsi-meet-cfg/*/*
 docker/mattermost/data/*
+docker/mattermost/mattermost-data/*

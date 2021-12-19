@@ -17,6 +17,9 @@ services:
 
     mattermost:
         image: "doganbros/octopus:mattermost-preview"
+        volumes:
+          - ./docker/mattermost/data:/mm/mattermost-data
+          - ./docker/mattermost/mattermost-data:/mm/mattermost/mattermost-data
 
     octopus-router:
         image: "nginx:1.21.4"
@@ -343,7 +346,7 @@ services:
 
                  # Jibri Component
     jibri:
-        image: jitsi/jibri:stable-6433
+        image: doganbros/octopus:jibri
         restart: ${RESTART_POLICY}
         volumes:
             - ${CONFIG}/jibri:/config:Z

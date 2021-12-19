@@ -1,11 +1,5 @@
 #!/bin/bash
 
-if ! command -v aws &> /dev/null
-then
-    echo "Installing AWS"
-    apt-get install awscli -y
-fi
-
 DATE="$(date)"
 
 EVENT_TYPE=$1
