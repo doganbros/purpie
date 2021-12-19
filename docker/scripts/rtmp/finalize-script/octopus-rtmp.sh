@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if ! command -v unzip &> /dev/null
+then
+    echo "Installing Unzip"
+    apt-dpkg-wrap apt-get update
+    apt-dpkg-wrap apt-get install unzip
+fi
+
 if ! command -v aws &> /dev/null
 then
     echo "Installing AWS"
@@ -7,6 +14,7 @@ then
     unzip awscliv2.zip
     ./aws/install
 fi
+
 
 DATE="$(date)"
 

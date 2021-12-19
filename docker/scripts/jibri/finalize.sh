@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if ! command -v unzip &> /dev/null
+then
+    echo "Installing Unzip"
+    apt-dpkg-wrap apt-get update
+    apt-dpkg-wrap apt-get install unzip
+fi
+
 if ! command -v aws &> /dev/null
 then
     echo "Installing AWS"
@@ -57,15 +64,15 @@ if [[ ${STATUS_CODE} == 401 || ${STATUS_CODE} == 403 || ${STATUS_CODE} == 400 ]]
   echo "$DATE --- Successfully Logged into Octopus. Receiving New Tokens..." 
    AUTH_TOKEN=$(echo ${RESPONSE} | jq -r '.accessToken')
    REFRESH_TOKEN=$(echo ${RESPONSE} | jq -r '.refreshToken')
-   echo "AUTH_TOKEN=$AUTH_TOKEN" > /home/finalize/token.txt
-   echo "REFRESH_TOKEN=$REFRESH_TOKEN" >> /home/finalize/token.txt
+   echo "AUTH_TOKEN=$AUTH_TOKEN" > ./token.txt
+   echo "REFRESH_TOKEN=$REFRESH_TOKEN" >> ./token.txt
   fi
 else
   echo "$DATE --- Refresh Successful. Receiving New Tokens..." 
   AUTH_TOKEN=$(echo ${RESPONSE} | jq -r '.accessToken')
   REFRESH_TOKEN=$(echo ${RESPONSE} | jq -r '.refreshToken')
-  echo "AUTH_TOKEN=$AUTH_TOKEN" > /home/finalize/token.txt
-  echo "REFRESH_TOKEN=$REFRESH_TOKEN" >> /home/finalize/token.txt
+  echo "AUTH_TOKEN=$AUTH_TOKEN" > ./token.txt
+  echo "REFRESH_TOKEN=$REFRESH_TOKEN" >> ./token.txt
 fi
 }
 
