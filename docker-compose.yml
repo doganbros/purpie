@@ -202,6 +202,7 @@ services:
             - JVB_AUTH_PASSWORD
             - JWT_APP_ID
             - JWT_APP_SECRET
+            - ENABLE_RECORDING
             - JWT_ACCEPTED_ISSUERS
             - JWT_ACCEPTED_AUDIENCES
             - JWT_ASAP_KEYSERVER
