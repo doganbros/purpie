@@ -2,10 +2,6 @@
 
 DATE="$(date)"
 # AWS credentials
-AWS_ACCESS_KEY=$AWS_ACCESS_KEY
-AWS_SECRET_KEY=$AWS_SECRET_KEY
-AWS_DEFAULT_REGION=$AWS_REGION
-S3_BUCKET_NAME=$AWS_BUCKET
 FINAL_STATUS=null
 RECORDINGS_DIR=$1
 echo "Uploading the recording to S3 Recording... Dir $1" 
@@ -48,15 +44,15 @@ if [[ ${STATUS_CODE} == 401 || ${STATUS_CODE} == 403 || ${STATUS_CODE} == 400 ]]
   echo "$DATE --- Successfully Logged into Octopus. Receiving New Tokens..." 
    AUTH_TOKEN=$(echo ${RESPONSE} | jq -r '.accessToken')
    REFRESH_TOKEN=$(echo ${RESPONSE} | jq -r '.refreshToken')
-   echo "AUTH_TOKEN=$AUTH_TOKEN" > /home/finalize/token.txt
-   echo "REFRESH_TOKEN=$REFRESH_TOKEN" >> /home/finalize/token.txt
+   echo "AUTH_TOKEN=$AUTH_TOKEN" > ./token.txt
+   echo "REFRESH_TOKEN=$REFRESH_TOKEN" >> ./token.txt
   fi
 else
   echo "$DATE --- Refresh Successful. Receiving New Tokens..." 
   AUTH_TOKEN=$(echo ${RESPONSE} | jq -r '.accessToken')
   REFRESH_TOKEN=$(echo ${RESPONSE} | jq -r '.refreshToken')
-  echo "AUTH_TOKEN=$AUTH_TOKEN" > /home/finalize/token.txt
-  echo "REFRESH_TOKEN=$REFRESH_TOKEN" >> /home/finalize/token.txt
+  echo "AUTH_TOKEN=$AUTH_TOKEN" > ./token.txt
+  echo "REFRESH_TOKEN=$REFRESH_TOKEN" >> ./token.txt
 fi
 }
 

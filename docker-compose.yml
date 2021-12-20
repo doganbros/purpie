@@ -17,6 +17,9 @@ services:
 
     mattermost:
         image: "doganbros/octopus:mattermost-preview"
+        volumes:
+          - ./docker/mattermost/data:/mm/mattermost-data
+          - ./docker/mattermost/mysql:/var/lib/mysql
 
     octopus-router:
         image: "nginx:1.21.4"
@@ -343,7 +346,7 @@ services:
 
                  # Jibri Component
     jibri:
-        image: jitsi/jibri:stable-6433
+        image: doganbros/octopus:jibri
         restart: ${RESTART_POLICY}
         volumes:
             - ${CONFIG}/jibri:/config:Z
@@ -386,16 +389,19 @@ services:
             - OCTOPUS_API_KEY
             - OCTOPUS_API_SECRET
             - AWS_ACCESS_KEY=${S3_ACCESS_KEY_ID}
-            - AWS_ACCESS_SECRET=${S3_SECRET_ACCESS_KEY}
+            - AWS_SECRET_KEY=${S3_SECRET_ACCESS_KEY}
             - AWS_DEFAULT_REGION=${S3_REGION}
             - S3_BUCKET_NAME=${S3_VIDEO_BUCKET_NAME}
         depends_on:
             - prosody
+            - jicofo
         networks:
             meet.jitsi:  # Custom RTMP Server
     rtmp:
         image: doganbros/octopus:rtmp
         restart: unless-stopped
+        ports:
+            - 1935:1935
         volumes:
 
             - ./docker/scripts/rtmp/sites-available:/etc/nginx/sites-available

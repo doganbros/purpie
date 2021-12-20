@@ -246,7 +246,3 @@ module:hook("muc-occupant-pre-leave", occupant_left, 152);
 -- module:hook("muc-occupant-left", occupant_left, 152);
 module:hook("muc-room-created", room_created, 153);
 module:hook("muc-room-destroyed", room_destroyed, 154);
-
-
-
-
