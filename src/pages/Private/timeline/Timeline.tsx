@@ -21,9 +21,11 @@ import PostGridItem from '../../../components/utils/PostGridItem/PostGridItem';
 import ChannelList from './ChannelList';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
+  createPostSaveAction,
   getPublicFeedAction,
   getUserFeedAction,
   getZoneFeedAction,
+  removePostSaveAction,
 } from '../../../store/actions/post.action';
 
 dayjs.extend(relativeTime);
@@ -145,8 +147,12 @@ const Timeline: FC = () => {
                 likes={item.likesCount}
                 live={item.liveStream}
                 onClickPlay={() => history.push(`video/${item.id}`)}
-                onClickSave={() => {}}
-                saved={false}
+                onClickSave={() => {
+                  if (item.saved)
+                    dispatch(removePostSaveAction({ postId: item.id }));
+                  else dispatch(createPostSaveAction({ postId: item.id }));
+                }}
+                saved={item.saved}
                 createdBy={item.createdBy}
                 videoTitle={item.title}
                 videoName={item.videoName}
