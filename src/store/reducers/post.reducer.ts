@@ -21,6 +21,13 @@ import {
   CLOSE_CREATE_VIDEO_LAYER,
   CREATE_POST_LIKE_SUCCESS,
   REMOVE_POST_LIKE_SUCCESS,
+  CREATE_POST_SAVE_SUCCESS,
+  CREATE_POST_SAVE_FAILED,
+  REMOVE_POST_SAVE_SUCCESS,
+  REMOVE_POST_SAVE_FAILED,
+  SAVED_POSTS_REQUESTED,
+  SAVED_POSTS_SUCCESS,
+  SAVED_POSTS_FAILED,
 } from '../constants/post.constants';
 import { PostActionParams, PostState } from '../types/post.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -39,6 +46,11 @@ const initialState: PostState = {
   createVideo: {
     showCreateVideoLayer: false,
     uploading: false,
+    error: null,
+  },
+  saved: {
+    ...paginationInitialState,
+    loading: false,
     error: null,
   },
 };
@@ -254,7 +266,94 @@ const postReducer = (
             : state.postDetail.data,
         },
       };
+    case CREATE_POST_SAVE_SUCCESS: {
+      const { postDetail, feed } = state;
 
+      if (postDetail.data?.id === action.payload.postId)
+        postDetail.data.saved = true;
+
+      const postIndex = feed.data.findIndex(
+        (p) => p.id === action.payload.postId
+      );
+
+      if (postIndex !== -1) feed.data[postIndex].saved = true;
+
+      return {
+        ...state,
+        postDetail,
+        feed,
+      };
+    }
+    case REMOVE_POST_SAVE_SUCCESS: {
+      const { postDetail, feed, saved } = state;
+
+      if (postDetail.data?.id === action.payload.postId)
+        postDetail.data.saved = false;
+
+      const feedPostIndex = feed.data.findIndex(
+        (p) => p.id === action.payload.postId
+      );
+
+      if (feedPostIndex !== -1) feed.data[feedPostIndex].saved = false;
+
+      const savedPostIndex = saved.data.findIndex(
+        (p) => p.id === action.payload.postId
+      );
+
+      if (savedPostIndex !== -1) saved.data.splice(savedPostIndex, 1);
+
+      return {
+        ...state,
+        postDetail,
+        feed,
+        saved,
+      };
+    }
+    case CREATE_POST_SAVE_FAILED:
+      return {
+        ...state,
+        saved: {
+          ...state.saved,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case REMOVE_POST_SAVE_FAILED:
+      return {
+        ...state,
+        saved: {
+          ...state.saved,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case SAVED_POSTS_REQUESTED:
+      return {
+        ...state,
+        saved: {
+          ...state.saved,
+          loading: true,
+          error: null,
+        },
+      };
+    case SAVED_POSTS_SUCCESS:
+      return {
+        ...state,
+        saved: {
+          ...action.payload,
+          loading: false,
+          error: null,
+        },
+      };
+    case SAVED_POSTS_FAILED:
+      return {
+        ...state,
+        saved: {
+          ...state.saved,
+          loading: false,
+          error: action.payload,
+        },
+      };
     default:
       return state;
   }
