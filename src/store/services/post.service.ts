@@ -57,3 +57,15 @@ export const createPostLike = (postId: number): Promise<Post> =>
 
 export const removePostLike = (postId: number): Promise<Post> =>
   http.delete(`/post/like/remove/${postId}`).then((res) => res.data);
+
+export const createPostSave = (postId: number): Promise<Post> =>
+  http.post('/post/saved/create', { postId }).then((res) => res.data);
+
+export const removePostSave = (postId: number): Promise<Post> =>
+  http.delete(`/post/saved/remove/${postId}`).then((res) => res.data);
+
+export const getSavedPost = (params: {
+  limit?: number;
+  skip?: number;
+}): Promise<PaginatedResponse<Post>> =>
+  http.get('/post/saved/list', { params }).then((res) => res.data);
