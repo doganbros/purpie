@@ -297,7 +297,7 @@ const postReducer = (
       if (feedPostIndex !== -1) feed.data[feedPostIndex].saved = false;
 
       const savedPostIndex = saved.data.findIndex(
-        (p) => p.id === action.payload.postId
+        (p) => p.post.id === action.payload.postId
       );
 
       if (savedPostIndex !== -1) saved.data.splice(savedPostIndex, 1);

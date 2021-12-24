@@ -10,6 +10,7 @@ import Video from './pages/Private/video/Video';
 import ThirdPartyAuth from './pages/Public/ThirdPartyAuth';
 import VerifyUserEmailInfo from './pages/Public/VerifyUserEmailInfo';
 import VerifyUserEmail from './pages/Public/VerifyUserEmail';
+import Saved from './pages/Private/saved/Saved';
 
 interface AppRoute {
   id: string;
@@ -78,6 +79,12 @@ export const privateRoutes: Array<AppRoute> = [
     path: '/channels',
     component: Channels,
     description: 'User views channels',
+  },
+  {
+    id: nanoid(),
+    path: '/saved-posts',
+    component: Saved,
+    description: 'User views saved posts',
   },
   {
     id: nanoid(),
