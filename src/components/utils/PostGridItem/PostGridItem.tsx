@@ -43,6 +43,7 @@ const PostGridItem: FC<PostGridItemProps> = ({
       onClick={() => {
         onClickPlay(id);
       }}
+      focusIndicator={false}
       round={{ corner: 'top', size: 'medium' }}
       overflow="hidden"
       gap="small"

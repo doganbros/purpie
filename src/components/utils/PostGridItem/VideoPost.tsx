@@ -91,6 +91,7 @@ export const VideoPost: FC<VideoPostProps> = ({
         <Box
           pad="small"
           margin="small"
+          focusIndicator={false}
           onClick={(e) => {
             e.stopPropagation();
             onClickSave(id);
