@@ -59,27 +59,33 @@ const Saved: FC = () => {
           columns={size !== 'small' ? 'medium' : '100%'}
           gap={{ row: 'large', column: 'medium' }}
         >
-          <InfiniteScroll items={saved.data} step={6}>
-            {({ post }: typeof saved.data[0]) => (
-              <PostGridItem
-                key={post.slug}
-                slug={post.slug}
-                id={post.id}
-                comments={post.commentsCount}
-                createdAt={dayjs(post.createdOn).fromNow()}
-                likes={post.likesCount}
-                live={post.liveStream}
-                onClickPlay={() => history.push(`video/${post.id}`)}
-                onClickSave={() => {
-                  dispatch(removePostSaveAction({ postId: post.id }));
-                }}
-                saved
-                createdBy={post.createdBy}
-                videoTitle={post.title}
-                videoName={post.videoName}
-              />
-            )}
-          </InfiniteScroll>
+          {saved.data.length === 0 ? (
+            <Text size="small" color="status-disabled">
+              Your saved posts will appear here
+            </Text>
+          ) : (
+            <InfiniteScroll items={saved.data} step={6}>
+              {({ post }: typeof saved.data[0]) => (
+                <PostGridItem
+                  key={post.slug}
+                  slug={post.slug}
+                  id={post.id}
+                  comments={post.commentsCount}
+                  createdAt={dayjs(post.createdOn).fromNow()}
+                  likes={post.likesCount}
+                  live={post.liveStream}
+                  onClickPlay={() => history.push(`video/${post.id}`)}
+                  onClickSave={() => {
+                    dispatch(removePostSaveAction({ postId: post.id }));
+                  }}
+                  saved
+                  createdBy={post.createdBy}
+                  videoTitle={post.title}
+                  videoName={post.videoName}
+                />
+              )}
+            </InfiniteScroll>
+          )}
         </Grid>
       </Box>
     </PrivatePageLayout>
