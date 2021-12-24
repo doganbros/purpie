@@ -18,3 +18,21 @@ export const FavoriteFill: FC<IconProps> = (props) => (
     </svg>
   </Blank>
 );
+
+export const BookmarkFill: FC<IconProps> = (props) => (
+  <Blank {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+    >
+      <polygon
+        fill="#000"
+        stroke="#000"
+        strokeWidth="2"
+        points="5 1 5 22 12 17 19 22 19 1"
+      />
+    </svg>
+  </Blank>
+);

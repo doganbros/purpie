@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import React, { FC, useState } from 'react';
 import { http } from '../../../config/http';
 import { useVideoJS } from '../../../hooks/useVideoJS';
+import { BookmarkFill } from '../CustomIcons';
 import ExtendedBox from '../ExtendedBox';
 
 interface VideoPostProps {
@@ -98,7 +99,7 @@ export const VideoPost: FC<VideoPostProps> = ({
           }}
         >
           {saved ? (
-            <Bookmark color="white" />
+            <BookmarkFill color="white" />
           ) : (
             hover && <Bookmark color="status-disabled" />
           )}
