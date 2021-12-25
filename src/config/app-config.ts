@@ -67,13 +67,20 @@ export const theme: typeof grommet = deepMerge(base, {
         light: base.global?.colors?.['light-5']?.toString(),
       },
     },
-    round: 'medium',
+    round: 'large',
     label: {
-      margin: { horizontal: '8px' },
-      size: '14px',
+      margin: { horizontal: 'small' },
+      size: 'small',
       color: {
         light: '#202631',
       },
+    },
+    error: {
+      background: {
+        color: 'status-critical',
+        opacity: 'weak',
+      },
+      size: 'small',
     },
   },
 } as ThemeType);

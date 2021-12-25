@@ -25,6 +25,15 @@ import {
   REMOVE_POST_LIKE_REQUESTED,
   REMOVE_POST_LIKE_SUCCESS,
   REMOVE_POST_LIKE_FAILED,
+  CREATE_POST_SAVE_REQUESTED,
+  CREATE_POST_SAVE_SUCCESS,
+  CREATE_POST_SAVE_FAILED,
+  REMOVE_POST_SAVE_REQUESTED,
+  REMOVE_POST_SAVE_SUCCESS,
+  REMOVE_POST_SAVE_FAILED,
+  SAVED_POSTS_REQUESTED,
+  SAVED_POSTS_SUCCESS,
+  SAVED_POSTS_FAILED,
 } from '../constants/post.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
@@ -91,6 +100,10 @@ export interface PostState {
     uploading: boolean;
     error: ResponseError | null;
   };
+  saved: PaginatedResponse<Post> & {
+    loading: boolean;
+    error: ResponseError | null;
+  };
 }
 
 export type PostActionParams =
@@ -114,7 +127,11 @@ export type PostActionParams =
       type:
         | typeof POST_DETAIL_REQUESTED
         | typeof CREATE_POST_LIKE_REQUESTED
-        | typeof REMOVE_POST_LIKE_REQUESTED;
+        | typeof REMOVE_POST_LIKE_REQUESTED
+        | typeof CREATE_POST_SAVE_REQUESTED
+        | typeof REMOVE_POST_SAVE_REQUESTED
+        | typeof CREATE_POST_SAVE_SUCCESS
+        | typeof REMOVE_POST_SAVE_SUCCESS;
       payload: {
         postId: number;
       };
@@ -124,11 +141,19 @@ export type PostActionParams =
       payload: CreateVideoPayload;
     }
   | {
+      type: typeof SAVED_POSTS_REQUESTED;
+      payload: {
+        limit?: number;
+        skip?: number;
+      };
+    }
+  | {
       type:
         | typeof PUBLIC_FEED_SUCCESS
         | typeof USER_FEED_SUCCESS
         | typeof CHANNEL_FEED_SUCCESS
-        | typeof ZONE_FEED_SUCCESS;
+        | typeof ZONE_FEED_SUCCESS
+        | typeof SAVED_POSTS_SUCCESS;
       payload: PaginatedResponse<Post>;
     }
   | {
@@ -152,7 +177,10 @@ export type PostActionParams =
         | typeof POST_DETAIL_FAILED
         | typeof CREATE_VIDEO_FAILED
         | typeof CREATE_POST_LIKE_FAILED
-        | typeof REMOVE_POST_LIKE_FAILED;
+        | typeof REMOVE_POST_LIKE_FAILED
+        | typeof CREATE_POST_SAVE_FAILED
+        | typeof REMOVE_POST_SAVE_FAILED
+        | typeof SAVED_POSTS_FAILED;
       payload: ResponseError;
     };
 
