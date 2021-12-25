@@ -21,12 +21,14 @@ import {
   RESEND_MAIL_VERIFICATION_TOKEN_REQUESTED,
   RESEND_MAIL_VERIFICATION_TOKEN_SUCCESS,
   RESEND_MAIL_VERIFICATION_TOKEN_FAILED,
+  MUST_SET_INITIAL_USER,
 } from '../constants/auth.constants';
 import { AuthState, AuthActionParams } from '../types/auth.types';
 
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
+  isInitialUserSetup: false,
   login: {
     loading: false,
     error: null,
@@ -125,6 +127,12 @@ const authReducer = (
           error: action.payload,
           loading: false,
         },
+      };
+
+    case MUST_SET_INITIAL_USER:
+      return {
+        ...state,
+        isInitialUserSetup: true,
       };
     case USER_RETRIEVED_SUCCESS:
       return {

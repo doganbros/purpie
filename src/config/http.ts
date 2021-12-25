@@ -30,9 +30,11 @@ if (appSubdomain) {
 axios.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error?.response?.data?.error === 'NOT_SIGNED_IN')
+    const showErrorToast = error?.response.config?.showErrorToast;
+
+    if (error?.response?.data?.error === 'NOT_SIGNED_IN') {
       store.dispatch({ type: 'LOGOUT' });
-    else {
+    } else if (showErrorToast ? showErrorToast(error) : true) {
       const toastId = nanoid();
 
       // eslint-disable-next-line no-console

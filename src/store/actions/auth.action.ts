@@ -24,6 +24,7 @@ import {
   RESEND_MAIL_VERIFICATION_TOKEN_SUCCESS,
   RESEND_MAIL_VERIFICATION_TOKEN_FAILED,
   RESEND_MAIL_VERIFICATION_TOKEN_REQUESTED,
+  MUST_SET_INITIAL_USER,
 } from '../constants/auth.constants';
 import * as AuthService from '../services/auth.service';
 import {
@@ -69,11 +70,15 @@ export const retrieveUserAction = (): AuthAction => {
         payload,
       });
     } catch (err: any) {
+      if (err?.response?.data?.error === 'INITIAL_USER_REQUIRED') {
+        return dispatch({ type: MUST_SET_INITIAL_USER });
+      }
       dispatch({
         type: USER_RETRIEVED_FAILED,
         payload: err?.response?.data,
       });
     }
+    return null;
   };
 };
 

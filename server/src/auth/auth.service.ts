@@ -10,6 +10,7 @@ import dayjs from 'dayjs';
 import { Client } from 'entities/Client.entity';
 import { User } from 'entities/User.entity';
 import { UserRefreshToken } from 'entities/UserRefreshToken.entity';
+import { UserRole } from 'entities/UserRole.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
 import { Response } from 'express';
@@ -25,6 +26,7 @@ import {
   PASSWORD_VERIFICATION_TYPE,
 } from './constants/auth.constants';
 import { CreateClientDto } from './dto/create-client.dto';
+import { InitializeUserDto } from './dto/initialize-user.dto';
 import { LoginClientDto } from './dto/login-client.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import {
@@ -52,6 +54,8 @@ export class AuthService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Client) private clientRepository: Repository<Client>,
+    @InjectRepository(UserRole)
+    private userRoleRepository: Repository<UserRole>,
     @InjectRepository(UserRefreshToken)
     private userRefreshTokenRepository: Repository<UserRefreshToken>,
     private mailService: MailService,
@@ -197,6 +201,10 @@ export class AuthService {
     }
   }
 
+  async systemUserCount() {
+    return this.userRepository.count();
+  }
+
   async registerUser({
     firstName,
     lastName,
@@ -330,19 +338,17 @@ export class AuthService {
     googleId,
     facebookId,
   }: UserBasic) {
-    let user = this.userRepository.create({
-      firstName,
-      lastName,
-      email,
-      googleId,
-      facebookId,
-      userRoleCode: 'NORMAL',
-      emailConfirmed: true,
-    });
-
-    user = await user.save();
-
-    return user;
+    return this.userRepository
+      .create({
+        firstName,
+        lastName,
+        email,
+        googleId,
+        facebookId,
+        userRoleCode: 'NORMAL',
+        emailConfirmed: true,
+      })
+      .save();
   }
 
   async subdomainValidity(subdomain: string, email: string) {
@@ -453,6 +459,50 @@ export class AuthService {
       lastName: user.lastName,
       email: user.email,
     };
+  }
+
+  async initializeUser(info: InitializeUserDto, res: Response) {
+    const user = await this.userRepository
+      .create({
+        firstName: info.firstName,
+        lastName: info.lastName,
+        userName: info.userName,
+        email: info.email,
+        emailConfirmed: true,
+        userRoleCode: 'SUPER_ADMIN',
+        password: await bcrypt.hash(info.password, 10),
+      })
+      .save();
+
+    const mattermostProfile = await this.createMattermostUserAndJoinDefaults(
+      user,
+    );
+
+    const userRole = await this.userRoleRepository.findOne({
+      where: {
+        roleCode: 'SUPER_ADMIN',
+      },
+    });
+
+    const userPayload: UserPayload = {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      userName: user.userName,
+      mattermostId: mattermostProfile.id,
+      userRole: {
+        ...userRole!,
+      },
+    };
+
+    const { token, id } = await this.createMattermostPersonalTokenForUser(
+      mattermostProfile.id,
+    );
+    userPayload.mattermostTokenId = id;
+
+    await this.setAccessTokens(userPayload, res, token);
+    return userPayload;
   }
 
   getGoogleAuthAccessToken(code: string): Promise<string> {

@@ -11,6 +11,7 @@ import {
   Put,
   Res,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -40,6 +41,8 @@ import {
   MAIL_VERIFICATION_TYPE,
   PASSWORD_VERIFICATION_TYPE,
 } from '../constants/auth.constants';
+import { InitialUserGuard } from '../guards/initial-user.guard';
+import { InitializeUserDto } from '../dto/initialize-user.dto';
 
 const { VERIFICATION_TOKEN_SECRET = '' } = process.env;
 @Controller({ path: 'auth', version: '1' })
@@ -175,6 +178,23 @@ export class AuthController {
     this.authService.removeAccessTokens(res);
 
     return 'OK';
+  }
+
+  @Post('/initial-user')
+  @UseGuards(InitialUserGuard)
+  @ApiUnauthorizedResponse({
+    description: 'Error thrown when initial user has already been set',
+    schema: errorResponseDoc(
+      401,
+      'Initial user has been specified already',
+      'INITIAL_USER_SPECIFIED',
+    ),
+  })
+  async setInitialUser(
+    @Body() info: InitializeUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.initializeUser(info, res);
   }
 
   @Post('/verify-email')

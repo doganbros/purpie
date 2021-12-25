@@ -11,7 +11,16 @@ export const login = async (user: LoginPayload): Promise<User> =>
   http.post('/auth/login', user).then((res) => res.data);
 
 export const retrieveUser = async (): Promise<User> =>
-  http.post('/auth/retrieve').then((res) => res.data);
+  http
+    .post(
+      '/auth/retrieve',
+      {},
+      {
+        showErrorToast: (err) =>
+          err?.response?.data?.error !== 'INITIAL_USER_REQUIRED',
+      }
+    )
+    .then((res) => res.data);
 
 export const logOut = (): Promise<any> =>
   http.post('/auth/logout').then((res) => res.data);

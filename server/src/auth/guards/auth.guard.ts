@@ -30,11 +30,20 @@ export class AuthGuard implements CanActivate {
     const token = req.cookies.OCTOPUS_ACCESS_TOKEN;
     const refreshToken = req.cookies.OCTOPUS_REFRESH_ACCESS_TOKEN;
 
-    if (!token)
+    if (!token) {
+      const systemUserCount = await this.authService.systemUserCount();
+
+      if (!systemUserCount)
+        throw new UnauthorizedException(
+          'You need to set the initial super admin user',
+          'INITIAL_USER_REQUIRED',
+        );
+
       throw new UnauthorizedException(
         'You not authorized to use this route',
         'NOT_SIGNED_IN',
       );
+    }
 
     await verifyJWT(token, AUTH_TOKEN_SECRET)
       .then((payload) => {

@@ -26,6 +26,7 @@ import {
   RESEND_MAIL_VERIFICATION_TOKEN_REQUESTED,
   RESEND_MAIL_VERIFICATION_TOKEN_SUCCESS,
   RESEND_MAIL_VERIFICATION_TOKEN_FAILED,
+  MUST_SET_INITIAL_USER,
 } from '../constants/auth.constants';
 import { UtilActionParams } from './util.types';
 
@@ -55,6 +56,7 @@ export interface User extends UserBasic {
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
+  isInitialUserSetup: boolean;
   verifyUserEmail: {
     loading: boolean;
     error: ResponseError | null;
@@ -121,6 +123,7 @@ export type AuthActionParams =
   | {
       type:
         | typeof LOGIN_REQUESTED
+        | typeof MUST_SET_INITIAL_USER
         | typeof VERIFY_USER_EMAIL_REQUESTED
         | typeof REGISTER_REQUESTED
         | typeof RESEND_MAIL_VERIFICATION_TOKEN_REQUESTED
@@ -168,5 +171,5 @@ export interface AuthDispatch {
 }
 
 export interface AuthAction {
-  (dispatch: AuthDispatch): Promise<void>;
+  (dispatch: AuthDispatch): Promise<void | null>;
 }
