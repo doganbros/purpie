@@ -14,6 +14,7 @@ import { retrieveUserAction } from './store/actions/auth.action';
 import { getUserZonesAction } from './store/actions/zone.action';
 import { AppState } from './store/reducers/root.reducer';
 import { initializeMattermostAction } from './store/actions/mattermost.action';
+import InitializeUser from './pages/Public/InitializeUser';
 
 const { REACT_APP_MM_TEAM_NAME = '' } = process.env;
 
@@ -72,6 +73,7 @@ const App: FC = () => {
                 component={component}
               />
             ))}
+            <Route exact path="/initialize-user" component={InitializeUser} />
             <Route exact path="*" component={NotFound} />
           </Switch>
         </Router>

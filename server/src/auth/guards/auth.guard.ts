@@ -90,6 +90,14 @@ export class AuthGuard implements CanActivate {
           if (userPermissionOptions.removeAccessTokens)
             this.authService.removeAccessTokens(res);
 
+          const systemUserCount = await this.authService.systemUserCount();
+
+          if (!systemUserCount)
+            throw new UnauthorizedException(
+              'You need to set the initial super admin user',
+              'INITIAL_USER_REQUIRED',
+            );
+
           throw new UnauthorizedException(
             'You not authorized to use this route',
             'NOT_SIGNED_IN',

@@ -133,6 +133,10 @@ const authReducer = (
       return {
         ...state,
         isInitialUserSetup: true,
+        retrieveUser: {
+          error: null,
+          loading: false,
+        },
       };
     case USER_RETRIEVED_SUCCESS:
       return {

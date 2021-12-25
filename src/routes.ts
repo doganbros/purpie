@@ -10,7 +10,6 @@ import Video from './pages/Private/video/Video';
 import ThirdPartyAuth from './pages/Public/ThirdPartyAuth';
 import VerifyUserEmailInfo from './pages/Public/VerifyUserEmailInfo';
 import VerifyUserEmail from './pages/Public/VerifyUserEmail';
-import InitializeUser from './pages/Public/InitializeUser';
 
 interface AppRoute {
   id: string;
@@ -63,12 +62,6 @@ export const publicRoutes: Array<AppRoute> = [
     id: nanoid(),
     path: '/verify-email/:token',
     component: VerifyUserEmail,
-    description: 'User verifies email',
-  },
-  {
-    id: nanoid(),
-    path: '/initialize-user',
-    component: InitializeUser,
     description: 'User verifies email',
   },
 ];
