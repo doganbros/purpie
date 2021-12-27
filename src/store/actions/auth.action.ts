@@ -257,6 +257,7 @@ export const initializeUserAction = (user: RegisterPayload): AuthAction => {
         type: INITIALIZE_USER_SUCCESS,
         payload,
       });
+      appHistory.replace('/');
     } catch (err: any) {
       dispatch({
         type: INITIALIZE_USER_FAILED,
