@@ -12,6 +12,8 @@ import { useResponsive } from '../../hooks/useResponsive';
 import { userNameExistsCheck } from '../../store/services/auth.service';
 import { useDebouncer } from '../../hooks/useDebouncer';
 import { theme } from '../../config/app-config';
+import { USER_NAME_CONSTRAINT } from '../../helpers/constants';
+import { ExistenceResult } from '../../store/types/auth.types';
 
 interface Params {
   token: string;
@@ -24,10 +26,10 @@ const VerifyUserEmail: FC = () => {
 
   const { token } = useParams<Params>();
 
-  const [existenceResult, setExistenceResult] = useState<{
-    userName: string;
-    exists: boolean;
-  } | null>(null);
+  const [
+    existenceResult,
+    setExistenceResult,
+  ] = useState<ExistenceResult | null>(null);
 
   const handleSubmit: FormSubmitEvent<{ userName: string }> = ({
     value: { userName },
@@ -37,7 +39,7 @@ const VerifyUserEmail: FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    if (/^[a-z0-9_]{1,25}$/.test(value)) {
+    if (USER_NAME_CONSTRAINT.test(value)) {
       debouncer(async () => {
         const result = await userNameExistsCheck(value);
 
@@ -98,7 +100,7 @@ const VerifyUserEmail: FC = () => {
             }
             validate={[
               validators.required(),
-              validators.matches(/^[a-z0-9_]{1,25}$/, 'User Name is invalid'),
+              validators.matches(USER_NAME_CONSTRAINT, 'User Name is invalid'),
             ]}
             contentProps={
               existenceResult && !existenceResult.exists

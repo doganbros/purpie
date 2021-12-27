@@ -32,6 +32,12 @@ import { UtilActionParams } from './util.types';
 
 export type UserRoleCode = 'SUPER_ADMIN' | 'ADMIN' | 'NORMAL';
 
+export interface ExistenceResult {
+  userName: string;
+  exists: boolean;
+  suggestions: Array<string>;
+}
+
 export interface UserRole {
   roleCode: UserRoleCode;
   roleName: string;

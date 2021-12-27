@@ -1,5 +1,6 @@
 import { http } from '../../config/http';
 import {
+  ExistenceResult,
   LoginPayload,
   RegisterPayload,
   ResetPasswordPayload,
@@ -58,7 +59,7 @@ export const resetPasswordRequest = (email: string): Promise<any> =>
 
 export const userNameExistsCheck = (
   userName: string
-): Promise<{ exists: boolean; userName: string }> =>
+): Promise<ExistenceResult> =>
   http
     .post('/user/user-name-check', {
       userName,
