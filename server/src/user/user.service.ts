@@ -2,9 +2,10 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from 'entities/Contact.entity';
 import { ContactInvitation } from 'entities/ContactInvitation.entity';
+import { generateLowerAlphaNumId } from 'helpers/utils';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
-import { Brackets, Repository } from 'typeorm';
+import { Brackets, In, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { SearchUsersQuery } from './dto/search-users.query';
 import { SetUserRoleDto } from './dto/set-user-role.dto';
@@ -171,5 +172,30 @@ export class UserService {
 
   async userNameExists(userName: string) {
     return this.userRepository.findOne({ where: { userName }, select: ['id'] });
+  }
+
+  async userNameSuggestions(userName: string) {
+    const { length } = userName;
+
+    const slicedIndex = Math.floor(length / 2) + 1;
+
+    const suggestions = [
+      `${userName}_`,
+      `${userName}1`,
+      `${userName}_1`,
+      `${userName}2`,
+      `${userName.slice(0, slicedIndex)}_${userName.slice(slicedIndex)}`,
+      `${userName.slice(0, slicedIndex)}_${userName.slice(slicedIndex)}_`,
+      `${userName}_${generateLowerAlphaNumId()}`,
+    ];
+
+    const result = await this.userRepository
+      .find({
+        select: ['userName'],
+        where: { userName: In(suggestions) },
+      })
+      .then((users) => users.map((u) => u.userName));
+
+    return suggestions.filter((v) => !result.includes(v));
   }
 }
