@@ -22,6 +22,9 @@ import {
   RESEND_MAIL_VERIFICATION_TOKEN_SUCCESS,
   RESEND_MAIL_VERIFICATION_TOKEN_FAILED,
   MUST_SET_INITIAL_USER,
+  INITIALIZE_USER_REQUESTED,
+  INITIALIZE_USER_SUCCESS,
+  INITIALIZE_USER_FAILED,
 } from '../constants/auth.constants';
 import { AuthState, AuthActionParams } from '../types/auth.types';
 
@@ -34,6 +37,10 @@ const initialState: AuthState = {
     error: null,
   },
   register: {
+    loading: false,
+    error: null,
+  },
+  initializeUser: {
     loading: false,
     error: null,
   },
@@ -277,6 +284,31 @@ const authReducer = (
         ...state,
         isAuthenticated: false,
         user: null,
+      };
+    case INITIALIZE_USER_REQUESTED:
+      return {
+        ...state,
+        initializeUser: {
+          loading: true,
+          error: null,
+        },
+      };
+    case INITIALIZE_USER_SUCCESS:
+      return {
+        ...state,
+        initializeUser: {
+          loading: false,
+          error: null,
+        },
+        isInitialUserSetup: false,
+      };
+    case INITIALIZE_USER_FAILED:
+      return {
+        ...state,
+        initializeUser: {
+          loading: false,
+          error: action.payload,
+        },
       };
     default:
       return state;

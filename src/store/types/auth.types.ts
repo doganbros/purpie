@@ -27,6 +27,9 @@ import {
   RESEND_MAIL_VERIFICATION_TOKEN_SUCCESS,
   RESEND_MAIL_VERIFICATION_TOKEN_FAILED,
   MUST_SET_INITIAL_USER,
+  INITIALIZE_USER_REQUESTED,
+  INITIALIZE_USER_SUCCESS,
+  INITIALIZE_USER_FAILED,
 } from '../constants/auth.constants';
 import { UtilActionParams } from './util.types';
 
@@ -74,6 +77,10 @@ export interface AuthState {
     error: ResponseError | null;
   };
   register: {
+    loading: boolean;
+    error: ResponseError | null;
+  };
+  initializeUser: {
     loading: boolean;
     error: ResponseError | null;
   };
@@ -133,7 +140,8 @@ export type AuthActionParams =
         | typeof FORGOT_PASSWORD_SUCCESS
         | typeof RESEND_MAIL_VERIFICATION_TOKEN_SUCCESS
         | typeof LOGOUT
-        | typeof RESET_PASSWORD_SUCCESS;
+        | typeof RESET_PASSWORD_SUCCESS
+        | typeof INITIALIZE_USER_REQUESTED;
     }
   | {
       type: typeof THIRD_PARTY_URL_REQUESTED;
@@ -145,7 +153,8 @@ export type AuthActionParams =
         | typeof REGISTER_SUCCESS
         | typeof VERIFY_USER_EMAIL_SUCCESS
         | typeof THIRD_PARTY_AUTH_WITH_CODE_SUCCESS
-        | typeof USER_RETRIEVED_SUCCESS;
+        | typeof USER_RETRIEVED_SUCCESS
+        | typeof INITIALIZE_USER_SUCCESS;
       payload: User;
     }
   | {
@@ -162,7 +171,8 @@ export type AuthActionParams =
         | typeof THIRD_PARTY_AUTH_WITH_CODE_FAILED
         | typeof RESEND_MAIL_VERIFICATION_TOKEN_FAILED
         | typeof USER_RETRIEVED_FAILED
-        | typeof FORGOT_PASSWORD_FAILED;
+        | typeof FORGOT_PASSWORD_FAILED
+        | typeof INITIALIZE_USER_FAILED;
       payload: ResponseError;
     };
 

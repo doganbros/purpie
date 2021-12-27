@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Box,
   Button,
@@ -17,12 +17,16 @@ import OctopusText from '../../assets/octopus-logo/octopus-text-2.png';
 import { validators } from '../../helpers/validators';
 import { useTitle } from '../../hooks/useTitle';
 import { useResponsive } from '../../hooks/useResponsive';
+import { FormSubmitEvent } from '../../models/form-submit-event';
+import { initializeUserAction } from '../../store/actions/auth.action';
+import { RegisterPayload } from '../../store/types/auth.types';
 
 const InitializeUser: FC = () => {
   const {
     isInitialUserSetup,
-    register: { loading },
+    initializeUser: { loading },
   } = useSelector((state: AppState) => state.auth);
+  const dispatch = useDispatch();
 
   const history = useHistory();
 
@@ -34,6 +38,9 @@ const InitializeUser: FC = () => {
     if (!isInitialUserSetup) history.push('/login');
   }, []);
 
+  const handleSubmit: FormSubmitEvent<RegisterPayload> = ({ value }) => {
+    dispatch(initializeUserAction(value));
+  };
   return (
     <Main
       background="#FFE7E3"
@@ -62,7 +69,7 @@ const InitializeUser: FC = () => {
               Sign up with an admin account to continue
             </Text>
           </Box>
-          <Form>
+          <Form onSubmit={handleSubmit}>
             <FormField
               label="FIRST NAME"
               validate={validators.required()}
