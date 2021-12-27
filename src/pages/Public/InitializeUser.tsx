@@ -63,10 +63,10 @@ const InitializeUser: FC = () => {
           </Box>
           <Box gap="small">
             <Text size="xlarge" weight="bold">
-              Create an Admin Account
+              Welcome to Octopus!
             </Text>
             <Text size="small" margin="">
-              Sign up with an admin account to continue
+              Sign up with an account to continue
             </Text>
           </Box>
           <Form onSubmit={handleSubmit}>
