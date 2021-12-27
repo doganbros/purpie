@@ -72,5 +72,5 @@ export const authenticateWithThirdPartyCode = async (
 ): Promise<User> =>
   http.post(`/auth/third-party/${name}`, { code }).then((res) => res.data);
 
-export const initializeUser = (user: RegisterPayload): Promise<any> =>
+export const initializeUser = (user: RegisterPayload): Promise<User> =>
   http.post('auth/initial-user', user).then((res) => res.data);

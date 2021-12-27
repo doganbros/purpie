@@ -301,6 +301,8 @@ const authReducer = (
           error: null,
         },
         isInitialUserSetup: false,
+        isAuthenticated: true,
+        user: action.payload,
       };
     case INITIALIZE_USER_FAILED:
       return {
