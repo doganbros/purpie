@@ -99,7 +99,7 @@ export const VideoPost: FC<VideoPostProps> = ({
           }}
         >
           {saved ? (
-            <BookmarkFill color="white" />
+            <BookmarkFill color="accent-1" />
           ) : (
             hover && <Bookmark color="status-disabled" />
           )}
