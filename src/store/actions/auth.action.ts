@@ -25,6 +25,9 @@ import {
   RESEND_MAIL_VERIFICATION_TOKEN_FAILED,
   RESEND_MAIL_VERIFICATION_TOKEN_REQUESTED,
   MUST_SET_INITIAL_USER,
+  INITIALIZE_USER_REQUESTED,
+  INITIALIZE_USER_SUCCESS,
+  INITIALIZE_USER_FAILED,
 } from '../constants/auth.constants';
 import * as AuthService from '../services/auth.service';
 import {
@@ -238,6 +241,26 @@ export const resendMailVerificationTokenAction = (
     } catch (err: any) {
       dispatch({
         type: RESEND_MAIL_VERIFICATION_TOKEN_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+export const initializeUserAction = (user: RegisterPayload): AuthAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: INITIALIZE_USER_REQUESTED,
+    });
+    try {
+      const payload = await AuthService.initializeUser(user);
+      dispatch({
+        type: INITIALIZE_USER_SUCCESS,
+        payload,
+      });
+      appHistory.replace('/');
+    } catch (err: any) {
+      dispatch({
+        type: INITIALIZE_USER_FAILED,
         payload: err?.response?.data,
       });
     }
