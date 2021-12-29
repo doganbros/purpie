@@ -26,10 +26,20 @@ import {
   RESEND_MAIL_VERIFICATION_TOKEN_REQUESTED,
   RESEND_MAIL_VERIFICATION_TOKEN_SUCCESS,
   RESEND_MAIL_VERIFICATION_TOKEN_FAILED,
+  MUST_SET_INITIAL_USER,
+  INITIALIZE_USER_REQUESTED,
+  INITIALIZE_USER_SUCCESS,
+  INITIALIZE_USER_FAILED,
 } from '../constants/auth.constants';
 import { UtilActionParams } from './util.types';
 
 export type UserRoleCode = 'SUPER_ADMIN' | 'ADMIN' | 'NORMAL';
+
+export interface ExistenceResult {
+  userName: string;
+  exists: boolean;
+  suggestions: Array<string>;
+}
 
 export interface UserRole {
   roleCode: UserRoleCode;
@@ -55,6 +65,7 @@ export interface User extends UserBasic {
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
+  isInitialUserSetup: boolean;
   verifyUserEmail: {
     loading: boolean;
     error: ResponseError | null;
@@ -72,6 +83,10 @@ export interface AuthState {
     error: ResponseError | null;
   };
   register: {
+    loading: boolean;
+    error: ResponseError | null;
+  };
+  initializeUser: {
     loading: boolean;
     error: ResponseError | null;
   };
@@ -121,6 +136,7 @@ export type AuthActionParams =
   | {
       type:
         | typeof LOGIN_REQUESTED
+        | typeof MUST_SET_INITIAL_USER
         | typeof VERIFY_USER_EMAIL_REQUESTED
         | typeof REGISTER_REQUESTED
         | typeof RESEND_MAIL_VERIFICATION_TOKEN_REQUESTED
@@ -130,7 +146,8 @@ export type AuthActionParams =
         | typeof FORGOT_PASSWORD_SUCCESS
         | typeof RESEND_MAIL_VERIFICATION_TOKEN_SUCCESS
         | typeof LOGOUT
-        | typeof RESET_PASSWORD_SUCCESS;
+        | typeof RESET_PASSWORD_SUCCESS
+        | typeof INITIALIZE_USER_REQUESTED;
     }
   | {
       type: typeof THIRD_PARTY_URL_REQUESTED;
@@ -142,7 +159,8 @@ export type AuthActionParams =
         | typeof REGISTER_SUCCESS
         | typeof VERIFY_USER_EMAIL_SUCCESS
         | typeof THIRD_PARTY_AUTH_WITH_CODE_SUCCESS
-        | typeof USER_RETRIEVED_SUCCESS;
+        | typeof USER_RETRIEVED_SUCCESS
+        | typeof INITIALIZE_USER_SUCCESS;
       payload: User;
     }
   | {
@@ -159,7 +177,8 @@ export type AuthActionParams =
         | typeof THIRD_PARTY_AUTH_WITH_CODE_FAILED
         | typeof RESEND_MAIL_VERIFICATION_TOKEN_FAILED
         | typeof USER_RETRIEVED_FAILED
-        | typeof FORGOT_PASSWORD_FAILED;
+        | typeof FORGOT_PASSWORD_FAILED
+        | typeof INITIALIZE_USER_FAILED;
       payload: ResponseError;
     };
 
@@ -168,5 +187,5 @@ export interface AuthDispatch {
 }
 
 export interface AuthAction {
-  (dispatch: AuthDispatch): Promise<void>;
+  (dispatch: AuthDispatch): Promise<void | null>;
 }

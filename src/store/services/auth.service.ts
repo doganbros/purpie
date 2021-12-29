@@ -1,5 +1,6 @@
 import { http } from '../../config/http';
 import {
+  ExistenceResult,
   LoginPayload,
   RegisterPayload,
   ResetPasswordPayload,
@@ -11,7 +12,16 @@ export const login = async (user: LoginPayload): Promise<User> =>
   http.post('/auth/login', user).then((res) => res.data);
 
 export const retrieveUser = async (): Promise<User> =>
-  http.post('/auth/retrieve').then((res) => res.data);
+  http
+    .post(
+      '/auth/retrieve',
+      {},
+      {
+        showErrorToast: (err) =>
+          err?.response?.data?.error !== 'INITIAL_USER_REQUIRED',
+      }
+    )
+    .then((res) => res.data);
 
 export const logOut = (): Promise<any> =>
   http.post('/auth/logout').then((res) => res.data);
@@ -49,7 +59,7 @@ export const resetPasswordRequest = (email: string): Promise<any> =>
 
 export const userNameExistsCheck = (
   userName: string
-): Promise<{ exists: boolean; userName: string }> =>
+): Promise<ExistenceResult> =>
   http
     .post('/user/user-name-check', {
       userName,
@@ -61,3 +71,6 @@ export const authenticateWithThirdPartyCode = async (
   code: string
 ): Promise<User> =>
   http.post(`/auth/third-party/${name}`, { code }).then((res) => res.data);
+
+export const initializeUser = (user: RegisterPayload): Promise<User> =>
+  http.post('auth/initial-user', user).then((res) => res.data);

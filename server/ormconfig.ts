@@ -11,6 +11,7 @@ const {
   DB_USER,
   DB_DATABASE,
   DB_HOST,
+  DB_PORT = 5432,
 } = process.env;
 
 const env: any = {
@@ -28,7 +29,7 @@ const env: any = {
 const ormConfig: TypeOrmModuleOptions = {
   type: 'postgres',
   host: DB_HOST,
-  port: 5432,
+  port: Number(DB_PORT),
   username: DB_USER,
   migrationsRun: true,
   password: DB_PASSWORD,

@@ -171,7 +171,13 @@ export class UserController {
   @ValidationBadRequest()
   async userNameExistenceCheck(@Body() info: UserNameExistenceCheckDto) {
     const user = await this.userService.userNameExists(info.userName);
-    return { userName: info.userName, exists: !!user };
+    return {
+      userName: info.userName,
+      exists: !!user,
+      suggestions: user
+        ? await this.userService.userNameSuggestions(info.userName)
+        : [],
+    };
   }
 
   @Get('/contact/list')

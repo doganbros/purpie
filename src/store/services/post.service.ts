@@ -1,7 +1,12 @@
 import { serialize } from 'object-to-formdata';
 import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
-import { CreateVideoPayload, FeedPayload, Post } from '../types/post.types';
+import {
+  CreateVideoPayload,
+  FeedPayload,
+  Post,
+  SavedPost,
+} from '../types/post.types';
 
 export const getPublicFeed = (
   params: FeedPayload
@@ -67,5 +72,5 @@ export const removePostSave = (postId: number): Promise<Post> =>
 export const getSavedPost = (params: {
   limit?: number;
   skip?: number;
-}): Promise<PaginatedResponse<Post>> =>
+}): Promise<PaginatedResponse<SavedPost>> =>
   http.get('/post/saved/list', { params }).then((res) => res.data);
