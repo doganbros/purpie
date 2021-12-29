@@ -67,6 +67,12 @@ export interface Post {
   videoName: string;
 }
 
+export interface SavedPost {
+  id: number;
+  createdOn: Date;
+  post: Post;
+}
+
 export interface CreateVideoPayload {
   title: string;
   description?: string;
@@ -100,7 +106,7 @@ export interface PostState {
     uploading: boolean;
     error: ResponseError | null;
   };
-  saved: PaginatedResponse<Post> & {
+  saved: PaginatedResponse<SavedPost> & {
     loading: boolean;
     error: ResponseError | null;
   };
@@ -152,10 +158,10 @@ export type PostActionParams =
         | typeof PUBLIC_FEED_SUCCESS
         | typeof USER_FEED_SUCCESS
         | typeof CHANNEL_FEED_SUCCESS
-        | typeof ZONE_FEED_SUCCESS
-        | typeof SAVED_POSTS_SUCCESS;
+        | typeof ZONE_FEED_SUCCESS;
       payload: PaginatedResponse<Post>;
     }
+  | { type: typeof SAVED_POSTS_SUCCESS; payload: PaginatedResponse<SavedPost> }
   | {
       type: typeof POST_DETAIL_SUCCESS;
       payload: Post;

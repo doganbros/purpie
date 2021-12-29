@@ -36,9 +36,9 @@ const sidebarBtns = [
     path: '/contacts',
   },
   {
-    title: 'Saved Videos',
+    title: 'Saved Posts',
     icon: Bookmark,
-    path: '/saved_videos',
+    path: '/saved-posts',
   },
 ];
 
