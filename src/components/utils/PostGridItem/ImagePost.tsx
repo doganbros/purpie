@@ -1,11 +1,17 @@
-import { Box, Image } from 'grommet';
 import React, { FC } from 'react';
-import MeetingBackground from '../../../assets/meeting-bg.png';
+import { Box } from 'grommet';
+import { Group } from 'grommet-icons';
 
 export const ImagePost: FC = () => {
   return (
-    <Box>
-      <Image src={MeetingBackground} />
+    <Box
+      flex="grow"
+      background="brand"
+      justify="evenly"
+      direction="row"
+      align="center"
+    >
+      <Group size="xlarge" color="white" />
     </Box>
   );
 };
