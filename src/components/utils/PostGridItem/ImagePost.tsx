@@ -1,18 +1,16 @@
 import React, { FC } from 'react';
-import { Box } from 'grommet';
+import { Box, Stack } from 'grommet';
 import { Group } from 'grommet-icons';
 
 export const ImagePost: FC = () => {
   return (
-    <Box
-      flex="grow"
-      background="brand"
-      justify="evenly"
-      direction="row"
-      pad={{ vertical: 'medium' }}
-      align="center"
-    >
+    <Stack anchor="center">
+      <Box
+        flex="grow"
+        background="brand"
+        pad={{ top: '56.25%' }} // For 16 by 9 aspect ratio
+      />
       <Group size="xlarge" color="white" />
-    </Box>
+    </Stack>
   );
 };
