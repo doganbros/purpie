@@ -15,6 +15,7 @@ import {
 import { AppState } from '../../../store/reducers/root.reducer';
 import VideoPlayer from '../../../components/utils/VideoPlayer';
 import { FavoriteFill } from '../../../components/utils/CustomIcons';
+import RecommendedVideos from './RecommendedVideos';
 
 dayjs.extend(relativeTime);
 interface RouteParams {
@@ -84,7 +85,7 @@ const Video: FC = () => {
             </Box>
           </Box>
           <Text color="status-disabled"> {data.description} </Text>
-          {/* <RecommendedVideos /> */}
+          <RecommendedVideos />
         </Box>
       )}
     </PrivatePageLayout>
