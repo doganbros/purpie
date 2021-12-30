@@ -394,10 +394,12 @@ export class PostService {
     if (query.searchTerm?.trim()) {
       builder.setParameter('searchTerm', tsqueryParam(query.searchTerm));
       builder.addSelect(
-        'ts_rank(post.search_document, to_tsquery(:searchTerm))',
+        `ts_rank(post.search_document, to_tsquery('simple', :searchTerm))`,
         'search_rank',
       );
-      builder.andWhere('post.search_document @@ to_tsquery(:searchTerm)');
+      builder.andWhere(
+        `post.search_document @@ to_tsquery('simple', :searchTerm)`,
+      );
 
       builder.addOrderBy('search_rank', 'DESC');
     }

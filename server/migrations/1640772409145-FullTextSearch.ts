@@ -171,7 +171,7 @@ export class FullTextSearch1640772409145 implements MigrationInterface {
     // Profile search setup
 
     await queryRunner.query(
-      `UPDATE "user" SET search_document = setweight(to_tsvector('simple', "firstName"), 'A') || setweight(to_tsvector('simple', "lastName"), 'A') || setweight(to_tsvector('simple', "userName"), 'A') || setweight(to_tsvector('simple', "email"), 'B')`,
+      `UPDATE "user" SET search_document = setweight(to_tsvector('simple', "firstName"), 'A') || setweight(to_tsvector('simple', "lastName"), 'A') || setweight(to_tsvector('simple', coalesce("userName", '')), 'A') || setweight(to_tsvector('simple', "email"), 'B')`,
     );
 
     await queryRunner.query(
@@ -183,7 +183,7 @@ export class FullTextSearch1640772409145 implements MigrationInterface {
         RETURNS TRIGGER
         AS $$
         BEGIN
-            new.search_document := setweight(to_tsvector('simple', "new"."firstName"), 'A') || setweight(to_tsvector('simple', "new"."lastName"), 'A') || setweight(to_tsvector('simple', "new"."userName"), 'A') || setweight(to_tsvector('simple', "new"."email"), 'B');
+            new.search_document := setweight(to_tsvector('simple', new."firstName"), 'A') || setweight(to_tsvector('simple', new."lastName"), 'A') || setweight(to_tsvector('simple', coalesce(new."userName", '')), 'A') || setweight(to_tsvector('simple', new."email"), 'B');
             return new;
         END;
         $$  LANGUAGE plpgsql

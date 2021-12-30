@@ -134,7 +134,7 @@ export class ZoneService {
         'zone.public',
       ])
       .addSelect(
-        'ts_rank(zone.search_document, to_tsquery(:searchTerm))',
+        `ts_rank(zone.search_document, to_tsquery('simple', :searchTerm))`,
         'search_rank',
       )
       .leftJoin(
@@ -149,7 +149,7 @@ export class ZoneService {
           qb.where('zone.public = true').orWhere('user_zone.id is not null');
         }),
       )
-      .andWhere('zone.search_document @@ to_tsquery(:searchTerm)')
+      .andWhere(`zone.search_document @@ to_tsquery('simple', :searchTerm)`)
       .orderBy('search_rank', 'DESC')
       .paginate(query);
   }

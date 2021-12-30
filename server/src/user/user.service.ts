@@ -46,10 +46,10 @@ export class UserService {
         'user.userName',
       ])
       .addSelect(
-        'ts_rank(user.search_document, to_tsquery(:searchTerm))',
+        `ts_rank(user.search_document, to_tsquery('simple', :searchTerm))`,
         'search_rank',
       )
-      .where('user.search_document @@ to_tsquery(:searchTerm)')
+      .where(`user.search_document @@ to_tsquery('simple', :searchTerm)`)
       .andWhere('user.id not IN (:...excludeUserIds)', { excludeUserIds })
       .orderBy('search_rank', 'DESC');
   }

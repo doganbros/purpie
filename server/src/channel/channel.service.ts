@@ -103,7 +103,7 @@ export class ChannelService {
         'zone.description',
       ])
       .addSelect(
-        'ts_rank(channel.search_document, to_tsquery(:searchTerm))',
+        `ts_rank(channel.search_document, to_tsquery('simple', :searchTerm))`,
         'search_rank',
       )
       .innerJoin('channel.zone', 'zone')
@@ -121,7 +121,7 @@ export class ChannelService {
           );
         }),
       )
-      .andWhere('channel.search_document @@ to_tsquery(:searchTerm)')
+      .andWhere(`channel.search_document @@ to_tsquery('simple', :searchTerm)`)
       .orderBy('search_rank', 'DESC');
 
     if (query.zoneId)
