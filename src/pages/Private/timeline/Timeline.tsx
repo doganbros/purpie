@@ -20,6 +20,7 @@ import ChannelList from './ChannelList';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
   createPostSaveAction,
+  getChannelFeedAction,
   getPublicFeedAction,
   getUserFeedAction,
   getZoneFeedAction,
@@ -33,6 +34,7 @@ const Timeline: FC = () => {
   const {
     post: { feed },
     zone: { selectedUserZone },
+    channel: { selectedChannel },
   } = useSelector((state: AppState) => state);
 
   const [filters, setFilters] = useState([
@@ -69,7 +71,11 @@ const Timeline: FC = () => {
       case 0:
       case 1:
       case 2:
-        if (selectedUserZone) {
+        if (selectedChannel)
+          dispatch(
+            getChannelFeedAction({ channelId: selectedChannel.channel.id })
+          );
+        else if (selectedUserZone) {
           dispatch(
             getZoneFeedAction({
               zoneId: selectedUserZone.zone.id,
@@ -89,7 +95,7 @@ const Timeline: FC = () => {
       default:
         break;
     }
-  }, [filters]);
+  }, [filters, selectedChannel]);
   return (
     <PrivatePageLayout
       title="Timeline"
@@ -132,6 +138,7 @@ const Timeline: FC = () => {
           <InfiniteScroll items={feed.data} step={6}>
             {(item: typeof feed.data[0]) => (
               <PostGridItem
+                key={item.id}
                 post={item}
                 onClickPlay={() => history.push(`video/${item.id}`)}
                 onClickSave={() => {
