@@ -64,8 +64,7 @@ const Timeline: FC = () => {
       active: false,
     },
   ]);
-
-  useEffect(() => {
+  const getFeed = (skip?: number) => {
     const activeFilterId = filters.find((f) => f.active)?.id;
     switch (activeFilterId) {
       case 0:
@@ -73,29 +72,41 @@ const Timeline: FC = () => {
       case 2:
         if (selectedChannel)
           dispatch(
-            getChannelFeedAction({ channelId: selectedChannel.channel.id })
+            getChannelFeedAction({
+              skip,
+              channelId: selectedChannel.channel.id,
+              streaming: activeFilterId === 2,
+            })
           );
         else if (selectedUserZone) {
           dispatch(
             getZoneFeedAction({
+              skip,
               zoneId: selectedUserZone.zone.id,
               streaming: activeFilterId === 2,
             })
           );
         } else {
-          dispatch(getUserFeedAction({ streaming: activeFilterId === 2 }));
+          dispatch(
+            getUserFeedAction({ skip, streaming: activeFilterId === 2 })
+          );
         }
         break;
       case 3:
-        dispatch(getPublicFeedAction({ sortBy: 'time' }));
+        dispatch(getPublicFeedAction({ skip, sortBy: 'time' }));
         break;
       case 4:
-        dispatch(getPublicFeedAction({ sortBy: 'popularity' }));
+        dispatch(getPublicFeedAction({ skip, sortBy: 'popularity' }));
         break;
       default:
         break;
     }
+  };
+
+  useEffect(() => {
+    getFeed();
   }, [filters, selectedChannel]);
+
   return (
     <PrivatePageLayout
       title="Timeline"
@@ -135,7 +146,13 @@ const Timeline: FC = () => {
           </Box>
         </Box>
         <Grid columns={size !== 'small' ? 'medium' : '100%'}>
-          <InfiniteScroll items={feed.data} step={6}>
+          <InfiniteScroll
+            items={feed.data}
+            step={6}
+            onMore={() => {
+              getFeed(feed.data.length);
+            }}
+          >
             {(item: typeof feed.data[0]) => (
               <PostGridItem
                 key={item.id}

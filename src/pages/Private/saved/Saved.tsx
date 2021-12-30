@@ -28,13 +28,16 @@ const Saved: FC = () => {
     post: { saved },
   } = useSelector((state: AppState) => state);
 
-  useEffect(() => {
+  const getSaved = (skip?: number) => {
     dispatch(
       getSavedPostAction({
-        limit: 30,
-        skip: 0,
+        skip,
       })
     );
+  };
+
+  useEffect(() => {
+    getSaved();
   }, []);
 
   return (
@@ -64,7 +67,13 @@ const Saved: FC = () => {
               Your saved posts will appear here
             </Text>
           ) : (
-            <InfiniteScroll items={saved.data} step={6}>
+            <InfiniteScroll
+              items={saved.data}
+              onMore={() => {
+                getSaved(saved.data.length);
+              }}
+              step={6}
+            >
               {({ post }: typeof saved.data[0]) => (
                 <PostGridItem
                   post={post}
