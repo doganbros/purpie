@@ -132,10 +132,7 @@ const Timeline: FC = () => {
             ))}
           </Box>
         </Box>
-        <Grid
-          columns={size !== 'small' ? 'medium' : '100%'}
-          gap={{ row: 'large', column: 'medium' }}
-        >
+        <Grid columns={size !== 'small' ? 'medium' : '100%'}>
           <InfiniteScroll items={feed.data} step={6}>
             {(item: typeof feed.data[0]) => (
               <PostGridItem

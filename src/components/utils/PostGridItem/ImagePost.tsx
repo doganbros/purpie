@@ -9,6 +9,7 @@ export const ImagePost: FC = () => {
       background="brand"
       justify="evenly"
       direction="row"
+      pad={{ vertical: 'medium' }}
       align="center"
     >
       <Group size="xlarge" color="white" />
