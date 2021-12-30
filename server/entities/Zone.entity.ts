@@ -58,4 +58,7 @@ export class Zone extends RecordEntity {
     inverseJoinColumn: { name: 'userId', referencedColumnName: 'id' },
   })
   users: Array<User>;
+
+  @Column('tsvector', { select: false })
+  search_document: any;
 }

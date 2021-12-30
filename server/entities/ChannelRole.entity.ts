@@ -23,4 +23,8 @@ export class ChannelRole extends BaseEntity {
   @Column({ default: true })
   @ApiProperty()
   canEdit: boolean;
+
+  @Column({ default: false })
+  @ApiProperty()
+  canSetRole: boolean;
 }

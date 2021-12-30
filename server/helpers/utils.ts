@@ -123,3 +123,9 @@ export const parsePostTags = (description?: string) => {
 
   return description.match(/#\w+/gmu)?.map((v) => v.slice(1));
 };
+
+export const tsqueryParam = (value: string): string => {
+  if (!value?.trim().length) return '';
+
+  return `${value.trim().replace(/\s/g, ' | ')}:*`;
+};

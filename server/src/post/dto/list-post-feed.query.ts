@@ -45,4 +45,9 @@ export class ListPostFeedQuery extends PaginationQuery {
   @IsString()
   @IsOptional()
   tags: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  searchTerm: string;
 }

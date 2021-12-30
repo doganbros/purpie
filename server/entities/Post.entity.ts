@@ -48,6 +48,12 @@ export class Post extends RecordEntity {
   @Column({ nullable: true })
   channelId: number;
 
+  @Column({ default: 0 })
+  likesCount: number;
+
+  @Column({ default: 0 })
+  commentsCount: number;
+
   @Column({ default: false })
   streaming: boolean;
 
@@ -68,4 +74,7 @@ export class Post extends RecordEntity {
 
   @Column({ type: 'simple-json', nullable: true })
   config: JitsiConfig;
+
+  @Column('tsvector', { select: false })
+  search_document: any;
 }

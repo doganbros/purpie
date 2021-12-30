@@ -8,7 +8,7 @@ import { PostTag } from 'entities/PostTag.entity';
 import { PostVideo } from 'entities/PostVideo.entity';
 import { SavedPost } from 'entities/SavedPost.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
-import { booleanValue } from 'helpers/utils';
+import { booleanValue, tsqueryParam } from 'helpers/utils';
 import { Brackets, IsNull, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { CreatePostCommentDto } from './dto/create-post-comment.dto';
@@ -208,27 +208,13 @@ export class PostService {
         'post.channelId',
         'post.liveStream',
         'post.record',
+        'post.likesCount',
+        'post.commentsCount',
         'createdBy.id',
         'createdBy.email',
         'createdBy.firstName',
         'createdBy.lastName',
       ])
-      .addSelect(
-        (sq) =>
-          sq
-            .select('count(*)')
-            .from(PostLike, 'post_like')
-            .where('post_like.postId = post.id'),
-        'post_likesCount',
-      )
-      .addSelect(
-        (sq) =>
-          sq
-            .select('count(*)')
-            .from(PostComment, 'post_comment')
-            .where('post_comment.postId = post.id'),
-        'post_commentsCount',
-      )
       .addSelect(
         (sq) =>
           sq
@@ -272,7 +258,7 @@ export class PostService {
       .orderBy('savedPost.id', 'DESC')
       .paginateRawAndEntities(
         {
-          otherFields: ['likesCount', 'commentsCount', 'liked'],
+          otherFields: ['liked'],
           primaryTableAliasName: 'savedPost',
           primaryColumnName: 'id',
         },
@@ -320,28 +306,14 @@ export class PostService {
         'post.userContactExclusive',
         'post.channelId',
         'post.liveStream',
+        'post.likesCount',
+        'post.commentsCount',
         'post.record',
         'createdBy.id',
         'createdBy.email',
         'createdBy.firstName',
         'createdBy.lastName',
       ])
-      .addSelect(
-        (sq) =>
-          sq
-            .select('count(*)')
-            .from(PostLike, 'post_like')
-            .where('post_like.postId = post.id'),
-        'post_likesCount',
-      )
-      .addSelect(
-        (sq) =>
-          sq
-            .select('count(*)')
-            .from(PostComment, 'post_comment')
-            .where('post_comment.postId = post.id'),
-        'post_commentsCount',
-      )
       .addSelect(
         (sq) =>
           sq
@@ -414,10 +386,21 @@ export class PostService {
 
     if (query.sortBy === 'popularity')
       builder
-        .orderBy('"post_likesCount"', query.sortDirection ?? 'DESC')
-        .addOrderBy('"post_commentsCount"', query.sortDirection ?? 'DESC')
+        .orderBy('post.likesCount', query.sortDirection ?? 'DESC')
+        .addOrderBy('post.commentsCount', query.sortDirection ?? 'DESC')
         .addOrderBy('post.id', query.sortDirection ?? 'DESC');
     else builder.orderBy('post.id', query.sortDirection ?? 'DESC');
+
+    if (query.searchTerm?.trim()) {
+      builder.setParameter('searchTerm', tsqueryParam(query.searchTerm));
+      builder.addSelect(
+        'ts_rank(post.search_document, to_tsquery(:searchTerm))',
+        'search_rank',
+      );
+      builder.andWhere('post.search_document @@ to_tsquery(:searchTerm)');
+
+      builder.addOrderBy('search_rank', 'DESC');
+    }
 
     return builder;
   }
@@ -471,7 +454,7 @@ export class PostService {
   getUserFeed(userId: number, query: ListPostFeedQuery) {
     return this.getUserFeedSelection(userId, query).paginateRawAndEntities(
       {
-        otherFields: ['commentsCount', 'likesCount', 'liked', 'saved'],
+        otherFields: ['liked', 'saved'],
         primaryColumnName: 'id',
         primaryTableAliasName: 'post',
       },
@@ -482,10 +465,7 @@ export class PostService {
   getPostById(userId: number, postId: number) {
     return this.getUserFeedSelection(userId, {}, true)
       .andWhere('post.id = :postId', { postId })
-      .getRawOneAndEntity(
-        ['commentsCount', 'likesCount', 'liked', 'saved'],
-        'post',
-      );
+      .getRawOneAndEntity(['liked', 'saved'], 'post');
   }
 
   getZoneFeed(zoneId: number, userId: number, query: ListPostFeedQuery) {
@@ -512,7 +492,7 @@ export class PostService {
       .andWhere('channel.zoneId = :zoneId', { zoneId })
       .paginateRawAndEntities(
         {
-          otherFields: ['commentsCount', 'likesCount', 'liked', 'saved'],
+          otherFields: ['liked', 'saved'],
           primaryColumnName: 'id',
           primaryTableAliasName: 'post',
         },
@@ -542,7 +522,7 @@ export class PostService {
       )
       .paginateRawAndEntities(
         {
-          otherFields: ['commentsCount', 'likesCount', 'liked', 'saved'],
+          otherFields: ['liked', 'saved'],
           primaryColumnName: 'id',
           primaryTableAliasName: 'post',
         },
@@ -555,7 +535,7 @@ export class PostService {
       .andWhere('post.public = true')
       .paginateRawAndEntities(
         {
-          otherFields: ['commentsCount', 'likesCount', 'liked', 'saved'],
+          otherFields: ['liked', 'saved'],
           primaryColumnName: 'id',
           primaryTableAliasName: 'post',
         },

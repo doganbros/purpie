@@ -2,10 +2,10 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from 'entities/Contact.entity';
 import { ContactInvitation } from 'entities/ContactInvitation.entity';
-import { generateLowerAlphaNumId } from 'helpers/utils';
+import { generateLowerAlphaNumId, tsqueryParam } from 'helpers/utils';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
-import { Brackets, In, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { SearchUsersQuery } from './dto/search-users.query';
 import { SetUserRoleDto } from './dto/set-user-role.dto';
@@ -37,6 +37,7 @@ export class UserService {
   userBaseSelect(excludeUserIds: Array<number>, query: SearchUsersQuery) {
     return this.userRepository
       .createQueryBuilder('user')
+      .setParameter('searchTerm', tsqueryParam(query.name))
       .select([
         'user.id',
         'user.firstName',
@@ -44,23 +45,13 @@ export class UserService {
         'user.email',
         'user.userName',
       ])
-      .where(
-        new Brackets((qb) => {
-          qb.where(
-            `lower(CONCAT(user.firstName, ' ', user.lastName)) LIKE :name`,
-            {
-              name: `${query.name.toLowerCase()}%`,
-            },
-          )
-            .orWhere('user.email LIKE :email', {
-              email: `${query.name.toLowerCase()}%`,
-            })
-            .orWhere('user.userName LIKE :userName', {
-              userName: `${query.name.toLowerCase()}%`,
-            });
-        }),
+      .addSelect(
+        'ts_rank(user.search_document, to_tsquery(:searchTerm))',
+        'search_rank',
       )
-      .andWhere('user.id not IN (:...excludeUserIds)', { excludeUserIds });
+      .where('user.search_document @@ to_tsquery(:searchTerm)')
+      .andWhere('user.id not IN (:...excludeUserIds)', { excludeUserIds })
+      .orderBy('search_rank', 'DESC');
   }
 
   async searchUsers(excludeUserIds: Array<number>, query: SearchUsersQuery) {

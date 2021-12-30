@@ -8,6 +8,8 @@ import {
   Put,
   HttpCode,
   HttpStatus,
+  Get,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -36,6 +38,7 @@ import { ChannelIdParams } from '../dto/channel-id.params';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { EditChannelDto } from '../dto/edit-channel.dto';
 import { InviteToJoinChannelDto } from '../dto/invite-to-join-channel.dto';
+import { SearchChannelQuery } from '../dto/search-channel.query';
 
 @Controller({ path: 'channel', version: '1' })
 @ApiTags('channel')
@@ -76,6 +79,15 @@ export class ChannelController {
     );
 
     return userChannel.id;
+  }
+
+  @Get('/search')
+  @IsAuthenticated()
+  searchChannel(
+    @Query() query: SearchChannelQuery,
+    @CurrentUser() user: UserPayload,
+  ) {
+    return this.channelService.searchChannel(user, query);
   }
 
   @Post('/join/:channelId')
@@ -119,7 +131,7 @@ export class ChannelController {
   @UserChannelRole(['canInvite'])
   @ApiCreatedResponse({
     description:
-      'Current authenticated invites a user to this channel. The id of the invitation is returned. User channel must have canInvite permission',
+      'Current authenticated channel member invites a user to this channel. The id of the invitation is returned. User channel must have canInvite permission',
     schema: { type: 'integer' },
   })
   @ApiNotFoundResponse({
@@ -142,13 +154,7 @@ export class ChannelController {
     @CurrentUserChannel() currentUserChannel: UserChannel,
     @CurrentUser() currentUser: User,
   ) {
-    const channel = await this.channelService.validateInviteUser(
-      email,
-      channelId,
-    );
-
-    if (!channel)
-      throw new NotFoundException('Channel not found', 'CHANNEL_NOT_FOUND');
+    await this.channelService.validateInviteUser(email, channelId);
 
     const invitation = await this.channelService.addUserToChannelInvitation(
       email,

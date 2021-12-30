@@ -9,6 +9,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -22,6 +23,7 @@ import { UserZone } from 'entities/UserZone.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { User } from 'entities/User.entity';
+import { SearchQuery } from 'types/SearchQuery';
 import { Category } from 'entities/Category.entity';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { errorResponseDoc } from 'helpers/error-response-doc';
@@ -60,6 +62,12 @@ export class ZoneController {
     this.zoneService.sendZoneInfoMail(userZone.zone, currentUser);
 
     return userZone.id;
+  }
+
+  @Get('/search')
+  @IsAuthenticated()
+  searchChannel(@Query() query: SearchQuery, @CurrentUser() user: UserPayload) {
+    return this.zoneService.searchZone(user, query);
   }
 
   @Post('/join/:zoneId')

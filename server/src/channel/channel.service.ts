@@ -6,11 +6,14 @@ import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
+import { tsqueryParam } from 'helpers/utils';
 import { pick } from 'lodash';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { MailService } from 'src/mail/mail.service';
 import { Brackets, Repository } from 'typeorm';
 import { CreateChannelDto } from './dto/create-channel.dto';
+import { SearchChannelQuery } from './dto/search-channel.query';
+import { UpdateChannelUserRoleDto } from './dto/update-channel-user-role.dto';
 
 const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
 
@@ -82,6 +85,48 @@ export class ChannelService {
       },
       relations: ['channel', 'channelRole'],
     });
+  }
+
+  async searchChannel(userPayload: UserPayload, query: SearchChannelQuery) {
+    const baseQuery = this.channelRepository
+      .createQueryBuilder('channel')
+      .select([
+        'channel.id',
+        'channel.createdOn',
+        'channel.name',
+        'channel.topic',
+        'channel.description',
+        'channel.public',
+        'zone.id',
+        'zone.name',
+        'zone.subdomain',
+        'zone.description',
+      ])
+      .addSelect(
+        'ts_rank(channel.search_document, to_tsquery(:searchTerm))',
+        'search_rank',
+      )
+      .innerJoin('channel.zone', 'zone')
+      .leftJoin(
+        UserChannel,
+        'user_channel',
+        'channel.id = user_channel.channelId and user_channel.userId = :userId',
+        { userId: userPayload.id },
+      )
+      .setParameter('searchTerm', tsqueryParam(query.searchTerm))
+      .where(
+        new Brackets((qb) => {
+          qb.where('channel.public = true').orWhere(
+            'user_channel.id is not null',
+          );
+        }),
+      )
+      .andWhere('channel.search_document @@ to_tsquery(:searchTerm)')
+      .orderBy('search_rank', 'DESC');
+
+    if (query.zoneId)
+      baseQuery.andWhere('channel.zoneId = :zoneId', { zoneId: query.zoneId });
+    return baseQuery.paginate(query);
   }
 
   get userChannelBaseSelect() {
@@ -184,19 +229,19 @@ export class ChannelService {
     const channel = await this.channelRepository
       .createQueryBuilder('channel')
       .select('user.id', 'userId')
-      .leftJoin(
+      .innerJoin(
         UserChannel,
         'user_channel',
         'user_channel.channelId = channel.id',
       )
-      .leftJoin(User, 'user', 'user.id = user_channel.userId')
-
-      .andWhere('channel.id = :channelId', { channelId })
-      .andWhere('user.email <> :email', { email })
-
+      .innerJoin(User, 'user', 'user.id = user_channel.userId')
+      .where('user.email = :email', { email })
       .getRawOne();
 
-    return channel;
+    if (channel)
+      throw new BadRequestException(
+        `The user with the email ${email} is already a member of this channel`,
+      );
   }
 
   async addUserToChannelInvitation(
@@ -250,6 +295,13 @@ export class ChannelService {
     return this.channelRepository.update(
       { id },
       pick(editInfo, ['name', 'description', 'topic', 'public']),
+    );
+  }
+
+  async updateChannelUserRole(info: UpdateChannelUserRoleDto) {
+    return this.userChannelRepository.update(
+      { userId: info.userId, channelId: info.channelId },
+      { channelRoleCode: info.channelRoleCode },
     );
   }
 }

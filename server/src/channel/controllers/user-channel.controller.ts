@@ -1,4 +1,4 @@
-import { Controller, Delete, Get } from '@nestjs/common';
+import { Controller, Delete, Get, Put } from '@nestjs/common';
 import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
@@ -10,6 +10,7 @@ import { UserZoneRole } from 'src/zone/decorators/user-zone-role.decorator';
 import { ChannelService } from '../channel.service';
 import { CurrentUserChannel } from '../decorators/current-user-channel.decorator';
 import { UserChannelRole } from '../decorators/user-channel-role.decorator';
+import { UpdateChannelUserRoleDto } from '../dto/update-channel-user-role.dto';
 import { UserChannelListResponse } from '../responses/user-channel.response';
 
 @Controller({ path: 'user-channel', version: '1' })
@@ -78,6 +79,13 @@ export class UserChannelController {
     @CurrentUserZone() currentUserChannel: UserChannel,
   ) {
     await currentUserChannel.remove();
+    return 'OK';
+  }
+
+  @Put('/role/update')
+  @UserChannelRole(['canSetRole'])
+  async updateUserChannelRole(info: UpdateChannelUserRoleDto) {
+    await this.channelService.updateChannelUserRole(info);
     return 'OK';
   }
 }

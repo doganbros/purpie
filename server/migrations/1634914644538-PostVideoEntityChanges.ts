@@ -1,5 +1,4 @@
 import { Post } from 'entities/Post.entity';
-import { PostVideo } from 'entities/PostVideo.entity';
 import {
   MigrationInterface,
   QueryRunner,

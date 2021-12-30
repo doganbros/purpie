@@ -1,11 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { pick } from 'lodash';
 import { URL } from 'url';
-import { IsNull, Repository } from 'typeorm';
+import { Brackets, IsNull, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Zone } from 'entities/Zone.entity';
 import { UserZoneRepository } from 'entities/repositories/UserZone.repository';
-import { UserChannel } from 'entities/UserChannel.entity';
+import { tsqueryParam } from 'helpers/utils';
+import { SearchQuery } from 'types/SearchQuery';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { Category } from 'entities/Category.entity';
 import { MailService } from 'src/mail/mail.service';
@@ -23,8 +24,6 @@ export class ZoneService {
     @InjectRepository(Zone) private zoneRepository: Repository<Zone>,
     @InjectRepository(UserZoneRepository)
     private userZoneRepository: UserZoneRepository,
-    @InjectRepository(UserChannel)
-    private userChannelRepository: Repository<UserChannel>,
     @InjectRepository(Invitation)
     private invitationRepository: Repository<Invitation>,
     @InjectRepository(Category)
@@ -121,6 +120,38 @@ export class ZoneService {
         id: invitationId,
       },
     });
+  }
+
+  async searchZone(userPayload: UserPayload, query: SearchQuery) {
+    return this.zoneRepository
+      .createQueryBuilder('zone')
+      .select([
+        'zone.id',
+        'zone.createdOn',
+        'zone.name',
+        'zone.subdomain',
+        'zone.description',
+        'zone.public',
+      ])
+      .addSelect(
+        'ts_rank(zone.search_document, to_tsquery(:searchTerm))',
+        'search_rank',
+      )
+      .leftJoin(
+        UserZone,
+        'user_zone',
+        'zone.id = user_zone.zoneId and user_zone.userId = :userId',
+        { userId: userPayload.id },
+      )
+      .setParameter('searchTerm', tsqueryParam(query.searchTerm))
+      .where(
+        new Brackets((qb) => {
+          qb.where('zone.public = true').orWhere('user_zone.id is not null');
+        }),
+      )
+      .andWhere('zone.search_document @@ to_tsquery(:searchTerm)')
+      .orderBy('search_rank', 'DESC')
+      .paginate(query);
   }
 
   async getCurrentUserZones(user: UserPayload) {

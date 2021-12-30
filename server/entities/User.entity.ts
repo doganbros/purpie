@@ -87,4 +87,7 @@ export class User extends RecordEntity {
 
   @OneToMany(() => Contact, (contact) => contact.contactUserId)
   contacts: Array<Contact>;
+
+  @Column('tsvector', { select: false })
+  search_document: any;
 }
