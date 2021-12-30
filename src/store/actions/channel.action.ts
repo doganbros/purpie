@@ -108,7 +108,7 @@ export const createChannelAction = (
   };
 };
 
-export const setActiveChannelAction = (
+export const setSelectedChannelAction = (
   channel: UserChannelListItem
 ): ChannelAction => {
   return (dispatch) => {
@@ -119,7 +119,7 @@ export const setActiveChannelAction = (
   };
 };
 
-export const unsetActiveChannelAction = (): ChannelAction => {
+export const unsetSelectedChannelAction = (): ChannelAction => {
   return (dispatch) => {
     dispatch({
       type: UNSET_SELECTED_CHANNEL,

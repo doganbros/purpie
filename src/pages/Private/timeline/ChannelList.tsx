@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
   getUserChannelsAction,
-  setActiveChannelAction,
-  unsetActiveChannelAction,
+  setSelectedChannelAction,
+  unsetSelectedChannelAction,
 } from '../../../store/actions/channel.action';
 import { channelAvatarSrc } from './data/channel-avatars';
 
@@ -42,8 +42,8 @@ const ChannelList: FC = () => {
             <Box
               onClick={() => {
                 if (c.channel.id === selectedChannel?.channel.id)
-                  dispatch(unsetActiveChannelAction());
-                else dispatch(setActiveChannelAction(c));
+                  dispatch(unsetSelectedChannelAction());
+                else dispatch(setSelectedChannelAction(c));
               }}
               focusIndicator={false}
               key={c.channel.id}
