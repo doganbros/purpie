@@ -9,8 +9,6 @@ import {
   ResponsiveContext,
   Text,
 } from 'grommet';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
 import ChannelsToFollow from './ChannelsToFollow';
@@ -27,8 +25,6 @@ import {
   getZoneFeedAction,
   removePostSaveAction,
 } from '../../../store/actions/post.action';
-
-dayjs.extend(relativeTime);
 
 const Timeline: FC = () => {
   const size = useContext(ResponsiveContext);
@@ -136,23 +132,13 @@ const Timeline: FC = () => {
           <InfiniteScroll items={feed.data} step={6}>
             {(item: typeof feed.data[0]) => (
               <PostGridItem
-                key={item.slug}
-                slug={item.slug}
-                id={item.id}
-                comments={item.commentsCount}
-                createdAt={dayjs(item.createdOn).fromNow()}
-                likes={item.likesCount}
-                live={item.liveStream}
+                post={item}
                 onClickPlay={() => history.push(`video/${item.id}`)}
                 onClickSave={() => {
                   if (item.saved)
                     dispatch(removePostSaveAction({ postId: item.id }));
                   else dispatch(createPostSaveAction({ postId: item.id }));
                 }}
-                saved={item.saved}
-                createdBy={item.createdBy}
-                videoTitle={item.title}
-                videoName={item.videoName}
               />
             )}
           </InfiniteScroll>

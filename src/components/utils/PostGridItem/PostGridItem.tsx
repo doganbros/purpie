@@ -1,40 +1,24 @@
 import React, { FC, useState } from 'react';
-import { Avatar, Box, Stack, Text } from 'grommet';
+import { Box, Stack, Text } from 'grommet';
 import { Chat, Favorite } from 'grommet-icons';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import ExtendedBox from '../ExtendedBox';
-import { UserBasic } from '../../../store/types/auth.types';
 import InitialsAvatar from '../InitialsAvatar';
 import { VideoPost } from './VideoPost';
 import { ImagePost } from './ImagePost';
+import { Post } from '../../../store/types/post.types';
+
+dayjs.extend(relativeTime);
 
 interface PostGridItemProps {
-  id: number;
-  slug: string;
-  live: boolean;
-  saved: boolean;
-  userAvatarSrc?: string;
-  createdBy: UserBasic;
-  createdAt: string;
-  videoTitle: string;
-  videoName: string;
-  likes: string;
-  comments: string;
+  post: Post;
   onClickPlay: (id: number) => any;
   onClickSave: (id: number) => any;
 }
 
 const PostGridItem: FC<PostGridItemProps> = ({
-  id,
-  slug,
-  live,
-  saved,
-  userAvatarSrc,
-  createdBy,
-  createdAt,
-  videoTitle,
-  videoName,
-  likes,
-  comments,
+  post,
   onClickPlay,
   onClickSave,
 }) => {
@@ -50,7 +34,7 @@ const PostGridItem: FC<PostGridItemProps> = ({
         <Box
           fill
           onClick={() => {
-            onClickPlay(id);
+            onClickPlay(post.id);
           }}
           focusIndicator={false}
           round={{ size: 'medium' }}
@@ -58,14 +42,14 @@ const PostGridItem: FC<PostGridItemProps> = ({
           gap="small"
           pad={{ bottom: 'small' }}
         >
-          {videoName ? (
+          {post.videoName ? (
             <VideoPost
-              id={id}
-              live={live}
+              id={post.id}
+              live={post.liveStream}
               onClickSave={onClickSave}
-              saved={saved}
-              slug={slug}
-              videoName={videoName}
+              saved={post.saved}
+              slug={post.slug}
+              videoName={post.videoName}
             />
           ) : (
             <ImagePost />
@@ -84,21 +68,19 @@ const PostGridItem: FC<PostGridItemProps> = ({
                 round="large"
                 border={{ size: 'large', color: 'white' }}
               >
-                {userAvatarSrc ? (
-                  <Avatar round src={userAvatarSrc} />
-                ) : (
-                  <InitialsAvatar user={createdBy} />
-                )}
+                <InitialsAvatar user={post.createdBy} />
               </Box>
               <Text color="status-disabled">
-                {createdBy?.firstName} {createdBy?.lastName}
+                {post.createdBy?.firstName} {post.createdBy?.lastName}
               </Text>
             </Box>
-            <Text color="status-disabled">{createdAt}</Text>
+            <Text color="status-disabled">
+              {dayjs(post.createdOn).fromNow()}
+            </Text>
           </ExtendedBox>
           <Box direction="row" justify="between" align="start">
             <Text size="large" weight="bold" color="brand">
-              {videoTitle}
+              {post.title}
             </Text>
             <Box
               direction="row"
@@ -109,10 +91,10 @@ const PostGridItem: FC<PostGridItemProps> = ({
             >
               <Favorite color="status-disabled" />
               <Text size="small" color="status-disabled">
-                {likes}
+                {post.likesCount}
               </Text>
               <Chat color="status-disabled" />
-              <Text color="status-disabled">{comments}</Text>
+              <Text color="status-disabled">{post.commentsCount}</Text>
             </Box>
           </Box>
         </Box>

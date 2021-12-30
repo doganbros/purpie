@@ -1,10 +1,22 @@
 import React, { FC, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { Box, Grid, InfiniteScroll, ResponsiveContext, Text } from 'grommet';
-import { recommendedVideos } from './data/recommended-videos';
 import PostGridItem from '../../../components/utils/PostGridItem/PostGridItem';
+import { AppState } from '../../../store/reducers/root.reducer';
+import {
+  createPostSaveAction,
+  removePostSaveAction,
+} from '../../../store/actions/post.action';
 
 const RecommendedVideos: FC = () => {
   const size = useContext(ResponsiveContext);
+  const history = useHistory();
+  const dispatch = useDispatch();
+
+  const {
+    post: { feed },
+  } = useSelector((state: AppState) => state);
   return (
     <Box gap="small">
       <Text size="large" weight="bold" color="brand">
@@ -14,23 +26,16 @@ const RecommendedVideos: FC = () => {
         columns={size !== 'small' ? 'medium' : '100%'}
         gap={{ row: 'large', column: 'medium' }}
       >
-        <InfiniteScroll items={recommendedVideos} step={6}>
-          {(item: typeof recommendedVideos[0]) => (
+        <InfiniteScroll items={feed.data} step={6}>
+          {(item: typeof feed.data[0]) => (
             <PostGridItem
-              key={item.id}
-              id={+item.id}
-              slug={item.id.toString()}
-              comments={item.comments.toString()}
-              createdAt={item.createdAt}
-              likes={item.likes.toString()}
-              live={item.live}
-              onClickPlay={item.onClickPlay}
-              onClickSave={item.onClickSave}
-              saved={item.saved}
-              userAvatarSrc={item.userAvatarSrc}
-              createdBy={item.createdBy}
-              videoTitle={item.videoTitle}
-              videoName={item.id}
+              post={item}
+              onClickPlay={() => history.push(`video/${item.id}`)}
+              onClickSave={() => {
+                if (item.saved)
+                  dispatch(removePostSaveAction({ postId: item.id }));
+                else dispatch(createPostSaveAction({ postId: item.id }));
+              }}
             />
           )}
         </InfiniteScroll>
