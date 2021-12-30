@@ -30,6 +30,7 @@ export const VideoPost: FC<VideoPostProps> = ({
     muted: true,
     controlBar: false,
     controls: false,
+    aspectRatio: '16:9',
     sources: [
       {
         src: `${http.defaults.baseURL}/post/video/view/${slug}/${videoName}`,
