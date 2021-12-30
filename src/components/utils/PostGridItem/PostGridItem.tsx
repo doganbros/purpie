@@ -53,7 +53,7 @@ const PostGridItem: FC<PostGridItemProps> = ({
               videoName={post.videoName}
             />
           ) : (
-            <ImagePost />
+            <ImagePost id={post.id} />
           )}
 
           <ExtendedBox

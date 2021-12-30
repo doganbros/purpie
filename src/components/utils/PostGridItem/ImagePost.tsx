@@ -1,16 +1,22 @@
 import React, { FC } from 'react';
 import { Box, Stack } from 'grommet';
 import { Group } from 'grommet-icons';
+import { getColorPairFromId } from '../../../helpers/utils';
 
-export const ImagePost: FC = () => {
+interface ImagePostProps {
+  id: number;
+}
+
+export const ImagePost: FC<ImagePostProps> = ({ id }) => {
+  const { color, background } = getColorPairFromId(id);
   return (
     <Stack anchor="center">
       <Box
         flex="grow"
-        background="brand"
+        background={background}
         pad={{ top: '56.25%' }} // For 16 by 9 aspect ratio
       />
-      <Group size="xlarge" color="white" />
+      <Group size="xlarge" color={color} />
     </Stack>
   );
 };

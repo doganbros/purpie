@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
 import { ResponseError } from '../models/response-error';
+import colorPair from '../styles/color-pairs.json';
 
 export const errorResponseMessage = (error?: ResponseError): string => {
   if (!error) return '';
@@ -55,3 +56,6 @@ export function getCookie(name: string): string | null {
   if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
   return null;
 }
+
+export const getColorPairFromId = (id: number): typeof colorPair[0] =>
+  colorPair[id % colorPair.length];
