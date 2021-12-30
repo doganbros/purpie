@@ -8,6 +8,7 @@ import InitialsAvatar from '../InitialsAvatar';
 import { VideoPost } from './VideoPost';
 import { ImagePost } from './ImagePost';
 import { Post } from '../../../store/types/post.types';
+import { FavoriteFill } from '../CustomIcons';
 
 dayjs.extend(relativeTime);
 
@@ -89,7 +90,11 @@ const PostGridItem: FC<PostGridItemProps> = ({
               flex={{ shrink: 0 }}
               margin={{ left: 'small' }}
             >
-              <Favorite color="status-disabled" />
+              {post.liked ? (
+                <FavoriteFill color="brand" />
+              ) : (
+                <Favorite color="status-disabled" />
+              )}
               <Text size="small" color="status-disabled">
                 {post.likesCount}
               </Text>
