@@ -18,7 +18,16 @@ export class ListPostFeedQuery extends PaginationQuery {
   })
   @IsOptional()
   @IsIn(['false', 'true'])
-  streaming: boolean;
+  streaming: string;
+
+  @ApiProperty({
+    required: false,
+    type: Boolean,
+    description: 'Get only following post',
+  })
+  @IsOptional()
+  @IsIn(['false', 'true'])
+  following: string;
 
   @ApiProperty({
     required: false,

@@ -5,6 +5,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -53,9 +54,13 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   async validatePost(userId: number, postId: number) {
-    const post = await this.postService.getOnePost(userId, postId);
+    const post = await this.postService.getOnePost(userId, postId, true);
 
-    if (!post) throw new NotFoundException('Post not found', 'POST_NOT_FOUND');
+    if (!post)
+      throw new NotFoundException(
+        'Post not found or unauthorized',
+        'POST_NOT_FOUND',
+      );
   }
 
   @Post('comment/create')
@@ -67,7 +72,11 @@ export class PostController {
   @ApiNotFoundResponse({
     description:
       'Error thrown when the post is not found or user does not have the right to access',
-    schema: errorResponseDoc(404, 'Post not found', 'POST_NOT_FOUND'),
+    schema: errorResponseDoc(
+      404,
+      'Post not found or unauthorized',
+      'POST_NOT_FOUND',
+    ),
   })
   @IsAuthenticated()
   async createPostComment(
@@ -84,10 +93,6 @@ export class PostController {
   @Get('comment/list/:postId/:parentId?')
   @ApiParam({
     type: Number,
-    name: 'postId',
-  })
-  @ApiParam({
-    type: Number,
     name: 'parentId',
     required: false,
     allowEmptyValue: true,
@@ -100,18 +105,22 @@ export class PostController {
   @ApiNotFoundResponse({
     description:
       'Error thrown when the post is not found or user does not have the right to access',
-    schema: errorResponseDoc(404, 'Post not found', 'POST_NOT_FOUND'),
+    schema: errorResponseDoc(
+      404,
+      'Post not found or unauthorized',
+      'POST_NOT_FOUND',
+    ),
   })
   @IsAuthenticated()
   async getPostComments(
     @Query() query: PaginationQuery,
-    @Param('postId') postId: string,
+    @Param('postId', ParseIntPipe) postId: number,
     @Param() params: Record<string, any>,
     @CurrentUser() user: UserPayload,
   ) {
     await this.validatePost(user.id, Number(postId));
 
-    return this.postService.getPostComments(Number(postId), query, params);
+    return this.postService.getPostComments(postId, query, params);
   }
 
   @Put('comment/update')
@@ -154,7 +163,11 @@ export class PostController {
   @ApiNotFoundResponse({
     description:
       'Error thrown when the post is not found or user does not have the right to access',
-    schema: errorResponseDoc(404, 'Post not found', 'POST_NOT_FOUND'),
+    schema: errorResponseDoc(
+      404,
+      'Post not found or unauthorized',
+      'POST_NOT_FOUND',
+    ),
   })
   async getPostCommentCount(
     @Param('postId') postId: string,
@@ -202,7 +215,11 @@ export class PostController {
   @ApiNotFoundResponse({
     description:
       'Error thrown when the post is not found or user does not have the right to access',
-    schema: errorResponseDoc(404, 'Post not found', 'POST_NOT_FOUND'),
+    schema: errorResponseDoc(
+      404,
+      'Post not found or unauthorized',
+      'POST_NOT_FOUND',
+    ),
   })
   async createPostLike(
     @Body() info: CreatePostLikeDto,
@@ -223,7 +240,11 @@ export class PostController {
   @ApiNotFoundResponse({
     description:
       'Error thrown when the post is not found or user does not have the right to access',
-    schema: errorResponseDoc(404, 'Post not found', 'POST_NOT_FOUND'),
+    schema: errorResponseDoc(
+      404,
+      'Post not found or unauthorized',
+      'POST_NOT_FOUND',
+    ),
   })
   @IsAuthenticated()
   async getPostLikes(
@@ -240,7 +261,11 @@ export class PostController {
   @ApiNotFoundResponse({
     description:
       'Error thrown when the post is not found or user does not have the right to access',
-    schema: errorResponseDoc(404, 'Post not found', 'POST_NOT_FOUND'),
+    schema: errorResponseDoc(
+      404,
+      'Post not found or unauthorized',
+      'POST_NOT_FOUND',
+    ),
   })
   @ApiOkResponse({
     description: 'Get the number of likes belonging to the postId.',
@@ -324,7 +349,11 @@ export class PostController {
   @ApiNotFoundResponse({
     description:
       'Error thrown when the post is not found or user does not have the right to access',
-    schema: errorResponseDoc(404, 'Post not found', 'POST_NOT_FOUND'),
+    schema: errorResponseDoc(
+      404,
+      'Post not found or unauthorized',
+      'POST_NOT_FOUND',
+    ),
   })
   @IsAuthenticated()
   @ApiCreatedResponse({
@@ -411,20 +440,12 @@ export class PostController {
     type: MixedPostFeedListResponse,
   })
   @IsAuthenticated()
-  @ApiParam({
-    name: 'zoneId',
-    type: Number,
-  })
   getZoneFeed(
     @Query() query: ListPostFeedQuery,
     @CurrentUser() user: UserPayload,
-    @Param('zoneId') zoneId: string,
+    @Param('zoneId', ParseIntPipe) zoneId: number,
   ) {
-    return this.postService.getZoneFeed(
-      Number.parseInt(zoneId, 10),
-      user.id,
-      query,
-    );
+    return this.postService.getZoneFeed(zoneId, user.id, query);
   }
 
   @Get('/list/feed/channel/:channelId')
@@ -433,20 +454,12 @@ export class PostController {
     type: MixedPostFeedListResponse,
   })
   @IsAuthenticated()
-  @ApiParam({
-    name: 'channelId',
-    type: Number,
-  })
   getChannelFeed(
     @Query() query: ListPostFeedQuery,
     @CurrentUser() user: UserPayload,
-    @Param('channelId') channelId: string,
+    @Param('channelId', ParseIntPipe) channelId: number,
   ) {
-    return this.postService.getChannelFeed(
-      Number.parseInt(channelId, 10),
-      user.id,
-      query,
-    );
+    return this.postService.getChannelFeed(channelId, user.id, query);
   }
 
   @Get('/detail/feed/:postId')
@@ -466,7 +479,10 @@ export class PostController {
     const result = await this.postService.getPostById(user.id, Number(postId));
 
     if (!result)
-      throw new NotFoundException('Post not found', 'POST_NOT_FOUND');
+      throw new NotFoundException(
+        'Post not found or unauthorized',
+        'POST_NOT_FOUND',
+      );
 
     return result;
   }

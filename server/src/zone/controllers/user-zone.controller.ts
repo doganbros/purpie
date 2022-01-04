@@ -1,4 +1,11 @@
-import { Controller, Get, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  Headers,
+} from '@nestjs/common';
 import { ApiHeader, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 
 import { UserZone } from 'entities/UserZone.entity';
@@ -22,11 +29,20 @@ export class UserZoneController {
   @ApiOkResponse({
     type: UserZoneListResponse,
     isArray: true,
-    description: "Get the list of current user's zones",
+    description:
+      "Get the list of current user's zones. It also adds the public zone which is selected but not joined yet, Its userzoneId will be null when the user zone is not found",
+  })
+  @ApiHeader({
+    name: 'app-subdomain',
+    required: false,
+    description: 'Zone subdomain',
   })
   @IsAuthenticated()
-  async getCurrentUserZones(@CurrentUser() user: UserPayload) {
-    return this.zoneService.getCurrentUserZones(user);
+  async getCurrentUserZones(
+    @CurrentUser() user: UserPayload,
+    @Headers('app-subdomain') subdomain?: string,
+  ) {
+    return this.zoneService.getCurrentUserZones(user, subdomain);
   }
 
   @Get('detail')

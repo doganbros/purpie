@@ -7,6 +7,7 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Res,
@@ -243,9 +244,11 @@ export class AuthController {
     description: 'Error thrown when user is not found',
     schema: errorResponseDoc(404, 'User not found', 'USER_NOT_FOUND'),
   })
-  async resendMailVerificationToken(@Param('userId') userId: string) {
+  async resendMailVerificationToken(
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
     const userInfo = await this.authService.verifyResendMailVerificationToken(
-      Number.parseInt(userId, 10),
+      userId,
     );
 
     await this.authService.sendAccountVerificationMail(userInfo);
@@ -354,7 +357,7 @@ export class AuthController {
     @Headers('app-subdomain') subdomain: string,
   ) {
     if (subdomain) {
-      await this.authService.subdomainValidity(subdomain, currentUser.email);
+      await this.authService.subdomainValidity(subdomain, currentUser.id);
     }
 
     return currentUser;

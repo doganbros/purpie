@@ -10,6 +10,7 @@ import {
   HttpStatus,
   Get,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -34,7 +35,6 @@ import { ZoneService } from 'src/zone/zone.service';
 import { ChannelService } from '../channel.service';
 import { CurrentUserChannel } from '../decorators/current-user-channel.decorator';
 import { UserChannelRole } from '../decorators/user-channel-role.decorator';
-import { ChannelIdParams } from '../dto/channel-id.params';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { EditChannelDto } from '../dto/edit-channel.dto';
 import { InviteToJoinChannelDto } from '../dto/invite-to-join-channel.dto';
@@ -90,6 +90,15 @@ export class ChannelController {
     return this.channelService.searchChannel(user, query);
   }
 
+  @Get('/list/public/:zoneId')
+  @IsAuthenticated()
+  async listPublicChannelsByZoneId(
+    @Param('zoneId', ParseIntPipe) zoneId: number,
+    @CurrentUser() user: UserPayload,
+  ) {
+    return this.channelService.getPublicChannels(user.id, zoneId);
+  }
+
   @Post('/join/:channelId')
   @ApiCreatedResponse({
     description:
@@ -99,7 +108,7 @@ export class ChannelController {
   @IsAuthenticated()
   async joinPublicChannel(
     @CurrentUser() user: UserPayload,
-    @Param() { channelId }: ChannelIdParams,
+    @Param('channelId', ParseIntPipe) channelId: number,
   ) {
     const channel = await this.channelService.validateJoinPublicChannel(
       user.id,
@@ -149,7 +158,7 @@ export class ChannelController {
   })
   @ValidationBadRequest()
   async inviteToJoinChannel(
-    @Param() { channelId }: ChannelIdParams,
+    @Param('channelId', ParseIntPipe) channelId: number,
     @Body() { email }: InviteToJoinChannelDto,
     @CurrentUserChannel() currentUserChannel: UserChannel,
     @CurrentUser() currentUser: User,

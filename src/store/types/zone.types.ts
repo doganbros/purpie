@@ -62,9 +62,9 @@ export interface ZoneRole {
 }
 
 export interface UserZoneListItem {
-  id: number;
-  createdOn: Date;
-  zoneRole: ZoneRole;
+  id: number | null;
+  createdOn: Date | null;
+  zoneRole: Partial<ZoneRole>;
   zone: ZoneListItem;
 }
 

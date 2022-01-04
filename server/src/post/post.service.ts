@@ -8,6 +8,7 @@ import { PostTag } from 'entities/PostTag.entity';
 import { PostVideo } from 'entities/PostVideo.entity';
 import { SavedPost } from 'entities/SavedPost.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
+import { UserZone } from 'entities/UserZone.entity';
 import { booleanValue, tsqueryParam } from 'helpers/utils';
 import { Brackets, IsNull, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
@@ -30,7 +31,7 @@ export class PostService {
     private postVideoRepository: Repository<PostVideo>,
   ) {}
 
-  getOnePost(userId: number, identity: number | string) {
+  getOnePost(userId: number, identity: number | string, preview = false) {
     return this.postRepository
       .createQueryBuilder('post')
       .select([
@@ -42,10 +43,18 @@ export class PostService {
         'post.type',
         'post.public',
       ])
+      .leftJoin('post.channel', 'channel')
+      .leftJoin('channel.zone', 'zone')
       .leftJoin(
         UserChannel,
-        'userChannel',
-        'userChannel.channelId = post.channelId and userChannel.userId = :userId',
+        'user_channel',
+        'user_channel.channelId = channel.id and user_channel.userId = :userId',
+        { userId },
+      )
+      .leftJoin(
+        UserZone,
+        'user_zone',
+        'user_zone.zoneId = zone.id and user_zone.userId = :userId',
         { userId },
       )
       .leftJoin(
@@ -66,10 +75,31 @@ export class PostService {
         new Brackets((qb) => {
           qb.where(
             new Brackets((qbi) => {
-              qbi
-                .orWhere('post.public = true')
-                .orWhere('userChannel.id is not null')
-                .orWhere('contact.contactUserId is not null');
+              qbi.orWhere('post.public = true');
+              if (preview) {
+                qbi.orWhere(
+                  new Brackets((qbii) => {
+                    qbii
+                      .where(
+                        new Brackets((qbiii) => {
+                          qbiii
+                            .where('zone.public = true')
+                            .orWhere('user_zone.id is not null');
+                        }),
+                      )
+                      .andWhere(
+                        new Brackets((qbiii) => {
+                          qbiii
+                            .where('channel.public = true')
+                            .orWhere('user_channel.id is not null');
+                        }),
+                      );
+                  }),
+                );
+              } else {
+                qbi.orWhere('user_channel.id is not null');
+              }
+              qbi.orWhere('contact.contactUserId is not null');
             }),
           );
         }),
@@ -230,8 +260,8 @@ export class PostService {
       .leftJoin('post.channel', 'channel')
       .leftJoin(
         UserChannel,
-        'userChannel',
-        'userChannel.channelId = channel.id and userChannel.userId = :userId',
+        'user_channel',
+        'user_channel.channelId = channel.id and user_channel.userId = :userId',
         { userId },
       )
       .leftJoin('channel.zone', 'zone')
@@ -248,7 +278,7 @@ export class PostService {
             new Brackets((qbi) => {
               qbi
                 .orWhere('post.public = true')
-                .orWhere('userChannel.id is not null')
+                .orWhere('user_channel.id is not null')
                 .orWhere('contact.contactUserId is not null');
             }),
           );
@@ -271,7 +301,7 @@ export class PostService {
     slug: string,
     fileName: string,
   ) {
-    const post = await this.getOnePost(userId, slug);
+    const post = await this.getOnePost(userId, slug, true);
 
     if (!post)
       throw new NotFoundException('Video not found', 'VIDEO_NOT_FOUND');
@@ -411,6 +441,7 @@ export class PostService {
     userId: number,
     query: Partial<ListPostFeedQuery>,
     includePublic = false,
+    includePublicZoneChannel = false,
   ) {
     return this.basePost(query, userId)
       .addSelect([
@@ -425,13 +456,19 @@ export class PostService {
         'channel.public',
       ])
       .leftJoin('post.channel', 'channel')
+      .leftJoin('channel.zone', 'zone')
       .leftJoin(
         UserChannel,
-        'userChannel',
-        'userChannel.channelId = channel.id and userChannel.userId = :userId',
+        'user_channel',
+        'user_channel.channelId = channel.id and user_channel.userId = :userId',
         { userId },
       )
-      .leftJoin('channel.zone', 'zone')
+      .leftJoin(
+        UserZone,
+        'user_zone',
+        'user_zone.zoneId = zone.id and user_zone.userId = :userId',
+        { userId },
+      )
       .leftJoin(
         Contact,
         'contact',
@@ -442,11 +479,36 @@ export class PostService {
         new Brackets((qb) => {
           qb.where(
             new Brackets((qbi) => {
+              qbi.where('contact.contactUserId is not null');
               if (includePublic) qbi.orWhere('post.public = true');
-              qbi
-                .orWhere('userChannel.id is not null')
-                .orWhere('contact.contactUserId is not null')
-                .orWhere('post.createdById = :userId', { userId });
+
+              if (includePublicZoneChannel)
+                qbi.orWhere(
+                  new Brackets((qbii) => {
+                    qbii
+                      .where(
+                        new Brackets((qbiii) => {
+                          qbiii
+                            .where('zone.public = true')
+                            .orWhere('user_zone.id is not null');
+                        }),
+                      )
+                      .andWhere(
+                        new Brackets((qbiii) => {
+                          qbiii
+                            .where('channel.public = true')
+                            .orWhere('user_channel.id is not null');
+                        }),
+                      );
+                  }),
+                );
+              else qbi.orWhere('user_channel.id is not null');
+
+              if (
+                !query.following ||
+                (query.following && !booleanValue(query.following))
+              )
+                qbi.orWhere('post.createdById = :userId', { userId });
             }),
           );
         }),
@@ -465,12 +527,12 @@ export class PostService {
   }
 
   getPostById(userId: number, postId: number) {
-    return this.getUserFeedSelection(userId, {}, true)
+    return this.getUserFeedSelection(userId, {}, true, true)
       .andWhere('post.id = :postId', { postId })
       .getRawOneAndEntity(['liked', 'saved'], 'post');
   }
 
-  getZoneFeed(zoneId: number, userId: number, query: ListPostFeedQuery) {
+  baseChannelPosts(query: PaginationQuery, userId: number) {
     return this.basePost(query, userId)
       .addSelect([
         'zone.id',
@@ -484,13 +546,40 @@ export class PostService {
         'channel.public',
       ])
       .innerJoin('post.channel', 'channel')
-      .innerJoin(
+      .innerJoin('channel.zone', 'zone')
+      .leftJoin(
+        UserZone,
+        'user_zone',
+        'user_zone.zoneId = zone.id and user_zone.userId = :userId',
+        { userId },
+      )
+      .leftJoin(
         UserChannel,
         'user_channel',
         'user_channel.channelId = channel.id and user_channel.userId = :userId',
         { userId },
       )
-      .innerJoin('channel.zone', 'zone')
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            new Brackets((qbi) => {
+              qbi
+                .where('zone.public = true')
+                .orWhere('user_zone.id is not null');
+            }),
+          ).andWhere(
+            new Brackets((qbi) => {
+              qbi
+                .where('channel.public = true')
+                .orWhere('user_channel.id is not null');
+            }),
+          );
+        }),
+      );
+  }
+
+  getZoneFeed(zoneId: number, userId: number, query: ListPostFeedQuery) {
+    return this.baseChannelPosts(query, userId)
       .andWhere('channel.zoneId = :zoneId', { zoneId })
       .paginateRawAndEntities(
         {
@@ -503,25 +592,8 @@ export class PostService {
   }
 
   getChannelFeed(channelId: number, userId: number, query: PaginationQuery) {
-    return this.basePost(query, userId)
-      .addSelect([
-        'zone.id',
-        'zone.name',
-        'zone.subdomain',
-        'zone.public',
-        'channel.id',
-        'channel.name',
-        'channel.topic',
-        'channel.description',
-      ])
-      .innerJoin('post.channel', 'channel')
-      .innerJoin('channel.zone', 'zone')
-      .innerJoin(
-        UserChannel,
-        'userChannel',
-        'userChannel.channelId = :channelId and userChannel.userId = :userId',
-        { userId, channelId },
-      )
+    return this.baseChannelPosts(query, userId)
+      .andWhere('channel.id = :channelId', { channelId })
       .paginateRawAndEntities(
         {
           otherFields: ['liked', 'saved'],

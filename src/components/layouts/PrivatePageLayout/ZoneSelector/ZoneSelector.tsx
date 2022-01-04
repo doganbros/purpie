@@ -60,14 +60,14 @@ const ZoneSelector: FC = () => {
             {userZones &&
               userZones.map((z) => (
                 <ZoneSelectorListItem
-                  selected={selectedUserZone?.id === z.id}
+                  selected={selectedUserZone?.zone.id === z.zone.id}
                   onClick={() => {
                     navigateToSubdomain(z.zone.subdomain);
                   }}
                   leftIcon={
                     <Avatar size="small" src={getZoneAvatarSrc(z.zone.id)} />
                   }
-                  key={z.id}
+                  key={z.zone.id}
                   label={z.zone.name}
                 />
               ))}

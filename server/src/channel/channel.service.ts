@@ -87,6 +87,51 @@ export class ChannelService {
     });
   }
 
+  async getPublicChannels(userId: number, zoneId: number) {
+    return this.channelRepository
+      .createQueryBuilder('channel')
+      .select([
+        'channel.id',
+        'channel.createdOn',
+        'channel.name',
+        'channel.topic',
+        'channel.description',
+        'channel.public',
+      ])
+      .innerJoin('channel.zone', 'zone')
+      .leftJoin(
+        UserZone,
+        'user_zone',
+        'user_zone.zoneId = zone.id and user_zone.userId = :userId',
+        { userId },
+      )
+      .leftJoin(
+        UserChannel,
+        'user_channel',
+        'user_channel.channelId = channel.id and user_channel.userId = :userId',
+        { userId },
+      )
+      .where('zone.id = :zoneId', { zoneId })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            new Brackets((qbi) => {
+              qbi
+                .where('zone.public = true')
+                .orWhere('user_zone.id is not null');
+            }),
+          ).andWhere(
+            new Brackets((qbi) => {
+              qbi
+                .where('channel.public = true')
+                .orWhere('user_channel.id is not null');
+            }),
+          );
+        }),
+      )
+      .getMany();
+  }
+
   async searchChannel(userPayload: UserPayload, query: SearchChannelQuery) {
     const baseQuery = this.channelRepository
       .createQueryBuilder('channel')
@@ -129,7 +174,98 @@ export class ChannelService {
     return baseQuery.paginate(query);
   }
 
-  get userChannelBaseSelect() {
+  async getCurrentUserZoneChannels(
+    identifier: number | string,
+    userId: number,
+  ) {
+    const records = await this.channelRepository
+      .createQueryBuilder('channel')
+      .select([
+        'user_channel.id',
+        'user_channel.createdOn',
+        'channel.id',
+        'channel.createdOn',
+        'channel.name',
+        'channel.topic',
+        'channel.description',
+        'channel.public',
+        'channel.zoneId',
+        'createdBy.id',
+        'createdBy.firstName',
+        'createdBy.lastName',
+        'createdBy.email',
+      ])
+      .innerJoin('channel.zone', 'zone')
+      .leftJoin('channel.createdBy', 'createdBy')
+      .leftJoin(
+        UserZone,
+        'user_zone',
+        'user_zone.zoneId = channel.id and user_zone.userId = :userId',
+        { userId },
+      )
+      .leftJoin(
+        UserChannel,
+        'user_channel',
+        'user_channel.channelId = channel.id and user_channel.userId = :userId',
+        { userId },
+      )
+      .leftJoinAndSelect('channel.category', 'category')
+      .leftJoinAndSelect('user_channel.channelRole', 'channel_role')
+      .where(
+        typeof identifier === 'string'
+          ? 'zone.subdomain = :identifier'
+          : 'zone.id = :identifier',
+        { identifier },
+      )
+      .andWhere(
+        new Brackets((qi) => {
+          qi.where('zone.public = true').orWhere('user_zone.id is not null');
+        }),
+      )
+      .andWhere(
+        new Brackets((qi) => {
+          qi.where('channel.public = true').orWhere(
+            'user_channel.id is not null',
+          );
+        }),
+      )
+      .getRawMany();
+
+    return records.map((record) => ({
+      id: record.user_channel_id,
+      createdOn: record.user_channel_createdOn,
+      channel: {
+        id: record.channel_id,
+        createdOn: record.channel_createdOn,
+        name: record.channel_name,
+        topic: record.channel_topic,
+        description: record.channel_description,
+        public: record.channel_public,
+        zoneId: record.channel_zoneId,
+        createdBy: {
+          id: record.createdBy_id,
+          firstName: record.createdBy_firstName,
+          lastName: record.createdBy_lastName,
+          email: record.createdBy_email,
+        },
+      },
+      chanelRole: {
+        roleCode: record.channel_role_roleCode,
+        roleName: record.channel_role_roleName,
+        canInvite: record.channel_role_canInvite,
+        canDelete: record.channel_role_canDelete,
+        canEdit: record.channel_role_canEdit,
+        canSetRole: record.channel_role_canSetRole,
+      },
+    }));
+  }
+
+  async getCurrentUserChannels(
+    userId: number,
+    subdomain: string | null = null,
+  ) {
+    if (subdomain) return this.getCurrentUserZoneChannels(subdomain, userId);
+
     return this.userChannelRepository
       .createQueryBuilder('user_channel')
       .select([
@@ -146,23 +282,7 @@ export class ChannelService {
         'createdBy.firstName',
         'createdBy.lastName',
         'createdBy.email',
-      ]);
-  }
-
-  async getCurrentUserZoneChannels(zoneId: number, userId: number) {
-    return this.userChannelBaseSelect
-      .leftJoin('user_channel.channel', 'channel')
-      .leftJoin('channel.createdBy', 'createdBy')
-      .leftJoinAndSelect('channel.category', 'category')
-      .leftJoinAndSelect('user_channel.channelRole', 'channel_role')
-      .where('user_channel.userId = :userId', { userId })
-      .andWhere('channel.zoneId = :zoneId', { zoneId })
-      .orderBy('user_channel.createdOn', 'DESC')
-      .getMany();
-  }
-
-  async getCurrentUserChannels(userId: number) {
-    return this.userChannelBaseSelect
+      ])
       .leftJoin('user_channel.channel', 'channel')
       .leftJoin('channel.createdBy', 'createdBy')
       .leftJoinAndSelect('channel.category', 'category')

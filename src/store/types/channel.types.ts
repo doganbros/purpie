@@ -32,8 +32,8 @@ export interface ChannelListItem extends ChannelBasic {
 }
 
 export interface UserChannelListItem {
-  id: number;
-  createdOn: Date;
+  id?: number | null;
+  createdOn?: Date | null;
   channel: ChannelListItem;
 }
 

@@ -19,7 +19,7 @@ import { alphaNum, compareHash, fetchOrProduceNull, hash } from 'helpers/utils';
 import { customAlphabet, nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
 import { MattermostService } from 'src/utils/mattermost.service';
-import { Not, Repository, IsNull } from 'typeorm';
+import { Not, Repository, IsNull, Brackets } from 'typeorm';
 import {
   MAIL_VERIFICATION_TYPE,
   OCTOPUS_CLIENT_AUTH_TYPE,
@@ -351,14 +351,35 @@ export class AuthService {
       .save();
   }
 
-  async subdomainValidity(subdomain: string, email: string) {
-    const user = await this.userRepository
+  async subdomainValidity(subdomain: string, identifier: number | string) {
+    const baseQuery = this.userRepository
       .createQueryBuilder('user')
-      .leftJoin(UserZone, 'user_zone', 'user_zone.userId = user.id')
-      .innerJoin(Zone, 'zone', 'zone.id = user_zone.zoneId')
-      .where('user.email = :email', { email })
-      .andWhere('zone.subdomain = :subdomain', { subdomain })
-      .getOne();
+      .innerJoin(Zone, 'zone', 'zone.subdomain = :subdomain', { subdomain })
+      .leftJoin(
+        UserZone,
+        'user_zone',
+        'user_zone.userId = user.id and user_zone.zoneId = zone.id',
+      )
+      .setParameter('identifier', identifier)
+      .where(
+        new Brackets((qb) => {
+          qb.where('zone.public = true').orWhere('user_zone.id is not null');
+        }),
+      );
+
+    if (typeof identifier === 'number')
+      baseQuery.andWhere('user.id = :identifier');
+    else {
+      baseQuery.andWhere(
+        new Brackets((qb) => {
+          qb.where('user.userName = :identifier').orWhere(
+            'user.email = :identifier',
+          );
+        }),
+      );
+    }
+
+    const user = await baseQuery.getOne();
 
     if (!user)
       throw new NotFoundException(

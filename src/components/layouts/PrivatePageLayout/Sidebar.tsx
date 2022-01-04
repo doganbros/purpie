@@ -49,7 +49,7 @@ const Sidebar: FC = () => {
   const [showAddContent, setShowAddContent] = useState(false);
   const {
     meeting: { showPlanMeetingLayer },
-    zone: { showCreateZoneLayer },
+    zone: { showCreateZoneLayer, selectedUserZone },
     channel: { showCreateChannelLayer },
     post: {
       createVideo: { showCreateVideoLayer },
@@ -78,24 +78,25 @@ const Sidebar: FC = () => {
           onDismiss={() => dispatch(closeCreateVideoLayerAction())}
         />
       )}
-      {}
-      <Button
-        onClick={() => {
-          setShowAddContent(true);
-        }}
-        alignSelf="center"
-      >
-        <Box
+      {!selectedUserZone || selectedUserZone.id ? (
+        <Button
+          onClick={() => {
+            setShowAddContent(true);
+          }}
           alignSelf="center"
-          width="min-content"
-          background="accent-4"
-          round="small"
-          pad={{ vertical: 'xxsmall', horizontal: 'xsmall' }}
-          margin={{ vertical: 'small' }}
         >
-          <Add color="dark-1" />
-        </Box>
-      </Button>
+          <Box
+            alignSelf="center"
+            width="min-content"
+            background="accent-4"
+            round="small"
+            pad={{ vertical: 'xxsmall', horizontal: 'xsmall' }}
+            margin={{ vertical: 'small' }}
+          >
+            <Add color="dark-1" />
+          </Box>
+        </Button>
+      ) : null}
 
       {sidebarBtns.map((v) => (
         <SidebarButton key={v.title} {...v} />

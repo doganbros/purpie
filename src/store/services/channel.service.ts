@@ -13,10 +13,10 @@ export const createChannel = (
 export const getUserChannels = (): Promise<PaginatedResponse<any>> =>
   http.get('/user-channel/list').then((res) => res.data);
 
-export const getUserChannelsByUserZoneId = (
-  userChannelId: number
+export const getUserChannelsByZoneId = (
+  zoneId: number
 ): Promise<PaginatedResponse<any>> =>
-  http.get(`/user-channel/list/${userChannelId}`).then((res) => res.data);
+  http.get(`/user-channel/list/${zoneId}`).then((res) => res.data);
 
 export const getUserChannelById = (id: number): Promise<any> =>
   http.get(`/user-channel/detail/${id}`).then((res) => res.data);

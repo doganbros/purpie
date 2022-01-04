@@ -154,9 +154,12 @@ export class ZoneService {
       .paginate(query);
   }
 
-  async getCurrentUserZones(user: UserPayload) {
-    return this.userZoneRepository
-      .createQueryBuilder('user_zone')
+  async getCurrentUserZones(
+    user: UserPayload,
+    subdomain: string | null = null,
+  ) {
+    const records = await this.zoneRepository
+      .createQueryBuilder('zone')
       .select([
         'user_zone.id',
         'user_zone.createdOn',
@@ -170,13 +173,53 @@ export class ZoneService {
         'createdBy.lastName',
         'createdBy.email',
       ])
-      .leftJoin('user_zone.zone', 'zone')
       .leftJoin('zone.createdBy', 'createdBy')
-      .leftJoinAndSelect('user_zone.zoneRole', 'zone_role')
       .leftJoinAndSelect('zone.category', 'category')
-      .where('user_zone.userId = :userId', { userId: user.id })
+      .leftJoin(
+        UserZone,
+        'user_zone',
+        'user_zone.zoneId = zone.id and user_zone.userId = :userId',
+        { userId: user.id },
+      )
+      .leftJoinAndSelect('user_zone.zoneRole', 'zone_role')
+      .where('zone.public = true and zone.subdomain = :subdomain', {
+        subdomain,
+      })
+      .orWhere('user_zone.userId = :userId', { userId: user.id })
       .orderBy('user_zone.createdOn', 'DESC')
-      .getMany();
+      .getRawMany();
+
+    return records.map((record) => ({
+      id: record.user_zone_id,
+      createdOn: record.user_zone_createdOn,
+      zone: {
+        id: record.zone_id,
+        name: record.zone_name,
+        subdomain: record.zone_subdomain,
+        description: record.zone_description,
+        public: record.zone_public,
+        category: {
+          id: record.category_id,
+          name: record.category_name,
+          parentCategoryId: record.category_parentCategoryId,
+        },
+        createdBy: {
+          id: record.createdBy_id,
+          firstName: record.createdBy_firstName,
+          lastName: record.createdBy_lastName,
+          email: record.createdBy_email,
+        },
+      },
+      zoneRole: {
+        roleCode: record.zone_role_roleCode,
+        roleName: record.zone_role_roleName,
+        canCreateChannel: record.zone_role_canCreateChannel,
+        canInvite: record.zone_role_canInvite,
+        canDelete: record.zone_role_canDelete,
+        canEdit: record.zone_role_canEdit,
+        canSetRole: record.zone_role_canSetRole,
+      },
+    }));
   }
 
   async getUserZone(userId: number, params: Record<string, any>) {

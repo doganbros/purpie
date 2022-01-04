@@ -1,12 +1,9 @@
-import { Controller, Delete, Get, Put } from '@nestjs/common';
-import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Controller, Headers, Delete, Get, Put } from '@nestjs/common';
+import { ApiHeader, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UserChannel } from 'entities/UserChannel.entity';
-import { UserZone } from 'entities/UserZone.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
-import { CurrentUserZone } from 'src/zone/decorators/current-user-zone.decorator';
-import { UserZoneRole } from 'src/zone/decorators/user-zone-role.decorator';
 import { ChannelService } from '../channel.service';
 import { CurrentUserChannel } from '../decorators/current-user-channel.decorator';
 import { UserChannelRole } from '../decorators/user-channel-role.decorator';
@@ -22,48 +19,20 @@ export class UserChannelController {
   @ApiOkResponse({
     type: UserChannelListResponse,
     isArray: true,
-    description: "Get the list of current user's channels",
+    description:
+      "Get the list of current user's channels. public channels of zone not joined yet will be listed when user is authorized in the zone(public, or userzone). But the userChannel id will be null",
+  })
+  @ApiHeader({
+    name: 'app-subdomain',
+    required: false,
+    description: 'Zone subdomain',
   })
   @IsAuthenticated()
-  async getCurrentUserChannels(@CurrentUser() user: UserPayload) {
-    return this.channelService.getCurrentUserChannels(user.id);
-  }
-
-  @Get('list/:userZoneId')
-  @ApiOkResponse({
-    type: UserChannelListResponse,
-    description: "Get the list of current user's zone channels",
-  })
-  @ApiParam({
-    name: 'userZoneId',
-    description: 'user zone id',
-  })
-  @UserZoneRole()
-  async getCurrentUserZoneChannels(
+  async getCurrentUserChannels(
     @CurrentUser() user: UserPayload,
-    @CurrentUserZone() currentUserZone: UserZone,
+    @Headers('app-subdomain') subdomain: string,
   ) {
-    return this.channelService.getCurrentUserZoneChannels(
-      currentUserZone.zone.id,
-      user.id,
-    );
-  }
-
-  @Get('detail/:userChannelId')
-  @ApiOkResponse({
-    type: UserChannelListResponse,
-    description:
-      'Get channel details by user channel id. This endpoint include channel meeting config.',
-  })
-  @ApiParam({
-    name: 'userChannelId',
-    description: 'User Channel Id',
-  })
-  @UserChannelRole()
-  async getUserChannelById(
-    @CurrentUserChannel() currentUserchannel: UserChannel,
-  ) {
-    return currentUserchannel;
+    return this.channelService.getCurrentUserChannels(user.id, subdomain);
   }
 
   @Delete('remove/:userChannelId')
@@ -76,7 +45,7 @@ export class UserChannelController {
   })
   @UserChannelRole()
   async deleteUserChannelById(
-    @CurrentUserZone() currentUserChannel: UserChannel,
+    @CurrentUserChannel() currentUserChannel: UserChannel,
   ) {
     await currentUserChannel.remove();
     return 'OK';
