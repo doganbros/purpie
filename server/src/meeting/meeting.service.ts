@@ -13,7 +13,7 @@ import { UserChannel } from 'entities/UserChannel.entity';
 import { PostVideo } from 'entities/PostVideo.entity';
 import { generateJWT } from 'helpers/jwt';
 import { Brackets, DeepPartial, Repository } from 'typeorm';
-import { UserPayload } from 'src/auth/interfaces/user.interface';
+import { UserProfile } from 'src/auth/interfaces/user.interface';
 import {
   generateLowerAlphaNumId,
   meetingConfigStringify,
@@ -136,7 +136,7 @@ export class MeetingService {
     return this.userRepository.findByIds(ids);
   }
 
-  async sendMeetingInfoMail(user: UserPayload, meeting: Post, creator = false) {
+  async sendMeetingInfoMail(user: UserProfile, meeting: Post, creator = false) {
     const context = {
       firstName: user.firstName,
       lastName: user.lastName,
@@ -165,7 +165,6 @@ export class MeetingService {
   currentUserMeetingBaseValidator(userId: number, slug: string) {
     return this.postRepository
       .createQueryBuilder('meeting')
-      .innerJoin(User, 'user', 'user.id = :userId', { userId })
       .leftJoin(
         UserChannel,
         'user_channel',
@@ -178,7 +177,6 @@ export class MeetingService {
         'meeting.userContactExclusive = true AND meeting.createdById = contact.userId AND contact.contactUserId = :userId',
         { userId },
       )
-
       .where('meeting.slug = :slug', { slug })
       .andWhere('meeting.type = :type', { type: 'meeting' })
       .andWhere(
@@ -251,7 +249,7 @@ export class MeetingService {
 
   async generateMeetingUrl(
     meeting: Post,
-    user: UserPayload,
+    user: UserProfile,
     moderator: boolean,
   ) {
     const token = await this.generateMeetingToken(meeting, user, moderator);
@@ -274,7 +272,7 @@ export class MeetingService {
 
   async generateMeetingToken(
     meeting: Post,
-    user: UserPayload,
+    user: UserProfile,
     moderator: boolean,
   ) {
     const payload = {

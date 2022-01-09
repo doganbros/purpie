@@ -8,7 +8,10 @@ import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
 import { tsqueryParam } from 'helpers/utils';
 import { pick } from 'lodash';
-import { UserPayload } from 'src/auth/interfaces/user.interface';
+import {
+  UserProfile,
+  UserTokenPayload,
+} from 'src/auth/interfaces/user.interface';
 import { MailService } from 'src/mail/mail.service';
 import { Brackets, Repository } from 'typeorm';
 import { CreateChannelDto } from './dto/create-channel.dto';
@@ -58,7 +61,7 @@ export class ChannelService {
   async sendChannelInfo(
     zone: Zone,
     channel: Channel,
-    userPayload: UserPayload,
+    userPayload: UserProfile,
   ) {
     const clientUrl = new URL(REACT_APP_CLIENT_HOST);
 
@@ -132,7 +135,10 @@ export class ChannelService {
       .getMany();
   }
 
-  async searchChannel(userPayload: UserPayload, query: SearchChannelQuery) {
+  async searchChannel(
+    userPayload: UserTokenPayload,
+    query: SearchChannelQuery,
+  ) {
     const baseQuery = this.channelRepository
       .createQueryBuilder('channel')
       .select([

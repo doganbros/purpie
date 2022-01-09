@@ -3,7 +3,7 @@ import { ApiHeader, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { UserPayload } from 'src/auth/interfaces/user.interface';
+import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
 import { ChannelService } from '../channel.service';
 import { CurrentUserChannel } from '../decorators/current-user-channel.decorator';
 import { UserChannelRole } from '../decorators/user-channel-role.decorator';
@@ -29,7 +29,7 @@ export class UserChannelController {
   })
   @IsAuthenticated()
   async getCurrentUserChannels(
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Headers('app-subdomain') subdomain: string,
   ) {
     return this.channelService.getCurrentUserChannels(user.id, subdomain);

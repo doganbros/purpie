@@ -2,7 +2,7 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { UserPayload } from 'src/auth/interfaces/user.interface';
+import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
 import { PaginationQuery } from 'types/PaginationQuery';
 import {
   PublicChannelSuggestionListResponse,
@@ -23,7 +23,7 @@ export class ActivityController {
   @IsAuthenticated()
   getPublicChannels(
     @Query() query: PaginationQuery,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     return this.activityService.getPublicChannelSuggestions(user.id, query);
   }
@@ -36,7 +36,7 @@ export class ActivityController {
   @IsAuthenticated()
   getPublicZones(
     @Query() query: PaginationQuery,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     return this.activityService.getPublicZoneSuggestions(user.id, query);
   }

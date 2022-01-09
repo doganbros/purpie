@@ -7,7 +7,7 @@ import { Zone } from 'entities/Zone.entity';
 import { UserZoneRepository } from 'entities/repositories/UserZone.repository';
 import { tsqueryParam } from 'helpers/utils';
 import { SearchQuery } from 'types/SearchQuery';
-import { UserPayload } from 'src/auth/interfaces/user.interface';
+import { UserProfile } from 'src/auth/interfaces/user.interface';
 import { Category } from 'entities/Category.entity';
 import { MailService } from 'src/mail/mail.service';
 import { UserZone } from 'entities/UserZone.entity';
@@ -122,7 +122,7 @@ export class ZoneService {
     });
   }
 
-  async searchZone(userPayload: UserPayload, query: SearchQuery) {
+  async searchZone(userId: number, query: SearchQuery) {
     return this.zoneRepository
       .createQueryBuilder('zone')
       .select([
@@ -141,7 +141,7 @@ export class ZoneService {
         UserZone,
         'user_zone',
         'zone.id = user_zone.zoneId and user_zone.userId = :userId',
-        { userId: userPayload.id },
+        { userId },
       )
       .setParameter('searchTerm', tsqueryParam(query.searchTerm))
       .where(
@@ -154,10 +154,7 @@ export class ZoneService {
       .paginate(query);
   }
 
-  async getCurrentUserZones(
-    user: UserPayload,
-    subdomain: string | null = null,
-  ) {
+  async getCurrentUserZones(userId: number, subdomain: string | null = null) {
     const records = await this.zoneRepository
       .createQueryBuilder('zone')
       .select([
@@ -179,13 +176,13 @@ export class ZoneService {
         UserZone,
         'user_zone',
         'user_zone.zoneId = zone.id and user_zone.userId = :userId',
-        { userId: user.id },
+        { userId },
       )
       .leftJoinAndSelect('user_zone.zoneRole', 'zone_role')
       .where('zone.public = true and zone.subdomain = :subdomain', {
         subdomain,
       })
-      .orWhere('user_zone.userId = :userId', { userId: user.id })
+      .orWhere('user_zone.userId = :userId', { userId })
       .orderBy('user_zone.createdOn', 'DESC')
       .getRawMany();
 
@@ -232,7 +229,7 @@ export class ZoneService {
     });
   }
 
-  async sendZoneInfoMail(zone: Zone, userPayload: UserPayload) {
+  async sendZoneInfoMail(zone: Zone, userPayload: UserProfile) {
     const clientUrl = new URL(REACT_APP_CLIENT_HOST);
 
     const context = {

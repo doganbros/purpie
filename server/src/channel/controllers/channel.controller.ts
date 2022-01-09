@@ -34,8 +34,14 @@ import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { errorResponseDoc } from 'helpers/error-response-doc';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { UserPayload } from 'src/auth/interfaces/user.interface';
+import {
+  CurrentUser,
+  CurrentUserProfile,
+} from 'src/auth/decorators/current-user.decorator';
+import {
+  UserProfile,
+  UserTokenPayload,
+} from 'src/auth/interfaces/user.interface';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { CurrentUserZone } from 'src/zone/decorators/current-user-zone.decorator';
 import { UserZoneRole } from 'src/zone/decorators/user-zone-role.decorator';
@@ -70,14 +76,14 @@ export class ChannelController {
     name: 'userZoneId',
     description: 'user zone id',
   })
-  @UserZoneRole(['canCreateChannel'])
+  @UserZoneRole(['canCreateChannel'], [], {}, { injectUserProfile: true })
   async createNewChannel(
     @Body() createChannelInfo: CreateChannelDto,
-    @CurrentUser() currentUser: UserPayload,
+    @CurrentUserProfile() userProfile: UserProfile,
     @CurrentUserZone() currentUserZone: UserZone,
   ) {
     const userChannel = await this.channelService.createChannel(
-      currentUser.id,
+      userProfile.id,
       currentUserZone.id,
       currentUserZone.zone.id,
       createChannelInfo,
@@ -86,7 +92,7 @@ export class ChannelController {
     this.channelService.sendChannelInfo(
       currentUserZone.zone,
       userChannel.channel,
-      currentUser,
+      userProfile,
     );
 
     return userChannel.id;
@@ -96,7 +102,7 @@ export class ChannelController {
   @IsAuthenticated()
   searchChannel(
     @Query() query: SearchChannelQuery,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     return this.channelService.searchChannel(user, query);
   }
@@ -105,7 +111,7 @@ export class ChannelController {
   @IsAuthenticated()
   async listPublicChannelsByZoneId(
     @Param('zoneId', ParseIntPipe) zoneId: number,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     return this.channelService.getPublicChannels(user.id, zoneId);
   }
@@ -116,13 +122,13 @@ export class ChannelController {
       "Current authenticated user joins a public channel. When the user doesn't belong to the zone he is added. The id of the user channel is returned",
     schema: { type: 'integer' },
   })
-  @IsAuthenticated()
+  @IsAuthenticated([], { injectUserProfile: true })
   async joinPublicChannel(
-    @CurrentUser() user: UserPayload,
+    @CurrentUserProfile() userProfile: UserProfile,
     @Param('channelId', ParseIntPipe) channelId: number,
   ) {
     const channel = await this.channelService.validateJoinPublicChannel(
-      user.id,
+      userProfile.id,
       channelId,
     );
 
@@ -130,19 +136,22 @@ export class ChannelController {
       throw new NotFoundException('Channel not found', 'CHANNEL_NOT_FOUND');
 
     let userZone = await this.zoneService.userExistsInZone(
-      user.id,
+      userProfile.id,
       channel.zoneId,
     );
 
     if (!userZone)
-      userZone = await this.zoneService.addUserToZone(user.id, channel.zoneId);
+      userZone = await this.zoneService.addUserToZone(
+        userProfile.id,
+        channel.zoneId,
+      );
 
     const userChannel = await this.channelService.addUserToChannel(
-      user.id,
+      userProfile.id,
       userZone.id,
       channel.id,
     );
-    await this.channelService.removeInvitation(user.email, channel.id);
+    await this.channelService.removeInvitation(userProfile.email, channel.id);
 
     return userChannel.id;
   }
@@ -196,14 +205,14 @@ export class ChannelController {
     description: 'User Responds to invitation',
     schema: { type: 'string', example: 'OK' },
   })
-  @IsAuthenticated()
+  @IsAuthenticated([], { injectUserProfile: true })
   async respondToInvitationToJoinChannel(
     @Body() invitationResponse: InvitationResponseDto,
-    @CurrentUser() currentUser: UserPayload,
+    @CurrentUserProfile() userProfile: UserProfile,
   ) {
     const invitation = await this.channelService.validateInvitationResponse(
       invitationResponse.invitationId,
-      currentUser.email,
+      userProfile.email,
     );
 
     if (!invitation) throw new NotFoundException('Invitation not found');
@@ -214,18 +223,18 @@ export class ChannelController {
     }
 
     let userZone = await this.zoneService.userExistsInZone(
-      currentUser.id,
+      userProfile.id,
       invitation.channel.zoneId,
     );
 
     if (!userZone)
       userZone = await this.zoneService.addUserToZone(
-        currentUser.id,
+        userProfile.id,
         invitation.channel.zoneId,
       );
 
     await this.channelService.addUserToChannel(
-      currentUser.id,
+      userProfile.id,
       userZone.id,
       invitation.channelId,
     );

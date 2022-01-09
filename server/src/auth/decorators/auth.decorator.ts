@@ -3,14 +3,15 @@ import { ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { UserRole } from 'entities/UserRole.entity';
 import { RolePermission } from 'types/RolePermission';
 import { AuthGuard } from '../guards/auth.guard';
+import { UserPermissionOptions } from '../interfaces/user.interface';
 
 export const IsAuthenticated = (
   permissions: Array<RolePermission<UserRole>> = [],
-  options: Record<string, any> = {},
+  options: UserPermissionOptions = {},
 ) =>
   applyDecorators(
     SetMetadata('userPermissions', permissions),
-    SetMetadata('userPermissionsOptions', options),
+    SetMetadata('userPermissionOptions', options),
     UseGuards(AuthGuard),
     ApiUnauthorizedResponse({
       description:

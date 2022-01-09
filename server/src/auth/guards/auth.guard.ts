@@ -8,6 +8,7 @@ import { Reflector } from '@nestjs/core';
 import { verifyJWT } from 'helpers/jwt';
 import { pick } from 'lodash';
 import { AuthService } from '../auth.service';
+import { UserPermissionOptions } from '../interfaces/user.interface';
 
 const { AUTH_TOKEN_SECRET = '', AUTH_TOKEN_SECRET_REFRESH = '' } = process.env;
 
@@ -22,8 +23,8 @@ export class AuthGuard implements CanActivate {
       'userPermissions',
       context.getHandler(),
     );
-    const userPermissionOptions = this.reflector.get<Record<string, any>>(
-      'userPermissionsOptions',
+    const userPermissionOptions = this.reflector.get<UserPermissionOptions>(
+      'userPermissionOptions',
       context.getHandler(),
     );
 
@@ -57,36 +58,24 @@ export class AuthGuard implements CanActivate {
           );
           const userPayload = pick(refreshPayload, [
             'id',
-            'firstName',
-            'lastName',
-            'email',
-            'userName',
-            'userRole',
             'mattermostId',
+            'mattermostTokenId',
             'refreshTokenId',
           ]);
 
-          const refreshedUser = await this.authService.verifyRefreshToken(
+          await this.authService.verifyRefreshToken(
             userPayload.refreshTokenId,
             refreshToken,
           );
 
-          const refreshedUserPayload = {
-            ...userPayload,
-            firstName: refreshedUser.firstName,
-            lastName: refreshedUser.lastName,
-            userName: refreshedUser.userName,
-            email: refreshedUser.email,
-          };
-
           const newRefreshTokenId = await this.authService.setAccessTokens(
-            refreshedUserPayload,
+            userPayload,
             res,
           );
 
-          refreshedUserPayload.refreshTokenId = newRefreshTokenId;
+          userPayload.refreshTokenId = newRefreshTokenId;
 
-          req.user = refreshedUserPayload;
+          req.user = userPayload;
         } catch (err) {
           if (userPermissionOptions.removeAccessTokens)
             this.authService.removeAccessTokens(res);
@@ -106,13 +95,11 @@ export class AuthGuard implements CanActivate {
         }
       });
 
-    if (userPermissions.length) {
-      req.user.userRole = await this.authService
-        .getUserProfile(req.user.id)
-        .then((v) => v?.userRole);
+    if (userPermissions.length || userPermissionOptions.injectUserProfile) {
+      req.userProfile = await this.authService.getUserProfile(req.user.id);
 
       for (const permission of userPermissions) {
-        if (!req.user.userRole?.[permission])
+        if (!req.userProfile?.userRole?.[permission])
           throw new UnauthorizedException(
             'You are not authorized',
             'NOT_AUTHORIZED',

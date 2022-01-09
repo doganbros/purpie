@@ -28,10 +28,16 @@ import {
 import { Express, Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  CurrentUserProfile,
+} from 'src/auth/decorators/current-user.decorator';
 import { s3HeadObject, s3Storage, s3 } from 'config/s3-storage';
 import { AuthService } from 'src/auth/auth.service';
-import { UserPayload } from 'src/auth/interfaces/user.interface';
+import {
+  UserProfile,
+  UserTokenPayload,
+} from 'src/auth/interfaces/user.interface';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { emptyPaginatedResponse } from 'helpers/utils';
 import { PaginationQuery } from 'types/PaginationQuery';
@@ -65,12 +71,12 @@ export class UserController {
   })
   @IsAuthenticated()
   async contactInvitationResponse(
-    @CurrentUser() currentUser: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Body() { contactInvitationId, status }: ContactInvitationResponseDto,
   ) {
     const invitation = await this.userService.getContactInvitationByIdAndInviteeId(
       contactInvitationId,
-      currentUser.id,
+      user.id,
     );
 
     if (!invitation)
@@ -97,11 +103,11 @@ export class UserController {
   })
   @IsAuthenticated()
   async createNewContactInvitation(
-    @CurrentUser() currentUser: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Body() { userId }: CreateContactDto,
   ) {
     const contactInvitation = await this.userService.createNewContactInvitation(
-      currentUser.id,
+      user.id,
       userId,
     );
 
@@ -118,7 +124,7 @@ export class UserController {
     required: false,
   })
   async searchUsers(
-    @CurrentUser() currentUser: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Query() query: SearchUsersQuery,
     @Query(
       'excludeIds',
@@ -139,7 +145,7 @@ export class UserController {
     }
     if (query.userContacts === 'true') {
       const users = await this.userService.searchInUserContacts(
-        currentUser.id,
+        user.id,
         excludeIds,
         query,
       );
@@ -156,11 +162,11 @@ export class UserController {
   })
   @IsAuthenticated()
   async getContactInvitations(
-    @CurrentUser() currentUser: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Query() paginatedQuery: PaginationQuery,
   ) {
     const contactInvitation = await this.userService.listContactInvitations(
-      currentUser.id,
+      user.id,
       paginatedQuery,
     );
 
@@ -203,10 +209,10 @@ export class UserController {
   })
   @IsAuthenticated()
   async listContacts(
-    @CurrentUser() currentUser: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Query() paginatedQuery: PaginationQuery,
   ) {
-    return this.userService.listContacts(currentUser.id, paginatedQuery);
+    return this.userService.listContacts(user.id, paginatedQuery);
   }
 
   @Delete('/contact/remove/:contactId')
@@ -217,17 +223,17 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @IsAuthenticated()
   async deleteContact(
-    @CurrentUser() currentUser: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Param() { contactId }: ContactIdParam,
   ) {
-    await this.userService.deleteContact(currentUser.id, contactId);
+    await this.userService.deleteContact(user.id, contactId);
     return 'OK';
   }
 
   @Get('profile')
-  @IsAuthenticated()
-  async getUserProfile(@CurrentUser() user: UserPayload) {
-    return this.authService.getUserProfile(user.id);
+  @IsAuthenticated([], { injectUserProfile: true })
+  getUserProfile(@CurrentUserProfile() userProfile: UserProfile) {
+    return userProfile;
   }
 
   @Put('display-photo')
@@ -273,7 +279,7 @@ export class UserController {
   @IsAuthenticated()
   @ValidationBadRequest()
   async changeDisplayPhoto(
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @UploadedFile() file: Express.MulterS3.File,
   ) {
     const fileName = file.key.replace(`${S3_PROFILE_PHOTO_DIR}/user-dp/`, '');

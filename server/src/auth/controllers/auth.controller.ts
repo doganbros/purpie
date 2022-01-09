@@ -30,14 +30,21 @@ import { errorResponseDoc } from 'helpers/error-response-doc';
 import { hash } from 'helpers/utils';
 import { RegisterUserDto } from '../dto/register-user.dto';
 import { AuthService } from '../auth.service';
-import { UserBasic, UserPayload } from '../interfaces/user.interface';
+import {
+  UserBasic,
+  UserProfile,
+  UserTokenPayload,
+} from '../interfaces/user.interface';
 import { LoginUserDto } from '../dto/login-user.dto';
 import { ParseTokenPipe } from '../pipes/parse-token.pipe';
 import { ResetPasswordRequestDto } from '../dto/reset-password-request.dto';
 import { VerifyEmailDto } from '../dto/verify-email.dto';
 import { ResetPasswordDto } from '../dto/reset-password.dto';
 import { IsAuthenticated } from '../decorators/auth.decorator';
-import { CurrentUser } from '../decorators/current-user.decorator';
+import {
+  CurrentUser,
+  CurrentUserProfile,
+} from '../decorators/current-user.decorator';
 import {
   MAIL_VERIFICATION_TYPE,
   PASSWORD_VERIFICATION_TYPE,
@@ -89,14 +96,14 @@ export class AuthController {
       {
         user: {
           schema: {
-            $ref: getSchemaPath(UserPayload),
+            $ref: getSchemaPath(UserProfile),
           },
         },
       },
     ),
   })
   @ApiOkResponse({
-    type: UserPayload,
+    type: UserProfile,
     description: `Signs in user. If it contains a header subdomain, it will be validated. If user's email is not verified an unauthorized error will be thrown. `,
   })
   @HttpCode(HttpStatus.OK)
@@ -132,7 +139,7 @@ export class AuthController {
         'ERROR_USERNAME_OR_PASSWORD',
       );
 
-    const userPayload: UserPayload = {
+    const userPayload: UserProfile = {
       id: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
@@ -155,10 +162,18 @@ export class AuthController {
       token,
       id,
     } = await this.authService.createMattermostPersonalTokenForUser(
-      user.mattermostId!,
+      user.mattermostId,
     );
-    userPayload.mattermostTokenId = id;
-    await this.authService.setAccessTokens(userPayload, res, token);
+
+    await this.authService.setAccessTokens(
+      {
+        id: user.id,
+        mattermostId: user.mattermostId,
+        mattermostTokenId: id,
+      },
+      res,
+      token,
+    );
 
     return userPayload;
   }
@@ -168,13 +183,10 @@ export class AuthController {
   @ApiOkResponse({ schema: { type: 'string', example: 'OK' } })
   @HttpCode(HttpStatus.OK)
   async logout(
-    @CurrentUser() currentUser: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Res({ passthrough: true }) res: Response,
   ) {
-    await this.authService.removeRefreshToken(
-      currentUser.id,
-      currentUser.refreshTokenId!,
-    );
+    await this.authService.removeRefreshToken(user.id, user.refreshTokenId!);
 
     this.authService.removeAccessTokens(res);
 
@@ -340,9 +352,9 @@ export class AuthController {
     return 'OK';
   }
 
-  @IsAuthenticated()
+  @IsAuthenticated([], { injectUserProfile: true })
   @ApiOkResponse({
-    type: UserPayload,
+    type: UserProfile,
     description: `Verifies current token and retrieves user.`,
   })
   @ApiHeader({
@@ -353,13 +365,13 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('/retrieve')
   async retrieveUser(
-    @CurrentUser() currentUser: UserPayload,
+    @CurrentUserProfile() userProfile: UserProfile,
     @Headers('app-subdomain') subdomain: string,
   ) {
     if (subdomain) {
-      await this.authService.subdomainValidity(subdomain, currentUser.id);
+      await this.authService.subdomainValidity(subdomain, userProfile.id);
     }
 
-    return this.authService.getUserProfile(currentUser.id);
+    return userProfile;
   }
 }

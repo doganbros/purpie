@@ -32,7 +32,8 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import {
   UserBasic,
   UserBasicWithToken,
-  UserPayload,
+  UserProfile,
+  UserTokenPayload,
 } from './interfaces/user.interface';
 
 const {
@@ -103,14 +104,16 @@ export class AuthService {
   }
 
   async setAccessTokens(
-    userPayload: UserPayload,
+    userPayload: UserTokenPayload,
     res: Response,
     mattermostToken?: string,
   ) {
-    await this.userRefreshTokenRepository.delete({
-      userId: userPayload.id,
-      id: userPayload.refreshTokenId,
-    });
+    if (userPayload.refreshTokenId) {
+      await this.userRefreshTokenRepository.delete({
+        userId: userPayload.id,
+        id: userPayload.refreshTokenId,
+      });
+    }
 
     const {
       accessToken,
@@ -168,11 +171,13 @@ export class AuthService {
       where: {
         id: refreshTokenId,
       },
-      relations: ['user', 'user.userRole'],
     });
 
     if (!userRefreshToken)
-      throw new NotFoundException('User not found', 'USER_NOT_FOUND');
+      throw new UnauthorizedException(
+        'You not authorized to use this route',
+        'NOT_SIGNED_IN',
+      );
 
     const isValid = await compareHash(refreshToken, userRefreshToken.token);
     if (!isValid)
@@ -181,7 +186,7 @@ export class AuthService {
         'NOT_SIGNED_IN',
       );
 
-    return userRefreshToken.user;
+    return true;
   }
 
   async removeRefreshToken(userId: number, refreshTokenId: string) {
@@ -209,6 +214,7 @@ export class AuthService {
     return this.userRepository
       .createQueryBuilder('user')
       .select([
+        'user.id',
         'user.firstName',
         'user.lastName',
         'user.mattermostId',
@@ -521,7 +527,7 @@ export class AuthService {
       },
     });
 
-    const userPayload: UserPayload = {
+    const userPayload: UserProfile = {
       id: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
@@ -536,9 +542,16 @@ export class AuthService {
     const { token, id } = await this.createMattermostPersonalTokenForUser(
       mattermostProfile.id,
     );
-    userPayload.mattermostTokenId = id;
 
-    await this.setAccessTokens(userPayload, res, token);
+    await this.setAccessTokens(
+      {
+        id: user.id,
+        mattermostId: mattermostProfile.id,
+        mattermostTokenId: id,
+      },
+      res,
+      token,
+    );
     return userPayload;
   }
 
@@ -637,7 +650,7 @@ export class AuthService {
     return { id, token };
   }
 
-  async createMattermostUserAndJoinDefaults(user: UserPayload) {
+  async createMattermostUserAndJoinDefaults(user: UserProfile) {
     const profile = await this.mattermostService.mattermostClient.createUser(
       {
         email: user.email,

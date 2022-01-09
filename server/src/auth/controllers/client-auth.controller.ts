@@ -20,7 +20,7 @@ import {
   ClientPayload,
   ClientTokens,
 } from '../interfaces/client.interface';
-import { UserPayload } from '../interfaces/user.interface';
+import { UserTokenPayload } from '../interfaces/user.interface';
 
 @Controller({ path: 'auth/client', version: '1' })
 @ApiTags('auth-client')
@@ -36,7 +36,7 @@ export class ClientAuthController {
   })
   createNewClient(
     @Body() createClientInfo: CreateClientDto,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     return this.authService.createClient(user.id, createClientInfo);
   }

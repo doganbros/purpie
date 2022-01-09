@@ -23,7 +23,7 @@ import { s3, s3HeadObject } from 'config/s3-storage';
 import { errorResponseDoc } from 'helpers/error-response-doc';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { UserPayload } from 'src/auth/interfaces/user.interface';
+import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { CreatePostCommentDto } from './dto/create-post-comment.dto';
@@ -81,7 +81,7 @@ export class PostController {
   @IsAuthenticated()
   async createPostComment(
     @Body() info: CreatePostCommentDto,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     await this.validatePost(user.id, info.postId);
 
@@ -116,7 +116,7 @@ export class PostController {
     @Query() query: PaginationQuery,
     @Param('postId', ParseIntPipe) postId: number,
     @Param() params: Record<string, any>,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     await this.validatePost(user.id, Number(postId));
 
@@ -132,7 +132,7 @@ export class PostController {
   @IsAuthenticated()
   async updatePostComment(
     @Body() info: UpdatePostCommentDto,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     await this.postService.editPostComment(
       user.id,
@@ -172,7 +172,7 @@ export class PostController {
   async getPostCommentCount(
     @Param('postId') postId: string,
     @Param('parentId') parentId: string,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     await this.validatePost(user.id, Number(postId));
 
@@ -194,7 +194,7 @@ export class PostController {
     name: 'commentId',
   })
   async removePostComment(
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Param('commentId') commentId: string,
   ) {
     const result = await this.postService.removePostComment(
@@ -223,7 +223,7 @@ export class PostController {
   })
   async createPostLike(
     @Body() info: CreatePostLikeDto,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     await this.validatePost(user.id, info.postId);
 
@@ -250,7 +250,7 @@ export class PostController {
   async getPostLikes(
     @Query() query: PaginationQuery,
     @Param('postId') postId: string,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     await this.validatePost(user.id, Number(postId));
 
@@ -278,7 +278,7 @@ export class PostController {
   })
   async getPostLikeCount(
     @Param('postId') postId: string,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     await this.validatePost(user.id, Number(postId));
 
@@ -298,7 +298,7 @@ export class PostController {
     name: 'postId',
   })
   async removePostLike(
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Param('postId') postId: string,
   ) {
     const result = await this.postService.removePostLike(
@@ -316,7 +316,7 @@ export class PostController {
     type: MixedPostFeedListResponse,
   })
   async getSavedPostList(
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Query() query: PaginationQuery,
   ) {
     return this.postService.getSavedPosts(user.id, query);
@@ -334,7 +334,7 @@ export class PostController {
     name: 'postId',
   })
   async removeSavedPost(
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Param('postId') postId: string,
   ) {
     const result = await this.postService.removeSavedPost(
@@ -362,7 +362,7 @@ export class PostController {
   })
   async createSavedPost(
     @Body() info: CreateSavedPostDto,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     await this.validatePost(user.id, info.postId);
 
@@ -374,7 +374,7 @@ export class PostController {
   @Get('video/view/:slug/:fileName')
   @IsAuthenticated()
   async viewVideoPost(
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Param('slug') slug: string,
     @Param('fileName') fileName: string,
     @Res() res: Response,
@@ -416,7 +416,7 @@ export class PostController {
   @IsAuthenticated()
   getPublicFeed(
     @Query() query: ListPostFeedQuery,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     return this.postService.getPublicFeed(query, user.id);
   }
@@ -429,7 +429,7 @@ export class PostController {
   @IsAuthenticated()
   getUserFeed(
     @Query() query: ListPostFeedQuery,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     return this.postService.getUserFeed(user.id, query);
   }
@@ -442,7 +442,7 @@ export class PostController {
   @IsAuthenticated()
   getZoneFeed(
     @Query() query: ListPostFeedQuery,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Param('zoneId', ParseIntPipe) zoneId: number,
   ) {
     return this.postService.getZoneFeed(zoneId, user.id, query);
@@ -456,7 +456,7 @@ export class PostController {
   @IsAuthenticated()
   getChannelFeed(
     @Query() query: ListPostFeedQuery,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Param('channelId', ParseIntPipe) channelId: number,
   ) {
     return this.postService.getChannelFeed(channelId, user.id, query);
@@ -474,7 +474,7 @@ export class PostController {
   })
   async getFeedById(
     @Param('postId') postId: string,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     const result = await this.postService.getPostById(user.id, Number(postId));
 

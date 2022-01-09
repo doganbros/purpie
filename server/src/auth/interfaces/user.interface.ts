@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { UserRole } from 'entities/UserRole.entity';
 import { SoftEntity } from 'types/SoftEntity';
 
-export class UserPayload {
+export class UserProfile {
   @ApiProperty()
   id: number;
 
@@ -17,9 +17,6 @@ export class UserPayload {
 
   @ApiProperty()
   mattermostId: string | null;
-
-  @ApiProperty()
-  mattermostTokenId?: string | null;
 
   @ApiProperty()
   userName?: string | null;
@@ -46,6 +43,18 @@ export class UserPayload {
   userRole: SoftEntity<UserRole>;
 }
 
+export interface UserTokenPayload {
+  id: number;
+  mattermostId: string;
+  mattermostTokenId: string;
+  refreshTokenId?: string;
+}
+
+export interface UserPermissionOptions {
+  removeAccessTokens?: boolean;
+  injectUserProfile?: boolean;
+}
+
 export class UserBasic {
   @ApiProperty()
   firstName: string;
@@ -64,14 +73,6 @@ export class UserBasic {
 export class UserBasicWithToken {
   @ApiProperty()
   user: UserBasic;
-
-  @ApiProperty()
-  token: string;
-}
-
-export class UserPayloadWithToken {
-  @ApiProperty()
-  user: UserPayload;
 
   @ApiProperty()
   token: string;

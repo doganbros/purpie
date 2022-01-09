@@ -17,9 +17,15 @@ import { Post as PostEntity } from 'entities/Post.entity';
 import path from 'path';
 import { Express } from 'express';
 import { s3, s3Storage } from 'config/s3-storage';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  CurrentUserProfile,
+} from 'src/auth/decorators/current-user.decorator';
 import { IsClientAuthenticated } from 'src/auth/decorators/client-auth.decorator';
-import { UserPayload } from 'src/auth/interfaces/user.interface';
+import {
+  UserProfile,
+  UserTokenPayload,
+} from 'src/auth/interfaces/user.interface';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { CreateVideoDto } from './dto/create-video.dto';
@@ -64,11 +70,11 @@ export class VideoController {
       },
     }),
   )
-  @IsAuthenticated()
+  @IsAuthenticated([], { injectUserProfile: true })
   @ValidationBadRequest()
   async createVideoPost(
     @Body() videoInfo: CreateVideoDto,
-    @CurrentUser() user: UserPayload,
+    @CurrentUserProfile() user: UserProfile,
     @UploadedFile() file: Express.MulterS3.File,
   ) {
     const videoPostPayload: Partial<PostEntity> = {
@@ -106,7 +112,7 @@ export class VideoController {
   @IsAuthenticated()
   async removeVideoPost(
     @Param() info: VideoIdParams,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     const videoPost = await this.staticVideoService.getVideoPostForUserById(
       user.id,

@@ -25,8 +25,14 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { Post as PostEntity } from 'entities/Post.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { UserPayload } from 'src/auth/interfaces/user.interface';
+import {
+  CurrentUser,
+  CurrentUserProfile,
+} from 'src/auth/decorators/current-user.decorator';
+import {
+  UserProfile,
+  UserTokenPayload,
+} from 'src/auth/interfaces/user.interface';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { MeetingConfig } from 'types/Meeting';
 import { errorResponseDoc } from 'helpers/error-response-doc';
@@ -46,7 +52,7 @@ export class MeetingController {
   constructor(private meetingService: MeetingService) {}
 
   @Post('create')
-  @IsAuthenticated()
+  @IsAuthenticated([], { injectUserProfile: true })
   @ValidationBadRequest()
   @ApiCreatedResponse({
     description:
@@ -60,7 +66,7 @@ export class MeetingController {
   })
   async createMeeting(
     @Body() createMeetingInfo: CreateMeetingDto,
-    @CurrentUser() user: UserPayload,
+    @CurrentUserProfile() user: UserProfile,
   ) {
     const { channelId, timeZone } = createMeetingInfo;
 
@@ -173,10 +179,10 @@ export class MeetingController {
       ],
     },
   })
-  @IsAuthenticated()
+  @IsAuthenticated([], { injectUserProfile: true })
   async joinMeeting(
     @Param('slug') slug: string,
-    @CurrentUser() user: UserPayload,
+    @CurrentUserProfile() user: UserProfile,
     @Res() res: Response,
   ) {
     const meeting = await this.meetingService.currentUserJoinMeetingValidator(
@@ -187,14 +193,14 @@ export class MeetingController {
     if (!meeting)
       throw new NotFoundException('Meeting not found', 'MEETING_NOT_FOUND');
 
-    if (meeting.conferenceEndDate && meeting.createdById !== user.id) {
+    if (meeting.createdById !== user.id && meeting.conferenceEndDate) {
       throw new BadRequestException(
         'Meeting has already ended',
         'MEETING_ALREADY_ENDED',
       );
     }
 
-    if (dayjs().isBefore(meeting.startDate) && meeting.createdById !== user.id)
+    if (meeting.createdById !== user.id && dayjs().isBefore(meeting.startDate))
       throw new BadRequestException(
         'Meeting has not started yet',
         'MEETING_NOT_STARTED',
@@ -217,7 +223,7 @@ export class MeetingController {
   @IsAuthenticated()
   async removeMeeting(
     @Param() { meetingId }: MeetingIdParams,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
   ) {
     await this.meetingService.removeMeeting(meetingId, user.id);
     return 'OK';
@@ -229,7 +235,7 @@ export class MeetingController {
     type: MeetingConfig,
   })
   @IsAuthenticated()
-  async getCurrentUserMeetingConfig(@CurrentUser() user: UserPayload) {
+  async getCurrentUserMeetingConfig(@CurrentUser() user: UserTokenPayload) {
     const result = await this.meetingService.getCurrentUserConfig(user.id);
 
     if (!result)
@@ -243,7 +249,7 @@ export class MeetingController {
   })
   @IsAuthenticated()
   async getMeetingLogs(
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Param('meetingSlug') meetingSlug: string,
     @Query() query: PaginationQuery,
   ) {
@@ -256,7 +262,7 @@ export class MeetingController {
   })
   @IsAuthenticated()
   async getMeetingRecordings(
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Param('meetingSlug') meetingSlug: string,
     @Query() query: PaginationQuery,
   ) {

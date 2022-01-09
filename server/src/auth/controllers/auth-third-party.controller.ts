@@ -18,7 +18,7 @@ import { ApiParam, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from 'entities/User.entity';
 import { AuthByThirdPartyDto } from '../dto/auth-by-third-party.dto';
 import { ThirdPartyLoginParams } from '../dto/third-party-login.params';
-import { UserPayload } from '../interfaces/user.interface';
+import { UserProfile } from '../interfaces/user.interface';
 import { AuthService } from '../auth.service';
 
 const {
@@ -88,7 +88,7 @@ export class AuthThirdPartyController {
     type: String,
   })
   @ApiOkResponse({
-    type: UserPayload,
+    type: UserProfile,
     description: `User signs in with a third-party. `,
   })
   @HttpCode(HttpStatus.OK)
@@ -145,7 +145,7 @@ export class AuthThirdPartyController {
       }
     }
     if (user) {
-      const userPayload: UserPayload = {
+      const userPayload: UserProfile = {
         id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
@@ -172,10 +172,17 @@ export class AuthThirdPartyController {
         user.mattermostId,
       );
 
-      userPayload.mattermostTokenId = id;
+      await this.authService.setAccessTokens(
+        {
+          id: user.id,
+          mattermostId: user.mattermostId,
+          mattermostTokenId: id,
+        },
+        res,
+        token,
+      );
 
-      await this.authService.setAccessTokens(userPayload, res, token);
-      return { mattermostToken: token, ...userPayload };
+      return userPayload;
     }
 
     throw new InternalServerErrorException(

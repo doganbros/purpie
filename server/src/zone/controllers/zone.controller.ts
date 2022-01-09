@@ -28,7 +28,10 @@ import {
 import { UserZone } from 'entities/UserZone.entity';
 import { Express, Response } from 'express';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  CurrentUserProfile,
+} from 'src/auth/decorators/current-user.decorator';
 import { User } from 'entities/User.entity';
 import { SearchQuery } from 'types/SearchQuery';
 import { Category } from 'entities/Category.entity';
@@ -36,7 +39,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { s3, s3HeadObject, s3Storage } from 'config/s3-storage';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { errorResponseDoc } from 'helpers/error-response-doc';
-import { UserPayload } from 'src/auth/interfaces/user.interface';
+import {
+  UserProfile,
+  UserTokenPayload,
+} from 'src/auth/interfaces/user.interface';
 import { CurrentUserZone } from '../decorators/current-user-zone.decorator';
 import { UserZoneRole } from '../decorators/user-zone-role.decorator';
 import { InviteToJoinDto } from '../dto/invite-to-join.dto';
@@ -59,25 +65,28 @@ export class ZoneController {
     schema: { type: 'integer' },
   })
   @ValidationBadRequest()
-  @IsAuthenticated(['canCreateZone'])
+  @IsAuthenticated(['canCreateZone'], { injectUserProfile: true })
   async createZone(
     @Body() createZoneInfo: CreateZoneDto,
-    @CurrentUser() currentUser: UserPayload,
+    @CurrentUserProfile() userProfile: UserProfile,
   ) {
     const userZone = await this.zoneService.createZone(
-      currentUser.id,
+      userProfile.id,
       createZoneInfo,
     );
 
-    this.zoneService.sendZoneInfoMail(userZone.zone, currentUser);
+    this.zoneService.sendZoneInfoMail(userZone.zone, userProfile);
 
     return userZone.id;
   }
 
   @Get('/search')
   @IsAuthenticated()
-  searchChannel(@Query() query: SearchQuery, @CurrentUser() user: UserPayload) {
-    return this.zoneService.searchZone(user, query);
+  searchChannel(
+    @Query() query: SearchQuery,
+    @CurrentUser() user: UserTokenPayload,
+  ) {
+    return this.zoneService.searchZone(user.id, query);
   }
 
   @Post('/join/:zoneId')
@@ -86,9 +95,9 @@ export class ZoneController {
       'Current authenticated user joins a public zone. The id of the user zone is returned',
     schema: { type: 'integer' },
   })
-  @IsAuthenticated()
+  @IsAuthenticated([], { injectUserProfile: true })
   async joinPublicZone(
-    @CurrentUser() user: UserPayload,
+    @CurrentUserProfile() user: UserProfile,
     @Param() { zoneId }: ZoneIdParams,
   ) {
     const zone = await this.zoneService.validateJoinPublicZone(user.id, zoneId);
@@ -171,7 +180,7 @@ export class ZoneController {
   }
 
   @Post('/invitation/response')
-  @IsAuthenticated()
+  @IsAuthenticated([], { injectUserProfile: true })
   @ApiCreatedResponse({
     description: 'User Responds to invitation',
     schema: { type: 'string', example: 'OK' },
@@ -179,11 +188,11 @@ export class ZoneController {
   @ValidationBadRequest()
   async respondToInvitationToJoinZone(
     @Body() invitationResponse: InvitationResponseDto,
-    @CurrentUser() currentUser: UserPayload,
+    @CurrentUserProfile() userProfile: UserProfile,
   ) {
     const invitation = await this.zoneService.validateInvitationResponse(
       invitationResponse.invitationId,
-      currentUser.email,
+      userProfile.email,
     );
 
     if (!invitation) throw new NotFoundException('Invitation not found');
@@ -193,7 +202,7 @@ export class ZoneController {
       return 'OK';
     }
 
-    await this.zoneService.addUserToZone(currentUser.id, invitation.zoneId);
+    await this.zoneService.addUserToZone(userProfile.id, invitation.zoneId);
 
     await invitation.remove();
     return 'OK';

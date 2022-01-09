@@ -11,7 +11,7 @@ import { ApiHeader, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UserZone } from 'entities/UserZone.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { UserPayload } from 'src/auth/interfaces/user.interface';
+import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
 import { CurrentUserZone } from '../decorators/current-user-zone.decorator';
 import { UserZoneRole } from '../decorators/user-zone-role.decorator';
 import {
@@ -39,10 +39,10 @@ export class UserZoneController {
   })
   @IsAuthenticated()
   async getCurrentUserZones(
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserTokenPayload,
     @Headers('app-subdomain') subdomain?: string,
   ) {
-    return this.zoneService.getCurrentUserZones(user, subdomain);
+    return this.zoneService.getCurrentUserZones(user.id, subdomain);
   }
 
   @Get('detail')

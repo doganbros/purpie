@@ -7,7 +7,7 @@ import { PostTag } from 'entities/PostTag.entity';
 import { PostVideo } from 'entities/PostVideo.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { parsePostTags } from 'helpers/utils';
-import { UserPayload } from 'src/auth/interfaces/user.interface';
+import { UserProfile } from 'src/auth/interfaces/user.interface';
 import { MailService } from 'src/mail/mail.service';
 import { Brackets, Repository } from 'typeorm';
 
@@ -59,7 +59,7 @@ export class VideoService {
     return null;
   }
 
-  async sendVideoInfoMail(user: UserPayload, videoPost: Post) {
+  async sendVideoInfoMail(user: UserProfile, videoPost: Post) {
     const context = {
       firstName: user.firstName,
       lastName: user.lastName,
