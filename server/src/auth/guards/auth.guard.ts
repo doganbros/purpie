@@ -60,13 +60,14 @@ export class AuthGuard implements CanActivate {
             'firstName',
             'lastName',
             'email',
+            'userName',
             'userRole',
             'mattermostId',
             'refreshTokenId',
           ]);
 
           const refreshedUser = await this.authService.verifyRefreshToken(
-            userPayload,
+            userPayload.refreshTokenId,
             refreshToken,
           );
 
@@ -74,8 +75,8 @@ export class AuthGuard implements CanActivate {
             ...userPayload,
             firstName: refreshedUser.firstName,
             lastName: refreshedUser.lastName,
+            userName: refreshedUser.userName,
             email: refreshedUser.email,
-            userRole: refreshedUser.userRole,
           };
 
           const newRefreshTokenId = await this.authService.setAccessTokens(
@@ -105,12 +106,18 @@ export class AuthGuard implements CanActivate {
         }
       });
 
-    for (const permission of userPermissions) {
-      if (!req.user.userRole?.[permission])
-        throw new UnauthorizedException(
-          'You are not authorized',
-          'NOT_AUTHORIZED',
-        );
+    if (userPermissions.length) {
+      req.user.userRole = await this.authService
+        .getUserProfile(req.user.id)
+        .then((v) => v?.userRole);
+
+      for (const permission of userPermissions) {
+        if (!req.user.userRole?.[permission])
+          throw new UnauthorizedException(
+            'You are not authorized',
+            'NOT_AUTHORIZED',
+          );
+      }
     }
 
     return true;

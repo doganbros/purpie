@@ -24,6 +24,9 @@ export class UserPayload {
   @ApiProperty()
   userName?: string | null;
 
+  @ApiProperty()
+  displayPhoto?: string | null;
+
   refreshTokenId?: string;
 
   @ApiProperty({
@@ -37,7 +40,7 @@ export class UserPayload {
       roleName: { type: 'string', example: 'Super Admin' },
       canCreateZone: { type: 'boolean' },
       canCreateClient: { type: 'boolean' },
-      canSetRole: { type: 'boolean' },
+      canManageRole: { type: 'boolean' },
     },
   })
   userRole: SoftEntity<UserRole>;

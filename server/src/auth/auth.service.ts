@@ -163,10 +163,10 @@ export class AuthService {
     });
   }
 
-  async verifyRefreshToken(userPayload: UserPayload, refreshToken: string) {
+  async verifyRefreshToken(refreshTokenId: string, refreshToken: string) {
     const userRefreshToken = await this.userRefreshTokenRepository.findOne({
       where: {
-        id: userPayload.refreshTokenId,
+        id: refreshTokenId,
       },
       relations: ['user', 'user.userRole'],
     });
@@ -203,6 +203,22 @@ export class AuthService {
 
   async systemUserCount() {
     return this.userRepository.count();
+  }
+
+  getUserProfile(userId: number) {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .select([
+        'user.firstName',
+        'user.lastName',
+        'user.mattermostId',
+        'user.userName',
+        'user.displayPhoto',
+        'user.email',
+      ])
+      .innerJoinAndSelect('user.userRole', 'userRole')
+      .where('id = :userId', { userId })
+      .getOne();
   }
 
   async registerUser({

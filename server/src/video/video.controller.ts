@@ -38,7 +38,7 @@ export class VideoController {
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
     FileInterceptor('videoFile', {
-      storage: s3Storage,
+      storage: s3Storage(S3_VIDEO_POST_DIR),
       fileFilter(_: any, file, cb) {
         const { mimetype } = file;
 

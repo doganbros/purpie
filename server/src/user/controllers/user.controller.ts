@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   DefaultValuePipe,
@@ -10,16 +11,26 @@ import {
   Param,
   ParseArrayPipe,
   Post,
+  Put,
   Query,
+  Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
+  ApiBody,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
+import { Express, Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { s3HeadObject, s3Storage, s3 } from 'config/s3-storage';
+import { AuthService } from 'src/auth/auth.service';
 import { UserPayload } from 'src/auth/interfaces/user.interface';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { emptyPaginatedResponse } from 'helpers/utils';
@@ -37,10 +48,15 @@ import { SearchUsersQuery } from '../dto/search-users.query';
 import { SetUserRoleDto } from '../dto/set-user-role.dto';
 import { UserService } from '../user.service';
 
+const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
+
 @Controller({ path: 'user', version: '1' })
 @ApiTags('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private authService: AuthService,
+  ) {}
 
   @Post('/contact/invitation/response')
   @ApiCreatedResponse({
@@ -153,11 +169,11 @@ export class UserController {
 
   @Post('/set/role')
   @ApiCreatedResponse({
-    description: 'User sets a role. User must have canSetRole permission',
+    description: 'User sets a role. User must have canManageRole permission',
     schema: { type: 'string', example: 'OK' },
   })
   @ValidationBadRequest()
-  @IsAuthenticated(['canSetRole'])
+  @IsAuthenticated(['canManageRole'])
   async setRole(@Body() info: SetUserRoleDto) {
     await this.userService.setUserRole(info);
     return 'OK';
@@ -206,5 +222,87 @@ export class UserController {
   ) {
     await this.userService.deleteContact(currentUser.id, contactId);
     return 'OK';
+  }
+
+  @Get('profile')
+  @IsAuthenticated()
+  async getUserProfile(@CurrentUser() user: UserPayload) {
+    return this.authService.getUserProfile(user.id);
+  }
+
+  @Put('display-photo')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        photoFile: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('photoFile', {
+      storage: s3Storage(`${S3_PROFILE_PHOTO_DIR}/user-dp/`),
+      fileFilter(_: any, file, cb) {
+        const { mimetype } = file;
+
+        const isValid = [
+          'image/jpg',
+          'image/jpeg',
+          'image/png',
+          'image/bmp',
+          'image/svg+xml',
+        ].includes(mimetype);
+
+        if (!isValid)
+          return cb(
+            new BadRequestException(
+              'Please upload a valid photo format',
+              'FILE_FORMAT_MUST_BE_PHOTO',
+            ),
+            false,
+          );
+
+        return cb(null, true);
+      },
+    }),
+  )
+  @IsAuthenticated()
+  @ValidationBadRequest()
+  async changeDisplayPhoto(
+    @CurrentUser() user: UserPayload,
+    @UploadedFile() file: Express.MulterS3.File,
+  ) {
+    const fileName = file.key.replace(`${S3_PROFILE_PHOTO_DIR}/user-dp/`, '');
+
+    await this.userService.changeDisplayPhoto(user.id, fileName);
+
+    return fileName;
+  }
+
+  @Get('display-photo/:fileName')
+  @IsAuthenticated()
+  async viewProfilePhoto(
+    @Res() res: Response,
+    @Param('fileName') fileName: string,
+  ) {
+    try {
+      const creds = {
+        Bucket: S3_VIDEO_BUCKET_NAME,
+        Key: `${S3_PROFILE_PHOTO_DIR}/user-dp/${fileName}`,
+      };
+      const head = await s3HeadObject(creds);
+      const objectStream = s3.getObject(creds).createReadStream();
+
+      res.setHeader('Content-Disposition', `filename=${fileName}`);
+      if (head.ContentType) res.setHeader('Content-Type', head.ContentType);
+
+      return objectStream.pipe(res);
+    } catch (err: any) {
+      return res.status(err.statusCode || 500).json(err);
+    }
   }
 }

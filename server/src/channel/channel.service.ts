@@ -255,7 +255,7 @@ export class ChannelService {
         canInvite: record.channel_role_canInvite,
         canDelete: record.channel_role_canDelete,
         canEdit: record.channel_role_canEdit,
-        canSetRole: record.channel_role_canSetRole,
+        canManageRole: record.channel_role_canManageRole,
       },
     }));
   }
@@ -395,6 +395,13 @@ export class ChannelService {
 
   async removeInvitation(email: string, channelId: number) {
     return this.invitationRepository.delete({ email, channelId });
+  }
+
+  async changeDisplayPhoto(channelId: number, fileName: string) {
+    return this.channelRepository.update(
+      { id: channelId },
+      { displayPhoto: fileName },
+    );
   }
 
   async validateInvitationResponse(invitationId: number, email: string) {

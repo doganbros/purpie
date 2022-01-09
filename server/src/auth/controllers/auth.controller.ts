@@ -360,6 +360,6 @@ export class AuthController {
       await this.authService.subdomainValidity(subdomain, currentUser.id);
     }
 
-    return currentUser;
+    return this.authService.getUserProfile(currentUser.id);
   }
 }

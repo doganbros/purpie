@@ -30,5 +30,5 @@ export class ZoneRole extends BaseEntity {
 
   @Column({ default: false })
   @ApiProperty()
-  canSetRole: boolean;
+  canManageRole: boolean;
 }

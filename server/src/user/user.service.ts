@@ -44,6 +44,7 @@ export class UserService {
         'user.lastName',
         'user.email',
         'user.userName',
+        'user.displayPhoto',
       ])
       .addSelect(
         `ts_rank(user.search_document, to_tsquery('simple', :searchTerm))`,
@@ -137,6 +138,7 @@ export class UserService {
         'contactUser.email',
         'contactUser.firstName',
         'contactUser.lastName',
+        'contactUser.displayPhoto',
       ])
       .where('contact.userId = :userId', {
         userId,
@@ -163,6 +165,13 @@ export class UserService {
 
   async userNameExists(userName: string) {
     return this.userRepository.findOne({ where: { userName }, select: ['id'] });
+  }
+
+  async changeDisplayPhoto(userId: number, fileName: string) {
+    return this.userRepository.update(
+      { id: userId },
+      { displayPhoto: fileName },
+    );
   }
 
   async userNameSuggestions(userName: string) {

@@ -38,6 +38,9 @@ export class Channel extends RecordEntity {
   @Column('int')
   createdById: number;
 
+  @Column({ nullable: true })
+  displayPhoto: string;
+
   @OneToOne(() => Category, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'categoryId' })
   category: Category;

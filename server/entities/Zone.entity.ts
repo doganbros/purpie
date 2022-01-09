@@ -31,6 +31,9 @@ export class Zone extends RecordEntity {
   @Column({ default: false })
   public: boolean;
 
+  @Column({ nullable: true })
+  displayPhoto: string;
+
   @OneToMany(() => Channel, (channel) => channel.zone)
   channels: Channel;
 

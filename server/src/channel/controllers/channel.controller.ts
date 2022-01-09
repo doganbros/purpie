@@ -11,15 +11,24 @@ import {
   Get,
   Query,
   ParseIntPipe,
+  UseInterceptors,
+  BadRequestException,
+  UploadedFile,
+  Res,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBadRequestResponse,
+  ApiBody,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { s3, s3HeadObject, s3Storage } from 'config/s3-storage';
+import { Express, Response } from 'express';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
@@ -39,6 +48,8 @@ import { CreateChannelDto } from '../dto/create-channel.dto';
 import { EditChannelDto } from '../dto/edit-channel.dto';
 import { InviteToJoinChannelDto } from '../dto/invite-to-join-channel.dto';
 import { SearchChannelQuery } from '../dto/search-channel.query';
+
+const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 
 @Controller({ path: 'channel', version: '1' })
 @ApiTags('channel')
@@ -257,5 +268,88 @@ export class ChannelController {
   ) {
     await this.channelService.editChannelById(userChannel.channel.id, editInfo);
     return 'OK';
+  }
+
+  @Put('display-photo')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        photoFile: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('photoFile', {
+      storage: s3Storage(`${S3_PROFILE_PHOTO_DIR}/channel-dp/`),
+      fileFilter(_: any, file, cb) {
+        const { mimetype } = file;
+
+        const isValid = [
+          'image/jpg',
+          'image/jpeg',
+          'image/png',
+          'image/bmp',
+          'image/svg+xml',
+        ].includes(mimetype);
+
+        if (!isValid)
+          return cb(
+            new BadRequestException(
+              'Please upload a valid photo format',
+              'FILE_FORMAT_MUST_BE_PHOTO',
+            ),
+            false,
+          );
+
+        return cb(null, true);
+      },
+    }),
+  )
+  @IsAuthenticated()
+  @UserChannelRole(['canEdit'])
+  @ValidationBadRequest()
+  async changeDisplayPhoto(
+    @CurrentUserChannel() userChannel: UserChannel,
+    @UploadedFile() file: Express.MulterS3.File,
+  ) {
+    const fileName = file.key.replace(
+      `${S3_PROFILE_PHOTO_DIR}/channel-dp/`,
+      '',
+    );
+
+    await this.channelService.changeDisplayPhoto(
+      userChannel.channel.id,
+      fileName,
+    );
+
+    return fileName;
+  }
+
+  @Get('display-photo/:fileName')
+  @IsAuthenticated()
+  async viewProfilePhoto(
+    @Res() res: Response,
+    @Param('fileName') fileName: string,
+  ) {
+    try {
+      const creds = {
+        Bucket: S3_VIDEO_BUCKET_NAME,
+        Key: `${S3_PROFILE_PHOTO_DIR}/channel-dp/${fileName}`,
+      };
+      const head = await s3HeadObject(creds);
+      const objectStream = s3.getObject(creds).createReadStream();
+
+      res.setHeader('Content-Disposition', `filename=${fileName}`);
+      if (head.ContentType) res.setHeader('Content-Type', head.ContentType);
+
+      return objectStream.pipe(res);
+    } catch (err: any) {
+      return res.status(err.statusCode || 500).json(err);
+    }
   }
 }

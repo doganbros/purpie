@@ -52,7 +52,7 @@ export class UserChannelController {
   }
 
   @Put('/role/update')
-  @UserChannelRole(['canSetRole'])
+  @UserChannelRole(['canManageRole'])
   async updateUserChannelRole(info: UpdateChannelUserRoleDto) {
     await this.channelService.updateChannelUserRole(info);
     return 'OK';

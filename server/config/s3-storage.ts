@@ -9,7 +9,6 @@ const {
   S3_SECRET_ACCESS_KEY = '',
   S3_REGION = '',
   S3_VIDEO_BUCKET_NAME = '',
-  S3_VIDEO_POST_DIR = '',
 } = process.env;
 
 export const s3 = new aws.S3({
@@ -27,16 +26,12 @@ export const s3HeadObject = promisify(
   ) => s3.headObject(params, cb),
 );
 
-export const s3Storage = multerS3({
-  s3,
-  bucket: S3_VIDEO_BUCKET_NAME,
-  acl: 'authenticated-read',
-  contentType: multerS3.AUTO_CONTENT_TYPE,
-  key: (_, file, cb) =>
-    cb(
-      null,
-      `${S3_VIDEO_POST_DIR}${uuid.v4()}${path.extname(
-        file?.originalname || '',
-      )}`,
-    ),
-});
+export const s3Storage = (dir: string) =>
+  multerS3({
+    s3,
+    bucket: S3_VIDEO_BUCKET_NAME,
+    acl: 'authenticated-read',
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    key: (_, file, cb) =>
+      cb(null, `${dir}${uuid.v4()}${path.extname(file?.originalname || '')}`),
+  });

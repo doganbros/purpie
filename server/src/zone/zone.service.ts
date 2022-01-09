@@ -217,7 +217,7 @@ export class ZoneService {
         canInvite: record.zone_role_canInvite,
         canDelete: record.zone_role_canDelete,
         canEdit: record.zone_role_canEdit,
-        canSetRole: record.zone_role_canSetRole,
+        canManageRole: record.zone_role_canManageRole,
       },
     }));
   }
@@ -276,6 +276,13 @@ export class ZoneService {
 
   async deleteZoneById(id: number) {
     return this.zoneRepository.delete({ id });
+  }
+
+  async changeDisplayPhoto(zoneId: number, fileName: string) {
+    return this.zoneRepository.update(
+      { id: zoneId },
+      { displayPhoto: fileName },
+    );
   }
 
   async editZoneById(id: number, editInfo: EditZoneDto) {

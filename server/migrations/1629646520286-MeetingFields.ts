@@ -1,5 +1,11 @@
 import { UserRole } from 'entities/UserRole.entity';
-import { MigrationInterface, QueryRunner, Table, TableColumn, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableColumn,
+  TableForeignKey,
+} from 'typeorm';
 
 export class MeetingFields1629646520286 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -63,10 +69,8 @@ export class MeetingFields1629646520286 implements MigrationInterface {
       }),
     );
 
-    await queryRunner.manager.update(
-      UserRole,
-      { roleCode: 'SUPER_ADMIN' },
-      { canSetRole: true },
+    await queryRunner.query(
+      `UPDATE user_role SET "canSetRole" = true WHERE roleCode = 'SUPER_ADMIN'`,
     );
 
     await queryRunner.addColumn(
