@@ -9,8 +9,6 @@ import {
   ResponsiveContext,
   Text,
 } from 'grommet';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
 import ChannelsToFollow from './ChannelsToFollow';
@@ -22,13 +20,12 @@ import ChannelList from './ChannelList';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
   createPostSaveAction,
+  getChannelFeedAction,
   getPublicFeedAction,
   getUserFeedAction,
   getZoneFeedAction,
   removePostSaveAction,
 } from '../../../store/actions/post.action';
-
-dayjs.extend(relativeTime);
 
 const Timeline: FC = () => {
   const size = useContext(ResponsiveContext);
@@ -37,6 +34,7 @@ const Timeline: FC = () => {
   const {
     post: { feed },
     zone: { selectedUserZone },
+    channel: { selectedChannel },
   } = useSelector((state: AppState) => state);
 
   const [filters, setFilters] = useState([
@@ -66,34 +64,49 @@ const Timeline: FC = () => {
       active: false,
     },
   ]);
-
-  useEffect(() => {
+  const getFeed = (skip?: number) => {
     const activeFilterId = filters.find((f) => f.active)?.id;
     switch (activeFilterId) {
       case 0:
       case 1:
       case 2:
-        if (selectedUserZone) {
+        if (selectedChannel)
+          dispatch(
+            getChannelFeedAction({
+              skip,
+              channelId: selectedChannel.channel.id,
+              streaming: activeFilterId === 2,
+            })
+          );
+        else if (selectedUserZone) {
           dispatch(
             getZoneFeedAction({
+              skip,
               zoneId: selectedUserZone.zone.id,
               streaming: activeFilterId === 2,
             })
           );
         } else {
-          dispatch(getUserFeedAction({ streaming: activeFilterId === 2 }));
+          dispatch(
+            getUserFeedAction({ skip, streaming: activeFilterId === 2 })
+          );
         }
         break;
       case 3:
-        dispatch(getPublicFeedAction({ sortBy: 'time' }));
+        dispatch(getPublicFeedAction({ skip, sortBy: 'time' }));
         break;
       case 4:
-        dispatch(getPublicFeedAction({ sortBy: 'popularity' }));
+        dispatch(getPublicFeedAction({ skip, sortBy: 'popularity' }));
         break;
       default:
         break;
     }
-  }, [filters]);
+  };
+
+  useEffect(() => {
+    getFeed();
+  }, [filters, selectedChannel]);
+
   return (
     <PrivatePageLayout
       title="Timeline"
@@ -132,30 +145,24 @@ const Timeline: FC = () => {
             ))}
           </Box>
         </Box>
-        <Grid
-          columns={size !== 'small' ? 'medium' : '100%'}
-          gap={{ row: 'large', column: 'medium' }}
-        >
-          <InfiniteScroll items={feed.data} step={6}>
+        <Grid columns={size !== 'small' ? 'medium' : '100%'}>
+          <InfiniteScroll
+            items={feed.data}
+            step={6}
+            onMore={() => {
+              getFeed(feed.data.length);
+            }}
+          >
             {(item: typeof feed.data[0]) => (
               <PostGridItem
-                key={item.slug}
-                slug={item.slug}
-                id={item.id}
-                comments={item.commentsCount}
-                createdAt={dayjs(item.createdOn).fromNow()}
-                likes={item.likesCount}
-                live={item.liveStream}
+                key={item.id}
+                post={item}
                 onClickPlay={() => history.push(`video/${item.id}`)}
                 onClickSave={() => {
                   if (item.saved)
                     dispatch(removePostSaveAction({ postId: item.id }));
                   else dispatch(createPostSaveAction({ postId: item.id }));
                 }}
-                saved={item.saved}
-                createdBy={item.createdBy}
-                videoTitle={item.title}
-                videoName={item.videoName}
               />
             )}
           </InfiniteScroll>

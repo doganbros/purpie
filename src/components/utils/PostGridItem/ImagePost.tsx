@@ -1,11 +1,22 @@
-import { Box, Image } from 'grommet';
 import React, { FC } from 'react';
-import MeetingBackground from '../../../assets/meeting-bg.png';
+import { Box, Stack } from 'grommet';
+import { Group } from 'grommet-icons';
+import { getColorPairFromId } from '../../../helpers/utils';
 
-export const ImagePost: FC = () => {
+interface ImagePostProps {
+  id: number;
+}
+
+export const ImagePost: FC<ImagePostProps> = ({ id }) => {
+  const { color, background } = getColorPairFromId(id);
   return (
-    <Box>
-      <Image src={MeetingBackground} />
-    </Box>
+    <Stack anchor="center">
+      <Box
+        flex="grow"
+        background={background}
+        pad={{ top: '56.25%' }} // For 16 by 9 aspect ratio
+      />
+      <Group size="xlarge" color={color} />
+    </Stack>
   );
 };

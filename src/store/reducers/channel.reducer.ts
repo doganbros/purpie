@@ -7,10 +7,13 @@ import {
   JOIN_CHANNEL_REQUESTED,
   JOIN_CHANNEL_SUCCESS,
   OPEN_CREATE_CHANNEL_LAYER,
+  SET_SELECTED_CHANNEL,
+  UNSET_SELECTED_CHANNEL,
 } from '../constants/channel.constants';
 import { ChannelActionParams, ChannelState } from '../types/channel.types';
 
 const initialState: ChannelState = {
+  selectedChannel: null,
   showCreateChannelLayer: false,
   userChannels: {
     data: [],
@@ -88,6 +91,16 @@ const channelReducer = (
       return {
         ...state,
         showCreateChannelLayer: false,
+      };
+    case SET_SELECTED_CHANNEL:
+      return {
+        ...state,
+        selectedChannel: action.payload,
+      };
+    case UNSET_SELECTED_CHANNEL:
+      return {
+        ...state,
+        selectedChannel: null,
       };
     default:
       return state;

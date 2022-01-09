@@ -10,9 +10,15 @@ import {
   CREATE_CHANNEL_FAILED,
   CREATE_CHANNEL_REQUESTED,
   CREATE_CHANNEL_SUCCESS,
+  SET_SELECTED_CHANNEL,
+  UNSET_SELECTED_CHANNEL,
 } from '../constants/channel.constants';
 import * as ChannelService from '../services/channel.service';
-import { ChannelAction, CreateChannelPayload } from '../types/channel.types';
+import {
+  ChannelAction,
+  CreateChannelPayload,
+  UserChannelListItem,
+} from '../types/channel.types';
 import { setToastAction } from './util.action';
 import { getUserZonesAction } from './zone.action';
 
@@ -99,5 +105,24 @@ export const createChannelAction = (
         payload: err?.response?.data,
       });
     }
+  };
+};
+
+export const setSelectedChannelAction = (
+  channel: UserChannelListItem
+): ChannelAction => {
+  return (dispatch) => {
+    dispatch({
+      type: SET_SELECTED_CHANNEL,
+      payload: channel,
+    });
+  };
+};
+
+export const unsetSelectedChannelAction = (): ChannelAction => {
+  return (dispatch) => {
+    dispatch({
+      type: UNSET_SELECTED_CHANNEL,
+    });
   };
 };

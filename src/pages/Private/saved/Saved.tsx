@@ -28,13 +28,16 @@ const Saved: FC = () => {
     post: { saved },
   } = useSelector((state: AppState) => state);
 
-  useEffect(() => {
+  const getSaved = (skip?: number) => {
     dispatch(
       getSavedPostAction({
-        limit: 30,
-        skip: 0,
+        skip,
       })
     );
+  };
+
+  useEffect(() => {
+    getSaved();
   }, []);
 
   return (
@@ -64,24 +67,20 @@ const Saved: FC = () => {
               Your saved posts will appear here
             </Text>
           ) : (
-            <InfiniteScroll items={saved.data} step={6}>
+            <InfiniteScroll
+              items={saved.data}
+              onMore={() => {
+                getSaved(saved.data.length);
+              }}
+              step={6}
+            >
               {({ post }: typeof saved.data[0]) => (
                 <PostGridItem
-                  key={post.slug}
-                  slug={post.slug}
-                  id={post.id}
-                  comments={post.commentsCount}
-                  createdAt={dayjs(post.createdOn).fromNow()}
-                  likes={post.likesCount}
-                  live={post.liveStream}
+                  post={post}
                   onClickPlay={() => history.push(`video/${post.id}`)}
                   onClickSave={() => {
                     dispatch(removePostSaveAction({ postId: post.id }));
                   }}
-                  saved
-                  createdBy={post.createdBy}
-                  videoTitle={post.title}
-                  videoName={post.videoName}
                 />
               )}
             </InfiniteScroll>

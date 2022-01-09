@@ -12,6 +12,8 @@ import {
   CREATE_CHANNEL_FAILED,
   CREATE_CHANNEL_REQUESTED,
   CREATE_CHANNEL_SUCCESS,
+  SET_SELECTED_CHANNEL,
+  UNSET_SELECTED_CHANNEL,
 } from '../constants/channel.constants';
 import { User } from './auth.types';
 import { UtilActionParams } from './util.types';
@@ -42,6 +44,7 @@ export interface UserChannelDetail extends UserChannelListItem {
 }
 
 export interface ChannelState {
+  selectedChannel: UserChannelListItem | null;
   showCreateChannelLayer: boolean;
   userChannels: {
     data: UserChannelListItem[];
@@ -76,12 +79,17 @@ export type ChannelActionParams =
       payload: CreateChannelPayload & { zoneId: number };
     }
   | {
+      type: typeof SET_SELECTED_CHANNEL;
+      payload: UserChannelListItem;
+    }
+  | {
       type:
         | typeof JOIN_CHANNEL_SUCCESS
         | typeof GET_USER_CHANNELS_REQUESTED
         | typeof OPEN_CREATE_CHANNEL_LAYER
         | typeof CLOSE_CREATE_CHANNEL_LAYER
-        | typeof CREATE_CHANNEL_SUCCESS;
+        | typeof CREATE_CHANNEL_SUCCESS
+        | typeof UNSET_SELECTED_CHANNEL;
     }
   | {
       type:

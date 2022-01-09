@@ -74,6 +74,10 @@ const postReducer = (
         ...state,
         feed: {
           ...action.payload,
+          data:
+            action.payload.skip > 0
+              ? [...state.feed.data, ...action.payload.data]
+              : action.payload.data,
           loading: false,
           error: null,
         },
@@ -101,6 +105,10 @@ const postReducer = (
         ...state,
         feed: {
           ...action.payload,
+          data:
+            action.payload.skip > 0
+              ? [...state.feed.data, ...action.payload.data]
+              : action.payload.data,
           loading: false,
           error: null,
         },
@@ -128,6 +136,10 @@ const postReducer = (
         ...state,
         feed: {
           ...action.payload,
+          data:
+            action.payload.skip > 0
+              ? [...state.feed.data, ...action.payload.data]
+              : action.payload.data,
           loading: false,
           error: null,
         },
@@ -155,6 +167,10 @@ const postReducer = (
         ...state,
         feed: {
           ...action.payload,
+          data:
+            action.payload.skip > 0
+              ? [...state.feed.data, ...action.payload.data]
+              : action.payload.data,
           loading: false,
           error: null,
         },
@@ -341,6 +357,10 @@ const postReducer = (
         ...state,
         saved: {
           ...action.payload,
+          data:
+            action.payload.skip > 0
+              ? [...state.saved.data, ...action.payload.data]
+              : action.payload.data,
           loading: false,
           error: null,
         },
