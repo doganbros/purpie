@@ -263,7 +263,10 @@ const postReducer = (
             ? {
                 ...state.postDetail.data,
                 liked: true,
-                likesCount: String(+state.postDetail.data.likesCount + 1),
+                postReaction: {
+                  ...state.postDetail.data.postReaction,
+                  likesCount: state.postDetail.data.postReaction.likesCount + 1,
+                },
               }
             : state.postDetail.data,
         },
@@ -277,7 +280,10 @@ const postReducer = (
             ? {
                 ...state.postDetail.data,
                 liked: false,
-                likesCount: String(+state.postDetail.data.likesCount - 1),
+                postReaction: {
+                  ...state.postDetail.data.postReaction,
+                  likesCount: state.postDetail.data.postReaction.likesCount - 1,
+                },
               }
             : state.postDetail.data,
         },

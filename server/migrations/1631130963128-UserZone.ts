@@ -28,13 +28,24 @@ export class UserZone1631130963128 implements MigrationInterface {
       }),
     );
 
-    const userChannels = await queryRunner.manager.find(UserChannel, {
-      relations: ['channel'],
-    });
+    const userChannels = await queryRunner.manager
+      .createQueryBuilder(UserChannel, 'user_channel')
+      .select([
+        'user_channel.id',
+        'user_channel.userId',
+        'channel.id',
+        'channel.zoneId',
+      ])
+      .innerJoin('user_channel.channel', 'channel')
+      .getMany();
 
     for (const userChannel of userChannels) {
       const userZone = await queryRunner.manager.findOne(UserZone, {
-        where: { userId: userChannel.userId, zoneId: userChannel.channel.id },
+        where: {
+          userId: userChannel.userId,
+          zoneId: userChannel.channel.zoneId,
+        },
+        select: ['id'],
       });
 
       if (userZone)

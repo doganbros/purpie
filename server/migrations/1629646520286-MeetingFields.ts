@@ -70,7 +70,7 @@ export class MeetingFields1629646520286 implements MigrationInterface {
     );
 
     await queryRunner.query(
-      `UPDATE user_role SET "canSetRole" = true WHERE roleCode = 'SUPER_ADMIN'`,
+      `UPDATE user_role SET "canSetRole" = true WHERE "roleCode" = 'SUPER_ADMIN'`,
     );
 
     await queryRunner.addColumn(

@@ -96,10 +96,12 @@ const PostGridItem: FC<PostGridItemProps> = ({
                 <Favorite color="status-disabled" />
               )}
               <Text size="small" color="status-disabled">
-                {post.likesCount}
+                {post.postReaction.likesCount}
               </Text>
               <Chat color="status-disabled" />
-              <Text color="status-disabled">{post.commentsCount}</Text>
+              <Text color="status-disabled">
+                {post.postReaction.commentsCount}
+              </Text>
             </Box>
           </Box>
         </Box>

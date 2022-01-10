@@ -22,10 +22,10 @@ export class FullTextSearch1640772409145 implements MigrationInterface {
     );
 
     await queryRunner.query(
-      `UPDATE channel_role SET "canSetRole" = true WHERE roleCode = 'SUPER_ADMIN'`,
+      `UPDATE channel_role SET "canSetRole" = true WHERE "roleCode" = 'SUPER_ADMIN'`,
     );
     await queryRunner.query(
-      `UPDATE zone_role SET "canSetRole" = true WHERE roleCode = 'SUPER_ADMIN'`,
+      `UPDATE zone_role SET "canSetRole" = true WHERE "roleCode" = 'SUPER_ADMIN'`,
     );
 
     await queryRunner.query('CREATE extension if not EXISTS pg_trgm;');

@@ -48,13 +48,11 @@ export enum PostType {
 export interface Post {
   channel?: ChannelBasic;
   channelId?: number;
-  commentsCount: string;
   createdBy: UserBasic;
   createdOn: Date;
   description: string;
   id: number;
   liked: boolean;
-  likesCount: string;
   liveStream: boolean;
   public: boolean;
   record: boolean;
@@ -65,6 +63,10 @@ export interface Post {
   type: PostType;
   userContactExclusive: boolean;
   videoName: string;
+  postReaction: {
+    likesCount: number;
+    commentsCount: number;
+  };
 }
 
 export interface SavedPost {

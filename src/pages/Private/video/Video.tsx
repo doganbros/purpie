@@ -74,11 +74,15 @@ const Video: FC = () => {
                       )
                     }
                   />
-                  <Text color="status-disabled">{data.likesCount}</Text>
+                  <Text color="status-disabled">
+                    {data.postReaction.likesCount}
+                  </Text>
                 </Box>
                 <Box direction="row" gap="xsmall">
                   <ChatIcon color="status-disabled" />
-                  <Text color="status-disabled">{data.commentsCount}</Text>
+                  <Text color="status-disabled">
+                    {data.postReaction.commentsCount}
+                  </Text>
                 </Box>
               </Box>
               <Text color="status-disabled">VIEW_COUNT_MISSING</Text>

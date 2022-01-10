@@ -238,8 +238,8 @@ export class PostService {
         'post.channelId',
         'post.liveStream',
         'post.record',
-        'post.likesCount',
-        'post.commentsCount',
+        'postReaction.likesCount',
+        'postReaction.commentsCount',
         'createdBy.id',
         'createdBy.email',
         'createdBy.firstName',
@@ -256,6 +256,7 @@ export class PostService {
       )
       .setParameter('currentUserId', userId)
       .innerJoin('savedPost.post', 'post')
+      .leftJoin('post.postReaction', 'postReaction')
       .leftJoin('post.createdBy', 'createdBy')
       .leftJoin('post.channel', 'channel')
       .leftJoin(
@@ -336,8 +337,8 @@ export class PostService {
         'post.userContactExclusive',
         'post.channelId',
         'post.liveStream',
-        'post.likesCount',
-        'post.commentsCount',
+        'postReaction.likesCount',
+        'postReaction.commentsCount',
         'post.record',
         'createdBy.id',
         'createdBy.email',
@@ -365,6 +366,7 @@ export class PostService {
 
       .setParameter('currentUserId', userId)
       .leftJoin('post.createdBy', 'createdBy')
+      .leftJoin('post.postReaction', 'postReaction')
       .where(
         new Brackets((qb) => {
           qb.where(
@@ -416,8 +418,8 @@ export class PostService {
 
     if (query.sortBy === 'popularity')
       builder
-        .orderBy('post.likesCount', query.sortDirection ?? 'DESC')
-        .addOrderBy('post.commentsCount', query.sortDirection ?? 'DESC')
+        .orderBy('postReaction.likesCount', query.sortDirection ?? 'DESC')
+        .addOrderBy('postReaction.commentsCount', query.sortDirection ?? 'DESC')
         .addOrderBy('post.id', query.sortDirection ?? 'DESC');
     else builder.orderBy('post.id', query.sortDirection ?? 'DESC');
 

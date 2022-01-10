@@ -1,8 +1,9 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { JitsiConfig } from 'types/Meeting';
 import { PostType } from 'types/Post';
 import { RecordEntity } from './base/RecordEntity';
 import { Channel } from './Channel.entity';
+import { PostReaction } from './PostReaction.entity';
 import { User } from './User.entity';
 
 @Entity()
@@ -48,12 +49,6 @@ export class Post extends RecordEntity {
   @Column({ nullable: true })
   channelId: number;
 
-  @Column({ default: 0 })
-  likesCount: number;
-
-  @Column({ default: 0 })
-  commentsCount: number;
-
   @Column({ default: false })
   streaming: boolean;
 
@@ -77,4 +72,13 @@ export class Post extends RecordEntity {
 
   @Column('tsvector', { select: false })
   search_document: any;
+
+  @OneToOne(() => PostReaction, (postReaction) => postReaction.postId, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'postReactionId' })
+  postReaction: PostReaction;
+
+  @Column({ nullable: true })
+  postReactionId: number;
 }
