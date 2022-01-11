@@ -256,8 +256,8 @@ export class MeetingService {
 
     meeting.config.subject = meeting.title;
     const otherConfig: Record<string, any> = {
-      autoRecord: meeting.record,
-      autoStream: meeting.liveStream,
+      autoRecording: meeting.record,
+      autoStreaming: meeting.liveStream,
     };
 
     if (meeting.liveStream)

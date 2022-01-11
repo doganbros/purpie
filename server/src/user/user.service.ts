@@ -1,7 +1,13 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from 'entities/Contact.entity';
+import { MattermostService } from 'src/utils/mattermost.service';
 import { ContactInvitation } from 'entities/ContactInvitation.entity';
+import { AuthService } from 'src/auth/auth.service';
 import { generateLowerAlphaNumId, tsqueryParam } from 'helpers/utils';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
@@ -9,6 +15,7 @@ import { In, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { SearchUsersQuery } from './dto/search-users.query';
 import { SetUserRoleDto } from './dto/set-user-role.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Injectable()
 export class UserService {
@@ -19,6 +26,8 @@ export class UserService {
     private userRepository: Repository<User>,
     @InjectRepository(ContactInvitation)
     private contactInvitation: Repository<ContactInvitation>,
+    private authService: AuthService,
+    private readonly mattermostService: MattermostService,
   ) {}
 
   createNewContact(userId: number, contactUserId: number) {
@@ -172,6 +181,44 @@ export class UserService {
       { id: userId },
       { displayPhoto: fileName },
     );
+  }
+
+  async updateProfile(userId: number, payload: UpdateProfileDto) {
+    const userProfile = await this.authService.getUserProfile(userId);
+
+    if (!userProfile)
+      throw new NotFoundException(
+        'User profile not found',
+        'USER_PROFILE_NOT_FOUND',
+      );
+
+    const updates: Record<string, any> = {};
+
+    if (payload.firstName && payload.firstName !== userProfile.firstName) {
+      updates.firstName = payload.firstName;
+    }
+    if (payload.lastName && payload.lastName !== userProfile.lastName) {
+      updates.lastName = payload.lastName;
+    }
+    if (payload.userName && payload.userName !== userProfile.userName) {
+      updates.userName = payload.userName;
+    }
+
+    if (!Object.keys(updates).length)
+      throw new BadRequestException(
+        'No Changes detected',
+        'NO_CHANGES_DETECTED',
+      );
+
+    await this.userRepository.update({ id: userId }, updates);
+
+    const mattermostUpdates: any = { id: userProfile.mattermostId };
+
+    if (updates.firstName) mattermostUpdates.first_name = updates.firstName;
+    if (updates.lastName) mattermostUpdates.last_name = updates.lastName;
+    if (updates.userName) mattermostUpdates.username = updates.userName;
+
+    await this.mattermostService.mattermostClient.patchUser(mattermostUpdates);
   }
 
   async userNameSuggestions(userName: string) {

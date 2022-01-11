@@ -41,6 +41,7 @@ import {
   PublicPostFeedListResponse,
 } from './response/post-list-feed.response';
 import { ListPostFeedQuery } from './dto/list-post-feed.query';
+import { EditPostDto } from './dto/edit-post.dto';
 
 const {
   S3_VIDEO_POST_DIR = '',
@@ -468,15 +469,11 @@ export class PostController {
     type: MixedPostFeedDetail,
   })
   @IsAuthenticated()
-  @ApiParam({
-    name: 'postId',
-    type: Number,
-  })
   async getFeedById(
-    @Param('postId') postId: string,
+    @Param('postId', ParseIntPipe) postId: number,
     @CurrentUser() user: UserTokenPayload,
   ) {
-    const result = await this.postService.getPostById(user.id, Number(postId));
+    const result = await this.postService.getPostById(user.id, postId);
 
     if (!result)
       throw new NotFoundException(
@@ -485,5 +482,17 @@ export class PostController {
       );
 
     return result;
+  }
+
+  @Put('update/:postId')
+  @IsAuthenticated()
+  async editPostById(
+    @Param('postId', ParseIntPipe) postId: number,
+    @CurrentUser() user: UserTokenPayload,
+    @Body() editPostPayload: EditPostDto,
+  ) {
+    await this.postService.editPost(postId, user.id, editPostPayload);
+
+    return 'OK';
   }
 }

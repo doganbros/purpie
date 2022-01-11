@@ -21,7 +21,7 @@ export class StreamService {
     private readonly userRepo: Repository<User>,
     @InjectRepository(CurrentStreamViewer)
     private readonly currentStreamViewerRepo: Repository<CurrentStreamViewer>,
-    private readonly utilService: MattermostService,
+    private readonly mattermostService: MattermostService,
   ) {}
 
   async setStreamEvent(info: ClientStreamEventDto) {
@@ -116,7 +116,7 @@ export class StreamService {
   async handleStreamViewerChange(slug: string, userId: number) {
     const stat = await this.getCurrentTotalViewers(slug);
 
-    this.utilService.broadcastPost({
+    this.mattermostService.broadcastPost({
       event: 'LIVE_STREAM_VIEWER_COUNT_CHANGE',
       slug,
       count: stat.total,
@@ -129,7 +129,7 @@ export class StreamService {
 
       if (user) {
         fetchOrProduceNull(() =>
-          this.utilService.mattermostClient.addToChannel(
+          this.mattermostService.mattermostClient.addToChannel(
             user.mattermostId,
             channel.id,
           ),
@@ -140,8 +140,8 @@ export class StreamService {
 
   async handleCreateStreamChannel(slug: string) {
     const channel = await fetchOrProduceNull(() =>
-      this.utilService.mattermostClient.getChannelByName(
-        this.utilService.octopusAppTeam!.id,
+      this.mattermostService.mattermostClient.getChannelByName(
+        this.mattermostService.octopusAppTeam!.id,
         slug,
       ),
     );
@@ -150,10 +150,10 @@ export class StreamService {
     const octopusPost = await this.postRepo.findOne({ slug });
 
     if (octopusPost) {
-      return this.utilService.mattermostClient.createChannel({
+      return this.mattermostService.mattermostClient.createChannel({
         name: slug,
         display_name: octopusPost.title,
-        team_id: this.utilService.octopusAppTeam!.id,
+        team_id: this.mattermostService.octopusAppTeam!.id,
         type: 'P',
         purpose: `Livestream channel for ${octopusPost.title} post`,
       } as any);

@@ -129,6 +129,7 @@ export class ZoneService {
         'zone.id',
         'zone.createdOn',
         'zone.name',
+        'zone.displayPhoto',
         'zone.subdomain',
         'zone.description',
         'zone.public',
@@ -162,6 +163,7 @@ export class ZoneService {
         'user_zone.createdOn',
         'zone.id',
         'zone.name',
+        'zone.displayPhoto',
         'zone.subdomain',
         'zone.description',
         'zone.public',
@@ -193,6 +195,7 @@ export class ZoneService {
         id: record.zone_id,
         name: record.zone_name,
         subdomain: record.zone_subdomain,
+        displayPhoto: record.zone_displayPhoto,
         description: record.zone_description,
         public: record.zone_public,
         category: {

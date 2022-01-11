@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from 'entities/Contact.entity';
 import { Post } from 'entities/Post.entity';
@@ -15,6 +19,7 @@ import { PaginationQuery } from 'types/PaginationQuery';
 import { CreatePostCommentDto } from './dto/create-post-comment.dto';
 import { CreatePostLikeDto } from './dto/create-post-like.dto';
 import { CreateSavedPostDto } from './dto/create-saved-post.dto';
+import { EditPostDto } from './dto/edit-post.dto';
 import { ListPostFeedQuery } from './dto/list-post-feed.query';
 
 @Injectable()
@@ -617,5 +622,20 @@ export class PostService {
         },
         query,
       );
+  }
+
+  editPost(postId: number, userId: number, payload: EditPostDto) {
+    const editPayload: Partial<EditPostDto> = {};
+
+    if (payload.title) editPayload.title = payload.title;
+    if (payload.description) editPayload.description = payload.description;
+
+    if (!Object.keys(editPayload).length)
+      throw new BadRequestException('Edit Payload empty', 'EDIT_PAYLOAD_EMPTY');
+
+    return this.postRepository.update(
+      { id: postId, createdById: userId },
+      editPayload,
+    );
   }
 }

@@ -53,6 +53,7 @@ import { CreateContactDto } from '../dto/create-contact.dto';
 import { SearchUsersQuery } from '../dto/search-users.query';
 import { SetUserRoleDto } from '../dto/set-user-role.dto';
 import { UserService } from '../user.service';
+import { UpdateProfileDto } from '../dto/update-profile.dto';
 
 const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 
@@ -234,6 +235,16 @@ export class UserController {
   @IsAuthenticated([], { injectUserProfile: true })
   getUserProfile(@CurrentUserProfile() userProfile: UserProfile) {
     return userProfile;
+  }
+
+  @Put('profile')
+  @IsAuthenticated()
+  async updateUserProfile(
+    @CurrentUser() user: UserTokenPayload,
+    @Body() info: UpdateProfileDto,
+  ) {
+    await this.userService.updateProfile(user.id, info);
+    return 'OK';
   }
 
   @Put('display-photo')
