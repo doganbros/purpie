@@ -89,7 +89,7 @@ export class MeetingController {
     const record = createMeetingInfo.record ?? privacyConfig.record;
 
     const meetingPayload: Partial<PostEntity> = {
-      title: createMeetingInfo.title || 'Untiltled Meeting',
+      title: createMeetingInfo.title || 'Untitled Meeting',
       description: createMeetingInfo.description,
       type: 'meeting',
       startDate: createMeetingInfo.startDate
