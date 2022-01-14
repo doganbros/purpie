@@ -69,7 +69,10 @@ const PostGridItem: FC<PostGridItemProps> = ({
                 round="large"
                 border={{ size: 'large', color: 'white' }}
               >
-                <InitialsAvatar user={post.createdBy} />
+                <InitialsAvatar
+                  id={post.createdBy.id}
+                  value={`${post.createdBy.firstName} ${post.createdBy.lastName} `}
+                />
               </Box>
               <Text color="status-disabled">
                 {post.createdBy?.firstName} {post.createdBy?.lastName}

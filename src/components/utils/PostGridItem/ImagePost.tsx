@@ -8,7 +8,7 @@ interface ImagePostProps {
 }
 
 export const ImagePost: FC<ImagePostProps> = ({ id }) => {
-  const { color, background } = getColorPairFromId(id);
+  const { foreground, background } = getColorPairFromId(id);
   return (
     <Stack anchor="center">
       <Box
@@ -16,7 +16,7 @@ export const ImagePost: FC<ImagePostProps> = ({ id }) => {
         background={background}
         pad={{ top: '56.25%' }} // For 16 by 9 aspect ratio
       />
-      <Group size="xlarge" color={color} />
+      <Group size="xlarge" color={foreground} />
     </Stack>
   );
 };

@@ -3,7 +3,6 @@ import { Box, Button, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import ChannelListItem from '../../../components/utils/channel/ChannelListItem';
 import { AppState } from '../../../store/reducers/root.reducer';
-import { channelAvatarSrc } from './data/channel-avatars';
 import { getChannelSuggestionsAction } from '../../../store/actions/activity.action';
 import {
   SUGGESTION_AMOUNT_LESS,
@@ -57,7 +56,6 @@ const ChannelsToFollow: FC = () => {
                 id={c.channel_id}
                 zoneSubdomain={c.zone_subdomain}
                 name={c.channel_name}
-                src={channelAvatarSrc[c.channel_id % channelAvatarSrc.length]}
               />
             ))
         ))}
