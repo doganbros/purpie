@@ -1,6 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from 'entities/Channel.entity';
+import { ChannelRole } from 'entities/ChannelRole.entity';
 import { Invitation } from 'entities/Invitation.entity';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
@@ -13,9 +18,11 @@ import {
   UserTokenPayload,
 } from 'src/auth/interfaces/user.interface';
 import { MailService } from 'src/mail/mail.service';
-import { Brackets, Repository } from 'typeorm';
+import { SystemUserListQuery } from 'src/user/dto/system-user-list.query';
+import { Brackets, Not, Repository } from 'typeorm';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { SearchChannelQuery } from './dto/search-channel.query';
+import { UpdateChannelPermission } from './dto/update-channel-permission.dto';
 import { UpdateChannelUserRoleDto } from './dto/update-channel-user-role.dto';
 
 const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
@@ -26,6 +33,8 @@ export class ChannelService {
     @InjectRepository(Channel) private channelRepository: Repository<Channel>,
     @InjectRepository(UserChannel)
     private userChannelRepository: Repository<UserChannel>,
+    @InjectRepository(ChannelRole)
+    private channelRoleRepository: Repository<ChannelRole>,
     @InjectRepository(Invitation)
     private invitationRepository: Repository<Invitation>,
     private mailService: MailService,
@@ -435,10 +444,125 @@ export class ChannelService {
     );
   }
 
-  async updateChannelUserRole(info: UpdateChannelUserRoleDto) {
+  listChannelRoles() {
+    return this.channelRoleRepository.find({ take: 30 });
+  }
+
+  listChannelUsers(channelId: number, query: SystemUserListQuery) {
+    const baseQuery = this.userChannelRepository
+      .createQueryBuilder('userChannel')
+      .select([
+        'userChannel.id',
+        'userChannel.createdOn',
+        'user.id',
+        'user.firstName',
+        'user.lastName',
+        'user.email',
+        'user.userName',
+        'user.displayPhoto',
+      ])
+      .innerJoin('userChannel.user', 'user')
+      .leftJoinAndSelect('userChannel.channelRole', 'channelRole')
+      .where('userChannel.channelId = :channelId', { channelId });
+
+    if (query.name) {
+      baseQuery
+        .setParameter('searchTerm', tsqueryParam(query.name))
+        .addSelect(
+          `ts_rank(user.search_document, to_tsquery('simple', :searchTerm))`,
+          'search_rank',
+        )
+        .andWhere(`user.search_document @@ to_tsquery('simple', :searchTerm)`)
+        .orderBy('search_rank', 'DESC');
+    } else {
+      baseQuery.orderBy('user.firstName').addOrderBy('user.lastName');
+    }
+
+    return baseQuery.paginate(query);
+  }
+
+  async changeUserChannelRole(
+    channelId: number,
+    info: UpdateChannelUserRoleDto,
+  ) {
+    const { channelRoleCode } = info;
+    if (channelRoleCode !== 'SUPER_ADMIN') {
+      const remainingSuperAdminCount = await this.userChannelRepository.count({
+        where: {
+          channelId,
+          userId: Not(info.userId),
+          channelRoleCode: 'SUPER_ADMIN',
+        },
+      });
+
+      if (remainingSuperAdminCount === 0)
+        throw new ForbiddenException('There must be at least one super admin');
+    }
+
     return this.userChannelRepository.update(
-      { userId: info.userId, channelId: info.channelId },
-      { channelRoleCode: info.channelRoleCode },
+      { userId: info.userId, channelId },
+      {
+        channelRoleCode: info.channelRoleCode,
+      },
     );
+  }
+
+  async createChannelRole(info: ChannelRole) {
+    const existingRoleCodes = await this.channelRoleRepository.count({
+      where: { roleCode: info.roleCode },
+    });
+
+    if (existingRoleCodes)
+      throw new BadRequestException(
+        `The role code ${info.roleCode} already exists`,
+        'ROLE_CODE_ALREADY_EXISTS',
+      );
+
+    return this.channelRoleRepository.create(info).save();
+  }
+
+  async removeChannelRole(roleCode: any) {
+    const existing = await this.userChannelRepository.count({
+      where: { channelRoleCode: roleCode },
+    });
+
+    if (existing)
+      throw new ForbiddenException(
+        'Users using this role already exists',
+        'USERS_USING_ROLE',
+      );
+
+    return this.channelRoleRepository
+      .delete({ roleCode, isSystemRole: false })
+      .then((res) => res.affected);
+  }
+
+  async editChannelRolePermissions(
+    roleCode: any,
+    info: Partial<UpdateChannelPermission>,
+  ) {
+    if (roleCode === 'SUPER_ADMIN')
+      throw new ForbiddenException("Super Admin Permissions can't be changed");
+
+    const updates: Partial<UpdateChannelPermission> = {};
+
+    const fields = [
+      'canInvite',
+      'canDelete',
+      'canEdit',
+      'canManageRole',
+    ] as const;
+
+    fields.forEach((v) => {
+      if (info[v] !== undefined) updates[v] = info[v];
+    });
+
+    if (!Object.keys(updates).length)
+      throw new BadRequestException(
+        'Fields for updates not specified',
+        'FIELDS_FOR_UPDATES_NOT_SPECIFIED',
+      );
+
+    return this.channelRoleRepository.update({ roleCode }, updates);
   }
 }

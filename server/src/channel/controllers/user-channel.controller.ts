@@ -1,4 +1,4 @@
-import { Controller, Headers, Delete, Get, Put } from '@nestjs/common';
+import { Controller, Headers, Delete, Get } from '@nestjs/common';
 import { ApiHeader, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
@@ -7,7 +7,6 @@ import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
 import { ChannelService } from '../channel.service';
 import { CurrentUserChannel } from '../decorators/current-user-channel.decorator';
 import { UserChannelRole } from '../decorators/user-channel-role.decorator';
-import { UpdateChannelUserRoleDto } from '../dto/update-channel-user-role.dto';
 import { UserChannelListResponse } from '../responses/user-channel.response';
 
 @Controller({ path: 'user-channel', version: '1' })
@@ -48,13 +47,6 @@ export class UserChannelController {
     @CurrentUserChannel() currentUserChannel: UserChannel,
   ) {
     await currentUserChannel.remove();
-    return 'OK';
-  }
-
-  @Put('/role/update')
-  @UserChannelRole(['canManageRole'])
-  async updateUserChannelRole(info: UpdateChannelUserRoleDto) {
-    await this.channelService.updateChannelUserRole(info);
     return 'OK';
   }
 }

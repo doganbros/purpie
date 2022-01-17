@@ -1,6 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MailModule } from 'src/mail/mail.module';
+import { ChannelRole } from 'entities/ChannelRole.entity';
 import { ZoneModule } from 'src/zone/zone.module';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { Invitation } from 'entities/Invitation.entity';
@@ -12,7 +13,7 @@ import { ChannelService } from './channel.service';
 @Module({
   controllers: [ChannelController, UserChannelController],
   imports: [
-    TypeOrmModule.forFeature([UserChannel, Channel, Invitation]),
+    TypeOrmModule.forFeature([UserChannel, Channel, Invitation, ChannelRole]),
     MailModule,
     forwardRef(() => ZoneModule),
   ],

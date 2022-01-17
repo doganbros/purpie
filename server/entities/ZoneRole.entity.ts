@@ -12,6 +12,10 @@ export class ZoneRole extends BaseEntity {
   @ApiProperty()
   roleName: string;
 
+  @Column({ default: false })
+  @ApiProperty()
+  isSystemRole: boolean;
+
   @Column({ default: true })
   @ApiProperty()
   canCreateChannel: boolean;

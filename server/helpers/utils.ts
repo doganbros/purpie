@@ -127,5 +127,5 @@ export const parsePostTags = (description?: string) => {
 export const tsqueryParam = (value: string): string => {
   if (!value?.trim().length) return '';
 
-  return `${value.trim().replace(/[&|]/g, '').replace(/\s/g, ' | ')}:*`;
+  return `${value.trim().replace(/[&|]/g, '').replace(/\s/g, ' & ')}:*`;
 };

@@ -74,6 +74,7 @@ export class User extends RecordEntity {
 
   @OneToOne(() => UserRole)
   @JoinColumn({ name: 'userRoleCode', referencedColumnName: 'roleCode' })
+  @ApiProperty()
   userRole: UserRole;
 
   @Column()

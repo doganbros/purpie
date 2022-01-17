@@ -1,8 +1,7 @@
 import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { ChannelRoleCode } from 'types/RoleCodes';
 
-export class UpdateChannelUserRoleDto {
+export class UpdateUserZoneRoleDto {
   @ApiProperty()
   @IsInt()
   @IsNotEmpty()
@@ -10,5 +9,5 @@ export class UpdateChannelUserRoleDto {
 
   @ApiProperty()
   @IsString()
-  channelRoleCode: ChannelRoleCode;
+  zoneRoleCode: string;
 }

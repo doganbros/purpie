@@ -43,8 +43,10 @@ import {
   UserTokenPayload,
 } from 'src/auth/interfaces/user.interface';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
+import { SystemUserListQuery } from 'src/user/dto/system-user-list.query';
 import { CurrentUserZone } from 'src/zone/decorators/current-user-zone.decorator';
 import { UserZoneRole } from 'src/zone/decorators/user-zone-role.decorator';
+import { ChannelRole } from 'entities/ChannelRole.entity';
 import { InvitationResponseDto } from 'src/zone/dto/invitation-response.dto';
 import { ZoneService } from 'src/zone/zone.service';
 import { ChannelService } from '../channel.service';
@@ -54,6 +56,8 @@ import { CreateChannelDto } from '../dto/create-channel.dto';
 import { EditChannelDto } from '../dto/edit-channel.dto';
 import { InviteToJoinChannelDto } from '../dto/invite-to-join-channel.dto';
 import { SearchChannelQuery } from '../dto/search-channel.query';
+import { UpdateChannelUserRoleDto } from '../dto/update-channel-user-role.dto';
+import { UpdateChannelPermission } from '../dto/update-channel-permission.dto';
 
 const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 
@@ -276,6 +280,106 @@ export class ChannelController {
     @Body() editInfo: EditChannelDto,
   ) {
     await this.channelService.editChannelById(userChannel.channel.id, editInfo);
+    return 'OK';
+  }
+
+  @Get('/users/list/:channelId')
+  @ApiOkResponse({
+    description: 'User lists channel users',
+    type: User,
+  })
+  @UserChannelRole(['canManageRole'])
+  channelUserList(
+    @Query() query: SystemUserListQuery,
+    @Param('channelId', ParseIntPipe) channelId: number,
+  ) {
+    return this.channelService.listChannelUsers(channelId, query);
+  }
+
+  @Get('/role/list/:channelId')
+  @ApiOkResponse({
+    type: ChannelRole,
+    description:
+      'User lists all channel roles. User must have canManageRole permission',
+  })
+  @ApiParam({
+    name: 'channelId',
+    description: 'The channel id',
+  })
+  @ValidationBadRequest()
+  @UserChannelRole(['canManageRole'])
+  listChannelRoles() {
+    return this.channelService.listChannelRoles();
+  }
+
+  @Post('/role/create/:channelId')
+  @ApiParam({
+    name: 'channelId',
+    description: 'The channel id',
+  })
+  @ApiCreatedResponse({
+    description:
+      'User creates a new channel role. User must have canManageRole permission',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @ValidationBadRequest()
+  @UserChannelRole(['canManageRole'])
+  async createChannelRole(@Body() info: ChannelRole) {
+    await this.channelService.createChannelRole(info);
+    return 'OK';
+  }
+
+  @Put('/role/change/:channelId')
+  @ApiParam({
+    name: 'channelId',
+    description: 'The channel id',
+  })
+  @ApiCreatedResponse({
+    description:
+      'User changes a role for an existing user channel. User must have canManageRole permission',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @ValidationBadRequest()
+  @UserChannelRole(['canManageRole'])
+  async changeUserChannelRole(
+    @Body() info: UpdateChannelUserRoleDto,
+    @Param('channelId', ParseIntPipe) channelId: number,
+  ) {
+    await this.channelService.changeUserChannelRole(channelId, info);
+    return 'OK';
+  }
+
+  @Delete('/role/remove/:channelId/:roleCode')
+  @ApiParam({
+    name: 'channelId',
+    description: 'The channel id',
+  })
+  @ApiCreatedResponse({
+    description:
+      'User removes a new channel role. User must have canManageRole permission. When a role is removed Created is returned else OK',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @ValidationBadRequest()
+  @UserChannelRole(['canManageRole'])
+  async removeChannelRole(@Param('roleCode') roleCode: string) {
+    const result = await this.channelService.removeChannelRole(roleCode);
+    return result ? 'Created' : 'OK';
+  }
+
+  @Put('/permissions/update/:channelId')
+  @ApiParam({
+    name: 'channelId',
+    description: 'The channel id',
+  })
+  @ApiCreatedResponse({
+    description:
+      'User updates permissions for user role. User must have canManageRole permission',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @ValidationBadRequest()
+  @UserChannelRole(['canManageRole'])
+  async updateUserRolePermissions(@Body() info: UpdateChannelPermission) {
+    await this.channelService.editChannelRolePermissions(info.roleCode, info);
     return 'OK';
   }
 

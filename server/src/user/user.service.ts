@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -9,13 +10,16 @@ import { MattermostService } from 'src/utils/mattermost.service';
 import { ContactInvitation } from 'entities/ContactInvitation.entity';
 import { AuthService } from 'src/auth/auth.service';
 import { generateLowerAlphaNumId, tsqueryParam } from 'helpers/utils';
+import { UserRole } from 'entities/UserRole.entity';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { SearchUsersQuery } from './dto/search-users.query';
 import { SetUserRoleDto } from './dto/set-user-role.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { UpdateUserPermission } from './dto/update-permissions.dto';
+import { SystemUserListQuery } from './dto/system-user-list.query';
 
 @Injectable()
 export class UserService {
@@ -24,6 +28,8 @@ export class UserService {
     private contactRepository: Repository<Contact>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(UserRole)
+    private userRoleRepository: Repository<UserRole>,
     @InjectRepository(ContactInvitation)
     private contactInvitation: Repository<ContactInvitation>,
     private authService: AuthService,
@@ -166,10 +172,112 @@ export class UserService {
       .execute();
   }
 
-  async setUserRole(info: SetUserRoleDto) {
+  listUserRoles() {
+    return this.userRoleRepository.find({ take: 30 });
+  }
+
+  listSystemUsers(query: SystemUserListQuery) {
+    const baseQuery = this.userRepository
+      .createQueryBuilder('user')
+      .select([
+        'user.id',
+        'user.firstName',
+        'user.lastName',
+        'user.email',
+        'user.userName',
+        'user.userRoleCode',
+        'user.displayPhoto',
+      ])
+      .leftJoinAndSelect('user.userRole', 'userRole');
+
+    if (query.name) {
+      baseQuery
+        .setParameter('searchTerm', tsqueryParam(query.name))
+        .addSelect(
+          `ts_rank(user.search_document, to_tsquery('simple', :searchTerm))`,
+          'search_rank',
+        )
+        .where(`user.search_document @@ to_tsquery('simple', :searchTerm)`)
+        .orderBy('search_rank', 'DESC');
+    } else {
+      baseQuery.orderBy('user.firstName').addOrderBy('user.lastName');
+    }
+
+    return baseQuery.paginate(query);
+  }
+
+  async changeUserRole(info: SetUserRoleDto) {
+    const { roleCode } = info;
+    if (roleCode !== 'SUPER_ADMIN') {
+      const remainingSuperAdminCount = await this.userRepository.count({
+        where: { id: Not(info.userId), userRoleCode: 'SUPER_ADMIN' },
+      });
+
+      if (remainingSuperAdminCount === 0)
+        throw new ForbiddenException('There must be at least one super admin');
+    }
+
     return this.userRepository.update(info.userId, {
       userRoleCode: info.roleCode,
     });
+  }
+
+  async createUserRole(info: UserRole) {
+    const existingRoleCodes = await this.userRoleRepository.count({
+      where: { roleCode: info.roleCode },
+    });
+
+    if (existingRoleCodes)
+      throw new BadRequestException(
+        `The role code ${info.roleCode} already exists`,
+        'ROLE_CODE_ALREADY_EXISTS',
+      );
+
+    return this.userRoleRepository.create(info).save();
+  }
+
+  async removeUserRole(roleCode: any) {
+    const existing = await this.userRepository.count({
+      where: { userRoleCode: roleCode },
+    });
+
+    if (existing)
+      throw new ForbiddenException(
+        'Users using this role already exists',
+        'USERS_USING_ROLE',
+      );
+
+    return this.userRoleRepository
+      .delete({ roleCode, isSystemRole: false })
+      .then((res) => res.affected);
+  }
+
+  async editUserRolePermissions(
+    roleCode: any,
+    info: Partial<UpdateUserPermission>,
+  ) {
+    if (roleCode === 'SUPER_ADMIN')
+      throw new ForbiddenException("Super Admin Permissions can't be changed");
+
+    const updates: Partial<UpdateUserPermission> = {};
+
+    const fields = [
+      'canCreateZone',
+      'canCreateClient',
+      'canManageRole',
+    ] as const;
+
+    fields.forEach((v) => {
+      if (info[v] !== undefined) updates[v] = info[v];
+    });
+
+    if (!Object.keys(updates).length)
+      throw new BadRequestException(
+        'Fields for updates not specified',
+        'FIELDS_FOR_UPDATES_NOT_SPECIFIED',
+      );
+
+    return this.userRoleRepository.update({ roleCode }, updates);
   }
 
   async userNameExists(userName: string) {

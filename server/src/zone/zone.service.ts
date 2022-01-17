@@ -1,20 +1,28 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { pick } from 'lodash';
 import { URL } from 'url';
-import { Brackets, IsNull, Repository } from 'typeorm';
+import { Brackets, IsNull, Not, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Zone } from 'entities/Zone.entity';
 import { UserZoneRepository } from 'entities/repositories/UserZone.repository';
 import { tsqueryParam } from 'helpers/utils';
 import { SearchQuery } from 'types/SearchQuery';
+import { ZoneRole } from 'entities/ZoneRole.entity';
 import { UserProfile } from 'src/auth/interfaces/user.interface';
 import { Category } from 'entities/Category.entity';
 import { MailService } from 'src/mail/mail.service';
+import { SystemUserListQuery } from 'src/user/dto/system-user-list.query';
 import { UserZone } from 'entities/UserZone.entity';
 import { Invitation } from 'entities/Invitation.entity';
 import { User } from 'entities/User.entity';
 import { CreateZoneDto } from './dto/create-zone.dto';
 import { EditZoneDto } from './dto/edit-zone.dto';
+import { UpdateUserZoneRoleDto } from './dto/update-user-zone-role.dto';
+import { UpdateZonePermission } from './dto/update-zone-permission.dto';
 
 const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
 
@@ -22,6 +30,8 @@ const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
 export class ZoneService {
   constructor(
     @InjectRepository(Zone) private zoneRepository: Repository<Zone>,
+    @InjectRepository(ZoneRole)
+    private zoneRoleRepository: Repository<ZoneRole>,
     @InjectRepository(UserZoneRepository)
     private userZoneRepository: UserZoneRepository,
     @InjectRepository(Invitation)
@@ -290,5 +300,125 @@ export class ZoneService {
       { id },
       pick(editInfo, ['name', 'description', 'subdomain', 'public']),
     );
+  }
+
+  listZoneRoles() {
+    return this.zoneRoleRepository.find({ take: 30 });
+  }
+
+  listZoneUsers(zoneId: number, query: SystemUserListQuery) {
+    const baseQuery = this.userZoneRepository
+      .createQueryBuilder('userZone')
+      .select([
+        'userZone.id',
+        'userZone.createdOn',
+        'user.id',
+        'user.firstName',
+        'user.lastName',
+        'user.email',
+        'user.userName',
+        'user.displayPhoto',
+      ])
+      .innerJoin('userZone.user', 'user')
+      .leftJoinAndSelect('userZone.zoneRole', 'zoneRole')
+      .where('userZone.zoneId = :zoneId', { zoneId });
+
+    if (query.name) {
+      baseQuery
+        .setParameter('searchTerm', tsqueryParam(query.name))
+        .addSelect(
+          `ts_rank(user.search_document, to_tsquery('simple', :searchTerm))`,
+          'search_rank',
+        )
+        .andWhere(`user.search_document @@ to_tsquery('simple', :searchTerm)`)
+        .orderBy('search_rank', 'DESC');
+    } else {
+      baseQuery.orderBy('user.firstName').addOrderBy('user.lastName');
+    }
+
+    return baseQuery.paginate(query);
+  }
+
+  async changeUserZoneRole(zoneId: number, info: UpdateUserZoneRoleDto) {
+    const { zoneRoleCode } = info;
+    if (zoneRoleCode !== 'SUPER_ADMIN') {
+      const remainingSuperAdminCount = await this.userZoneRepository.count({
+        where: {
+          userId: Not(info.userId),
+          zoneId,
+          zoneRoleCode: 'SUPER_ADMIN',
+        },
+      });
+
+      if (remainingSuperAdminCount === 0)
+        throw new ForbiddenException('There must be at least one super admin');
+    }
+
+    return this.userZoneRepository.update(
+      { userId: info.userId, zoneId },
+      {
+        zoneRoleCode: info.zoneRoleCode as any,
+      },
+    );
+  }
+
+  async createZoneRole(info: ZoneRole) {
+    const existingRoleCodes = await this.zoneRoleRepository.count({
+      where: { roleCode: info.roleCode },
+    });
+
+    if (existingRoleCodes)
+      throw new BadRequestException(
+        `The role code ${info.roleCode} already exists`,
+        'ROLE_CODE_ALREADY_EXISTS',
+      );
+
+    return this.zoneRoleRepository.create(info).save();
+  }
+
+  async removeZoneRole(roleCode: any) {
+    const existing = await this.userZoneRepository.count({
+      where: { zoneRoleCode: roleCode },
+    });
+
+    if (existing)
+      throw new ForbiddenException(
+        'Users using this role already exists',
+        'USERS_USING_ROLE',
+      );
+
+    return this.zoneRoleRepository
+      .delete({ roleCode, isSystemRole: false })
+      .then((res) => res.affected);
+  }
+
+  async editZoneRolePermissions(
+    roleCode: any,
+    info: Partial<UpdateZonePermission>,
+  ) {
+    if (roleCode === 'SUPER_ADMIN')
+      throw new ForbiddenException("Super Admin Permissions can't be changed");
+
+    const updates: Partial<UpdateZonePermission> = {};
+
+    const fields = [
+      'canInvite',
+      'canDelete',
+      'canEdit',
+      'canCreateChannel',
+      'canManageRole',
+    ] as const;
+
+    fields.forEach((v) => {
+      if (info[v] !== undefined) updates[v] = info[v];
+    });
+
+    if (!Object.keys(updates).length)
+      throw new BadRequestException(
+        'Fields for updates not specified',
+        'FIELDS_FOR_UPDATES_NOT_SPECIFIED',
+      );
+
+    return this.zoneRoleRepository.update({ roleCode }, updates);
   }
 }

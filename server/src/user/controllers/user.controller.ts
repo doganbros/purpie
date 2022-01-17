@@ -33,13 +33,14 @@ import {
   CurrentUserProfile,
 } from 'src/auth/decorators/current-user.decorator';
 import { s3HeadObject, s3Storage, s3 } from 'config/s3-storage';
-import { AuthService } from 'src/auth/auth.service';
 import {
   UserProfile,
   UserTokenPayload,
 } from 'src/auth/interfaces/user.interface';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
+import { User } from 'entities/User.entity';
 import { emptyPaginatedResponse } from 'helpers/utils';
+import { UserRole } from 'entities/UserRole.entity';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { UserNameExistenceCheckDto } from 'src/meeting/dto/user-name-existence-check.dto';
 import { ContactIdParam } from '../dto/contact-id.param';
@@ -54,16 +55,15 @@ import { SearchUsersQuery } from '../dto/search-users.query';
 import { SetUserRoleDto } from '../dto/set-user-role.dto';
 import { UserService } from '../user.service';
 import { UpdateProfileDto } from '../dto/update-profile.dto';
+import { UpdateUserPermission } from '../dto/update-permissions.dto';
+import { SystemUserListQuery } from '../dto/system-user-list.query';
 
 const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 
 @Controller({ path: 'user', version: '1' })
 @ApiTags('user')
 export class UserController {
-  constructor(
-    private userService: UserService,
-    private authService: AuthService,
-  ) {}
+  constructor(private userService: UserService) {}
 
   @Post('/contact/invitation/response')
   @ApiCreatedResponse({
@@ -113,6 +113,16 @@ export class UserController {
     );
 
     return contactInvitation.id;
+  }
+
+  @Get('/list')
+  @ApiOkResponse({
+    description: 'User lists system users',
+    type: User,
+  })
+  @IsAuthenticated(['canManageRole'])
+  systemUserList(@Query() query: SystemUserListQuery) {
+    return this.userService.listSystemUsers(query);
   }
 
   @Get('/search')
@@ -174,15 +184,67 @@ export class UserController {
     return contactInvitation;
   }
 
-  @Post('/set/role')
+  @Get('/role/list')
+  @ApiOkResponse({
+    type: UserRole,
+    description:
+      'User lists user roles. User must have canManageRole permission',
+  })
+  @ValidationBadRequest()
+  @IsAuthenticated(['canManageRole'])
+  async listUserRoles() {
+    return this.userService.listUserRoles();
+  }
+
+  @Post('/role/create')
   @ApiCreatedResponse({
-    description: 'User sets a role. User must have canManageRole permission',
+    description:
+      'User creates a new user role. User must have canManageRole permission',
     schema: { type: 'string', example: 'OK' },
   })
   @ValidationBadRequest()
   @IsAuthenticated(['canManageRole'])
-  async setRole(@Body() info: SetUserRoleDto) {
-    await this.userService.setUserRole(info);
+  async createUserRole(@Body() info: UserRole) {
+    await this.userService.createUserRole(info);
+    return 'OK';
+  }
+
+  @Put('/role/change')
+  @ApiCreatedResponse({
+    description:
+      'User changes a role for an existing user. User must have canManageRole permission',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @ValidationBadRequest()
+  @IsAuthenticated(['canManageRole'])
+  async changeUserRole(@Body() info: SetUserRoleDto) {
+    await this.userService.changeUserRole(info);
+    return 'OK';
+  }
+
+  @Delete('/role/remove/:roleCode')
+  @ApiCreatedResponse({
+    description:
+      'User removes a new user role. User must have canManageRole permission. When a role is removed Created is returned else OK',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @ValidationBadRequest()
+  @IsAuthenticated(['canManageRole'])
+  async removeUserRole(@Param('roleCode') roleCode: string) {
+    const result = await this.userService.removeUserRole(roleCode);
+    return result ? 'Created' : 'OK';
+  }
+
+  @Put('/permissions/update')
+  @ApiCreatedResponse({
+    description:
+      'User updates permissions for user role. User must have canManageRole permission',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @ValidationBadRequest()
+  @IsAuthenticated(['canManageRole'])
+  async updateUserRolePermissions(@Body() info: UpdateUserPermission) {
+    await this.userService.editUserRolePermissions(info.roleCode, info);
     return 'OK';
   }
 

@@ -8,6 +8,7 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -35,10 +36,12 @@ import {
 import { User } from 'entities/User.entity';
 import { SearchQuery } from 'types/SearchQuery';
 import { Category } from 'entities/Category.entity';
+import { ZoneRole } from 'entities/ZoneRole.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { s3, s3HeadObject, s3Storage } from 'config/s3-storage';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { errorResponseDoc } from 'helpers/error-response-doc';
+import { SystemUserListQuery } from 'src/user/dto/system-user-list.query';
 import {
   UserProfile,
   UserTokenPayload,
@@ -51,6 +54,8 @@ import { ZoneIdParams } from '../dto/zone-id.params';
 import { ZoneService } from '../zone.service';
 import { EditZoneDto } from '../dto/edit-zone.dto';
 import { CreateZoneDto } from '../dto/create-zone.dto';
+import { UpdateUserZoneRoleDto } from '../dto/update-user-zone-role.dto';
+import { UpdateZonePermission } from '../dto/update-zone-permission.dto';
 
 const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 @Controller({ version: '1', path: 'zone' })
@@ -78,6 +83,19 @@ export class ZoneController {
     this.zoneService.sendZoneInfoMail(userZone.zone, userProfile);
 
     return userZone.id;
+  }
+
+  @Get('/users/list/:zoneId')
+  @ApiOkResponse({
+    description: 'User lists zone users',
+    type: User,
+  })
+  @UserZoneRole(['canManageRole'])
+  channelUserList(
+    @Query() query: SystemUserListQuery,
+    @Param('zoneId', ParseIntPipe) zoneId: number,
+  ) {
+    return this.zoneService.listZoneUsers(zoneId, query);
   }
 
   @Get('/search')
@@ -319,5 +337,88 @@ export class ZoneController {
     } catch (err: any) {
       return res.status(err.statusCode || 500).json(err);
     }
+  }
+
+  @Get('/role/list/:zoneId')
+  @ApiOkResponse({
+    type: ZoneRole,
+    description:
+      'User lists all zone roles. User must have canManageRole permission',
+  })
+  @ApiParam({
+    name: 'zoneId',
+    description: 'The zone id',
+  })
+  @ValidationBadRequest()
+  @UserZoneRole(['canManageRole'])
+  listZoneRoles() {
+    return this.zoneService.listZoneRoles();
+  }
+
+  @Post('/role/create/:zoneId')
+  @ApiCreatedResponse({
+    description:
+      'User creates a new zone role. User must have canManageRole permission',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @ApiParam({
+    name: 'zoneId',
+    description: 'The zone id',
+  })
+  @ValidationBadRequest()
+  @UserZoneRole(['canManageRole'])
+  async createZoneRole(@Body() info: ZoneRole) {
+    await this.zoneService.createZoneRole(info);
+    return 'OK';
+  }
+
+  @Put('/role/change/:zoneId')
+  @ApiCreatedResponse({
+    description:
+      'User changes a role for an existing user zone. User must have canManageRole permission',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @ValidationBadRequest()
+  @UserZoneRole(['canManageRole'])
+  async changeUserZoneRole(
+    @Body() info: UpdateUserZoneRoleDto,
+    @Param('zoneId', ParseIntPipe) zoneId: number,
+  ) {
+    await this.zoneService.changeUserZoneRole(zoneId, info);
+    return 'OK';
+  }
+
+  @Delete('/role/remove/:zoneId/:roleCode')
+  @ApiParam({
+    name: 'zoneId',
+    description: 'The zone id',
+  })
+  @ApiCreatedResponse({
+    description:
+      'User removes a new zone role. User must have canManageRole permission. When a role is removed Created is returned else OK',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @ValidationBadRequest()
+  @UserZoneRole(['canManageRole'])
+  async removeChannelRole(@Param('roleCode') roleCode: string) {
+    const result = await this.zoneService.removeZoneRole(roleCode);
+    return result ? 'Created' : 'OK';
+  }
+
+  @Put('/permissions/update/:zoneId')
+  @ApiParam({
+    name: 'zoneId',
+    description: 'The zone id',
+  })
+  @ApiCreatedResponse({
+    description:
+      'User updates permissions for user role. User must have canManageRole permission',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @ValidationBadRequest()
+  @UserZoneRole(['canManageRole'])
+  async updateUserRolePermissions(@Body() info: UpdateZonePermission) {
+    await this.zoneService.editZoneRolePermissions(info.roleCode, info);
+    return 'OK';
   }
 }

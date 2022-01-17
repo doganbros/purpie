@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserZoneRepository } from 'entities/repositories/UserZone.repository';
 import { Invitation } from 'entities/Invitation.entity';
 import { Zone } from 'entities/Zone.entity';
+import { ZoneRole } from 'entities/ZoneRole.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { Category } from 'entities/Category.entity';
 import { MailModule } from 'src/mail/mail.module';
@@ -16,6 +17,7 @@ import { ZoneController } from './controllers/zone.controller';
       Zone,
       Invitation,
       Category,
+      ZoneRole,
       UserZoneRepository,
       UserChannel,
     ]),

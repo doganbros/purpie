@@ -12,6 +12,9 @@ export class ChannelRole extends BaseEntity {
   @ApiProperty()
   roleName: string;
 
+  @Column({ default: false })
+  isSystemRole: boolean;
+
   @Column({ default: true })
   @ApiProperty()
   canInvite: boolean;
