@@ -9,6 +9,7 @@ import { Brackets, IsNull, Not, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Zone } from 'entities/Zone.entity';
 import { UserZoneRepository } from 'entities/repositories/UserZone.repository';
+import { defaultZoneRoles } from 'entities/data/default-roles';
 import { tsqueryParam } from 'helpers/utils';
 import { SearchQuery } from 'types/SearchQuery';
 import { ZoneRole } from 'entities/ZoneRole.entity';
@@ -42,7 +43,7 @@ export class ZoneService {
   ) {}
 
   async createZone(userId: number, createZoneInfo: CreateZoneDto) {
-    return this.userZoneRepository
+    const userZone = await this.userZoneRepository
       .create({
         userId,
         zoneRoleCode: 'SUPER_ADMIN',
@@ -58,6 +59,12 @@ export class ZoneService {
           .save(),
       })
       .save();
+
+    await this.zoneRoleRepository.insert(
+      defaultZoneRoles.map((v) => ({ ...v, zoneId: userZone.zone.id })),
+    );
+
+    return userZone;
   }
 
   async validateJoinPublicZone(userId: number, zoneId: number) {
@@ -190,7 +197,11 @@ export class ZoneService {
         'user_zone.zoneId = zone.id and user_zone.userId = :userId',
         { userId },
       )
-      .leftJoinAndSelect('user_zone.zoneRole', 'zone_role')
+      .leftJoinAndSelect(
+        'user_zone.zoneRole',
+        'zone_role',
+        'zone_role.zoneId = zone.id AND zone_role.roleCode = user_zone.zoneRoleCode',
+      )
       .where('zone.public = true and zone.subdomain = :subdomain', {
         subdomain,
       })
@@ -222,6 +233,7 @@ export class ZoneService {
       },
       zoneRole: {
         roleCode: record.zone_role_roleCode,
+        zoneId: record.zone_role_zoneId,
         roleName: record.zone_role_roleName,
         canCreateChannel: record.zone_role_canCreateChannel,
         canInvite: record.zone_role_canInvite,
@@ -233,13 +245,26 @@ export class ZoneService {
   }
 
   async getUserZone(userId: number, params: Record<string, any>) {
-    return this.userZoneRepository.findOne({
-      where: {
-        userId,
-        ...params,
-      },
-      relations: ['zone', 'zoneRole', 'zone.category'],
-    });
+    const baseQuery = this.userZoneRepository
+      .createQueryBuilder('user_zone')
+      .select(['user_zone.id', 'user_zone.createdOn'])
+      .innerJoinAndSelect('user_zone.category', 'category')
+      .innerJoinAndSelect('user_zone.zone', 'zone')
+      .innerJoinAndSelect(
+        'zone.zoneRole',
+        'zoneRole',
+        'zoneRole.zoneId = zone.id AND zoneRole.roleCode = user_zone.zoneRoleCode',
+      )
+      .where('user_channel.userId = :userId', { userId });
+
+    if (params.zoneId)
+      baseQuery.andWhere('zone.id = :zoneId', { zoneId: params.zoneId });
+    if (params.userZoneId)
+      baseQuery.andWhere('user_zone.id = :userZoneId', {
+        userZoneId: params.userZoneId,
+      });
+
+    return baseQuery.getOne();
   }
 
   async sendZoneInfoMail(zone: Zone, userPayload: UserProfile) {
@@ -302,8 +327,8 @@ export class ZoneService {
     );
   }
 
-  listZoneRoles() {
-    return this.zoneRoleRepository.find({ take: 30 });
+  listZoneRoles(zoneId: number) {
+    return this.zoneRoleRepository.find({ take: 30, where: { zoneId } });
   }
 
   listZoneUsers(zoneId: number, query: SystemUserListQuery) {
@@ -320,7 +345,12 @@ export class ZoneService {
         'user.displayPhoto',
       ])
       .innerJoin('userZone.user', 'user')
-      .leftJoinAndSelect('userZone.zoneRole', 'zoneRole')
+      .leftJoinAndSelect(
+        'userZone.zoneRole',
+        'zoneRole',
+        'zoneRole.roleCode = userZone.zoneRoleCode AND zoneRole.zoneId = :zoneId',
+        { zoneId },
+      )
       .where('userZone.zoneId = :zoneId', { zoneId });
 
     if (query.name) {
@@ -362,9 +392,9 @@ export class ZoneService {
     );
   }
 
-  async createZoneRole(info: ZoneRole) {
+  async createZoneRole(zoneId: number, info: ZoneRole) {
     const existingRoleCodes = await this.zoneRoleRepository.count({
-      where: { roleCode: info.roleCode },
+      where: { roleCode: info.roleCode, zoneId },
     });
 
     if (existingRoleCodes)
@@ -373,12 +403,12 @@ export class ZoneService {
         'ROLE_CODE_ALREADY_EXISTS',
       );
 
-    return this.zoneRoleRepository.create(info).save();
+    return this.zoneRoleRepository.create({ ...info, zoneId }).save();
   }
 
-  async removeZoneRole(roleCode: any) {
+  async removeZoneRole(zoneId: number, roleCode: string) {
     const existing = await this.userZoneRepository.count({
-      where: { zoneRoleCode: roleCode },
+      where: { zoneRoleCode: roleCode, zoneId },
     });
 
     if (existing)
@@ -388,11 +418,12 @@ export class ZoneService {
       );
 
     return this.zoneRoleRepository
-      .delete({ roleCode, isSystemRole: false })
+      .delete({ roleCode, isSystemRole: false, zoneId })
       .then((res) => res.affected);
   }
 
   async editZoneRolePermissions(
+    zoneId: number,
     roleCode: any,
     info: Partial<UpdateZonePermission>,
   ) {
@@ -419,6 +450,6 @@ export class ZoneService {
         'FIELDS_FOR_UPDATES_NOT_SPECIFIED',
       );
 
-    return this.zoneRoleRepository.update({ roleCode }, updates);
+    return this.zoneRoleRepository.update({ roleCode, zoneId }, updates);
   }
 }

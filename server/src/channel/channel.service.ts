@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from 'entities/Channel.entity';
 import { ChannelRole } from 'entities/ChannelRole.entity';
+import { defaultChannelRoles } from 'entities/data/default-roles';
 import { Invitation } from 'entities/Invitation.entity';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
@@ -47,7 +48,7 @@ export class ChannelService {
     createChannelInfo: CreateChannelDto,
     defaultChannel = false,
   ) {
-    return this.userChannelRepository
+    const userChannel = await this.userChannelRepository
       .create({
         userId,
         userZoneId,
@@ -65,6 +66,15 @@ export class ChannelService {
           .save(),
       })
       .save();
+
+    await this.channelRoleRepository.insert(
+      defaultChannelRoles.map((v) => ({
+        ...v,
+        channelId: userChannel.channel.id,
+      })),
+    );
+
+    return userChannel;
   }
 
   async sendChannelInfo(
@@ -90,13 +100,27 @@ export class ChannelService {
   }
 
   async getUserChannel(userId: number, params: Record<string, any>) {
-    return this.userChannelRepository.findOne({
-      where: {
-        userId,
-        ...params,
-      },
-      relations: ['channel', 'channelRole'],
-    });
+    const baseQuery = this.userChannelRepository
+      .createQueryBuilder('user_channel')
+      .select(['user_channel.id', 'user_channel.createdOn'])
+      .innerJoinAndSelect('user_channel.channel', 'channel')
+      .innerJoinAndSelect(
+        'user_channel.channelRole',
+        'channelRole',
+        'channelRole.channelId = channel.id AND channelRole.roleCode = user_channel.channelRoleCode',
+      )
+      .where('user_channel.userId = :userId', { userId });
+
+    if (params.channelId)
+      baseQuery.andWhere('channel.id = :channelId', {
+        channelId: params.channelId,
+      });
+    if (params.userChannelId)
+      baseQuery.andWhere('user_channel.id = :userChannelId', {
+        userChannelId: params.userChannelId,
+      });
+
+    return baseQuery.getOne();
   }
 
   async getPublicChannels(userId: number, zoneId: number) {
@@ -228,7 +252,11 @@ export class ChannelService {
         { userId },
       )
       .leftJoinAndSelect('channel.category', 'category')
-      .leftJoinAndSelect('user_channel.channelRole', 'channel_role')
+      .leftJoinAndSelect(
+        'user_channel.channelRole',
+        'channel_role',
+        'channel_role.roleCode = user_channel.channelRoleCode AND channel_role.channelId = channel.id',
+      )
       .where(
         typeof identifier === 'string'
           ? 'zone.subdomain = :identifier'
@@ -305,7 +333,11 @@ export class ChannelService {
       .leftJoin('user_channel.channel', 'channel')
       .leftJoin('channel.createdBy', 'createdBy')
       .leftJoinAndSelect('channel.category', 'category')
-      .leftJoinAndSelect('user_channel.channelRole', 'channel_role')
+      .leftJoinAndSelect(
+        'user_channel.channelRole',
+        'channel_role',
+        'channel_role.roleCode = user_channel.channelRoleCode AND channel_role.channelId = channel.id',
+      )
       .where('user_channel.userId = :userId', { userId })
       .orderBy('user_channel.createdOn', 'DESC')
       .getMany();
@@ -444,8 +476,8 @@ export class ChannelService {
     );
   }
 
-  listChannelRoles() {
-    return this.channelRoleRepository.find({ take: 30 });
+  listChannelRoles(channelId: number) {
+    return this.channelRoleRepository.find({ take: 30, where: { channelId } });
   }
 
   listChannelUsers(channelId: number, query: SystemUserListQuery) {
@@ -507,9 +539,9 @@ export class ChannelService {
     );
   }
 
-  async createChannelRole(info: ChannelRole) {
+  async createChannelRole(channelId: number, info: ChannelRole) {
     const existingRoleCodes = await this.channelRoleRepository.count({
-      where: { roleCode: info.roleCode },
+      where: { roleCode: info.roleCode, channelId },
     });
 
     if (existingRoleCodes)
@@ -518,12 +550,12 @@ export class ChannelService {
         'ROLE_CODE_ALREADY_EXISTS',
       );
 
-    return this.channelRoleRepository.create(info).save();
+    return this.channelRoleRepository.create({ ...info, channelId }).save();
   }
 
-  async removeChannelRole(roleCode: any) {
+  async removeChannelRole(channelId: number, roleCode: any) {
     const existing = await this.userChannelRepository.count({
-      where: { channelRoleCode: roleCode },
+      where: { channelRoleCode: roleCode, channelId },
     });
 
     if (existing)
@@ -533,12 +565,13 @@ export class ChannelService {
       );
 
     return this.channelRoleRepository
-      .delete({ roleCode, isSystemRole: false })
+      .delete({ roleCode, isSystemRole: false, channelId })
       .then((res) => res.affected);
   }
 
   async editChannelRolePermissions(
-    roleCode: any,
+    channelId: number,
+    roleCode: string,
     info: Partial<UpdateChannelPermission>,
   ) {
     if (roleCode === 'SUPER_ADMIN')
@@ -563,6 +596,6 @@ export class ChannelService {
         'FIELDS_FOR_UPDATES_NOT_SPECIFIED',
       );
 
-    return this.channelRoleRepository.update({ roleCode }, updates);
+    return this.channelRoleRepository.update({ roleCode, channelId }, updates);
   }
 }

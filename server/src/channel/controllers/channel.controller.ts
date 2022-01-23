@@ -302,21 +302,13 @@ export class ChannelController {
     description:
       'User lists all channel roles. User must have canManageRole permission',
   })
-  @ApiParam({
-    name: 'channelId',
-    description: 'The channel id',
-  })
   @ValidationBadRequest()
   @UserChannelRole(['canManageRole'])
-  listChannelRoles() {
-    return this.channelService.listChannelRoles();
+  listChannelRoles(@Param('channelId', ParseIntPipe) channelId: number) {
+    return this.channelService.listChannelRoles(channelId);
   }
 
   @Post('/role/create/:channelId')
-  @ApiParam({
-    name: 'channelId',
-    description: 'The channel id',
-  })
   @ApiCreatedResponse({
     description:
       'User creates a new channel role. User must have canManageRole permission',
@@ -324,16 +316,15 @@ export class ChannelController {
   })
   @ValidationBadRequest()
   @UserChannelRole(['canManageRole'])
-  async createChannelRole(@Body() info: ChannelRole) {
-    await this.channelService.createChannelRole(info);
+  async createChannelRole(
+    @Body() info: ChannelRole,
+    @Param('channelId', ParseIntPipe) channelId: number,
+  ) {
+    await this.channelService.createChannelRole(channelId, info);
     return 'OK';
   }
 
   @Put('/role/change/:channelId')
-  @ApiParam({
-    name: 'channelId',
-    description: 'The channel id',
-  })
   @ApiCreatedResponse({
     description:
       'User changes a role for an existing user channel. User must have canManageRole permission',
@@ -350,10 +341,6 @@ export class ChannelController {
   }
 
   @Delete('/role/remove/:channelId/:roleCode')
-  @ApiParam({
-    name: 'channelId',
-    description: 'The channel id',
-  })
   @ApiCreatedResponse({
     description:
       'User removes a new channel role. User must have canManageRole permission. When a role is removed Created is returned else OK',
@@ -361,16 +348,18 @@ export class ChannelController {
   })
   @ValidationBadRequest()
   @UserChannelRole(['canManageRole'])
-  async removeChannelRole(@Param('roleCode') roleCode: string) {
-    const result = await this.channelService.removeChannelRole(roleCode);
+  async removeChannelRole(
+    @Param('roleCode') roleCode: string,
+    @Param('channelId', ParseIntPipe) channelId: number,
+  ) {
+    const result = await this.channelService.removeChannelRole(
+      channelId,
+      roleCode,
+    );
     return result ? 'Created' : 'OK';
   }
 
   @Put('/permissions/update/:channelId')
-  @ApiParam({
-    name: 'channelId',
-    description: 'The channel id',
-  })
   @ApiCreatedResponse({
     description:
       'User updates permissions for user role. User must have canManageRole permission',
@@ -378,8 +367,15 @@ export class ChannelController {
   })
   @ValidationBadRequest()
   @UserChannelRole(['canManageRole'])
-  async updateUserRolePermissions(@Body() info: UpdateChannelPermission) {
-    await this.channelService.editChannelRolePermissions(info.roleCode, info);
+  async updateUserRolePermissions(
+    @Body() info: UpdateChannelPermission,
+    @Param('channelId', ParseIntPipe) channelId: number,
+  ) {
+    await this.channelService.editChannelRolePermissions(
+      channelId,
+      info.roleCode,
+      info,
+    );
     return 'OK';
   }
 

@@ -351,8 +351,8 @@ export class ZoneController {
   })
   @ValidationBadRequest()
   @UserZoneRole(['canManageRole'])
-  listZoneRoles() {
-    return this.zoneService.listZoneRoles();
+  listZoneRoles(@Param('zoneId', ParseIntPipe) zoneId: number) {
+    return this.zoneService.listZoneRoles(zoneId);
   }
 
   @Post('/role/create/:zoneId')
@@ -361,14 +361,13 @@ export class ZoneController {
       'User creates a new zone role. User must have canManageRole permission',
     schema: { type: 'string', example: 'OK' },
   })
-  @ApiParam({
-    name: 'zoneId',
-    description: 'The zone id',
-  })
   @ValidationBadRequest()
   @UserZoneRole(['canManageRole'])
-  async createZoneRole(@Body() info: ZoneRole) {
-    await this.zoneService.createZoneRole(info);
+  async createZoneRole(
+    @Body() info: ZoneRole,
+    @Param('zoneId', ParseIntPipe) zoneId: number,
+  ) {
+    await this.zoneService.createZoneRole(zoneId, info);
     return 'OK';
   }
 
@@ -400,8 +399,11 @@ export class ZoneController {
   })
   @ValidationBadRequest()
   @UserZoneRole(['canManageRole'])
-  async removeChannelRole(@Param('roleCode') roleCode: string) {
-    const result = await this.zoneService.removeZoneRole(roleCode);
+  async removeChannelRole(
+    @Param('roleCode') roleCode: string,
+    @Param('zoneId', ParseIntPipe) zoneId: number,
+  ) {
+    const result = await this.zoneService.removeZoneRole(zoneId, roleCode);
     return result ? 'Created' : 'OK';
   }
 
@@ -417,8 +419,11 @@ export class ZoneController {
   })
   @ValidationBadRequest()
   @UserZoneRole(['canManageRole'])
-  async updateUserRolePermissions(@Body() info: UpdateZonePermission) {
-    await this.zoneService.editZoneRolePermissions(info.roleCode, info);
+  async updateUserRolePermissions(
+    @Body() info: UpdateZonePermission,
+    @Param('zoneId', ParseIntPipe) zoneId: number,
+  ) {
+    await this.zoneService.editZoneRolePermissions(zoneId, info.roleCode, info);
     return 'OK';
   }
 }

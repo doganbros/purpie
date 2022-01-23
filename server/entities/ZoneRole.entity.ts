@@ -1,12 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
-import { ZoneRoleCode } from 'types/RoleCodes';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class ZoneRole extends BaseEntity {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   @ApiProperty()
-  roleCode: ZoneRoleCode;
+  id: number;
+
+  @ApiProperty()
+  @Column()
+  roleCode: string;
+
+  @ApiProperty()
+  @Column()
+  zoneId: number;
 
   @Column()
   @ApiProperty()
