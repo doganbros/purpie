@@ -13,9 +13,10 @@ import {
   removePostLikeAction,
 } from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
-import VideoPlayer from '../../../components/utils/VideoPlayer';
 import { FavoriteFill } from '../../../components/utils/CustomIcons';
 import RecommendedVideos from './RecommendedVideos';
+import VideoJs from '../../../components/utils/PostGridItem/VideoJs';
+import { http } from '../../../config/http';
 
 dayjs.extend(relativeTime);
 interface RouteParams {
@@ -55,7 +56,25 @@ const Video: FC = () => {
             <Text weight="bold">{dayjs(data.createdOn).fromNow()}</Text>
           </Box>
           <Box gap="medium">
-            <VideoPlayer slug={data.slug} videoName={data.videoName} />
+            <VideoJs
+              options={{
+                autoplay: true,
+                muted: false,
+                controls: true,
+                fluid: true,
+                controlBar: {
+                  volumePanel: {
+                    inline: false,
+                  },
+                },
+                sources: [
+                  {
+                    src: `${http.defaults.baseURL}/post/video/view/${data.slug}/${data.videoName}`,
+                    type: 'video/mp4',
+                  },
+                ],
+              }}
+            />
             <Box direction="row" justify="between">
               <Box direction="row" gap="medium">
                 <Box direction="row" gap="xsmall">

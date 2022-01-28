@@ -1,11 +1,11 @@
 import { Box } from 'grommet';
+import videojs from 'video.js';
 import { Bookmark, PlayFill } from 'grommet-icons';
-import { nanoid } from 'nanoid';
-import React, { FC, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import { http } from '../../../config/http';
-import { useVideoJS } from '../../../hooks/useVideoJS';
 import { BookmarkFill } from '../CustomIcons';
 import ExtendedBox from '../ExtendedBox';
+import VideoJs from './VideoJs';
 
 interface VideoPostProps {
   id: number;
@@ -24,20 +24,7 @@ export const VideoPost: FC<VideoPostProps> = ({
   saved,
   onClickSave,
 }) => {
-  const [videoKey] = useState(nanoid());
-  const { Video, player } = useVideoJS(videoKey, {
-    autoplay: false,
-    muted: true,
-    controlBar: false,
-    controls: false,
-    aspectRatio: '16:9',
-    sources: [
-      {
-        src: `${http.defaults.baseURL}/post/video/view/${slug}/${videoName}`,
-        type: 'video/mp4',
-      },
-    ],
-  });
+  const player = useRef<videojs.Player | null>(null);
   const [hover, setHover] = useState(false);
 
   return (
@@ -45,19 +32,36 @@ export const VideoPost: FC<VideoPostProps> = ({
       position="relative"
       onMouseEnter={() => {
         setHover(true);
-        if (player) {
-          player.play();
+        if (player.current) {
+          player.current.play();
         }
       }}
       onMouseLeave={() => {
         setHover(false);
-        if (player) {
-          player.pause();
-          player.currentTime(0);
+        if (player.current) {
+          player.current.pause();
+          player.current.currentTime(0);
         }
       }}
     >
-      <Video />
+      <VideoJs
+        getPlayer={(p) => {
+          player.current = p;
+        }}
+        options={{
+          autoplay: false,
+          muted: true,
+          controlBar: false,
+          controls: false,
+          aspectRatio: '16:9',
+          sources: [
+            {
+              src: `${http.defaults.baseURL}/post/video/view/${slug}/${videoName}`,
+              type: 'video/mp4',
+            },
+          ],
+        }}
+      />
       <ExtendedBox
         position="absolute"
         top="0"
