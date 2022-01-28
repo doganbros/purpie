@@ -1,3 +1,4 @@
+import { navigateToSubdomain } from '../../helpers/app-subdomain';
 import appHistory from '../../helpers/history';
 import {
   FORGOT_PASSWORD_FAILED,
@@ -150,6 +151,7 @@ export const logoutAction = (): AuthAction => {
     dispatch({
       type: LOGOUT,
     });
+    navigateToSubdomain();
   };
 };
 
