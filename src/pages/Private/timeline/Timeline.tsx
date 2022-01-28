@@ -1,6 +1,4 @@
-import React, { FC, useState, useContext, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -9,15 +7,12 @@ import {
   ResponsiveContext,
   Text,
 } from 'grommet';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
-import ChannelsToFollow from './ChannelsToFollow';
-import ZonesToJoin from './ZonesToJoin';
-import LastActivities from './LastActivities';
-import Searchbar from './Searchbar';
 import PostGridItem from '../../../components/utils/PostGridItem/PostGridItem';
-import ChannelList from './ChannelList';
-import { AppState } from '../../../store/reducers/root.reducer';
+import SearchBar from '../../../components/utils/SearchBar';
 import {
   createPostSaveAction,
   getChannelFeedAction,
@@ -26,6 +21,11 @@ import {
   getZoneFeedAction,
   removePostSaveAction,
 } from '../../../store/actions/post.action';
+import { AppState } from '../../../store/reducers/root.reducer';
+import ChannelList from './ChannelList';
+import ChannelsToFollow from './ChannelsToFollow';
+import LastActivities from './LastActivities';
+import ZonesToJoin from './ZonesToJoin';
 
 const Timeline: FC = () => {
   const size = useContext(ResponsiveContext);
@@ -112,7 +112,7 @@ const Timeline: FC = () => {
       title="Timeline"
       rightComponent={
         <Box pad="medium" gap="medium">
-          <Searchbar />
+          <SearchBar />
           <ChannelsToFollow />
           <Divider />
           <ZonesToJoin />

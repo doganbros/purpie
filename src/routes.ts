@@ -1,16 +1,17 @@
-import { RouteComponentProps } from 'react-router-dom';
 import { nanoid } from 'nanoid';
+import { RouteComponentProps } from 'react-router-dom';
+import Channels from './pages/Private/channels/Channels';
+import Saved from './pages/Private/saved/Saved';
+import Search from './pages/Private/search/Search';
+import Timeline from './pages/Private/timeline/Timeline';
+import Video from './pages/Private/video/Video';
+import ForgotPassword from './pages/Public/ForgotPassword';
 import Login from './pages/Public/Login';
 import Register from './pages/Public/Register';
-import ForgotPassword from './pages/Public/ForgotPassword';
 import ResetPassword from './pages/Public/ResetPassword';
-import Timeline from './pages/Private/timeline/Timeline';
-import Channels from './pages/Private/channels/Channels';
-import Video from './pages/Private/video/Video';
 import ThirdPartyAuth from './pages/Public/ThirdPartyAuth';
-import VerifyUserEmailInfo from './pages/Public/VerifyUserEmailInfo';
 import VerifyUserEmail from './pages/Public/VerifyUserEmail';
-import Saved from './pages/Private/saved/Saved';
+import VerifyUserEmailInfo from './pages/Public/VerifyUserEmailInfo';
 
 interface AppRoute {
   id: string;
@@ -91,5 +92,11 @@ export const privateRoutes: Array<AppRoute> = [
     path: '/video/:id',
     component: Video,
     description: 'User views a video',
+  },
+  {
+    id: nanoid(),
+    path: '/search/:scope/:value',
+    component: Search,
+    description: 'User views a search results',
   },
 ];

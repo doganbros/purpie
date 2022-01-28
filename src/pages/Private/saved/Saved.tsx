@@ -1,22 +1,22 @@
-import React, { FC, useContext, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { Box, Grid, InfiniteScroll, ResponsiveContext, Text } from 'grommet';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { Box, Grid, InfiniteScroll, ResponsiveContext, Text } from 'grommet';
+import React, { FC, useContext, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
-import ChannelsToFollow from '../timeline/ChannelsToFollow';
-import ZonesToJoin from '../timeline/ZonesToJoin';
-import LastActivities from '../timeline/LastActivities';
-import Searchbar from '../timeline/Searchbar';
 import PostGridItem from '../../../components/utils/PostGridItem/PostGridItem';
-import ChannelList from '../timeline/ChannelList';
-import { AppState } from '../../../store/reducers/root.reducer';
+import SearchBar from '../../../components/utils/SearchBar';
 import {
   getSavedPostAction,
   removePostSaveAction,
 } from '../../../store/actions/post.action';
+import { AppState } from '../../../store/reducers/root.reducer';
+import ChannelList from '../timeline/ChannelList';
+import ChannelsToFollow from '../timeline/ChannelsToFollow';
+import LastActivities from '../timeline/LastActivities';
+import ZonesToJoin from '../timeline/ZonesToJoin';
 
 dayjs.extend(relativeTime);
 
@@ -45,7 +45,7 @@ const Saved: FC = () => {
       title="Saved Posts"
       rightComponent={
         <Box pad="medium" gap="medium">
-          <Searchbar />
+          <SearchBar />
           <ChannelsToFollow />
           <Divider />
           <ZonesToJoin />
