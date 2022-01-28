@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
 import { Box, Button, Text } from 'grommet';
+import React, { FC } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import SearchBar from '../../../components/utils/SearchBar';
 import { SearchScope } from '../../../store/types/search.types';

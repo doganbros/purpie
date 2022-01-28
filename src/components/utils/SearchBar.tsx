@@ -17,7 +17,9 @@ const SearchBar: FC<SearchBarProps> = ({
   const history = useHistory();
 
   const handleSearch = (v: string, s: SearchScope) => {
-    history.push(`/search/${s}/${v}`);
+    if (v && s) {
+      history.push(`/search/${s}/${v}`);
+    }
   };
 
   return (

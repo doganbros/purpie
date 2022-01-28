@@ -8,8 +8,10 @@ interface UserSearchItemProps {
 
 const UserSearchItem: FC<UserSearchItemProps> = ({ user }) => (
   <Box direction="row" align="center" gap="small" key={user.id}>
-    <Avatar background="#eee" round size="medium" />
-    <Box fill align="center" direction="row" gap="small">
+    <Box flex={{ shrink: 0 }}>
+      <Avatar background="#eee" round size="medium" />
+    </Box>
+    <Box fill align="end" direction="row" gap="small">
       <Text color="brand" weight="bold">
         {user.firstName} {user.lastName}
       </Text>
