@@ -98,7 +98,8 @@ const Saved: FC = () => {
             >
               {({ post }: typeof saved.data[0]) => (
                 <PostGridItem
-                  post={post}
+                  key={post.id}
+                  post={{ ...post, saved: true }}
                   onClickPlay={() => history.push(`video/${post.id}`)}
                   onClickSave={() => {
                     setConfirmation({ visible: true, postId: post.id });
