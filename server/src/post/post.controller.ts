@@ -9,9 +9,10 @@ import {
   Post,
   Put,
   Query,
+  Req,
   Res,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import {
   ApiCreatedResponse,
   ApiNotFoundResponse,
@@ -42,6 +43,7 @@ import {
 } from './response/post-list-feed.response';
 import { ListPostFeedQuery } from './dto/list-post-feed.query';
 import { EditPostDto } from './dto/edit-post.dto';
+import { VideoViewStats } from './dto/video-view-stats.dto';
 
 const {
   S3_VIDEO_POST_DIR = '',
@@ -379,6 +381,7 @@ export class PostController {
     @Param('slug') slug: string,
     @Param('fileName') fileName: string,
     @Res() res: Response,
+    @Req() req: Request,
   ) {
     try {
       const postVideo = await this.postService.getPostVideoForUserBySlugAndFileName(
@@ -400,13 +403,35 @@ export class PostController {
       const head = await s3HeadObject(creds);
       const objectStream = s3.getObject(creds).createReadStream();
 
+      const { range } = req.headers;
+      const total = head.ContentLength;
+      const parts = range?.replace(/bytes=/, '').split('-');
+      const [partialStart, partialEnd] = parts || [];
+
+      const start = Number.parseInt(partialStart, 10);
+      const end = partialEnd ? Number.parseInt(partialEnd, 10) : total;
+
+      res.setHeader('Content-Range', `bytes ${start}-${end}/${total}`);
+      res.setHeader('Accept-Ranges', 'bytes');
       res.setHeader('Content-Disposition', `filename=${postVideo.fileName}`);
+      if (total) res.setHeader('Content-Length', total);
       if (head.ContentType) res.setHeader('Content-Type', head.ContentType);
 
       return objectStream.pipe(res);
     } catch (err: any) {
       return res.status(err.statusCode || 500).json(err);
     }
+  }
+
+  @Post('video/stats/views')
+  @IsAuthenticated()
+  async videoViewStats(
+    @Body() payload: VideoViewStats,
+    @CurrentUser() user: UserTokenPayload,
+  ) {
+    await this.validatePost(user.id, payload.postId);
+    this.postService.videoViewStats(user.id, payload);
+    return 'Created';
   }
 
   @Get('/list/feed/public')

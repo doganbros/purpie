@@ -74,3 +74,17 @@ export const getSavedPost = (params: {
   skip?: number;
 }): Promise<PaginatedResponse<SavedPost>> =>
   http.get('/post/saved/list', { params }).then((res) => res.data);
+
+export const postViewStats = (
+  postId: number,
+  startedFrom: number,
+  endedAt: number
+): Promise<'Created'> => {
+  return http
+    .post('/post/video/stats/views', {
+      postId,
+      startedFrom: Math.round(startedFrom),
+      endedAt: Math.round(endedAt),
+    })
+    .then((res) => res.data);
+};

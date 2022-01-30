@@ -10,6 +10,7 @@ import { PostComment } from 'entities/PostComment.entity';
 import { PostLike } from 'entities/PostLike.entity';
 import { PostTag } from 'entities/PostTag.entity';
 import { PostVideo } from 'entities/PostVideo.entity';
+import { PostView } from 'entities/PostView.entity';
 import { SavedPost } from 'entities/SavedPost.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
@@ -21,10 +22,13 @@ import { CreatePostLikeDto } from './dto/create-post-like.dto';
 import { CreateSavedPostDto } from './dto/create-saved-post.dto';
 import { EditPostDto } from './dto/edit-post.dto';
 import { ListPostFeedQuery } from './dto/list-post-feed.query';
+import { VideoViewStats } from './dto/video-view-stats.dto';
 
 @Injectable()
 export class PostService {
   constructor(
+    @InjectRepository(PostView)
+    private postViewRepository: Repository<PostView>,
     @InjectRepository(Post) private postRepository: Repository<Post>,
     @InjectRepository(PostLike)
     private postLikeRepository: Repository<PostLike>,
@@ -245,6 +249,7 @@ export class PostService {
         'post.record',
         'postReaction.likesCount',
         'postReaction.commentsCount',
+        'postReaction.viewsCount',
         'createdBy.id',
         'createdBy.email',
         'createdBy.firstName',
@@ -343,6 +348,7 @@ export class PostService {
         'post.channelId',
         'post.liveStream',
         'postReaction.likesCount',
+        'postReaction.viewsCount',
         'postReaction.commentsCount',
         'post.record',
         'createdBy.id',
@@ -637,5 +643,22 @@ export class PostService {
       { id: postId, createdById: userId },
       editPayload,
     );
+  }
+
+  async videoViewStats(userId: number, payload: VideoViewStats) {
+    if (payload.endedAt <= payload.startedFrom)
+      throw new BadRequestException(
+        'Ended at must be greater that started from',
+        'VIDEO_VIEW_ENDEDAT_STARTEDFROM_VALIDATION',
+      );
+
+    return this.postViewRepository
+      .create({
+        postId: payload.postId,
+        userId,
+        startedFrom: payload.startedFrom,
+        endedAt: payload.endedAt,
+      })
+      .save();
   }
 }
