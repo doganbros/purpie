@@ -30,7 +30,7 @@ const ChannelList: FC = () => {
     : userChannels;
 
   return (
-    <Box fill direction="row" align="center" pad={{ horizontal: 'medium' }}>
+    <Box fill direction="row" align="center">
       {userChannelsFiltered.loading && <Text size="small">Loading</Text>}
       {!userChannelsFiltered.loading &&
         (userChannelsFiltered.data.length === 0 ? (
