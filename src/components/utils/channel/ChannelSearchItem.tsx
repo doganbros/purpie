@@ -1,9 +1,10 @@
-import { Avatar, Box, Button, Text } from 'grommet';
+import { Box, Button, Text } from 'grommet';
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { joinChannelAction } from '../../../store/actions/channel.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { ChannelListItem } from '../../../store/types/channel.types';
+import InitialsAvatar from '../InitialsAvatar';
 
 interface ChannelSearchItemProps {
   channel: ChannelListItem;
@@ -22,7 +23,7 @@ const ChannelSearchItem: FC<ChannelSearchItemProps> = ({ channel }) => {
   return (
     <Box direction="row" align="center" gap="small" key={channel.id}>
       <Box flex={{ shrink: 0 }}>
-        <Avatar background="#eee" round size="medium" />
+        <InitialsAvatar value={channel.name} id={channel.id} />
       </Box>
       <Box fill align="end" direction="row" gap="small">
         <Text color="brand" weight="bold">

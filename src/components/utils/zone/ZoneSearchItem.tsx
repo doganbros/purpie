@@ -1,9 +1,10 @@
-import { Avatar, Box, Button, Text } from 'grommet';
+import { Box, Button, Text } from 'grommet';
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { joinZoneAction } from '../../../store/actions/zone.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { ZoneListItem } from '../../../store/types/zone.types';
+import InitialsAvatar from '../InitialsAvatar';
 
 interface ZoneSearchItemProps {
   zone: ZoneListItem;
@@ -21,7 +22,7 @@ const ZoneSearchItem: FC<ZoneSearchItemProps> = ({ zone }) => {
   return (
     <Box direction="row" align="center" gap="small" key={zone.id}>
       <Box flex={{ shrink: 0 }}>
-        <Avatar background="#eee" round size="medium" />
+        <InitialsAvatar value={zone.name} id={zone.id} />
       </Box>
       <Box fill align="end" direction="row" gap="small">
         <Text color="brand" weight="bold">
