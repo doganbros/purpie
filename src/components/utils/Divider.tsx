@@ -5,11 +5,12 @@ import { theme } from '../../config/app-config';
 interface Props {
   dashed?: boolean;
   color?: string;
+  size?: string;
 }
 
-const Divider: FC<Props> = ({ dashed, color = 'light-3' }) => (
+const Divider: FC<Props> = ({ dashed, color = 'light-3', size = '3px' }) => (
   <Box
-    height="3px"
+    height={size}
     fill="horizontal"
     background={
       dashed

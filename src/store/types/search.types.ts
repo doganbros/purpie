@@ -29,10 +29,12 @@ export enum SearchScope {
   post = 'post',
 }
 
-export interface PostSearchParams {
-  searchTerm: string;
+export interface PostSearchOptions {
   following?: boolean;
   streaming?: boolean;
+}
+export interface PostSearchParams extends PostSearchOptions {
+  searchTerm: string;
   limit?: number;
   skip?: number;
 }
@@ -43,17 +45,21 @@ export interface ZoneSearchParams {
   skip?: number;
 }
 
-export interface UserSearchParams {
-  name: string;
-  limit?: number;
-  skip?: number;
+export interface UserSearchOptions {
   excludeIds?: string;
   channelId?: number;
   userContacts?: boolean;
-  excludeCurrentUser?: boolean;
+}
+export interface UserSearchParams extends UserSearchOptions {
+  name: string;
+  limit?: number;
+  skip?: number;
 }
 
-export interface ChannelSearchParams {
+export interface ChannelSearchOptions {
+  zoneId?: number;
+}
+export interface ChannelSearchParams extends ChannelSearchOptions {
   searchTerm: string;
   limit?: number;
   skip?: number;
