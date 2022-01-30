@@ -1,19 +1,27 @@
 import React, { FC } from 'react';
-import { Avatar } from 'grommet';
-import { UserBasic } from '../../store/types/auth.types';
+import { Avatar, Text } from 'grommet';
 import { getColorPairFromId } from '../../helpers/utils';
 
 interface InitialsAvatarProps {
-  user?: UserBasic;
+  id: number;
+  value: string;
 }
 
-const InitialsAvatar: FC<InitialsAvatarProps> = ({ user }) =>
-  user ? (
-    <Avatar round background={getColorPairFromId(user.id)}>
-      {user?.firstName[0]}
-      {user?.lastName[0]}
+const InitialsAvatar: FC<InitialsAvatarProps> = ({ id, value }) => {
+  const { background, foreground } = getColorPairFromId(id);
+  return value ? (
+    <Avatar round background={{ color: background }}>
+      <Text color={foreground}>
+        {value
+          .split(' ')
+          .filter((_v, i: number) => i < 2)
+          .map((v) => v[0].toUpperCase())
+          .join('')}
+      </Text>
     </Avatar>
   ) : (
     <Avatar round background="#eee" />
   );
+};
+
 export default InitialsAvatar;

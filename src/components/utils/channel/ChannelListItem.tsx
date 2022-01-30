@@ -1,20 +1,19 @@
 import React, { FC } from 'react';
-import { Avatar, Box, Button, Text } from 'grommet';
+import { Box, Button, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { joinChannelAction } from '../../../store/actions/channel.action';
+import InitialsAvatar from '../InitialsAvatar';
 
 interface ChannelListItemProps {
   id: number;
   zoneSubdomain: string;
   name: string;
-  src: string;
 }
 
 const ChannelListItem: FC<ChannelListItemProps> = ({
   id,
   name,
-  src,
   zoneSubdomain,
 }) => {
   const dispatch = useDispatch();
@@ -28,7 +27,7 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
   return (
     <Box direction="row" justify="between" align="center">
       <Box direction="row" align="center" gap="small">
-        <Avatar size="medium" src={src} />
+        <InitialsAvatar id={id} value={name} />
         <Box>
           <Text size="small" weight="bold">
             {name}

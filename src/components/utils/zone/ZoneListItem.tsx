@@ -1,22 +1,21 @@
 import React, { FC } from 'react';
-import { Avatar, Box, Button, Text } from 'grommet';
+import { Box, Button, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { joinZoneAction } from '../../../store/actions/zone.action';
+import InitialsAvatar from '../InitialsAvatar';
 
 interface ZoneListItemProps {
   id: number;
   name: string;
   channelCount: number;
   memberCount: number;
-  src: string;
 }
 const ZoneListItem: FC<ZoneListItemProps> = ({
   id,
   name,
   channelCount,
   memberCount,
-  src,
 }) => {
   const dispatch = useDispatch();
   const {
@@ -31,7 +30,7 @@ const ZoneListItem: FC<ZoneListItemProps> = ({
   return (
     <Box direction="row" justify="between" align="center">
       <Box direction="row" align="center" gap="small">
-        <Avatar size="medium" src={src} />
+        <InitialsAvatar id={id} value={name} />
         <Box>
           <Text size="small" weight="bold">
             {name}

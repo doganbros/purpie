@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { Avatar, Box, Text } from 'grommet';
+import { Box, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
@@ -7,7 +7,7 @@ import {
   setSelectedChannelAction,
   unsetSelectedChannelAction,
 } from '../../../store/actions/channel.action';
-import { channelAvatarSrc } from './data/channel-avatars';
+import InitialsAvatar from '../../../components/utils/InitialsAvatar';
 
 const ChannelList: FC = () => {
   const dispatch = useDispatch();
@@ -55,10 +55,7 @@ const ChannelList: FC = () => {
                 selectedChannel?.channel.id === c.channel.id ? 'brand' : ''
               }
             >
-              <Avatar
-                size="medium"
-                src={channelAvatarSrc[c.channel.id % channelAvatarSrc.length]}
-              />
+              <InitialsAvatar id={c.channel.id} value={c.channel.name} />
               <Text
                 size="small"
                 color={
