@@ -43,9 +43,19 @@ const UserSearch: FC = () => {
     search: { loading, searchResults },
   } = useSelector((state: AppState) => state);
 
-  useEffect(() => {
+  const getSearchResults = (skip?: number) => {
     const { userContacts } = options;
-    dispatch(searchUserAction({ name: value, userContacts }));
+    dispatch(
+      searchUserAction({
+        name: value,
+        userContacts,
+        skip,
+      })
+    );
+  };
+
+  useEffect(() => {
+    getSearchResults();
   }, [value, options]);
 
   const renderResults = () => {
@@ -59,7 +69,13 @@ const UserSearch: FC = () => {
       return <Text>Nothing Found</Text>;
     }
     return (
-      <InfiniteScroll step={6} items={searchResults.data} onMore={() => {}}>
+      <InfiniteScroll
+        step={6}
+        items={searchResults.data}
+        onMore={() => {
+          getSearchResults(searchResults.data.length);
+        }}
+      >
         {(item: UserBasic) => (
           <Box margin={{ vertical: 'xsmall' }}>
             <UserSearchItem user={item} />

@@ -1,4 +1,4 @@
-import { Box, InfiniteScroll, Spinner, Text } from 'grommet';
+import { Box, InfiniteScroll, Text } from 'grommet';
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -24,25 +24,36 @@ const ChannelSearch: FC = () => {
   const dispatch = useDispatch();
 
   const {
-    search: { loading, searchResults },
+    search: { searchResults },
   } = useSelector((state: AppState) => state);
 
+  const getSearchResults = (skip?: number) => {
+    dispatch(
+      searchChannelAction({
+        searchTerm: value,
+        skip,
+      })
+    );
+  };
   useEffect(() => {
-    dispatch(searchChannelAction({ searchTerm: value }));
+    getSearchResults();
   }, [value]);
 
   const renderResults = () => {
-    if (loading) {
-      return <Spinner />;
-    }
-    if (!searchResults || searchResults.scope !== SearchScope.user) {
+    if (!searchResults || searchResults.scope !== SearchScope.channel) {
       return null;
     }
     if (searchResults.data.length === 0) {
       return <Text>Nothing Found</Text>;
     }
     return (
-      <InfiniteScroll step={6} items={searchResults.data} onMore={() => {}}>
+      <InfiniteScroll
+        step={6}
+        items={searchResults.data}
+        onMore={() => {
+          getSearchResults(searchResults.data.length);
+        }}
+      >
         {(item: ChannelListItem) => (
           <Box margin={{ vertical: 'xsmall' }}>
             <ChannelSearchItem channel={item} />

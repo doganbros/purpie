@@ -6,7 +6,6 @@ import {
   FormField,
   Grid,
   InfiniteScroll,
-  Spinner,
   Text,
 } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
@@ -48,18 +47,26 @@ const PostSearch: FC = () => {
   });
 
   const {
-    search: { loading, searchResults },
+    search: { searchResults },
   } = useSelector((state: AppState) => state);
 
-  useEffect(() => {
+  const getSearchResults = (skip?: number) => {
     const { following, streaming } = options;
-    dispatch(searchPostAction({ searchTerm: value, following, streaming }));
+    dispatch(
+      searchPostAction({
+        searchTerm: value,
+        following,
+        streaming,
+        skip,
+      })
+    );
+  };
+
+  useEffect(() => {
+    getSearchResults();
   }, [value, options]);
 
   const renderResults = () => {
-    if (loading) {
-      return <Spinner />;
-    }
     if (!searchResults || searchResults.scope !== SearchScope.post) {
       return null;
     }
@@ -68,7 +75,13 @@ const PostSearch: FC = () => {
     }
     return (
       <Grid columns={size !== 'small' ? 'medium' : '100%'}>
-        <InfiniteScroll step={6} items={searchResults.data} onMore={() => {}}>
+        <InfiniteScroll
+          step={6}
+          items={searchResults.data}
+          onMore={() => {
+            getSearchResults(searchResults.data.length);
+          }}
+        >
           {(item: Post) => (
             <PostGridItem
               post={item}
