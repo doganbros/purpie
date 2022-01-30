@@ -11,7 +11,11 @@ import {
   SEARCH_POST_REQUESTED,
   SEARCH_POST_SUCCESS,
   SEARCH_POST_FAILED,
+  SAVE_SEARCHED_POST_REQUESTED,
+  SAVE_SEARCHED_POST_SUCCESS,
+  SAVE_SEARCHED_POST_FAILED,
 } from '../constants/search.constants';
+import { createPostSave } from '../services/post.service';
 import {
   searchChannel,
   searchPost,
@@ -106,6 +110,27 @@ export const searchPostAction = (params: PostSearchParams): SearchAction => {
     } catch (err) {
       dispatch({
         type: SEARCH_POST_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const saveSearchedPostAction = (postId: number): SearchAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: SAVE_SEARCHED_POST_REQUESTED,
+      payload: postId,
+    });
+    try {
+      await createPostSave(postId);
+      dispatch({
+        type: SAVE_SEARCHED_POST_SUCCESS,
+        payload: postId,
+      });
+    } catch (err) {
+      dispatch({
+        type: SAVE_SEARCHED_POST_FAILED,
         payload: err?.reponse?.data,
       });
     }

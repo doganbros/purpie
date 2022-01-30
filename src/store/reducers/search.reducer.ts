@@ -16,6 +16,7 @@ import {
   SEARCH_POST_REQUESTED,
   SEARCH_POST_SUCCESS,
   SEARCH_POST_FAILED,
+  SAVE_SEARCHED_POST_SUCCESS,
 } from '../constants/search.constants';
 
 const initialState: SearchState = {
@@ -133,6 +134,24 @@ const searchReducer = (
         loading: false,
         error: action.payload,
       };
+    case SAVE_SEARCHED_POST_SUCCESS: {
+      const { searchResults } = state;
+
+      if (searchResults?.scope === SearchScope.post) {
+        let { data } = searchResults;
+        data = data.map((p) =>
+          p.id === action.payload ? { ...p, saved: true } : p
+        );
+        return {
+          ...state,
+          searchResults: {
+            ...searchResults,
+            data,
+          },
+        };
+      }
+      return state;
+    }
     default:
       return state;
   }

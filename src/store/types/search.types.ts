@@ -16,6 +16,9 @@ import {
   SEARCH_POST_REQUESTED,
   SEARCH_POST_SUCCESS,
   SEARCH_POST_FAILED,
+  SAVE_SEARCHED_POST_REQUESTED,
+  SAVE_SEARCHED_POST_SUCCESS,
+  SAVE_SEARCHED_POST_FAILED,
 } from '../constants/search.constants';
 import { Post } from './post.types';
 
@@ -88,6 +91,12 @@ export type SearchActionParams =
       payload: PostSearchParams;
     }
   | {
+      type:
+        | typeof SAVE_SEARCHED_POST_REQUESTED
+        | typeof SAVE_SEARCHED_POST_SUCCESS;
+      payload: number;
+    }
+  | {
       type: typeof SEARCH_CHANNEL_SUCCESS;
       payload: PaginatedResponse<ChannelListItem>;
     }
@@ -108,7 +117,8 @@ export type SearchActionParams =
         | typeof SEARCH_CHANNEL_FAILED
         | typeof SEARCH_USER_FAILED
         | typeof SEARCH_ZONE_FAILED
-        | typeof SEARCH_POST_FAILED;
+        | typeof SEARCH_POST_FAILED
+        | typeof SAVE_SEARCHED_POST_FAILED;
       payload: ResponseError;
     };
 
