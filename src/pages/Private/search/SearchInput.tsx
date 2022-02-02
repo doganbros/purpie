@@ -2,18 +2,13 @@ import { Box, Button, Text } from 'grommet';
 import React, { FC } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import SearchBar from '../../../components/utils/SearchBar';
-import { SearchScope } from '../../../store/types/search.types';
-
-interface SearchParams {
-  value: string;
-  scope: SearchScope;
-}
+import { SearchParams, SearchScope } from './types';
 
 const SearchFilter = [
   { id: 1, scope: SearchScope.post },
   { id: 2, scope: SearchScope.channel },
   { id: 3, scope: SearchScope.zone },
-  { id: 4, scope: SearchScope.user },
+  { id: 4, scope: SearchScope.profile },
 ];
 
 const SearchInput: FC = () => {

@@ -5,6 +5,7 @@ import {
   CreateVideoPayload,
   FeedPayload,
   Post,
+  PostSearchParams,
   SavedPost,
 } from '../types/post.types';
 
@@ -74,3 +75,8 @@ export const getSavedPost = (params: {
   skip?: number;
 }): Promise<PaginatedResponse<SavedPost>> =>
   http.get('/post/saved/list', { params }).then((res) => res.data);
+
+export const searchPost = (
+  params: PostSearchParams
+): Promise<PaginatedResponse<Post>> =>
+  http.get(`/post/list/feed/user`, { params }).then((res) => res.data);

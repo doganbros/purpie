@@ -5,26 +5,23 @@ import { useParams } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import ChannelSearchItem from '../../../components/utils/channel/ChannelSearchItem';
 import Divider from '../../../components/utils/Divider';
-import { searchChannelAction } from '../../../store/actions/search.action';
+import { searchChannelAction } from '../../../store/actions/channel.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { ChannelListItem } from '../../../store/types/channel.types';
-import { SearchScope } from '../../../store/types/search.types';
 import ChannelsToFollow from '../timeline/ChannelsToFollow';
 import LastActivities from '../timeline/LastActivities';
 import ZonesToJoin from '../timeline/ZonesToJoin';
 import SearchInput from './SearchInput';
-
-interface SearchParams {
-  value: string;
-  scope: SearchScope;
-}
+import { SearchParams } from './types';
 
 const ChannelSearch: FC = () => {
   const { value } = useParams<SearchParams>();
   const dispatch = useDispatch();
 
   const {
-    search: { searchResults },
+    channel: {
+      search: { results },
+    },
   } = useSelector((state: AppState) => state);
 
   const getSearchResults = (skip?: number) => {
@@ -40,18 +37,15 @@ const ChannelSearch: FC = () => {
   }, [value]);
 
   const renderResults = () => {
-    if (!searchResults || searchResults.scope !== SearchScope.channel) {
-      return null;
-    }
-    if (searchResults.data.length === 0) {
+    if (results.data.length === 0) {
       return <Text>Nothing Found</Text>;
     }
     return (
       <InfiniteScroll
         step={6}
-        items={searchResults.data}
+        items={results.data}
         onMore={() => {
-          getSearchResults(searchResults.data.length);
+          getSearchResults(results.data.length);
         }}
       >
         {(item: ChannelListItem) => (

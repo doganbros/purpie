@@ -2,7 +2,7 @@ import { TextInput } from 'grommet';
 import { Search } from 'grommet-icons';
 import React, { FC, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { SearchScope } from '../../store/types/search.types';
+import { SearchScope } from '../../pages/Private/search/types';
 
 interface SearchBarProps {
   initialValue?: string;

@@ -14,26 +14,19 @@ import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/Pri
 import Divider from '../../../components/utils/Divider';
 import PostGridItem from '../../../components/utils/PostGridItem/PostGridItem';
 import { useResponsive } from '../../../hooks/useResponsive';
-import {
-  saveSearchedPostAction,
-  searchPostAction,
-} from '../../../store/actions/search.action';
+
 import { AppState } from '../../../store/reducers/root.reducer';
-import { Post } from '../../../store/types/post.types';
-import {
-  PostSearchOptions,
-  SearchScope,
-} from '../../../store/types/search.types';
+import { Post, PostSearchOptions } from '../../../store/types/post.types';
 import ChannelsToFollow from '../timeline/ChannelsToFollow';
 import LastActivities from '../timeline/LastActivities';
 import ZonesToJoin from '../timeline/ZonesToJoin';
 import FilterWrapper from './FilterWrapper';
 import SearchInput from './SearchInput';
-
-interface SearchParams {
-  value: string;
-  scope: SearchScope;
-}
+import {
+  createPostSaveAction,
+  searchPostAction,
+} from '../../../store/actions/post.action';
+import { SearchParams } from './types';
 
 const PostSearch: FC = () => {
   const { value } = useParams<SearchParams>();
@@ -47,7 +40,9 @@ const PostSearch: FC = () => {
   });
 
   const {
-    search: { searchResults },
+    post: {
+      search: { results },
+    },
   } = useSelector((state: AppState) => state);
 
   const getSearchResults = (skip?: number) => {
@@ -67,19 +62,16 @@ const PostSearch: FC = () => {
   }, [value, options]);
 
   const renderResults = () => {
-    if (!searchResults || searchResults.scope !== SearchScope.post) {
-      return null;
-    }
-    if (searchResults.data.length === 0) {
+    if (results.data.length === 0) {
       return <Text>Nothing Found</Text>;
     }
     return (
       <Grid columns={size !== 'small' ? 'medium' : '100%'}>
         <InfiniteScroll
           step={6}
-          items={searchResults.data}
+          items={results.data}
           onMore={() => {
-            getSearchResults(searchResults.data.length);
+            getSearchResults(results.data.length);
           }}
         >
           {(item: Post) => (
@@ -87,7 +79,8 @@ const PostSearch: FC = () => {
               post={item}
               onClickPlay={() => history.push(`video/${item.id}`)}
               onClickSave={() => {
-                if (!item.saved) dispatch(saveSearchedPostAction(item.id));
+                if (!item.saved)
+                  dispatch(createPostSaveAction({ postId: item.id }));
               }}
             />
           )}

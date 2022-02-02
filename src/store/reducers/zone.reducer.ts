@@ -1,4 +1,5 @@
 import { appSubdomain } from '../../helpers/app-subdomain';
+import { paginationInitialState } from '../../helpers/constants';
 import {
   CLOSE_CREATE_ZONE_LAYER,
   GET_CATEGORIES_FAILED,
@@ -21,6 +22,9 @@ import {
   JOIN_ZONE_SUCCESS,
   OPEN_CREATE_ZONE_LAYER,
   SET_CURRENT_USER_ZONE,
+  SEARCH_ZONE_REQUESTED,
+  SEARCH_ZONE_SUCCESS,
+  SEARCH_ZONE_FAILED,
 } from '../constants/zone.constants';
 import { ZoneActionParams, ZoneState } from '../types/zone.types';
 
@@ -58,6 +62,11 @@ const initialState: ZoneState = {
   getCurrentUserZoneDetail: {
     loading: false,
     userZone: null,
+    error: null,
+  },
+  search: {
+    results: paginationInitialState,
+    loading: false,
     error: null,
   },
 };
@@ -245,6 +254,39 @@ const zoneReducer = (
         getZoneCategories: {
           zoneId: null,
           categories: null,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case SEARCH_ZONE_REQUESTED:
+      return {
+        ...state,
+        search: {
+          ...state.search,
+          loading: true,
+          error: null,
+        },
+      };
+    case SEARCH_ZONE_SUCCESS:
+      return {
+        ...state,
+        search: {
+          results:
+            action.payload.skip > 0
+              ? {
+                  ...action.payload,
+                  data: [...state.search.results.data, ...action.payload.data],
+                }
+              : action.payload,
+          loading: false,
+          error: null,
+        },
+      };
+    case SEARCH_ZONE_FAILED:
+      return {
+        ...state,
+        search: {
+          ...state.search,
           loading: false,
           error: action.payload,
         },

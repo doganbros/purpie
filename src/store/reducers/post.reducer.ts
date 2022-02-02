@@ -28,6 +28,9 @@ import {
   SAVED_POSTS_REQUESTED,
   SAVED_POSTS_SUCCESS,
   SAVED_POSTS_FAILED,
+  SEARCH_POST_REQUESTED,
+  SEARCH_POST_SUCCESS,
+  SEARCH_POST_FAILED,
 } from '../constants/post.constants';
 import { PostActionParams, PostState } from '../types/post.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -50,6 +53,11 @@ const initialState: PostState = {
   },
   saved: {
     ...paginationInitialState,
+    loading: false,
+    error: null,
+  },
+  search: {
+    results: paginationInitialState,
     loading: false,
     error: null,
   },
@@ -289,25 +297,33 @@ const postReducer = (
         },
       };
     case CREATE_POST_SAVE_SUCCESS: {
-      const { postDetail, feed } = state;
+      const { postDetail, feed, search } = state;
 
       if (postDetail.data?.id === action.payload.postId)
         postDetail.data.saved = true;
 
-      const postIndex = feed.data.findIndex(
+      const feedPostIndex = feed.data.findIndex(
         (p) => p.id === action.payload.postId
       );
 
-      if (postIndex !== -1) feed.data[postIndex].saved = true;
+      if (feedPostIndex !== -1) feed.data[feedPostIndex].saved = true;
+
+      const searchPostIndex = search.results.data.findIndex(
+        (p) => p.id === action.payload.postId
+      );
+
+      if (searchPostIndex !== -1)
+        search.results.data[searchPostIndex].saved = true;
 
       return {
         ...state,
         postDetail,
         feed,
+        search,
       };
     }
     case REMOVE_POST_SAVE_SUCCESS: {
-      const { postDetail, feed, saved } = state;
+      const { postDetail, feed, saved, search } = state;
 
       if (postDetail.data?.id === action.payload.postId)
         postDetail.data.saved = false;
@@ -317,6 +333,13 @@ const postReducer = (
       );
 
       if (feedPostIndex !== -1) feed.data[feedPostIndex].saved = false;
+
+      const searchPostIndex = search.results.data.findIndex(
+        (p) => p.id === action.payload.postId
+      );
+
+      if (searchPostIndex !== -1)
+        search.results.data[searchPostIndex].saved = false;
 
       const savedPostIndex = saved.data.findIndex(
         (p) => p.post.id === action.payload.postId
@@ -329,6 +352,7 @@ const postReducer = (
         postDetail,
         feed,
         saved,
+        search,
       };
     }
     case CREATE_POST_SAVE_FAILED:
@@ -376,6 +400,39 @@ const postReducer = (
         ...state,
         saved: {
           ...state.saved,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case SEARCH_POST_REQUESTED:
+      return {
+        ...state,
+        search: {
+          ...state.search,
+          loading: true,
+          error: null,
+        },
+      };
+    case SEARCH_POST_SUCCESS:
+      return {
+        ...state,
+        search: {
+          results:
+            action.payload.skip > 0
+              ? {
+                  ...action.payload,
+                  data: [...state.search.results.data, ...action.payload.data],
+                }
+              : action.payload,
+          loading: false,
+          error: null,
+        },
+      };
+    case SEARCH_POST_FAILED:
+      return {
+        ...state,
+        search: {
+          ...state.search,
           loading: false,
           error: action.payload,
         },

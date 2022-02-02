@@ -1,52 +1,39 @@
-import {
-  Box,
-  CheckBox,
-  Form,
-  FormField,
-  InfiniteScroll,
-  Spinner,
-  Text,
-} from 'grommet';
+import { Box, CheckBox, Form, FormField, InfiniteScroll, Text } from 'grommet';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
 import UserSearchItem from '../../../components/utils/UserSearchItem';
-import { searchUserAction } from '../../../store/actions/search.action';
+import { searchProfileAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { UserBasic } from '../../../store/types/auth.types';
-import {
-  SearchScope,
-  UserSearchOptions,
-} from '../../../store/types/search.types';
+import { ProfileSearchOptions } from '../../../store/types/user.types';
 import ChannelsToFollow from '../timeline/ChannelsToFollow';
 import LastActivities from '../timeline/LastActivities';
 import ZonesToJoin from '../timeline/ZonesToJoin';
 import FilterWrapper from './FilterWrapper';
 import SearchInput from './SearchInput';
+import { SearchParams } from './types';
 
-interface SearchParams {
-  value: string;
-  scope: SearchScope;
-}
-
-const UserSearch: FC = () => {
+const ProfileSearch: FC = () => {
   const { value } = useParams<SearchParams>();
   const dispatch = useDispatch();
 
-  const [options, setOptions] = useState<UserSearchOptions>({
+  const [options, setOptions] = useState<ProfileSearchOptions>({
     userContacts: false,
   });
 
   const {
-    search: { loading, searchResults },
+    user: {
+      search: { results },
+    },
   } = useSelector((state: AppState) => state);
 
   const getSearchResults = (skip?: number) => {
     const { userContacts } = options;
     dispatch(
-      searchUserAction({
+      searchProfileAction({
         name: value,
         userContacts,
         skip,
@@ -59,21 +46,15 @@ const UserSearch: FC = () => {
   }, [value, options]);
 
   const renderResults = () => {
-    if (loading) {
-      return <Spinner />;
-    }
-    if (!searchResults || searchResults.scope !== SearchScope.user) {
-      return null;
-    }
-    if (searchResults.data.length === 0) {
+    if (results.data.length === 0) {
       return <Text>Nothing Found</Text>;
     }
     return (
       <InfiniteScroll
         step={6}
-        items={searchResults.data}
+        items={results.data}
         onMore={() => {
-          getSearchResults(searchResults.data.length);
+          getSearchResults(results.data.length);
         }}
       >
         {(item: UserBasic) => (
@@ -107,11 +88,11 @@ const UserSearch: FC = () => {
       }
     >
       <Box pad={{ vertical: 'medium' }} gap="medium">
-        <Text weight="bold">User Results</Text>
+        <Text weight="bold">Profile Results</Text>
         {renderResults()}
       </Box>
     </PrivatePageLayout>
   );
 };
 
-export default UserSearch;
+export default ProfileSearch;

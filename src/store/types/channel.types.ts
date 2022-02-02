@@ -1,3 +1,4 @@
+import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
 import { Category } from '../../models/utils';
 import {
@@ -14,6 +15,9 @@ import {
   CREATE_CHANNEL_SUCCESS,
   SET_SELECTED_CHANNEL,
   UNSET_SELECTED_CHANNEL,
+  SEARCH_CHANNEL_REQUESTED,
+  SEARCH_CHANNEL_SUCCESS,
+  SEARCH_CHANNEL_FAILED,
 } from '../constants/channel.constants';
 import { User } from './auth.types';
 import { UtilActionParams } from './util.types';
@@ -43,6 +47,15 @@ export interface UserChannelDetail extends UserChannelListItem {
   channel: Required<ChannelListItem>;
 }
 
+export interface ChannelSearchOptions {
+  zoneId?: number;
+}
+
+export interface ChannelSearchParams extends ChannelSearchOptions {
+  searchTerm: string;
+  limit?: number;
+  skip?: number;
+}
 export interface ChannelState {
   selectedChannel: UserChannelListItem | null;
   showCreateChannelLayer: boolean;
@@ -52,6 +65,11 @@ export interface ChannelState {
     error: ResponseError | null;
   };
   joinChannel: {
+    loading: boolean;
+    error: ResponseError | null;
+  };
+  search: {
+    results: PaginatedResponse<ChannelListItem>;
     loading: boolean;
     error: ResponseError | null;
   };
@@ -69,6 +87,14 @@ export type ChannelActionParams =
   | {
       type: typeof GET_USER_CHANNELS_SUCCESS;
       payload: UserChannelListItem[];
+    }
+  | {
+      type: typeof SEARCH_CHANNEL_REQUESTED;
+      payload: ChannelSearchParams;
+    }
+  | {
+      type: typeof SEARCH_CHANNEL_SUCCESS;
+      payload: PaginatedResponse<ChannelListItem>;
     }
   | {
       type: typeof JOIN_CHANNEL_REQUESTED;
@@ -95,7 +121,8 @@ export type ChannelActionParams =
       type:
         | typeof JOIN_CHANNEL_FAILED
         | typeof GET_USER_CHANNELS_FAILED
-        | typeof CREATE_CHANNEL_FAILED;
+        | typeof CREATE_CHANNEL_FAILED
+        | typeof SEARCH_CHANNEL_FAILED;
       payload: ResponseError;
     };
 

@@ -34,6 +34,9 @@ import {
   SAVED_POSTS_REQUESTED,
   SAVED_POSTS_SUCCESS,
   SAVED_POSTS_FAILED,
+  SEARCH_POST_REQUESTED,
+  SEARCH_POST_SUCCESS,
+  SEARCH_POST_FAILED,
 } from '../constants/post.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
@@ -93,6 +96,16 @@ export interface FeedPayload {
   tags?: string;
 }
 
+export interface PostSearchOptions {
+  following?: boolean;
+  streaming?: boolean;
+}
+export interface PostSearchParams extends PostSearchOptions {
+  searchTerm: string;
+  limit?: number;
+  skip?: number;
+}
+
 export interface PostState {
   feed: PaginatedResponse<Post> & {
     loading: boolean;
@@ -109,6 +122,11 @@ export interface PostState {
     error: ResponseError | null;
   };
   saved: PaginatedResponse<SavedPost> & {
+    loading: boolean;
+    error: ResponseError | null;
+  };
+  search: {
+    results: PaginatedResponse<Post>;
     loading: boolean;
     error: ResponseError | null;
   };
@@ -169,6 +187,14 @@ export type PostActionParams =
       payload: Post;
     }
   | {
+      type: typeof SEARCH_POST_REQUESTED;
+      payload: PostSearchParams;
+    }
+  | {
+      type: typeof SEARCH_POST_SUCCESS;
+      payload: PaginatedResponse<Post>;
+    }
+  | {
       type:
         | typeof CREATE_VIDEO_SUCCESS
         | typeof OPEN_CREATE_VIDEO_LAYER
@@ -188,7 +214,8 @@ export type PostActionParams =
         | typeof REMOVE_POST_LIKE_FAILED
         | typeof CREATE_POST_SAVE_FAILED
         | typeof REMOVE_POST_SAVE_FAILED
-        | typeof SAVED_POSTS_FAILED;
+        | typeof SAVED_POSTS_FAILED
+        | typeof SEARCH_POST_FAILED;
       payload: ResponseError;
     };
 

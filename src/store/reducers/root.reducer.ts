@@ -5,7 +5,7 @@ import channelReducer from './channel.reducer';
 import mattermostReducer from './mattermost.reducer';
 import meetingReducer from './meeting.reducer';
 import postReducer from './post.reducer';
-import searchReducer from './search.reducer';
+import userReducer from './user.reducer';
 import utilReducer from './util.reducer';
 import zoneReducer from './zone.reducer';
 
@@ -17,7 +17,7 @@ const rootReducer = combineReducers({
   meeting: meetingReducer,
   post: postReducer,
   util: utilReducer,
-  search: searchReducer,
+  user: userReducer,
   zone: zoneReducer,
 });
 

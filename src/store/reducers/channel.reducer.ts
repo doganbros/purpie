@@ -1,3 +1,4 @@
+import { paginationInitialState } from '../../helpers/constants';
 import {
   CLOSE_CREATE_CHANNEL_LAYER,
   GET_USER_CHANNELS_FAILED,
@@ -7,6 +8,9 @@ import {
   JOIN_CHANNEL_REQUESTED,
   JOIN_CHANNEL_SUCCESS,
   OPEN_CREATE_CHANNEL_LAYER,
+  SEARCH_CHANNEL_FAILED,
+  SEARCH_CHANNEL_REQUESTED,
+  SEARCH_CHANNEL_SUCCESS,
   SET_SELECTED_CHANNEL,
   UNSET_SELECTED_CHANNEL,
 } from '../constants/channel.constants';
@@ -21,6 +25,11 @@ const initialState: ChannelState = {
     error: null,
   },
   joinChannel: {
+    loading: false,
+    error: null,
+  },
+  search: {
+    results: paginationInitialState,
     loading: false,
     error: null,
   },
@@ -101,6 +110,39 @@ const channelReducer = (
       return {
         ...state,
         selectedChannel: null,
+      };
+    case SEARCH_CHANNEL_REQUESTED:
+      return {
+        ...state,
+        search: {
+          ...state.search,
+          loading: true,
+          error: null,
+        },
+      };
+    case SEARCH_CHANNEL_SUCCESS:
+      return {
+        ...state,
+        search: {
+          results:
+            action.payload.skip > 0
+              ? {
+                  ...action.payload,
+                  data: [...state.search.results.data, ...action.payload.data],
+                }
+              : action.payload,
+          loading: false,
+          error: null,
+        },
+      };
+    case SEARCH_CHANNEL_FAILED:
+      return {
+        ...state,
+        search: {
+          ...state.search,
+          loading: false,
+          error: action.payload,
+        },
       };
     default:
       return state;
