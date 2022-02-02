@@ -24,4 +24,7 @@ export class PostView extends RecordEntity {
 
   @Column()
   endedAt: number;
+
+  @Column({ default: false })
+  shouldCount: boolean;
 }

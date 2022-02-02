@@ -430,7 +430,7 @@ export class PostController {
     @CurrentUser() user: UserTokenPayload,
   ) {
     await this.validatePost(user.id, payload.postId);
-    this.postService.videoViewStats(user.id, payload);
+    await this.postService.videoViewStats(user.id, payload);
     return 'Created';
   }
 

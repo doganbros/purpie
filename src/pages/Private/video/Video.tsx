@@ -26,6 +26,7 @@ interface RouteParams {
 }
 
 const Video: FC = () => {
+  const DECISECOND = 10;
   const params = useParams<RouteParams>();
   const dispatch = useDispatch();
   const {
@@ -42,7 +43,13 @@ const Video: FC = () => {
 
   const maybeSendViewStat = () => {
     if (previousTime.current > startedFrom.current) {
-      postViewStats(+params.id, startedFrom.current, previousTime.current);
+      postViewStats(
+        +params.id,
+        startedFrom.current * DECISECOND,
+        (player.current?.ended()
+          ? player.current.duration()
+          : previousTime.current) * DECISECOND
+      );
     }
   };
 
@@ -62,6 +69,10 @@ const Video: FC = () => {
       startedFrom.current = 0;
       previousTime.current = 0;
       currentTime.current = 0;
+    });
+
+    player.current?.on('firstplay', () => {
+      postViewStats(+params.id, 0, 0);
     });
   };
 

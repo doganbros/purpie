@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import dayjs from 'dayjs';
 import { Contact } from 'entities/Contact.entity';
 import { Post } from 'entities/Post.entity';
 import { PostComment } from 'entities/PostComment.entity';
@@ -15,7 +16,7 @@ import { SavedPost } from 'entities/SavedPost.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { booleanValue, tsqueryParam } from 'helpers/utils';
-import { Brackets, IsNull, Repository } from 'typeorm';
+import { Brackets, IsNull, MoreThanOrEqual, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { CreatePostCommentDto } from './dto/create-post-comment.dto';
 import { CreatePostLikeDto } from './dto/create-post-like.dto';
@@ -646,11 +647,19 @@ export class PostService {
   }
 
   async videoViewStats(userId: number, payload: VideoViewStats) {
-    if (payload.endedAt <= payload.startedFrom)
-      throw new BadRequestException(
-        'Ended at must be greater that started from',
-        'VIDEO_VIEW_ENDEDAT_STARTEDFROM_VALIDATION',
-      );
+    const viewDate = new Date();
+    const { VIDEO_VIEW_COUNT_HOUR_INTERVAL = 12 } = process.env;
+
+    const lastIntervalExists = await this.postViewRepository.findOne({
+      where: {
+        userId,
+        createdOn: MoreThanOrEqual(
+          dayjs()
+            .subtract(+VIDEO_VIEW_COUNT_HOUR_INTERVAL, 'hours')
+            .toDate(),
+        ),
+      },
+    });
 
     return this.postViewRepository
       .create({
@@ -658,6 +667,8 @@ export class PostService {
         userId,
         startedFrom: payload.startedFrom,
         endedAt: payload.endedAt,
+        createdOn: viewDate,
+        shouldCount: !lastIntervalExists,
       })
       .save();
   }

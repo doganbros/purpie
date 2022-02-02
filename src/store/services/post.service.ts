@@ -83,8 +83,8 @@ export const postViewStats = (
   return http
     .post('/post/video/stats/views', {
       postId,
-      startedFrom: Math.round(startedFrom),
-      endedAt: Math.round(endedAt),
+      startedFrom: Math.ceil(startedFrom),
+      endedAt: Math.ceil(endedAt),
     })
     .then((res) => res.data);
 };
