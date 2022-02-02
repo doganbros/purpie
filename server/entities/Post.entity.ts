@@ -67,7 +67,7 @@ export class Post extends RecordEntity {
   @Column({ default: false })
   userContactExclusive: boolean;
 
-  @Column({ type: 'simple-json', nullable: true })
+  @Column({ type: 'simple-json', nullable: true, select: false })
   config: JitsiConfig;
 
   @Column('tsvector', { select: false })
@@ -81,4 +81,10 @@ export class Post extends RecordEntity {
 
   @Column({ nullable: true })
   postReactionId: number;
+
+  @Column({ select: false, nullable: true, insert: false, type: 'boolean' })
+  liked: boolean;
+
+  @Column({ select: false, nullable: true, insert: false, type: 'boolean' })
+  saved: boolean;
 }
