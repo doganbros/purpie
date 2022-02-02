@@ -12,7 +12,7 @@ import ChannelsToFollow from '../timeline/ChannelsToFollow';
 import LastActivities from '../timeline/LastActivities';
 import ZonesToJoin from '../timeline/ZonesToJoin';
 import SearchInput from './SearchInput';
-import { SearchParams } from './types';
+import { SearchParams } from '../../../models/utils';
 
 const ZoneSearch: FC = () => {
   const { value } = useParams<SearchParams>();

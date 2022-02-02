@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import ChannelSearchItem from '../../../components/utils/channel/ChannelSearchItem';
 import Divider from '../../../components/utils/Divider';
+import { SearchParams } from '../../../models/utils';
 import { searchChannelAction } from '../../../store/actions/channel.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { ChannelListItem } from '../../../store/types/channel.types';
@@ -12,7 +13,6 @@ import ChannelsToFollow from '../timeline/ChannelsToFollow';
 import LastActivities from '../timeline/LastActivities';
 import ZonesToJoin from '../timeline/ZonesToJoin';
 import SearchInput from './SearchInput';
-import { SearchParams } from './types';
 
 const ChannelSearch: FC = () => {
   const { value } = useParams<SearchParams>();

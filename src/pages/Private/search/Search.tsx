@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import ChannelSearch from './ChannelSearch';
 import PostSearch from './PostSearch';
 import ProfileSearch from './ProfileSearch';
-import { SearchParams, SearchScope } from './types';
+import { SearchParams, SearchScope } from '../../../models/utils';
 import ZoneSearch from './ZoneSearch';
 
 const Search: FC = () => {

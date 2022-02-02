@@ -2,7 +2,7 @@ import { Box, Button, Text } from 'grommet';
 import React, { FC } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import SearchBar from '../../../components/utils/SearchBar';
-import { SearchParams, SearchScope } from './types';
+import { SearchParams, SearchScope } from '../../../models/utils';
 
 const SearchFilter = [
   { id: 1, scope: SearchScope.post },

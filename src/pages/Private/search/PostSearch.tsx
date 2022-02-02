@@ -26,7 +26,7 @@ import {
   createPostSaveAction,
   searchPostAction,
 } from '../../../store/actions/post.action';
-import { SearchParams } from './types';
+import { SearchParams } from '../../../models/utils';
 
 const PostSearch: FC = () => {
   const { value } = useParams<SearchParams>();

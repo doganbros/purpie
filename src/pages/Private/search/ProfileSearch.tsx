@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
 import UserSearchItem from '../../../components/utils/UserSearchItem';
+import { SearchParams } from '../../../models/utils';
 import { searchProfileAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { UserBasic } from '../../../store/types/auth.types';
@@ -14,7 +15,6 @@ import LastActivities from '../timeline/LastActivities';
 import ZonesToJoin from '../timeline/ZonesToJoin';
 import FilterWrapper from './FilterWrapper';
 import SearchInput from './SearchInput';
-import { SearchParams } from './types';
 
 const ProfileSearch: FC = () => {
   const { value } = useParams<SearchParams>();
