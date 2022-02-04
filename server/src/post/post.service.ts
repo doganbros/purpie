@@ -4,27 +4,32 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import dayjs from 'dayjs';
 import { Contact } from 'entities/Contact.entity';
 import { Post } from 'entities/Post.entity';
 import { PostComment } from 'entities/PostComment.entity';
 import { PostLike } from 'entities/PostLike.entity';
 import { PostTag } from 'entities/PostTag.entity';
 import { PostVideo } from 'entities/PostVideo.entity';
+import { PostView } from 'entities/PostView.entity';
 import { SavedPost } from 'entities/SavedPost.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { booleanValue, tsqueryParam } from 'helpers/utils';
-import { Brackets, IsNull, Repository } from 'typeorm';
+import { Brackets, IsNull, MoreThanOrEqual, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { CreatePostCommentDto } from './dto/create-post-comment.dto';
 import { CreatePostLikeDto } from './dto/create-post-like.dto';
 import { CreateSavedPostDto } from './dto/create-saved-post.dto';
 import { EditPostDto } from './dto/edit-post.dto';
 import { ListPostFeedQuery } from './dto/list-post-feed.query';
+import { VideoViewStats } from './dto/video-view-stats.dto';
 
 @Injectable()
 export class PostService {
   constructor(
+    @InjectRepository(PostView)
+    private postViewRepository: Repository<PostView>,
     @InjectRepository(Post) private postRepository: Repository<Post>,
     @InjectRepository(PostLike)
     private postLikeRepository: Repository<PostLike>,
@@ -227,7 +232,7 @@ export class PostService {
   getSavedPosts(userId: number, query: PaginationQuery) {
     return this.savedPostRepository
       .createQueryBuilder('savedPost')
-      .select([
+      .addSelect([
         'savedPost.id',
         'savedPost.createdOn',
         'post.id',
@@ -245,6 +250,7 @@ export class PostService {
         'post.record',
         'postReaction.likesCount',
         'postReaction.commentsCount',
+        'postReaction.viewsCount',
         'createdBy.id',
         'createdBy.email',
         'createdBy.firstName',
@@ -292,14 +298,7 @@ export class PostService {
       )
 
       .orderBy('savedPost.id', 'DESC')
-      .paginateRawAndEntities(
-        {
-          otherFields: ['liked'],
-          primaryTableAliasName: 'savedPost',
-          primaryColumnName: 'id',
-        },
-        query,
-      );
+      .paginate(query);
   }
 
   async getPostVideoForUserBySlugAndFileName(
@@ -329,27 +328,6 @@ export class PostService {
   basePost(query: Partial<ListPostFeedQuery>, userId: number) {
     const builder = this.postRepository
       .createQueryBuilder('post')
-      .select([
-        'post.id',
-        'post.title',
-        'post.slug',
-        'post.description',
-        'post.startDate',
-        'post.type',
-        'post.createdOn',
-        'post.public',
-        'post.videoName',
-        'post.userContactExclusive',
-        'post.channelId',
-        'post.liveStream',
-        'postReaction.likesCount',
-        'postReaction.commentsCount',
-        'post.record',
-        'createdBy.id',
-        'createdBy.email',
-        'createdBy.firstName',
-        'createdBy.lastName',
-      ])
       .addSelect(
         (sq) =>
           sq
@@ -368,6 +346,16 @@ export class PostService {
             .andWhere('user_saved_post.userId = :currentUserId'),
         'post_saved',
       )
+      .addSelect([
+        'postReaction.likesCount',
+        'postReaction.viewsCount',
+        'postReaction.commentsCount',
+        'post.record',
+        'createdBy.id',
+        'createdBy.email',
+        'createdBy.firstName',
+        'createdBy.lastName',
+      ])
 
       .setParameter('currentUserId', userId)
       .leftJoin('post.createdBy', 'createdBy')
@@ -523,20 +511,13 @@ export class PostService {
   }
 
   getUserFeed(userId: number, query: ListPostFeedQuery) {
-    return this.getUserFeedSelection(userId, query).paginateRawAndEntities(
-      {
-        otherFields: ['liked', 'saved'],
-        primaryColumnName: 'id',
-        primaryTableAliasName: 'post',
-      },
-      query,
-    );
+    return this.getUserFeedSelection(userId, query).paginate(query);
   }
 
   getPostById(userId: number, postId: number) {
     return this.getUserFeedSelection(userId, {}, true, true)
       .andWhere('post.id = :postId', { postId })
-      .getRawOneAndEntity(['liked', 'saved'], 'post');
+      .getOne();
   }
 
   baseChannelPosts(query: PaginationQuery, userId: number) {
@@ -588,40 +569,19 @@ export class PostService {
   getZoneFeed(zoneId: number, userId: number, query: ListPostFeedQuery) {
     return this.baseChannelPosts(query, userId)
       .andWhere('channel.zoneId = :zoneId', { zoneId })
-      .paginateRawAndEntities(
-        {
-          otherFields: ['liked', 'saved'],
-          primaryColumnName: 'id',
-          primaryTableAliasName: 'post',
-        },
-        query,
-      );
+      .paginate(query);
   }
 
   getChannelFeed(channelId: number, userId: number, query: PaginationQuery) {
     return this.baseChannelPosts(query, userId)
       .andWhere('channel.id = :channelId', { channelId })
-      .paginateRawAndEntities(
-        {
-          otherFields: ['liked', 'saved'],
-          primaryColumnName: 'id',
-          primaryTableAliasName: 'post',
-        },
-        query,
-      );
+      .paginate(query);
   }
 
   getPublicFeed(query: PaginationQuery, userId: number) {
     return this.basePost(query, userId)
       .andWhere('post.public = true')
-      .paginateRawAndEntities(
-        {
-          otherFields: ['liked', 'saved'],
-          primaryColumnName: 'id',
-          primaryTableAliasName: 'post',
-        },
-        query,
-      );
+      .paginate(query);
   }
 
   editPost(postId: number, userId: number, payload: EditPostDto) {
@@ -637,5 +597,32 @@ export class PostService {
       { id: postId, createdById: userId },
       editPayload,
     );
+  }
+
+  async videoViewStats(userId: number, payload: VideoViewStats) {
+    const viewDate = new Date();
+    const { VIDEO_VIEW_COUNT_HOUR_INTERVAL = 12 } = process.env;
+
+    const lastIntervalExists = await this.postViewRepository.findOne({
+      where: {
+        userId,
+        createdOn: MoreThanOrEqual(
+          dayjs()
+            .subtract(+VIDEO_VIEW_COUNT_HOUR_INTERVAL, 'hours')
+            .toDate(),
+        ),
+      },
+    });
+
+    return this.postViewRepository
+      .create({
+        postId: payload.postId,
+        userId,
+        startedFrom: payload.startedFrom,
+        endedAt: payload.endedAt,
+        createdOn: viewDate,
+        shouldCount: !lastIntervalExists,
+      })
+      .save();
   }
 }

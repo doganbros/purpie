@@ -4,6 +4,7 @@ import { Post } from 'entities/Post.entity';
 import { PostComment } from 'entities/PostComment.entity';
 import { PostLike } from 'entities/PostLike.entity';
 import { PostVideo } from 'entities/PostVideo.entity';
+import { PostView } from 'entities/PostView.entity';
 import { SavedPost } from 'entities/SavedPost.entity';
 import { User } from 'entities/User.entity';
 import { PostController } from './post.controller';
@@ -14,6 +15,7 @@ import { PostService } from './post.service';
     TypeOrmModule.forFeature([
       User,
       Post,
+      PostView,
       PostLike,
       PostComment,
       SavedPost,

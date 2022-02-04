@@ -165,6 +165,7 @@ export class MeetingService {
   currentUserMeetingBaseValidator(userId: number, slug: string) {
     return this.postRepository
       .createQueryBuilder('meeting')
+      .addSelect('meeting.config')
       .leftJoin(
         UserChannel,
         'user_channel',

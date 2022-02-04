@@ -21,17 +21,6 @@ declare module 'typeorm/query-builder/SelectQueryBuilder' {
       },
     ): Promise<PaginationResponse<Record<string, any>>>;
 
-    paginateRawAndEntities(
-      this: SelectQueryBuilder<Entity>,
-      options: {
-        otherFields: Array<string>;
-        primaryColumnName: string;
-        primaryTableAliasName: string;
-        skipAndTake?: boolean;
-      },
-      query: PaginationQuery,
-    ): Promise<PaginationResponse<Record<string, any>>>;
-
     getRawOneAndEntity(
       otherFields: Array<string>,
       primaryTableAliasName: string,
@@ -43,8 +32,8 @@ SelectQueryBuilder.prototype.paginate = async function <Entity>(
   this: SelectQueryBuilder<Entity>,
   query: PaginationQuery,
 ): Promise<PaginationResponse<Entity>> {
-  const result = await this.skip(query.skip)
-    .take(query.limit)
+  const result = await this.offset(query.skip)
+    .limit(query.limit)
     .getManyAndCount();
 
   return paginate<Entity>(result, query);
@@ -77,50 +66,6 @@ SelectQueryBuilder.prototype.paginateRaw = async function <Entity>(
   }
 
   return paginate<Record<string, any>>(result, query);
-};
-
-SelectQueryBuilder.prototype.paginateRawAndEntities = async function <Entity>(
-  this: SelectQueryBuilder<Entity>,
-  options: {
-    otherFields: Array<string>;
-    primaryColumnName: string;
-    skipAndTake?: boolean;
-    primaryTableAliasName: string;
-  },
-  query: PaginationQuery,
-): Promise<PaginationResponse<Entity>> {
-  const {
-    skipAndTake,
-    otherFields,
-    primaryColumnName,
-    primaryTableAliasName,
-  } = options;
-  const [rawAndEntities, total] = await Promise.all([
-    skipAndTake
-      ? this.skip(query.skip).take(query.limit).getRawAndEntities()
-      : this.offset(query.skip).limit(query.limit).getRawAndEntities(),
-    this.getCount(),
-  ]);
-
-  const result: [data: Entity[], total: number] = [
-    rawAndEntities.entities.map((v) => ({
-      ...v,
-      ...otherFields.reduce(
-        (acc, otherField) => ({
-          ...acc,
-          [otherField]: rawAndEntities.raw.find(
-            (re: any) =>
-              re[`${primaryTableAliasName}_${primaryColumnName}`] ===
-              (v as any)[primaryColumnName],
-          )?.[`${primaryTableAliasName}_${otherField}`],
-        }),
-        {},
-      ),
-    })),
-    total,
-  ];
-
-  return paginate<Entity>(result, query);
 };
 
 SelectQueryBuilder.prototype.getRawOneAndEntity = async function <Entity>(

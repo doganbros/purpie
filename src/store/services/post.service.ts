@@ -80,3 +80,17 @@ export const searchPost = (
   params: PostSearchParams
 ): Promise<PaginatedResponse<Post>> =>
   http.get(`/post/list/feed/user`, { params }).then((res) => res.data);
+
+export const postViewStats = (
+  postId: number,
+  startedFrom: number,
+  endedAt: number
+): Promise<'Created'> => {
+  return http
+    .post('/post/video/stats/views', {
+      postId,
+      startedFrom: Math.ceil(startedFrom),
+      endedAt: Math.ceil(endedAt),
+    })
+    .then((res) => res.data);
+};

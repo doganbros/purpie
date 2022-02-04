@@ -1,5 +1,6 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import dayjs from 'dayjs';
+import videojs from 'video.js';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Box, Button, Layer, Spinner, Text } from 'grommet';
 import { Chat as ChatIcon, Favorite } from 'grommet-icons';
@@ -17,6 +18,7 @@ import { FavoriteFill } from '../../../components/utils/CustomIcons';
 import RecommendedVideos from './RecommendedVideos';
 import VideoJs from '../../../components/utils/PostGridItem/VideoJs';
 import { http } from '../../../config/http';
+import { postViewStats } from '../../../store/services/post.service';
 
 dayjs.extend(relativeTime);
 interface RouteParams {
@@ -24,6 +26,7 @@ interface RouteParams {
 }
 
 const Video: FC = () => {
+  const DECISECOND = 10;
   const params = useParams<RouteParams>();
   const dispatch = useDispatch();
   const {
@@ -32,8 +35,58 @@ const Video: FC = () => {
     },
   } = useSelector((state: AppState) => state);
 
+  const previousTime = useRef(0);
+  const currentTime = useRef(0);
+  const startedFrom = useRef(0);
+
+  const player = useRef<videojs.Player | null>(null);
+
+  const maybeSendViewStat = () => {
+    if (previousTime.current > startedFrom.current) {
+      postViewStats(
+        +params.id,
+        startedFrom.current * DECISECOND,
+        (player.current?.ended()
+          ? player.current.duration()
+          : previousTime.current) * DECISECOND
+      );
+    }
+  };
+
+  const onReady = () => {
+    player.current?.on('timeupdate', () => {
+      previousTime.current = currentTime.current;
+      currentTime.current = player.current!.currentTime();
+    });
+
+    player.current?.on('seeking', () => {
+      maybeSendViewStat();
+      startedFrom.current = currentTime.current;
+    });
+
+    player.current?.on('ended', () => {
+      maybeSendViewStat();
+      startedFrom.current = 0;
+      previousTime.current = 0;
+      currentTime.current = 0;
+    });
+
+    player.current?.on('firstplay', () => {
+      postViewStats(+params.id, 0, 0);
+    });
+  };
+
   useEffect(() => {
     dispatch(getPostDetailAction(+params.id));
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', maybeSendViewStat);
+
+    return () => {
+      window.removeEventListener('beforeunload', maybeSendViewStat);
+      maybeSendViewStat();
+    };
   }, []);
 
   return (
@@ -57,6 +110,10 @@ const Video: FC = () => {
           </Box>
           <Box gap="medium">
             <VideoJs
+              getPlayer={(p) => {
+                player.current = p;
+              }}
+              onReady={onReady}
               options={{
                 autoplay: true,
                 muted: false,
