@@ -1,6 +1,10 @@
 import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
-import { CreateChannelPayload } from '../types/channel.types';
+import {
+  ChannelListItem,
+  ChannelSearchParams,
+  CreateChannelPayload,
+} from '../types/channel.types';
 
 export const createChannel = (
   userZoneId: number,
@@ -38,3 +42,8 @@ export const inviteToChannel = (
 
 export const deleteUserChannel = (userChannelId: number): Promise<any> =>
   http.delete(`/user-channel/remove/${userChannelId}`).then((res) => res.data);
+
+export const searchChannel = (
+  params: ChannelSearchParams
+): Promise<PaginatedResponse<ChannelListItem>> =>
+  http.get(`/channel/search`, { params }).then((res) => res.data);

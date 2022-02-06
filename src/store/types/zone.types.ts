@@ -1,3 +1,4 @@
+import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
 import { Category } from '../../models/utils';
 import {
@@ -33,6 +34,9 @@ import {
   SET_CURRENT_USER_ZONE,
   UPDATE_ZONE_FAILED,
   UPDATE_ZONE_REQUESTED,
+  SEARCH_ZONE_REQUESTED,
+  SEARCH_ZONE_SUCCESS,
+  SEARCH_ZONE_FAILED,
 } from '../constants/zone.constants';
 import { User } from './auth.types';
 import { UtilActionParams } from './util.types';
@@ -84,6 +88,12 @@ export type UpdateZonePayload = Partial<CreateZonePayload>;
 
 export type ZoneDetail = Required<ZoneListItem>;
 
+export interface ZoneSearchParams {
+  searchTerm: string;
+  limit?: number;
+  skip?: number;
+}
+
 export interface ZoneState {
   selectedUserZone: UserZoneListItem | null;
   userZoneInitialized: boolean;
@@ -119,6 +129,11 @@ export interface ZoneState {
     userZone: UserZoneDetail | null;
     error: ResponseError | null;
   };
+  search: {
+    results: PaginatedResponse<ZoneListItem>;
+    loading: boolean;
+    error: ResponseError | null;
+  };
 }
 
 export type ZoneActionParams =
@@ -147,6 +162,7 @@ export type ZoneActionParams =
         | typeof GET_CURRENT_USER_ZONE_FAILED
         | typeof INVITE_TO_ZONE_FAILED
         | typeof DELETE_ZONE_FAILED
+        | typeof SEARCH_ZONE_FAILED
         | typeof UPDATE_ZONE_FAILED
         | typeof JOIN_ZONE_FAILED
         | typeof GET_CATEGORIES_FAILED
@@ -156,6 +172,14 @@ export type ZoneActionParams =
   | {
       type: typeof GET_USER_ZONES_SUCCESS;
       payload: Array<UserZoneListItem>;
+    }
+    | {
+      type: typeof SEARCH_ZONE_REQUESTED;
+      payload: ZoneSearchParams;
+    }
+    | {
+      type: typeof SEARCH_ZONE_SUCCESS;
+      payload: PaginatedResponse<ZoneListItem>;
     }
   | {
       type: typeof JOIN_ZONE_REQUESTED | typeof GET_ZONE_CATEGORIES_REQUESTED;

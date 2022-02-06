@@ -1,7 +1,7 @@
 import { ResponsiveContext } from 'grommet';
 import React, { FC, useContext } from 'react';
 import { useTitle } from '../../../../hooks/useTitle';
-import Desktop from './Desktop';
+import Desktop from './Desktop/Desktop';
 import Mobile from './Mobile';
 
 interface Props {

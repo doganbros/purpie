@@ -16,8 +16,15 @@ import {
   JOIN_ZONE_REQUESTED,
   JOIN_ZONE_SUCCESS,
   OPEN_CREATE_ZONE_LAYER,
+  SEARCH_ZONE_REQUESTED,
+  SEARCH_ZONE_SUCCESS,
+  SEARCH_ZONE_FAILED,
 } from '../constants/zone.constants';
-import { CreateZonePayload, ZoneAction } from '../types/zone.types';
+import {
+  CreateZonePayload,
+  ZoneAction,
+  ZoneSearchParams,
+} from '../types/zone.types';
 import * as ZoneService from '../services/zone.service';
 import { setToastAction } from './util.action';
 
@@ -142,6 +149,27 @@ export const createZoneAction = (payload: CreateZonePayload): ZoneAction => {
       dispatch({
         type: CREATE_ZONE_FAILED,
         payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const searchZoneAction = (params: ZoneSearchParams): ZoneAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: SEARCH_ZONE_REQUESTED,
+      payload: params,
+    });
+    try {
+      const payload = await ZoneService.searchZone(params);
+      dispatch({
+        type: SEARCH_ZONE_SUCCESS,
+        payload,
+      });
+    } catch (err) {
+      dispatch({
+        type: SEARCH_ZONE_FAILED,
+        payload: err?.reponse?.data,
       });
     }
   };

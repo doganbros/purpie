@@ -1,10 +1,13 @@
 import { http } from '../../config/http';
+import { PaginatedResponse } from '../../models/paginated-response';
 import { Category } from '../../models/utils';
 import {
   CreateZonePayload,
   UpdateZonePayload,
   UserZoneDetail,
   UserZoneListItem,
+  ZoneListItem,
+  ZoneSearchParams,
 } from '../types/zone.types';
 
 export const createZone = (zone: CreateZonePayload): Promise<any> =>
@@ -39,3 +42,8 @@ export const deleteUserZone = (userZoneId: number): Promise<any> =>
 
 export const deleteZone = (zoneId: number): Promise<any> =>
   http.delete(`/zone/remove/${zoneId}`).then((res) => res.data);
+
+export const searchZone = (
+  params: ZoneSearchParams
+): Promise<PaginatedResponse<ZoneListItem>> =>
+  http.get(`/zone/search`, { params }).then((res) => res.data);

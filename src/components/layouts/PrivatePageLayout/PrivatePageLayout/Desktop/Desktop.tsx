@@ -1,11 +1,11 @@
 import { Avatar, Box, Button } from 'grommet';
 import { useHistory } from 'react-router-dom';
 import React, { FC } from 'react';
-import ExtendedBox from '../../../utils/ExtendedBox';
-import Logo from '../../../../assets/octopus-logo/logo-white.svg';
-import Sidebar from '../Sidebar';
-import ZoneSelector from '../ZoneSelector/ZoneSelector';
-import Divider from '../../../utils/Divider';
+import ExtendedBox from '../../../../utils/ExtendedBox';
+import Logo from '../../../../../assets/octopus-logo/logo-white.svg';
+import Sidebar from '../../Sidebar';
+import ZoneSelector from '../../ZoneSelector/ZoneSelector';
+import TopContainer from './TopContainer';
 
 interface Props {
   topComponent?: React.ReactNode;
@@ -76,43 +76,13 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
       >
         {children}
         {topComponent && (
-          <ExtendedBox
-            position="fixed"
-            top="0"
-            right={`${rightComponent ? rightComponentWidth : 0}px`}
-            left={`${leftComponentWidth}px`}
-            height={`${topComponentHeight}px`}
-            round={{ corner: 'top-left', size: 'large' }}
-            background="white"
-            pad={{ horizontal: 'large' }}
+          <TopContainer
+            rightComponentWidth={rightComponent ? rightComponentWidth : 0}
+            leftComponentWidth={leftComponentWidth}
+            height={topComponentHeight}
           >
-            <Box fill justify="center" overflow="auto">
-              <ExtendedBox fill minWidth="min-content">
-                {topComponent}
-              </ExtendedBox>
-            </Box>
-            <ExtendedBox
-              margin={{ left: 'large' }}
-              position="absolute"
-              top="0"
-              left="0"
-              height={`${topComponentHeight - 3}px`}
-              background="linear-gradient(to right, rgb(255, 255, 255), rgba(255, 255, 255, 0))"
-              width="24px"
-            />
-            <ExtendedBox
-              margin={{ right: 'large' }}
-              position="absolute"
-              top="0"
-              right="0"
-              height={`${topComponentHeight - 3}px`}
-              background="linear-gradient(to left, rgb(255, 255, 255), rgba(255, 255, 255, 0))"
-              width="24px"
-            />
-            <Box fill="horizontal">
-              <Divider />
-            </Box>
-          </ExtendedBox>
+            {topComponent}
+          </TopContainer>
         )}
         {rightComponent && (
           <ExtendedBox

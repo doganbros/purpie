@@ -12,10 +12,14 @@ import {
   CREATE_CHANNEL_SUCCESS,
   SET_SELECTED_CHANNEL,
   UNSET_SELECTED_CHANNEL,
+  SEARCH_CHANNEL_REQUESTED,
+  SEARCH_CHANNEL_SUCCESS,
+  SEARCH_CHANNEL_FAILED,
 } from '../constants/channel.constants';
 import * as ChannelService from '../services/channel.service';
 import {
   ChannelAction,
+  ChannelSearchParams,
   CreateChannelPayload,
   UserChannelListItem,
 } from '../types/channel.types';
@@ -124,5 +128,28 @@ export const unsetSelectedChannelAction = (): ChannelAction => {
     dispatch({
       type: UNSET_SELECTED_CHANNEL,
     });
+  };
+};
+
+export const searchChannelAction = (
+  params: ChannelSearchParams
+): ChannelAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: SEARCH_CHANNEL_REQUESTED,
+      payload: params,
+    });
+    try {
+      const payload = await ChannelService.searchChannel(params);
+      dispatch({
+        type: SEARCH_CHANNEL_SUCCESS,
+        payload,
+      });
+    } catch (err) {
+      dispatch({
+        type: SEARCH_CHANNEL_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
   };
 };

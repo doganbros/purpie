@@ -20,13 +20,7 @@ const ChannelHeading: FC = () => (
   </Box>
 );
 const ChannelDummy: FC = () => (
-  <Box
-    fill
-    direction="row"
-    align="center"
-    gap="medium"
-    pad={{ horizontal: 'medium' }}
-  >
+  <Box fill direction="row" align="center" gap="medium">
     {thirtyIds.map((v) => (
       <Box
         width="45px"

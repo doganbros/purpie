@@ -34,6 +34,9 @@ import {
   SAVED_POSTS_REQUESTED,
   SAVED_POSTS_SUCCESS,
   SAVED_POSTS_FAILED,
+  SEARCH_POST_REQUESTED,
+  SEARCH_POST_SUCCESS,
+  SEARCH_POST_FAILED,
 } from '../constants/post.constants';
 
 import * as PostService from '../services/post.service';
@@ -41,6 +44,7 @@ import {
   CreateVideoPayload,
   FeedPayload,
   PostAction,
+  PostSearchParams,
 } from '../types/post.types';
 
 export const getPublicFeedAction = (payload: FeedPayload): PostAction => {
@@ -297,6 +301,27 @@ export const getSavedPostAction = (payload: {
       dispatch({
         type: SAVED_POSTS_FAILED,
         payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const searchPostAction = (params: PostSearchParams): PostAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: SEARCH_POST_REQUESTED,
+      payload: params,
+    });
+    try {
+      const payload = await PostService.searchPost(params);
+      dispatch({
+        type: SEARCH_POST_SUCCESS,
+        payload,
+      });
+    } catch (err) {
+      dispatch({
+        type: SEARCH_POST_FAILED,
+        payload: err?.reponse?.data,
       });
     }
   };
