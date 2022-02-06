@@ -7,11 +7,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ZoneService } from '../zone.service';
+import { UserZoneService } from '../services/user-zone.service';
 
 @Injectable()
 export class UserZoneGuard implements CanActivate {
-  constructor(private reflector: Reflector, private zoneService: ZoneService) {}
+  constructor(
+    private reflector: Reflector,
+    private userZoneService: UserZoneService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
@@ -31,15 +34,15 @@ export class UserZoneGuard implements CanActivate {
     const subdomain = req.headers['app-subdomain'];
 
     if (zoneId) {
-      req.userZone = await this.zoneService.getUserZone(req.user.id, {
+      req.userZone = await this.userZoneService.getUserZone(req.user.id, {
         zoneId: Number.parseInt(zoneId, 10),
       });
     } else if (userZoneId) {
-      req.userZone = await this.zoneService.getUserZone(req.user.id, {
+      req.userZone = await this.userZoneService.getUserZone(req.user.id, {
         id: Number.parseInt(userZoneId, 10),
       });
     } else if (subdomain) {
-      req.userZone = await this.zoneService.getUserZone(req.user.id, {
+      req.userZone = await this.userZoneService.getUserZone(req.user.id, {
         subdomain,
       });
     }

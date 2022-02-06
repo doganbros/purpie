@@ -5,7 +5,7 @@ import { Post } from 'entities/Post.entity';
 import { StreamLog } from 'entities/StreamLog.entity';
 import { User } from 'entities/User.entity';
 import { fetchOrProduceNull } from 'helpers/utils';
-import { MattermostService } from 'src/utils/mattermost.service';
+import { MattermostService } from 'src/utils/services/mattermost.service';
 import { Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { ClientStreamEventDto } from './dto/client-stream-event.dto';

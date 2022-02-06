@@ -6,20 +6,20 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from 'entities/Contact.entity';
-import { MattermostService } from 'src/utils/mattermost.service';
+import { MattermostService } from 'src/utils/services/mattermost.service';
 import { ContactInvitation } from 'entities/ContactInvitation.entity';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from 'src/auth/services/auth.service';
 import { generateLowerAlphaNumId, tsqueryParam } from 'helpers/utils';
 import { UserRole } from 'entities/UserRole.entity';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { In, Not, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
-import { SearchUsersQuery } from './dto/search-users.query';
-import { SetUserRoleDto } from './dto/set-user-role.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
-import { UpdateUserPermission } from './dto/update-permissions.dto';
-import { SystemUserListQuery } from './dto/system-user-list.query';
+import { SearchUsersQuery } from '../dto/search-users.query';
+import { SetUserRoleDto } from '../dto/set-user-role.dto';
+import { UpdateProfileDto } from '../dto/update-profile.dto';
+import { UpdateUserPermission } from '../dto/update-permissions.dto';
+import { SystemUserListQuery } from '../dto/system-user-list.query';
 
 @Injectable()
 export class UserService {

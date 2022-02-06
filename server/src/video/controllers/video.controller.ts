@@ -28,10 +28,10 @@ import {
 } from 'src/auth/interfaces/user.interface';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
-import { CreateVideoDto } from './dto/create-video.dto';
-import { VideoService } from './video.service';
-import { VideoIdParams } from './dto/video-id.params';
-import { VideoUploadClientFeedbackDto } from './dto/video-upload-client-feedback.dto';
+import { CreateVideoDto } from '../dto/create-video.dto';
+import { VideoService } from '../services/video.service';
+import { VideoIdParams } from '../dto/video-id.params';
+import { VideoUploadClientFeedbackDto } from '../dto/video-upload-client-feedback.dto';
 
 const { S3_VIDEO_POST_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 

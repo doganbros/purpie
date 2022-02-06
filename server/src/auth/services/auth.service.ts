@@ -4,45 +4,36 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import axios from 'axios';
 import bcrypt from 'bcryptjs';
 import dayjs from 'dayjs';
-import { Client } from 'entities/Client.entity';
 import { User } from 'entities/User.entity';
 import { UserRefreshToken } from 'entities/UserRefreshToken.entity';
 import { UserRole } from 'entities/UserRole.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
 import { Response } from 'express';
-import { generateJWT, verifyJWT } from 'helpers/jwt';
-import { alphaNum, compareHash, fetchOrProduceNull, hash } from 'helpers/utils';
-import { customAlphabet, nanoid } from 'nanoid';
+import { generateJWT } from 'helpers/jwt';
+import { compareHash, fetchOrProduceNull, hash } from 'helpers/utils';
+import { nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
-import { MattermostService } from 'src/utils/mattermost.service';
+import { MattermostService } from 'src/utils/services/mattermost.service';
 import { Not, Repository, IsNull, Brackets } from 'typeorm';
 import {
   MAIL_VERIFICATION_TYPE,
-  OCTOPUS_CLIENT_AUTH_TYPE,
   PASSWORD_VERIFICATION_TYPE,
-} from './constants/auth.constants';
-import { CreateClientDto } from './dto/create-client.dto';
-import { InitializeUserDto } from './dto/initialize-user.dto';
-import { LoginClientDto } from './dto/login-client.dto';
-import { RegisterUserDto } from './dto/register-user.dto';
+} from '../constants/auth.constants';
+import { InitializeUserDto } from '../dto/initialize-user.dto';
+import { RegisterUserDto } from '../dto/register-user.dto';
 import {
   UserBasic,
   UserBasicWithToken,
   UserProfile,
   UserTokenPayload,
-} from './interfaces/user.interface';
+} from '../interfaces/user.interface';
 
 const {
   AUTH_TOKEN_SECRET = '',
   AUTH_TOKEN_SECRET_REFRESH = '',
-  GOOGLE_OAUTH_CLIENT_SECRET = '',
-  GOOGLE_OAUTH_CLIENT_ID = '',
-  FACEBOOK_OAUTH_CLIENT_ID = '',
-  FACEBOOK_OAUTH_CLIENT_SECRET = '',
   AUTH_TOKEN_LIFE = '1h',
   AUTH_TOKEN_REFRESH_LIFE = '30d',
   REACT_APP_CLIENT_HOST = '',
@@ -54,7 +45,6 @@ const {
 export class AuthService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(Client) private clientRepository: Repository<Client>,
     @InjectRepository(UserRole)
     private userRoleRepository: Repository<UserRole>,
     @InjectRepository(UserRefreshToken)
@@ -246,93 +236,6 @@ export class AuthService {
     return this.setMailVerificationToken(user);
   }
 
-  async createClient(userId: number, createClientInfo: CreateClientDto) {
-    const apiKey = customAlphabet(alphaNum, 50)();
-    const apiSecret = customAlphabet(alphaNum, 70)();
-
-    const apiSecretHashed = await bcrypt.hash(apiSecret, 10);
-
-    await this.clientRepository
-      .create({
-        apiKey,
-        apiSecret: apiSecretHashed,
-        name: createClientInfo.name,
-        clientRoleCode: createClientInfo.roleCode,
-        createdById: userId,
-      })
-      .save();
-    return {
-      apiKey,
-      apiSecret,
-    };
-  }
-
-  async authenticateClient(info: LoginClientDto) {
-    const client = await this.clientRepository.findOne({
-      where: { apiKey: info.apiKey },
-      relations: ['clientRole'],
-    });
-
-    if (!client)
-      throw new NotFoundException(
-        'Wrong client apiKey or apiSecret',
-        'WRONG_CLIENT_API_KEY_OR_SECRET',
-      );
-
-    const isValid = await bcrypt.compare(info.apiSecret, client.apiSecret);
-
-    if (!isValid)
-      throw new NotFoundException(
-        'Wrong client apiKey or apiSecret',
-        'WRONG_CLIENT_API_KEY_OR_SECRET',
-      );
-
-    const tokens = await this.generateLoginToken({
-      id: client.id,
-      name: client.name,
-      clientRole: client.clientRole,
-      authType: OCTOPUS_CLIENT_AUTH_TYPE,
-    });
-
-    client.refreshToken = await hash(tokens.refreshToken);
-    await client.save();
-
-    return tokens;
-  }
-
-  async refreshClientTokens(refreshToken: string) {
-    try {
-      const payload = await verifyJWT(refreshToken, AUTH_TOKEN_SECRET_REFRESH);
-
-      const client = await this.clientRepository.findOneOrFail({
-        where: { id: payload.id, refreshToken: Not(IsNull()) },
-        relations: ['clientRole'],
-      });
-
-      const isValid = await compareHash(refreshToken, client.refreshToken!);
-
-      if (!isValid) throw new Error('Not Valid');
-
-      const tokens = await this.generateLoginToken({
-        id: client.id,
-        name: client.name,
-        clientRole: client.clientRole,
-      });
-      client.refreshToken = await hash(tokens.refreshToken);
-      await client.save();
-      return tokens;
-    } catch (err) {
-      throw new UnauthorizedException(
-        'Invalid Refresh Token',
-        'INVALID_REFRESH_TOKEN',
-      );
-    }
-  }
-
-  async removeClientRefreshToken(id: number) {
-    await this.clientRepository.update(id, { refreshToken: null });
-  }
-
   async setMailVerificationToken(user: User) {
     const userInfo = {
       firstName: user.firstName,
@@ -351,26 +254,6 @@ export class AuthService {
       user: userInfo,
       token,
     };
-  }
-
-  async registerUserByThirdParty({
-    firstName,
-    lastName,
-    email,
-    googleId,
-    facebookId,
-  }: UserBasic) {
-    return this.userRepository
-      .create({
-        firstName,
-        lastName,
-        email,
-        googleId,
-        facebookId,
-        userRoleCode: 'NORMAL',
-        emailConfirmed: true,
-      })
-      .save();
   }
 
   async subdomainValidity(subdomain: string, identifier: number | string) {
@@ -553,56 +436,6 @@ export class AuthService {
       token,
     );
     return userPayload;
-  }
-
-  getGoogleAuthAccessToken(code: string): Promise<string> {
-    return axios({
-      url: `https://oauth2.googleapis.com/token`,
-      method: 'post',
-      data: {
-        client_id: GOOGLE_OAUTH_CLIENT_ID,
-        client_secret: GOOGLE_OAUTH_CLIENT_SECRET,
-        redirect_uri: `${REACT_APP_CLIENT_HOST}/auth/google`,
-        grant_type: 'authorization_code',
-        code,
-      },
-    }).then((res) => res.data.access_token);
-  }
-
-  getGoogleUserInfo(accessToken: string): Promise<Record<string, any>> {
-    return axios({
-      url: 'https://www.googleapis.com/oauth2/v2/userinfo',
-      method: 'get',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }).then((res) => res.data);
-  }
-
-  getFacebookAuthAccessToken(code: string): Promise<string> {
-    return axios({
-      url: `https://graph.facebook.com/v4.0/oauth/access_token`,
-      method: 'get',
-      params: {
-        client_id: FACEBOOK_OAUTH_CLIENT_ID,
-        client_secret: FACEBOOK_OAUTH_CLIENT_SECRET,
-        redirect_uri: `${REACT_APP_CLIENT_HOST}/auth/facebook`,
-        code,
-      },
-    }).then((res) => res.data);
-  }
-
-  getFacebookUserInfo(accessToken: string): Promise<Record<string, any>> {
-    return axios({
-      url: 'https://graph.facebook.com/me',
-      method: 'get',
-      params: {
-        fields: ['id', 'email', 'first_name', 'last_name', 'middle_name'].join(
-          ',',
-        ),
-        accessToken,
-      },
-    }).then((res) => res.data);
   }
 
   async sendAccountVerificationMail({

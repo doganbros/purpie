@@ -7,7 +7,6 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { AuthService } from '../auth.service';
 import { IsAuthenticated } from '../decorators/auth.decorator';
 import { IsClientAuthenticated } from '../decorators/client-auth.decorator';
 import { CurrentClient } from '../decorators/current-client.decorator';
@@ -21,11 +20,12 @@ import {
   ClientTokens,
 } from '../interfaces/client.interface';
 import { UserTokenPayload } from '../interfaces/user.interface';
+import { ClientAuthService } from '../services/client-auth.service';
 
 @Controller({ path: 'auth/client', version: '1' })
 @ApiTags('auth-client')
 export class ClientAuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private clientAuthService: ClientAuthService) {}
 
   @Post('create')
   @IsAuthenticated(['canCreateClient'])
@@ -38,7 +38,7 @@ export class ClientAuthController {
     @Body() createClientInfo: CreateClientDto,
     @CurrentUser() user: UserTokenPayload,
   ) {
-    return this.authService.createClient(user.id, createClientInfo);
+    return this.clientAuthService.createClient(user.id, createClientInfo);
   }
 
   @Post('login')
@@ -47,7 +47,7 @@ export class ClientAuthController {
     description: `Signs in client and returns access and refresh token`,
   })
   loginClient(@Body() loginClientInfo: LoginClientDto) {
-    return this.authService.authenticateClient(loginClientInfo);
+    return this.clientAuthService.authenticateClient(loginClientInfo);
   }
 
   @Post('logout')
@@ -57,7 +57,7 @@ export class ClientAuthController {
     schema: { type: 'string', example: 'OK' },
   })
   async logout(@CurrentClient() currentClient: ClientPayload) {
-    await this.authService.removeClientRefreshToken(currentClient.id);
+    await this.clientAuthService.removeClientRefreshToken(currentClient.id);
 
     return 'OK';
   }
@@ -70,7 +70,9 @@ export class ClientAuthController {
       'Authorized client retrieves access token and refresh token. Note: The secret is shown only this time.',
   })
   refreshClientToken(@Body() refreshTokenInfo: RefreshClientTokenDto) {
-    return this.authService.refreshClientTokens(refreshTokenInfo.refreshToken);
+    return this.clientAuthService.refreshClientTokens(
+      refreshTokenInfo.refreshToken,
+    );
   }
 
   @Get('retrieve')

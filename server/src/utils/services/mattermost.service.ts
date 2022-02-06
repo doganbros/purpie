@@ -6,7 +6,7 @@ import { Team } from 'mattermost-redux/types/teams';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'entities/User.entity';
 import { Channel } from 'mattermost-redux/types/channels';
-import { fetchOrProduceNull } from '../../helpers/utils';
+import { fetchOrProduceNull } from '../../../helpers/utils';
 
 const {
   MM_SERVER_URL = '',

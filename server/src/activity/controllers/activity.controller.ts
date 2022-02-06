@@ -7,8 +7,8 @@ import { PaginationQuery } from 'types/PaginationQuery';
 import {
   PublicChannelSuggestionListResponse,
   PublicZoneSuggestionListResponse,
-} from './activity.response';
-import { ActivityService } from './activity.service';
+} from '../activity.response';
+import { ActivityService } from '../services/activity.service';
 
 @Controller({ path: 'activity', version: '1' })
 @ApiTags('activity')

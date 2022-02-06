@@ -30,8 +30,8 @@ import { MailService } from 'src/mail/mail.service';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import { ClientMeetingEventDto } from './dto/client-meeting-event.dto';
-import { CreateMeetingDto } from './dto/create-meeting.dto';
+import { ClientMeetingEventDto } from '../dto/client-meeting-event.dto';
+import { CreateMeetingDto } from '../dto/create-meeting.dto';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

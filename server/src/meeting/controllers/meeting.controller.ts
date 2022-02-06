@@ -38,11 +38,11 @@ import { MeetingConfig } from 'types/Meeting';
 import { errorResponseDoc } from 'helpers/error-response-doc';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { IsClientAuthenticated } from 'src/auth/decorators/client-auth.decorator';
-import { CreateMeetingDto } from './dto/create-meeting.dto';
-import { MeetingService } from './meeting.service';
-import { MeetingIdParams } from './dto/meeting-id.param';
-import { ClientMeetingEventDto } from './dto/client-meeting-event.dto';
-import { ClientVerifyMeetingAuthDto } from './dto/client-verify-meeting-auth.dto';
+import { CreateMeetingDto } from '../dto/create-meeting.dto';
+import { MeetingService } from '../services/meeting.service';
+import { MeetingIdParams } from '../dto/meeting-id.param';
+import { ClientMeetingEventDto } from '../dto/client-meeting-event.dto';
+import { ClientVerifyMeetingAuthDto } from '../dto/client-verify-meeting-auth.dto';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

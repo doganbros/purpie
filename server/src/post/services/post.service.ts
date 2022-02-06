@@ -18,12 +18,12 @@ import { UserZone } from 'entities/UserZone.entity';
 import { booleanValue, tsqueryParam } from 'helpers/utils';
 import { Brackets, IsNull, MoreThanOrEqual, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
-import { CreatePostCommentDto } from './dto/create-post-comment.dto';
-import { CreatePostLikeDto } from './dto/create-post-like.dto';
-import { CreateSavedPostDto } from './dto/create-saved-post.dto';
-import { EditPostDto } from './dto/edit-post.dto';
-import { ListPostFeedQuery } from './dto/list-post-feed.query';
-import { VideoViewStats } from './dto/video-view-stats.dto';
+import { CreatePostCommentDto } from '../dto/create-post-comment.dto';
+import { CreatePostLikeDto } from '../dto/create-post-like.dto';
+import { CreateSavedPostDto } from '../dto/create-saved-post.dto';
+import { EditPostDto } from '../dto/edit-post.dto';
+import { ListPostFeedQuery } from '../dto/list-post-feed.query';
+import { VideoViewStats } from '../dto/video-view-stats.dto';
 
 @Injectable()
 export class PostService {

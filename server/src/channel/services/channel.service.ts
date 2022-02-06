@@ -21,10 +21,10 @@ import {
 import { MailService } from 'src/mail/mail.service';
 import { SystemUserListQuery } from 'src/user/dto/system-user-list.query';
 import { Brackets, Not, Repository } from 'typeorm';
-import { CreateChannelDto } from './dto/create-channel.dto';
-import { SearchChannelQuery } from './dto/search-channel.query';
-import { UpdateChannelPermission } from './dto/update-channel-permission.dto';
-import { UpdateChannelUserRoleDto } from './dto/update-channel-user-role.dto';
+import { CreateChannelDto } from '../dto/create-channel.dto';
+import { SearchChannelQuery } from '../dto/search-channel.query';
+import { UpdateChannelPermission } from '../dto/update-channel-permission.dto';
+import { UpdateChannelUserRoleDto } from '../dto/update-channel-user-role.dto';
 
 const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
 
@@ -97,30 +97,6 @@ export class ChannelService {
       'new-channel-created',
       context,
     );
-  }
-
-  async getUserChannel(userId: number, params: Record<string, any>) {
-    const baseQuery = this.userChannelRepository
-      .createQueryBuilder('user_channel')
-      .select(['user_channel.id', 'user_channel.createdOn'])
-      .innerJoinAndSelect('user_channel.channel', 'channel')
-      .innerJoinAndSelect(
-        'user_channel.channelRole',
-        'channelRole',
-        'channelRole.channelId = channel.id AND channelRole.roleCode = user_channel.channelRoleCode',
-      )
-      .where('user_channel.userId = :userId', { userId });
-
-    if (params.channelId)
-      baseQuery.andWhere('channel.id = :channelId', {
-        channelId: params.channelId,
-      });
-    if (params.userChannelId)
-      baseQuery.andWhere('user_channel.id = :userChannelId', {
-        userChannelId: params.userChannelId,
-      });
-
-    return baseQuery.getOne();
   }
 
   async getPublicChannels(userId: number, zoneId: number) {
@@ -213,134 +189,6 @@ export class ChannelService {
     if (query.zoneId)
       baseQuery.andWhere('channel.zoneId = :zoneId', { zoneId: query.zoneId });
     return baseQuery.paginate(query);
-  }
-
-  async getCurrentUserZoneChannels(
-    identifier: number | string,
-    userId: number,
-  ) {
-    const records = await this.channelRepository
-      .createQueryBuilder('channel')
-      .select([
-        'user_channel.id',
-        'user_channel.createdOn',
-        'channel.id',
-        'channel.createdOn',
-        'channel.name',
-        'channel.topic',
-        'channel.displayPhoto',
-        'channel.description',
-        'channel.public',
-        'channel.zoneId',
-        'createdBy.id',
-        'createdBy.firstName',
-        'createdBy.lastName',
-        'createdBy.email',
-      ])
-      .innerJoin('channel.zone', 'zone')
-      .leftJoin('channel.createdBy', 'createdBy')
-      .leftJoin(
-        UserZone,
-        'user_zone',
-        'user_zone.zoneId = channel.id and user_zone.userId = :userId',
-        { userId },
-      )
-      .leftJoin(
-        UserChannel,
-        'user_channel',
-        'user_channel.channelId = channel.id and user_channel.userId = :userId',
-        { userId },
-      )
-      .leftJoinAndSelect('channel.category', 'category')
-      .leftJoinAndSelect(
-        'user_channel.channelRole',
-        'channel_role',
-        'channel_role.roleCode = user_channel.channelRoleCode AND channel_role.channelId = channel.id',
-      )
-      .where(
-        typeof identifier === 'string'
-          ? 'zone.subdomain = :identifier'
-          : 'zone.id = :identifier',
-        { identifier },
-      )
-      .andWhere(
-        new Brackets((qi) => {
-          qi.where('zone.public = true').orWhere('user_zone.id is not null');
-        }),
-      )
-      .andWhere(
-        new Brackets((qi) => {
-          qi.where('channel.public = true').orWhere(
-            'user_channel.id is not null',
-          );
-        }),
-      )
-      .getRawMany();
-
-    return records.map((record) => ({
-      id: record.user_channel_id,
-      createdOn: record.user_channel_createdOn,
-      channel: {
-        id: record.channel_id,
-        createdOn: record.channel_createdOn,
-        name: record.channel_name,
-        topic: record.channel_topic,
-        description: record.channel_description,
-        public: record.channel_public,
-        zoneId: record.channel_zoneId,
-        createdBy: {
-          id: record.createdBy_id,
-          firstName: record.createdBy_firstName,
-          lastName: record.createdBy_lastName,
-          email: record.createdBy_email,
-        },
-      },
-      chanelRole: {
-        roleCode: record.channel_role_roleCode,
-        roleName: record.channel_role_roleName,
-        canInvite: record.channel_role_canInvite,
-        canDelete: record.channel_role_canDelete,
-        canEdit: record.channel_role_canEdit,
-        canManageRole: record.channel_role_canManageRole,
-      },
-    }));
-  }
-
-  async getCurrentUserChannels(
-    userId: number,
-    subdomain: string | null = null,
-  ) {
-    if (subdomain) return this.getCurrentUserZoneChannels(subdomain, userId);
-
-    return this.userChannelRepository
-      .createQueryBuilder('user_channel')
-      .select([
-        'user_channel.id',
-        'user_channel.createdOn',
-        'channel.id',
-        'channel.createdOn',
-        'channel.name',
-        'channel.topic',
-        'channel.description',
-        'channel.displayPhoto',
-        'channel.public',
-        'channel.zoneId',
-        'createdBy.id',
-        'createdBy.firstName',
-        'createdBy.lastName',
-        'createdBy.email',
-      ])
-      .leftJoin('user_channel.channel', 'channel')
-      .leftJoin('channel.createdBy', 'createdBy')
-      .leftJoinAndSelect('channel.category', 'category')
-      .leftJoinAndSelect(
-        'user_channel.channelRole',
-        'channel_role',
-        'channel_role.roleCode = user_channel.channelRoleCode AND channel_role.channelId = channel.id',
-      )
-      .where('user_channel.userId = :userId', { userId })
-      .orderBy('user_channel.createdOn', 'DESC')
-      .getMany();
   }
 
   async validateJoinPublicChannel(userId: number, channelId: number) {

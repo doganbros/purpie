@@ -8,7 +8,8 @@ import { Invitation } from 'entities/Invitation.entity';
 import { Channel } from 'entities/Channel.entity';
 import { ChannelController } from './controllers/channel.controller';
 import { UserChannelController } from './controllers/user-channel.controller';
-import { ChannelService } from './channel.service';
+import { ChannelService } from './services/channel.service';
+import { UserChannelService } from './services/user-channel.service';
 
 @Module({
   controllers: [ChannelController, UserChannelController],
@@ -17,7 +18,7 @@ import { ChannelService } from './channel.service';
     MailModule,
     forwardRef(() => ZoneModule),
   ],
-  exports: [ChannelService],
-  providers: [ChannelService],
+  exports: [UserChannelService],
+  providers: [ChannelService, UserChannelService],
 })
 export class ChannelModule {}

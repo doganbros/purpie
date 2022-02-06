@@ -7,13 +7,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ChannelService } from '../channel.service';
+import { UserChannelService } from '../services/user-channel.service';
 
 @Injectable()
 export class UserChannelGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    private channelService: ChannelService,
+    private userChannelService: UserChannelService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -32,13 +32,19 @@ export class UserChannelGuard implements CanActivate {
     const { userChannelId, channelId } = req.params;
 
     if (channelId) {
-      req.userChannel = await this.channelService.getUserChannel(req.user.id, {
-        channelId: Number.parseInt(channelId, 10),
-      });
+      req.userChannel = await this.userChannelService.getUserChannel(
+        req.user.id,
+        {
+          channelId: Number.parseInt(channelId, 10),
+        },
+      );
     } else if (userChannelId) {
-      req.userChannel = await this.channelService.getUserChannel(req.user.id, {
-        id: Number.parseInt(userChannelId, 10),
-      });
+      req.userChannel = await this.userChannelService.getUserChannel(
+        req.user.id,
+        {
+          id: Number.parseInt(userChannelId, 10),
+        },
+      );
     }
 
     if (!req.userChannel)

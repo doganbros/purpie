@@ -4,7 +4,7 @@ import { CurrentStreamViewer } from 'entities/CurrentStreamViewer.entity';
 import { Post } from 'entities/Post.entity';
 import { StreamLog } from 'entities/StreamLog.entity';
 import { User } from 'entities/User.entity';
-import { StreamController } from './stream.controller';
+import { StreamController } from './controllers/stream.controller';
 import { StreamService } from './stream.service';
 
 @Module({

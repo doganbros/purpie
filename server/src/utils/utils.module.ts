@@ -2,8 +2,8 @@ import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Client } from 'entities/Client.entity';
 import { User } from 'entities/User.entity';
-import { MattermostService } from './mattermost.service';
-import { UtilService } from './util.service';
+import { MattermostService } from './services/mattermost.service';
+import { UtilService } from './services/util.service';
 
 @Global()
 @Module({

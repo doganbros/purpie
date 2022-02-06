@@ -7,8 +7,8 @@ import { UserChannel } from 'entities/UserChannel.entity';
 import { ChannelModule } from 'src/channel/channel.module';
 import { MailModule } from 'src/mail/mail.module';
 import { ZoneModule } from 'src/zone/zone.module';
-import { VideoController } from './video.controller';
-import { VideoService } from './video.service';
+import { VideoController } from './controllers/video.controller';
+import { VideoService } from './services/video.service';
 
 @Module({
   imports: [

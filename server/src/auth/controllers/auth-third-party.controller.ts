@@ -13,13 +13,13 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { MattermostService } from 'src/utils/mattermost.service';
 import { ApiParam, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from 'entities/User.entity';
 import { AuthByThirdPartyDto } from '../dto/auth-by-third-party.dto';
 import { ThirdPartyLoginParams } from '../dto/third-party-login.params';
 import { UserProfile } from '../interfaces/user.interface';
-import { AuthService } from '../auth.service';
+import { AuthThirdPartyService } from '../services/auth-third-party.service';
+import { AuthService } from '../services/auth.service';
 
 const {
   GOOGLE_OAUTH_CLIENT_ID = '',
@@ -32,7 +32,7 @@ const {
 export class AuthThirdPartyController {
   constructor(
     private authService: AuthService,
-    private utilService: MattermostService,
+    private authThirdPartyService: AuthThirdPartyService,
   ) {}
 
   @Get('/:name')
@@ -100,8 +100,12 @@ export class AuthThirdPartyController {
     let user: User | undefined;
     let userExistsAlready = false;
     if (name === 'google') {
-      const accessToken = await this.authService.getGoogleAuthAccessToken(code);
-      const userInfo = await this.authService.getGoogleUserInfo(accessToken);
+      const accessToken = await this.authThirdPartyService.getGoogleAuthAccessToken(
+        code,
+      );
+      const userInfo = await this.authThirdPartyService.getGoogleUserInfo(
+        accessToken,
+      );
 
       user = await this.authService.getUserByEmail(userInfo.email);
 
@@ -112,7 +116,7 @@ export class AuthThirdPartyController {
           user = await user.save();
         }
       } else {
-        user = await this.authService.registerUserByThirdParty({
+        user = await this.authThirdPartyService.registerUserByThirdParty({
           firstName: userInfo.given_name,
           lastName: userInfo.family_name,
           email: userInfo.email,
@@ -120,10 +124,12 @@ export class AuthThirdPartyController {
         });
       }
     } else if (name === 'facebook') {
-      const accessToken = await this.authService.getFacebookAuthAccessToken(
+      const accessToken = await this.authThirdPartyService.getFacebookAuthAccessToken(
         code,
       );
-      const userInfo = await this.authService.getFacebookUserInfo(accessToken);
+      const userInfo = await this.authThirdPartyService.getFacebookUserInfo(
+        accessToken,
+      );
 
       user = await this.authService.getUserByEmail(userInfo.email);
 
@@ -134,7 +140,7 @@ export class AuthThirdPartyController {
           user = await user.save();
         }
       } else {
-        user = await this.authService.registerUserByThirdParty({
+        user = await this.authThirdPartyService.registerUserByThirdParty({
           firstName:
             userInfo.first_name +
             (userInfo.middle_name ? ` ${userInfo.middle_name}` : ''),

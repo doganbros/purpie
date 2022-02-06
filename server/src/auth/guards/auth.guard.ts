@@ -7,7 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { verifyJWT } from 'helpers/jwt';
 import { pick } from 'lodash';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 import { UserPermissionOptions } from '../interfaces/user.interface';
 
 const { AUTH_TOKEN_SECRET = '', AUTH_TOKEN_SECRET_REFRESH = '' } = process.env;

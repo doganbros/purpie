@@ -4,9 +4,9 @@ import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { IsClientAuthenticated } from 'src/auth/decorators/client-auth.decorator';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
-import { ClientStreamEventDto } from './dto/client-stream-event.dto';
-import { StreamLogResponse } from './responses/stream.response';
-import { StreamService } from './stream.service';
+import { ClientStreamEventDto } from '../dto/client-stream-event.dto';
+import { StreamLogResponse } from '../responses/stream.response';
+import { StreamService } from '../stream.service';
 
 @Controller({ version: '1', path: 'stream' })
 @ApiTags('stream')

@@ -18,12 +18,16 @@ import {
   UserZoneListResponse,
   UserZoneDetailResponse,
 } from '../responses/user-zone.response';
-import { ZoneService } from '../zone.service';
+import { UserZoneService } from '../services/user-zone.service';
+import { ZoneService } from '../services/zone.service';
 
 @Controller({ path: 'user-zone', version: '1' })
 @ApiTags('user-zone')
 export class UserZoneController {
-  constructor(private zoneService: ZoneService) {}
+  constructor(
+    private zoneService: ZoneService,
+    private userZoneService: UserZoneService,
+  ) {}
 
   @Get('list')
   @ApiOkResponse({
@@ -42,7 +46,7 @@ export class UserZoneController {
     @CurrentUser() user: UserTokenPayload,
     @Headers('app-subdomain') subdomain?: string,
   ) {
-    return this.zoneService.getCurrentUserZones(user.id, subdomain);
+    return this.userZoneService.getCurrentUserZones(user.id, subdomain);
   }
 
   @Get('detail')

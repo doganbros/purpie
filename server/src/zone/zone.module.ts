@@ -8,8 +8,9 @@ import { UserChannel } from 'entities/UserChannel.entity';
 import { Category } from 'entities/Category.entity';
 import { MailModule } from 'src/mail/mail.module';
 import { UserZoneController } from './controllers/user-zone.controller';
-import { ZoneService } from './zone.service';
+import { ZoneService } from './services/zone.service';
 import { ZoneController } from './controllers/zone.controller';
+import { UserZoneService } from './services/user-zone.service';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { ZoneController } from './controllers/zone.controller';
     MailModule,
   ],
   controllers: [UserZoneController, ZoneController],
-  providers: [ZoneService],
-  exports: [ZoneService],
+  providers: [ZoneService, UserZoneService],
+  exports: [UserZoneService],
 })
 export class ZoneModule {}

@@ -27,23 +27,23 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
-import { CreatePostCommentDto } from './dto/create-post-comment.dto';
-import { CreatePostLikeDto } from './dto/create-post-like.dto';
-import { CreateSavedPostDto } from './dto/create-saved-post.dto';
-import { UpdatePostCommentDto } from './dto/update-comment.dto';
-import { PostService } from './post.service';
+import { CreatePostCommentDto } from '../dto/create-post-comment.dto';
+import { CreatePostLikeDto } from '../dto/create-post-like.dto';
+import { CreateSavedPostDto } from '../dto/create-saved-post.dto';
+import { UpdatePostCommentDto } from '../dto/update-comment.dto';
+import { PostService } from '../services/post.service';
 import {
   PostCommentListResponse,
   PostLikeListResponse,
-} from './response/post.response';
+} from '../response/post.response';
 import {
   MixedPostFeedDetail,
   MixedPostFeedListResponse,
   PublicPostFeedListResponse,
-} from './response/post-list-feed.response';
-import { ListPostFeedQuery } from './dto/list-post-feed.query';
-import { EditPostDto } from './dto/edit-post.dto';
-import { VideoViewStats } from './dto/video-view-stats.dto';
+} from '../response/post-list-feed.response';
+import { ListPostFeedQuery } from '../dto/list-post-feed.query';
+import { EditPostDto } from '../dto/edit-post.dto';
+import { VideoViewStats } from '../dto/video-view-stats.dto';
 
 const {
   S3_VIDEO_POST_DIR = '',

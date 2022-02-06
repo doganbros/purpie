@@ -46,10 +46,10 @@ import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-reques
 import { SystemUserListQuery } from 'src/user/dto/system-user-list.query';
 import { CurrentUserZone } from 'src/zone/decorators/current-user-zone.decorator';
 import { UserZoneRole } from 'src/zone/decorators/user-zone-role.decorator';
+import { UserZoneService } from 'src/zone/services/user-zone.service';
 import { ChannelRole } from 'entities/ChannelRole.entity';
 import { InvitationResponseDto } from 'src/zone/dto/invitation-response.dto';
-import { ZoneService } from 'src/zone/zone.service';
-import { ChannelService } from '../channel.service';
+import { ChannelService } from '../services/channel.service';
 import { CurrentUserChannel } from '../decorators/current-user-channel.decorator';
 import { UserChannelRole } from '../decorators/user-channel-role.decorator';
 import { CreateChannelDto } from '../dto/create-channel.dto';
@@ -66,7 +66,7 @@ const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 export class ChannelController {
   constructor(
     private channelService: ChannelService,
-    private zoneService: ZoneService,
+    private userZoneService: UserZoneService,
   ) {}
 
   @Post('/create/:userZoneId')
@@ -139,13 +139,13 @@ export class ChannelController {
     if (!channel)
       throw new NotFoundException('Channel not found', 'CHANNEL_NOT_FOUND');
 
-    let userZone = await this.zoneService.userExistsInZone(
+    let userZone = await this.userZoneService.userExistsInZone(
       userProfile.id,
       channel.zoneId,
     );
 
     if (!userZone)
-      userZone = await this.zoneService.addUserToZone(
+      userZone = await this.userZoneService.addUserToZone(
         userProfile.id,
         channel.zoneId,
       );
@@ -226,13 +226,13 @@ export class ChannelController {
       return 'OK';
     }
 
-    let userZone = await this.zoneService.userExistsInZone(
+    let userZone = await this.userZoneService.userExistsInZone(
       userProfile.id,
       invitation.channel.zoneId,
     );
 
     if (!userZone)
-      userZone = await this.zoneService.addUserToZone(
+      userZone = await this.userZoneService.addUserToZone(
         userProfile.id,
         invitation.channel.zoneId,
       );

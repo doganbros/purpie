@@ -7,8 +7,8 @@ import { PostVideo } from 'entities/PostVideo.entity';
 import { PostView } from 'entities/PostView.entity';
 import { SavedPost } from 'entities/SavedPost.entity';
 import { User } from 'entities/User.entity';
-import { PostController } from './post.controller';
-import { PostService } from './post.service';
+import { PostController } from './controllers/post.controller';
+import { PostService } from './services/post.service';
 
 @Module({
   imports: [

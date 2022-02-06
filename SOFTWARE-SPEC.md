@@ -132,7 +132,7 @@ While using nestjs at the server-side, One must follow these guidelines.
 
 - NestJS pattern must be followed strictly. For example controllers should be used to handle only http requests, services must be used to generate data or communicate with the database, guards must be used for securing routes etc.
 
-- If there are a lot of routes in a controller, it could be splitted.
+- controllers and providers should reside in controllers and services directories respectively.
 - Implement global providers if they are needed only. This will help other developers know from which modules those services are imported from. Example authentication and exceptions would be needed in the entire application but zone service wouldn't.
 - the `@IsAuthenticated()` decorator should be used to validate the current user's token. Also permissions could be passed in as paremeters if they are needed.
 - Document the controllers written extensively (using decorators provided by Nestjs for OpenAPI). This helps other developers to make requests very easily without reading the source code.

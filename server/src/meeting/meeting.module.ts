@@ -9,8 +9,8 @@ import { PostTag } from 'entities/PostTag.entity';
 import { ChannelModule } from 'src/channel/channel.module';
 import { MailModule } from 'src/mail/mail.module';
 import { ZoneModule } from 'src/zone/zone.module';
-import { MeetingController } from './meeting.controller';
-import { MeetingService } from './meeting.service';
+import { MeetingController } from './controllers/meeting.controller';
+import { MeetingService } from './services/meeting.service';
 
 @Module({
   imports: [

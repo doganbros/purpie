@@ -4,15 +4,15 @@ import { UserChannel } from 'entities/UserChannel.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
-import { ChannelService } from '../channel.service';
 import { CurrentUserChannel } from '../decorators/current-user-channel.decorator';
 import { UserChannelRole } from '../decorators/user-channel-role.decorator';
 import { UserChannelListResponse } from '../responses/user-channel.response';
+import { UserChannelService } from '../services/user-channel.service';
 
 @Controller({ path: 'user-channel', version: '1' })
 @ApiTags('user-channel')
 export class UserChannelController {
-  constructor(private channelService: ChannelService) {}
+  constructor(private userChannelService: UserChannelService) {}
 
   @Get('list')
   @ApiOkResponse({
@@ -31,7 +31,7 @@ export class UserChannelController {
     @CurrentUser() user: UserTokenPayload,
     @Headers('app-subdomain') subdomain: string,
   ) {
-    return this.channelService.getCurrentUserChannels(user.id, subdomain);
+    return this.userChannelService.getCurrentUserChannels(user.id, subdomain);
   }
 
   @Delete('remove/:userChannelId')

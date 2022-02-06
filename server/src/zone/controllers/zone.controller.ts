@@ -51,17 +51,21 @@ import { UserZoneRole } from '../decorators/user-zone-role.decorator';
 import { InviteToJoinDto } from '../dto/invite-to-join.dto';
 import { InvitationResponseDto } from '../dto/invitation-response.dto';
 import { ZoneIdParams } from '../dto/zone-id.params';
-import { ZoneService } from '../zone.service';
+import { ZoneService } from '../services/zone.service';
 import { EditZoneDto } from '../dto/edit-zone.dto';
 import { CreateZoneDto } from '../dto/create-zone.dto';
 import { UpdateUserZoneRoleDto } from '../dto/update-user-zone-role.dto';
 import { UpdateZonePermission } from '../dto/update-zone-permission.dto';
+import { UserZoneService } from '../services/user-zone.service';
 
 const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 @Controller({ version: '1', path: 'zone' })
 @ApiTags('zone')
 export class ZoneController {
-  constructor(private zoneService: ZoneService) {}
+  constructor(
+    private zoneService: ZoneService,
+    private userZoneService: UserZoneService,
+  ) {}
 
   @Post('create')
   @ApiCreatedResponse({
@@ -122,7 +126,7 @@ export class ZoneController {
 
     if (!zone) throw new NotFoundException('Zone not found', 'ZONE_NOT_FOUND');
 
-    const userZone = await this.zoneService.addUserToZone(user.id, zoneId);
+    const userZone = await this.userZoneService.addUserToZone(user.id, zoneId);
 
     this.zoneService.removeInvitation(user.email, zone.id);
     return userZone.id;
@@ -220,7 +224,7 @@ export class ZoneController {
       return 'OK';
     }
 
-    await this.zoneService.addUserToZone(userProfile.id, invitation.zoneId);
+    await this.userZoneService.addUserToZone(userProfile.id, invitation.zoneId);
 
     await invitation.remove();
     return 'OK';

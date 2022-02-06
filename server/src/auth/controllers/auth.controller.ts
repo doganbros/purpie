@@ -29,7 +29,7 @@ import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-reques
 import { errorResponseDoc } from 'helpers/error-response-doc';
 import { hash } from 'helpers/utils';
 import { RegisterUserDto } from '../dto/register-user.dto';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 import {
   UserBasic,
   UserProfile,
