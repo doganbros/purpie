@@ -381,9 +381,6 @@ Please follow the steps below to get a development mattermost server running. Th
         - `data`
 
             This directory hosts the default data used by some entities.
-        - `repositories`
-
-            This directory all the typeorm repositories used in the application. A custom repository can be defined only if some static methods are needed. For example the `UserZone` repository inherits from the `RecordRepository` which provides the static paginate method used for the pagination of the application.
     
     - `helpers`
 
