@@ -37,6 +37,18 @@ import {
   SEARCH_POST_REQUESTED,
   SEARCH_POST_SUCCESS,
   SEARCH_POST_FAILED,
+  CREATE_POST_COMMENT_REQUESTED,
+  CREATE_POST_COMMENT_SUCCESS,
+  CREATE_POST_COMMENT_FAILED,
+  UPDATE_POST_COMMENT_REQUESTED,
+  UPDATE_POST_COMMENT_SUCCESS,
+  UPDATE_POST_COMMENT_FAILED,
+  REMOVE_POST_COMMENT_REQUESTED,
+  REMOVE_POST_COMMENT_SUCCESS,
+  REMOVE_POST_COMMENT_FAILED,
+  LIST_POST_COMMENTS_REQUESTED,
+  LIST_POST_COMMENTS_SUCCESS,
+  LIST_POST_COMMENTS_FAILED,
 } from '../constants/post.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
@@ -70,6 +82,17 @@ export interface Post {
     likesCount: number;
     commentsCount: number;
   };
+}
+
+export interface PostComment {
+  id: number;
+  comment: string;
+  parentId: number | null;
+  createdOn: Date;
+  updatedOn: Date | null;
+  edited: true;
+  user: UserBasic;
+  publishedInLiveStream: boolean;
 }
 
 export interface SavedPost {
@@ -106,6 +129,12 @@ export interface PostSearchParams extends PostSearchOptions {
   skip?: number;
 }
 
+export interface ListPostCommentsParams {
+  limit?: number;
+  skip?: number;
+  postId: number;
+  parentId?: number;
+}
 export interface PostState {
   feed: PaginatedResponse<Post> & {
     loading: boolean;
@@ -115,6 +144,10 @@ export interface PostState {
     loading: boolean;
     error: ResponseError | null;
     data: Post | null;
+    comments: PaginatedResponse<PostComment> & {
+      loading: boolean;
+      error: ResponseError | null;
+    };
   };
   createVideo: {
     showCreateVideoLayer: boolean;
@@ -174,6 +207,39 @@ export type PostActionParams =
       };
     }
   | {
+      type: typeof CREATE_POST_COMMENT_REQUESTED;
+      payload: {
+        comment: string;
+        postId: number;
+        parentId?: number;
+      };
+    }
+  | {
+      type:
+        | typeof UPDATE_POST_COMMENT_REQUESTED
+        | typeof UPDATE_POST_COMMENT_SUCCESS;
+      payload: {
+        comment: string;
+        commentId: number;
+      };
+    }
+  | {
+      type:
+        | typeof REMOVE_POST_COMMENT_REQUESTED
+        | typeof REMOVE_POST_COMMENT_SUCCESS;
+      payload: {
+        commentId: number;
+      };
+    }
+  | {
+      type: typeof LIST_POST_COMMENTS_REQUESTED;
+      payload: ListPostCommentsParams;
+    }
+  | {
+      type: typeof LIST_POST_COMMENTS_SUCCESS;
+      payload: PaginatedResponse<PostComment>;
+    }
+  | {
       type:
         | typeof PUBLIC_FEED_SUCCESS
         | typeof USER_FEED_SUCCESS
@@ -200,7 +266,8 @@ export type PostActionParams =
         | typeof OPEN_CREATE_VIDEO_LAYER
         | typeof CLOSE_CREATE_VIDEO_LAYER
         | typeof CREATE_POST_LIKE_SUCCESS
-        | typeof REMOVE_POST_LIKE_SUCCESS;
+        | typeof REMOVE_POST_LIKE_SUCCESS
+        | typeof CREATE_POST_COMMENT_SUCCESS;
     }
   | {
       type:
@@ -215,7 +282,11 @@ export type PostActionParams =
         | typeof CREATE_POST_SAVE_FAILED
         | typeof REMOVE_POST_SAVE_FAILED
         | typeof SAVED_POSTS_FAILED
-        | typeof SEARCH_POST_FAILED;
+        | typeof SEARCH_POST_FAILED
+        | typeof CREATE_POST_COMMENT_FAILED
+        | typeof UPDATE_POST_COMMENT_FAILED
+        | typeof REMOVE_POST_COMMENT_FAILED
+        | typeof LIST_POST_COMMENTS_FAILED;
       payload: ResponseError;
     };
 

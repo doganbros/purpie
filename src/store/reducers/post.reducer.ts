@@ -31,6 +31,11 @@ import {
   SEARCH_POST_REQUESTED,
   SEARCH_POST_SUCCESS,
   SEARCH_POST_FAILED,
+  UPDATE_POST_COMMENT_SUCCESS,
+  REMOVE_POST_COMMENT_SUCCESS,
+  LIST_POST_COMMENTS_REQUESTED,
+  LIST_POST_COMMENTS_SUCCESS,
+  LIST_POST_COMMENTS_FAILED,
 } from '../constants/post.constants';
 import { PostActionParams, PostState } from '../types/post.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -45,6 +50,11 @@ const initialState: PostState = {
     data: null,
     loading: false,
     error: null,
+    comments: {
+      loading: false,
+      error: null,
+      ...paginationInitialState,
+    },
   },
   createVideo: {
     showCreateVideoLayer: false,
@@ -205,6 +215,7 @@ const postReducer = (
       return {
         ...state,
         postDetail: {
+          ...state.postDetail,
           data: action.payload,
           loading: false,
           error: null,
@@ -429,6 +440,77 @@ const postReducer = (
         },
       };
     case SEARCH_POST_FAILED:
+      return {
+        ...state,
+        search: {
+          ...state.search,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case UPDATE_POST_COMMENT_SUCCESS: {
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments: {
+            ...state.postDetail.comments,
+            data: state.postDetail.comments.data.map((c) =>
+              c.id === action.payload.commentId
+                ? {
+                    ...c,
+                    comment: action.payload.comment,
+                    updatedOn: new Date(),
+                  }
+                : c
+            ),
+          },
+        },
+      };
+    }
+    case REMOVE_POST_COMMENT_SUCCESS: {
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments: {
+            ...state.postDetail.comments,
+            data: state.postDetail.comments.data.filter(
+              (c) => c.id !== action.payload.commentId
+            ),
+          },
+        },
+      };
+    }
+    case LIST_POST_COMMENTS_REQUESTED:
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments: {
+            ...state.postDetail.comments,
+            loading: true,
+            error: null,
+          },
+        },
+      };
+    case LIST_POST_COMMENTS_SUCCESS:
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments: {
+            ...action.payload,
+            data:
+              action.payload.skip > 0
+                ? [...state.postDetail.comments.data, ...action.payload.data]
+                : action.payload.data,
+            loading: false,
+            error: null,
+          },
+        },
+      };
+    case LIST_POST_COMMENTS_FAILED:
       return {
         ...state,
         search: {

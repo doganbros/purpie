@@ -4,7 +4,9 @@ import { PaginatedResponse } from '../../models/paginated-response';
 import {
   CreateVideoPayload,
   FeedPayload,
+  ListPostCommentsParams,
   Post,
+  PostComment,
   PostSearchParams,
   SavedPost,
 } from '../types/post.types';
@@ -94,3 +96,35 @@ export const postViewStats = (
     })
     .then((res) => res.data);
 };
+
+export const createPostComment = (
+  comment: string,
+  postId: number,
+  parentId?: number
+): Promise<number> =>
+  http
+    .post('/post/comment/create', { comment, postId, parentId })
+    .then((res) => res.data);
+
+export const updatePostComment = (
+  comment: string,
+  commentId: number
+): Promise<'OK'> =>
+  http
+    .put('/post/comment/update', { comment, commentId })
+    .then((res) => res.data);
+
+export const removePostComment = (commentId: number): Promise<'OK'> =>
+  http.delete(`/post/comment/update/${commentId}`).then((res) => res.data);
+
+export const listPostComments = ({
+  postId,
+  parentId,
+  limit,
+  skip,
+}: ListPostCommentsParams): Promise<PaginatedResponse<PostComment>> =>
+  http
+    .get(`/post/comment/list/${postId}/${parentId}`, {
+      params: { limit, skip },
+    })
+    .then((res) => res.data);

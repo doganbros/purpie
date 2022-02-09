@@ -37,12 +37,25 @@ import {
   SEARCH_POST_REQUESTED,
   SEARCH_POST_SUCCESS,
   SEARCH_POST_FAILED,
+  CREATE_POST_COMMENT_REQUESTED,
+  CREATE_POST_COMMENT_SUCCESS,
+  CREATE_POST_COMMENT_FAILED,
+  UPDATE_POST_COMMENT_REQUESTED,
+  UPDATE_POST_COMMENT_SUCCESS,
+  UPDATE_POST_COMMENT_FAILED,
+  REMOVE_POST_COMMENT_REQUESTED,
+  REMOVE_POST_COMMENT_SUCCESS,
+  REMOVE_POST_COMMENT_FAILED,
+  LIST_POST_COMMENTS_REQUESTED,
+  LIST_POST_COMMENTS_SUCCESS,
+  LIST_POST_COMMENTS_FAILED,
 } from '../constants/post.constants';
 
 import * as PostService from '../services/post.service';
 import {
   CreateVideoPayload,
   FeedPayload,
+  ListPostCommentsParams,
   PostAction,
   PostSearchParams,
 } from '../types/post.types';
@@ -321,6 +334,111 @@ export const searchPostAction = (params: PostSearchParams): PostAction => {
     } catch (err) {
       dispatch({
         type: SEARCH_POST_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const createPostCommentAction = (
+  comment: string,
+  postId: number,
+  parentId?: number
+): PostAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: CREATE_POST_COMMENT_REQUESTED,
+      payload: {
+        comment,
+        postId,
+        parentId,
+      },
+    });
+    try {
+      await PostService.createPostComment(comment, postId, parentId);
+      dispatch({
+        type: CREATE_POST_COMMENT_SUCCESS,
+      });
+      listPostCommentsAction({ postId });
+    } catch (err) {
+      dispatch({
+        type: CREATE_POST_COMMENT_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const updatePostCommentAction = (
+  comment: string,
+  commentId: number
+): PostAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: UPDATE_POST_COMMENT_REQUESTED,
+      payload: {
+        comment,
+        commentId,
+      },
+    });
+    try {
+      await PostService.updatePostComment(comment, commentId);
+      dispatch({
+        type: UPDATE_POST_COMMENT_SUCCESS,
+        payload: {
+          comment,
+          commentId,
+        },
+      });
+    } catch (err) {
+      dispatch({
+        type: UPDATE_POST_COMMENT_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const removePostCommentAction = (commentId: number): PostAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: REMOVE_POST_COMMENT_REQUESTED,
+      payload: {
+        commentId,
+      },
+    });
+    try {
+      await PostService.removePostComment(commentId);
+      dispatch({
+        type: REMOVE_POST_COMMENT_SUCCESS,
+        payload: { commentId },
+      });
+    } catch (err) {
+      dispatch({
+        type: REMOVE_POST_COMMENT_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const listPostCommentsAction = (
+  params: ListPostCommentsParams
+): PostAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: LIST_POST_COMMENTS_REQUESTED,
+      payload: params,
+    });
+    try {
+      const payload = await PostService.listPostComments(params);
+      dispatch({
+        type: LIST_POST_COMMENTS_SUCCESS,
+        payload,
+      });
+    } catch (err) {
+      dispatch({
+        type: LIST_POST_COMMENTS_FAILED,
         payload: err?.reponse?.data,
       });
     }
