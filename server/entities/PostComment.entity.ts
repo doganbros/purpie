@@ -30,4 +30,7 @@ export class PostComment extends RecordEntity {
 
   @Column({ default: false })
   publishedInLiveStream: boolean;
+
+  @Column({ select: false, nullable: true, insert: false, type: 'int' })
+  replyCount: number;
 }

@@ -2,11 +2,8 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Delete,
   HttpCode,
   HttpStatus,
-  NotFoundException,
-  Param,
   Post,
   UploadedFile,
   UseInterceptors,
@@ -16,24 +13,17 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Post as PostEntity } from 'entities/Post.entity';
 import path from 'path';
 import { Express } from 'express';
-import { s3, s3Storage } from 'config/s3-storage';
-import {
-  CurrentUser,
-  CurrentUserProfile,
-} from 'src/auth/decorators/current-user.decorator';
+import { s3Storage } from 'config/s3-storage';
+import { CurrentUserProfile } from 'src/auth/decorators/current-user.decorator';
 import { IsClientAuthenticated } from 'src/auth/decorators/client-auth.decorator';
-import {
-  UserProfile,
-  UserTokenPayload,
-} from 'src/auth/interfaces/user.interface';
+import { UserProfile } from 'src/auth/interfaces/user.interface';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { CreateVideoDto } from '../dto/create-video.dto';
 import { VideoService } from '../services/video.service';
-import { VideoIdParams } from '../dto/video-id.params';
 import { VideoUploadClientFeedbackDto } from '../dto/video-upload-client-feedback.dto';
 
-const { S3_VIDEO_POST_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
+const { S3_VIDEO_POST_DIR = '' } = process.env;
 
 @Controller({ path: 'video', version: '1' })
 @ApiTags('video')
@@ -106,30 +96,6 @@ export class VideoController {
     this.staticVideoService.sendVideoInfoMail(user, videoPost);
 
     return videoPost.id;
-  }
-
-  @Delete('remove/:videoId')
-  @IsAuthenticated()
-  async removeVideoPost(
-    @Param() info: VideoIdParams,
-    @CurrentUser() user: UserTokenPayload,
-  ) {
-    const videoPost = await this.staticVideoService.getVideoPostForUserById(
-      user.id,
-      info.videoId,
-    );
-
-    if (!videoPost)
-      throw new NotFoundException('Video not found', 'VIDEO_NOT_FOUND');
-
-    await this.staticVideoService.removeVideoPost(user.id, info.videoId);
-
-    s3.deleteObject({
-      Key: `${S3_VIDEO_POST_DIR}${videoPost.slug}`,
-      Bucket: S3_VIDEO_BUCKET_NAME,
-    });
-
-    return 'OK';
   }
 
   @Post('client/feedback')

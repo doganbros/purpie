@@ -41,7 +41,7 @@ export class VideoService {
     await this.postVideoRepository
       .create({
         slug: payload.slug,
-        fileName: payload.videoName,
+        fileName: payload.videoName!,
       })
       .save();
 
