@@ -68,7 +68,7 @@ const Login: FC = () => {
           <FormField
             name="emailOrUserName"
             htmlFor="emailOrUserNameInput"
-            label="EMAIL"
+            label="EMAIL / USERNAME"
             validate={[validators.required()]}
           >
             <TextInput id="emailOrUserNameInput" name="emailOrUserName" />
@@ -116,7 +116,7 @@ const Login: FC = () => {
             </Box>
             <Box basis="100%" direction="row" justify="center">
               <Text margin={{ horizontal: 'small' }} size="small">
-                Or Sign In With
+                Or Sign in With
               </Text>
             </Box>
             <Box basis="80%">
