@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import { Contact } from 'entities/Contact.entity';
 import { Post } from 'entities/Post.entity';
 import { PostComment } from 'entities/PostComment.entity';
+import { PostCommentLike } from 'entities/PostCommentLike.entity';
 import { PostLike } from 'entities/PostLike.entity';
 import { PostTag } from 'entities/PostTag.entity';
 import { PostVideo } from 'entities/PostVideo.entity';
@@ -19,6 +20,7 @@ import { UserZone } from 'entities/UserZone.entity';
 import { booleanValue, tsqueryParam } from 'helpers/utils';
 import { Brackets, IsNull, MoreThanOrEqual, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
+import { CreatePostCommentLikeDto } from '../dto/create-post-comment-like.dto';
 import { CreatePostCommentDto } from '../dto/create-post-comment.dto';
 import { CreatePostLikeDto } from '../dto/create-post-like.dto';
 import { CreateSavedPostDto } from '../dto/create-saved-post.dto';
@@ -42,6 +44,8 @@ export class PostService {
     private postLikeRepository: Repository<PostLike>,
     @InjectRepository(PostComment)
     private postCommentRepository: Repository<PostComment>,
+    @InjectRepository(PostCommentLike)
+    private postCommentLikeRepository: Repository<PostCommentLike>,
     @InjectRepository(SavedPost)
     private savedPostRepository: Repository<SavedPost>,
     @InjectRepository(PostVideo)
@@ -144,6 +148,22 @@ export class PostService {
       .save();
   }
 
+  createPostCommentLike(userId: number, info: CreatePostCommentLikeDto) {
+    return this.postCommentLikeRepository
+      .create({
+        userId,
+        postId: info.postId,
+        commentId: info.postCommentId,
+      })
+      .save();
+  }
+
+  getPostCommentLikeCount(postId: number, commentId: number) {
+    return this.postCommentLikeRepository.count({
+      where: { postId, commentId },
+    });
+  }
+
   getPostLikeCount(postId: number) {
     return this.postLikeRepository.count({ where: { postId } });
   }
@@ -155,6 +175,28 @@ export class PostService {
         parentId: parentId || IsNull(),
       },
     });
+  }
+
+  getPostCommentLikes(
+    postId: number,
+    commentId: number,
+    query: PaginationQuery,
+  ) {
+    return this.postCommentLikeRepository
+      .createQueryBuilder('postCommentLike')
+      .select([
+        'postCommentLike.id',
+        'postCommentLike.createdOn',
+        'user.id',
+        'user.firstName',
+        'user.lastName',
+        'user.userName',
+        'user.email',
+      ])
+      .innerJoin('postCommentLike.user', 'user')
+      .where('postCommentLike.postId = :postId', { postId })
+      .andWhere('postCommentLike.commentId = :commentId', { commentId })
+      .paginate(query);
   }
 
   getPostLikes(postId: number, query: PaginationQuery) {
@@ -203,6 +245,14 @@ export class PostService {
             .where('postReply.postId = postComment.postId')
             .andWhere('postReply.parentId = postComment.id'),
         'postComment_replyCount',
+      )
+      .addSelect(
+        (sq) =>
+          sq
+            .select('cast(count(*) as int)')
+            .from(PostCommentLike, 'postCommentLike')
+            .where('postCommentLike.commentId = postComment.id'),
+        'postComment_likesCount',
       )
       .innerJoin('postComment.user', 'user')
       .where('postComment.postId = :postId', { postId })
@@ -283,6 +333,10 @@ export class PostService {
     }
 
     return true;
+  }
+
+  removePostCommentLike(userId: number, commentId: number) {
+    return this.postCommentLikeRepository.delete({ userId, commentId });
   }
 
   removePostLike(userId: number, postId: number) {

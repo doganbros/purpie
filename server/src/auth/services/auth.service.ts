@@ -399,43 +399,48 @@ export class AuthService {
         password: await bcrypt.hash(info.password, 10),
       })
       .save();
+    try {
+      const mattermostProfile = await this.createMattermostUserAndJoinDefaults(
+        user,
+      );
 
-    const mattermostProfile = await this.createMattermostUserAndJoinDefaults(
-      user,
-    );
+      const userRole = await this.userRoleRepository.findOne({
+        where: {
+          roleCode: 'SUPER_ADMIN',
+        },
+      });
 
-    const userRole = await this.userRoleRepository.findOne({
-      where: {
-        roleCode: 'SUPER_ADMIN',
-      },
-    });
-
-    const userPayload: UserProfile = {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      userName: user.userName,
-      mattermostId: mattermostProfile.id,
-      userRole: {
-        ...userRole!,
-      },
-    };
-
-    const { token, id } = await this.createMattermostPersonalTokenForUser(
-      mattermostProfile.id,
-    );
-
-    await this.setAccessTokens(
-      {
+      const userPayload: UserProfile = {
         id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        userName: user.userName,
         mattermostId: mattermostProfile.id,
-        mattermostTokenId: id,
-      },
-      res,
-      token,
-    );
-    return userPayload;
+        userRole: {
+          ...userRole!,
+        },
+      };
+
+      const { token, id } = await this.createMattermostPersonalTokenForUser(
+        mattermostProfile.id,
+      );
+
+      await this.setAccessTokens(
+        {
+          id: user.id,
+          mattermostId: mattermostProfile.id,
+          mattermostTokenId: id,
+        },
+        res,
+        token,
+      );
+
+      return userPayload;
+    } catch (err) {
+      await user.remove();
+      throw err;
+    }
   }
 
   async sendAccountVerificationMail({

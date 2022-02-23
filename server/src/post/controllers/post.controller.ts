@@ -44,6 +44,7 @@ import {
 import { ListPostFeedQuery } from '../dto/list-post-feed.query';
 import { EditPostDto } from '../dto/edit-post.dto';
 import { VideoViewStats } from '../dto/video-view-stats.dto';
+import { CreatePostCommentLikeDto } from '../dto/create-post-comment-like.dto';
 
 const {
   S3_VIDEO_POST_DIR = '',
@@ -205,6 +206,78 @@ export class PostController {
     return result.affected === 0 ? 'OK' : 'Created';
   }
 
+  @Post('comment/like/create')
+  @ValidationBadRequest()
+  @ApiCreatedResponse({
+    description: 'User likes a post comment. Returns the like id',
+    schema: { type: 'int', example: 1 },
+  })
+  @IsAuthenticated()
+  @ApiNotFoundResponse({
+    description:
+      'Error thrown when the post is not found or user does not have the right to access',
+    schema: errorResponseDoc(
+      404,
+      'Post not found or unauthorized',
+      'POST_NOT_FOUND',
+    ),
+  })
+  async createPostCommentLike(
+    @Body() info: CreatePostCommentLikeDto,
+    @CurrentUser() user: UserTokenPayload,
+  ) {
+    await this.validatePost(user.id, info.postId);
+
+    const like = await this.postService.createPostCommentLike(user.id, info);
+
+    return like.id;
+  }
+
+  @Get('comment/like/list/:postId/:commentId')
+  @ApiOkResponse({
+    type: PostLikeListResponse,
+    description: 'User gets the likes belonging to the postId',
+  })
+  @ApiNotFoundResponse({
+    description:
+      'Error thrown when the post is not found or user does not have the right to access',
+    schema: errorResponseDoc(
+      404,
+      'Post not found or unauthorized',
+      'POST_NOT_FOUND',
+    ),
+  })
+  @IsAuthenticated()
+  async getPostCommentLikes(
+    @Query() query: PaginationQuery,
+    @Param('postId', ParseIntPipe) postId: number,
+    @Param('commentId', ParseIntPipe) commentId: number,
+    @CurrentUser() user: UserTokenPayload,
+  ) {
+    await this.validatePost(user.id, postId);
+
+    return this.postService.getPostCommentLikes(postId, commentId, query);
+  }
+
+  @Delete('comment/like/remove/:commentId')
+  @ApiCreatedResponse({
+    description:
+      'User unlikes a post comment. Returns Created when some rows are affected and OK otherwise',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @IsAuthenticated()
+  async removePostCommentLike(
+    @CurrentUser() user: UserTokenPayload,
+    @Param('commentId', ParseIntPipe) commentId: number,
+  ) {
+    const result = await this.postService.removePostCommentLike(
+      user.id,
+      commentId,
+    );
+
+    return result.affected === 0 ? 'OK' : 'Created';
+  }
+
   @Post('like/create')
   @ValidationBadRequest()
   @ApiCreatedResponse({
@@ -249,12 +322,12 @@ export class PostController {
   @IsAuthenticated()
   async getPostLikes(
     @Query() query: PaginationQuery,
-    @Param('postId') postId: string,
+    @Param('postId', ParseIntPipe) postId: number,
     @CurrentUser() user: UserTokenPayload,
   ) {
-    await this.validatePost(user.id, Number(postId));
+    await this.validatePost(user.id, postId);
 
-    return this.postService.getPostLikes(Number(postId), query);
+    return this.postService.getPostLikes(postId, query);
   }
 
   @Get('like/count/:postId')
@@ -272,17 +345,13 @@ export class PostController {
     schema: { type: 'int', example: 15 },
   })
   @IsAuthenticated()
-  @ApiParam({
-    type: Number,
-    name: 'postId',
-  })
   async getPostLikeCount(
-    @Param('postId') postId: string,
+    @Param('postId', ParseIntPipe) postId: number,
     @CurrentUser() user: UserTokenPayload,
   ) {
-    await this.validatePost(user.id, Number(postId));
+    await this.validatePost(user.id, postId);
 
-    return this.postService.getPostLikeCount(Number(postId));
+    return this.postService.getPostLikeCount(postId);
   }
 
   @Delete('like/remove/:postId')
@@ -292,19 +361,11 @@ export class PostController {
     schema: { type: 'string', example: 'OK' },
   })
   @IsAuthenticated()
-  @ApiParam({
-    type: Number,
-    description: 'The post id to unlike',
-    name: 'postId',
-  })
   async removePostLike(
     @CurrentUser() user: UserTokenPayload,
-    @Param('postId') postId: string,
+    @Param('postId', ParseIntPipe) postId: number,
   ) {
-    const result = await this.postService.removePostLike(
-      user.id,
-      Number(postId),
-    );
+    const result = await this.postService.removePostLike(user.id, postId);
 
     return result.affected === 0 ? 'OK' : 'Created';
   }
@@ -329,18 +390,11 @@ export class PostController {
     schema: { type: 'string', example: 'OK' },
   })
   @IsAuthenticated()
-  @ApiParam({
-    type: Number,
-    name: 'postId',
-  })
   async removeSavedPost(
     @CurrentUser() user: UserTokenPayload,
-    @Param('postId') postId: string,
+    @Param('postId', ParseIntPipe) postId: number,
   ) {
-    const result = await this.postService.removeSavedPost(
-      user.id,
-      Number(postId),
-    );
+    const result = await this.postService.removeSavedPost(user.id, postId);
     return result.affected === 0 ? 'OK' : 'Created';
   }
 
