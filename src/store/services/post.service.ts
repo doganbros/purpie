@@ -124,7 +124,7 @@ export const listPostComments = ({
   skip,
 }: ListPostCommentsParams): Promise<PaginatedResponse<PostComment>> =>
   http
-    .get(`/post/comment/list/${postId}/${parentId}`, {
+    .get(`/post/comment/list/${postId}/${parentId || ''}`, {
       params: { limit, skip },
     })
     .then((res) => res.data);
