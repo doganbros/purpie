@@ -93,7 +93,7 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
             width={`${rightComponentWidth}px`}
             background="white"
             round={{ corner: 'left', size: 'large' }}
-            elevation="xlarge"
+            elevation="indigo"
             overflow="auto"
           >
             <ExtendedBox fill minWidth="min-content">

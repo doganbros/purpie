@@ -97,7 +97,7 @@ const AuthLayout: React.FC<Props> = ({
         ) : null}
         <Box basis={formWidth[size]} margin="0" style={{ zIndex: 2 }}>
           <Card
-            elevation="xlarge"
+            elevation="indigo"
             background={theme.dark ? 'dark-2' : 'white'}
             round="large"
             width="100%"

@@ -118,7 +118,7 @@ const ZoneSelector: FC = () => {
               vertical: size === 'small' ? 'medium' : 'small',
             }}
             round="medium"
-            elevation={hover ? 'medium' : 'none'}
+            elevation={hover ? 'indigo' : 'none'}
           >
             {selectedUserZone ? (
               <Avatar

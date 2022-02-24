@@ -35,10 +35,11 @@ export const theme: typeof grommet = deepMerge(base, {
     },
     elevation: {
       light: {
-        xlarge: '-5px 5px 30px #3D138D26',
+        indigo: '-5px 5px 30px #3D138D26',
+        peach: '0px 2px 20px 0px #FFE7E380',
       },
       dark: {
-        medium: '0 5px 15px #3D138D35',
+        indigo: '0 5px 15px #3D138D35',
       },
     },
     control: {

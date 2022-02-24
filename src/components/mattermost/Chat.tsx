@@ -301,7 +301,7 @@ const Chat: FC<Props> = ({
                           size="small"
                           dropProps={{
                             align: { top: 'bottom', left: 'left' },
-                            elevation: 'xlarge',
+                            elevation: 'indigo',
                           }}
                           icon={<MoreVertical size="20px" />}
                           items={menuItems}
