@@ -19,7 +19,7 @@ import RecommendedVideos from './RecommendedVideos';
 import VideoJs from '../../../components/utils/PostGridItem/VideoJs';
 import { http } from '../../../config/http';
 import { postViewStats } from '../../../store/services/post.service';
-import Comments from './Comments';
+import CommentList from './Comments/CommentList';
 
 dayjs.extend(relativeTime);
 interface RouteParams {
@@ -170,7 +170,7 @@ const Video: FC = () => {
             </Box>
           </Box>
           <Text color="status-disabled"> {data.description} </Text>
-          <Comments postId={+params.id} />
+          <CommentList postId={+params.id} />
           <RecommendedVideos />
         </Box>
       )}

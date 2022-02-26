@@ -36,6 +36,9 @@ import {
   LIST_POST_COMMENTS_REQUESTED,
   LIST_POST_COMMENTS_SUCCESS,
   LIST_POST_COMMENTS_FAILED,
+  LIST_POST_COMMENT_REPLIES_REQUESTED,
+  LIST_POST_COMMENT_REPLIES_SUCCESS,
+  LIST_POST_COMMENT_REPLIES_FAILED,
 } from '../constants/post.constants';
 import { PostActionParams, PostState } from '../types/post.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -519,6 +522,77 @@ const postReducer = (
           error: action.payload,
         },
       };
+    case LIST_POST_COMMENT_REPLIES_REQUESTED: {
+      const parentIndex = state.postDetail.comments.data.findIndex(
+        (c) => c.id === action.payload.parentId
+      );
+      const { comments } = state.postDetail;
+      const parentComment = comments.data[parentIndex];
+
+      parentComment.replies = {
+        ...(parentComment.replies || paginationInitialState),
+        loading: true,
+        error: null,
+      };
+
+      comments.data[parentIndex] = parentComment;
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments,
+        },
+      };
+    }
+    case LIST_POST_COMMENT_REPLIES_SUCCESS: {
+      const parentIndex = state.postDetail.comments.data.findIndex(
+        (c) => c.id === action.payload.parentId
+      );
+      const { comments } = state.postDetail;
+      const parentComment = comments.data[parentIndex];
+
+      parentComment.replies = {
+        ...(parentComment.replies || paginationInitialState),
+        ...action.payload,
+        data:
+          action.payload.skip > 0
+            ? [...(parentComment.replies?.data || []), ...action.payload.data]
+            : action.payload.data,
+        loading: false,
+        error: null,
+      };
+
+      comments.data[parentIndex] = parentComment;
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments,
+        },
+      };
+    }
+    case LIST_POST_COMMENT_REPLIES_FAILED: {
+      const parentIndex = state.postDetail.comments.data.findIndex(
+        (c) => c.id === action.payload.parentId
+      );
+      const { comments } = state.postDetail;
+      const parentComment = comments.data[parentIndex];
+
+      parentComment.replies = {
+        ...(parentComment.replies || paginationInitialState),
+        loading: false,
+        error: action.payload,
+      };
+
+      comments.data[parentIndex] = parentComment;
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments,
+        },
+      };
+    }
     default:
       return state;
   }

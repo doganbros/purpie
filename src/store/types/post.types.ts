@@ -49,6 +49,9 @@ import {
   LIST_POST_COMMENTS_REQUESTED,
   LIST_POST_COMMENTS_SUCCESS,
   LIST_POST_COMMENTS_FAILED,
+  LIST_POST_COMMENT_REPLIES_REQUESTED,
+  LIST_POST_COMMENT_REPLIES_SUCCESS,
+  LIST_POST_COMMENT_REPLIES_FAILED,
 } from '../constants/post.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
@@ -94,6 +97,7 @@ export interface PostComment {
   edited: true;
   user: UserBasic;
   publishedInLiveStream: boolean;
+  replyCount: number;
 }
 
 export interface SavedPost {
@@ -134,7 +138,17 @@ export interface ListPostCommentsParams {
   limit?: number;
   skip?: number;
   postId: number;
-  parentId?: number;
+}
+
+export interface ListPostCommentRepliesParams extends ListPostCommentsParams {
+  parentId: number;
+}
+
+export interface PostCommentState extends PostComment {
+  replies?: PaginatedResponse<PostComment> & {
+    loading: boolean;
+    error: ResponseError | null;
+  };
 }
 export interface PostState {
   feed: PaginatedResponse<Post> & {
@@ -145,7 +159,7 @@ export interface PostState {
     loading: boolean;
     error: ResponseError | null;
     data: Post | null;
-    comments: PaginatedResponse<PostComment> & {
+    comments: PaginatedResponse<PostCommentState> & {
       loading: boolean;
       error: ResponseError | null;
     };
@@ -237,8 +251,16 @@ export type PostActionParams =
       payload: ListPostCommentsParams;
     }
   | {
+      type: typeof LIST_POST_COMMENT_REPLIES_REQUESTED;
+      payload: ListPostCommentRepliesParams;
+    }
+  | {
       type: typeof LIST_POST_COMMENTS_SUCCESS;
       payload: PaginatedResponse<PostComment>;
+    }
+  | {
+      type: typeof LIST_POST_COMMENT_REPLIES_SUCCESS;
+      payload: PaginatedResponse<PostComment> & { parentId: number };
     }
   | {
       type:
@@ -289,6 +311,10 @@ export type PostActionParams =
         | typeof REMOVE_POST_COMMENT_FAILED
         | typeof LIST_POST_COMMENTS_FAILED;
       payload: ResponseError;
+    }
+  | {
+      type: typeof LIST_POST_COMMENT_REPLIES_FAILED;
+      payload: ResponseError & { parentId: number };
     };
 
 export interface PostDispatch {

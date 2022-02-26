@@ -49,12 +49,16 @@ import {
   LIST_POST_COMMENTS_REQUESTED,
   LIST_POST_COMMENTS_SUCCESS,
   LIST_POST_COMMENTS_FAILED,
+  LIST_POST_COMMENT_REPLIES_REQUESTED,
+  LIST_POST_COMMENT_REPLIES_SUCCESS,
+  LIST_POST_COMMENT_REPLIES_FAILED,
 } from '../constants/post.constants';
 
 import * as PostService from '../services/post.service';
 import {
   CreateVideoPayload,
   FeedPayload,
+  ListPostCommentRepliesParams,
   ListPostCommentsParams,
   PostAction,
   PostSearchParams,
@@ -442,6 +446,30 @@ export const listPostCommentsAction = (
     } catch (err) {
       dispatch({
         type: LIST_POST_COMMENTS_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const listPostCommentRepliesAction = (
+  params: ListPostCommentRepliesParams
+): PostAction => {
+  return async (dispatch) => {
+    const { parentId } = params;
+    dispatch({
+      type: LIST_POST_COMMENT_REPLIES_REQUESTED,
+      payload: params,
+    });
+    try {
+      const payload = await PostService.listPostComments(params);
+      dispatch({
+        type: LIST_POST_COMMENT_REPLIES_SUCCESS,
+        payload: { ...payload, parentId },
+      });
+    } catch (err) {
+      dispatch({
+        type: LIST_POST_COMMENT_REPLIES_FAILED,
         payload: err?.reponse?.data,
       });
     }

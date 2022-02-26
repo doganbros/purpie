@@ -127,7 +127,9 @@ export const listPostComments = ({
   parentId,
   limit,
   skip,
-}: ListPostCommentsParams): Promise<PaginatedResponse<PostComment>> =>
+}: ListPostCommentsParams & { parentId?: number }): Promise<
+  PaginatedResponse<PostComment>
+> =>
   http
     .get(`/post/comment/list/${postId}/${parentId || ''}`, {
       params: { limit, skip },
