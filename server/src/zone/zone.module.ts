@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserZoneRepository } from 'entities/repositories/UserZone.repository';
 import { Invitation } from 'entities/Invitation.entity';
 import { Zone } from 'entities/Zone.entity';
 import { ZoneRole } from 'entities/ZoneRole.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { Category } from 'entities/Category.entity';
+import { UserZone } from 'entities/UserZone.entity';
 import { MailModule } from 'src/mail/mail.module';
 import { UserZoneController } from './controllers/user-zone.controller';
 import { ZoneService } from './services/zone.service';
@@ -19,7 +19,7 @@ import { UserZoneService } from './services/user-zone.service';
       Invitation,
       Category,
       ZoneRole,
-      UserZoneRepository,
+      UserZone,
       UserChannel,
     ]),
     MailModule,

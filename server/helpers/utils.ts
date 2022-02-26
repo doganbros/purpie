@@ -115,8 +115,8 @@ export const fetchOrProduceNull = async <T>(
     return null;
   }
 };
-export const booleanValue = (value: string | boolean | number) =>
-  [true, 'true', 1].includes(value);
+export const booleanValue = (value?: string | boolean | number) =>
+  [true, 'true', 1, '1'].includes(value || 0);
 
 export const parsePostTags = (description?: string) => {
   if (!description?.trim()) return null;

@@ -301,13 +301,6 @@ export class MeetingService {
     return generateJWT(payload, JITSI_SECRET);
   }
 
-  async removeMeeting(meetingId: number, userId: number) {
-    return this.postRepository.delete({
-      id: meetingId,
-      createdById: userId,
-    });
-  }
-
   get meetingSelections() {
     return this.postRepository
       .createQueryBuilder('meeting')

@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserZoneRepository } from 'entities/repositories/UserZone.repository';
 import { Zone } from 'entities/Zone.entity';
 import { UserZone } from 'entities/UserZone.entity';
 
 @Injectable()
 export class UserZoneService {
   constructor(
-    @InjectRepository(UserZoneRepository)
-    private userZoneRepository: UserZoneRepository,
+    @InjectRepository(UserZone)
+    private userZoneRepository: Repository<UserZone>,
     @InjectRepository(Zone)
     private zoneRepository: Repository<Zone>,
   ) {}

@@ -54,8 +54,13 @@ export const getChannelFeed = (
 export const getPostDetail = (postId: number): Promise<Post> =>
   http.get(`/post/detail/feed/${postId}`).then((res) => res.data);
 
-export const createVideo = (data: CreateVideoPayload): Promise<any> =>
-  http.post('video/create/', serialize(data)).then((res) => res.data);
+export const createVideo = (
+  data: CreateVideoPayload,
+  onUploadProgress: (progressEvent: ProgressEvent<XMLHttpRequestUpload>) => void
+): Promise<any> =>
+  http
+    .post('video/create/', serialize(data), { onUploadProgress })
+    .then((res) => res.data);
 
 export const create = (postId: number): Promise<Post> =>
   http.get(`/post/detail/feed/${postId}`).then((res) => res.data);

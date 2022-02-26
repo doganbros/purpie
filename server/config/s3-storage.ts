@@ -19,6 +19,13 @@ export const s3 = new aws.S3({
   },
 });
 
+export const deleteObject = promisify(
+  (
+    params: S3.DeleteObjectRequest,
+    cb: (err: AWSError, data: S3.Types.HeadObjectOutput) => void,
+  ) => s3.deleteObject(params, cb),
+);
+
 export const s3HeadObject = promisify(
   (
     params: S3.Types.HeadObjectRequest,

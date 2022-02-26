@@ -69,8 +69,7 @@ export class PostController {
   @Post('comment/create')
   @ValidationBadRequest()
   @ApiCreatedResponse({
-    description: 'User creates a new comment. Returns the comment id',
-    schema: { type: 'int', example: 1 },
+    description: 'User creates a new comment. Returns the comment',
   })
   @ApiNotFoundResponse({
     description:
@@ -88,9 +87,7 @@ export class PostController {
   ) {
     await this.validatePost(user.id, info.postId);
 
-    const comment = await this.postService.createPostComment(user.id, info);
-
-    return comment.id;
+    return this.postService.createPostComment(user.id, info);
   }
 
   @Get('comment/list/:postId/:parentId?')
@@ -447,6 +444,20 @@ export class PostController {
     return this.postService.getPublicFeed(query, user.id);
   }
 
+  @Get('/list/feed/public-user/:userId')
+  @ApiOkResponse({
+    description: 'User gets main feed of another user',
+    type: MixedPostFeedListResponse,
+  })
+  @IsAuthenticated()
+  getPublicUserFeed(
+    @Query() query: ListPostFeedQuery,
+    @CurrentUser() user: UserTokenPayload,
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
+    return this.postService.getPublicUserFeed(user.id, userId, query);
+  }
+
   @Get('/list/feed/user')
   @ApiOkResponse({
     description: 'User gets main feed from channels and from contacts',
@@ -493,6 +504,15 @@ export class PostController {
     description: 'User gets post by id',
     type: MixedPostFeedDetail,
   })
+  @ApiNotFoundResponse({
+    description:
+      'Error thrown when the post is not found or user does not have the right to access',
+    schema: errorResponseDoc(
+      404,
+      'Post not found or unauthorized',
+      'POST_NOT_FOUND',
+    ),
+  })
   @IsAuthenticated()
   async getFeedById(
     @Param('postId', ParseIntPipe) postId: number,
@@ -517,6 +537,51 @@ export class PostController {
     @Body() editPostPayload: EditPostDto,
   ) {
     await this.postService.editPost(postId, user.id, editPostPayload);
+
+    return 'OK';
+  }
+
+  @Delete('remove/:postId')
+  @IsAuthenticated()
+  @ApiNotFoundResponse({
+    description:
+      'Error thrown when the post is not found or user does not have the right to access',
+    schema: errorResponseDoc(
+      404,
+      'Post not found or unauthorized',
+      'POST_NOT_FOUND',
+    ),
+  })
+  async removePostById(
+    @Param('postId', ParseIntPipe) postId: number,
+    @CurrentUser() user: UserTokenPayload,
+  ) {
+    const result = await this.postService.removePost(user.id, postId);
+    if (!result.affected)
+      throw new NotFoundException(
+        'Post not found or unauthorized',
+        'POST_NOT_FOUND',
+      );
+    return 'OK';
+  }
+
+  @Delete('remove/video/:postId/:videoName')
+  @IsAuthenticated()
+  @ApiNotFoundResponse({
+    description:
+      'Error thrown when the post is not found or user does not have the right to access',
+    schema: errorResponseDoc(
+      404,
+      'Post not found or unauthorized',
+      'POST_NOT_FOUND',
+    ),
+  })
+  async removePostVideo(
+    @Param('postId', ParseIntPipe) postId: number,
+    @Param('videoName') videoName: string,
+    @CurrentUser() user: UserTokenPayload,
+  ) {
+    await this.postService.removePostVideo(postId, user.id, videoName);
 
     return 'OK';
   }

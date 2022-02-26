@@ -2,10 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Delete,
   Get,
-  HttpCode,
-  HttpStatus,
   NotFoundException,
   Param,
   Post,
@@ -40,7 +37,6 @@ import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-reques
 import { IsClientAuthenticated } from 'src/auth/decorators/client-auth.decorator';
 import { CreateMeetingDto } from '../dto/create-meeting.dto';
 import { MeetingService } from '../services/meeting.service';
-import { MeetingIdParams } from '../dto/meeting-id.param';
 import { ClientMeetingEventDto } from '../dto/client-meeting-event.dto';
 import { ClientVerifyMeetingAuthDto } from '../dto/client-verify-meeting-auth.dto';
 
@@ -212,21 +208,6 @@ export class MeetingController {
       user.id === meeting.createdById,
     );
     return res.redirect(url);
-  }
-
-  @Delete('remove/:meetingId')
-  @ApiOkResponse({
-    description: 'User removes a meeting by id',
-    schema: { type: 'string', example: 'OK' },
-  })
-  @HttpCode(HttpStatus.OK)
-  @IsAuthenticated()
-  async removeMeeting(
-    @Param() { meetingId }: MeetingIdParams,
-    @CurrentUser() user: UserTokenPayload,
-  ) {
-    await this.meetingService.removeMeeting(meetingId, user.id);
-    return 'OK';
   }
 
   @Get('config/user')

@@ -169,14 +169,17 @@ export const getPostDetailAction = (postId: number): PostAction => {
   };
 };
 
-export const createVideoAction = (payload: CreateVideoPayload): PostAction => {
+export const createVideoAction = (
+  payload: CreateVideoPayload,
+  onUploadProgress: (progressEvent: ProgressEvent<XMLHttpRequestUpload>) => void
+): PostAction => {
   return async (dispatch) => {
     dispatch({
       type: CREATE_VIDEO_REQUESTED,
       payload,
     });
     try {
-      await PostService.createVideo(payload);
+      await PostService.createVideo(payload, onUploadProgress);
       dispatch({
         type: CREATE_VIDEO_SUCCESS,
       });

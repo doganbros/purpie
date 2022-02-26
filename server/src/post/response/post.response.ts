@@ -8,6 +8,9 @@ class PostCommentList {
   @ApiProperty()
   comment: string;
 
+  @ApiProperty()
+  replyCount: number;
+
   @ApiProperty({ nullable: true })
   parentId: number;
 

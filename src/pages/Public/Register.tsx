@@ -30,7 +30,7 @@ const Register: FC = () => {
     <AuthLayout
       title="Register"
       formTitle="Create an Account"
-      formSubTitle="Sign Up to continue."
+      formSubTitle="Sign up to continue"
       callToAction={{
         title: 'Already have an account?',
         body: 'SIGN IN',

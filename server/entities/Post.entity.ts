@@ -61,8 +61,8 @@ export class Post extends RecordEntity {
   @Column({ default: false })
   record: boolean;
 
-  @Column({ nullable: true })
-  videoName: string;
+  @Column({ nullable: true, type: 'character varying' })
+  videoName: string | null;
 
   @Column({ default: false })
   userContactExclusive: boolean;

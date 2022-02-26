@@ -8,7 +8,6 @@ import { URL } from 'url';
 import { Brackets, IsNull, Not, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Zone } from 'entities/Zone.entity';
-import { UserZoneRepository } from 'entities/repositories/UserZone.repository';
 import { defaultZoneRoles } from 'entities/data/default-roles';
 import { tsqueryParam } from 'helpers/utils';
 import { SearchQuery } from 'types/SearchQuery';
@@ -33,8 +32,8 @@ export class ZoneService {
     @InjectRepository(Zone) private zoneRepository: Repository<Zone>,
     @InjectRepository(ZoneRole)
     private zoneRoleRepository: Repository<ZoneRole>,
-    @InjectRepository(UserZoneRepository)
-    private userZoneRepository: UserZoneRepository,
+    @InjectRepository(UserZone)
+    private userZoneRepository: Repository<UserZone>,
     @InjectRepository(Invitation)
     private invitationRepository: Repository<Invitation>,
     @InjectRepository(Category)

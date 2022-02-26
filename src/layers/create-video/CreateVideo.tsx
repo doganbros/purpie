@@ -40,6 +40,17 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
   const [userContactExclusive, setUserContactExclusive] = useState(false);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [uplaodStarted, setUploadStarted] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const handleUploadProgress = (
+    progressEvent: ProgressEvent<XMLHttpRequestUpload>
+  ) => {
+    if (progressEvent.loaded && progressEvent.total) {
+      setUploadProgress(
+        Math.round((progressEvent.loaded * 100) / progressEvent.total)
+      );
+    }
+  };
 
   const notValid = !title || !videoFile;
   return (
@@ -70,7 +81,10 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
             CreateVideoPayload & { videoFile: FileList }
           >) => {
             dispatch(
-              createVideoAction({ ...value, videoFile: value.videoFile[0] })
+              createVideoAction(
+                { ...value, videoFile: value.videoFile[0] },
+                handleUploadProgress
+              )
             );
             setUploadStarted(true);
           }}
@@ -160,7 +174,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
               icon={uploading ? <Spinner /> : undefined}
               label={(() => {
                 if (uploading) {
-                  return 'Uploading';
+                  return `Uploading ${uploadProgress}%`;
                 }
                 if (!uploading && !error && uplaodStarted) {
                   return 'Upload complete!';

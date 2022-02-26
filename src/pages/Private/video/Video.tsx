@@ -162,7 +162,11 @@ const Video: FC = () => {
                   </Text>
                 </Box>
               </Box>
-              <Text color="status-disabled">VIEW_COUNT_MISSING</Text>
+              <Text color="status-disabled">
+                {data.postReaction.viewsCount === 1
+                  ? `${data.postReaction.viewsCount} view`
+                  : `${data.postReaction.viewsCount} views`}
+              </Text>
             </Box>
           </Box>
           <Text color="status-disabled"> {data.description} </Text>

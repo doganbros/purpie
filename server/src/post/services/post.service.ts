@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { deleteObject } from 'config/s3-storage';
 import dayjs from 'dayjs';
 import { Contact } from 'entities/Contact.entity';
 import { Post } from 'entities/Post.entity';
@@ -24,6 +25,12 @@ import { CreateSavedPostDto } from '../dto/create-saved-post.dto';
 import { EditPostDto } from '../dto/edit-post.dto';
 import { ListPostFeedQuery } from '../dto/list-post-feed.query';
 import { VideoViewStats } from '../dto/video-view-stats.dto';
+
+const {
+  S3_VIDEO_BUCKET_NAME = '',
+  S3_VIDEO_POST_DIR = '',
+  S3_VIDEO_MEETING_RECORDING_DIR = '',
+} = process.env;
 
 @Injectable()
 export class PostService {
@@ -174,7 +181,7 @@ export class PostService {
   ) {
     return this.postCommentRepository
       .createQueryBuilder('postComment')
-      .select([
+      .addSelect([
         'postComment.id',
         'postComment.comment',
         'postComment.parentId',
@@ -188,6 +195,15 @@ export class PostService {
         'user.userName',
         'user.email',
       ])
+      .addSelect(
+        (sq) =>
+          sq
+            .select('cast(count(*) as int)')
+            .from(PostComment, 'postReply')
+            .where('postReply.postId = postComment.postId')
+            .andWhere('postReply.parentId = postComment.id'),
+        'postComment_replyCount',
+      )
       .innerJoin('postComment.user', 'user')
       .where('postComment.postId = :postId', { postId })
       .andWhere(
@@ -199,6 +215,74 @@ export class PostService {
         },
       )
       .paginate(query);
+  }
+
+  async dropPostVideosByUser(userId: number, identity: string | number) {
+    const filter: Record<string, any> = { createdById: userId };
+    if (typeof identity === 'string') filter.slug = identity;
+    else filter.id = identity;
+
+    const post = await this.postRepository.findOne({ where: filter });
+
+    if (!post) throw new NotFoundException('Post not found', 'POST_NOT_FOUND');
+
+    const postVideos = await this.postVideoRepository.find({
+      where: { slug: post.slug },
+    });
+
+    for (const postVideo of postVideos) {
+      const location =
+        post.type === 'meeting'
+          ? `${S3_VIDEO_MEETING_RECORDING_DIR}${post.slug}/${postVideo.fileName}`
+          : `${S3_VIDEO_POST_DIR}${postVideo.fileName}`;
+
+      deleteObject({
+        Key: location,
+        Bucket: S3_VIDEO_BUCKET_NAME,
+      });
+      await this.postVideoRepository.delete({ id: postVideo.id });
+    }
+
+    post.videoName = null;
+
+    await post.save();
+
+    return true;
+  }
+
+  async removePost(userId: number, postId: number) {
+    await this.dropPostVideosByUser(userId, postId);
+    return this.postRepository.delete({ createdById: userId, id: postId });
+  }
+
+  async removePostVideo(postId: number, userId: number, videoName: string) {
+    const post = await this.postRepository.findOne({
+      where: { createdById: userId, id: postId },
+    });
+
+    if (!post) return null;
+
+    await this.postVideoRepository.delete({
+      slug: post.slug,
+      fileName: videoName,
+    });
+
+    const location =
+      post.type === 'meeting'
+        ? `${S3_VIDEO_MEETING_RECORDING_DIR}${post.slug}/${videoName}`
+        : `${S3_VIDEO_POST_DIR}${videoName}`;
+
+    deleteObject({
+      Key: location,
+      Bucket: S3_VIDEO_BUCKET_NAME,
+    });
+
+    if (post.videoName === videoName) {
+      post.videoName = null;
+      await post.save();
+    }
+
+    return true;
   }
 
   removePostLike(userId: number, postId: number) {
@@ -437,8 +521,9 @@ export class PostService {
     query: Partial<ListPostFeedQuery>,
     includePublic = false,
     includePublicZoneChannel = false,
+    createdByUserId?: number,
   ) {
-    return this.basePost(query, userId)
+    const baseSelection = this.basePost(query, userId)
       .addSelect([
         'zone.id',
         'zone.name',
@@ -499,15 +584,37 @@ export class PostService {
                 );
               else qbi.orWhere('user_channel.id is not null');
 
-              if (
-                !query.following ||
-                (query.following && !booleanValue(query.following))
-              )
+              if (createdByUserId) query.following = 'false';
+
+              const following = booleanValue(query.following);
+
+              if (!following)
                 qbi.orWhere('post.createdById = :userId', { userId });
             }),
           );
         }),
       );
+
+    if (createdByUserId)
+      baseSelection.andWhere('post.createdById = :createdByUserId', {
+        createdByUserId,
+      });
+
+    return baseSelection;
+  }
+
+  getPublicUserFeed(
+    currentUserId: number,
+    createdByUserId: number,
+    query: ListPostFeedQuery,
+  ) {
+    return this.getUserFeedSelection(
+      currentUserId,
+      query,
+      true,
+      true,
+      createdByUserId,
+    ).paginate(query);
   }
 
   getUserFeed(userId: number, query: ListPostFeedQuery) {
