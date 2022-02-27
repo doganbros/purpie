@@ -34,7 +34,7 @@ const CommentList: FC<CommentsProps> = ({ postId }) => {
       <Text size="large" color="brand" weight="bold">
         Comments
       </Text>
-      {user && <Input user={user} />}
+      {user && <Input user={user} postId={postId} />}
       <InfiniteScroll items={comments.data}>
         {(item: typeof comments.data[0]) => (
           <Stack key={item.id} interactiveChild="first">
@@ -45,10 +45,7 @@ const CommentList: FC<CommentsProps> = ({ postId }) => {
               round="small"
             >
               <Box pad={{ left: 'small' }} gap="small">
-                <CommentBase
-                  comment={item}
-                  showActions={item.user.id === user?.id}
-                />
+                <CommentBase comment={item} showReply postId={postId} />
                 {item.replyCount > 0 && (
                   <Replies parentComment={item} postId={postId} />
                 )}

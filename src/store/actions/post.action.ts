@@ -55,6 +55,7 @@ import {
 } from '../constants/post.constants';
 
 import * as PostService from '../services/post.service';
+import { store } from '../store';
 import {
   CreateVideoPayload,
   FeedPayload,
@@ -362,9 +363,17 @@ export const createPostCommentAction = (
       },
     });
     try {
-      await PostService.createPostComment(comment, postId, parentId);
+      const payload = await PostService.createPostComment(
+        comment,
+        postId,
+        parentId
+      );
       dispatch({
         type: CREATE_POST_COMMENT_SUCCESS,
+        payload: {
+          ...payload,
+          user: store.getState().auth.user || payload.user,
+        },
       });
       listPostCommentsAction({ postId });
     } catch (err) {

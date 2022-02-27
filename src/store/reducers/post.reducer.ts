@@ -39,6 +39,7 @@ import {
   LIST_POST_COMMENT_REPLIES_REQUESTED,
   LIST_POST_COMMENT_REPLIES_SUCCESS,
   LIST_POST_COMMENT_REPLIES_FAILED,
+  CREATE_POST_COMMENT_SUCCESS,
 } from '../constants/post.constants';
 import { PostActionParams, PostState } from '../types/post.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -451,6 +452,45 @@ const postReducer = (
           error: action.payload,
         },
       };
+    case CREATE_POST_COMMENT_SUCCESS: {
+      if (action.payload.parentId) {
+        const { comments } = state.postDetail;
+        const parentIndex = comments.data.findIndex(
+          (c) => c.id === action.payload.parentId
+        );
+        const parentComment = comments.data[parentIndex];
+        parentComment.replies = {
+          ...(parentComment.replies || {
+            ...paginationInitialState,
+            loading: false,
+            error: null,
+          }),
+        };
+        parentComment.replies.data = [
+          action.payload,
+          ...parentComment.replies.data,
+        ];
+        parentComment.replyCount += 1;
+        comments.data[parentIndex] = parentComment;
+        return {
+          ...state,
+          postDetail: {
+            ...state.postDetail,
+            comments,
+          },
+        };
+      }
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments: {
+            ...state.postDetail.comments,
+            data: [action.payload, ...state.postDetail.comments.data],
+          },
+        },
+      };
+    }
     case UPDATE_POST_COMMENT_SUCCESS: {
       return {
         ...state,
@@ -462,6 +502,7 @@ const postReducer = (
               c.id === action.payload.commentId
                 ? {
                     ...c,
+                    edited: true,
                     comment: action.payload.comment,
                     updatedOn: new Date(),
                   }
@@ -561,7 +602,6 @@ const postReducer = (
         loading: false,
         error: null,
       };
-
       comments.data[parentIndex] = parentComment;
       return {
         ...state,

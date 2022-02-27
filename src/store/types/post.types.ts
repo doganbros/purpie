@@ -230,6 +230,10 @@ export type PostActionParams =
       };
     }
   | {
+      type: typeof CREATE_POST_COMMENT_SUCCESS;
+      payload: PostComment;
+    }
+  | {
       type:
         | typeof UPDATE_POST_COMMENT_REQUESTED
         | typeof UPDATE_POST_COMMENT_SUCCESS;
@@ -289,8 +293,7 @@ export type PostActionParams =
         | typeof OPEN_CREATE_VIDEO_LAYER
         | typeof CLOSE_CREATE_VIDEO_LAYER
         | typeof CREATE_POST_LIKE_SUCCESS
-        | typeof REMOVE_POST_LIKE_SUCCESS
-        | typeof CREATE_POST_COMMENT_SUCCESS;
+        | typeof REMOVE_POST_LIKE_SUCCESS;
     }
   | {
       type:

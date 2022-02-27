@@ -42,22 +42,23 @@ const Replies: FC<RepliesProps> = ({ parentComment, postId }) => {
         </Box>
       </Button>
       {showReplies && parentComment.replies && (
-        <>
-          {parentComment.replies.loading ? (
+        <Box gap="small">
+          {parentComment.replies.loading &&
+          !parentComment.replies.data.length ? (
             <Spinner />
           ) : (
             parentComment.replies.data.map((c) => (
-              <CommentBase comment={c} showActions={false} showAvatar />
+              <CommentBase key={c.id} comment={c} showAvatar postId={postId} />
             ))
           )}
           {parentComment.replies.data.length !== parentComment.replyCount && (
             <Button
               onClick={() => getReplies(parentComment.replies?.data.length)}
             >
-              <Text>Load more</Text>
+              <Text color="brand">Load more</Text>
             </Button>
           )}
-        </>
+        </Box>
       )}
     </Box>
   );

@@ -106,7 +106,7 @@ export const createPostComment = (
   comment: string,
   postId: number,
   parentId?: number
-): Promise<number> =>
+): Promise<PostComment> =>
   http
     .post('/post/comment/create', { comment, postId, parentId })
     .then((res) => res.data);
