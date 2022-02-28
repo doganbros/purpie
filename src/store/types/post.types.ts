@@ -69,6 +69,7 @@ export interface Post {
   postReaction: {
     likesCount: number;
     commentsCount: number;
+    viewsCount: number;
   };
 }
 
