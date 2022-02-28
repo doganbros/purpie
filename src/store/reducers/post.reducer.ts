@@ -356,11 +356,7 @@ const postReducer = (
       if (searchPostIndex !== -1)
         search.results.data[searchPostIndex].saved = false;
 
-      const savedPostIndex = saved.data.findIndex(
-        (p) => p.post.id === action.payload.postId
-      );
-
-      if (savedPostIndex !== -1) saved.data.splice(savedPostIndex, 1);
+      saved.data = saved.data.filter((p) => p.id !== action.payload.postId);
 
       return {
         ...state,
