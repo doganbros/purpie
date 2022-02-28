@@ -10,8 +10,10 @@ import { AppState } from '../../../../store/reducers/root.reducer';
 import { PostComment } from '../../../../store/types/post.types';
 import {
   createPostCommentAction,
+  removePostCommentAction,
   updatePostCommentAction,
 } from '../../../../store/actions/post.action';
+import ConfirmDialog from '../../../../components/utils/ConfirmDialog';
 
 dayjs.extend(LocalizedFormat);
 
@@ -33,6 +35,7 @@ const CommentBase: FC<CommentBaseProps> = ({
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
   const [showReplyInput, setShowReplyInput] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(comment.comment);
@@ -50,6 +53,10 @@ const CommentBase: FC<CommentBaseProps> = ({
       dispatch(updatePostCommentAction(editValue, comment.id));
       setIsEditing(false);
     }
+  };
+
+  const handleDelete = () => {
+    dispatch(removePostCommentAction(comment.id));
   };
 
   return (
@@ -88,7 +95,7 @@ const CommentBase: FC<CommentBaseProps> = ({
                   <ListButton onClick={() => setIsEditing(true)}>
                     <Text>Edit Comment</Text>
                   </ListButton>
-                  <ListButton>
+                  <ListButton onClick={() => setShowDeleteDialog(true)}>
                     <Text>Delete</Text>
                   </ListButton>
                 </>
@@ -173,6 +180,14 @@ const CommentBase: FC<CommentBaseProps> = ({
             <Button onClick={handleReply} label="Reply" primary />
           </Box>
         </Box>
+      )}
+      {showDeleteDialog && (
+        <ConfirmDialog
+          onConfirm={handleDelete}
+          onDismiss={() => setShowDeleteDialog(false)}
+          message="Are you sure you want to delete the comment?"
+          confirmButtonText="Delete"
+        />
       )}
     </Box>
   );
