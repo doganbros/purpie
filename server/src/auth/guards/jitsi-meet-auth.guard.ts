@@ -25,6 +25,7 @@ export class JitsiMeetAuthGuard implements CanActivate {
       const payload = await verifyJWT(token, JITSI_SECRET);
 
       req.jitsiMeetUser = payload?.context?.user;
+      req.meetingSlug = payload?.room;
 
       if (!req.jitsiMeetUser)
         throw new UnauthorizedException(
