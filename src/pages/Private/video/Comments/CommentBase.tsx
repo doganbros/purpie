@@ -8,7 +8,10 @@ import InitialsAvatar from '../../../../components/utils/InitialsAvatar';
 import ListButton from '../../../../components/utils/ListButton';
 import { AppState } from '../../../../store/reducers/root.reducer';
 import { PostComment } from '../../../../store/types/post.types';
-import { createPostCommentAction } from '../../../../store/actions/post.action';
+import {
+  createPostCommentAction,
+  updatePostCommentAction,
+} from '../../../../store/actions/post.action';
 
 dayjs.extend(LocalizedFormat);
 
@@ -31,6 +34,8 @@ const CommentBase: FC<CommentBaseProps> = ({
   const dispatch = useDispatch();
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(comment.comment);
 
   const handleReply = () => {
     if (inputValue) {
@@ -39,6 +44,14 @@ const CommentBase: FC<CommentBaseProps> = ({
       setInputValue('');
     }
   };
+
+  const handleEdit = () => {
+    if (editValue && editValue !== comment.comment) {
+      dispatch(updatePostCommentAction(editValue, comment.id));
+      setIsEditing(false);
+    }
+  };
+
   return (
     <Box gap="small">
       <Box direction="row" align={showAvatar ? 'center' : 'start'}>
@@ -66,13 +79,13 @@ const CommentBase: FC<CommentBaseProps> = ({
           <Text size="small" color="status-disabled">
             {dayjs(comment.createdOn).format('L')}
           </Text>
-          {comment.user.id === user?.id && (
+          {comment.user.id === user?.id && !isEditing && (
             <DropButton
               plain
               icon={<MoreVertical color="status-disabled-light" />}
               dropContent={
                 <>
-                  <ListButton>
+                  <ListButton onClick={() => setIsEditing(true)}>
                     <Text>Edit Comment</Text>
                   </ListButton>
                   <ListButton>
@@ -86,7 +99,34 @@ const CommentBase: FC<CommentBaseProps> = ({
         </Box>
       </Box>
       <Box flex="grow">
-        <Text color="status-disabled">{comment.comment}</Text>
+        {isEditing ? (
+          <Box gap="small">
+            <Box border={{ color: 'status-disabled', side: 'bottom' }} fill>
+              <TextInput
+                plain
+                autoFocus
+                focusIndicator={false}
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+              />
+            </Box>
+            <Box direction="row" justify="end" gap="small">
+              <Button
+                onClick={() => {
+                  setIsEditing(false);
+                  setEditValue(comment.comment);
+                }}
+              >
+                <Text color="status-disabled" weight="bold">
+                  Cancel
+                </Text>
+              </Button>
+              <Button primary onClick={handleEdit} label="Edit" />
+            </Box>
+          </Box>
+        ) : (
+          <Text color="status-disabled">{comment.comment}</Text>
+        )}
       </Box>
       <Box direction="row" align="center" gap="medium">
         <Button>
