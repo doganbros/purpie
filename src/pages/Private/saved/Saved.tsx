@@ -1,15 +1,7 @@
 import React, { FC, useContext, useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import {
-  Box,
-  Button,
-  Grid,
-  InfiniteScroll,
-  Layer,
-  ResponsiveContext,
-  Text,
-} from 'grommet';
+import { Box, Grid, InfiniteScroll, ResponsiveContext, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
@@ -25,6 +17,7 @@ import ChannelList from '../timeline/ChannelList';
 import ChannelsToFollow from '../timeline/ChannelsToFollow';
 import LastActivities from '../timeline/LastActivities';
 import ZonesToJoin from '../timeline/ZonesToJoin';
+import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 
 dayjs.extend(relativeTime);
 
@@ -110,34 +103,16 @@ const Saved: FC = () => {
           )}
         </Grid>
         {confirmation.visible && (
-          <Layer responsive={false} onClickOutside={closeConfirmation}>
-            <Box pad="large" gap="medium" width="350px">
-              <Text weight="bold">
-                Are you sure you want to remove this post from your saved list?
-              </Text>
-              <Box fill="horizontal" direction="row" justify="between">
-                <Button
-                  primary
-                  color="status-error"
-                  onClick={() => {
-                    if (confirmation.postId !== null) {
-                      dispatch(
-                        removePostSaveAction({ postId: confirmation.postId })
-                      );
-                      closeConfirmation();
-                    }
-                  }}
-                  label="Remove"
-                />
-                <Button
-                  primary
-                  color="brand"
-                  onClick={closeConfirmation}
-                  label="Cancel"
-                />
-              </Box>
-            </Box>
-          </Layer>
+          <ConfirmDialog
+            onConfirm={() => {
+              if (confirmation.postId !== null) {
+                dispatch(removePostSaveAction({ postId: confirmation.postId }));
+              }
+            }}
+            onDismiss={closeConfirmation}
+            message="Are you sure you want to remove this post from your saved list?"
+            confirmButtonText="Remove"
+          />
         )}
       </Box>
     </PrivatePageLayout>
