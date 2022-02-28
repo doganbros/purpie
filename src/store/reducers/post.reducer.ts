@@ -513,16 +513,33 @@ const postReducer = (
       };
     }
     case REMOVE_POST_COMMENT_SUCCESS: {
+      const { comments } = state.postDetail;
+      if (action.payload.parentId) {
+        const parentIndex = comments.data.findIndex(
+          (c) => c.id === action.payload.parentId
+        );
+        const parentComment = comments.data[parentIndex];
+        if (parentComment.replies) {
+          parentComment.replies.data = parentComment.replies.data.filter(
+            (c) => c.id !== action.payload.commentId
+          );
+
+          parentComment.replyCount -= 1;
+          if (parentComment.replyCount === 0) {
+            parentComment.replies = undefined;
+          }
+        }
+        comments.data[parentIndex] = parentComment;
+      } else {
+        comments.data = comments.data.filter(
+          (c) => c.id !== action.payload.commentId
+        );
+      }
       return {
         ...state,
         postDetail: {
           ...state.postDetail,
-          comments: {
-            ...state.postDetail.comments,
-            data: state.postDetail.comments.data.filter(
-              (c) => c.id !== action.payload.commentId
-            ),
-          },
+          comments,
         },
       };
     }

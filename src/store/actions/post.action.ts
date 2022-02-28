@@ -415,19 +415,23 @@ export const updatePostCommentAction = (
   };
 };
 
-export const removePostCommentAction = (commentId: number): PostAction => {
+export const removePostCommentAction = (
+  commentId: number,
+  parentId?: number
+): PostAction => {
   return async (dispatch) => {
     dispatch({
       type: REMOVE_POST_COMMENT_REQUESTED,
       payload: {
         commentId,
+        parentId,
       },
     });
     try {
       await PostService.removePostComment(commentId);
       dispatch({
         type: REMOVE_POST_COMMENT_SUCCESS,
-        payload: { commentId },
+        payload: { commentId, parentId },
       });
     } catch (err) {
       dispatch({

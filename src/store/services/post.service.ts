@@ -120,7 +120,7 @@ export const updatePostComment = (
     .then((res) => res.data);
 
 export const removePostComment = (commentId: number): Promise<'OK'> =>
-  http.delete(`/post/comment/update/${commentId}`).then((res) => res.data);
+  http.delete(`/post/comment/remove/${commentId}`).then((res) => res.data);
 
 export const listPostComments = ({
   postId,

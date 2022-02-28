@@ -56,7 +56,9 @@ const CommentBase: FC<CommentBaseProps> = ({
   };
 
   const handleDelete = () => {
-    dispatch(removePostCommentAction(comment.id));
+    dispatch(
+      removePostCommentAction(comment.id, comment.parentId || undefined)
+    );
   };
 
   return (

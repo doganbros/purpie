@@ -248,6 +248,7 @@ export type PostActionParams =
         | typeof REMOVE_POST_COMMENT_SUCCESS;
       payload: {
         commentId: number;
+        parentId?: number;
       };
     }
   | {
