@@ -31,7 +31,11 @@ const Replies: FC<RepliesProps> = ({ parentComment, postId }) => {
     <Box gap="small">
       <Button onClick={handleToggleButton}>
         <Box direction="row" align="center">
-          {showReplies ? <CaretUpFill /> : <CaretDownFill />}
+          {showReplies ? (
+            <CaretUpFill color="brand" />
+          ) : (
+            <CaretDownFill color="brand" />
+          )}
           <Text size="small" weight="bold" color="brand">
             {showReplies
               ? 'Hide replies'
