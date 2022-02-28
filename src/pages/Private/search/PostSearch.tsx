@@ -77,7 +77,7 @@ const PostSearch: FC = () => {
           {(item: Post) => (
             <PostGridItem
               post={item}
-              onClickPlay={() => history.push(`video/${item.id}`)}
+              onClickPlay={() => history.push(`/video/${item.id}`)}
               onClickSave={() => {
                 if (!item.saved)
                   dispatch(createPostSaveAction({ postId: item.id }));
