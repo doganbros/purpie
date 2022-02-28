@@ -488,6 +488,37 @@ const postReducer = (
       };
     }
     case UPDATE_POST_COMMENT_SUCCESS: {
+      const { comments } = state.postDetail;
+      if (action.payload.parentId) {
+        const parentIndex = comments.data.findIndex(
+          (c) => c.id === action.payload.parentId
+        );
+        const parentComment = comments.data[parentIndex];
+        if (parentComment.replies) {
+          parentComment.replies.data = parentComment.replies.data.map((c) =>
+            c.id === action.payload.commentId
+              ? {
+                  ...c,
+                  edited: true,
+                  comment: action.payload.comment,
+                  updatedOn: new Date(),
+                }
+              : c
+          );
+          comments.data[parentIndex] = parentComment;
+        }
+      } else {
+        comments.data = comments.data.map((c) =>
+          c.id === action.payload.commentId
+            ? {
+                ...c,
+                edited: true,
+                comment: action.payload.comment,
+                updatedOn: new Date(),
+              }
+            : c
+        );
+      }
       return {
         ...state,
         postDetail: {

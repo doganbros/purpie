@@ -240,6 +240,7 @@ export type PostActionParams =
       payload: {
         comment: string;
         commentId: number;
+        parentId?: number;
       };
     }
   | {

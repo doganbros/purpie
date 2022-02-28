@@ -50,7 +50,13 @@ const CommentBase: FC<CommentBaseProps> = ({
 
   const handleEdit = () => {
     if (editValue && editValue !== comment.comment) {
-      dispatch(updatePostCommentAction(editValue, comment.id));
+      dispatch(
+        updatePostCommentAction(
+          editValue,
+          comment.id,
+          comment.parentId || undefined
+        )
+      );
       setIsEditing(false);
     }
   };

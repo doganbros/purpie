@@ -387,7 +387,8 @@ export const createPostCommentAction = (
 
 export const updatePostCommentAction = (
   comment: string,
-  commentId: number
+  commentId: number,
+  parentId?: number
 ): PostAction => {
   return async (dispatch) => {
     dispatch({
@@ -395,6 +396,7 @@ export const updatePostCommentAction = (
       payload: {
         comment,
         commentId,
+        parentId,
       },
     });
     try {
@@ -404,6 +406,7 @@ export const updatePostCommentAction = (
         payload: {
           comment,
           commentId,
+          parentId,
         },
       });
     } catch (err) {
