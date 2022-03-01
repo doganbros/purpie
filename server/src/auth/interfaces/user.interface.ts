@@ -50,6 +50,12 @@ export interface UserTokenPayload {
   refreshTokenId?: string;
 }
 
+export interface ConferenceUser {
+  id: number;
+  name: string;
+  email: string;
+}
+
 export interface UserPermissionOptions {
   removeAccessTokens?: boolean;
   injectUserProfile?: boolean;

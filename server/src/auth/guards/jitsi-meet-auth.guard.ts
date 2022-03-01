@@ -24,10 +24,10 @@ export class JitsiMeetAuthGuard implements CanActivate {
     try {
       const payload = await verifyJWT(token, JITSI_SECRET);
 
-      req.jitsiMeetUser = payload?.context?.user;
-      req.meetingSlug = payload?.room;
+      req.conferenceUser = payload?.context?.user;
+      req.conferenceRoomName = payload?.room;
 
-      if (!req.jitsiMeetUser)
+      if (!req.conferenceUser)
         throw new UnauthorizedException(
           'You not authorized to use this route, Invalid payload',
           'NOT_SIGNED_IN',

@@ -27,6 +27,7 @@ import {
   CurrentUserProfile,
 } from 'src/auth/decorators/current-user.decorator';
 import {
+  ConferenceUser,
   UserProfile,
   UserTokenPayload,
 } from 'src/auth/interfaces/user.interface';
@@ -35,10 +36,14 @@ import { MeetingConfig } from 'types/Meeting';
 import { errorResponseDoc } from 'helpers/error-response-doc';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { IsClientAuthenticated } from 'src/auth/decorators/client-auth.decorator';
+import { IsConferenceUserAuthenticated } from 'src/auth/decorators/conference-auth.decorator';
+import { CurrentConferenceUser } from 'src/auth/decorators/current-conference-user.decorator';
+import { ConferenceRoomName } from 'src/auth/decorators/conference-room-name.decorator';
 import { CreateMeetingDto } from '../dto/create-meeting.dto';
 import { MeetingService } from '../services/meeting.service';
 import { ClientMeetingEventDto } from '../dto/client-meeting-event.dto';
 import { ClientVerifyMeetingAuthDto } from '../dto/client-verify-meeting-auth.dto';
+import { ConferenceInfoResponse } from '../responses/conference-info.response';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -291,5 +296,18 @@ export class MeetingController {
       throw new NotFoundException('Meeting not found', 'MEETING_NOT_FOUND');
 
     return 'OK';
+  }
+
+  @Get('conference/info')
+  @ApiOkResponse({
+    description: 'Get current conference information',
+    type: ConferenceInfoResponse,
+  })
+  @IsConferenceUserAuthenticated()
+  async getConferenceInfo(
+    @ConferenceRoomName() room: string,
+    @CurrentConferenceUser() user: ConferenceUser,
+  ) {
+    return this.meetingService.getConferenceInfo(room, user.id);
   }
 }
