@@ -40,6 +40,8 @@ import {
   LIST_POST_COMMENT_REPLIES_SUCCESS,
   LIST_POST_COMMENT_REPLIES_FAILED,
   CREATE_POST_COMMENT_SUCCESS,
+  CREATE_POST_COMMENT_LIKE_SUCCESS,
+  REMOVE_POST_COMMENT_LIKE_SUCCESS,
 } from '../constants/post.constants';
 import { PostActionParams, PostState } from '../types/post.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -669,6 +671,64 @@ const postReducer = (
       };
 
       comments.data[parentIndex] = parentComment;
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments,
+        },
+      };
+    }
+    case CREATE_POST_COMMENT_LIKE_SUCCESS: {
+      const { comments } = state.postDetail;
+      if (action.payload.parentId) {
+        const parentIndex = comments.data.findIndex(
+          (c) => c.id === action.payload.parentId
+        );
+        const parentComment = comments.data[parentIndex];
+        if (!parentComment || !parentComment.replies) return state;
+        parentComment.replies.data = parentComment.replies.data.map((c) =>
+          c.id === action.payload.commentId
+            ? { ...c, likesCount: c.likesCount + 1 }
+            : c
+        );
+        comments.data[parentIndex] = parentComment;
+      } else {
+        comments.data = comments.data.map((c) =>
+          c.id === action.payload.commentId
+            ? { ...c, likesCount: c.likesCount + 1 }
+            : c
+        );
+      }
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments,
+        },
+      };
+    }
+    case REMOVE_POST_COMMENT_LIKE_SUCCESS: {
+      const { comments } = state.postDetail;
+      if (action.payload.parentId) {
+        const parentIndex = comments.data.findIndex(
+          (c) => c.id === action.payload.parentId
+        );
+        const parentComment = comments.data[parentIndex];
+        if (!parentComment || !parentComment.replies) return state;
+        parentComment.replies.data = parentComment.replies.data.map((c) =>
+          c.id === action.payload.commentId
+            ? { ...c, likesCount: c.likesCount - 1 }
+            : c
+        );
+        comments.data[parentIndex] = parentComment;
+      } else {
+        comments.data = comments.data.map((c) =>
+          c.id === action.payload.commentId
+            ? { ...c, likesCount: c.likesCount - 1 }
+            : c
+        );
+      }
       return {
         ...state,
         postDetail: {

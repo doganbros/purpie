@@ -135,3 +135,12 @@ export const listPostComments = ({
       params: { limit, skip },
     })
     .then((res) => res.data);
+
+export const createPostCommentLike = (params: {
+  postId: number;
+  postCommentId: number;
+}): Promise<number> =>
+  http.post('/post/comment/like/create', params).then((res) => res.data);
+
+export const removePostCommentLike = (commentId: number): Promise<string> =>
+  http.delete(`/post/comment/like/remove/${commentId}`).then((res) => res.data);

@@ -52,6 +52,12 @@ import {
   LIST_POST_COMMENT_REPLIES_REQUESTED,
   LIST_POST_COMMENT_REPLIES_SUCCESS,
   LIST_POST_COMMENT_REPLIES_FAILED,
+  CREATE_POST_COMMENT_LIKE_REQUESTED,
+  CREATE_POST_COMMENT_LIKE_SUCCESS,
+  CREATE_POST_COMMENT_LIKE_FAILED,
+  REMOVE_POST_COMMENT_LIKE_REQUESTED,
+  REMOVE_POST_COMMENT_LIKE_SUCCESS,
+  REMOVE_POST_COMMENT_LIKE_FAILED,
 } from '../constants/post.constants';
 
 import * as PostService from '../services/post.service';
@@ -486,6 +492,59 @@ export const listPostCommentRepliesAction = (
     } catch (err) {
       dispatch({
         type: LIST_POST_COMMENT_REPLIES_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const createPostCommentLikeAction = (params: {
+  postId: number;
+  commentId: number;
+  parentId?: number;
+}): PostAction => {
+  return async (dispatch) => {
+    const { postId, ...payload } = params;
+    dispatch({
+      type: CREATE_POST_COMMENT_LIKE_REQUESTED,
+      payload,
+    });
+    try {
+      await PostService.createPostCommentLike({
+        postId,
+        postCommentId: payload.commentId,
+      });
+      dispatch({
+        type: CREATE_POST_COMMENT_LIKE_SUCCESS,
+        payload,
+      });
+    } catch (err) {
+      dispatch({
+        type: CREATE_POST_COMMENT_LIKE_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const removePostCommentLikeAction = (payload: {
+  commentId: number;
+  parentId?: number;
+}): PostAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: REMOVE_POST_COMMENT_LIKE_REQUESTED,
+      payload,
+    });
+    try {
+      await PostService.removePostCommentLike(payload.commentId);
+      dispatch({
+        type: REMOVE_POST_COMMENT_LIKE_SUCCESS,
+        payload,
+      });
+    } catch (err) {
+      dispatch({
+        type: REMOVE_POST_COMMENT_LIKE_FAILED,
         payload: err?.reponse?.data,
       });
     }

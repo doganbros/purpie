@@ -52,6 +52,12 @@ import {
   LIST_POST_COMMENT_REPLIES_REQUESTED,
   LIST_POST_COMMENT_REPLIES_SUCCESS,
   LIST_POST_COMMENT_REPLIES_FAILED,
+  CREATE_POST_COMMENT_LIKE_REQUESTED,
+  CREATE_POST_COMMENT_LIKE_SUCCESS,
+  CREATE_POST_COMMENT_LIKE_FAILED,
+  REMOVE_POST_COMMENT_LIKE_REQUESTED,
+  REMOVE_POST_COMMENT_LIKE_SUCCESS,
+  REMOVE_POST_COMMENT_LIKE_FAILED,
 } from '../constants/post.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
@@ -98,6 +104,7 @@ export interface PostComment {
   user: UserBasic;
   publishedInLiveStream: boolean;
   replyCount: number;
+  likesCount: number;
 }
 
 export interface SavedPost {
@@ -246,7 +253,11 @@ export type PostActionParams =
   | {
       type:
         | typeof REMOVE_POST_COMMENT_REQUESTED
-        | typeof REMOVE_POST_COMMENT_SUCCESS;
+        | typeof REMOVE_POST_COMMENT_SUCCESS
+        | typeof CREATE_POST_COMMENT_LIKE_REQUESTED
+        | typeof CREATE_POST_COMMENT_LIKE_SUCCESS
+        | typeof REMOVE_POST_COMMENT_LIKE_REQUESTED
+        | typeof REMOVE_POST_COMMENT_LIKE_SUCCESS;
       payload: {
         commentId: number;
         parentId?: number;
@@ -314,7 +325,9 @@ export type PostActionParams =
         | typeof CREATE_POST_COMMENT_FAILED
         | typeof UPDATE_POST_COMMENT_FAILED
         | typeof REMOVE_POST_COMMENT_FAILED
-        | typeof LIST_POST_COMMENTS_FAILED;
+        | typeof LIST_POST_COMMENTS_FAILED
+        | typeof CREATE_POST_COMMENT_LIKE_FAILED
+        | typeof REMOVE_POST_COMMENT_LIKE_FAILED;
       payload: ResponseError;
     }
   | {
