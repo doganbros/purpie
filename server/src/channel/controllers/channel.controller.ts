@@ -440,7 +440,6 @@ export class ChannelController {
   }
 
   @Get('display-photo/:fileName')
-  @IsAuthenticated()
   async viewProfilePhoto(
     @Res() res: Response,
     @Param('fileName') fileName: string,

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Post } from 'entities/Post.entity';
 import { PostComment } from 'entities/PostComment.entity';
+import { PostCommentLike } from 'entities/PostCommentLike.entity';
 import { PostLike } from 'entities/PostLike.entity';
 import { PostVideo } from 'entities/PostVideo.entity';
 import { PostView } from 'entities/PostView.entity';
@@ -18,6 +19,7 @@ import { PostService } from './services/post.service';
       PostView,
       PostLike,
       PostComment,
+      PostCommentLike,
       SavedPost,
       PostVideo,
     ]),

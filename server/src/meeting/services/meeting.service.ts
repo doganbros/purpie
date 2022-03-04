@@ -32,6 +32,7 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { ClientMeetingEventDto } from '../dto/client-meeting-event.dto';
 import { CreateMeetingDto } from '../dto/create-meeting.dto';
+import { ConferenceInfoResponse } from '../responses/conference-info.response';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -378,5 +379,86 @@ export class MeetingService {
       meetingLog.userId = info.userId!;
 
     return meetingLog.save();
+  }
+
+  async getConferenceInfo(
+    slug: string,
+    userId: number,
+  ): Promise<ConferenceInfoResponse> {
+    const meeting = await this.postRepository
+      .createQueryBuilder('meeting')
+      .leftJoinAndSelect('meeting.createdBy', 'createdBy')
+      .leftJoinAndSelect('meeting.channel', 'channel')
+      .leftJoinAndSelect(
+        UserChannel,
+        'user_channel',
+        'user_channel.channelId = channel.id and user_channel.userId = :userId',
+        { userId },
+      )
+      .leftJoinAndSelect('channel.zone', 'zone')
+      .leftJoinAndSelect(
+        Contact,
+        'contact',
+        'meeting.userContactExclusive = true AND contact.userId = meeting.createdById AND contact.contactUserId = :userId',
+        { userId },
+      )
+      .where('meeting.slug = :slug', { slug })
+      .andWhere('meeting.type = :postType', { postType: 'meeting' })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            new Brackets((qbi) => {
+              qbi
+                .orWhere('meeting.public = true')
+                .orWhere('user_channel.id is not null')
+                .orWhere('contact.contactUserId is not null');
+            }),
+          );
+        }),
+      )
+      .getOne();
+
+    if (!meeting) throw new NotFoundException('Meeting not found');
+
+    if (meeting.channelId) {
+      return {
+        title: meeting.title,
+        description: meeting.description,
+        type: 'channel',
+        channel: {
+          name: meeting.channel.name,
+          description: meeting.channel.description,
+          topic: meeting.channel.topic,
+          public: meeting.channel.public,
+          photoURL: meeting.channel.displayPhoto
+            ? `${REACT_APP_SERVER_HOST}/v1/channel/display-photo/${meeting.channel.displayPhoto}`
+            : null,
+          zone: {
+            name: meeting.channel.zone.name,
+            description: meeting.channel.zone.description,
+            subdomain: meeting.channel.zone.subdomain,
+            public: meeting.channel.zone.public,
+            photoURL: meeting.channel.zone.displayPhoto
+              ? `${REACT_APP_SERVER_HOST}/v1/zone/display-photo/${meeting.channel.zone.displayPhoto}`
+              : null,
+          },
+        },
+      };
+    }
+
+    return {
+      title: meeting.title,
+      description: meeting.description,
+      type: 'user',
+      user: {
+        firstName: meeting.createdBy.firstName,
+        lastName: meeting.createdBy.lastName,
+        email: meeting.createdBy.email,
+        userName: meeting.createdBy.userName,
+        photoURL: meeting.createdBy.displayPhoto
+          ? `${REACT_APP_SERVER_HOST}/v1/user/display-photo/${meeting.createdBy.displayPhoto}`
+          : null,
+      },
+    };
   }
 }

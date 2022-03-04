@@ -33,4 +33,7 @@ export class PostComment extends RecordEntity {
 
   @Column({ select: false, nullable: true, insert: false, type: 'int' })
   replyCount: number;
+
+  @Column({ select: false, nullable: true, insert: false, type: 'int' })
+  likesCount: number;
 }
