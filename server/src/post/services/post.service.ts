@@ -217,6 +217,7 @@ export class PostService {
   }
 
   getPostComments(
+    userId: number,
     postId: number,
     query: PaginationQuery,
     params: Record<string, any>,
@@ -253,6 +254,18 @@ export class PostService {
             .from(PostCommentLike, 'postCommentLike')
             .where('postCommentLike.commentId = postComment.id'),
         'postComment_likesCount',
+      )
+      .addSelect(
+        (sq) =>
+          sq
+            .select('count(*) > 0')
+            .from(PostCommentLike, 'user_post_comment_like')
+            .where('user_post_comment_like.postId = postComment.postId')
+            .andWhere('user_post_comment_like.commentId = postComment.id')
+            .andWhere('user_post_comment_like.userId = :currentUserId', {
+              currentUserId: userId,
+            }),
+        'postComment_liked',
       )
       .innerJoin('postComment.user', 'user')
       .where('postComment.postId = :postId', { postId })

@@ -88,6 +88,17 @@ Please follow the steps below to get a development mattermost server running. Th
 6. To view the logs enter the command `docker logs octopus-mattermost-preview --follow`
 7. Doganbros MM image is pre-configured and should work with default .env configuration. Later you may update MM environment variables in .env file according to your MM configuration. The variables `REACT_APP_MM_SERVER_URL, MM_SERVER_URL` is used to point to the MM server just installed. The variables `MM_SYS_ADMIN_USERNAME`, `MM_SYS_ADMIN_EMAIL`, `MM_SYS_ADMIN_PASSWORD` and `MM_BOT_USERNAME` are used by octopus to set up the system adminstrator of MM. The last but not least variable, `REACT_APP_MM_TEAM_NAME` sets up the team name that will be used by octopus in MM. Examples can be found in the `.env.example` file.
 
+
+## Development Test Email Setup
+
+To test (preview) how mails will appear in email clients . We use `mail dev` client. Follow the steps below to set it up on your local development environment.
+
+- Run `docker run -p 1080:80 -p 1025:25 djfarrelly/maildev -d`. This will a maildev server on port `1080`
+- Visit `http://localhost:1080`.
+- All test mails will appear in this inbox.
+- Use the endpoint `POST /api/mail/test` to send test mail.
+- Visit the swagger UI to learn the payload required.
+
 ## Running project
 
 ```bash

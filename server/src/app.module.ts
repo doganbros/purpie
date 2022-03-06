@@ -1,3 +1,4 @@
+import path from 'path';
 import {
   MiddlewareConsumer,
   Module,
@@ -6,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import ormConfig from 'ormconfig';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmExceptionFilter } from './utils/exceptions/typeorm.exception';
@@ -24,6 +26,13 @@ import { PostModule } from './post/post.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormConfig),
+    ServeStaticModule.forRoot({
+      rootPath: path.join(__dirname, '..', '..', '..', 'src', 'assets'),
+      serveRoot: '/static-dir',
+      serveStaticOptions: {
+        index: false,
+      },
+    }),
     AuthModule,
     MailModule,
     ZoneModule,
