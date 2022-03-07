@@ -170,8 +170,8 @@ const Video: FC = () => {
             </Box>
           </Box>
           <Text color="status-disabled"> {data.description} </Text>
-          <CommentList postId={+params.id} />
           <RecommendedVideos />
+          <CommentList postId={+params.id} />
         </Box>
       )}
     </PrivatePageLayout>
