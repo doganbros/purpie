@@ -24,6 +24,7 @@
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "import/prefer-default-export": "off",
+    "react/static-property-placement": "off",
     "max-classes-per-file": "off",
     "import/no-cycle": "off",
     "@typescript-eslint/no-non-null-assertion": "off",

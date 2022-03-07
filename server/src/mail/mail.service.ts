@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import nodemailer from 'nodemailer';
 import path from 'path';
 import ehbs from 'express-handlebars';
 import sendGrid, { MailDataRequired } from '@sendgrid/mail';
@@ -11,11 +12,27 @@ const viewEngine = ehbs.create({
   defaultLayout: 'main-layout',
 });
 
-const { SENDGRID_API_KEY = '', SENDGRID_FROM_EMAIL = '' } = process.env;
+const {
+  SENDGRID_API_KEY = '',
+  SENDGRID_FROM_EMAIL = '',
+  REACT_APP_SERVER_HOST,
+  REACT_APP_CLIENT_HOST,
+} = process.env;
 sendGrid.setApiKey(SENDGRID_API_KEY);
 
 @Injectable()
 export class MailService {
+  private testMailTransport: nodemailer.Transporter;
+
+  constructor() {
+    if (process.env.NODE_ENV === 'development') {
+      this.testMailTransport = nodemailer.createTransport({
+        port: 1025,
+        ignoreTLS: true,
+      });
+    }
+  }
+
   async sendMailByView(
     to: string,
     subject: string,
@@ -30,6 +47,21 @@ export class MailService {
       html: result,
     };
     return sendGrid.send(message);
+  }
+
+  async sendTestMail(
+    subject: string,
+    viewName: string,
+    context: Record<string, any> = {},
+  ) {
+    const result = await this.renderMail(viewName, context);
+
+    return this.testMailTransport.sendMail({
+      from: 'Test',
+      to: 'support@maildev.com',
+      subject,
+      html: result,
+    });
   }
 
   async sendMailByText(to: string, subject: string, msg: string) {
@@ -49,7 +81,11 @@ export class MailService {
     return new Promise((res, rej) => {
       viewEngine.renderView(
         path.join(rootViewPath, 'templates', `${viewName}.handlebars`),
-        context,
+        {
+          ...context,
+          staticPath: `${REACT_APP_SERVER_HOST}/static-dir`,
+          clientHost: REACT_APP_CLIENT_HOST,
+        },
         (err, content = '') => {
           if (err) return rej(err);
 

@@ -119,9 +119,9 @@ export class PostController {
     @Param() params: Record<string, any>,
     @CurrentUser() user: UserTokenPayload,
   ) {
-    await this.validatePost(user.id, Number(postId));
+    await this.validatePost(user.id, postId);
 
-    return this.postService.getPostComments(postId, query, params);
+    return this.postService.getPostComments(user.id, postId, query, params);
   }
 
   @Put('comment/update')
