@@ -52,7 +52,7 @@ const Replies: FC<RepliesProps> = ({ parentComment, postId }) => {
             <Spinner />
           ) : (
             parentComment.replies.data.map((c) => (
-              <CommentBase key={c.id} comment={c} showAvatar postId={postId} />
+              <CommentBase key={c.id} comment={c} postId={postId} />
             ))
           )}
           {parentComment.replies.data.length !== parentComment.replyCount && (

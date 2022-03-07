@@ -19,17 +19,10 @@ dayjs.extend(LocalizedFormat);
 
 interface CommentBaseProps {
   comment: PostComment;
-  showAvatar?: boolean;
-  showReply?: boolean;
   postId: number;
 }
 
-const CommentBase: FC<CommentBaseProps> = ({
-  comment,
-  showAvatar,
-  showReply,
-  postId,
-}) => {
+const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
   const {
     auth: { user },
   } = useSelector((state: AppState) => state);
@@ -39,6 +32,8 @@ const CommentBase: FC<CommentBaseProps> = ({
   const [inputValue, setInputValue] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(comment.comment);
+
+  const isChildComment = !!comment.parentId;
 
   const handleReply = () => {
     if (inputValue) {
@@ -69,8 +64,8 @@ const CommentBase: FC<CommentBaseProps> = ({
 
   return (
     <Box gap="small">
-      <Box direction="row" align={showAvatar ? 'center' : 'start'}>
-        {showAvatar && (
+      <Box direction="row" align={isChildComment ? 'center' : 'start'}>
+        {isChildComment && (
           <Box pad={{ right: 'xsmall' }}>
             <InitialsAvatar
               id={comment.user.id}
@@ -147,13 +142,11 @@ const CommentBase: FC<CommentBaseProps> = ({
         <Button>
           <Like color="status-disabled" size="14px" />
         </Button>
-        {showReply && (
-          <Button onClick={() => setShowReplyInput(true)}>
-            <Text color="status-disabled" size="14px">
-              REPLY
-            </Text>
-          </Button>
-        )}
+        <Button onClick={() => setShowReplyInput(true)}>
+          <Text color="status-disabled" size="14px">
+            REPLY
+          </Text>
+        </Button>
       </Box>
       {showReplyInput && user && (
         <Box gap="small">
