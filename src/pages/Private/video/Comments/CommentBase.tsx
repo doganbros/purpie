@@ -10,10 +10,13 @@ import { AppState } from '../../../../store/reducers/root.reducer';
 import { PostComment } from '../../../../store/types/post.types';
 import {
   createPostCommentAction,
+  createPostCommentLikeAction,
   removePostCommentAction,
+  removePostCommentLikeAction,
   updatePostCommentAction,
 } from '../../../../store/actions/post.action';
 import ConfirmDialog from '../../../../components/utils/ConfirmDialog';
+import { LikeFill } from '../../../../components/utils/CustomIcons';
 
 dayjs.extend(LocalizedFormat);
 
@@ -152,9 +155,35 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
         )}
       </Box>
       <Box direction="row" align="center" gap="medium">
-        <Button>
-          <Like color="status-disabled" size="14px" />
-        </Button>
+        {comment.liked ? (
+          <Button
+            onClick={() => {
+              dispatch(
+                removePostCommentLikeAction({
+                  commentId: comment.id,
+                  parentId: comment.parentId || undefined,
+                })
+              );
+            }}
+          >
+            <LikeFill color="brand" size="14px" />
+          </Button>
+        ) : (
+          <Button
+            onClick={() => {
+              dispatch(
+                createPostCommentLikeAction({
+                  postId,
+                  commentId: comment.id,
+                  parentId: comment.parentId || undefined,
+                })
+              );
+            }}
+          >
+            <Like color="status-disabled" size="14px" />
+          </Button>
+        )}
+
         <Button onClick={handleShowReply}>
           <Text color="status-disabled" size="14px">
             REPLY

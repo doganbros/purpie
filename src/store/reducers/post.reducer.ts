@@ -689,14 +689,14 @@ const postReducer = (
         if (!parentComment || !parentComment.replies) return state;
         parentComment.replies.data = parentComment.replies.data.map((c) =>
           c.id === action.payload.commentId
-            ? { ...c, likesCount: c.likesCount + 1 }
+            ? { ...c, likesCount: c.likesCount + 1, liked: true }
             : c
         );
         comments.data[parentIndex] = parentComment;
       } else {
         comments.data = comments.data.map((c) =>
           c.id === action.payload.commentId
-            ? { ...c, likesCount: c.likesCount + 1 }
+            ? { ...c, likesCount: c.likesCount + 1, liked: true }
             : c
         );
       }
@@ -718,14 +718,14 @@ const postReducer = (
         if (!parentComment || !parentComment.replies) return state;
         parentComment.replies.data = parentComment.replies.data.map((c) =>
           c.id === action.payload.commentId
-            ? { ...c, likesCount: c.likesCount - 1 }
+            ? { ...c, likesCount: c.likesCount - 1, liked: false }
             : c
         );
         comments.data[parentIndex] = parentComment;
       } else {
         comments.data = comments.data.map((c) =>
           c.id === action.payload.commentId
-            ? { ...c, likesCount: c.likesCount - 1 }
+            ? { ...c, likesCount: c.likesCount - 1, liked: false }
             : c
         );
       }

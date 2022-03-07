@@ -105,6 +105,7 @@ export interface PostComment {
   publishedInLiveStream: boolean;
   replyCount: number;
   likesCount: number;
+  liked: boolean;
 }
 
 export interface SavedPost {
