@@ -35,9 +35,22 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
 
   const isChildComment = !!comment.parentId;
 
+  const handleShowReply = () => {
+    setShowReplyInput(true);
+    if (isChildComment) {
+      setInputValue(`@${comment.user.userName} `);
+    }
+  };
+
   const handleReply = () => {
     if (inputValue) {
-      dispatch(createPostCommentAction(inputValue, postId, comment.id));
+      dispatch(
+        createPostCommentAction(
+          inputValue,
+          postId,
+          comment.parentId || comment.id
+        )
+      );
       setShowReplyInput(false);
       setInputValue('');
     }
@@ -142,7 +155,7 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
         <Button>
           <Like color="status-disabled" size="14px" />
         </Button>
-        <Button onClick={() => setShowReplyInput(true)}>
+        <Button onClick={handleShowReply}>
           <Text color="status-disabled" size="14px">
             REPLY
           </Text>
@@ -160,6 +173,7 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
             <Box border={{ color: 'status-disabled', side: 'bottom' }} fill>
               <TextInput
                 plain
+                autoFocus
                 focusIndicator={false}
                 placeholder="Write a public reply"
                 value={inputValue}
