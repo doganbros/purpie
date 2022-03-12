@@ -47,6 +47,9 @@ class ContactUser {
   email: string;
 
   @ApiProperty()
+  userName: string;
+
+  @ApiProperty()
   firstName: string;
 
   @ApiProperty()

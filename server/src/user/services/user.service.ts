@@ -188,7 +188,7 @@ export class UserService {
         'user.displayPhoto',
         'user.email',
       ])
-      .where('userName = :userName', { userName })
+      .where('user.userName = :userName', { userName })
       .getOne();
   }
 
