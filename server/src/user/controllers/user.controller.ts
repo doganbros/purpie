@@ -299,6 +299,12 @@ export class UserController {
     return userProfile;
   }
 
+  @Get('profile/:userName')
+  @IsAuthenticated()
+  getPublicUserProfile(@Param('userName') userName: string) {
+    return this.userService.getPublicUserProfile(userName);
+  }
+
   @Put('profile')
   @IsAuthenticated()
   async updateUserProfile(
