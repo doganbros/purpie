@@ -150,6 +150,7 @@ export class UserService {
         'contact.id',
         'contact.createdOn',
         'contactUser.id',
+        'contactUser.userName',
         'contactUser.email',
         'contactUser.firstName',
         'contactUser.lastName',
@@ -174,6 +175,21 @@ export class UserService {
 
   listUserRoles() {
     return this.userRoleRepository.find({ take: 30 });
+  }
+
+  getPublicUserProfile(userName: string) {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .select([
+        'user.id',
+        'user.firstName',
+        'user.lastName',
+        'user.userName',
+        'user.displayPhoto',
+        'user.email',
+      ])
+      .where('userName = :userName', { userName })
+      .getOne();
   }
 
   listSystemUsers(query: SystemUserListQuery) {
