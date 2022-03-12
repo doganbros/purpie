@@ -31,6 +31,17 @@ import {
   SEARCH_POST_REQUESTED,
   SEARCH_POST_SUCCESS,
   SEARCH_POST_FAILED,
+  UPDATE_POST_COMMENT_SUCCESS,
+  REMOVE_POST_COMMENT_SUCCESS,
+  LIST_POST_COMMENTS_REQUESTED,
+  LIST_POST_COMMENTS_SUCCESS,
+  LIST_POST_COMMENTS_FAILED,
+  LIST_POST_COMMENT_REPLIES_REQUESTED,
+  LIST_POST_COMMENT_REPLIES_SUCCESS,
+  LIST_POST_COMMENT_REPLIES_FAILED,
+  CREATE_POST_COMMENT_SUCCESS,
+  CREATE_POST_COMMENT_LIKE_SUCCESS,
+  REMOVE_POST_COMMENT_LIKE_SUCCESS,
 } from '../constants/post.constants';
 import { PostActionParams, PostState } from '../types/post.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -45,6 +56,11 @@ const initialState: PostState = {
     data: null,
     loading: false,
     error: null,
+    comments: {
+      loading: false,
+      error: null,
+      ...paginationInitialState,
+    },
   },
   createVideo: {
     showCreateVideoLayer: false,
@@ -205,6 +221,7 @@ const postReducer = (
       return {
         ...state,
         postDetail: {
+          ...state.postDetail,
           data: action.payload,
           loading: false,
           error: null,
@@ -341,11 +358,7 @@ const postReducer = (
       if (searchPostIndex !== -1)
         search.results.data[searchPostIndex].saved = false;
 
-      const savedPostIndex = saved.data.findIndex(
-        (p) => p.post.id === action.payload.postId
-      );
-
-      if (savedPostIndex !== -1) saved.data.splice(savedPostIndex, 1);
+      saved.data = saved.data.filter((p) => p.id !== action.payload.postId);
 
       return {
         ...state,
@@ -437,6 +450,293 @@ const postReducer = (
           error: action.payload,
         },
       };
+    case CREATE_POST_COMMENT_SUCCESS: {
+      if (action.payload.parentId) {
+        const { comments } = state.postDetail;
+        const parentIndex = comments.data.findIndex(
+          (c) => c.id === action.payload.parentId
+        );
+        const parentComment = comments.data[parentIndex];
+        parentComment.replies = {
+          ...(parentComment.replies || {
+            ...paginationInitialState,
+            loading: false,
+            error: null,
+          }),
+        };
+        parentComment.replies.data = [
+          action.payload,
+          ...parentComment.replies.data,
+        ];
+        parentComment.replyCount += 1;
+        comments.data[parentIndex] = parentComment;
+        return {
+          ...state,
+          postDetail: {
+            ...state.postDetail,
+            comments,
+          },
+        };
+      }
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments: {
+            ...state.postDetail.comments,
+            data: [action.payload, ...state.postDetail.comments.data],
+          },
+        },
+      };
+    }
+    case UPDATE_POST_COMMENT_SUCCESS: {
+      const { comments } = state.postDetail;
+      if (action.payload.parentId) {
+        const parentIndex = comments.data.findIndex(
+          (c) => c.id === action.payload.parentId
+        );
+        const parentComment = comments.data[parentIndex];
+        if (parentComment.replies) {
+          parentComment.replies.data = parentComment.replies.data.map((c) =>
+            c.id === action.payload.commentId
+              ? {
+                  ...c,
+                  edited: true,
+                  comment: action.payload.comment,
+                  updatedOn: new Date(),
+                }
+              : c
+          );
+          comments.data[parentIndex] = parentComment;
+        }
+      } else {
+        comments.data = comments.data.map((c) =>
+          c.id === action.payload.commentId
+            ? {
+                ...c,
+                edited: true,
+                comment: action.payload.comment,
+                updatedOn: new Date(),
+              }
+            : c
+        );
+      }
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments: {
+            ...state.postDetail.comments,
+            data: state.postDetail.comments.data.map((c) =>
+              c.id === action.payload.commentId
+                ? {
+                    ...c,
+                    edited: true,
+                    comment: action.payload.comment,
+                    updatedOn: new Date(),
+                  }
+                : c
+            ),
+          },
+        },
+      };
+    }
+    case REMOVE_POST_COMMENT_SUCCESS: {
+      const { comments } = state.postDetail;
+      if (action.payload.parentId) {
+        const parentIndex = comments.data.findIndex(
+          (c) => c.id === action.payload.parentId
+        );
+        const parentComment = comments.data[parentIndex];
+        if (parentComment.replies) {
+          parentComment.replies.data = parentComment.replies.data.filter(
+            (c) => c.id !== action.payload.commentId
+          );
+
+          parentComment.replyCount -= 1;
+          if (parentComment.replyCount === 0) {
+            parentComment.replies = undefined;
+          }
+        }
+        comments.data[parentIndex] = parentComment;
+      } else {
+        comments.data = comments.data.filter(
+          (c) => c.id !== action.payload.commentId
+        );
+      }
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments,
+        },
+      };
+    }
+    case LIST_POST_COMMENTS_REQUESTED:
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments: {
+            ...state.postDetail.comments,
+            loading: true,
+            error: null,
+          },
+        },
+      };
+    case LIST_POST_COMMENTS_SUCCESS:
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments: {
+            ...action.payload,
+            data:
+              action.payload.skip > 0
+                ? [...state.postDetail.comments.data, ...action.payload.data]
+                : action.payload.data,
+            loading: false,
+            error: null,
+          },
+        },
+      };
+    case LIST_POST_COMMENTS_FAILED:
+      return {
+        ...state,
+        search: {
+          ...state.search,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case LIST_POST_COMMENT_REPLIES_REQUESTED: {
+      const parentIndex = state.postDetail.comments.data.findIndex(
+        (c) => c.id === action.payload.parentId
+      );
+      const { comments } = state.postDetail;
+      const parentComment = comments.data[parentIndex];
+
+      parentComment.replies = {
+        ...(parentComment.replies || paginationInitialState),
+        loading: true,
+        error: null,
+      };
+
+      comments.data[parentIndex] = parentComment;
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments,
+        },
+      };
+    }
+    case LIST_POST_COMMENT_REPLIES_SUCCESS: {
+      const parentIndex = state.postDetail.comments.data.findIndex(
+        (c) => c.id === action.payload.parentId
+      );
+      const { comments } = state.postDetail;
+      const parentComment = comments.data[parentIndex];
+
+      parentComment.replies = {
+        ...(parentComment.replies || paginationInitialState),
+        ...action.payload,
+        data:
+          action.payload.skip > 0
+            ? [...(parentComment.replies?.data || []), ...action.payload.data]
+            : action.payload.data,
+        loading: false,
+        error: null,
+      };
+      comments.data[parentIndex] = parentComment;
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments,
+        },
+      };
+    }
+    case LIST_POST_COMMENT_REPLIES_FAILED: {
+      const parentIndex = state.postDetail.comments.data.findIndex(
+        (c) => c.id === action.payload.parentId
+      );
+      const { comments } = state.postDetail;
+      const parentComment = comments.data[parentIndex];
+
+      parentComment.replies = {
+        ...(parentComment.replies || paginationInitialState),
+        loading: false,
+        error: action.payload,
+      };
+
+      comments.data[parentIndex] = parentComment;
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments,
+        },
+      };
+    }
+    case CREATE_POST_COMMENT_LIKE_SUCCESS: {
+      const { comments } = state.postDetail;
+      if (action.payload.parentId) {
+        const parentIndex = comments.data.findIndex(
+          (c) => c.id === action.payload.parentId
+        );
+        const parentComment = comments.data[parentIndex];
+        if (!parentComment || !parentComment.replies) return state;
+        parentComment.replies.data = parentComment.replies.data.map((c) =>
+          c.id === action.payload.commentId
+            ? { ...c, likesCount: c.likesCount + 1, liked: true }
+            : c
+        );
+        comments.data[parentIndex] = parentComment;
+      } else {
+        comments.data = comments.data.map((c) =>
+          c.id === action.payload.commentId
+            ? { ...c, likesCount: c.likesCount + 1, liked: true }
+            : c
+        );
+      }
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments,
+        },
+      };
+    }
+    case REMOVE_POST_COMMENT_LIKE_SUCCESS: {
+      const { comments } = state.postDetail;
+      if (action.payload.parentId) {
+        const parentIndex = comments.data.findIndex(
+          (c) => c.id === action.payload.parentId
+        );
+        const parentComment = comments.data[parentIndex];
+        if (!parentComment || !parentComment.replies) return state;
+        parentComment.replies.data = parentComment.replies.data.map((c) =>
+          c.id === action.payload.commentId
+            ? { ...c, likesCount: c.likesCount - 1, liked: false }
+            : c
+        );
+        comments.data[parentIndex] = parentComment;
+      } else {
+        comments.data = comments.data.map((c) =>
+          c.id === action.payload.commentId
+            ? { ...c, likesCount: c.likesCount - 1, liked: false }
+            : c
+        );
+      }
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          comments,
+        },
+      };
+    }
     default:
       return state;
   }

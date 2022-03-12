@@ -1,5 +1,6 @@
-import React, { FC, ReactNode, useState } from 'react';
-import { Box, Button, Text } from 'grommet';
+import React, { FC, ReactNode } from 'react';
+import { Box, Text } from 'grommet';
+import ListButton from '../../../utils/ListButton';
 
 interface ZoneSelectorListItemProps {
   label: string;
@@ -15,49 +16,22 @@ const ZoneSelectorListItem: FC<ZoneSelectorListItemProps> = ({
   leftIcon,
   selected,
   onClick,
-}) => {
-  const [hover, setHover] = useState(false);
-
-  const setBackgroundColor = () => {
-    if (selected) return 'brand';
-    if (hover) return 'status-disabled-light';
-    return 'white';
-  };
-
-  return (
-    <Button
-      onClick={onClick}
-      onMouseEnter={() => {
-        setHover(true);
-      }}
-      onMouseLeave={() => {
-        setHover(false);
-      }}
-      plain
-      fill="horizontal"
-    >
-      <Box
-        fill
-        direction="row"
-        align="center"
-        pad="small"
-        gap="small"
-        background={setBackgroundColor()}
-      >
-        {leftIcon}
-        <Box flex={{ grow: 1 }}>
-          <Text
-            weight={selected ? 'bold' : 'normal'}
-            size="small"
-            color={selected ? 'white' : 'black'}
-          >
-            {label}
-          </Text>
-        </Box>
-        {rightIcon}
+}) => (
+  <ListButton selected={selected} onClick={onClick}>
+    <Box fill direction="row" align="center" gap="small">
+      {leftIcon}
+      <Box flex={{ grow: 1 }}>
+        <Text
+          weight={selected ? 'bold' : 'normal'}
+          size="small"
+          color={selected ? 'white' : 'black'}
+        >
+          {label}
+        </Text>
       </Box>
-    </Button>
-  );
-};
+      {rightIcon}
+    </Box>
+  </ListButton>
+);
 
 export default ZoneSelectorListItem;

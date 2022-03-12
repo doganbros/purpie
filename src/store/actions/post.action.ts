@@ -37,12 +37,36 @@ import {
   SEARCH_POST_REQUESTED,
   SEARCH_POST_SUCCESS,
   SEARCH_POST_FAILED,
+  CREATE_POST_COMMENT_REQUESTED,
+  CREATE_POST_COMMENT_SUCCESS,
+  CREATE_POST_COMMENT_FAILED,
+  UPDATE_POST_COMMENT_REQUESTED,
+  UPDATE_POST_COMMENT_SUCCESS,
+  UPDATE_POST_COMMENT_FAILED,
+  REMOVE_POST_COMMENT_REQUESTED,
+  REMOVE_POST_COMMENT_SUCCESS,
+  REMOVE_POST_COMMENT_FAILED,
+  LIST_POST_COMMENTS_REQUESTED,
+  LIST_POST_COMMENTS_SUCCESS,
+  LIST_POST_COMMENTS_FAILED,
+  LIST_POST_COMMENT_REPLIES_REQUESTED,
+  LIST_POST_COMMENT_REPLIES_SUCCESS,
+  LIST_POST_COMMENT_REPLIES_FAILED,
+  CREATE_POST_COMMENT_LIKE_REQUESTED,
+  CREATE_POST_COMMENT_LIKE_SUCCESS,
+  CREATE_POST_COMMENT_LIKE_FAILED,
+  REMOVE_POST_COMMENT_LIKE_REQUESTED,
+  REMOVE_POST_COMMENT_LIKE_SUCCESS,
+  REMOVE_POST_COMMENT_LIKE_FAILED,
 } from '../constants/post.constants';
 
 import * as PostService from '../services/post.service';
+import { store } from '../store';
 import {
   CreateVideoPayload,
   FeedPayload,
+  ListPostCommentRepliesParams,
+  ListPostCommentsParams,
   PostAction,
   PostSearchParams,
 } from '../types/post.types';
@@ -324,6 +348,203 @@ export const searchPostAction = (params: PostSearchParams): PostAction => {
     } catch (err) {
       dispatch({
         type: SEARCH_POST_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const createPostCommentAction = (
+  comment: string,
+  postId: number,
+  parentId?: number
+): PostAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: CREATE_POST_COMMENT_REQUESTED,
+      payload: {
+        comment,
+        postId,
+        parentId,
+      },
+    });
+    try {
+      const payload = await PostService.createPostComment(
+        comment,
+        postId,
+        parentId
+      );
+      dispatch({
+        type: CREATE_POST_COMMENT_SUCCESS,
+        payload: {
+          ...payload,
+          user: store.getState().auth.user || payload.user,
+        },
+      });
+      listPostCommentsAction({ postId });
+    } catch (err) {
+      dispatch({
+        type: CREATE_POST_COMMENT_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const updatePostCommentAction = (
+  comment: string,
+  commentId: number,
+  parentId?: number
+): PostAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: UPDATE_POST_COMMENT_REQUESTED,
+      payload: {
+        comment,
+        commentId,
+        parentId,
+      },
+    });
+    try {
+      await PostService.updatePostComment(comment, commentId);
+      dispatch({
+        type: UPDATE_POST_COMMENT_SUCCESS,
+        payload: {
+          comment,
+          commentId,
+          parentId,
+        },
+      });
+    } catch (err) {
+      dispatch({
+        type: UPDATE_POST_COMMENT_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const removePostCommentAction = (
+  commentId: number,
+  parentId?: number
+): PostAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: REMOVE_POST_COMMENT_REQUESTED,
+      payload: {
+        commentId,
+        parentId,
+      },
+    });
+    try {
+      await PostService.removePostComment(commentId);
+      dispatch({
+        type: REMOVE_POST_COMMENT_SUCCESS,
+        payload: { commentId, parentId },
+      });
+    } catch (err) {
+      dispatch({
+        type: REMOVE_POST_COMMENT_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const listPostCommentsAction = (
+  params: ListPostCommentsParams
+): PostAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: LIST_POST_COMMENTS_REQUESTED,
+      payload: params,
+    });
+    try {
+      const payload = await PostService.listPostComments(params);
+      dispatch({
+        type: LIST_POST_COMMENTS_SUCCESS,
+        payload,
+      });
+    } catch (err) {
+      dispatch({
+        type: LIST_POST_COMMENTS_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const listPostCommentRepliesAction = (
+  params: ListPostCommentRepliesParams
+): PostAction => {
+  return async (dispatch) => {
+    const { parentId } = params;
+    dispatch({
+      type: LIST_POST_COMMENT_REPLIES_REQUESTED,
+      payload: params,
+    });
+    try {
+      const payload = await PostService.listPostComments(params);
+      dispatch({
+        type: LIST_POST_COMMENT_REPLIES_SUCCESS,
+        payload: { ...payload, parentId },
+      });
+    } catch (err) {
+      dispatch({
+        type: LIST_POST_COMMENT_REPLIES_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const createPostCommentLikeAction = (params: {
+  postId: number;
+  commentId: number;
+  parentId?: number;
+}): PostAction => {
+  return async (dispatch) => {
+    const { postId, ...payload } = params;
+    dispatch({
+      type: CREATE_POST_COMMENT_LIKE_REQUESTED,
+      payload,
+    });
+    try {
+      await PostService.createPostCommentLike({
+        postId,
+        postCommentId: payload.commentId,
+      });
+      dispatch({
+        type: CREATE_POST_COMMENT_LIKE_SUCCESS,
+        payload,
+      });
+    } catch (err) {
+      dispatch({
+        type: CREATE_POST_COMMENT_LIKE_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const removePostCommentLikeAction = (payload: {
+  commentId: number;
+  parentId?: number;
+}): PostAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: REMOVE_POST_COMMENT_LIKE_REQUESTED,
+      payload,
+    });
+    try {
+      await PostService.removePostCommentLike(payload.commentId);
+      dispatch({
+        type: REMOVE_POST_COMMENT_LIKE_SUCCESS,
+        payload,
+      });
+    } catch (err) {
+      dispatch({
+        type: REMOVE_POST_COMMENT_LIKE_FAILED,
         payload: err?.reponse?.data,
       });
     }

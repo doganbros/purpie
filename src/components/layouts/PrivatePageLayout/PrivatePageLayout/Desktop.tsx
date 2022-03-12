@@ -1,11 +1,12 @@
 import { Avatar, Box, Button } from 'grommet';
 import { useHistory } from 'react-router-dom';
 import React, { FC } from 'react';
-import ExtendedBox from '../../../../utils/ExtendedBox';
-import Logo from '../../../../../assets/octopus-logo/logo-white.svg';
-import Sidebar from '../../Sidebar';
-import ZoneSelector from '../../ZoneSelector/ZoneSelector';
-import TopContainer from './TopContainer';
+import ExtendedBox from '../../../utils/ExtendedBox';
+import Logo from '../../../../assets/octopus-logo/logo-white.svg';
+import Sidebar from '../Sidebar';
+import ZoneSelector from '../ZoneSelector/ZoneSelector';
+import GradientScroll from '../../../utils/GradientScroll';
+import Divider from '../../../utils/Divider';
 
 interface Props {
   topComponent?: React.ReactNode;
@@ -76,13 +77,22 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
       >
         {children}
         {topComponent && (
-          <TopContainer
-            rightComponentWidth={rightComponent ? rightComponentWidth : 0}
-            leftComponentWidth={leftComponentWidth}
-            height={topComponentHeight}
+          <ExtendedBox
+            position="fixed"
+            top="0"
+            right={`${rightComponent ? rightComponentWidth : 0}px`}
+            left={`${leftComponentWidth}px`}
+            height={`${topComponentHeight}px`}
+            round={{ corner: 'top-left', size: 'large' }}
+            background="white"
+            pad={{ horizontal: 'large' }}
+            direction="column"
           >
-            {topComponent}
-          </TopContainer>
+            <GradientScroll height="100%">{topComponent}</GradientScroll>
+            <Box fill="horizontal">
+              <Divider />
+            </Box>
+          </ExtendedBox>
         )}
         {rightComponent && (
           <ExtendedBox
@@ -93,7 +103,7 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
             width={`${rightComponentWidth}px`}
             background="white"
             round={{ corner: 'left', size: 'large' }}
-            elevation="xlarge"
+            elevation="indigo"
             overflow="auto"
           >
             <ExtendedBox fill minWidth="min-content">

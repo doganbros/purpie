@@ -37,6 +37,27 @@ import {
   SEARCH_POST_REQUESTED,
   SEARCH_POST_SUCCESS,
   SEARCH_POST_FAILED,
+  CREATE_POST_COMMENT_REQUESTED,
+  CREATE_POST_COMMENT_SUCCESS,
+  CREATE_POST_COMMENT_FAILED,
+  UPDATE_POST_COMMENT_REQUESTED,
+  UPDATE_POST_COMMENT_SUCCESS,
+  UPDATE_POST_COMMENT_FAILED,
+  REMOVE_POST_COMMENT_REQUESTED,
+  REMOVE_POST_COMMENT_SUCCESS,
+  REMOVE_POST_COMMENT_FAILED,
+  LIST_POST_COMMENTS_REQUESTED,
+  LIST_POST_COMMENTS_SUCCESS,
+  LIST_POST_COMMENTS_FAILED,
+  LIST_POST_COMMENT_REPLIES_REQUESTED,
+  LIST_POST_COMMENT_REPLIES_SUCCESS,
+  LIST_POST_COMMENT_REPLIES_FAILED,
+  CREATE_POST_COMMENT_LIKE_REQUESTED,
+  CREATE_POST_COMMENT_LIKE_SUCCESS,
+  CREATE_POST_COMMENT_LIKE_FAILED,
+  REMOVE_POST_COMMENT_LIKE_REQUESTED,
+  REMOVE_POST_COMMENT_LIKE_SUCCESS,
+  REMOVE_POST_COMMENT_LIKE_FAILED,
 } from '../constants/post.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
@@ -73,6 +94,20 @@ export interface Post {
   };
 }
 
+export interface PostComment {
+  id: number;
+  comment: string;
+  parentId: number | null;
+  createdOn: Date;
+  updatedOn: Date | null;
+  edited: true;
+  user: UserBasic;
+  publishedInLiveStream: boolean;
+  replyCount: number;
+  likesCount: number;
+  liked: boolean;
+}
+
 export interface SavedPost {
   id: number;
   createdOn: Date;
@@ -107,6 +142,22 @@ export interface PostSearchParams extends PostSearchOptions {
   skip?: number;
 }
 
+export interface ListPostCommentsParams {
+  limit?: number;
+  skip?: number;
+  postId: number;
+}
+
+export interface ListPostCommentRepliesParams extends ListPostCommentsParams {
+  parentId: number;
+}
+
+export interface PostCommentState extends PostComment {
+  replies?: PaginatedResponse<PostComment> & {
+    loading: boolean;
+    error: ResponseError | null;
+  };
+}
 export interface PostState {
   feed: PaginatedResponse<Post> & {
     loading: boolean;
@@ -116,6 +167,10 @@ export interface PostState {
     loading: boolean;
     error: ResponseError | null;
     data: Post | null;
+    comments: PaginatedResponse<PostCommentState> & {
+      loading: boolean;
+      error: ResponseError | null;
+    };
   };
   createVideo: {
     showCreateVideoLayer: boolean;
@@ -175,6 +230,57 @@ export type PostActionParams =
       };
     }
   | {
+      type: typeof CREATE_POST_COMMENT_REQUESTED;
+      payload: {
+        comment: string;
+        postId: number;
+        parentId?: number;
+      };
+    }
+  | {
+      type: typeof CREATE_POST_COMMENT_SUCCESS;
+      payload: PostComment;
+    }
+  | {
+      type:
+        | typeof UPDATE_POST_COMMENT_REQUESTED
+        | typeof UPDATE_POST_COMMENT_SUCCESS;
+      payload: {
+        comment: string;
+        commentId: number;
+        parentId?: number;
+      };
+    }
+  | {
+      type:
+        | typeof REMOVE_POST_COMMENT_REQUESTED
+        | typeof REMOVE_POST_COMMENT_SUCCESS
+        | typeof CREATE_POST_COMMENT_LIKE_REQUESTED
+        | typeof CREATE_POST_COMMENT_LIKE_SUCCESS
+        | typeof REMOVE_POST_COMMENT_LIKE_REQUESTED
+        | typeof REMOVE_POST_COMMENT_LIKE_SUCCESS;
+      payload: {
+        commentId: number;
+        parentId?: number;
+      };
+    }
+  | {
+      type: typeof LIST_POST_COMMENTS_REQUESTED;
+      payload: ListPostCommentsParams;
+    }
+  | {
+      type: typeof LIST_POST_COMMENT_REPLIES_REQUESTED;
+      payload: ListPostCommentRepliesParams;
+    }
+  | {
+      type: typeof LIST_POST_COMMENTS_SUCCESS;
+      payload: PaginatedResponse<PostComment>;
+    }
+  | {
+      type: typeof LIST_POST_COMMENT_REPLIES_SUCCESS;
+      payload: PaginatedResponse<PostComment> & { parentId: number };
+    }
+  | {
       type:
         | typeof PUBLIC_FEED_SUCCESS
         | typeof USER_FEED_SUCCESS
@@ -216,8 +322,18 @@ export type PostActionParams =
         | typeof CREATE_POST_SAVE_FAILED
         | typeof REMOVE_POST_SAVE_FAILED
         | typeof SAVED_POSTS_FAILED
-        | typeof SEARCH_POST_FAILED;
+        | typeof SEARCH_POST_FAILED
+        | typeof CREATE_POST_COMMENT_FAILED
+        | typeof UPDATE_POST_COMMENT_FAILED
+        | typeof REMOVE_POST_COMMENT_FAILED
+        | typeof LIST_POST_COMMENTS_FAILED
+        | typeof CREATE_POST_COMMENT_LIKE_FAILED
+        | typeof REMOVE_POST_COMMENT_LIKE_FAILED;
       payload: ResponseError;
+    }
+  | {
+      type: typeof LIST_POST_COMMENT_REPLIES_FAILED;
+      payload: ResponseError & { parentId: number };
     };
 
 export interface PostDispatch {
