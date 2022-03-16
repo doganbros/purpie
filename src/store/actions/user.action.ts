@@ -2,16 +2,20 @@ import {
   SEARCH_PROFILE_REQUESTED,
   SEARCH_PROFILE_SUCCESS,
   SEARCH_PROFILE_FAILED,
-  LIST_USER_CONTACTS_REQUESTED,
-  LIST_USER_CONTACTS_SUCCESS,
-  LIST_USER_CONTACTS_FAILED,
-  SELECT_USER_CONTACT_REQUESTED,
-  SELECT_USER_CONTACT_SUCCESS,
-  SELECT_USER_CONTACT_FAILED,
+  LIST_CONTACTS_REQUESTED,
+  LIST_CONTACTS_SUCCESS,
+  LIST_CONTACTS_FAILED,
+  SELECT_CONTACT_REQUESTED,
+  SELECT_CONTACT_SUCCESS,
+  SELECT_CONTACT_FAILED,
+  REMOVE_CONTACT_REQUESTED,
+  REMOVE_CONTACT_SUCCESS,
+  REMOVE_CONTACT_FAILED,
 } from '../constants/user.constants';
 import {
   getUserProfile,
   listContacts,
+  removeContact,
   searchUser,
 } from '../services/user.service';
 import { UserAction, ProfileSearchParams } from '../types/user.types';
@@ -45,38 +49,62 @@ export const listContactsAction = (params: {
 }): UserAction => {
   return async (dispatch) => {
     dispatch({
-      type: LIST_USER_CONTACTS_REQUESTED,
+      type: LIST_CONTACTS_REQUESTED,
     });
     try {
       const payload = await listContacts(params);
       dispatch({
-        type: LIST_USER_CONTACTS_SUCCESS,
+        type: LIST_CONTACTS_SUCCESS,
         payload,
       });
     } catch (err) {
       dispatch({
-        type: LIST_USER_CONTACTS_FAILED,
+        type: LIST_CONTACTS_FAILED,
         payload: err?.reponse?.data,
       });
     }
   };
 };
 
-export const selectContactAction = (userName: string): UserAction => {
+export const selectContactAction = (params: {
+  userName: string;
+  contactId: number;
+}): UserAction => {
   return async (dispatch) => {
     dispatch({
-      type: SELECT_USER_CONTACT_REQUESTED,
-      payload: { userName },
+      type: SELECT_CONTACT_REQUESTED,
+      payload: params,
     });
     try {
-      const payload = await getUserProfile(userName);
+      const payload = await getUserProfile(params.userName);
       dispatch({
-        type: SELECT_USER_CONTACT_SUCCESS,
+        type: SELECT_CONTACT_SUCCESS,
         payload,
       });
     } catch (err) {
       dispatch({
-        type: SELECT_USER_CONTACT_FAILED,
+        type: SELECT_CONTACT_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const removeContactAction = (contactId: number): UserAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: REMOVE_CONTACT_REQUESTED,
+      payload: { contactId },
+    });
+    try {
+      await removeContact(contactId);
+      dispatch({
+        type: REMOVE_CONTACT_SUCCESS,
+        payload: { contactId },
+      });
+    } catch (err) {
+      dispatch({
+        type: REMOVE_CONTACT_FAILED,
         payload: err?.reponse?.data,
       });
     }

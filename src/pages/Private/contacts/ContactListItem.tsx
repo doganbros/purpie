@@ -7,7 +7,7 @@ import { ContactUser } from '../../../store/types/user.types';
 interface ContactListItemProps {
   contact: ContactUser;
   selected?: boolean;
-  onClick: (userName: string) => void;
+  onClick: (contact: ContactUser) => void;
 }
 
 const ContactListItem: FC<ContactListItemProps> = ({
@@ -16,7 +16,7 @@ const ContactListItem: FC<ContactListItemProps> = ({
   onClick,
 }) => (
   <Box
-    onClick={() => onClick(contact.contactUser.userName)}
+    onClick={() => onClick(contact)}
     background={selected ? 'brand' : ''}
     focusIndicator={false}
     direction="row"
@@ -41,7 +41,7 @@ const ContactListItem: FC<ContactListItemProps> = ({
   >
     <Box direction="row" align="center" gap="small">
       <InitialsAvatar
-        id={contact.id}
+        id={contact.contactUser.id}
         value={`${contact.contactUser.firstName} ${contact.contactUser.lastName}`}
       />
       <Text weight="bold" color={selected ? 'white' : 'brand'}>

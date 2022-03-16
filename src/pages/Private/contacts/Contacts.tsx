@@ -1,5 +1,5 @@
 import { Box, InfiniteScroll, Text } from 'grommet';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import {
@@ -7,7 +7,8 @@ import {
   selectContactAction,
 } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
-import SelectedUser from './ContactDetail';
+import { ContactUser } from '../../../store/types/user.types';
+import SelectedUser from './SelectedUser';
 import ContactListItem from './ContactListItem';
 
 const Contacts: FC = () => {
@@ -15,15 +16,18 @@ const Contacts: FC = () => {
   const {
     user: { contacts },
   } = useSelector((state: AppState) => state);
-  const [activeContact, setActiveContact] = useState<string | null>(null);
 
   const getContacts = (skip?: number) => {
     dispatch(listContactsAction({ skip }));
   };
 
-  const selectContact = (userName: string) => {
-    setActiveContact(userName);
-    dispatch(selectContactAction(userName));
+  const selectContact = (contact: ContactUser) => {
+    dispatch(
+      selectContactAction({
+        userName: contact.contactUser.userName,
+        contactId: contact.id,
+      })
+    );
   };
 
   useEffect(() => {
@@ -34,7 +38,12 @@ const Contacts: FC = () => {
     <PrivatePageLayout
       title="Contacts"
       rightComponent={
-        activeContact && <SelectedUser user={contacts.selected.user} />
+        contacts.selected.contactId && (
+          <SelectedUser
+            user={contacts.selected.user}
+            contactId={contacts.selected.contactId}
+          />
+        )
       }
     >
       <Box pad={{ vertical: 'medium' }} gap="medium">
@@ -48,7 +57,7 @@ const Contacts: FC = () => {
         >
           {(item: typeof contacts.data[0]) => (
             <ContactListItem
-              selected={activeContact === item.contactUser.userName}
+              selected={contacts.selected.contactId === item.id}
               contact={item}
               onClick={selectContact}
             />

@@ -5,12 +5,15 @@ import {
   SEARCH_PROFILE_REQUESTED,
   SEARCH_PROFILE_SUCCESS,
   SEARCH_PROFILE_FAILED,
-  LIST_USER_CONTACTS_REQUESTED,
-  LIST_USER_CONTACTS_SUCCESS,
-  LIST_USER_CONTACTS_FAILED,
-  SELECT_USER_CONTACT_REQUESTED,
-  SELECT_USER_CONTACT_SUCCESS,
-  SELECT_USER_CONTACT_FAILED,
+  LIST_CONTACTS_REQUESTED,
+  LIST_CONTACTS_SUCCESS,
+  LIST_CONTACTS_FAILED,
+  SELECT_CONTACT_REQUESTED,
+  SELECT_CONTACT_SUCCESS,
+  SELECT_CONTACT_FAILED,
+  REMOVE_CONTACT_FAILED,
+  REMOVE_CONTACT_REQUESTED,
+  REMOVE_CONTACT_SUCCESS,
 } from '../constants/user.constants';
 
 export interface ProfileSearchOptions {
@@ -39,6 +42,7 @@ export interface UserState {
     loading: boolean;
     error: ResponseError | null;
     selected: {
+      contactId: number | null;
       user: User | null;
       loading: boolean;
       error: ResponseError | null;
@@ -58,7 +62,7 @@ export interface UserState {
 
 export type UserActionParams =
   | {
-      type: typeof LIST_USER_CONTACTS_REQUESTED;
+      type: typeof LIST_CONTACTS_REQUESTED;
     }
   | {
       type: typeof SEARCH_PROFILE_REQUESTED;
@@ -69,24 +73,32 @@ export type UserActionParams =
       payload: PaginatedResponse<UserBasic>;
     }
   | {
-      type: typeof LIST_USER_CONTACTS_SUCCESS;
+      type: typeof LIST_CONTACTS_SUCCESS;
       payload: PaginatedResponse<ContactUser>;
     }
   | {
-      type: typeof SELECT_USER_CONTACT_REQUESTED;
+      type: typeof SELECT_CONTACT_REQUESTED;
       payload: {
         userName: string;
+        contactId: number;
       };
     }
   | {
-      type: typeof SELECT_USER_CONTACT_SUCCESS;
+      type: typeof SELECT_CONTACT_SUCCESS;
       payload: User;
+    }
+  | {
+      type: typeof REMOVE_CONTACT_REQUESTED | typeof REMOVE_CONTACT_SUCCESS;
+      payload: {
+        contactId: number;
+      };
     }
   | {
       type:
         | typeof SEARCH_PROFILE_FAILED
-        | typeof LIST_USER_CONTACTS_FAILED
-        | typeof SELECT_USER_CONTACT_FAILED;
+        | typeof LIST_CONTACTS_FAILED
+        | typeof SELECT_CONTACT_FAILED
+        | typeof REMOVE_CONTACT_FAILED;
       payload: ResponseError;
     };
 

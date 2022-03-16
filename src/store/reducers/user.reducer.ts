@@ -3,10 +3,11 @@ import {
   SEARCH_PROFILE_REQUESTED,
   SEARCH_PROFILE_SUCCESS,
   SEARCH_PROFILE_FAILED,
-  LIST_USER_CONTACTS_REQUESTED,
-  LIST_USER_CONTACTS_SUCCESS,
-  SELECT_USER_CONTACT_REQUESTED,
-  SELECT_USER_CONTACT_SUCCESS,
+  LIST_CONTACTS_REQUESTED,
+  LIST_CONTACTS_SUCCESS,
+  SELECT_CONTACT_REQUESTED,
+  SELECT_CONTACT_SUCCESS,
+  REMOVE_CONTACT_SUCCESS,
 } from '../constants/user.constants';
 import { paginationInitialState } from '../../helpers/constants';
 
@@ -21,6 +22,7 @@ const initialState: UserState = {
     error: null,
     loading: false,
     selected: {
+      contactId: null,
       user: null,
       error: null,
       loading: false,
@@ -76,7 +78,7 @@ const userReducer = (
           error: action.payload,
         },
       };
-    case LIST_USER_CONTACTS_REQUESTED: {
+    case LIST_CONTACTS_REQUESTED: {
       return {
         ...state,
         contacts: {
@@ -86,7 +88,7 @@ const userReducer = (
         },
       };
     }
-    case LIST_USER_CONTACTS_SUCCESS: {
+    case LIST_CONTACTS_SUCCESS: {
       return {
         ...state,
         contacts: {
@@ -98,6 +100,7 @@ const userReducer = (
           loading: false,
           error: null,
           selected: {
+            contactId: null,
             user: null,
             loading: false,
             error: null,
@@ -105,26 +108,45 @@ const userReducer = (
         },
       };
     }
-    case SELECT_USER_CONTACT_REQUESTED: {
+    case SELECT_CONTACT_REQUESTED: {
       return {
         ...state,
         contacts: {
           ...state.contacts,
           selected: {
             ...state.contacts.selected,
+            contactId: action.payload.contactId,
             loading: true,
             error: null,
           },
         },
       };
     }
-    case SELECT_USER_CONTACT_SUCCESS: {
+    case SELECT_CONTACT_SUCCESS: {
       return {
         ...state,
         contacts: {
           ...state.contacts,
           selected: {
+            ...state.contacts.selected,
             user: action.payload,
+            loading: false,
+            error: null,
+          },
+        },
+      };
+    }
+    case REMOVE_CONTACT_SUCCESS: {
+      return {
+        ...state,
+        contacts: {
+          ...state.contacts,
+          data: state.contacts.data.filter(
+            (c) => c.id !== action.payload.contactId
+          ),
+          selected: {
+            contactId: null,
+            user: null,
             loading: false,
             error: null,
           },

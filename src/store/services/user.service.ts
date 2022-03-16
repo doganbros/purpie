@@ -16,3 +16,6 @@ export const listContacts = (params: {
 
 export const getUserProfile = (userName?: string): Promise<User> =>
   http.get(`/user/profile/${userName || ''}`).then((res) => res.data);
+
+export const removeContact = (contactId: number): Promise<string> =>
+  http.delete(`/user/contact/remove/${contactId}`).then((res) => res.data);
