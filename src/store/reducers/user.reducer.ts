@@ -5,6 +5,8 @@ import {
   SEARCH_PROFILE_FAILED,
   LIST_USER_CONTACTS_REQUESTED,
   LIST_USER_CONTACTS_SUCCESS,
+  SELECT_USER_CONTACT_REQUESTED,
+  SELECT_USER_CONTACT_SUCCESS,
 } from '../constants/user.constants';
 import { paginationInitialState } from '../../helpers/constants';
 
@@ -18,6 +20,21 @@ const initialState: UserState = {
     ...paginationInitialState,
     error: null,
     loading: false,
+    selected: {
+      user: null,
+      error: null,
+      loading: false,
+    },
+  },
+  detail: {
+    user: null,
+    error: null,
+    loading: false,
+    selected: {
+      user: null,
+      error: null,
+      loading: false,
+    },
   },
 };
 
@@ -80,6 +97,37 @@ const userReducer = (
               : action.payload.data,
           loading: false,
           error: null,
+          selected: {
+            user: null,
+            loading: false,
+            error: null,
+          },
+        },
+      };
+    }
+    case SELECT_USER_CONTACT_REQUESTED: {
+      return {
+        ...state,
+        contacts: {
+          ...state.contacts,
+          selected: {
+            ...state.contacts.selected,
+            loading: true,
+            error: null,
+          },
+        },
+      };
+    }
+    case SELECT_USER_CONTACT_SUCCESS: {
+      return {
+        ...state,
+        contacts: {
+          ...state.contacts,
+          selected: {
+            user: action.payload,
+            loading: false,
+            error: null,
+          },
         },
       };
     }

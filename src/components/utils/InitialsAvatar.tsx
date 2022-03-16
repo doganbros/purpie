@@ -1,18 +1,24 @@
 import React, { FC } from 'react';
-import { Avatar, Text } from 'grommet';
+import { Avatar, AvatarExtendedProps, Text, TextExtendedProps } from 'grommet';
 import { getColorPairFromId } from '../../helpers/utils';
 
 interface InitialsAvatarProps {
   id: number;
   value: string;
-  size?: string;
+  avatarProps?: AvatarExtendedProps;
+  textProps?: TextExtendedProps;
 }
 
-const InitialsAvatar: FC<InitialsAvatarProps> = ({ id, value, size }) => {
+const InitialsAvatar: FC<InitialsAvatarProps> = ({
+  id,
+  value,
+  avatarProps,
+  textProps,
+}) => {
   const { background, foreground } = getColorPairFromId(id);
   return value ? (
-    <Avatar round background={{ color: background }} size={size}>
-      <Text color={foreground} size={size}>
+    <Avatar round background={{ color: background }} {...avatarProps}>
+      <Text color={foreground} {...textProps}>
         {value
           .split(' ')
           .filter((_v, i: number) => i < 2)

@@ -5,8 +5,15 @@ import {
   LIST_USER_CONTACTS_REQUESTED,
   LIST_USER_CONTACTS_SUCCESS,
   LIST_USER_CONTACTS_FAILED,
+  SELECT_USER_CONTACT_REQUESTED,
+  SELECT_USER_CONTACT_SUCCESS,
+  SELECT_USER_CONTACT_FAILED,
 } from '../constants/user.constants';
-import { listContacts, searchUser } from '../services/user.service';
+import {
+  getUserProfile,
+  listContacts,
+  searchUser,
+} from '../services/user.service';
 import { UserAction, ProfileSearchParams } from '../types/user.types';
 
 export const searchProfileAction = (
@@ -49,6 +56,27 @@ export const listContactsAction = (params: {
     } catch (err) {
       dispatch({
         type: LIST_USER_CONTACTS_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const selectContactAction = (userName: string): UserAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: SELECT_USER_CONTACT_REQUESTED,
+      payload: { userName },
+    });
+    try {
+      const payload = await getUserProfile(userName);
+      dispatch({
+        type: SELECT_USER_CONTACT_SUCCESS,
+        payload,
+      });
+    } catch (err) {
+      dispatch({
+        type: SELECT_USER_CONTACT_FAILED,
         payload: err?.reponse?.data,
       });
     }

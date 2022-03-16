@@ -1,6 +1,6 @@
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
-import { UserBasic } from './auth.types';
+import { User, UserBasic } from './auth.types';
 import {
   SEARCH_PROFILE_REQUESTED,
   SEARCH_PROFILE_SUCCESS,
@@ -8,6 +8,9 @@ import {
   LIST_USER_CONTACTS_REQUESTED,
   LIST_USER_CONTACTS_SUCCESS,
   LIST_USER_CONTACTS_FAILED,
+  SELECT_USER_CONTACT_REQUESTED,
+  SELECT_USER_CONTACT_SUCCESS,
+  SELECT_USER_CONTACT_FAILED,
 } from '../constants/user.constants';
 
 export interface ProfileSearchOptions {
@@ -35,6 +38,21 @@ export interface UserState {
   contacts: PaginatedResponse<ContactUser> & {
     loading: boolean;
     error: ResponseError | null;
+    selected: {
+      user: User | null;
+      loading: boolean;
+      error: ResponseError | null;
+    };
+  };
+  detail: {
+    user: User | null;
+    loading: boolean;
+    error: ResponseError | null;
+    selected: {
+      user: User | null;
+      loading: boolean;
+      error: ResponseError | null;
+    };
   };
 }
 
@@ -55,7 +73,20 @@ export type UserActionParams =
       payload: PaginatedResponse<ContactUser>;
     }
   | {
-      type: typeof SEARCH_PROFILE_FAILED | typeof LIST_USER_CONTACTS_FAILED;
+      type: typeof SELECT_USER_CONTACT_REQUESTED;
+      payload: {
+        userName: string;
+      };
+    }
+  | {
+      type: typeof SELECT_USER_CONTACT_SUCCESS;
+      payload: User;
+    }
+  | {
+      type:
+        | typeof SEARCH_PROFILE_FAILED
+        | typeof LIST_USER_CONTACTS_FAILED
+        | typeof SELECT_USER_CONTACT_FAILED;
       payload: ResponseError;
     };
 
