@@ -23,7 +23,7 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
   return (
     <Box width="100vw" height="100vh" elevation="xlarge" round="large">
       <ExtendedBox
-        background="brand-2"
+        background="brand-alt"
         position="fixed"
         top="0"
         bottom="0"

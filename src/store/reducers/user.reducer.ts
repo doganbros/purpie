@@ -3,12 +3,19 @@ import {
   SEARCH_PROFILE_REQUESTED,
   SEARCH_PROFILE_SUCCESS,
   SEARCH_PROFILE_FAILED,
+  LIST_USER_CONTACTS_REQUESTED,
+  LIST_USER_CONTACTS_SUCCESS,
 } from '../constants/user.constants';
 import { paginationInitialState } from '../../helpers/constants';
 
 const initialState: UserState = {
   search: {
     results: paginationInitialState,
+    error: null,
+    loading: false,
+  },
+  contacts: {
+    ...paginationInitialState,
     error: null,
     loading: false,
   },
@@ -52,6 +59,30 @@ const userReducer = (
           error: action.payload,
         },
       };
+    case LIST_USER_CONTACTS_REQUESTED: {
+      return {
+        ...state,
+        contacts: {
+          ...state.contacts,
+          loading: true,
+          error: null,
+        },
+      };
+    }
+    case LIST_USER_CONTACTS_SUCCESS: {
+      return {
+        ...state,
+        contacts: {
+          ...action.payload,
+          data:
+            action.payload.skip > 0
+              ? [...state.contacts.data, ...action.payload.data]
+              : action.payload.data,
+          loading: false,
+          error: null,
+        },
+      };
+    }
     default:
       return state;
   }

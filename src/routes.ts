@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid';
 import { RouteComponentProps } from 'react-router-dom';
 import Channels from './pages/Private/channels/Channels';
+import Contacts from './pages/Private/contacts/Contacts';
 import Saved from './pages/Private/saved/Saved';
 import Search from './pages/Private/search/Search';
 import Timeline from './pages/Private/timeline/Timeline';
@@ -98,5 +99,11 @@ export const privateRoutes: Array<AppRoute> = [
     path: '/search/:scope/:value',
     component: Search,
     description: 'User views a search results',
+  },
+  {
+    id: nanoid(),
+    path: '/contacts',
+    component: Contacts,
+    description: 'User views contacts list',
   },
 ];
