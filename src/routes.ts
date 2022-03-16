@@ -5,6 +5,7 @@ import Contacts from './pages/Private/contacts/Contacts';
 import Saved from './pages/Private/saved/Saved';
 import Search from './pages/Private/search/Search';
 import Timeline from './pages/Private/timeline/Timeline';
+import User from './pages/Private/user/User';
 import Video from './pages/Private/video/Video';
 import ForgotPassword from './pages/Public/ForgotPassword';
 import Login from './pages/Public/Login';
@@ -98,12 +99,18 @@ export const privateRoutes: Array<AppRoute> = [
     id: nanoid(),
     path: '/search/:scope/:value',
     component: Search,
-    description: 'User views a search results',
+    description: 'User views search results',
   },
   {
     id: nanoid(),
     path: '/contacts',
     component: Contacts,
     description: 'User views contacts list',
+  },
+  {
+    id: nanoid(),
+    path: '/user/:userName',
+    component: User,
+    description: 'User view a profile',
   },
 ];

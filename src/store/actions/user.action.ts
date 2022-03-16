@@ -11,6 +11,9 @@ import {
   REMOVE_CONTACT_REQUESTED,
   REMOVE_CONTACT_SUCCESS,
   REMOVE_CONTACT_FAILED,
+  GET_USER_DETAIL_REQUESTED,
+  GET_USER_DETAIL_SUCCESS,
+  GET_USER_DETAIL_FAILED,
 } from '../constants/user.constants';
 import {
   getUserProfile,
@@ -105,6 +108,29 @@ export const removeContactAction = (contactId: number): UserAction => {
     } catch (err) {
       dispatch({
         type: REMOVE_CONTACT_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const getUserDetailAction = (params: {
+  userName: string;
+}): UserAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: GET_USER_DETAIL_REQUESTED,
+      payload: params,
+    });
+    try {
+      const payload = await getUserProfile(params.userName);
+      dispatch({
+        type: GET_USER_DETAIL_SUCCESS,
+        payload,
+      });
+    } catch (err) {
+      dispatch({
+        type: GET_USER_DETAIL_FAILED,
         payload: err?.reponse?.data,
       });
     }

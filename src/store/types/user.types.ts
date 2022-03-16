@@ -14,6 +14,9 @@ import {
   REMOVE_CONTACT_FAILED,
   REMOVE_CONTACT_REQUESTED,
   REMOVE_CONTACT_SUCCESS,
+  GET_USER_DETAIL_REQUESTED,
+  GET_USER_DETAIL_SUCCESS,
+  GET_USER_DETAIL_FAILED,
 } from '../constants/user.constants';
 
 export interface ProfileSearchOptions {
@@ -84,7 +87,13 @@ export type UserActionParams =
       };
     }
   | {
-      type: typeof SELECT_CONTACT_SUCCESS;
+      type: typeof GET_USER_DETAIL_REQUESTED;
+      payload: {
+        userName: string;
+      };
+    }
+  | {
+      type: typeof SELECT_CONTACT_SUCCESS | typeof GET_USER_DETAIL_SUCCESS;
       payload: User;
     }
   | {
@@ -98,7 +107,8 @@ export type UserActionParams =
         | typeof SEARCH_PROFILE_FAILED
         | typeof LIST_CONTACTS_FAILED
         | typeof SELECT_CONTACT_FAILED
-        | typeof REMOVE_CONTACT_FAILED;
+        | typeof REMOVE_CONTACT_FAILED
+        | typeof GET_USER_DETAIL_FAILED;
       payload: ResponseError;
     };
 

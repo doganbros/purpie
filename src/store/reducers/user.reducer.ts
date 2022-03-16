@@ -8,6 +8,8 @@ import {
   SELECT_CONTACT_REQUESTED,
   SELECT_CONTACT_SUCCESS,
   REMOVE_CONTACT_SUCCESS,
+  GET_USER_DETAIL_REQUESTED,
+  GET_USER_DETAIL_SUCCESS,
 } from '../constants/user.constants';
 import { paginationInitialState } from '../../helpers/constants';
 
@@ -150,6 +152,32 @@ const userReducer = (
             loading: false,
             error: null,
           },
+        },
+      };
+    }
+    case GET_USER_DETAIL_REQUESTED: {
+      return {
+        ...state,
+        detail: {
+          ...state.detail,
+          selected: {
+            user: null,
+            loading: false,
+            error: null,
+          },
+          loading: true,
+          error: null,
+        },
+      };
+    }
+    case GET_USER_DETAIL_SUCCESS: {
+      return {
+        ...state,
+        detail: {
+          ...state.detail,
+          user: action.payload,
+          loading: false,
+          error: null,
         },
       };
     }
