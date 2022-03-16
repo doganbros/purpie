@@ -1,15 +1,15 @@
 import React, { FC, useContext, useState } from 'react';
-import { Avatar, Box, DropButton, ResponsiveContext, Text } from 'grommet';
-import { Add, SettingsOption, User } from 'grommet-icons';
+import { Box, DropButton, ResponsiveContext, Text } from 'grommet';
+import { Add, SettingsOption } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
-import { getZoneAvatarSrc } from '../../../../pages/Private/timeline/data/zone-avatars';
 import { AppState } from '../../../../store/reducers/root.reducer';
 import Divider from './Divider';
 import ZoneSelectorListItem from './ZoneSelectorListItem';
 import { openCreateZoneLayerAction } from '../../../../store/actions/zone.action';
 import { openCreateChannelLayerAction } from '../../../../store/actions/channel.action';
 import { logoutAction } from '../../../../store/actions/auth.action';
+import InitialsAvatar from '../../../utils/InitialsAvatar';
 
 const ZoneSelector: FC = () => {
   const {
@@ -51,9 +51,12 @@ const ZoneSelector: FC = () => {
                 navigateToSubdomain();
               }}
               leftIcon={
-                <Avatar background="accent-4" size="small">
-                  <User size="small" />
-                </Avatar>
+                user && (
+                  <InitialsAvatar
+                    id={user.id}
+                    value={`${user.firstName} ${user.lastName}`}
+                  />
+                )
               }
               label={`${user?.firstName} ${user?.lastName}`}
             />
@@ -65,7 +68,7 @@ const ZoneSelector: FC = () => {
                     navigateToSubdomain(z.zone.subdomain);
                   }}
                   leftIcon={
-                    <Avatar size="small" src={getZoneAvatarSrc(z.zone.id)} />
+                    <InitialsAvatar id={z.zone.id} value={z.zone.name} />
                   }
                   key={z.zone.id}
                   label={z.zone.name}
@@ -121,14 +124,17 @@ const ZoneSelector: FC = () => {
             elevation={hover ? 'indigo' : 'none'}
           >
             {selectedUserZone ? (
-              <Avatar
-                size="medium"
-                src={getZoneAvatarSrc(selectedUserZone.zone.id)}
+              <InitialsAvatar
+                id={selectedUserZone.zone.id}
+                value={selectedUserZone.zone.name}
               />
             ) : (
-              <Avatar background="accent-4" size="medium">
-                <User />
-              </Avatar>
+              user && (
+                <InitialsAvatar
+                  id={user.id}
+                  value={`${user.firstName} ${user.lastName}`}
+                />
+              )
             )}
             <Box align="center">
               <Text
