@@ -127,6 +127,8 @@ export class UserService {
         'inviter.email',
         'inviter.firstName',
         'inviter.lastName',
+        'inviter.displayPhoto',
+        'inviter.userName',
       ])
       .where('contact_invitation.inviteeId = :userId', {
         userId,
@@ -150,6 +152,7 @@ export class UserService {
         'contact.id',
         'contact.createdOn',
         'contactUser.id',
+        'contactUser.userName',
         'contactUser.email',
         'contactUser.firstName',
         'contactUser.lastName',
@@ -174,6 +177,41 @@ export class UserService {
 
   listUserRoles() {
     return this.userRoleRepository.find({ take: 30 });
+  }
+
+  async getPublicUserProfile(currentUserId: number, userName: string) {
+    const result = await this.userRepository
+      .createQueryBuilder('user')
+      .select([
+        'user.id',
+        'user.firstName',
+        'user.lastName',
+        'user.userName',
+        'user.displayPhoto',
+        'user.email',
+      ])
+      .addSelect((subQuery) => {
+        return subQuery
+          .select('count(*) > 0', 'userCount')
+          .from(Contact, 'contact')
+          .where('contact.contactUserId = user.id')
+          .andWhere('contact.userId = :currentUserId', { currentUserId });
+      }, 'isInContact')
+      .where('user.userName = :userName', { userName })
+      .getRawOne();
+
+    if (!result)
+      throw new NotFoundException('User not found', 'USER_NOT_FOUND');
+
+    return {
+      id: result.user_id,
+      firstName: result.user_firstName,
+      lastName: result.user_lastName,
+      userName: result.user_userName,
+      displayPhoto: result.user_displayPhoto,
+      email: result.user_email,
+      isInContact: result.isInContact,
+    };
   }
 
   listSystemUsers(query: SystemUserListQuery) {
