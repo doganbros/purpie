@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from 'entities/Contact.entity';
-import { MattermostService } from 'src/utils/services/mattermost.service';
 import { ContactInvitation } from 'entities/ContactInvitation.entity';
 import { AuthService } from 'src/auth/services/auth.service';
 import { generateLowerAlphaNumId, tsqueryParam } from 'helpers/utils';
@@ -33,7 +32,6 @@ export class UserService {
     @InjectRepository(ContactInvitation)
     private contactInvitation: Repository<ContactInvitation>,
     private authService: AuthService,
-    private readonly mattermostService: MattermostService,
   ) {}
 
   createNewContact(userId: number, contactUserId: number) {
@@ -357,14 +355,6 @@ export class UserService {
       );
 
     await this.userRepository.update({ id: userId }, updates);
-
-    const mattermostUpdates: any = { id: userProfile.mattermostId };
-
-    if (updates.firstName) mattermostUpdates.first_name = updates.firstName;
-    if (updates.lastName) mattermostUpdates.last_name = updates.lastName;
-    if (updates.userName) mattermostUpdates.username = updates.userName;
-
-    await this.mattermostService.mattermostClient.patchUser(mattermostUpdates);
   }
 
   async userNameSuggestions(userName: string) {

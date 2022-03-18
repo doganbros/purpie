@@ -4,8 +4,6 @@ import { CurrentStreamViewer } from 'entities/CurrentStreamViewer.entity';
 import { Post } from 'entities/Post.entity';
 import { StreamLog } from 'entities/StreamLog.entity';
 import { User } from 'entities/User.entity';
-import { fetchOrProduceNull } from 'helpers/utils';
-import { MattermostService } from 'src/utils/services/mattermost.service';
 import { Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { ClientStreamEventDto } from './dto/client-stream-event.dto';
@@ -21,7 +19,6 @@ export class StreamService {
     private readonly userRepo: Repository<User>,
     @InjectRepository(CurrentStreamViewer)
     private readonly currentStreamViewerRepo: Repository<CurrentStreamViewer>,
-    private readonly mattermostService: MattermostService,
   ) {}
 
   async setStreamEvent(info: ClientStreamEventDto) {
@@ -49,7 +46,6 @@ export class StreamService {
             slug: info.slug,
           });
         }
-        this.handleStreamViewerChange(info.slug, info.userId!);
       } catch (error) {
         //
       }
@@ -68,9 +64,6 @@ export class StreamService {
         { streaming: info.event === 'publish_started' },
       );
     }
-
-    if (info.event === 'publish_started')
-      await this.handleCreateStreamChannel(info.slug);
 
     return streamLog;
   }
@@ -111,54 +104,5 @@ export class StreamService {
       .select('COUNT(current_stream_viewer.userId) AS total')
       .where('current_stream_viewer.slug = :slug', { slug })
       .getRawOne();
-  }
-
-  async handleStreamViewerChange(slug: string, userId: number) {
-    const stat = await this.getCurrentTotalViewers(slug);
-
-    this.mattermostService.broadcastPost({
-      event: 'LIVE_STREAM_VIEWER_COUNT_CHANGE',
-      slug,
-      count: stat.total,
-    });
-
-    const channel = await this.handleCreateStreamChannel(slug);
-
-    if (channel) {
-      const user = await this.userRepo.findOne({ where: { id: userId } });
-
-      if (user) {
-        fetchOrProduceNull(() =>
-          this.mattermostService.mattermostClient.addToChannel(
-            user.mattermostId,
-            channel.id,
-          ),
-        );
-      }
-    }
-  }
-
-  async handleCreateStreamChannel(slug: string) {
-    const channel = await fetchOrProduceNull(() =>
-      this.mattermostService.mattermostClient.getChannelByName(
-        this.mattermostService.octopusAppTeam!.id,
-        slug,
-      ),
-    );
-    if (channel) return channel;
-
-    const octopusPost = await this.postRepo.findOne({ slug });
-
-    if (octopusPost) {
-      return this.mattermostService.mattermostClient.createChannel({
-        name: slug,
-        display_name: octopusPost.title,
-        team_id: this.mattermostService.octopusAppTeam!.id,
-        type: 'P',
-        purpose: `Livestream channel for ${octopusPost.title} post`,
-      } as any);
-    }
-
-    return null;
   }
 }

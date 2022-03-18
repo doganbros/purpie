@@ -56,12 +56,7 @@ export class AuthGuard implements CanActivate {
             refreshToken,
             AUTH_TOKEN_SECRET_REFRESH,
           );
-          const userPayload = pick(refreshPayload, [
-            'id',
-            'mattermostId',
-            'mattermostTokenId',
-            'refreshTokenId',
-          ]);
+          const userPayload = pick(refreshPayload, ['id', 'refreshTokenId']);
 
           await this.authService.verifyRefreshToken(
             userPayload.refreshTokenId,

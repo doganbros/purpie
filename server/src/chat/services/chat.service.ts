@@ -10,6 +10,7 @@ import { verifyJWT } from 'helpers/jwt';
 import { pick } from 'lodash';
 import { AuthService } from 'src/auth/services/auth.service';
 import { ChatMessage } from 'entities/ChatMessage.entity';
+import { ChatMessageDto } from '../dto/chat-message.dto';
 
 const { AUTH_TOKEN_SECRET = '', AUTH_TOKEN_SECRET_REFRESH = '' } = process.env;
 
@@ -52,7 +53,7 @@ export class ChatService {
     const refreshToken = cookies.OCTOPUS_REFRESH_ACCESS_TOKEN;
 
     if (!token) {
-      throw new WsException('You not authorized to use this route');
+      throw new WsException('You not authorized to use this websocket');
     }
 
     return verifyJWT(token, AUTH_TOKEN_SECRET).catch(async () => {
@@ -70,23 +71,42 @@ export class ChatService {
 
         return { id: userPayload.id };
       } catch (err) {
-        throw new WsException('You not authorized to use this route');
+        throw new WsException('You not authorized to use this websocket');
       }
     });
   }
 
-  removeChatMessage(id: number, userId: number) {
+  removeChatMessage(identifier: string, userId: number) {
     return this.chatMessageRepository
-      .delete({ id, createdById: userId })
+      .delete({ identifier, createdById: userId })
       .then((v) => !!v.affected);
   }
 
-  saveChatMessage(userId: number, payload: Record<string, any>) {
+  saveChatMessage(userId: number, payload: ChatMessageDto, isEdit: boolean) {
+    if (isEdit) {
+      return this.chatMessageRepository
+        .update(
+          { identifier: payload.identifier, createdById: userId },
+          {
+            message: payload.message,
+            updatedOn: new Date(),
+            edited: true,
+          },
+        )
+        .then((res) => !!res.affected);
+    }
+
+    const data: Partial<ChatMessage> = {
+      createdById: userId,
+      message: payload.message,
+      to: payload.to,
+      medium: payload.medium,
+    };
+
+    if (payload.parent) data.parentIdentifier = payload.parent.identifier;
+
     return this.chatMessageRepository
-      .create({
-        createdById: userId,
-        message: payload.message,
-      })
+      .create(data)
       .save()
       .then((res) => res.id);
   }

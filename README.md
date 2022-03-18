@@ -75,20 +75,6 @@ Please follow the steps below to get a development Postgres server running. The 
 6. Run 'CREATE DATABASE octopus' to create your Octopus database.
 7. Run `\q` to quit from Psql and Docker container.
 
-
-## Setup your Mattermost server:
-
-Please follow the steps below to get a development mattermost server running. The easiest way to use [docker](https://www.docker.com/).
-
-1. Make sure you have docker installed on your computer. If you do not have docker already on your computer, Go to https://www.docker.com/get-started, choose your platform and click download. Follow the simple steps to get docker installed on your computer.
-2. Open your terminal (command prompt or preferably powershell on windows).
-3. Enter the command `docker run --name octopus-mattermost-preview -d --publish 8065:8065 --add-host dockerhost:127.0.0.1 doganbros/octopus:mattermost-preview`
-4. If you want to change the port where mattermost runs by default, replace `<port>:8065` by your prefered port while typing the command.   
-5. Wait for some few minutes for the mattermost server to bootup.
-6. To view the logs enter the command `docker logs octopus-mattermost-preview --follow`
-7. Doganbros MM image is pre-configured and should work with default .env configuration. Later you may update MM environment variables in .env file according to your MM configuration. The variables `REACT_APP_MM_SERVER_URL, MM_SERVER_URL` is used to point to the MM server just installed. The variables `MM_SYS_ADMIN_USERNAME`, `MM_SYS_ADMIN_EMAIL`, `MM_SYS_ADMIN_PASSWORD` and `MM_BOT_USERNAME` are used by octopus to set up the system adminstrator of MM. The last but not least variable, `REACT_APP_MM_TEAM_NAME` sets up the team name that will be used by octopus in MM. Examples can be found in the `.env.example` file.
-
-
 ## Development Test Email Setup
 
 To test (preview) how mails will appear in email clients . We use `mail dev` client. Follow the steps below to set it up on your local development environment.

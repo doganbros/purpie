@@ -26,7 +26,4 @@ export class UserRefreshToken extends BaseEntity {
 
   @CreateDateColumn()
   createdOn: Date;
-
-  @Column({ nullable: true, type: 'character varying' })
-  mattermostTokenId?: string | null;
 }

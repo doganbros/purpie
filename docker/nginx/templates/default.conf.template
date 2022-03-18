@@ -33,21 +33,3 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
 }
-
-server {
-    listen ${MATTERMOST_PORT} ssl;
-    server_name mattermost;
-
-    ssl_certificate     /etc/nginx/ssl/cert.crt;
-    ssl_certificate_key    /etc/nginx/ssl/cert.key;
-
-
-    location / {
-        proxy_pass http://mattermost:${MATTERMOST_PORT};
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-}

@@ -7,7 +7,6 @@ import { Chat as ChatIcon, Favorite } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
-import Chat from '../../../components/mattermost/Chat';
 import {
   createPostLikeAction,
   getPostDetailAction,
@@ -91,10 +90,7 @@ const Video: FC = () => {
   }, []);
 
   return (
-    <PrivatePageLayout
-      title={data?.title || 'Loading'}
-      rightComponent={!loading && <Chat channelName="off-topic" />}
-    >
+    <PrivatePageLayout title={data?.title || 'Loading'} rightComponent={null}>
       {loading || !data ? (
         <Layer responsive={false} plain>
           <Spinner />

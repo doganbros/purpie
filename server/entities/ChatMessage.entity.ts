@@ -5,7 +5,10 @@ import { User } from './User.entity';
 @Entity()
 export class ChatMessage extends RecordEntity {
   @Column()
-  parentId: number;
+  identifier: string;
+
+  @Column({ nullable: true })
+  parentIdentifier: string;
 
   @Column({ type: 'character varying', default: 'direct' })
   medium: 'direct' | 'channel' | 'post';
@@ -21,6 +24,9 @@ export class ChatMessage extends RecordEntity {
 
   @Column({ default: false })
   isSystemMessage: boolean;
+
+  @Column({ default: false })
+  edited: boolean;
 
   @Column({ default: false })
   deleted: boolean;

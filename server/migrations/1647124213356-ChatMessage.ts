@@ -9,13 +9,18 @@ export class ChatMessage1647124213356 implements MigrationInterface {
         columns: [
           ...recordEntityColumns,
           {
-            name: 'parentId',
-            type: 'int',
+            name: 'identifier',
+            type: 'character varying',
+          },
+          {
+            name: 'parentIdentifier',
+            type: 'character varying',
+            isNullable: true,
           },
           {
             name: 'medium',
             type: 'character varying',
-            default: 'direct',
+            default: "'direct'",
           },
           {
             name: 'message',
@@ -28,6 +33,11 @@ export class ChatMessage1647124213356 implements MigrationInterface {
           },
           {
             name: 'isSystemMessage',
+            type: 'boolean',
+            default: false,
+          },
+          {
+            name: 'edited',
             type: 'boolean',
             default: false,
           },
@@ -48,6 +58,8 @@ export class ChatMessage1647124213356 implements MigrationInterface {
       }),
       true,
     );
+
+    await queryRunner.dropColumn('user', 'mattermostId');
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {}

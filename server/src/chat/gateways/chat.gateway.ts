@@ -6,8 +6,10 @@ import {
   WebSocketServer,
   WsException,
 } from '@nestjs/websockets';
+import { nanoid } from 'nanoid/async';
 import { Socket, Server } from 'socket.io';
 import { PostService } from 'src/post/services/post.service';
+import { ChatMessageDto } from '../dto/chat-message.dto';
 import { ChatService } from '../services/chat.service';
 
 interface SocketWithTokenPayload extends Socket {
@@ -40,35 +42,37 @@ export class ChatGateway {
     @ConnectedSocket() socket: SocketWithTokenPayload,
     @MessageBody()
     payload: {
-      id: number;
+      identifier: string;
       to: number | string;
     },
   ) {
     const result = await this.chatService.removeChatMessage(
-      payload.id,
+      payload.identifier,
       socket.user.id,
     );
-
     if (!result) throw new WsException('Could not delete message');
-    socket.to(payload.id.toString()).emit('message_deleted', payload);
+
+    socket.to(payload.to.toString()).emit('message_deleted', payload);
   }
 
   @SubscribeMessage('message')
   async handleNewMessage(
     @ConnectedSocket() socket: SocketWithTokenPayload,
     @MessageBody()
-    payload: {
-      message: string;
-      to: number;
-      parentMessage?: string;
-      parentCreatedBy?: string;
-      parentCreatedOn?: string;
-      parentCreatedByFullName?: string;
-    },
+    payload: ChatMessageDto,
   ) {
+    if (!socket.rooms.has(payload.to.toString()))
+      throw new WsException('Not Authorized');
+
+    const isEdit = !!payload.identifier;
+
+    if (!isEdit) payload.identifier = await nanoid();
+
     socket.to(payload.to.toString()).emit('new_message', payload);
 
-    return this.chatService.saveChatMessage(socket.user.id, payload);
+    await this.chatService.saveChatMessage(socket.user.id, payload, isEdit);
+
+    return payload.identifier;
   }
 
   @SubscribeMessage('join_post')
@@ -80,7 +84,7 @@ export class ChatGateway {
 
     if (!post) throw new WsException('Post not found');
 
-    socket.join(postId.toString());
+    await socket.join(postId.toString());
 
     socket.to(postId.toString()).emit('new_user_joined_post', {
       socketId: socket.id,
@@ -91,11 +95,26 @@ export class ChatGateway {
     return postId;
   }
 
+  @SubscribeMessage('leave_post')
+  async leavePost(
+    @ConnectedSocket() socket: SocketWithTokenPayload,
+    @MessageBody() postId: number,
+  ) {
+    socket.to(postId.toString()).emit('user_left_post', {
+      socketId: socket.id,
+      userId: socket.user.id,
+    });
+    await socket.leave(postId.toString());
+  }
+
   @SubscribeMessage('typing')
   handleTyping(
     @ConnectedSocket() socket: SocketWithTokenPayload,
     @MessageBody() to: string | number,
   ) {
+    if (!socket.rooms.has(to.toString()))
+      throw new WsException('Not Authorized');
+
     socket.to(to.toString()).emit('typing', {
       socketId: socket.id,
       userId: socket.user.id,
@@ -115,6 +134,17 @@ export class ChatGateway {
     });
   }
 
+  @SubscribeMessage('send_presence')
+  async announcePresenceToContact(
+    @ConnectedSocket() socket: SocketWithTokenPayload,
+    @MessageBody() to: string | number,
+  ) {
+    if (!socket.rooms.has(to.toString()))
+      throw new WsException('Not Authorized');
+
+    socket.to(to.toString()).emit('presence', socket.user.id);
+  }
+
   async handleConnection(socket: SocketWithTokenPayload) {
     const currentUser = await this.chatService.getCurrentUser(socket);
     socket.user = currentUser;
@@ -127,10 +157,9 @@ export class ChatGateway {
 
     contactIds.forEach((contactId) => {
       socket.join(contactId.toString());
-      socket.to(contactId.toString()).emit('new_socket_connected', {
-        socketId: socket.id,
-        userId: socket.user.id,
-      });
+      socket
+        .to(contactId.toString())
+        .emit('contact_user_connected', socket.user.id);
     });
 
     // Will be implmented when channel chat is needed.
