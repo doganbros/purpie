@@ -301,8 +301,11 @@ export class UserController {
 
   @Get('profile/:userName')
   @IsAuthenticated()
-  getPublicUserProfile(@Param('userName') userName: string) {
-    return this.userService.getPublicUserProfile(userName);
+  getPublicUserProfile(
+    @Param('userName') userName: string,
+    @CurrentUser() user: UserTokenPayload,
+  ) {
+    return this.userService.getPublicUserProfile(user.id, userName);
   }
 
   @Put('profile')

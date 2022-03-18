@@ -12,6 +12,12 @@ class Inviter {
 
   @ApiProperty()
   lastName: string;
+
+  @ApiProperty()
+  userName: string;
+
+  @ApiProperty()
+  displayPhoto: string;
 }
 
 class ContactInvitationList {
