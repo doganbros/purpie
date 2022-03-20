@@ -1,36 +1,23 @@
 import { Box, Button, Layer, ResponsiveContext, Text, TextArea } from 'grommet';
 import { Close } from 'grommet-icons';
-import React, { FC, useContext } from 'react';
+import React, { FC, useContext, useRef } from 'react';
 import { ChatMessage } from '../../../store/types/chat.types';
-import MessageItem from '../MessageItem';
 
 interface Props {
   message: ChatMessage;
   onDismiss: () => void;
+  onSubmit: (message: ChatMessage) => void;
 }
 
-const ReplyPost: FC<Props> = ({ onDismiss, message }) => {
+const EditMessage: FC<Props> = ({ onDismiss, message, onSubmit }) => {
   const size = useContext(ResponsiveContext);
-
-  // const onKeyDown = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-  //   if (e.key === 'Enter' && e.shiftKey === false && e.currentTarget.value) {
-  //     try {
-  //       e.preventDefault();
-  //       await Client4.createPost({
-  //         root_id: message.root_id || message.id,
-  //         channel_id: message.channel_id,
-  //         message: e.currentTarget.value,
-  //       } as any);
-  //       dispatch(setToastAction('ok', 'Successfuly replied message'));
-  //       onDismiss();
-  //     } catch (err: any) {
-  //       dispatch(setToastAction('error', err.toString()));
-  //     }
-  //   }
-  // };
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   return (
-    <Layer onClickOutside={onDismiss}>
+    <Layer
+      onClickOutside={onDismiss}
+      onFocus={() => textAreaRef.current?.focus()}
+    >
       <Box
         width={size !== 'small' ? '720px' : undefined}
         height={size !== 'small' ? '505px' : undefined}
@@ -43,24 +30,42 @@ const ReplyPost: FC<Props> = ({ onDismiss, message }) => {
         <Box direction="row" justify="between" align="start">
           <Box pad="xsmall">
             <Text size="large" weight="bold">
-              Reply Post
+              Edit Post
             </Text>
           </Box>
           <Button plain onClick={onDismiss}>
             <Close color="brand" />
           </Button>
         </Box>
-        <MessageItem message={message} />
         <TextArea
-          placeholder="Reply Post"
+          placeholder="Edit Post"
+          ref={textAreaRef}
+          defaultValue={message.message}
           resize="vertical"
+          autoFocus
           size="medium"
           fill={false}
-          // onKeyDown={onKeyDown}
+          onKeyDown={(e) => {
+            if (
+              e.key === 'Enter' &&
+              e.shiftKey === false &&
+              e.currentTarget.value
+            ) {
+              e.preventDefault();
+              onSubmit({
+                ...message,
+                message: e.currentTarget.value,
+                edited: true,
+              });
+              e.currentTarget.value = '';
+              return null;
+            }
+            return null;
+          }}
         />
       </Box>
     </Layer>
   );
 };
 
-export default ReplyPost;
+export default EditMessage;

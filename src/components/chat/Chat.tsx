@@ -13,6 +13,8 @@ import { AppState } from '../../store/reducers/root.reducer';
 import MessageItem from './MessageItem';
 import { useThrottle } from '../../hooks/useThrottle';
 import { User } from '../../store/types/auth.types';
+import ReplyMessage from './layers/ReplyMessage';
+import EditMessage from './layers/EditMessage';
 
 interface Props {
   medium: 'direct' | 'channel' | 'post';
@@ -43,7 +45,11 @@ const Chat: React.FC<Props> = ({
   const [typingUser, setTypingUser] = useState<User | null>(null);
   const typingTimerId = useRef<NodeJS.Timeout | null>(null);
   const tempMsgIdCounter = useRef(0);
-  const containerId = useMemo(() => nanoid(), []);
+  const containerId = useMemo(nanoid, []);
+  const [repliedMessage, setRepliedMessage] = useState<ChatMessage | null>(
+    null
+  );
+  const [editedMessage, setEditedMessage] = useState<ChatMessage | null>(null);
 
   const throttle = useThrottle();
 
@@ -107,14 +113,21 @@ const Chat: React.FC<Props> = ({
   };
 
   const handleSendMessage = (message: Partial<ChatMessage>) => {
-    const tempId = ++tempMsgIdCounter.current;
-    setMessages(
-      (msgs) =>
-        msgs && [
-          ...msgs,
-          { ...message, createdBy: currentUser, identifier: tempId } as any,
-        ]
-    );
+    setRepliedMessage(null);
+    setEditedMessage(null);
+    const tempId = message.edited
+      ? message.identifier
+      : ++tempMsgIdCounter.current;
+
+    if (!message.edited) {
+      setMessages(
+        (msgs) =>
+          msgs && [
+            ...msgs,
+            { ...message, createdBy: currentUser, identifier: tempId } as any,
+          ]
+      );
+    }
 
     socket.emit('message', message, (payloadMsg: ChatMessage) => {
       setMessages(
@@ -220,6 +233,23 @@ const Chat: React.FC<Props> = ({
 
   return (
     <PlanMeetingTheme>
+      {editedMessage ? (
+        <EditMessage
+          message={editedMessage}
+          onDismiss={() => setEditedMessage(null)}
+          onSubmit={handleSendMessage}
+        />
+      ) : null}
+      {repliedMessage ? (
+        <ReplyMessage
+          message={repliedMessage}
+          name={name}
+          to={id}
+          user={currentUser!}
+          onDismiss={() => setRepliedMessage(null)}
+          onSubmit={handleSendMessage}
+        />
+      ) : null}
       <Box>
         <Box
           height={height}
@@ -249,7 +279,7 @@ const Chat: React.FC<Props> = ({
                   menuItems.push({
                     label: 'Edit',
                     onClick: () => {
-                      // setEditedPost(message);
+                      setEditedMessage(message);
                     },
                   });
                 if (canDelete)
@@ -270,7 +300,7 @@ const Chat: React.FC<Props> = ({
                 menuItems.push({
                   label: 'Reply',
                   onClick: () => {
-                    // setRepliedPost(message);
+                    setRepliedMessage(message);
                   },
                 });
 

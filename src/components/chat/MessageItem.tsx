@@ -14,7 +14,7 @@ const MessageItem: FC<Props> = ({ message, side, children, actions }) => {
   return (
     <Box
       direction="row"
-      id={`message-item-${message.id}`}
+      id={`message-item-${message.identifier}`}
       justify={side === 'right' ? 'end' : 'start'}
       alignContent="end"
       gap="small"
@@ -42,7 +42,7 @@ const MessageItem: FC<Props> = ({ message, side, children, actions }) => {
               <Text size="xsmall" as="i" margin={{ right: 'xsmall' }}>
                 Replied to:
               </Text>
-              <Anchor href={`#message-item-${message.parent.id}`}>
+              <Anchor href={`#message-item-${message.parent.identifier}`}>
                 {message.parent.message}
               </Anchor>
             </Text>
