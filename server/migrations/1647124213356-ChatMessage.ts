@@ -1,8 +1,15 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 import { recordEntityColumns } from './data/record-entity';
 
 export class ChatMessage1647124213356 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropColumn('user', 'mattermostId');
+
     await queryRunner.createTable(
       new Table({
         name: 'chat_message',
@@ -10,6 +17,7 @@ export class ChatMessage1647124213356 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'identifier',
+            isUnique: true,
             type: 'character varying',
           },
           {
@@ -59,7 +67,25 @@ export class ChatMessage1647124213356 implements MigrationInterface {
       true,
     );
 
-    await queryRunner.dropColumn('user', 'mattermostId');
+    await queryRunner.createForeignKey(
+      'chat_message',
+      new TableForeignKey({
+        columnNames: ['createdById'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'user',
+        onDelete: 'CASCADE',
+      }),
+    );
+
+    await queryRunner.createForeignKey(
+      'chat_message',
+      new TableForeignKey({
+        columnNames: ['parentIdentifier'],
+        referencedColumnNames: ['identifier'],
+        referencedTableName: 'chat_message',
+        onDelete: 'NO ACTION',
+      }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {}

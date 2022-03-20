@@ -19,6 +19,7 @@ import VideoJs from '../../../components/utils/PostGridItem/VideoJs';
 import { http } from '../../../config/http';
 import { postViewStats } from '../../../store/services/post.service';
 import CommentList from './Comments/CommentList';
+import Chat from '../../../components/chat/Chat';
 
 dayjs.extend(relativeTime);
 interface RouteParams {
@@ -90,7 +91,10 @@ const Video: FC = () => {
   }, []);
 
   return (
-    <PrivatePageLayout title={data?.title || 'Loading'} rightComponent={null}>
+    <PrivatePageLayout
+      title={data?.title || 'Loading'}
+      rightComponent={data ? <Chat medium="post" id={+params.id} /> : null}
+    >
       {loading || !data ? (
         <Layer responsive={false} plain>
           <Spinner />

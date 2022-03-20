@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from 'entities/Contact.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
@@ -10,7 +10,9 @@ import { verifyJWT } from 'helpers/jwt';
 import { pick } from 'lodash';
 import { AuthService } from 'src/auth/services/auth.service';
 import { ChatMessage } from 'entities/ChatMessage.entity';
+import { PostService } from 'src/post/services/post.service';
 import { ChatMessageDto } from '../dto/chat-message.dto';
+import { ChatMessageListQuery } from '../dto/chat-message-list.dto';
 
 const { AUTH_TOKEN_SECRET = '', AUTH_TOKEN_SECRET_REFRESH = '' } = process.env;
 
@@ -24,6 +26,7 @@ export class ChatService {
     @InjectRepository(ChatMessage)
     private chatMessageRepository: Repository<ChatMessage>,
     private authService: AuthService,
+    private postService: PostService,
   ) {}
 
   fetchUserChannelIds(userId: number) {
@@ -82,6 +85,86 @@ export class ChatService {
       .then((v) => !!v.affected);
   }
 
+  async getChatMessages(
+    userId: number,
+    medium: string,
+    id: number,
+    query: ChatMessageListQuery,
+  ) {
+    if (medium === 'post') {
+      const post = await this.postService.getOnePost(userId, id, false);
+      if (!post)
+        throw new ForbiddenException('You are not authorized', 'UNAUTHORIZED');
+    } else if (medium === 'channel') {
+      const channel = await this.userChannelRepository.findOne({
+        where: { userId, channelId: id },
+        select: ['id'],
+      });
+
+      if (!channel)
+        throw new ForbiddenException('You are not authorized', 'UNAUTHORIZED');
+    } else {
+      const contactUser = await this.contactRepository.findOne({
+        userId,
+        contactUserId: id,
+      });
+      if (!contactUser)
+        throw new ForbiddenException('You are not authorized', 'UNAUTHORIZED');
+    }
+
+    const baseQuery = this.chatMessageRepository
+      .createQueryBuilder('chat')
+      .select([
+        'chat.identifier',
+        'chat.parentIdentifier',
+        'chat.medium',
+        'chat.to',
+        'chat.message',
+        'chat.readOn',
+        'chat.isSystemMessage',
+        'chat.edited',
+        'chat.deleted',
+        'chat.createdById',
+        'chat.createdOn',
+        'parentChat.identifier',
+        'parentChat.parentIdentifier',
+        'parentChat.medium',
+        'parentChat.to',
+        'parentChat.message',
+        'parentChat.readOn',
+        'parentChat.isSystemMessage',
+        'parentChat.edited',
+        'parentChat.createdOn',
+        'parentChat.deleted',
+        'parentChat.createdById',
+        'createdBy.id',
+        'createdBy.userName',
+        'createdBy.firstName',
+        'createdBy.lastName',
+        'createdBy.lastName',
+        'createdBy.displayPhoto',
+        'parentChatCreatedBy.id',
+        'parentChatCreatedBy.userName',
+        'parentChatCreatedBy.firstName',
+        'parentChatCreatedBy.lastName',
+        'parentChatCreatedBy.lastName',
+        'parentChatCreatedBy.displayPhoto',
+      ])
+      .leftJoin('chat.createdBy', 'createdBy')
+      .leftJoin('chat.parent', 'parentChat')
+      .leftJoin('parentChat.createdBy', 'parentChatCreatedBy')
+      .orderBy('chat.id', 'DESC')
+      .where('chat.medium = :medium', { medium })
+      .andWhere('chat.to = :to', { to: id });
+
+    if (query.lastDate)
+      baseQuery.andWhere('chat.createdOn < :lastDate', {
+        lastDate: query.lastDate,
+      });
+
+    return baseQuery.paginate({ limit: query.limit, skip: 0 });
+  }
+
   saveChatMessage(userId: number, payload: ChatMessageDto, isEdit: boolean) {
     if (isEdit) {
       return this.chatMessageRepository
@@ -97,6 +180,7 @@ export class ChatService {
     }
 
     const data: Partial<ChatMessage> = {
+      identifier: payload.identifier,
       createdById: userId,
       message: payload.message,
       to: payload.to,

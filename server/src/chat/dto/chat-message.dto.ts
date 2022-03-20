@@ -1,27 +1,23 @@
-class ParentMessageInfo {
-  identifier: string;
+export class ChatMessageDto {
+  identifier?: string;
 
   message: string;
 
-  createdOn: string;
+  edited?: boolean;
 
-  user: {
+  createdOn: Date;
+
+  to: number;
+
+  parent?: ChatMessageDto;
+
+  medium: 'direct' | 'channel' | 'post';
+
+  createdBy: {
     id: number;
     displayPhoto?: string;
     firstName?: string;
     lastName?: string;
     userName?: string;
   };
-}
-
-export class ChatMessageDto {
-  identifier?: string;
-
-  message: string;
-
-  to: number;
-
-  parent?: ParentMessageInfo;
-
-  medium: 'direct' | 'channel' | 'post';
 }

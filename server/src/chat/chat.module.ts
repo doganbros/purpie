@@ -7,6 +7,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChatService } from './services/chat.service';
 import { ChatGateway } from './gateways/chat.gateway';
+import { ChatController } from './controllers/chat.controller';
 
 @Module({
   providers: [ChatGateway, ChatService],
@@ -15,5 +16,6 @@ import { ChatGateway } from './gateways/chat.gateway';
     PostModule,
     TypeOrmModule.forFeature([UserChannel, Contact, ChatMessage]),
   ],
+  controllers: [ChatController],
 })
 export class ChatModule {}

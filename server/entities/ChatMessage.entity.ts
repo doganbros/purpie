@@ -4,8 +4,12 @@ import { User } from './User.entity';
 
 @Entity()
 export class ChatMessage extends RecordEntity {
-  @Column()
+  @Column({ unique: true })
   identifier: string;
+
+  @OneToOne(() => ChatMessage, { onDelete: 'NO ACTION' })
+  @JoinColumn({ name: 'parentIdentifier', referencedColumnName: 'identifier' })
+  parent?: ChatMessage;
 
   @Column({ nullable: true })
   parentIdentifier: string;

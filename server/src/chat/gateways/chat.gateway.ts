@@ -37,13 +37,14 @@ export class ChatGateway {
     private postService: PostService,
   ) {}
 
-  @SubscribeMessage('message_deleted')
+  @SubscribeMessage('delete_message')
   async handleMessageDeleted(
     @ConnectedSocket() socket: SocketWithTokenPayload,
     @MessageBody()
     payload: {
       identifier: string;
       to: number | string;
+      medium: string;
     },
   ) {
     const result = await this.chatService.removeChatMessage(
@@ -53,6 +54,8 @@ export class ChatGateway {
     if (!result) throw new WsException('Could not delete message');
 
     socket.to(payload.to.toString()).emit('message_deleted', payload);
+
+    return payload;
   }
 
   @SubscribeMessage('message')
@@ -67,12 +70,15 @@ export class ChatGateway {
     const isEdit = !!payload.identifier;
 
     if (!isEdit) payload.identifier = await nanoid();
+    else payload.edited = true;
+
+    payload.createdOn = new Date();
 
     socket.to(payload.to.toString()).emit('new_message', payload);
 
     await this.chatService.saveChatMessage(socket.user.id, payload, isEdit);
 
-    return payload.identifier;
+    return payload;
   }
 
   @SubscribeMessage('join_post')
@@ -110,14 +116,18 @@ export class ChatGateway {
   @SubscribeMessage('typing')
   handleTyping(
     @ConnectedSocket() socket: SocketWithTokenPayload,
-    @MessageBody() to: string | number,
+    @MessageBody() payload: { to: string | number; user: Record<string, any> },
   ) {
-    if (!socket.rooms.has(to.toString()))
+    if (!socket.rooms.has(payload.to.toString()))
       throw new WsException('Not Authorized');
 
-    socket.to(to.toString()).emit('typing', {
+    socket.to(payload.to.toString()).emit('typing', {
       socketId: socket.id,
-      userId: socket.user.id,
+      to: payload.to,
+      user: {
+        ...payload.user,
+        id: socket.user.id,
+      },
     });
   }
 
