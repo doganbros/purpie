@@ -16,9 +16,6 @@ export class UserProfile {
   email: string;
 
   @ApiProperty()
-  mattermostId: string | null;
-
-  @ApiProperty()
   userName?: string | null;
 
   @ApiProperty()
@@ -45,8 +42,6 @@ export class UserProfile {
 
 export interface UserTokenPayload {
   id: number;
-  mattermostId: string;
-  mattermostTokenId: string;
   refreshTokenId?: string;
 }
 

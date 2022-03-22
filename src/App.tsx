@@ -13,10 +13,8 @@ import { privateRoutes, publicRoutes } from './routes';
 import { retrieveUserAction } from './store/actions/auth.action';
 import { getUserZonesAction } from './store/actions/zone.action';
 import { AppState } from './store/reducers/root.reducer';
-import { initializeMattermostAction } from './store/actions/mattermost.action';
 import InitializeUser from './pages/Public/InitializeUser';
-
-const { REACT_APP_MM_TEAM_NAME = '' } = process.env;
+import { initializeSocket } from './helpers/socket';
 
 const App: FC = () => {
   const dispatch = useDispatch();
@@ -28,7 +26,6 @@ const App: FC = () => {
     },
     zone: { userZoneInitialized },
     util: { toast },
-    mattermost: { currentUser: mattermostCurrentUser, currentTeam },
   } = useSelector((state: AppState) => state);
 
   useEffect(() => {
@@ -37,8 +34,8 @@ const App: FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
+      initializeSocket();
       dispatch(getUserZonesAction());
-      dispatch(initializeMattermostAction(REACT_APP_MM_TEAM_NAME));
     }
   }, [isAuthenticated]);
 
@@ -50,9 +47,7 @@ const App: FC = () => {
         message={toast.message}
         id={toast.toastId}
       />
-      {loading ||
-      (isAuthenticated &&
-        !(userZoneInitialized && mattermostCurrentUser && currentTeam)) ? (
+      {loading || (isAuthenticated && !userZoneInitialized) ? (
         <Loader />
       ) : (
         <Router history={appHistory}>

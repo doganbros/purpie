@@ -6,7 +6,6 @@ services:
         extra_hosts:
             - "octopus.localhost:127.0.0.1"
         depends_on:
-            - mattermost
             - postgres
         env_file:
             - .env
@@ -14,12 +13,6 @@ services:
             - ./:/octopus
             - octopus-modules:/octopus/node_modules
             - octopus-server-dist:/octopus/server/dist
-
-    mattermost:
-        image: "doganbros/octopus:mattermost-preview"
-        volumes:
-          - ./docker/mattermost/data:/mm/mattermost-data
-          - ./docker/mattermost/mysql:/var/lib/mysql
 
     octopus-router:
         image: "nginx:1.21.4"
