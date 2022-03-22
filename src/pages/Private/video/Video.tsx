@@ -93,7 +93,9 @@ const Video: FC = () => {
   return (
     <PrivatePageLayout
       title={data?.title || 'Loading'}
-      rightComponent={data ? <Chat medium="post" id={+params.id} /> : null}
+      rightComponent={
+        data ? <Chat medium="post" id={+params.id} handleTypingEvent /> : null
+      }
     >
       {loading || !data ? (
         <Layer responsive={false} plain>

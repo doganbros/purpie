@@ -131,19 +131,6 @@ export class ChatGateway {
     });
   }
 
-  async handleDisconnecting(socket: SocketWithTokenPayload) {
-    const contactIds = await this.chatService.fetchUserContactUserIds(
-      socket.user.id,
-    );
-
-    contactIds.forEach((contactId) => {
-      socket.to(contactId.toString()).emit('socket_disconnected', {
-        socketId: socket.id,
-        userId: socket.user.id,
-      });
-    });
-  }
-
   @SubscribeMessage('send_presence')
   async announcePresenceToContact(
     @ConnectedSocket() socket: SocketWithTokenPayload,
@@ -182,5 +169,18 @@ export class ChatGateway {
     // });
 
     socket.on('disconnecting', () => this.handleDisconnecting(socket));
+  }
+
+  async handleDisconnecting(socket: SocketWithTokenPayload) {
+    const contactIds = await this.chatService.fetchUserContactUserIds(
+      socket.user.id,
+    );
+
+    contactIds.forEach((contactId) => {
+      socket.to(contactId.toString()).emit('socket_disconnected', {
+        socketId: socket.id,
+        userId: socket.user.id,
+      });
+    });
   }
 }
