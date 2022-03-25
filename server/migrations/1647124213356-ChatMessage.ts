@@ -8,7 +8,10 @@ import { recordEntityColumns } from './data/record-entity';
 
 export class ChatMessage1647124213356 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropColumn('user', 'mattermostId');
+    await queryRunner.query(`
+      ALTER TABLE "user"
+      DROP COLUMN IF EXISTS "mattermostId";
+    `);
 
     await queryRunner.createTable(
       new Table({
