@@ -23,7 +23,7 @@ services:
 
 
 # Example command list bucket
-# AWS_ACCESS_KEY_ID=AKIAQUZ73XIUZUONOPMY AWS_SECRET_ACCESS_KEY=vbQH/iIGdZ0Bqt4+hFXg6aSh20zS5t962JA4XGZi  aws --endpoint-url=http://localhost:6566 --region=eu-central-1 s3  ls
+# AWS_ACCESS_KEY_ID=some_access_key_id AWS_SECRET_ACCESS_KEY=some_secret_access_key  aws --endpoint-url=http://localhost:6566 --region=eu-central-1 s3  ls
 
 # Example command create bucket
-# AWS_ACCESS_KEY_ID=AKIAQUZ73XIUZUONOPMY AWS_SECRET_ACCESS_KEY=vbQH/iIGdZ0Bqt4+hFXg6aSh20zS5t962JA4XGZi aws --endpoint-url=http://localhost:6566 --region=eu-central-1 s3  mb octopus-doganbros-storage
+# AWS_ACCESS_KEY_ID=some_access_key_id AWS_SECRET_ACCESS_KEY=some_secret_access_key aws --endpoint-url=http://localhost:6566 --region=eu-central-1 s3  mb octopus-doganbros-storage

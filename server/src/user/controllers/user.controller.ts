@@ -278,6 +278,29 @@ export class UserController {
     return this.userService.listContacts(user.id, paginatedQuery);
   }
 
+  @Get('/contact/list/:userName')
+  @ApiOkResponse({
+    description: `User lists another's contacts`,
+    type: ContactListResponse,
+  })
+  @IsAuthenticated()
+  listPublicUserContacts(
+    @Param('userName') userName: string,
+    @Query() paginatedQuery: PaginationQuery,
+  ) {
+    return this.userService.listContacts(userName, paginatedQuery);
+  }
+
+  @Get('/channel/list/:userName')
+  @IsAuthenticated()
+  listPublicUserChannels(
+    @CurrentUser() user: UserTokenPayload,
+    @Param('userName') userName: string,
+    @Query() query: PaginationQuery,
+  ) {
+    return this.userService.getUserChannels(user.id, userName, query);
+  }
+
   @Delete('/contact/remove/:contactId')
   @ApiOkResponse({
     description: 'User removes a contact by id',

@@ -531,6 +531,10 @@ export class PostService {
         }),
       );
 
+    if (query.userName)
+      builder.andWhere('post.createdById = :createdById', {
+        createdById: query.userName,
+      });
     if (query.postType)
       builder.andWhere('post.type = :postType', {
         postType: query.postType,

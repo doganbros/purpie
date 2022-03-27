@@ -12,7 +12,7 @@ import { generateLowerAlphaNumId, tsqueryParam } from 'helpers/utils';
 import { UserRole } from 'entities/UserRole.entity';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
-import { In, Not, Repository } from 'typeorm';
+import { Brackets, In, Not, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { SearchUsersQuery } from '../dto/search-users.query';
 import { SetUserRoleDto } from '../dto/set-user-role.dto';
@@ -29,6 +29,8 @@ export class UserService {
     private userRepository: Repository<User>,
     @InjectRepository(UserRole)
     private userRoleRepository: Repository<UserRole>,
+    @InjectRepository(UserChannel)
+    private userChannelRepository: Repository<UserChannel>,
     @InjectRepository(ContactInvitation)
     private contactInvitation: Repository<ContactInvitation>,
     private authService: AuthService,
@@ -142,10 +144,9 @@ export class UserService {
     return this.contactInvitation.delete(id);
   }
 
-  listContacts(userId: number, query: PaginationQuery) {
-    return this.contactRepository
+  listContacts(identity: number | string, query: PaginationQuery) {
+    const baseQuery = this.contactRepository
       .createQueryBuilder('contact')
-      .innerJoinAndSelect('contact.contactUser', 'contactUser')
       .select([
         'contact.id',
         'contact.createdOn',
@@ -156,10 +157,16 @@ export class UserService {
         'contactUser.lastName',
         'contactUser.displayPhoto',
       ])
-      .where('contact.userId = :userId', {
-        userId,
-      })
-      .paginate(query);
+      .innerJoin('contact.contactUser', 'contactUser');
+
+    if (typeof identity === 'number')
+      baseQuery.where('contact.userId = :identity', { identity });
+    else
+      baseQuery
+        .innerJoin('contact.user', 'user')
+        .where('user.userName = :identity', { identity });
+
+    return baseQuery.paginate(query);
   }
 
   async deleteContact(userId: number, id: number) {
@@ -380,5 +387,37 @@ export class UserService {
       .then((users) => users.map((u) => u.userName));
 
     return suggestions.filter((v) => !result.includes(v));
+  }
+
+  getUserChannels(userId: number, userName: string, query: PaginationQuery) {
+    return this.userChannelRepository
+      .createQueryBuilder('user_channel')
+      .select('user_channel.id')
+      .addSelect([
+        'channel.id',
+        'channel.createdOn',
+        'channel.name',
+        'channel.topic',
+        'channel.displayPhoto',
+        'channel.description',
+        'channel.public',
+        'channel.zoneId',
+      ])
+      .innerJoin('user_channel.channel', 'channel')
+      .innerJoin('user_channel.user', 'user')
+      .where('user.userName = :userName', { userName })
+      .andWhere(
+        new Brackets((qb) => {
+          const userQb = this.userChannelRepository
+            .createQueryBuilder('user_channel_user')
+            .select('user_channel_user.id')
+            .where('user_channel_user.userId = :userId');
+
+          qb.where(
+            'channel.public = true',
+          ).orWhere(`EXISTS (${userQb.getQuery()})`, { userId });
+        }),
+      )
+      .paginate(query);
   }
 }
