@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Contact } from 'entities/Contact.entity';
-import { ContactInvitation } from 'entities/ContactInvitation.entity';
+import { Invitation } from 'entities/Invitation.entity';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserRole } from 'entities/UserRole.entity';
@@ -14,10 +14,10 @@ import { UserService } from './services/user.service';
   imports: [
     TypeOrmModule.forFeature([
       Contact,
-      ContactInvitation,
       User,
       UserRole,
       UserChannel,
+      Invitation,
     ]),
     AuthModule,
   ],

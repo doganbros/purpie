@@ -88,10 +88,7 @@ export class UserController {
       return 'OK';
     }
 
-    await this.userService.createNewContact(
-      invitation.inviterId,
-      invitation.inviteeId,
-    );
+    await this.userService.createNewContact(user.id, invitation.createdById);
 
     await this.userService.removeContactInvitation(contactInvitationId);
     return 'OK';
@@ -105,14 +102,91 @@ export class UserController {
   @IsAuthenticated()
   async createNewContactInvitation(
     @CurrentUser() user: UserTokenPayload,
-    @Body() { userId }: CreateContactDto,
+    @Body() { email }: CreateContactDto,
   ) {
     const contactInvitation = await this.userService.createNewContactInvitation(
+      email,
       user.id,
-      userId,
     );
 
     return contactInvitation.id;
+  }
+
+  @Get('/contact/invitation/list')
+  @ApiOkResponse({
+    description: 'User lists their contact invitation list',
+    type: ContactInvitationListResponse,
+  })
+  @IsAuthenticated()
+  async getContactInvitations(
+    @CurrentUser() user: UserTokenPayload,
+    @Query() paginatedQuery: PaginationQuery,
+  ) {
+    const invitations = await this.userService.listContactInvitations(
+      user.id,
+      paginatedQuery,
+    );
+
+    return invitations;
+  }
+
+  @Get('invitations/list')
+  @ApiOkResponse({
+    description: 'User lists all invitations, contacts, channels, zones',
+    type: ContactInvitationListResponse,
+  })
+  @IsAuthenticated()
+  async getUserInvitations(
+    @CurrentUser() user: UserTokenPayload,
+    @Query() paginatedQuery: PaginationQuery,
+  ) {
+    const invitations = await this.userService.listInvitationsForUser(
+      user.id,
+      paginatedQuery,
+    );
+
+    return invitations;
+  }
+
+  @Get('/contact/list')
+  @ApiOkResponse({
+    description: 'User lists contact',
+    type: ContactListResponse,
+  })
+  @IsAuthenticated()
+  async listContacts(
+    @CurrentUser() user: UserTokenPayload,
+    @Query() paginatedQuery: PaginationQuery,
+  ) {
+    return this.userService.listContacts(user.id, paginatedQuery);
+  }
+
+  @Get('/contact/list/:userName')
+  @ApiOkResponse({
+    description: `User lists another's contacts`,
+    type: ContactListResponse,
+  })
+  @IsAuthenticated()
+  listPublicUserContacts(
+    @Param('userName') userName: string,
+    @Query() paginatedQuery: PaginationQuery,
+  ) {
+    return this.userService.listContacts(userName, paginatedQuery);
+  }
+
+  @Delete('/contact/remove/:contactId')
+  @ApiOkResponse({
+    description: 'User removes a contact by id',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @HttpCode(HttpStatus.OK)
+  @IsAuthenticated()
+  async deleteContact(
+    @CurrentUser() user: UserTokenPayload,
+    @Param() { contactId }: ContactIdParam,
+  ) {
+    await this.userService.deleteContact(user.id, contactId);
+    return 'OK';
   }
 
   @Get('/list')
@@ -164,24 +238,6 @@ export class UserController {
     }
     const users = await this.userService.searchUsers(excludeIds, query);
     return users;
-  }
-
-  @Get('/contact/invitation/list')
-  @ApiOkResponse({
-    description: 'User lists their contact invitation list',
-    type: ContactInvitationListResponse,
-  })
-  @IsAuthenticated()
-  async getContactInvitations(
-    @CurrentUser() user: UserTokenPayload,
-    @Query() paginatedQuery: PaginationQuery,
-  ) {
-    const contactInvitation = await this.userService.listContactInvitations(
-      user.id,
-      paginatedQuery,
-    );
-
-    return contactInvitation;
   }
 
   @Get('/role/list')
@@ -265,32 +321,6 @@ export class UserController {
     };
   }
 
-  @Get('/contact/list')
-  @ApiOkResponse({
-    description: 'User lists contact',
-    type: ContactListResponse,
-  })
-  @IsAuthenticated()
-  async listContacts(
-    @CurrentUser() user: UserTokenPayload,
-    @Query() paginatedQuery: PaginationQuery,
-  ) {
-    return this.userService.listContacts(user.id, paginatedQuery);
-  }
-
-  @Get('/contact/list/:userName')
-  @ApiOkResponse({
-    description: `User lists another's contacts`,
-    type: ContactListResponse,
-  })
-  @IsAuthenticated()
-  listPublicUserContacts(
-    @Param('userName') userName: string,
-    @Query() paginatedQuery: PaginationQuery,
-  ) {
-    return this.userService.listContacts(userName, paginatedQuery);
-  }
-
   @Get('/channel/list/:userName')
   @IsAuthenticated()
   listPublicUserChannels(
@@ -299,21 +329,6 @@ export class UserController {
     @Query() query: PaginationQuery,
   ) {
     return this.userService.getUserChannels(user.id, userName, query);
-  }
-
-  @Delete('/contact/remove/:contactId')
-  @ApiOkResponse({
-    description: 'User removes a contact by id',
-    schema: { type: 'string', example: 'OK' },
-  })
-  @HttpCode(HttpStatus.OK)
-  @IsAuthenticated()
-  async deleteContact(
-    @CurrentUser() user: UserTokenPayload,
-    @Param() { contactId }: ContactIdParam,
-  ) {
-    await this.userService.deleteContact(user.id, contactId);
-    return 'OK';
   }
 
   @Get('profile')

@@ -6,10 +6,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from 'entities/Contact.entity';
-import { ContactInvitation } from 'entities/ContactInvitation.entity';
 import { AuthService } from 'src/auth/services/auth.service';
 import { generateLowerAlphaNumId, tsqueryParam } from 'helpers/utils';
 import { UserRole } from 'entities/UserRole.entity';
+import { Invitation } from 'entities/Invitation.entity';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { Brackets, In, Not, Repository } from 'typeorm';
@@ -31,22 +31,30 @@ export class UserService {
     private userRoleRepository: Repository<UserRole>,
     @InjectRepository(UserChannel)
     private userChannelRepository: Repository<UserChannel>,
-    @InjectRepository(ContactInvitation)
-    private contactInvitation: Repository<ContactInvitation>,
+    @InjectRepository(Invitation)
+    private invitationRepository: Repository<Invitation>,
     private authService: AuthService,
   ) {}
 
-  createNewContact(userId: number, contactUserId: number) {
+  async createNewContact(userId: number, contactUserId: number) {
     if (userId === contactUserId)
       throw new BadRequestException(
         'You cannot add yourself to your contacts',
         'CONTACT_ELIGEBILITY_ERR',
       );
 
-    return this.contactRepository.insert([
-      { userId, contactUserId },
-      { userId: contactUserId, contactUserId: userId },
-    ]);
+    await this.contactRepository.insert({ userId, contactUserId }).catch(() => {
+      // Ignore duplicate insertion error
+      // So that if it exists in other user's contact it will just use that
+    });
+    await this.contactRepository
+      .insert({ userId: contactUserId, contactUserId: userId })
+      .catch(() => {
+        // Ignore duplicate insertion error
+        // So that if it exists in other user's contact it will just use that
+      });
+
+    return true;
   }
 
   userBaseSelect(excludeUserIds: Array<number>, query: SearchUsersQuery) {
@@ -101,25 +109,56 @@ export class UserService {
       .paginate(query);
   }
 
-  async createNewContactInvitation(inviterId: number, inviteeId: number) {
-    if (inviterId === inviteeId)
+  async createNewContactInvitation(email: string, createdById: number) {
+    const existing = await this.invitationRepository
+      .createQueryBuilder('invitation')
+      .innerJoin('invitation.createdBy', 'createdBy')
+      .innerJoin('invitation.invitee', 'invitee')
+      .select(['invitation.id', 'invitation.createdById', 'invitation.email'])
+      .where(
+        new Brackets((qb) => {
+          qb.where('createdBy.email = :email', {
+            email,
+          }).andWhere('invitee.id = :createdById', {
+            createdById,
+          });
+        }),
+      )
+      .orWhere(
+        new Brackets((qb) => {
+          qb.where('invitee.email = :email', {
+            email,
+          }).andWhere('createdBy.id = :createdById', {
+            createdById,
+          });
+        }),
+      )
+      .getOne();
+
+    if (existing?.email === email)
       throw new BadRequestException(
-        'Inviter and Invitee cannot be the same user',
-        'INVITER_INVITEE_EQUALITY_ERR',
+        'Invitation to this user has already been sent',
+        'INVITATION_FOR_USER_ALREADY_SENT',
+      );
+    else if (existing)
+      throw new BadRequestException(
+        'You have already been invited by this user already',
+        'INVITATION_RECEIVED_FROM_USER_ALREADY',
       );
 
-    return this.contactInvitation
+    return this.invitationRepository
       .create({
-        inviteeId,
-        inviterId,
+        createdById,
+        email,
       })
       .save();
   }
 
   listContactInvitations(userId: number, query: PaginationQuery) {
-    return this.contactInvitation
+    return this.invitationRepository
       .createQueryBuilder('contact_invitation')
-      .innerJoinAndSelect('contact_invitation.inviter', 'inviter')
+      .innerJoin('contact_invitation.createdBy', 'inviter')
+      .innerJoin('contact_invitation.invitee', 'invitee')
       .select([
         'contact_invitation.id',
         'contact_invitation.createdOn',
@@ -130,18 +169,75 @@ export class UserService {
         'inviter.displayPhoto',
         'inviter.userName',
       ])
-      .where('contact_invitation.inviteeId = :userId', {
-        userId,
-      })
+      .where('contact_invitation.zoneId is null')
+      .andWhere('contact_invitation.channelId is null')
+      .andWhere('invitee.id = :userId', { userId })
       .paginate(query);
   }
 
   getContactInvitationByIdAndInviteeId(id: number, inviteeId: number) {
-    return this.contactInvitation.findOne({ id, inviteeId });
+    return this.invitationRepository
+      .createQueryBuilder('invitation')
+      .innerJoin('invitation.createdBy', 'inviter')
+      .innerJoin('invitation.invitee', 'invitee')
+      .select([
+        'invitation.id',
+        'inviter.id',
+        'invitee.id',
+        'invitation.createdById',
+      ])
+      .where('invitation.id = :id', { id })
+      .andWhere('invitee.id = :inviteeId', { inviteeId })
+      .andWhere('invitation.channelId is null')
+      .andWhere('invitation.zoneId is null')
+      .getOne();
+  }
+
+  async listInvitationsForUser(userId: number, query: PaginationQuery) {
+    return this.invitationRepository
+      .createQueryBuilder('invitation')
+      .innerJoin('invitation.createdBy', 'inviter')
+      .innerJoin('invitation.invitee', 'invitee')
+      .leftJoin('invitation.zone', 'zone')
+      .leftJoin('invitation.channel', 'channel')
+      .leftJoin('channel.zone', 'channel_zone')
+      .select([
+        'invitation.id',
+        'invitation.createdOn',
+        'inviter.id',
+        'inviter.email',
+        'inviter.firstName',
+        'inviter.lastName',
+        'inviter.displayPhoto',
+        'inviter.userName',
+        'zone.id',
+        'zone.createdOn',
+        'zone.name',
+        'zone.displayPhoto',
+        'zone.subdomain',
+        'zone.description',
+        'zone.public',
+        'channel.id',
+        'channel.createdOn',
+        'channel.name',
+        'channel.displayPhoto',
+        'channel.topic',
+        'channel.description',
+        'channel.public',
+        'channel_zone.id',
+        'channel_zone.createdOn',
+        'channel_zone.name',
+        'channel_zone.displayPhoto',
+        'channel_zone.subdomain',
+        'channel_zone.description',
+        'channel_zone.public',
+      ])
+      .where('invitee.id = :userId', { userId })
+      .paginate(query);
   }
 
   async removeContactInvitation(id: number) {
-    return this.contactInvitation.delete(id);
+    return this.invitationRepository.delete(id);
   }
 
   listContacts(identity: number | string, query: PaginationQuery) {

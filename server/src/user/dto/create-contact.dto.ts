@@ -1,9 +1,9 @@
-import { IsNotEmpty, IsInt } from 'class-validator';
+import { IsNotEmpty, IsEmail } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateContactDto {
   @ApiProperty()
   @IsNotEmpty()
-  @IsInt()
-  userId: number;
+  @IsEmail()
+  email: string;
 }

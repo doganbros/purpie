@@ -99,14 +99,14 @@ export class UserZoneService {
     const baseQuery = this.userZoneRepository
       .createQueryBuilder('user_zone')
       .select(['user_zone.id', 'user_zone.createdOn'])
-      .innerJoinAndSelect('user_zone.category', 'category')
       .innerJoinAndSelect('user_zone.zone', 'zone')
+      .innerJoinAndSelect('zone.category', 'category')
       .innerJoinAndSelect(
-        'zone.zoneRole',
+        'user_zone.zoneRole',
         'zoneRole',
         'zoneRole.zoneId = zone.id AND zoneRole.roleCode = user_zone.zoneRoleCode',
       )
-      .where('user_channel.userId = :userId', { userId });
+      .where('user_zone.userId = :userId', { userId });
 
     if (params.zoneId)
       baseQuery.andWhere('zone.id = :zoneId', { zoneId: params.zoneId });

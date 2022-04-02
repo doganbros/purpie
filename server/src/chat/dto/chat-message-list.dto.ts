@@ -5,7 +5,7 @@ import { Type } from 'class-transformer';
 export class ChatMessageListQuery {
   @ApiProperty({
     required: false,
-    description: 'The number of zones to get. Defaults to 30',
+    description: 'The number of records to get. Defaults to 30',
   })
   @IsOptional()
   @IsInt()
