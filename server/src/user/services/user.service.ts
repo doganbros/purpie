@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from 'entities/Contact.entity';
 import { AuthService } from 'src/auth/services/auth.service';
 import { generateLowerAlphaNumId, tsqueryParam } from 'helpers/utils';
+import { BlockedUser } from 'entities/BlockedUser.entity';
 import { UserRole } from 'entities/UserRole.entity';
 import { Invitation } from 'entities/Invitation.entity';
 import { User } from 'entities/User.entity';
@@ -33,6 +34,8 @@ export class UserService {
     private userChannelRepository: Repository<UserChannel>,
     @InjectRepository(Invitation)
     private invitationRepository: Repository<Invitation>,
+    @InjectRepository(BlockedUser)
+    private blockedUserRepository: Repository<BlockedUser>,
     private authService: AuthService,
   ) {}
 
@@ -298,11 +301,21 @@ export class UserService {
           .where('contact.contactUserId = user.id')
           .andWhere('contact.userId = :currentUserId', { currentUserId });
       }, 'isInContact')
+      .addSelect((subQuery) => {
+        return subQuery
+          .select('count(*) > 0', 'blockedCount')
+          .from(BlockedUser, 'blocked_user')
+          .where('blocked_user.userId = :currentUserId', { currentUserId })
+          .andWhere('blocked_user.createdById = user.id');
+      }, 'isBlocked')
       .where('user.userName = :userName', { userName })
       .getRawOne();
 
     if (!result)
       throw new NotFoundException('User not found', 'USER_NOT_FOUND');
+
+    if (result.isBlocked)
+      throw new ForbiddenException('User has blocked you', 'USER_BLOCKED_YOU');
 
     return {
       id: result.user_id,
@@ -515,5 +528,82 @@ export class UserService {
         }),
       )
       .paginate(query);
+  }
+
+  getBlockedUsers(userId: number, query: PaginationQuery) {
+    return this.blockedUserRepository
+      .createQueryBuilder('blocked_user')
+      .innerJoin('blocked_user.user', 'user')
+      .select([
+        'blocked_user.id',
+        'blocked_user.createdOn',
+        'user.id',
+        'user.firstName',
+        'user.lastName',
+        'user.email',
+        'user.userName',
+        'user.userRoleCode',
+        'user.displayPhoto',
+      ])
+      .where('blocked_user.createdById = :userId', { userId })
+      .paginate(query);
+  }
+
+  async createBlockedUser(createdById: number, userId: number) {
+    if (createdById === userId)
+      throw new BadRequestException(
+        'You cannot block yourself',
+        'YOU_CANT_BLOCK_YOURSELF',
+      );
+
+    const [createdBy, user] = await Promise.all([
+      this.userRepository.findOne({
+        where: { id: createdById },
+        select: ['id', 'email'],
+      }),
+      this.userRepository.findOne({
+        where: { id: userId },
+        select: ['id', 'email'],
+      }),
+    ]);
+
+    if (!(user && createdBy))
+      throw new NotFoundException('User not found', 'USER_NOT_FOUND');
+
+    await this.blockedUserRepository.create({ createdById, userId }).save();
+
+    await this.invitationRepository
+      .createQueryBuilder()
+      .delete()
+      .where('email = :userEmail and createdById = :createdById', {
+        createdById,
+        userEmail: user.email,
+      })
+      .orWhere('email = :createdByEmail and createdById = :userId', {
+        userId,
+        createdByEmail: createdBy.email,
+      })
+      .execute();
+    await this.contactRepository
+      .createQueryBuilder()
+      .delete()
+      .where('contactUserId = :createdById and userId = :userId', {
+        createdById,
+        userId,
+      })
+      .orWhere('contactUserId = :userId and userId = :createdById', {
+        createdById,
+        userId,
+      })
+      .execute();
+  }
+
+  async unBlockUser(createdById: number, userId: number) {
+    if (createdById === userId)
+      throw new BadRequestException(
+        'You cannot unblock yourself',
+        'YOU_CANT_UNBLOCK_YOURSELF',
+      );
+    await this.blockedUserRepository.delete({ createdById, userId });
   }
 }

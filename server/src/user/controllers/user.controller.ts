@@ -10,6 +10,7 @@ import {
   NotFoundException,
   Param,
   ParseArrayPipe,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -57,6 +58,7 @@ import { UserService } from '../services/user.service';
 import { UpdateProfileDto } from '../dto/update-profile.dto';
 import { UpdateUserPermission } from '../dto/update-permissions.dto';
 import { SystemUserListQuery } from '../dto/system-user-list.query';
+import { CreateBlockedUserDto } from '../dto/create-blocked-user.dto';
 
 const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 
@@ -187,6 +189,33 @@ export class UserController {
   ) {
     await this.userService.deleteContact(user.id, contactId);
     return 'OK';
+  }
+
+  @Get('/blocked/list')
+  @IsAuthenticated()
+  getBlockedUsers(
+    @CurrentUser() user: UserTokenPayload,
+    @Query() paginatedQuery: PaginationQuery,
+  ) {
+    return this.userService.getBlockedUsers(user.id, paginatedQuery);
+  }
+
+  @Post('/blocked/create')
+  @IsAuthenticated()
+  createBlockedUser(
+    @Body() info: CreateBlockedUserDto,
+    @CurrentUser() user: UserTokenPayload,
+  ) {
+    return this.userService.createBlockedUser(user.id, info.userId);
+  }
+
+  @Delete('/blocked/remove/:userId')
+  @IsAuthenticated()
+  unblockUser(
+    @CurrentUser() user: UserTokenPayload,
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
+    return this.userService.unBlockUser(user.id, userId);
   }
 
   @Get('/list')

@@ -6,6 +6,7 @@ import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserRole } from 'entities/UserRole.entity';
 import { AuthModule } from 'src/auth/auth.module';
+import { BlockedUser } from '../../entities/BlockedUser.entity';
 import { UserController } from './controllers/user.controller';
 import { UserService } from './services/user.service';
 
@@ -18,6 +19,7 @@ import { UserService } from './services/user.service';
       UserRole,
       UserChannel,
       Invitation,
+      BlockedUser,
     ]),
     AuthModule,
   ],
