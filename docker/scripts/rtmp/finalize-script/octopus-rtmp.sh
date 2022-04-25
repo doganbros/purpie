@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "" >> token.txt
+source token.txt
+
 DATE="$(date)"
 
 EVENT_TYPE=$1
@@ -12,6 +15,21 @@ FINAL_STATUS_CODE=0
 echo "#################################### $DATE --- Reporting Event to Octopus #########################################################" 
 echo "1: $1 - 2: $2 - 3:$3 - 4: $4"  
 echo "$DATE --- Event Type: $EVENT_TYPE - User ID: $USER_ID - Video ID: $VIDEO_ID" 
+
+strpos() { 
+  haystack=$1
+  needle=${2//\*/\\*}
+  x="${haystack%%$needle*}"
+  [[ "$x" = "$haystack" ]] && echo -1 || echo "${#x}"
+}
+
+
+pos=$(strpos $VIDEO_ID _)
+
+if [[ $pos -ge 0 ]]
+then
+    OCTOPUS_URL="https://${VIDEO_ID:$((pos + 1))}"
+fi
 
 upload() {
   # Set credentials for aws cli

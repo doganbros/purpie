@@ -43,6 +43,7 @@ const {
   RTMP_INGRESS_URL = '',
   REACT_APP_SERVER_HOST = '',
   JWT_APP_ID = 'doganbros-meet',
+  MEETING_HOST = '',
 } = process.env;
 
 @Injectable()
@@ -108,6 +109,10 @@ export class MeetingService {
     while (createAttempts < maxCreateAttempts) {
       try {
         payload.slug = separateString(generateLowerAlphaNumId(9), 3);
+        if (MEETING_HOST) {
+          payload.slug += `_${MEETING_HOST}`;
+        }
+
         const meeting = await this.postRepository.create(payload).save();
         return meeting;
       } catch (err) {
