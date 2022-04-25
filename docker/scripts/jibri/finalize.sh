@@ -3,25 +3,6 @@
 echo "" >> /config/token.txt
 source /config/token.txt
 
-DATE="$(date)"
-# AWS credentials
-FINAL_STATUS=null
-RECORDINGS_DIR=$1
-echo "Uploading the recording to S3 Recording... Dir $1" 
-# Get the folder name
-RECORDINGS=`ls $RECORDINGS_DIR/*.mp4`
-RECORDINGS=`basename $RECORDINGS`
-FOLDER_NAME=$(echo $RECORDINGS | tr "_" "\n")
-echo "S3 Parameters: $FOLDER_NAME" 
-echo "Recordings: $RECORDINGS" 
-for name in $FOLDER_NAME
-do
-FOLDER_NAME=$name
-break
-done
-echo "Started Uploading file: $name" 
-
-
 strpos() { 
   haystack=$1
   needle=${2//\*/\\*}
@@ -29,28 +10,44 @@ strpos() {
   [[ "$x" = "$haystack" ]] && echo -1 || echo "${#x}"
 }
 
-pos=$(strpos $FOLDER_NAME _)
+DATE="$(date)"
+# AWS credentials
+FINAL_STATUS=null
+RECORDINGS_DIR=$1
+
+echo "Uploading the recording to S3 Recording... Dir $1" 
+# Get the folder name
+RECORDINGS=`ls $RECORDINGS_DIR/*.mp4`
+RECORDINGS=`basename $RECORDINGS`
+
+MEETING_URL=`cat $RECORDINGS_DIR/metadata.json | jq -r '.meeting_url'`
+MEETING_NAME="${MEETING_URL##*\/}"
+
+
+
+
+pos=$(strpos $MEETING_NAME _)
 
 if [[ $pos -ge 0 ]]
 then
-    OCTOPUS_URL="https://${FOLDER_NAME:$((pos + 1))}"
+    OCTOPUS_URL="https://${MEETING_NAME:$((pos + 1))}"
 fi
 
 upload() {
-  echo "$DATE - Uploading recording files from: $RECORDINGS_DIR to S3 bucket: $S3_BUCKET_NAME/meeting-recordings/$FOLDER_NAME/"
+  echo "$DATE - Uploading recording files from: $RECORDINGS_DIR to S3 bucket: $S3_BUCKET_NAME/meeting-recordings/$MEETING_NAME/"
   # Set credentials for aws cli
   aws configure set aws_access_key_id $AWS_ACCESS_KEY
   aws configure set aws_secret_access_key $AWS_SECRET_KEY
   aws configure set default.region $AWS_DEFAULT_REGION
   # Upload to S3
-  aws s3 sync $RECORDINGS_DIR s3://$S3_BUCKET_NAME/meeting-recordings/$FOLDER_NAME/
+  aws s3 sync $RECORDINGS_DIR s3://$S3_BUCKET_NAME/meeting-recordings/$MEETING_NAME/
   #TODO: CONFIRM THIS IS WORKING
   S3_EXIT_CODE=$(echo $?)
   if [[ ${S3_EXIT_CODE} == 0 ]]
   then
-    echo "$RECORDINGS_DIR successfully synced with $S3_BUCKET_NAME/meeting-recordings/$FOLDER_NAME/"
+    echo "$RECORDINGS_DIR successfully synced with $S3_BUCKET_NAME/meeting-recordings/$MEETING_NAME/"
   else
-    echo "$RECORDINGS_DIR failed to sync with $S3_BUCKET_NAME/meeting-recordings/$FOLDER_NAME/. Status Code: $S3_EXIT_CODE"
+    echo "$RECORDINGS_DIR failed to sync with $S3_BUCKET_NAME/meeting-recordings/$MEETING_NAME/. Status Code: $S3_EXIT_CODE"
   fi
 }
 
@@ -84,8 +81,8 @@ auth() {
 
 send_event() {
   HEADER="Bearer $AUTH_TOKEN"
-  echo "$DATE - Sending event to Octopus. Payload data is id: $FOLDER_NAME fileName: $RECORDINGS"
-  RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -H "Authorization: $HEADER" -d '{"id": "'"$FOLDER_NAME"'", "type": "meeting-recording", "fileName": "'"$RECORDINGS"'"}' ${OCTOPUS_URL}/v1/video/client/feedback)
+  echo "$DATE - Sending event to Octopus. Payload data is id: $MEETING_NAME fileName: $RECORDINGS"
+  RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -H "Authorization: $HEADER" -d '{"id": "'"$MEETING_NAME"'", "type": "meeting-recording", "fileName": "'"$RECORDINGS"'"}' ${OCTOPUS_URL}/v1/video/client/feedback)
   echo "$DATE - Got send event response : $RESPONSE"
   SEND_EVENT_RETURN_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
   #TO DO: UPDATE OCTOPUS BACKEND TO SUCCESS AND FAIL AND UPDATE HERE ACCORDINGLY
