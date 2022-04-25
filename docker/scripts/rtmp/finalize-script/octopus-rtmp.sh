@@ -48,13 +48,13 @@ upload() {
 
 auth() {
   echo "$DATE - Authentication Token Expired. Attempting to Use Refresh Token." >>/tmp/octopus-rtmp.log
-  RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"refreshToken": "'"$REFRESH_TOKEN"'"}' ${OCTOPUS_URL}/auth/client/refresh-token)
+  RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"refreshToken": "'"$REFRESH_TOKEN"'"}' ${OCTOPUS_URL}/v1/auth/client/refresh-token)
   AUTH_STATUS_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
   if [[ ${AUTH_STATUS_CODE} == 200 ]]; then
     echo "$DATE - Auth token successfully renewed" >>/tmp/octopus-rtmp.log
   elif [[ ${AUTH_STATUS_CODE} == 401 || ${AUTH_STATUS_CODE} == 403 || ${AUTH_STATUS_CODE} == 400 ]]; then
     echo "$DATE - Refresh Token has expired. Re-authing to Octopus..." >>/tmp/octopus-rtmp.log
-    RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"apiKey": "'"$API_KEY"'", "apiSecret": "'"$API_SECRET"'"}' ${OCTOPUS_URL}/auth/client/login)
+    RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"apiKey": "'"$API_KEY"'", "apiSecret": "'"$API_SECRET"'"}' ${OCTOPUS_URL}/v1/auth/client/login)
     LOGIN_RETURN_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
     if [[ ${LOGIN_RETURN_CODE} == 200 ]]; then
       echo "$DATE - Successfully logged into Octopus" >>/tmp/octopus-rtmp.log
@@ -79,10 +79,10 @@ send_event() {
   if [[ $EVENT_TYPE == record-done ]]
     upload
     echo "$DATE - Sending Recording Event: id: $FILE_ID and filename is: $FILENAME" >>/tmp/octopus-rtmp.log
-    RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -H "Authorization: $HEADER" -d '{"id": "'"$FILE_ID"'", "type": "meeting-recording", "fileName": "'"$FILENAME"'"}' ${OCTOPUS_URL}/video/client/feedback)
+    RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -H "Authorization: $HEADER" -d '{"id": "'"$FILE_ID"'", "type": "meeting-recording", "fileName": "'"$FILENAME"'"}' ${OCTOPUS_URL}/v1/video/client/feedback)
   else
     echo "$DATE - Sending Streaming Event: slug: $VIDEO_ID and userID is: $USER_ID" >>/tmp/octopus-rtmp.log
-    RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -H "Authorization: $HEADER" -d '{"event": "'"$EVENT_TYPE"'", "mediaType": "video", "slug": "'"$VIDEO_ID"'", "userId": '$USER_ID'}' ${OCTOPUS_URL}/stream/client/event)
+    RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -H "Authorization: $HEADER" -d '{"event": "'"$EVENT_TYPE"'", "mediaType": "video", "slug": "'"$VIDEO_ID"'", "userId": '$USER_ID'}' ${OCTOPUS_URL}/v1/stream/client/event)
   fi
   SEND_EVENT_RETURN_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
   if [[ $RESPONSE == OK || $RESPONSE == Created ]]; then

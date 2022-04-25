@@ -55,13 +55,13 @@ upload() {
 
 auth() {
   echo "$DATE - Authentication token expired. Attempting to use Refresh Token."
-  RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"refreshToken": "'"$REFRESH_TOKEN"'"}' ${OCTOPUS_URL}/auth/client/refresh-token)
+  RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"refreshToken": "'"$REFRESH_TOKEN"'"}' ${OCTOPUS_URL}/v1/auth/client/refresh-token)
   AUTH_RETURN_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
   if [[ ${AUTH_RETURN_CODE} == 200 ]]; then
     echo "Auth token successfully renewed"
   elif [[ ${AUTH_RETURN_CODE} == 401 || ${AUTH_RETURN_CODE} == 403 || ${AUTH_RETURN_CODE} == 400 ]]; then
     echo "$DATE - Refresh Token has expired. Re-authing to Octopus..."
-    RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"apiKey": "'"$API_KEY"'", "apiSecret": "'"$API_SECRET"'"}' ${OCTOPUS_URL}/auth/client/login)
+    RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"apiKey": "'"$API_KEY"'", "apiSecret": "'"$API_SECRET"'"}' ${OCTOPUS_URL}/v1/auth/client/login)
     LOGIN_RETURN_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
     if [[ ${LOGIN_RETURN_CODE} == 200 ]]; then
       echo "Successfully logged into Octopus"
@@ -84,7 +84,7 @@ auth() {
 send_event() {
   HEADER="Bearer $AUTH_TOKEN"
   echo "$DATE - Sending event to Octopus. Payload data is id: $FOLDER_NAME fileName: $RECORDINGS"
-  RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -H "Authorization: $HEADER" -d '{"id": "'"$FOLDER_NAME"'", "type": "meeting-recording", "fileName": "'"$RECORDINGS"'"}' ${OCTOPUS_URL}/video/client/feedback)
+  RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -H "Authorization: $HEADER" -d '{"id": "'"$FOLDER_NAME"'", "type": "meeting-recording", "fileName": "'"$RECORDINGS"'"}' ${OCTOPUS_URL}/v1/video/client/feedback)
   echo "$DATE - Got send event response : $RESPONSE"
   SEND_EVENT_RETURN_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
   #TO DO: UPDATE OCTOPUS BACKEND TO SUCCESS AND FAIL AND UPDATE HERE ACCORDINGLY
