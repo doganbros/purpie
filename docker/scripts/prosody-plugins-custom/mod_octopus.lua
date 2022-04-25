@@ -122,7 +122,7 @@ function authenticate_octopus(requestURL)
     local error = nil
     body["refreshToken"], error = storage:get("refreshToken")
     local credJson = json.encode(body)
-    local response = http_post_with_retry(requestURL .. "auth/client/refresh-token", 1, credJson)
+    local response = http_post_with_retry(requestURL .. "/auth/client/refresh-token", 1, credJson)
 
     if response == 401 or response == 403 or response == 400 then
         body = {}
@@ -130,7 +130,7 @@ function authenticate_octopus(requestURL)
         body["apiSecret"] = octopusApiSecret
         credJson = json.encode(body)
 
-        response = http_post_with_retry(requestURL .. "auth/client/login", 1, credJson)
+        response = http_post_with_retry(requestURL .. "/auth/client/login", 1, credJson)
         if response == 403 then
             module:log("warn", "not authorized")
         elseif response == 400 then
@@ -166,7 +166,7 @@ function send_event(meetingTitle, event, userId)
     if accessToken ~= nil then
         accessToken = "Bearer " .. accessToken
     end
-    local response = http_post_with_retry(get_url(meetingTitle) .. "meeting/client/event", 1, body, accessToken)
+    local response = http_post_with_retry(get_url(meetingTitle) .. "/meeting/client/event", 1, body, accessToken)
 
     if response == 401 or response == 403 or response == 400 then
         module:log("info", "[send_event] error exist", event)
@@ -244,7 +244,7 @@ function occupant_pre_joined(event)
         accessToken = "Bearer " .. accessToken
     end
     local response =
-        http_post_with_retry(get_url(jid.node(event.room.jid)) .. "meeting/client/verify", 1, body, accessToken)
+        http_post_with_retry(get_url(jid.node(event.room.jid)) .. "/meeting/client/verify", 1, body, accessToken)
 
     if response == 401 then
         module:log("info", "[verify user joining meeting] error exist", response)
