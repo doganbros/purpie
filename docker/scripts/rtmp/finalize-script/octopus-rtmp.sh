@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "" >> token.txt
-source token.txt
+echo "" >> /config/token.txt
+source /config/token.txt
 
 DATE="$(date)"
 
@@ -67,8 +67,8 @@ auth() {
   AUTH_TOKEN=$(echo ${RESPONSE} | jq -r '.accessToken')
   REFRESH_TOKEN=$(echo ${RESPONSE} | jq -r '.refreshToken')
   #Overwriting previous tokens
-  echo "AUTH_TOKEN=$AUTH_TOKEN" >token.txt
-  echo "REFRESH_TOKEN=$REFRESH_TOKEN" >>token.txt
+  echo "AUTH_TOKEN=$AUTH_TOKEN" >/config/token.txt
+  echo "REFRESH_TOKEN=$REFRESH_TOKEN" >>/config/token.txt
   #Logging new tokens
   echo "$DATE - Auth Token: $AUTH_TOKEN" >>/tmp/octopus-rtmp.log
   echo "$DATE - Refresh Token: $REFRESH_TOKEN" >>/tmp/octopus-rtmp.log

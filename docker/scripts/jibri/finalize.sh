@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "" >> token.txt
-source token.txt
+echo "" >> /config/token.txt
+source /config/token.txt
 
 DATE="$(date)"
 # AWS credentials
@@ -47,6 +47,7 @@ upload() {
   #TODO: CONFIRM THIS IS WORKING
   S3_EXIT_CODE=$(echo $?)
   if [[ ${S3_EXIT_CODE} == 0 ]]
+  then
     echo "$RECORDINGS_DIR successfully synced with $S3_BUCKET_NAME/meeting-recordings/$FOLDER_NAME/"
   else
     echo "$RECORDINGS_DIR failed to sync with $S3_BUCKET_NAME/meeting-recordings/$FOLDER_NAME/. Status Code: $S3_EXIT_CODE"
@@ -74,8 +75,8 @@ auth() {
   AUTH_TOKEN=$(echo ${RESPONSE} | jq -r '.accessToken')
   REFRESH_TOKEN=$(echo ${RESPONSE} | jq -r '.refreshToken')
   #Overwriting previous tokens
-  echo "AUTH_TOKEN=$AUTH_TOKEN" >token.txt
-  echo "REFRESH_TOKEN=$REFRESH_TOKEN" >>token.txt
+  echo "AUTH_TOKEN=$AUTH_TOKEN" >/config/token.txt
+  echo "REFRESH_TOKEN=$REFRESH_TOKEN" >>/config/token.txt
   #Logging new tokens
   echo "$DATE - Auth Token: $AUTH_TOKEN"
   echo "$DATE - Refresh Token: $REFRESH_TOKEN"
