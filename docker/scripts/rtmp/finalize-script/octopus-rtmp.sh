@@ -3,6 +3,9 @@
 echo "" >> /config/token.txt
 source /config/token.txt
 
+MAX_EVENT_TRIES=$((3))
+NUMBER_OF_TRIES=$((0))
+
 DATE="$(date)"
 
 EVENT_TYPE=$1
@@ -88,13 +91,13 @@ send_event() {
   if [[ $RESPONSE == OK || $RESPONSE == Created ]]; then
     echo "$DATE - Event successfully sent to Octopus with response: $SEND_EVENT_RETURN_CODE" >>/tmp/octopus-rtmp.log
   else
-    if [[ $NUM_SEND_EVENT_TRIES -lt $MAX_EVENT_TRIES ]]; then
+    if [[ $NUMBER_OF_TRIES -lt $MAX_EVENT_TRIES ]]; then
       NUMBER_OF_TRIES=$((NUMBER_OF_TRIES+1))
-      echo "$DATE - Error while sending event. Retuned code: ${SEND_EVENT_RETURN_CODE}. Num of tries: $NUM_SEND_EVENT_TRIES." >>/tmp/octopus-rtmp.log
+      echo "$DATE - Error while sending event. Retuned code: ${SEND_EVENT_RETURN_CODE}. Num of tries: $NUMBER_OF_TRIES." >>/tmp/octopus-rtmp.log
       auth
       send_event      
     else
-      echo "$DATE - Error while sending event after trying $NUM_SEND_EVENT_TRIES times. Retuned code: ${SEND_EVENT_RETURN_CODE}" >>/tmp/octopus-rtmp.log
+      echo "$DATE - Error while sending event after trying $NUMBER_OF_TRIES times. Retuned code: ${SEND_EVENT_RETURN_CODE}" >>/tmp/octopus-rtmp.log
     fi
   fi
 }

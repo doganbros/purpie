@@ -3,7 +3,7 @@
 echo "" >> /config/token.txt
 source /config/token.txt
 
-MAX_SEND_EVENT_TRIES=$((3))
+MAX_EVENT_TRIES=$((3))
 NUMBER_OF_TRIES=$((0))
 
 strpos() { 
@@ -93,7 +93,7 @@ send_event() {
     echo "$DATE - Event successfully sent to Octopus with response: $SEND_EVENT_RETURN_CODE"
     NUMBER_OF_TRIES=$((0))
   else
-    if [[ $NUMBER_OF_TRIES -lt $MAX_SEND_EVENT_TRIES ]]; then
+    if [[ $NUMBER_OF_TRIES -lt $MAX_EVENT_TRIES ]]; then
       NUMBER_OF_TRIES=$((NUMBER_OF_TRIES+1))
       echo "$DATE - Error while sending event. Retuned code: ${SEND_EVENT_RETURN_CODE}. Num of tries: $NUMBER_OF_TRIES."
       auth
