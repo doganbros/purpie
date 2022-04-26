@@ -1,4 +1,3 @@
-MEETING_URL=`cat metadata.json | jq -r '.meeting_url'`
-MEETING_NAME="${MEETING_URL##*\/}"
+MAX_SEND_EVENT_TRIES=$((3))
 
-echo $MEETING_NAME
+echo $((MAX_SEND_EVENT_TRIES + 1))

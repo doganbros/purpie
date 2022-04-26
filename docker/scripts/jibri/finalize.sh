@@ -3,6 +3,9 @@
 echo "" >> /config/token.txt
 source /config/token.txt
 
+MAX_SEND_EVENT_TRIES=$((3))
+NUMBER_OF_TRIES=$((0))
+
 strpos() { 
   haystack=$1
   needle=${2//\*/\\*}
@@ -88,14 +91,15 @@ send_event() {
   #TO DO: UPDATE OCTOPUS BACKEND TO SUCCESS AND FAIL AND UPDATE HERE ACCORDINGLY
   if [[ $RESPONSE == OK || $RESPONSE == Created ]]; then
     echo "$DATE - Event successfully sent to Octopus with response: $SEND_EVENT_RETURN_CODE"
+    NUMBER_OF_TRIES=$((0))
   else
-    if [[ $NUM_SEND_EVENT_TRIES -lt $MAX_SEND_EVENT_TRIES ]]; then
+    if [[ $NUMBER_OF_TRIES -lt $MAX_SEND_EVENT_TRIES ]]; then
       NUMBER_OF_TRIES=$((NUMBER_OF_TRIES+1))
-      echo "$DATE - Error while sending event. Retuned code: ${SEND_EVENT_RETURN_CODE}. Num of tries: $NUM_SEND_EVENT_TRIES."
+      echo "$DATE - Error while sending event. Retuned code: ${SEND_EVENT_RETURN_CODE}. Num of tries: $NUMBER_OF_TRIES."
       auth
       send_event      
     else
-      echo "$DATE - Error while sending event after trying $NUM_SEND_EVENT_TRIES times. Retuned code: ${SEND_EVENT_RETURN_CODE}"
+      echo "$DATE - Error while sending event after trying $NUMBER_OF_TRIES times. Retuned code: ${SEND_EVENT_RETURN_CODE}"
     fi
   fi
 }
