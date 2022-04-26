@@ -57,7 +57,7 @@ auth() {
     echo "$DATE - Auth token successfully renewed" >>/tmp/octopus-rtmp.log
   elif [[ ${AUTH_STATUS_CODE} == 401 || ${AUTH_STATUS_CODE} == 403 || ${AUTH_STATUS_CODE} == 400 ]]; then
     echo "$DATE - Refresh Token has expired. Re-authing to Octopus..." >>/tmp/octopus-rtmp.log
-    RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"apiKey": "'"$API_KEY"'", "apiSecret": "'"$API_SECRET"'"}' ${OCTOPUS_URL}/v1/auth/client/login)
+    RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"apiKey": "'"$OCTOPUS_API_KEY"'", "apiSecret": "'"$OCTOPUS_API_SECRET"'"}' ${OCTOPUS_URL}/v1/auth/client/login)
     LOGIN_RETURN_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
     if [[ ${LOGIN_RETURN_CODE} == 200 ]]; then
       echo "$DATE - Successfully logged into Octopus" >>/tmp/octopus-rtmp.log
