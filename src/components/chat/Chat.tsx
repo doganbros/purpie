@@ -1,4 +1,4 @@
-import { Box, Header, Menu, Text, TextArea } from 'grommet';
+import { Box, Header, Menu, Text } from 'grommet';
 import { nanoid } from 'nanoid';
 import { useSelector } from 'react-redux';
 import { MoreVertical } from 'grommet-icons';
@@ -11,10 +11,10 @@ import { getChatMessages } from '../../store/services/chat.service';
 import { ChatMessage } from '../../store/types/chat.types';
 import { AppState } from '../../store/reducers/root.reducer';
 import MessageItem from './MessageItem';
-import { useThrottle } from '../../hooks/useThrottle';
 import { User } from '../../store/types/auth.types';
 import ReplyMessage from './layers/ReplyMessage';
 import EditMessage from './layers/EditMessage';
+import MessageTextArea from './MessageTextArea';
 
 interface Props {
   medium: 'direct' | 'channel' | 'post';
@@ -27,7 +27,6 @@ interface Props {
   height?: string;
 }
 
-const TYPING_THROTTLE_INTERVAL = 700;
 const FETCH_MESSAGE_LIMIT = 50;
 
 const Chat: React.FC<Props> = ({
@@ -50,8 +49,6 @@ const Chat: React.FC<Props> = ({
     null
   );
   const [editedMessage, setEditedMessage] = useState<ChatMessage | null>(null);
-
-  const throttle = useThrottle();
 
   const {
     auth: { user: currentUser },
@@ -346,32 +343,19 @@ const Chat: React.FC<Props> = ({
             })}
           </InfiniteScroll>
         </Box>
-        <TextArea
-          placeholder={`Write ${name ? `to ${name}` : 'your message...'} `}
-          resize="vertical"
-          fill
-          onKeyDown={(e) => {
-            if (
-              e.key === 'Enter' &&
-              e.shiftKey === false &&
-              e.currentTarget.value
-            ) {
-              e.preventDefault();
-              handleSendMessage({
-                message: e.currentTarget.value,
-                medium,
-                to: id,
-                createdBy: currentUser as any,
-              });
-              e.currentTarget.value = '';
-              return null;
-            }
-            if (handleTypingEvent)
-              return throttle(() => {
-                onTyping();
-              }, TYPING_THROTTLE_INTERVAL);
-            return null;
-          }}
+        <MessageTextArea
+          name={name}
+          handleTypingEvent={handleTypingEvent}
+          onTyping={onTyping}
+          user={currentUser!}
+          onSubmit={({ message }) =>
+            handleSendMessage({
+              message,
+              medium,
+              to: id,
+              createdBy: currentUser as any,
+            })
+          }
         />
         {typingUser ? (
           <Text size="small" as="i">

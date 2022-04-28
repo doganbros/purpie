@@ -19,6 +19,8 @@ const MessageItem: FC<Props> = ({ message, side, children, actions }) => {
       alignContent="end"
       gap="small"
       margin="small"
+      width="100%"
+      pad={{ top: 'medium' }}
     >
       <InitialsAvatar
         id={message.createdBy.id}
