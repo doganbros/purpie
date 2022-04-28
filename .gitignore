@@ -13,3 +13,5 @@ docker/ssl/cert.crt
 docker/ssl/cert.key
 docker/postgres/data/pgdata
 docker/jitsi-meet-cfg/*/*
+.idea
+.lock
