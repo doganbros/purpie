@@ -130,12 +130,11 @@ function authenticate_octopus()
 end
 
 function send_event(meetingTitle, event, userId)
-    if userId == nil then do return end
 
     local body = {};
     body['meetingTitle'] = meetingTitle;
     body['event'] = event;
-    body['userId'] = userId
+    if userId ~= nil then body['userId'] = userId; end
     local accessToken = storage:get("accessToken");
     body = json.encode(body);
     if accessToken ~= nil then accessToken = "Bearer " .. accessToken; end
@@ -156,14 +155,19 @@ function occupant_joined(event)
                "********************************************New occupant join******************************************")
 
     local userId = event.occupant:get_presence():get_child('identity');
-    if userId ~= nil then
-        userId = userId:get_child("user"):get_child_text("id");
-        userId = tonumber(userId);
-    end
+    if userId == nil do return end
+
+    userId = userId:get_child("user"):get_child_text("id");
+
+    if userId == nil do return end
+
+    userId = tonumber(userId);
+
+    if userId == nil do return end
+
     if event.occupant.role then
         role = event.occupant.role;
-        -- userId is nill when jibri connects
-        if event.occupant.role ~= 'moderator' and userId ~= nil then
+        if event.occupant.role ~= 'moderator' then
             local room_name = jid.node(event.room.jid);
             local response = send_event(room_name, 'user_joined', userId);
             if response == 401 then
