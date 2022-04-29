@@ -161,7 +161,8 @@ function occupant_joined(event)
     end
     if event.occupant.role then
         role = event.occupant.role;
-        if event.occupant.role ~= 'moderator' then
+        -- userId is nill when jibri connects
+        if event.occupant.role ~= 'moderator' and userId ~= nil then
             local room_name = jid.node(event.room.jid);
             local response = send_event(room_name, 'user_joined', userId);
             if response == 401 then
