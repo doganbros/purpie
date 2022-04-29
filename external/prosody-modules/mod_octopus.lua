@@ -130,11 +130,12 @@ function authenticate_octopus()
 end
 
 function send_event(meetingTitle, event, userId)
+    if userId == nil then do return end
 
     local body = {};
     body['meetingTitle'] = meetingTitle;
     body['event'] = event;
-    if userId ~= nil then body['userId'] = userId; end
+    body['userId'] = userId
     local accessToken = storage:get("accessToken");
     body = json.encode(body);
     if accessToken ~= nil then accessToken = "Bearer " .. accessToken; end
