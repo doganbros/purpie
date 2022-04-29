@@ -155,15 +155,15 @@ function occupant_joined(event)
                "********************************************New occupant join******************************************")
 
     local userId = event.occupant:get_presence():get_child('identity');
-    if userId == nil do return end
+    if userId == nil then do return end
 
     userId = userId:get_child("user"):get_child_text("id");
 
-    if userId == nil do return end
+    if userId == nil then do return end
 
     userId = tonumber(userId);
 
-    if userId == nil do return end
+    if userId == nil then do return end
 
     if event.occupant.role then
         role = event.occupant.role;
