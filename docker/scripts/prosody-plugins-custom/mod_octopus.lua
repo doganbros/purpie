@@ -189,7 +189,7 @@ function occupant_joined(event)
         userId = userId:get_child("user"):get_child_text("id")
         userId = tonumber(userId)
     end
-    if event.occupant.role then
+    if userId ~= nil and event.occupant.role then
         role = event.occupant.role
         if event.occupant.role ~= "moderator" then
             local room_name = jid.node(event.room.jid)
