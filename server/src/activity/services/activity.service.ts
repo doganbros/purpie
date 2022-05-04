@@ -4,7 +4,8 @@ import { Channel } from 'entities/Channel.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
-import { Brackets, Repository } from 'typeorm';
+import { Notification } from 'entities/Notification.entity';
+import { Brackets, IsNull, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 
 @Injectable()
@@ -12,6 +13,8 @@ export class ActivityService {
   constructor(
     @InjectRepository(Zone) private zoneRepository: Repository<Zone>,
     @InjectRepository(Channel) private channelRepository: Repository<Channel>,
+    @InjectRepository(Notification)
+    private notificationRepository: Repository<Notification>,
   ) {}
 
   getPublicChannelSuggestions(userId: number, query: PaginationQuery) {
@@ -98,5 +101,58 @@ export class ActivityService {
       .orderBy('zone.createdOn', 'DESC')
 
       .paginateRaw(query);
+  }
+
+  getNotifications(userId: number, query: PaginationQuery) {
+    return this.notificationRepository
+      .createQueryBuilder('notification')
+      .leftJoin('notification.post', 'post')
+      .leftJoin('notification.createdBy', 'createdBy')
+      .select([
+        'notification.id',
+        'notification.message',
+        'notification.type',
+        'notification.readOn',
+        'post.id',
+        'post.title',
+        'post.slug',
+        'post.description',
+        'post.startDate',
+        'post.type',
+        'post.createdOn',
+        'post.public',
+        'post.videoName',
+        'post.userContactExclusive',
+        'post.channelId',
+        'post.liveStream',
+        'post.record',
+        'createdBy.id',
+        'createdBy.firstName',
+        'createdBy.lastName',
+        'createdBy.userName',
+        'createdBy.displayPhoto',
+        'createdBy.email',
+      ])
+      .where('notification.userId = :userId', { userId })
+      .orderBy('notification.createdOn', 'DESC')
+      .paginate(query);
+  }
+
+  markNotificationAsRead(userId: number, notificationId: number) {
+    return this.notificationRepository.update(
+      { id: notificationId, userId },
+      { readOn: new Date() },
+    );
+  }
+
+  markAllNotificationsAsRead(userId: number) {
+    return this.notificationRepository.update(
+      { userId, readOn: IsNull() },
+      { readOn: new Date() },
+    );
+  }
+
+  removeNotification(userId: number, notificationId: number) {
+    return this.notificationRepository.delete({ id: notificationId, userId });
   }
 }

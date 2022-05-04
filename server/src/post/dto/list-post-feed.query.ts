@@ -31,6 +31,13 @@ export class ListPostFeedQuery extends PaginationQuery {
 
   @ApiProperty({
     required: false,
+    description: 'Get post created by a particular user',
+  })
+  @IsOptional()
+  userName: string;
+
+  @ApiProperty({
+    required: false,
     enum: ['time', 'popularity'],
     description:
       'Sort post by time or popularity. If not specified, defaults to time',

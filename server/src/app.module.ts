@@ -22,6 +22,7 @@ import { ActivityModule } from './activity/activity.module';
 import { StreamModule } from './stream/stream.module';
 import { VideoModule } from './video/video.module';
 import { PostModule } from './post/post.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { PostModule } from './post/post.module';
     StreamModule,
     VideoModule,
     PostModule,
+    ChatModule,
   ],
   providers: [
     {

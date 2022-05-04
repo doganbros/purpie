@@ -9,6 +9,10 @@ export class Invitation extends RecordEntity {
   @Column()
   email: string;
 
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'email', referencedColumnName: 'email' })
+  invitee: User;
+
   @ManyToOne(() => Channel, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'channelId' })
   channel: Channel;
@@ -23,7 +27,7 @@ export class Invitation extends RecordEntity {
   @Column({ nullable: true })
   zoneId: number;
 
-  @ManyToOne(() => Channel, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'createdById' })
   createdBy: User;
 

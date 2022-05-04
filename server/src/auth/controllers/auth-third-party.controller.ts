@@ -98,7 +98,6 @@ export class AuthThirdPartyController {
     @Res({ passthrough: true }) res: Response,
   ) {
     let user: User | undefined;
-    let userExistsAlready = false;
     if (name === 'google') {
       const accessToken = await this.authThirdPartyService.getGoogleAuthAccessToken(
         code,
@@ -110,7 +109,6 @@ export class AuthThirdPartyController {
       user = await this.authService.getUserByEmail(userInfo.email);
 
       if (user) {
-        userExistsAlready = true;
         if (!user.googleId) {
           user.googleId = userInfo.id;
           user = await user.save();
@@ -134,7 +132,6 @@ export class AuthThirdPartyController {
       user = await this.authService.getUserByEmail(userInfo.email);
 
       if (user) {
-        userExistsAlready = true;
         if (!user.facebookId) {
           user.facebookId = userInfo.id;
           user = await user.save();
@@ -157,35 +154,16 @@ export class AuthThirdPartyController {
         lastName: user.lastName,
         email: user.email,
         userName: user.userName,
-        mattermostId: user.mattermostId,
         userRole: {
           ...user.userRole,
         },
       };
-      if (!userExistsAlready) {
-        const profile = await this.authService.createMattermostUserAndJoinDefaults(
-          user,
-        );
-        user.mattermostId = profile.id;
-        userPayload.mattermostId = profile.id;
-        await user.save();
-      }
-
-      const {
-        token,
-        id,
-      } = await this.authService.createMattermostPersonalTokenForUser(
-        user.mattermostId,
-      );
 
       await this.authService.setAccessTokens(
         {
           id: user.id,
-          mattermostId: user.mattermostId,
-          mattermostTokenId: id,
         },
         res,
-        token,
       );
 
       return userPayload;

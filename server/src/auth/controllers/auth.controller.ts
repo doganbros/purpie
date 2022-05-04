@@ -145,7 +145,6 @@ export class AuthController {
       lastName: user.lastName,
       email: user.email,
       userName: user.userName,
-      mattermostId: user.mattermostId,
       userRole: {
         ...user.userRole,
       },
@@ -158,21 +157,11 @@ export class AuthController {
         user: userPayload,
       });
 
-    const {
-      token,
-      id,
-    } = await this.authService.createMattermostPersonalTokenForUser(
-      user.mattermostId,
-    );
-
     await this.authService.setAccessTokens(
       {
         id: user.id,
-        mattermostId: user.mattermostId,
-        mattermostTokenId: id,
       },
       res,
-      token,
     );
 
     return userPayload;

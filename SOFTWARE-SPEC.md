@@ -35,7 +35,6 @@
 
 ## Open Source Technologies used
 - [Jitsi](https://jitsi.org)
-- [Mattermost](https://mattermost.com)
 
 # Requirements
 
@@ -222,27 +221,6 @@ This app interacts with a stateless http server. Authentication is realized by s
 
 Since this app allows users to create subdomains, it needs to persist authentication through the main domain and subdomains. This is one of the main reasons why cookies are been used. For cookies to persist authentication through domains and subdomains, the main domain parameter supplied while creating them must be valid. One of the rules for its validity is that it must have at least one dot. Due to this, localhost will not work. Read this [article](https://medium.com/@emilycoco/working-with-subdomains-locally-and-sharing-cookies-across-them-12b108cf5e43) to learn more.
 Even though developers can still use localhost but if another subdomain is visited, authentication would be required again. Developers can therefore set a different domain other than localhost in `/etc/host` ( or ` C:\Windows\System32\Drivers\etc\hosts` for windows) file. The domain recommended is octopus.localhost. This is because it allows all subdomains to see the cookie as well.
-
-
-## Mattermost
-
-[Mattermost](https://mattermost.com) is an open source platform used for real-time communication in this application. It is used to provide feedbacks to front-end clients about events. This app also takes advantage of mattermost's channels for real-time chats between two or more people.
-
-### Mattermost Setup and Configuration
-
-Please follow the steps below to get a development mattermost server running. The easiest way to use [docker](https://www.docker.com/).
-
-1. Make sure you have docker installed on your computer. If you do not have docker already on your computer, Go to https://www.docker.com/get-started, choose your platform and click download. Follow the simple steps to get docker installed on your computer.
-2. Open your terminal (command prompt or preferably powershell on windows).
-3. Enter the command `docker run --name octopus-mattermost-preview -d --publish 8065:8065 --add-host dockerhost:127.0.0.1 doganbros/octopus:mattermost-preview`
-4. If you want to change the port where mattermost runs by default, replace `<port>:8065` by your prefered port while typing the command.
-5. Wait for some few minutes for the mattermost server to bootup.
-6. To view the logs enter the command `docker logs octopus-mattermost-preview --follow`
-7. Update all the environment variables used by octopus to set up mattermost. The variables `REACT_APP_MM_SERVER_URL, MM_SERVER_URL` is used to point to the mattermost server just installed. The variables `MM_SYS_ADMIN_USERNAME`, `MM_SYS_ADMIN_EMAIL`, `MM_SYS_ADMIN_PASSWORD` and `MM_BOT_USERNAME` are used by octopus to set up the system adminstrator of mattermost. The last but not least variable, `REACT_APP_MM_TEAM_NAME` sets up the team name that will be used by octopus in mattermost. Examples can be found in the `.env.example` file.
-
-
-
-
 # Application Structure
 
 ```
@@ -307,7 +285,6 @@ Please follow the steps below to get a development mattermost server running. Th
 │   │   └── logo.png
 │   ├── components
 │   │   ├── layouts
-│   │   ├── mattermost
 │   │   └── utils
 │   ├── config
 │   │   ├── app-config.ts

@@ -59,8 +59,6 @@ export interface UserBasic {
 }
 
 export interface User extends UserBasic {
-  mattermostId: string;
-  mattermostToken: string;
   userRole?: UserRole;
 }
 

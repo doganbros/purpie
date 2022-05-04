@@ -21,11 +21,16 @@ declare module 'typeorm/query-builder/SelectQueryBuilder' {
       },
     ): Promise<PaginationResponse<Record<string, any>>>;
 
-    getRawOneAndEntity(
-      otherFields: Array<string>,
-      primaryTableAliasName: string,
-    ): Promise<Record<string, any> | null>;
+    whereExists<T>(query: SelectQueryBuilder<T>): this;
+    andWhereExists<T>(query: SelectQueryBuilder<T>): this;
+    orWhereExists<T>(query: SelectQueryBuilder<T>): this;
   }
+
+  // interface WhereExpression {
+  //   whereExists<T>(query: SelectQueryBuilder<T>): this;
+  //   andWhereExists<T>(query: SelectQueryBuilder<T>): this;
+  //   orWhereExists<T>(query: SelectQueryBuilder<T>): this;
+  // }
 }
 
 SelectQueryBuilder.prototype.paginate = async function <Entity>(
@@ -66,28 +71,4 @@ SelectQueryBuilder.prototype.paginateRaw = async function <Entity>(
   }
 
   return paginate<Record<string, any>>(result, query);
-};
-
-SelectQueryBuilder.prototype.getRawOneAndEntity = async function <Entity>(
-  this: SelectQueryBuilder<Entity>,
-  otherFields: Array<string>,
-  primaryTableAliasName: string,
-): Promise<Record<string, any> | null> {
-  const [entityResult, rawResult] = await Promise.all([
-    this.getOne(),
-    this.getRawOne(),
-  ]);
-
-  if (!entityResult) return null;
-
-  return {
-    ...entityResult,
-    ...otherFields.reduce(
-      (acc, otherField) => ({
-        ...acc,
-        [otherField]: rawResult?.[`${primaryTableAliasName}_${otherField}`],
-      }),
-      {},
-    ),
-  };
 };

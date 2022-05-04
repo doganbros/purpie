@@ -9,7 +9,16 @@ const {
   S3_SECRET_ACCESS_KEY = '',
   S3_REGION = '',
   S3_VIDEO_BUCKET_NAME = '',
+  S3_ENDPOINT_URL,
+  NODE_ENV,
 } = process.env;
+
+const endpointParams = NODE_ENV !== 'production' &&
+  S3_ENDPOINT_URL && {
+    endpoint: S3_ENDPOINT_URL,
+    s3ForcePathStyle: true,
+    sslEnabled: false,
+  };
 
 export const s3 = new aws.S3({
   region: S3_REGION,
@@ -17,6 +26,7 @@ export const s3 = new aws.S3({
     accessKeyId: S3_ACCESS_KEY_ID,
     secretAccessKey: S3_SECRET_ACCESS_KEY,
   },
+  ...endpointParams,
 });
 
 export const deleteObject = promisify(

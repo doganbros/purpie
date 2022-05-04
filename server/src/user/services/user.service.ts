@@ -6,14 +6,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from 'entities/Contact.entity';
-import { MattermostService } from 'src/utils/services/mattermost.service';
-import { ContactInvitation } from 'entities/ContactInvitation.entity';
 import { AuthService } from 'src/auth/services/auth.service';
 import { generateLowerAlphaNumId, tsqueryParam } from 'helpers/utils';
+import { BlockedUser } from 'entities/BlockedUser.entity';
 import { UserRole } from 'entities/UserRole.entity';
+import { Invitation } from 'entities/Invitation.entity';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
-import { In, Not, Repository } from 'typeorm';
+import { Brackets, In, Not, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { SearchUsersQuery } from '../dto/search-users.query';
 import { SetUserRoleDto } from '../dto/set-user-role.dto';
@@ -30,23 +30,34 @@ export class UserService {
     private userRepository: Repository<User>,
     @InjectRepository(UserRole)
     private userRoleRepository: Repository<UserRole>,
-    @InjectRepository(ContactInvitation)
-    private contactInvitation: Repository<ContactInvitation>,
+    @InjectRepository(UserChannel)
+    private userChannelRepository: Repository<UserChannel>,
+    @InjectRepository(Invitation)
+    private invitationRepository: Repository<Invitation>,
+    @InjectRepository(BlockedUser)
+    private blockedUserRepository: Repository<BlockedUser>,
     private authService: AuthService,
-    private readonly mattermostService: MattermostService,
   ) {}
 
-  createNewContact(userId: number, contactUserId: number) {
+  async createNewContact(userId: number, contactUserId: number) {
     if (userId === contactUserId)
       throw new BadRequestException(
         'You cannot add yourself to your contacts',
         'CONTACT_ELIGEBILITY_ERR',
       );
 
-    return this.contactRepository.insert([
-      { userId, contactUserId },
-      { userId: contactUserId, contactUserId: userId },
-    ]);
+    await this.contactRepository.insert({ userId, contactUserId }).catch(() => {
+      // Ignore duplicate insertion error
+      // So that if it exists in other user's contact it will just use that
+    });
+    await this.contactRepository
+      .insert({ userId: contactUserId, contactUserId: userId })
+      .catch(() => {
+        // Ignore duplicate insertion error
+        // So that if it exists in other user's contact it will just use that
+      });
+
+    return true;
   }
 
   userBaseSelect(excludeUserIds: Array<number>, query: SearchUsersQuery) {
@@ -101,25 +112,56 @@ export class UserService {
       .paginate(query);
   }
 
-  async createNewContactInvitation(inviterId: number, inviteeId: number) {
-    if (inviterId === inviteeId)
+  async createNewContactInvitation(email: string, createdById: number) {
+    const existing = await this.invitationRepository
+      .createQueryBuilder('invitation')
+      .innerJoin('invitation.createdBy', 'createdBy')
+      .innerJoin('invitation.invitee', 'invitee')
+      .select(['invitation.id', 'invitation.createdById', 'invitation.email'])
+      .where(
+        new Brackets((qb) => {
+          qb.where('createdBy.email = :email', {
+            email,
+          }).andWhere('invitee.id = :createdById', {
+            createdById,
+          });
+        }),
+      )
+      .orWhere(
+        new Brackets((qb) => {
+          qb.where('invitee.email = :email', {
+            email,
+          }).andWhere('createdBy.id = :createdById', {
+            createdById,
+          });
+        }),
+      )
+      .getOne();
+
+    if (existing?.email === email)
       throw new BadRequestException(
-        'Inviter and Invitee cannot be the same user',
-        'INVITER_INVITEE_EQUALITY_ERR',
+        'Invitation to this user has already been sent',
+        'INVITATION_FOR_USER_ALREADY_SENT',
+      );
+    else if (existing)
+      throw new BadRequestException(
+        'You have already been invited by this user already',
+        'INVITATION_RECEIVED_FROM_USER_ALREADY',
       );
 
-    return this.contactInvitation
+    return this.invitationRepository
       .create({
-        inviteeId,
-        inviterId,
+        createdById,
+        email,
       })
       .save();
   }
 
   listContactInvitations(userId: number, query: PaginationQuery) {
-    return this.contactInvitation
+    return this.invitationRepository
       .createQueryBuilder('contact_invitation')
-      .innerJoinAndSelect('contact_invitation.inviter', 'inviter')
+      .innerJoin('contact_invitation.createdBy', 'inviter')
+      .innerJoin('contact_invitation.invitee', 'invitee')
       .select([
         'contact_invitation.id',
         'contact_invitation.createdOn',
@@ -127,25 +169,83 @@ export class UserService {
         'inviter.email',
         'inviter.firstName',
         'inviter.lastName',
+        'inviter.displayPhoto',
+        'inviter.userName',
       ])
-      .where('contact_invitation.inviteeId = :userId', {
-        userId,
-      })
+      .where('contact_invitation.zoneId is null')
+      .andWhere('contact_invitation.channelId is null')
+      .andWhere('invitee.id = :userId', { userId })
       .paginate(query);
   }
 
   getContactInvitationByIdAndInviteeId(id: number, inviteeId: number) {
-    return this.contactInvitation.findOne({ id, inviteeId });
+    return this.invitationRepository
+      .createQueryBuilder('invitation')
+      .innerJoin('invitation.createdBy', 'inviter')
+      .innerJoin('invitation.invitee', 'invitee')
+      .select([
+        'invitation.id',
+        'inviter.id',
+        'invitee.id',
+        'invitation.createdById',
+      ])
+      .where('invitation.id = :id', { id })
+      .andWhere('invitee.id = :inviteeId', { inviteeId })
+      .andWhere('invitation.channelId is null')
+      .andWhere('invitation.zoneId is null')
+      .getOne();
+  }
+
+  async listInvitationsForUser(userId: number, query: PaginationQuery) {
+    return this.invitationRepository
+      .createQueryBuilder('invitation')
+      .innerJoin('invitation.createdBy', 'inviter')
+      .innerJoin('invitation.invitee', 'invitee')
+      .leftJoin('invitation.zone', 'zone')
+      .leftJoin('invitation.channel', 'channel')
+      .leftJoin('channel.zone', 'channel_zone')
+      .select([
+        'invitation.id',
+        'invitation.createdOn',
+        'inviter.id',
+        'inviter.email',
+        'inviter.firstName',
+        'inviter.lastName',
+        'inviter.displayPhoto',
+        'inviter.userName',
+        'zone.id',
+        'zone.createdOn',
+        'zone.name',
+        'zone.displayPhoto',
+        'zone.subdomain',
+        'zone.description',
+        'zone.public',
+        'channel.id',
+        'channel.createdOn',
+        'channel.name',
+        'channel.displayPhoto',
+        'channel.topic',
+        'channel.description',
+        'channel.public',
+        'channel_zone.id',
+        'channel_zone.createdOn',
+        'channel_zone.name',
+        'channel_zone.displayPhoto',
+        'channel_zone.subdomain',
+        'channel_zone.description',
+        'channel_zone.public',
+      ])
+      .where('invitee.id = :userId', { userId })
+      .paginate(query);
   }
 
   async removeContactInvitation(id: number) {
-    return this.contactInvitation.delete(id);
+    return this.invitationRepository.delete(id);
   }
 
-  listContacts(userId: number, query: PaginationQuery) {
-    return this.contactRepository
+  listContacts(identity: number | string, query: PaginationQuery) {
+    const baseQuery = this.contactRepository
       .createQueryBuilder('contact')
-      .innerJoinAndSelect('contact.contactUser', 'contactUser')
       .select([
         'contact.id',
         'contact.createdOn',
@@ -156,10 +256,16 @@ export class UserService {
         'contactUser.lastName',
         'contactUser.displayPhoto',
       ])
-      .where('contact.userId = :userId', {
-        userId,
-      })
-      .paginate(query);
+      .innerJoin('contact.contactUser', 'contactUser');
+
+    if (typeof identity === 'number')
+      baseQuery.where('contact.userId = :identity', { identity });
+    else
+      baseQuery
+        .innerJoin('contact.user', 'user')
+        .where('user.userName = :identity', { identity });
+
+    return baseQuery.paginate(query);
   }
 
   async deleteContact(userId: number, id: number) {
@@ -177,8 +283,8 @@ export class UserService {
     return this.userRoleRepository.find({ take: 30 });
   }
 
-  getPublicUserProfile(userName: string) {
-    return this.userRepository
+  async getPublicUserProfile(currentUserId: number, userName: string) {
+    const result = await this.userRepository
       .createQueryBuilder('user')
       .select([
         'user.id',
@@ -188,8 +294,38 @@ export class UserService {
         'user.displayPhoto',
         'user.email',
       ])
+      .addSelect((subQuery) => {
+        return subQuery
+          .select('count(*) > 0', 'userCount')
+          .from(Contact, 'contact')
+          .where('contact.contactUserId = user.id')
+          .andWhere('contact.userId = :currentUserId', { currentUserId });
+      }, 'isInContact')
+      .addSelect((subQuery) => {
+        return subQuery
+          .select('count(*) > 0', 'blockedCount')
+          .from(BlockedUser, 'blocked_user')
+          .where('blocked_user.userId = :currentUserId', { currentUserId })
+          .andWhere('blocked_user.createdById = user.id');
+      }, 'isBlocked')
       .where('user.userName = :userName', { userName })
-      .getOne();
+      .getRawOne();
+
+    if (!result)
+      throw new NotFoundException('User not found', 'USER_NOT_FOUND');
+
+    if (result.isBlocked)
+      throw new ForbiddenException('User has blocked you', 'USER_BLOCKED_YOU');
+
+    return {
+      id: result.user_id,
+      firstName: result.user_firstName,
+      lastName: result.user_lastName,
+      userName: result.user_userName,
+      displayPhoto: result.user_displayPhoto,
+      email: result.user_email,
+      isInContact: result.isInContact,
+    };
   }
 
   listSystemUsers(query: SystemUserListQuery) {
@@ -335,14 +471,6 @@ export class UserService {
       );
 
     await this.userRepository.update({ id: userId }, updates);
-
-    const mattermostUpdates: any = { id: userProfile.mattermostId };
-
-    if (updates.firstName) mattermostUpdates.first_name = updates.firstName;
-    if (updates.lastName) mattermostUpdates.last_name = updates.lastName;
-    if (updates.userName) mattermostUpdates.username = updates.userName;
-
-    await this.mattermostService.mattermostClient.patchUser(mattermostUpdates);
   }
 
   async userNameSuggestions(userName: string) {
@@ -368,5 +496,114 @@ export class UserService {
       .then((users) => users.map((u) => u.userName));
 
     return suggestions.filter((v) => !result.includes(v));
+  }
+
+  getUserChannels(userId: number, userName: string, query: PaginationQuery) {
+    return this.userChannelRepository
+      .createQueryBuilder('user_channel')
+      .select('user_channel.id')
+      .addSelect([
+        'channel.id',
+        'channel.createdOn',
+        'channel.name',
+        'channel.topic',
+        'channel.displayPhoto',
+        'channel.description',
+        'channel.public',
+        'channel.zoneId',
+      ])
+      .innerJoin('user_channel.channel', 'channel')
+      .innerJoin('user_channel.user', 'user')
+      .where('user.userName = :userName', { userName })
+      .andWhere(
+        new Brackets((qb) => {
+          const userQb = this.userChannelRepository
+            .createQueryBuilder('user_channel_user')
+            .select('user_channel_user.id')
+            .where('user_channel_user.userId = :userId');
+
+          qb.where(
+            'channel.public = true',
+          ).orWhere(`EXISTS (${userQb.getQuery()})`, { userId });
+        }),
+      )
+      .paginate(query);
+  }
+
+  getBlockedUsers(userId: number, query: PaginationQuery) {
+    return this.blockedUserRepository
+      .createQueryBuilder('blocked_user')
+      .innerJoin('blocked_user.user', 'user')
+      .select([
+        'blocked_user.id',
+        'blocked_user.createdOn',
+        'user.id',
+        'user.firstName',
+        'user.lastName',
+        'user.email',
+        'user.userName',
+        'user.userRoleCode',
+        'user.displayPhoto',
+      ])
+      .where('blocked_user.createdById = :userId', { userId })
+      .paginate(query);
+  }
+
+  async createBlockedUser(createdById: number, userId: number) {
+    if (createdById === userId)
+      throw new BadRequestException(
+        'You cannot block yourself',
+        'YOU_CANT_BLOCK_YOURSELF',
+      );
+
+    const [createdBy, user] = await Promise.all([
+      this.userRepository.findOne({
+        where: { id: createdById },
+        select: ['id', 'email'],
+      }),
+      this.userRepository.findOne({
+        where: { id: userId },
+        select: ['id', 'email'],
+      }),
+    ]);
+
+    if (!(user && createdBy))
+      throw new NotFoundException('User not found', 'USER_NOT_FOUND');
+
+    await this.blockedUserRepository.create({ createdById, userId }).save();
+
+    await this.invitationRepository
+      .createQueryBuilder()
+      .delete()
+      .where('email = :userEmail and createdById = :createdById', {
+        createdById,
+        userEmail: user.email,
+      })
+      .orWhere('email = :createdByEmail and createdById = :userId', {
+        userId,
+        createdByEmail: createdBy.email,
+      })
+      .execute();
+    await this.contactRepository
+      .createQueryBuilder()
+      .delete()
+      .where('contactUserId = :createdById and userId = :userId', {
+        createdById,
+        userId,
+      })
+      .orWhere('contactUserId = :userId and userId = :createdById', {
+        createdById,
+        userId,
+      })
+      .execute();
+  }
+
+  async unBlockUser(createdById: number, userId: number) {
+    if (createdById === userId)
+      throw new BadRequestException(
+        'You cannot unblock yourself',
+        'YOU_CANT_UNBLOCK_YOURSELF',
+      );
+    await this.blockedUserRepository.delete({ createdById, userId });
   }
 }
