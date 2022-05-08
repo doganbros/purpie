@@ -95,6 +95,7 @@ export class ClientAuthService {
         id: client.id,
         name: client.name,
         clientRole: client.clientRole,
+        authType: OCTOPUS_CLIENT_AUTH_TYPE,
       });
       client.refreshToken = await hash(tokens.refreshToken);
       await client.save();
