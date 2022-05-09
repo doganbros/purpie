@@ -42,9 +42,10 @@ upload() {
   # Upload to S3
   aws s3 sync /home/recordings/$FILE_ID s3://$S3_BUCKET_NAME/meeting-recordings/$FILE_ID/
   S3_EXIT_CODE=$(echo $?)
-  if [[ ${S3_EXIT_CODE} == 0 ]]
+  if [[ $S3_EXIT_CODE == 0 ]] 
+    then
     echo "/home/recordings/$FILE_ID successfully synced with $S3_BUCKET_NAME/meeting-recordings/$FOLDER_NAME/" >>/tmp/octopus-rtmp.log
-  else
+    else
     echo "/home/recordings/$FILE_ID failed to sync with $S3_BUCKET_NAME/meeting-recordings/$FOLDER_NAME/. Status Code: $S3_EXIT_CODE" >>/tmp/octopus-rtmp.log
   fi
 }
@@ -80,6 +81,7 @@ auth() {
 send_event() {
   HEADER="Bearer $AUTH_TOKEN"
   if [[ $EVENT_TYPE == record-done ]]
+    then
     upload
     echo "$DATE - Sending Recording Event: id: $FILE_ID and filename is: $FILENAME" >>/tmp/octopus-rtmp.log
     RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -H "Authorization: $HEADER" -d '{"id": "'"$FILE_ID"'", "type": "meeting-recording", "fileName": "'"$FILENAME"'"}' ${OCTOPUS_URL}/v1/video/client/feedback)
@@ -88,10 +90,12 @@ send_event() {
     RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -H "Authorization: $HEADER" -d '{"event": "'"$EVENT_TYPE"'", "mediaType": "video", "slug": "'"$VIDEO_ID"'", "userId": '$USER_ID'}' ${OCTOPUS_URL}/v1/stream/client/event)
   fi
   SEND_EVENT_RETURN_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
-  if [[ $RESPONSE == OK || $RESPONSE == Created ]]; then
+  if [[ $RESPONSE == OK || $RESPONSE == Created ]]
+   then
     echo "$DATE - Event successfully sent to Octopus with response: $SEND_EVENT_RETURN_CODE" >>/tmp/octopus-rtmp.log
   else
-    if [[ $NUMBER_OF_TRIES -lt $MAX_EVENT_TRIES ]]; then
+    if [[ $NUMBER_OF_TRIES -lt $MAX_EVENT_TRIES ]]
+     then
       NUMBER_OF_TRIES=$((NUMBER_OF_TRIES+1))
       echo "$DATE - Error while sending event. Retuned code: ${SEND_EVENT_RETURN_CODE}. Num of tries: $NUMBER_OF_TRIES." >>/tmp/octopus-rtmp.log
       auth
