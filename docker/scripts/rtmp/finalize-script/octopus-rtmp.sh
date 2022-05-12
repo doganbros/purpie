@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "" >> /config/token.txt
-source /config/token.txt
+echo "" >> /tmp/token.txt
+source /tmp/token.txt
 
 MAX_EVENT_TRIES=$((3))
 NUMBER_OF_TRIES=$((0))
@@ -44,38 +44,38 @@ upload() {
   S3_EXIT_CODE=$(echo $?)
   if [[ $S3_EXIT_CODE == 0 ]] 
     then
-    echo "/home/recordings/$FILE_ID successfully synced with $S3_BUCKET_NAME/meeting-recordings/$FOLDER_NAME/" >>/tmp/octopus-rtmp.log
+    echo "/home/recordings/$FILE_ID successfully synced with $S3_BUCKET_NAME/meeting-recordings/$FOLDER_NAME/"
     else
-    echo "/home/recordings/$FILE_ID failed to sync with $S3_BUCKET_NAME/meeting-recordings/$FOLDER_NAME/. Status Code: $S3_EXIT_CODE" >>/tmp/octopus-rtmp.log
+    echo "/home/recordings/$FILE_ID failed to sync with $S3_BUCKET_NAME/meeting-recordings/$FOLDER_NAME/. Status Code: $S3_EXIT_CODE"
   fi
 }
 
 auth() {
-  echo "$DATE - Authentication Token Expired. Attempting to Use Refresh Token." >>/tmp/octopus-rtmp.log
+  echo "$DATE - Authentication Token Expired. Attempting to Use Refresh Token."
   RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"refreshToken": "'"$REFRESH_TOKEN"'"}' ${OCTOPUS_URL}/v1/auth/client/refresh-token)
   AUTH_STATUS_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
   if [[ ${AUTH_STATUS_CODE} == 200 ]]; then
-    echo "$DATE - Auth token successfully renewed" >>/tmp/octopus-rtmp.log
+    echo "$DATE - Auth token successfully renewed"
   elif [[ ${AUTH_STATUS_CODE} == 401 || ${AUTH_STATUS_CODE} == 403 || ${AUTH_STATUS_CODE} == 400 ]]; then
-    echo "$DATE - Refresh Token has expired. Re-authing to Octopus..." >>/tmp/octopus-rtmp.log
+    echo "$DATE - Refresh Token has expired. Re-authing to Octopus..."
     RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"apiKey": "'"$OCTOPUS_API_KEY"'", "apiSecret": "'"$OCTOPUS_API_SECRET"'"}' ${OCTOPUS_URL}/v1/auth/client/login)
     LOGIN_RETURN_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
     if [[ ${LOGIN_RETURN_CODE} == 200 ]]; then
-      echo "$DATE - Successfully logged into Octopus" >>/tmp/octopus-rtmp.log
+      echo "$DATE - Successfully logged into Octopus"
     else
-      echo "$DATE - Error while re-auth. Returned: $LOGIN_RETURN_CODE" >>/tmp/octopus-rtmp.log  
+      echo "$DATE - Error while re-auth. Returned: $LOGIN_RETURN_CODE"  
     fi
   else
-    echo "$DATE - Authentication failed with the status code: $AUTH_STATUS_CODE." >>/tmp/octopus-rtmp.log
+    echo "$DATE - Authentication failed with the status code: $AUTH_STATUS_CODE."
   fi
   AUTH_TOKEN=$(echo ${RESPONSE} | jq -r '.accessToken')
   REFRESH_TOKEN=$(echo ${RESPONSE} | jq -r '.refreshToken')
   #Overwriting previous tokens
-  echo "AUTH_TOKEN=$AUTH_TOKEN" >/config/token.txt
-  echo "REFRESH_TOKEN=$REFRESH_TOKEN" >>/config/token.txt
+  echo "AUTH_TOKEN=$AUTH_TOKEN" >/tmp/token.txt
+  echo "REFRESH_TOKEN=$REFRESH_TOKEN" >>/tmp/token.txt
   #Logging new tokens
-  echo "$DATE - Auth Token: $AUTH_TOKEN" >>/tmp/octopus-rtmp.log
-  echo "$DATE - Refresh Token: $REFRESH_TOKEN" >>/tmp/octopus-rtmp.log
+  echo "$DATE - Auth Token: $AUTH_TOKEN"
+  echo "$DATE - Refresh Token: $REFRESH_TOKEN"
 }
 
 send_event() {
@@ -83,25 +83,25 @@ send_event() {
   if [[ $EVENT_TYPE == record-done ]]
     then
     upload
-    echo "$DATE - Sending Recording Event: id: $FILE_ID and filename is: $FILENAME" >>/tmp/octopus-rtmp.log
+    echo "$DATE - Sending Recording Event: id: $FILE_ID and filename is: $FILENAME"
     RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -H "Authorization: $HEADER" -d '{"id": "'"$FILE_ID"'", "type": "meeting-recording", "fileName": "'"$FILENAME"'"}' ${OCTOPUS_URL}/v1/video/client/feedback)
   else
-    echo "$DATE - Sending Streaming Event: slug: $VIDEO_ID and userID is: $USER_ID" >>/tmp/octopus-rtmp.log
+    echo "$DATE - Sending Streaming Event: slug: $VIDEO_ID and userID is: $USER_ID"
     RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -H "Authorization: $HEADER" -d '{"event": "'"$EVENT_TYPE"'", "mediaType": "video", "slug": "'"$VIDEO_ID"'", "userId": '$USER_ID'}' ${OCTOPUS_URL}/v1/stream/client/event)
   fi
   SEND_EVENT_RETURN_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
   if [[ $RESPONSE == OK || $RESPONSE == Created ]]
    then
-    echo "$DATE - Event successfully sent to Octopus with response: $SEND_EVENT_RETURN_CODE" >>/tmp/octopus-rtmp.log
+    echo "$DATE - Event successfully sent to Octopus with response: $SEND_EVENT_RETURN_CODE"
   else
     if [[ $NUMBER_OF_TRIES -lt $MAX_EVENT_TRIES ]]
      then
       NUMBER_OF_TRIES=$((NUMBER_OF_TRIES+1))
-      echo "$DATE - Error while sending event. Retuned code: ${SEND_EVENT_RETURN_CODE}. Num of tries: $NUMBER_OF_TRIES." >>/tmp/octopus-rtmp.log
+      echo "$DATE - Error while sending event. Retuned code: ${SEND_EVENT_RETURN_CODE}. Num of tries: $NUMBER_OF_TRIES."
       auth
       send_event      
     else
-      echo "$DATE - Error while sending event after trying $NUMBER_OF_TRIES times. Retuned code: ${SEND_EVENT_RETURN_CODE}" >>/tmp/octopus-rtmp.log
+      echo "$DATE - Error while sending event after trying $NUMBER_OF_TRIES times. Retuned code: ${SEND_EVENT_RETURN_CODE}"
     fi
   fi
 }
