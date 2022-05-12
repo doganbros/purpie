@@ -6,13 +6,19 @@ interface InitialsAvatarProps {
   id: number;
   value: string;
   size?: 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge' | string;
+  fontSize?: 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge' | string;
 }
 
-const InitialsAvatar: FC<InitialsAvatarProps> = ({ id, value, size }) => {
+const InitialsAvatar: FC<InitialsAvatarProps> = ({
+  id,
+  value,
+  size,
+  fontSize,
+}) => {
   const { background, foreground } = getColorPairFromId(id);
   return value ? (
-    <Avatar round background={{ color: background }} size={size} height="30">
-      <Text color={foreground} size={size}>
+    <Avatar round background={{ color: background }} size={size}>
+      <Text color={foreground} size={fontSize || size}>
         {value
           .split(' ')
           .filter((_v, i: number) => i < 2)

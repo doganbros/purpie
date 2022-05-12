@@ -1,7 +1,6 @@
-import { Box, Header, Menu, Text } from 'grommet';
+import { Box, Header, Text } from 'grommet';
 import { nanoid } from 'nanoid';
 import { useSelector } from 'react-redux';
-import { MoreVertical } from 'grommet-icons';
 import dayjs from 'dayjs';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
@@ -24,9 +23,7 @@ interface Props {
   canDelete?: boolean;
   canEdit?: boolean;
   handleTypingEvent?: boolean;
-  height?: string;
 }
-
 const FETCH_MESSAGE_LIMIT = 50;
 
 const Chat: React.FC<Props> = ({
@@ -37,7 +34,6 @@ const Chat: React.FC<Props> = ({
   canDelete = true,
   canReply = true,
   canEdit = true,
-  height = '90vh',
 }) => {
   const [messages, setMessages] = useState<Array<ChatMessage> | null>(null);
   const [hasMore, setHasMore] = useState(true);
@@ -247,15 +243,10 @@ const Chat: React.FC<Props> = ({
           onSubmit={handleSendMessage}
         />
       ) : null}
-      <Box>
-        <Box
-          height={height}
-          overflow="auto"
-          flex={{ grow: 1 }}
-          direction="column-reverse"
-          id={containerId}
-        >
+      <Box fill>
+        <Box id={containerId} flex overflow="auto">
           <InfiniteScroll
+            height="100%"
             dataLength={messages.length}
             inverse
             hasMore={hasMore}
@@ -263,7 +254,7 @@ const Chat: React.FC<Props> = ({
             loader={<h4>Loading...</h4>}
             scrollableTarget={containerId}
           >
-            {messages.map((message) => {
+            {messages?.map((message, index) => {
               const isCurrentUserMsg = currentUser?.id === message.createdBy.id;
 
               const menuItems = [];
@@ -322,19 +313,8 @@ const Chat: React.FC<Props> = ({
                   <MessageItem
                     key={message.id}
                     message={message}
-                    actions={
-                      menuItems.length ? (
-                        <Menu
-                          size="small"
-                          dropProps={{
-                            align: { top: 'bottom', left: 'left' },
-                            elevation: 'indigo',
-                          }}
-                          icon={<MoreVertical size="20px" />}
-                          items={menuItems}
-                        />
-                      ) : null
-                    }
+                    id={index}
+                    menuItems={menuItems}
                   />
                 </Fragment>
               );
@@ -343,23 +323,26 @@ const Chat: React.FC<Props> = ({
             })}
           </InfiniteScroll>
         </Box>
-        <MessageTextArea
-          name={name}
-          handleTypingEvent={handleTypingEvent}
-          onTyping={onTyping}
-          user={currentUser!}
-          onSubmit={({ message }) =>
-            handleSendMessage({
-              message,
-              medium,
-              to: id,
-              createdBy: currentUser as any,
-            })
-          }
-        />
+        <Box flex={false} pad="small">
+          <MessageTextArea
+            name={name}
+            handleTypingEvent={handleTypingEvent}
+            onTyping={onTyping}
+            user={currentUser!}
+            onSubmit={({ message }) =>
+              handleSendMessage({
+                message,
+                medium,
+                to: id,
+                createdBy: currentUser as any,
+              })
+            }
+          />
+        </Box>
+
         {typingUser ? (
           <Text size="small" as="i">
-            {typingUser.firstName} {typingUser.lastName} is typing...
+            {typingUser?.firstName} {typingUser?.lastName} is typing...
           </Text>
         ) : null}
       </Box>

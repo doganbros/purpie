@@ -93,6 +93,7 @@ const Video: FC = () => {
   return (
     <PrivatePageLayout
       title={data?.title || 'Loading'}
+      rightComponentWithoutExtendedBox
       rightComponent={
         data ? <Chat medium="post" id={+params.id} handleTypingEvent /> : null
       }
