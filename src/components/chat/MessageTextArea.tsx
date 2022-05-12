@@ -1,5 +1,5 @@
 import { Box, Button, Image, TextArea } from 'grommet';
-import React, { FC, useState } from 'react';
+import React, { FC, useLayoutEffect, useState } from 'react';
 import { ChatMessage } from '../../store/types/chat.types';
 import { useThrottle } from '../../hooks/useThrottle';
 import InitialsAvatar from '../utils/InitialsAvatar';
@@ -27,13 +27,28 @@ const MessageTextArea: FC<Props> = ({
   user,
 }) => {
   const throttle = useThrottle();
-  const [focused, setFocused] = useState(false);
-  const [text, setText] = useState('');
-  const attachmentToolVisibility = focused || text.length > 0;
-  console.log(focused, text, text.length > 0);
+  const inputFileRef = React.useRef<HTMLInputElement>(null);
+  const [focused, setFocused] = useState<boolean>(false);
+  const [text, setText] = useState<string>('');
+  const [mouseOver, setMouseOver] = useState<boolean>(false);
+  const [
+    attachmentToolVisibility,
+    setAttachmentToolVisibility,
+  ] = useState<boolean>(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+
+  useLayoutEffect(() => {
+    const newValue = focused || text.length > 0;
+    if (newValue !== attachmentToolVisibility) {
+      if (newValue) {
+        setAttachmentToolVisibility(true);
+      } else if (!mouseOver) {
+        setAttachmentToolVisibility(false);
+      }
+    }
+  }, [mouseOver, text, focused]);
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    console.log(e);
     if (e.key === 'Enter' && !e.shiftKey && e.currentTarget.value) {
       e.preventDefault();
       onSubmit({ message: e.currentTarget.value });
@@ -41,7 +56,6 @@ const MessageTextArea: FC<Props> = ({
       return null;
     }
     if (handleTypingEvent) {
-      setText(e.currentTarget.value);
       return throttle(() => {
         onTyping();
       }, TYPING_THROTTLE_INTERVAL);
@@ -49,12 +63,32 @@ const MessageTextArea: FC<Props> = ({
     return null;
   };
 
+  const onFileChangeCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { files } = e.target;
+    const fileList = [];
+    if (files && files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        fileList.push(files[i]);
+      }
+    }
+    const concatList = fileList.concat(selectedFiles);
+    setSelectedFiles(concatList);
+  };
+
   return (
     <Box
       direction="row"
       align="center"
       margin={{ right: 'small', left: 'small' }}
+      onMouseOver={() => setMouseOver(true)}
+      onMouseLeave={() => setMouseOver(false)}
     >
+      <input
+        type="file"
+        ref={inputFileRef}
+        onChangeCapture={onFileChangeCapture}
+        style={{ display: 'none' }}
+      />
       {user && (
         <Box flex={{ shrink: 0 }}>
           <InitialsAvatar
@@ -89,6 +123,7 @@ const MessageTextArea: FC<Props> = ({
             onBlur={() => setFocused(false)}
             placeholder={`Write ${name ? `to ${name}` : 'your message...'} `}
             onKeyDown={(e) => onKeyDown(e)}
+            onChange={(e) => setText(e.target.value)}
             style={{ overflow: 'none' }}
             rows={1}
           />
@@ -103,10 +138,13 @@ const MessageTextArea: FC<Props> = ({
           justify="between"
           direction="row"
         >
-          <Box direction="row" margin={{left: "small"}}>
+          <Box direction="row" margin={{ left: 'small' }}>
             <Button
               size="small"
               margin="0px"
+              onClick={() => {
+                inputFileRef?.current?.click();
+              }}
               style={{
                 paddingTop: '0',
                 paddingBottom: '0',
@@ -139,7 +177,7 @@ const MessageTextArea: FC<Props> = ({
             />
           </Box>
           <Box>
-            <Button primary label="Send" disabled={text.length > 0} />
+            <Button primary label="Send" disabled={text.length === 0} />
           </Box>
         </ExtendedBox>
       </ExtendedBox>
