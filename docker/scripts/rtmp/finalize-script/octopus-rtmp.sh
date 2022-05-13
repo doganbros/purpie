@@ -34,6 +34,10 @@ then
     OCTOPUS_URL="https://${VIDEO_ID:$((pos + 1))}"
 fi
 
+
+echo "API_KEY: $OCTOPUS_API_KEY, URL=$OCTOPUS_URL" >> /tmp/octopus-rtmp.log
+
+
 upload() {
   # Set credentials for aws cli
   aws configure set aws_access_key_id $AWS_ACCESS_KEY
