@@ -24,8 +24,8 @@ const MessageItem: FC<Props> = ({ id, message, side, children, menuItems }) => {
         {menuItems?.map((item: { label: string; onClick: () => void }) => (
           <Box
             onClick={() => {}}
-            margin={{ horizontal: 'small', vertical: 'xsmall' }}
-            border
+            pad={{ horizontal: 'small', vertical: 'xsmall' }}
+            hoverIndicator={{ background: '#8F9BB3' }}
           >
             <MenuItem onClick={item.onClick}>{item.label}</MenuItem>
           </Box>

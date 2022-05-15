@@ -8,6 +8,7 @@ import ExtendedBox from '../utils/ExtendedBox';
 import AttachmentIcon from '../../assets/icons/attachment.svg';
 import AtIcon from '../../assets/icons/at.svg';
 import EmojiIcon from '../../assets/icons/emoji.svg';
+import MessageFiles from './components/MessageFiles';
 
 interface Props {
   name?: string;
@@ -84,6 +85,7 @@ const MessageTextArea: FC<Props> = ({
       onMouseLeave={() => setMouseOver(false)}
     >
       <input
+        multiple
         type="file"
         ref={inputFileRef}
         onChangeCapture={onFileChangeCapture}
@@ -128,6 +130,7 @@ const MessageTextArea: FC<Props> = ({
             rows={1}
           />
         </Box>
+        <MessageFiles fileList={selectedFiles} />
         <ExtendedBox
           gap="small"
           round={{ corner: 'bottom', size: 'small' }}
