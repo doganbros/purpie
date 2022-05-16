@@ -1,12 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from 'entities/User.entity';
 
-const events = [
-  'play_started',
-  'play_done',
-  'publish_started',
-  'publish_done',
-];
+const events = ['play_started', 'play_done', 'publish_started', 'publish_done'];
 
 const mediaTypes = ['video', 'audio'];
 
