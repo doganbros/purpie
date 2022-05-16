@@ -81,6 +81,7 @@ export interface Post {
   public: boolean;
   record: boolean;
   saved: boolean;
+  streaming: boolean;
   slug: string;
   startDate?: Date;
   title: string;

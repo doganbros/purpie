@@ -1,17 +1,19 @@
-name: Octopus Deployment
+name: Octopus Lint And Test
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
 
 jobs:
   build-app:
 
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [14.x, 16.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -21,8 +23,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-      - run: sudo yarn install
-      - run: sudo yarn build
-      - run: "sudo pm2 stop API || :"
-      - run: "sudo pm2 delete API || :"
-      - run: sudo yarn server:start:pm2
+      - run: yarn install
+      - run: yarn lint
+      - run: yarn server:lint

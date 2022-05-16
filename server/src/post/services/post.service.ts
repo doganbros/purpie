@@ -398,6 +398,7 @@ export class PostService {
         'post.userContactExclusive',
         'post.channelId',
         'post.liveStream',
+        'post.streaming',
         'post.record',
         'postReaction.likesCount',
         'postReaction.commentsCount',
