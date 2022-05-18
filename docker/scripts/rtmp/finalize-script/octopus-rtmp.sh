@@ -84,7 +84,7 @@ auth() {
 
 send_event() {
   HEADER="Bearer $AUTH_TOKEN"
-  if [[ $EVENT_TYPE == record-done ]]
+  if [[ $EVENT_TYPE == record_done ]]
     then
     upload
     echo "$DATE - Sending Recording Event: id: $FILE_ID and filename is: $FILENAME" >> /tmp/octopus-rtmp.log
