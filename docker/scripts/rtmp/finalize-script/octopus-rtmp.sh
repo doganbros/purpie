@@ -44,13 +44,13 @@ upload() {
   aws configure set aws_secret_access_key $AWS_SECRET_KEY
   aws configure set default.region $AWS_DEFAULT_REGION
   # Upload to S3
-  aws s3 sync /home/recordings/$FILE_ID s3://$S3_BUCKET_NAME/meeting-recordings/$FILE_ID/
+  aws s3 sync /tmp/recordings/$FILE_ID s3://$S3_BUCKET_NAME/meeting-recordings/$FILE_ID/
   S3_EXIT_CODE=$(echo $?)
   if [[ $S3_EXIT_CODE == 0 ]] 
     then
-    echo "/home/recordings/$FILE_ID successfully synced with $S3_BUCKET_NAME/meeting-recordings/$FOLDER_NAME/" >> /tmp/octopus-rtmp.log
+    echo "/tmp/recordings/$FILE_ID successfully synced with $S3_BUCKET_NAME/meeting-recordings/$FOLDER_NAME/" >> /tmp/octopus-rtmp.log
     else
-    echo "/home/recordings/$FILE_ID failed to sync with $S3_BUCKET_NAME/meeting-recordings/$FOLDER_NAME/. Status Code: $S3_EXIT_CODE" >> /tmp/octopus-rtmp.log
+    echo "/tmp/recordings/$FILE_ID failed to sync with $S3_BUCKET_NAME/meeting-recordings/$FOLDER_NAME/. Status Code: $S3_EXIT_CODE" >> /tmp/octopus-rtmp.log
   fi
 }
 

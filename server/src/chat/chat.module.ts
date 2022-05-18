@@ -2,6 +2,7 @@ import { UserChannel } from 'entities/UserChannel.entity';
 import { Module } from '@nestjs/common';
 import { PostModule } from 'src/post/post.module';
 import { ChatMessage } from 'entities/ChatMessage.entity';
+import { ChatMessageAttachment } from 'entities/ChatMessageAttachment.entity';
 import { Contact } from 'entities/Contact.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -14,7 +15,12 @@ import { ChatController } from './controllers/chat.controller';
   imports: [
     AuthModule,
     PostModule,
-    TypeOrmModule.forFeature([UserChannel, Contact, ChatMessage]),
+    TypeOrmModule.forFeature([
+      UserChannel,
+      Contact,
+      ChatMessage,
+      ChatMessageAttachment,
+    ]),
   ],
   controllers: [ChatController],
 })

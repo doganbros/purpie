@@ -8,6 +8,7 @@ import {
   Unique,
 } from 'typeorm';
 import { User } from './User.entity';
+import { Post } from './Post.entity';
 
 @Entity()
 @Unique(['userId', 'slug'])
@@ -20,6 +21,10 @@ export class CurrentStreamViewer extends BaseEntity {
 
   @Column()
   slug: string;
+
+  @ManyToOne(() => Post, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @JoinColumn({ name: 'slug', referencedColumnName: 'slug' })
+  post: Post;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })

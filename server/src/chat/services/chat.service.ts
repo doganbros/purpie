@@ -1,7 +1,9 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from 'entities/Contact.entity';
+import { ChatMessageAttachment } from 'entities/ChatMessageAttachment.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
+import { deleteObject } from 'config/s3-storage';
 import { Socket } from 'socket.io';
 import { Repository } from 'typeorm';
 import cookie from 'cookie';
@@ -14,13 +16,20 @@ import { PostService } from 'src/post/services/post.service';
 import { ChatMessageDto } from '../dto/chat-message.dto';
 import { ChatMessageListQuery } from '../dto/chat-message-list.dto';
 
-const { AUTH_TOKEN_SECRET = '', AUTH_TOKEN_SECRET_REFRESH = '' } = process.env;
+const {
+  AUTH_TOKEN_SECRET = '',
+  AUTH_TOKEN_SECRET_REFRESH = '',
+  S3_VIDEO_BUCKET_NAME = '',
+  S3_CHAT_MESSAGE_DIR = '',
+} = process.env;
 
 @Injectable()
 export class ChatService {
   constructor(
     @InjectRepository(UserChannel)
     private userChannelRepository: Repository<UserChannel>,
+    @InjectRepository(ChatMessageAttachment)
+    private chatMessageAttachmentRepo: Repository<ChatMessageAttachment>,
     @InjectRepository(Contact)
     private contactRepository: Repository<Contact>,
     @InjectRepository(ChatMessage)
@@ -85,6 +94,25 @@ export class ChatService {
       .then((v) => !!v.affected);
   }
 
+  saveChatMessageAttachment(payload: Partial<ChatMessageAttachment>) {
+    return this.chatMessageAttachmentRepo.create(payload).save();
+  }
+
+  async removeChatMessageAttachment(name: string, createdById: number) {
+    const result = await this.chatMessageAttachmentRepo.delete({
+      name,
+      createdById,
+    });
+
+    if (result.affected) {
+      const location = `${S3_CHAT_MESSAGE_DIR}/${name}`;
+      await deleteObject({
+        Key: location,
+        Bucket: S3_VIDEO_BUCKET_NAME,
+      });
+    }
+  }
+
   async getChatMessages(
     userId: number,
     medium: string,
@@ -115,6 +143,7 @@ export class ChatService {
     const baseQuery = this.chatMessageRepository
       .createQueryBuilder('chat')
       .select([
+        'chat.id',
         'chat.identifier',
         'chat.parentIdentifier',
         'chat.medium',
@@ -152,6 +181,7 @@ export class ChatService {
       ])
       .leftJoin('chat.createdBy', 'createdBy')
       .leftJoin('chat.parent', 'parentChat')
+      .leftJoinAndSelect('chat.attachments', 'attachments')
       .leftJoin('parentChat.createdBy', 'parentChatCreatedBy')
       .orderBy('chat.id', 'DESC')
       .where('chat.medium = :medium', { medium })
@@ -165,7 +195,11 @@ export class ChatService {
     return baseQuery.paginate({ limit: query.limit, skip: 0 });
   }
 
-  saveChatMessage(userId: number, payload: ChatMessageDto, isEdit: boolean) {
+  async saveChatMessage(
+    userId: number,
+    payload: ChatMessageDto,
+    isEdit: boolean,
+  ) {
     if (isEdit) {
       return this.chatMessageRepository
         .update(
@@ -189,9 +223,19 @@ export class ChatService {
 
     if (payload.parent) data.parentIdentifier = payload.parent.identifier;
 
-    return this.chatMessageRepository
+    const chatMessageId = await this.chatMessageRepository
       .create(data)
       .save()
       .then((res) => res.id);
+
+    if (payload.attachments?.length) {
+      for (const attachment of payload.attachments) {
+        await this.chatMessageAttachmentRepo
+          .create({ name: attachment.name, chatMessageId })
+          .save();
+      }
+    }
+
+    return chatMessageId;
   }
 }
