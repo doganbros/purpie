@@ -8,12 +8,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-const events = [
-  'play_started',
-  'play_done',
-  'publish_started',
-  'publish_done',
-] as const;
+const events = ['publish_started', 'publish_done'] as const;
 
 const mediaTypes = ['video', 'audio'] as const;
 

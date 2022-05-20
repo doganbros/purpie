@@ -26,6 +26,8 @@ interface RouteParams {
   id: string;
 }
 
+const { REACT_APP_STREAMING_URL } = process.env;
+
 const Video: FC = () => {
   const DECISECOND = 10;
   const params = useParams<RouteParams>();
@@ -129,8 +131,12 @@ const Video: FC = () => {
                 },
                 sources: [
                   {
-                    src: `${http.defaults.baseURL}/post/video/view/${data.slug}/${data.videoName}`,
-                    type: 'video/mp4',
+                    src: data.streaming
+                      ? `${REACT_APP_STREAMING_URL}/${data.slug}.m3u8`
+                      : `${http.defaults.baseURL}/post/video/view/${data.slug}/${data.videoName}`,
+                    type: data.streaming
+                      ? 'application/x-mpegURL'
+                      : 'video/mp4',
                   },
                 ],
               }}

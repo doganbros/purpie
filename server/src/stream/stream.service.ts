@@ -28,29 +28,6 @@ export class StreamService {
       mediaType: info.mediaType || 'video',
     });
 
-    // user events
-    if (['play_started', 'play_done'].includes(info.event)) {
-      streamLog.userId = info.userId!;
-      try {
-        if (info.event === 'play_started') {
-          // when the same event is sent for a user a unique constraint error would be thrown. It can be ignored.
-          await this.currentStreamViewerRepo
-            .create({
-              userId: info.userId,
-              slug: info.slug,
-            })
-            .save();
-        } else {
-          await this.currentStreamViewerRepo.delete({
-            userId: info.userId,
-            slug: info.slug,
-          });
-        }
-      } catch (error) {
-        //
-      }
-    }
-
     await streamLog.save();
 
     if (

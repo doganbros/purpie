@@ -3,6 +3,8 @@ export class ChatMessageDto {
 
   message: string;
 
+  attachments?: [{ name: string }];
+
   edited?: boolean;
 
   createdOn: Date;
