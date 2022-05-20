@@ -16,6 +16,8 @@ interface VideoPostProps {
   onClickSave: (id: number) => any;
 }
 
+const { REACT_APP_STREAMING_URL } = process.env;
+
 export const VideoPost: FC<VideoPostProps> = ({
   id,
   videoName,
@@ -56,8 +58,10 @@ export const VideoPost: FC<VideoPostProps> = ({
           aspectRatio: '16:9',
           sources: [
             {
-              src: `${http.defaults.baseURL}/post/video/view/${slug}/${videoName}`,
-              type: 'video/mp4',
+              src: live
+                ? `${REACT_APP_STREAMING_URL}/${slug}.m3u8`
+                : `${http.defaults.baseURL}/post/video/view/${slug}/${videoName}`,
+              type: live ? 'application/x-mpegURL' : 'video/mp4',
             },
           ],
         }}

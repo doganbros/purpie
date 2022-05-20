@@ -31,7 +31,7 @@ export class StreamService {
     await streamLog.save();
 
     if (
-      ['publish-started', 'publish_done'].includes(info.event) &&
+      ['publish_started', 'publish_done'].includes(info.event) &&
       (!info.postType || info.postType === 'meeting')
     ) {
       await this.postRepo.update(

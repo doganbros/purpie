@@ -419,8 +419,8 @@ export class PostService {
       )
       .setParameter('currentUserId', userId)
       .innerJoin('savedPost.post', 'post')
+      .innerJoin('post.createdBy', 'createdBy')
       .leftJoin('post.postReaction', 'postReaction')
-      .leftJoin('post.createdBy', 'createdBy')
       .leftJoin('post.channel', 'channel')
       .leftJoin(
         UserChannel,
@@ -510,7 +510,7 @@ export class PostService {
       ])
 
       .setParameter('currentUserId', userId)
-      .leftJoin('post.createdBy', 'createdBy')
+      .innerJoin('post.createdBy', 'createdBy')
       .leftJoin('post.postReaction', 'postReaction')
       .where(
         new Brackets((qb) => {
