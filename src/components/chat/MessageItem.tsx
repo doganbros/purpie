@@ -37,84 +37,89 @@ const MessageItem: FC<Props> = ({ id, message, side, children, menuItems }) => {
   return (
     <>
       {renderContextMenu()}
-      <ContextMenuTrigger
-        id={`message_${id}`}
-        disableIfShiftIsPressed
-        holdToDisplay={-1}
-      >
-        <Box
-          direction={message.to === id ? 'row-reverse' : 'row'}
-          id={`message-item-${message.identifier}`}
-          justify={side === 'right' ? 'end' : 'start'}
-          alignContent="end"
-          gap="small"
-          margin="small"
-          pad={{ top: 'medium' }}
-          round="small"
-          elevation={message.to === id ? 'right' : 'left'}
+      <Box width="95%">
+        <ContextMenuTrigger
+          id={`message_${id}`}
+          disableIfShiftIsPressed
+          holdToDisplay={-1}
         >
           <Box
-            margin={{ [message.to === id ? 'right' : 'left']: '-15.5px' }}
-            pad="1px"
-            height="42px"
-            width="48px"
-            round="xlarge"
-            border={{ color: '#E4E9F2', size: 'small' }}
+            direction={message.to === id ? 'row-reverse' : 'row'}
+            id={`message-item-${message.identifier}`}
+            justify={side === 'right' ? 'end' : 'start'}
+            alignContent="end"
+            gap="small"
+            margin="small"
+            pad={{ top: 'medium' }}
+            round="small"
+            elevation={message.to === id ? 'right' : 'left'}
           >
-            <InitialsAvatar
-              size="36px"
-              fontSize="small"
-              id={message.createdBy.id}
-              value={`${message.createdBy.firstName} ${message.createdBy.lastName} `}
-            />
-          </Box>
-          <Box
-            direction="column"
-            justify="end"
-            margin={{ right: 'small' }}
-            width={{ width: message.to === id ? '50%' : '100%' }}
-          >
-            <Box direction="row" justify={message.to === id ? 'end' : 'start'}>
-              <Box direction="row">
+            <Box
+              margin={{ [message.to === id ? 'right' : 'left']: '-15.5px' }}
+              pad="1px"
+              height="42px"
+              width="48px"
+              round="xlarge"
+              border={{ color: '#E4E9F2', size: 'small' }}
+            >
+              <InitialsAvatar
+                size="36px"
+                fontSize="small"
+                id={message.createdBy.id}
+                value={`${message.createdBy.firstName} ${message.createdBy.lastName} `}
+              />
+            </Box>
+            <Box
+              direction="column"
+              justify="end"
+              margin={{ right: 'small' }}
+              width={{ width: message.to === id ? '50%' : '100%' }}
+            >
+              <Box
+                direction="row"
+                justify={message.to === id ? 'end' : 'start'}
+              >
+                <Box direction="row">
+                  <Text
+                    size="small"
+                    margin={{ right: 'xsmall' }}
+                    weight="bold"
+                    textAlign={message.to === id ? 'end' : 'start'}
+                  >
+                    {message.createdBy.firstName} {message.createdBy.lastName}
+                  </Text>
+                  <Text size="small">
+                    {dayjs(message.createdOn).format('hh:mm:a')}
+                  </Text>
+                </Box>
+              </Box>
+              <Box>
+                {message.parent ? (
+                  <Text size="xsmall" margin={{ bottom: 'xsmall' }}>
+                    <Text size="xsmall" as="i" margin={{ right: 'xsmall' }}>
+                      Replied to:
+                    </Text>
+                    <Anchor href={`#message-item-${message.parent.identifier}`}>
+                      {message.parent.message}
+                    </Anchor>
+                  </Text>
+                ) : null}
                 <Text
                   size="small"
                   margin={{ right: 'xsmall' }}
-                  weight="bold"
                   textAlign={message.to === id ? 'end' : 'start'}
                 >
-                  {message.createdBy.firstName} {message.createdBy.lastName}
+                  {message.deleted
+                    ? 'This message has been deleted'
+                    : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}
                 </Text>
-                <Text size="small">
-                  {dayjs(message.createdOn).format('hh:mm:a')}
-                </Text>
+                {message.edited ? <Text size="xsmall">(edited)</Text> : null}
+                {children}
               </Box>
             </Box>
-            <Box>
-              {message.parent ? (
-                <Text size="xsmall" margin={{ bottom: 'xsmall' }}>
-                  <Text size="xsmall" as="i" margin={{ right: 'xsmall' }}>
-                    Replied to:
-                  </Text>
-                  <Anchor href={`#message-item-${message.parent.identifier}`}>
-                    {message.parent.message}
-                  </Anchor>
-                </Text>
-              ) : null}
-              <Text
-                size="small"
-                margin={{ right: 'xsmall' }}
-                textAlign={message.to === id ? 'end' : 'start'}
-              >
-                {message.deleted
-                  ? 'This message has been deleted'
-                  : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}
-              </Text>
-              {message.edited ? <Text size="xsmall">(edited)</Text> : null}
-              {children}
-            </Box>
           </Box>
-        </Box>
-      </ContextMenuTrigger>
+        </ContextMenuTrigger>
+      </Box>
     </>
   );
 };

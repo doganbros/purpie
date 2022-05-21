@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid';
 import { useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { socket } from '../../helpers/socket';
 import PlanMeetingTheme from '../../layers/meeting/custom-theme';
 import { getChatMessages } from '../../store/services/chat.service';
@@ -13,7 +13,7 @@ import MessageItem from './MessageItem';
 import { User } from '../../store/types/auth.types';
 import ReplyMessage from './layers/ReplyMessage';
 import EditMessage from './layers/EditMessage';
-import MessageTextArea from './MessageTextArea';
+import MessageBox from './components/MessageBox';
 
 interface Props {
   medium: 'direct' | 'channel' | 'post';
@@ -293,7 +293,7 @@ const Chat: React.FC<Props> = ({
                 });
 
               const item = (
-                <Fragment key={message.identifier}>
+                <Box key={message.identifier} alignSelf="center" align="center">
                   {!lastDate ||
                   dayjs(message.createdOn)
                     .startOf('day')
@@ -316,7 +316,7 @@ const Chat: React.FC<Props> = ({
                     id={index}
                     menuItems={menuItems}
                   />
-                </Fragment>
+                </Box>
               );
               lastDate = message.createdOn;
               return item;
@@ -324,7 +324,7 @@ const Chat: React.FC<Props> = ({
           </InfiniteScroll>
         </Box>
         <Box flex={false} pad="small">
-          <MessageTextArea
+          <MessageBox
             name={name}
             handleTypingEvent={handleTypingEvent}
             onTyping={onTyping}
