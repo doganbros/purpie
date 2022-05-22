@@ -42,6 +42,10 @@ const MessageBox: FC<Props> = ({
     suggestionPickerVisibility,
     setSuggestionPickerVisibility,
   ] = useState<boolean>(false);
+  const [
+    mentionPickerVisibility,
+    setMentionPickerVisibility,
+  ] = useState<boolean>(false);
 
   useLayoutEffect(() => {
     const newValue = focused || text.length > 0;
@@ -105,28 +109,27 @@ const MessageBox: FC<Props> = ({
           emojiPickerVisibility={emojiPickerVisibility}
           setEmojiPickerVisibility={setEmojiPickerVisibility}
           setSuggestionPickerVisibility={setSuggestionPickerVisibility}
+          setMentionPickerVisibility={setMentionPickerVisibility}
           suggestionPickerVisibility={suggestionPickerVisibility}
           componentRef={componentRef}
+          mentionPickerVisibility={mentionPickerVisibility}
         />
         <MessageFiles
           fileList={selectedFiles}
           deleteFile={() => {
-            console.log('deletee file');
+            console.log('delete file');
           }}
         />
         <MessageAttachments
-          // attachmentToolVisibility={
-          //   attachmentToolVisibility ||
-          //   selectedFiles.length > 0 ||
-          //   emojiPickerVisibility ||
-          //   suggestionPickerVisibility
-          // }
           attachmentToolVisibility
           text={text}
           selectedFiles={selectedFiles}
           setSelectedFiles={setSelectedFiles}
           toggleEmojiPicker={() =>
             setEmojiPickerVisibility(!emojiPickerVisibility)
+          }
+          toggleMentionPicker={() =>
+            setMentionPickerVisibility(!mentionPickerVisibility)
           }
         />
       </Box>

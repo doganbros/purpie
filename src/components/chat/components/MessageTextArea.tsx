@@ -13,8 +13,11 @@ import React, {
 } from 'react';
 
 import { EmojiData, emojiIndex } from 'emoji-mart';
+import _ from 'lodash';
 import EmojiPicker from './EmojiPicker';
 import SuggestionPicker from './SuggestionPicker';
+import MentionPicker from './MentionPicker';
+import { UserBasic } from '../../../store/types/auth.types';
 
 interface Props {
   text: string;
@@ -28,7 +31,16 @@ interface Props {
   componentRef: RefObject<HTMLDivElement>;
   suggestionPickerVisibility: boolean;
   setSuggestionPickerVisibility: Dispatch<SetStateAction<boolean>>;
+  mentionPickerVisibility: boolean;
+  setMentionPickerVisibility: Dispatch<SetStateAction<boolean>>;
 }
+
+const userListForMentions = [
+  { id: 1, firstName: 'User', userName: 'user1', lastName: '1', email: '1@1' },
+  { id: 2, firstName: 'User', userName: 'user2', lastName: '2', email: '2@2' },
+  { id: 3, firstName: 'User', userName: 'user3', lastName: '3', email: '3@3' },
+  { id: 4, firstName: 'User', userName: 'user4', lastName: '4', email: '4@4' },
+];
 
 const MessageBox: FC<Props> = ({
   text,
@@ -42,6 +54,8 @@ const MessageBox: FC<Props> = ({
   componentRef,
   suggestionPickerVisibility,
   setSuggestionPickerVisibility,
+  mentionPickerVisibility,
+  setMentionPickerVisibility,
 }) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [editingEmoji, setEditingEmoji] = useState<string>('');
@@ -141,10 +155,37 @@ const MessageBox: FC<Props> = ({
     return resultText;
   };
 
+  const getMentionInSentence = (
+    textMessage: string,
+    selectionIndex: number
+  ) => {
+    const resultText = textMessage;
+    let mentionStartIndex = -1;
+
+    for (let i = selectionIndex; i >= 0; i--) {
+      if (resultText[i] === '@') {
+        if (i === 0 || resultText[i - 1] === ' ') mentionStartIndex = i;
+        break;
+      } else if (resultText[i] === ' ') {
+        break;
+      }
+    }
+
+    if (mentionStartIndex > -1) {
+      // send api request
+      setMentionPickerVisibility(true);
+    } else if (mentionPickerVisibility) {
+      setMentionPickerVisibility(false);
+    }
+
+    return resultText;
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.persist();
     const { value, selectionStart } = e.target;
-    const currentText = getEmojiTextInSentence(value, selectionStart);
+    let currentText = getEmojiTextInSentence(value, selectionStart);
+    currentText = getMentionInSentence(currentText, selectionStart);
     setText(currentText);
   };
 
@@ -160,21 +201,25 @@ const MessageBox: FC<Props> = ({
         case 'ArrowLeft':
           e.persist();
           getEmojiTextInSentence(value, selectionStart);
+          getMentionInSentence(value, selectionStart);
           break;
         case 'Right':
         case 'ArrowRight':
           e.persist();
           getEmojiTextInSentence(value, selectionStart, true);
+          getMentionInSentence(value, selectionStart);
           break;
         case 'Up':
         case 'ArrowUp':
           e.persist();
           getEmojiTextInSentence(value, selectionStart);
+          getMentionInSentence(value, selectionStart);
           break;
         case 'Down':
         case 'ArrowDown':
           e.persist();
           getEmojiTextInSentence(value, selectionStart);
+          getMentionInSentence(value, selectionStart);
           break;
         default:
           e.persist();
@@ -219,9 +264,28 @@ const MessageBox: FC<Props> = ({
     }
   };
 
-  // const onOverEmojiIndex = (index: number) => setSelectedEmojiIndex(index);
+  const onSelectMention = (user: UserBasic) => {
+    const element = textAreaRef.current;
+    const { userName } = user;
+    if (element && userName) {
+      let before;
+      const after = text.slice(element.selectionStart);
 
-  // const highlight = editingEmoji.substr(1);
+      const atIndex = _.findLastIndex(
+        text.slice(0, element.selectionStart),
+        (i) => i === '@'
+      );
+      if (atIndex > -1) before = text.slice(0, atIndex);
+      if (before) {
+        const newText = `${before}@${user.userName}${
+          after?.charAt(0) === ' ' ? after : ` ${after}`
+        }`;
+        setText(newText);
+        handleTextAreaCursor(before.length + userName.length + 2);
+      }
+    }
+    setMentionPickerVisibility(false);
+  };
 
   const pickerWidth = useMemo(
     () =>
@@ -250,6 +314,13 @@ const MessageBox: FC<Props> = ({
         onSelect={enterEmoji}
         bottom={pickerBottom}
         width={pickerWidth}
+      />
+      <MentionPicker
+        visibility={mentionPickerVisibility}
+        bottom={pickerBottom}
+        width={pickerWidth}
+        userList={userListForMentions}
+        onSelect={onSelectMention}
       />
       <Box round="small" fill gap="small" width="100%" ref={componentRef}>
         <TextArea

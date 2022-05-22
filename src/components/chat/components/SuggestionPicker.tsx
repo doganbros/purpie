@@ -30,7 +30,7 @@ const SuggestionPicker: FC<Props> = ({
       <Box
         flex
         pad={{ vertical: 'xxsmall', horizontal: 'xsmall' }}
-        id="emoji_picker"
+        id="suggestion_picker"
         background="white"
         round="large"
         direction="row"
@@ -41,7 +41,6 @@ const SuggestionPicker: FC<Props> = ({
           return (
             <Button
               plain
-              color="red"
               label={
                 'native' in suggestion ? suggestion.native : suggestion.name
               }

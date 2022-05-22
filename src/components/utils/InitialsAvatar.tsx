@@ -18,7 +18,11 @@ const InitialsAvatar: FC<InitialsAvatarProps> = ({
   const { background, foreground } = getColorPairFromId(id);
   return value ? (
     <Avatar round background={{ color: background }} size={size}>
-      <Text color={foreground} size={fontSize || size}>
+      <Text
+        color={foreground}
+        size={fontSize || size}
+        style={{ userSelect: 'none' }}
+      >
         {value
           .split(' ')
           .filter((_v, i: number) => i < 2)

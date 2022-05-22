@@ -11,6 +11,7 @@ interface Props {
   selectedFiles: File[];
   setSelectedFiles: Dispatch<SetStateAction<File[]>>;
   toggleEmojiPicker: () => void;
+  toggleMentionPicker: () => void;
 }
 
 const MessageAttachments: FC<Props> = ({
@@ -19,6 +20,7 @@ const MessageAttachments: FC<Props> = ({
   selectedFiles,
   setSelectedFiles,
   toggleEmojiPicker,
+  toggleMentionPicker,
 }) => {
   const inputFileRef = React.useRef<HTMLInputElement>(null);
 
@@ -74,6 +76,7 @@ const MessageAttachments: FC<Props> = ({
           <Button
             size="small"
             margin="0px"
+            onClick={toggleMentionPicker}
             style={{
               paddingTop: '0',
               paddingBottom: '0',

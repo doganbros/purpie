@@ -17,7 +17,7 @@ const MessageFiles: React.FC<Props> = ({ fileList, deleteFile }) => {
           justify="between"
           align="center"
           margin="xxsmall"
-          hoverIndicator={{ background: 'rgba(0,0,0,0.2)' }}
+          hoverIndicator={{ background: 'rgba(0,0,0,0.1)' }}
         >
           <Text size="small">{file.name}</Text>
           <Button
