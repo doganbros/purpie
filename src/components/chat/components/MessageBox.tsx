@@ -114,12 +114,14 @@ const MessageBox: FC<Props> = ({
           componentRef={componentRef}
           mentionPickerVisibility={mentionPickerVisibility}
         />
-        <MessageFiles
-          fileList={selectedFiles}
-          deleteFile={() => {
-            console.log('delete file');
-          }}
-        />
+        {selectedFiles?.length > 0 && (
+          <MessageFiles
+            fileList={selectedFiles}
+            deleteFile={(index) =>
+              setSelectedFiles(selectedFiles.filter((_, idx) => index !== idx))
+            }
+          />
+        )}
         <MessageAttachments
           attachmentToolVisibility
           text={text}

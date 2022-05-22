@@ -2,17 +2,23 @@ import dayjs from 'dayjs';
 import { Anchor, Box, Text } from 'grommet';
 import React, { FC } from 'react';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
+import { useSelector } from 'react-redux';
 import { ChatMessage } from '../../store/types/chat.types';
 import InitialsAvatar from '../utils/InitialsAvatar';
+import { AppState } from '../../store/reducers/root.reducer';
 
 interface Props {
   message: ChatMessage;
   id?: number;
-  side?: 'right' | 'left';
   menuItems?: { label: string; onClick: () => void }[] | null;
 }
 
-const MessageItem: FC<Props> = ({ id, message, side, children, menuItems }) => {
+const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
+  const {
+    auth: { user: currentUser },
+  } = useSelector((state: AppState) => state);
+  const ownMessage = message.createdBy.id === currentUser?.id;
+
   const renderContextMenu = () => (
     <ContextMenu id={`message_${id}`} preventHideOnContextMenu>
       <Box
@@ -39,26 +45,26 @@ const MessageItem: FC<Props> = ({ id, message, side, children, menuItems }) => {
       {renderContextMenu()}
       <Box width="95%">
         <ContextMenuTrigger
-          id={`message_${id}`}
+          id={`message_${message.id}`}
           disableIfShiftIsPressed
           holdToDisplay={-1}
         >
           <Box
-            direction={message.to === id ? 'row-reverse' : 'row'}
+            direction={ownMessage ? 'row-reverse' : 'row'}
             id={`message-item-${message.identifier}`}
-            justify={side === 'right' ? 'end' : 'start'}
+            justify="start"
             alignContent="end"
             gap="small"
             margin="small"
             pad={{ top: 'medium' }}
             round="small"
-            elevation={message.to === id ? 'right' : 'left'}
+            elevation={ownMessage ? 'right' : 'left'}
           >
             <Box
-              margin={{ [message.to === id ? 'right' : 'left']: '-15.5px' }}
+              margin={{ [ownMessage ? 'right' : 'left']: '-15.5px' }}
               pad="1px"
               height="42px"
-              width="48px"
+              width={ownMessage ? '42px' : '48px'}
               round="xlarge"
               border={{ color: '#E4E9F2', size: 'small' }}
             >
@@ -73,18 +79,15 @@ const MessageItem: FC<Props> = ({ id, message, side, children, menuItems }) => {
               direction="column"
               justify="end"
               margin={{ right: 'small' }}
-              width={{ width: message.to === id ? '50%' : '100%' }}
+              width={{ width: ownMessage ? '50%' : '100%' }}
             >
-              <Box
-                direction="row"
-                justify={message.to === id ? 'end' : 'start'}
-              >
+              <Box direction="row" justify={ownMessage ? 'end' : 'start'}>
                 <Box direction="row">
                   <Text
                     size="small"
                     margin={{ right: 'xsmall' }}
                     weight="bold"
-                    textAlign={message.to === id ? 'end' : 'start'}
+                    textAlign={ownMessage ? 'end' : 'start'}
                   >
                     {message.createdBy.firstName} {message.createdBy.lastName}
                   </Text>
@@ -107,11 +110,11 @@ const MessageItem: FC<Props> = ({ id, message, side, children, menuItems }) => {
                 <Text
                   size="small"
                   margin={{ right: 'xsmall' }}
-                  textAlign={message.to === id ? 'end' : 'start'}
+                  textAlign={ownMessage ? 'end' : 'start'}
                 >
                   {message.deleted
                     ? 'This message has been deleted'
-                    : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}
+                    : message.message}
                 </Text>
                 {message.edited ? <Text size="xsmall">(edited)</Text> : null}
                 {children}

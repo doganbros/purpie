@@ -59,7 +59,6 @@ const MessageBox: FC<Props> = ({
 }) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [editingEmoji, setEditingEmoji] = useState<string>('');
-  const [selectedEmojiIndex, setSelectedEmojiIndex] = useState<number>(0);
   const [suggestions, setSuggestions] = useState<EmojiData[]>([]);
 
   useEffect(() => {
@@ -151,7 +150,6 @@ const MessageBox: FC<Props> = ({
 
     setSuggestions(sugs);
     setEditingEmoji(currentEmoji || '');
-    setSelectedEmojiIndex(0);
     return resultText;
   };
 
@@ -232,10 +230,6 @@ const MessageBox: FC<Props> = ({
   const handleKeyUp = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     switch (e.key) {
       case 'Enter':
-        if (suggestions.length > 0) {
-          enterEmoji(suggestions[selectedEmojiIndex]);
-          e.preventDefault();
-        }
         break;
       case 'Tab':
       case ' ':
@@ -259,7 +253,6 @@ const MessageBox: FC<Props> = ({
       setText(newText);
       setEditingEmoji('');
       setSuggestions([]);
-      setSelectedEmojiIndex(0);
       handleTextAreaCursor(before.length + native.length);
     }
   };

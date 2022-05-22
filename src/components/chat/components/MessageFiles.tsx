@@ -4,13 +4,13 @@ import { Trash } from 'grommet-icons';
 
 type Props = {
   fileList: File[];
-  deleteFile: () => void;
+  deleteFile: (index: number) => void;
 };
 
 const MessageFiles: React.FC<Props> = ({ fileList, deleteFile }) => {
   return (
     <Box>
-      {fileList.map((file: File) => (
+      {fileList.map((file: File, index) => (
         <Box
           pad={{ left: 'small', right: 'small' }}
           direction="row"
@@ -19,9 +19,11 @@ const MessageFiles: React.FC<Props> = ({ fileList, deleteFile }) => {
           margin="xxsmall"
           hoverIndicator={{ background: 'rgba(0,0,0,0.1)' }}
         >
-          <Text size="small">{file.name}</Text>
+          <Text size="small" truncate>
+            {file.name}
+          </Text>
           <Button
-            onClick={deleteFile}
+            onClick={() => deleteFile(index)}
             icon={<Trash size="small" />}
             style={{ padding: '5px' }}
           />

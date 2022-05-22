@@ -224,6 +224,22 @@ const Chat: React.FC<Props> = ({
 
   if (!messages) return <Box>Loading...</Box>;
 
+  const renderDayItem = (message: ChatMessage) => {
+    return (
+      <Header
+        round="small"
+        pad={{ horizontal: 'small', vertical: 'xsmall' }}
+        margin={{ vertical: 'xsmall' }}
+        justify="center"
+        border={{ color: 'rgba(0,0,0,0.1)', size: 'xsmall' }}
+      >
+        <Text textAlign="center" size="small">
+          {parseDateToString(message.createdOn)}
+        </Text>
+      </Header>
+    );
+  };
+
   return (
     <PlanMeetingTheme>
       {editedMessage ? (
@@ -254,7 +270,7 @@ const Chat: React.FC<Props> = ({
             loader={<h4>Loading...</h4>}
             scrollableTarget={containerId}
           >
-            {messages?.map((message, index) => {
+            {messages?.map((message) => {
               const isCurrentUserMsg = currentUser?.id === message.createdBy.id;
 
               const menuItems = [];
@@ -291,29 +307,18 @@ const Chat: React.FC<Props> = ({
                     setRepliedMessage(message);
                   },
                 });
-
               const item = (
                 <Box key={message.identifier} alignSelf="center" align="center">
                   {!lastDate ||
                   dayjs(message.createdOn)
                     .startOf('day')
-                    .diff(dayjs(lastDate).startOf('day'), 'day') > 0 ? (
-                    <Header
-                      background="accent-3"
-                      round="small"
-                      pad="xsmall"
-                      margin={{ vertical: 'xsmall' }}
-                      justify="center"
-                    >
-                      <Text textAlign="center" size="small">
-                        {parseDateToString(message.createdOn)}
-                      </Text>
-                    </Header>
-                  ) : null}
+                    .diff(dayjs(lastDate).startOf('day'), 'day') > 0
+                    ? renderDayItem(message)
+                    : null}
                   <MessageItem
                     key={message.id}
                     message={message}
-                    id={index}
+                    id={message.id}
                     menuItems={menuItems}
                   />
                 </Box>
