@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Contact } from 'entities/Contact.entity';
 import { ChatMessageAttachment } from 'entities/ChatMessageAttachment.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
+import { CurrentStreamViewer } from 'entities/CurrentStreamViewer.entity';
 import { deleteObject } from 'config/s3-storage';
 import { Socket } from 'socket.io';
 import { Repository } from 'typeorm';
@@ -34,6 +35,8 @@ export class ChatService {
     private contactRepository: Repository<Contact>,
     @InjectRepository(ChatMessage)
     private chatMessageRepository: Repository<ChatMessage>,
+    @InjectRepository(CurrentStreamViewer)
+    private currentStreamViewerRepository: Repository<CurrentStreamViewer>,
     private authService: AuthService,
     private postService: PostService,
   ) {}
@@ -237,5 +240,29 @@ export class ChatService {
     }
 
     return chatMessageId;
+  }
+
+  async addCurrentStreamViewer(userId: number, postId: number) {
+    return this.currentStreamViewerRepository
+      .create({
+        postId,
+        userId,
+      })
+      .save()
+      .catch(() => {
+        // if it fails validation contraints just ignore it
+        return null;
+      });
+  }
+
+  async removeCurrentStreamViewer(userId: number, postId: number) {
+    return this.currentStreamViewerRepository.delete({
+      postId,
+      userId,
+    });
+  }
+
+  async getTotalNumberOfStreamViewers(postId: number) {
+    return this.currentStreamViewerRepository.count({ postId });
   }
 }

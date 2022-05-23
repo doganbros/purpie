@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CurrentStreamViewer } from 'entities/CurrentStreamViewer.entity';
 import { Post } from 'entities/Post.entity';
 import { StreamLog } from 'entities/StreamLog.entity';
-import { User } from 'entities/User.entity';
 import { Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { ClientStreamEventDto } from './dto/client-stream-event.dto';
@@ -15,10 +13,6 @@ export class StreamService {
     private streamLogRepo: Repository<StreamLog>,
     @InjectRepository(Post)
     private readonly postRepo: Repository<Post>,
-    @InjectRepository(User)
-    private readonly userRepo: Repository<User>,
-    @InjectRepository(CurrentStreamViewer)
-    private readonly currentStreamViewerRepo: Repository<CurrentStreamViewer>,
   ) {}
 
   async setStreamEvent(info: ClientStreamEventDto) {
@@ -64,22 +58,5 @@ export class StreamService {
       .leftJoin('stream_log.user', 'user')
       .where('stream_log.slug = :slug', { slug })
       .paginate(query);
-  }
-
-  async getTotalViewers(slug: string) {
-    return this.streamLogRepo
-      .createQueryBuilder('stream_log')
-      .select('COUNT(distinct stream_log.userId) AS total')
-      .where('stream_log.slug = :slug', { slug })
-      .andWhere('stream_log.event = :event', { event: 'play_started' })
-      .getRawOne();
-  }
-
-  async getCurrentTotalViewers(slug: string) {
-    return this.currentStreamViewerRepo
-      .createQueryBuilder('current_stream_viewer')
-      .select('COUNT(current_stream_viewer.userId) AS total')
-      .where('current_stream_viewer.slug = :slug', { slug })
-      .getRawOne();
   }
 }

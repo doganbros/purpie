@@ -13,6 +13,9 @@ export class PostReaction extends RecordEntity {
   @Column({ default: 0 })
   viewsCount: number;
 
+  @Column({ default: 0 })
+  liveStreamViewersCount: number;
+
   @OneToOne(() => Post, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'postId' })
   post: Post;

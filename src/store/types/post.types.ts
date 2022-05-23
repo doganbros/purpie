@@ -91,6 +91,7 @@ export interface Post {
   postReaction: {
     likesCount: number;
     commentsCount: number;
+    liveStreamViewersCount: number;
     viewsCount: number;
   };
 }
