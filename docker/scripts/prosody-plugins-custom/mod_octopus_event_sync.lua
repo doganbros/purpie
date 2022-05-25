@@ -87,7 +87,9 @@ local function async_http_request(url, options, callback, timeout_callback, retr
             -- If not authorized
             if (response_code == 401) then
                 module:log("warn", "(%d) Unauthorized error will try to refresh tokens and retry", response_code);
-                authenticate_octopus(options, async_http_request(url, options, callback, timeout_callback, retries))
+                authenticate_octopus(options["roomName"], function()
+                    async_http_request(url, options, callback, timeout_callback, retries)
+                end)
             end
 
             module:log("debug", "%s %s returned code %s", options.method, url, response_code);
@@ -275,6 +277,7 @@ function room_created(event)
     async_http_request(render_url(room_data.room_name, URL_EVENT_ROOM_CREATED), {
         headers = http_headers,
         method = "POST",
+        roomName = room_data.room_name,
         body = json.encode({
             ['event_name'] = 'muc-room-created',
             ['room_name'] = room_data.room_name,
@@ -304,6 +307,7 @@ function room_destroyed(event)
     async_http_request(render_url(room_data.room_name, URL_EVENT_ROOM_DESTROYED), {
         headers = http_headers,
         method = "POST",
+        roomName = room_data.room_name,
         body = json.encode({
             ['event_name'] = 'muc-room-destroyed',
             ['room_name'] = room_data.room_name,
@@ -336,6 +340,7 @@ function occupant_joined(event)
     async_http_request(render_url(room_data.room_name, URL_EVENT_OCCUPANT_JOINED), {
         headers = http_headers,
         method = "POST",
+        roomName = room_data.room_name,
         body = json.encode({
             ['event_name'] = 'muc-occupant-joined',
             ['room_name'] = room_data.room_name,
@@ -368,6 +373,7 @@ function occupant_left(event)
     async_http_request(render_url(room_data.room_name, URL_EVENT_OCCUPANT_LEFT), {
         headers = http_headers,
         method = "POST",
+        roomName = room_data.room_name,
         body = json.encode({
             ['event_name'] = 'muc-occupant-left',
             ['room_name'] = room_data.room_name,
@@ -379,10 +385,10 @@ end
 
 --- Register callbacks on muc events when MUC component is connected
 function process_host()
-    muc_module:hook("muc-room-created", room_created, -1);
-    muc_module:hook("muc-occupant-joined", occupant_joined, -1);
-    muc_module:hook("muc-occupant-left", occupant_left, -1);
-    muc_module:hook("muc-room-destroyed", room_destroyed, -1);
+    module:hook("muc-room-created", room_created, -1);
+    module:hook("muc-occupant-joined", occupant_joined, -1);
+    module:hook("muc-occupant-left", occupant_left, -1);
+    module:hook("muc-room-destroyed", room_destroyed, -1);
 end
 
 process_host()
