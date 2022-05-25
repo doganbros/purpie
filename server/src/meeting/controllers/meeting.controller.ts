@@ -260,6 +260,25 @@ export class MeetingController {
     return this.meetingService.getMeetingRecordingList(meetingSlug, query);
   }
 
+  @Post('/events/:identifier/:eventName')
+  @ApiCreatedResponse({
+    description:
+      'Client sends an event relating to a meeting. Client must have manageMeeting permission.',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @ValidationBadRequest()
+  @IsClientAuthenticated(['manageMeeting'])
+  async handleMeetingEvent(
+    @Body() info: Record<string, any>,
+    @Param('identifier') identifier: string,
+    @Param('eventName') eventName: string,
+  ) {
+    console.log('info', info);
+    console.log('identifier', identifier);
+    console.log('eventName', eventName);
+    return 'OK';
+  }
+
   @Post('/client/event')
   @ApiCreatedResponse({
     description:
