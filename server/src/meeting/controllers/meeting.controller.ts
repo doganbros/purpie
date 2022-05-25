@@ -272,12 +272,16 @@ export class MeetingController {
     @Body() info: Record<string, any>,
     @Param('eventName') eventName: MeetingEvent,
   ) {
-    await this.meetingService.setMeetingStatus({
-      userId: info.occupant?.id,
-      event: eventName,
-      slug: info.room_name,
-    });
-    return 'OK';
+    try {
+      await this.meetingService.setMeetingStatus({
+        userId: info.occupant?.id,
+        event: eventName,
+        slug: info.room_name,
+      });
+      return 'OK';
+    } catch (err) {
+      throw new NotFoundException(err);
+    }
   }
 
   @Post('/client/verify')

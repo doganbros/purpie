@@ -369,7 +369,6 @@ end
 --- Register callbacks on muc events when MUC component is connected
 function process_host()
     module:hook("muc-room-created", room_created, -1);
-    module:hook("muc-occupant-pre-join", occupant_pre_joined, -1)
     module:hook("muc-occupant-joined", occupant_joined, -1);
     module:hook("muc-occupant-left", occupant_left, -1);
     module:hook("muc-room-destroyed", room_destroyed, -1);
