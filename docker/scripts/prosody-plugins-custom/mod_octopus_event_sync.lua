@@ -117,10 +117,47 @@ local function async_http_request(url, options, callback, timeout_callback, retr
 
 end
 
+function getTokensFromLogin(roomName, cb)
+    body = {}
+    body["apiKey"] = octopusApiKey
+    body["apiSecret"] = octopusApiSecret
+
+    async_http_request(render_url(roomName, URL_AUTH), {
+        headers = http_headers,
+        method = "POST",
+        body = json.encode(body)
+    }, function(response_body, response_code)
+        if (response_code == 200) then
+            local res = json.decode(response_body)
+            storage:set("accessToken", res.accessToken)
+
+            storage:set("refreshToken", res.refreshToken)
+
+            module:log("info", "New tokens saved successfully, got from api key and secret")
+            cb()
+
+        elseif (response_code == 401) then
+            module:log("info", "Invalid client tokens")
+
+        elseif (response_code == 400) then
+            module:log("info", "Bad request while making request for new tokens")
+        end
+
+    end)
+
+end
+
 function authenticate_octopus(roomName, cb)
     local body = {}
 
     body["refreshToken"] = storage:get("refreshToken")
+
+    if (body["refresh_token"] == nil or body["refresh_token"] == '') then
+        getTokensFromLogin(roomName, cb)
+        do
+            return
+        end
+    end
 
     async_http_request(render_url(roomName, URL_REFRESH_TOKEN), {
         headers = http_headers,
@@ -138,31 +175,7 @@ function authenticate_octopus(roomName, cb)
         elseif (response_code == 401) then
             module:log("info", "Expired refresh token, getting new tokens")
 
-            body = {}
-            body["apiKey"] = octopusApiKey
-            body["apiSecret"] = octopusApiSecret
-
-            async_http_request(render_url(roomName, URL_AUTH), {
-                headers = http_headers,
-                method = "POST",
-                body = json.encode(body)
-            }, function(response_body, response_code)
-                if (response_code == 200) then
-                    local res = json.decode(response_body)
-                    local ok, err = storage:set("accessToken", res.accessToken)
-                    ok, err = storage:set("refreshToken", res.refreshToken)
-                    if err == nil then
-                        module:log("info", "New tokens saved successfully, got from api key and secret")
-                        cb()
-                    end
-                elseif (response_code == 401) then
-                    module:log("info", "Invalid client tokens")
-
-                elseif (response_code == 400) then
-                    module:log("info", "Bad request while making request for new tokens")
-                end
-
-            end)
+            getTokensFromLogin(roomName, cb)
 
         elseif (response_code == 400) then
             module:log("info", "Bad request while refreshing tokens")

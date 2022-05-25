@@ -273,9 +273,8 @@ export class MeetingController {
     @Param('identifier') identifier: string,
     @Param('eventName') eventName: string,
   ) {
-    console.log('info', info);
-    console.log('identifier', identifier);
-    console.log('eventName', eventName);
+    // eslint-disable-next-line no-console
+    console.log(info, identifier, eventName);
     return 'OK';
   }
 
