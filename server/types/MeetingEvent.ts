@@ -1,6 +1,6 @@
 export type MeetingEvent =
-  | 'ended'
-  | 'started'
-  | 'user_joined'
-  | 'user_left'
+  | 'destroyed'
+  | 'created'
+  | 'joined'
+  | 'left'
   | 'moderator_changed';

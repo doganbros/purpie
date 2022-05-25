@@ -198,8 +198,6 @@ function new_EventData(room_jid)
         room_jid = room_jid,
         room_name = jid.node(room_jid),
         created_at = now(),
-        occupants = {}, -- table of all (past and present) occupants data
-        active = {} -- set of active occupants (by occupant jid)
     }, EventData);
 end
 
@@ -213,12 +211,10 @@ function EventData:on_occupant_joined(occupant_jid, event_origin)
         name = user_context.name,
         id = user_context.id,
         email = user_context.email,
+        room = user_context.room,
         joined_at = now(),
         left_at = nil
     };
-
-    self.occupants[occupant_jid] = occupant_data;
-    self.active[occupant_jid] = true;
 
     return occupant_data;
 end
@@ -226,38 +222,10 @@ end
 --- Handle occupant leaving room
 function EventData:on_occupant_leave(occupant_jid)
     local left_at = now();
-    self.active[occupant_jid] = nil;
-
-    local occupant_data = self.occupants[occupant_jid];
-    if occupant_data then
-        occupant_data['left_at'] = left_at;
-    end
 
     return occupant_data;
 end
 
---- Returns array of occupant data for all active occupant.
---- @param exclude occupant_jid to exclude form the output
-function EventData:get_active_occupant_array(exclude)
-    local output = {};
-    for _, jid in ipairs(self.active) do
-        if jid ~= exclude then
-            table.insert(output, self.occupants[jid])
-        end
-    end
-
-    return output;
-end
-
---- Returns array of all (past or present) occupants
-function EventData:get_occupant_array()
-    local output = {};
-    for _, occupant_data in pairs(self.occupants) do
-        table.insert(output, occupant_data)
-    end
-
-    return output;
-end
 
 --- End EventData implementation
 
@@ -325,8 +293,7 @@ function room_destroyed(event)
             ['room_name'] = room_data.room_name,
             ['room_jid'] = room_data.room_jid,
             ['created_at'] = room_data.created_at,
-            ['destroyed_at'] = destroyed_at,
-            ['all_occupants'] = room_data:get_occupant_array()
+            ['destroyed_at'] = destroyed_at
         })
     })
 end
@@ -348,6 +315,10 @@ function occupant_joined(event)
 
     local occupant_data = room_data:on_occupant_joined(occupant_jid, event.origin);
     module:log("info", "New occupant - %s", json.encode(occupant_data));
+
+    if (room_data.room_name ~= occupant_data.room) then
+        session.send(st.error_reply(stanza, "cancel", "not-allowed", "Room modification disabled for guests"))
+    end
 
     async_http_request(render_url(room_data.room_name, URL_EVENT_OCCUPANT_JOINED), {
         headers = http_headers,
@@ -398,6 +369,7 @@ end
 --- Register callbacks on muc events when MUC component is connected
 function process_host()
     module:hook("muc-room-created", room_created, -1);
+    module:hook("muc-occupant-pre-join", occupant_pre_joined, -1)
     module:hook("muc-occupant-joined", occupant_joined, -1);
     module:hook("muc-occupant-left", occupant_left, -1);
     module:hook("muc-room-destroyed", room_destroyed, -1);

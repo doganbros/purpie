@@ -2,7 +2,7 @@ import { IsIn, IsInt, IsNotEmpty, IsString, ValidateIf } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { MeetingEvent } from 'types/MeetingEvent';
 
-const events = ['ended', 'started', 'user_joined', 'user_left'];
+const events = ['destroyed', 'created', 'joined', 'left'];
 export class ClientMeetingEventDto {
   @ApiProperty({ enum: events })
   @IsIn(events)
@@ -12,10 +12,10 @@ export class ClientMeetingEventDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  meetingTitle: string;
+  slug: string;
 
   @ApiProperty({ required: false })
   @IsInt()
-  @ValidateIf((o) => ['user_joined', 'user_left'].includes(o.event))
+  @ValidateIf((o) => ['joined', 'left'].includes(o.event))
   userId?: number;
 }
