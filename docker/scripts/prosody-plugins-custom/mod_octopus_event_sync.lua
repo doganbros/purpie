@@ -39,6 +39,8 @@ local URL_EVENT_ROOM_CREATED = '/v1/meeting/events/room/created';
 local URL_EVENT_ROOM_DESTROYED = '/v1/meeting/events/room/destroyed';
 local URL_EVENT_OCCUPANT_JOINED = '/v1/meeting/events/occupant/joined';
 local URL_EVENT_OCCUPANT_LEFT = '/v1/meeting/events/occupant/left';
+local URL_REFRESH_TOKEN = '/v1/auth/client/refresh-token';
+local URL_AUTH = '/v1/auth/client/login';
 
 function get_url(meetingName)
     local underscorePosition = string.find(meetingName, "_")
@@ -118,14 +120,12 @@ end
 function authenticate_octopus(roomName, cb)
     local body = {}
 
-    local error = nil
-    body["refreshToken"], error = storage:get("refreshToken")
-    local credJson = json.encode(body)
+    body["refreshToken"] = storage:get("refreshToken")
 
-    async_http_request(get_url(roomName) .. "/v1/auth/client/refresh-token", {
+    async_http_request(render_url(roomName, URL_REFRESH_TOKEN), {
         headers = http_headers,
         method = "POST",
-        body = body
+        body = json.encode(body)
     }, function(response_body, response_code)
         if (response_code == 200) then
             local res = json.decode(response_body)
@@ -141,12 +141,11 @@ function authenticate_octopus(roomName, cb)
             body = {}
             body["apiKey"] = octopusApiKey
             body["apiSecret"] = octopusApiSecret
-            credJson = json.encode(body)
 
-            async_http_request(get_url(roomName) .. "/v1/auth/client/login", {
+            async_http_request(render_url(roomName, URL_AUTH), {
                 headers = http_headers,
                 method = "POST",
-                body = body
+                body = json.encode(body)
             }, function(response_body, response_code)
                 if (response_code == 200) then
                     local res = json.decode(response_body)
