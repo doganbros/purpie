@@ -18,7 +18,7 @@ const SuggestionPicker: FC<Props> = ({
   bottom,
   width,
 }) => {
-  if (!visibility) return <></>;
+  if (!visibility) return null;
   return (
     <ExtendedBox
       position="absolute"

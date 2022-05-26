@@ -110,7 +110,6 @@
       "last 1 safari version"
     ]
   },
-  "types": "./index.d.ts",
   "devDependencies": {
     "@nestjs/cli": "^8.2.2",
     "@nestjs/schematics": "^8.0.8",

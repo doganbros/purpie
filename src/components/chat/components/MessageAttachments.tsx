@@ -65,36 +65,18 @@ const MessageAttachments: FC<Props> = ({
             onClick={() => {
               inputFileRef?.current?.click();
             }}
-            style={{
-              paddingTop: '0',
-              paddingBottom: '0',
-              paddingLeft: '6px',
-              paddingRight: '6px',
-            }}
             icon={<Image src={AttachmentIcon} width="14px" height="15px" />}
           />
           <Button
             size="small"
             margin="0px"
             onClick={toggleMentionPicker}
-            style={{
-              paddingTop: '0',
-              paddingBottom: '0',
-              paddingLeft: '6px',
-              paddingRight: '6px',
-            }}
             icon={<Image src={AtIcon} width="14px" height="15px" />}
           />
           <Button
             size="small"
             margin="0px"
             onClick={toggleEmojiPicker}
-            style={{
-              paddingTop: '0',
-              paddingBottom: '0',
-              paddingLeft: '6px',
-              paddingRight: '6px',
-            }}
             icon={<Image src={EmojiIcon} width="14px" height="15px" />}
           />
         </Box>

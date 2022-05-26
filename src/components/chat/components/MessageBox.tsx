@@ -62,7 +62,7 @@ const MessageBox: FC<Props> = ({
     if (e.key === 'Enter' && !e.shiftKey && e.currentTarget.value) {
       e.preventDefault();
       onSubmit({ message: e.currentTarget.value });
-      e.currentTarget.value = '';
+      setText('');
       return null;
     }
     if (handleTypingEvent) {

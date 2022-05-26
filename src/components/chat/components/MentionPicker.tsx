@@ -19,7 +19,7 @@ const MentionPicker: FC<Props> = ({
   userList,
   onSelect,
 }) => {
-  if (!visibility) return <></>;
+  if (!visibility) return null;
   return (
     <ExtendedBox
       position="absolute"

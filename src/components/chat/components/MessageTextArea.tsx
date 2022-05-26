@@ -269,10 +269,12 @@ const MessageBox: FC<Props> = ({
         (i) => i === '@'
       );
       if (atIndex > -1) before = text.slice(0, atIndex);
-      if (before) {
+      console.log({ before });
+      if (typeof before !== 'undefined') {
         const newText = `${before}@${user.userName}${
           after?.charAt(0) === ' ' ? after : ` ${after}`
         }`;
+        console.log({ newText });
         setText(newText);
         handleTextAreaCursor(before.length + userName.length + 2);
       }

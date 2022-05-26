@@ -1,7 +1,8 @@
 import React, { FC } from 'react';
 import { Box } from 'grommet';
-import { EmojiData, Picker } from 'emoji-mart';
+import { EmojiData } from 'emoji-mart';
 import ExtendedBox from '../../utils/ExtendedBox';
+import { CustomEmojiPicker } from './EmojiPicker.styled';
 
 interface Props {
   visibility: boolean;
@@ -11,7 +12,7 @@ interface Props {
 }
 
 const EmojiPicker: FC<Props> = ({ visibility, onSelect, bottom, width }) => {
-  if (!visibility) return <></>;
+  if (!visibility) return null;
   return (
     <ExtendedBox
       position="absolute"
@@ -21,7 +22,7 @@ const EmojiPicker: FC<Props> = ({ visibility, onSelect, bottom, width }) => {
       width={width}
     >
       <Box id="emoji_picker">
-        <Picker
+        <CustomEmojiPicker
           native
           useButton
           autoFocus
@@ -31,11 +32,6 @@ const EmojiPicker: FC<Props> = ({ visibility, onSelect, bottom, width }) => {
           showPreview={false}
           showSkinTones={false}
           emojiTooltip={false}
-          style={{
-            width: 'inherit',
-            background: 'white',
-            zIndex: 2,
-          }}
         />
       </Box>
     </ExtendedBox>

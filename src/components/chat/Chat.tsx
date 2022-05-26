@@ -40,6 +40,7 @@ const Chat: React.FC<Props> = ({
   const [typingUser, setTypingUser] = useState<User | null>(null);
   const typingTimerId = useRef<NodeJS.Timeout | null>(null);
   const tempMsgIdCounter = useRef(0);
+  const messageScrollRef = useRef<InfiniteScroll>(null);
   const containerId = useMemo(nanoid, []);
   const [repliedMessage, setRepliedMessage] = useState<ChatMessage | null>(
     null
@@ -106,6 +107,9 @@ const Chat: React.FC<Props> = ({
   };
 
   const handleSendMessage = (message: Partial<ChatMessage>) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    console.log({ messageScrollRef });
     setRepliedMessage(null);
     setEditedMessage(null);
     const tempId = message.edited
@@ -269,6 +273,7 @@ const Chat: React.FC<Props> = ({
             next={fetchMessages}
             loader={<h4>Loading...</h4>}
             scrollableTarget={containerId}
+            ref={messageScrollRef}
           >
             {messages?.map((message) => {
               const isCurrentUserMsg = currentUser?.id === message.createdBy.id;
@@ -347,7 +352,7 @@ const Chat: React.FC<Props> = ({
 
         {typingUser ? (
           <Text size="small" as="i">
-            {typingUser?.firstName} {typingUser?.lastName} is typing...
+            {typingUser.firstName} {typingUser.lastName} is typing...
           </Text>
         ) : null}
       </Box>
