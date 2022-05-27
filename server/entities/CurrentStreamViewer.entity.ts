@@ -26,6 +26,10 @@ export class CurrentStreamViewer extends BaseEntity {
   @JoinColumn({ name: 'postId', referencedColumnName: 'id' })
   post: Post;
 
+  @ManyToOne(() => Post, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @JoinColumn({ name: 'slug', referencedColumnName: 'slug' })
+  post: Post;
+
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user: User;
