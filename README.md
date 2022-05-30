@@ -104,7 +104,7 @@ To stream meetings using the https://octopus-jitsi.doganbros.com server, follow 
 
 - Create a meeting
 - Click on the three dots, and on start live stream
-- A window will appear, enter rtmp://octopus-jitsi.doganbros.com/live/<meeting-slug>?uid=1 as a live stream key. (Replace <meeting-slug> with the real meeting slug).
+- A window will appear, enter `rtmp://octopus-jitsi.doganbros.com/live/<meeting-slug>?uid=1` as a live stream key. (Replace `<meeting-slug>` with the real meeting slug).
 - The stream should start in few minutes
 
 ## Running project
