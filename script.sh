@@ -1,3 +1,0 @@
-MAX_SEND_EVENT_TRIES=$((3))
-
-echo $((MAX_SEND_EVENT_TRIES + 1))

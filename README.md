@@ -97,6 +97,16 @@ We provide https://octopus-jitsi.doganbros.com as a server that handles all meet
 - Add the environment variable `REACT_APP_STREAMING_URL=https://octopus-jitsi.doganbros.com:1980/hls` so that streaming works correctly.
 - You are all set! You can now create, record and stream a meeting using the https://octopus-jitsi.doganbros.com server.
 
+
+## Development Streaming
+
+To stream meetings using the https://octopus-jitsi.doganbros.com server, follow the instructions below:
+
+- Create a meeting
+- Click on the three dots, and on start live stream
+- A window will appear, enter rtmp://octopus-jitsi.doganbros.com/live/<meeting-slug>?uid=1 as a live stream key. (Replace <meeting-slug> with the real meeting slug).
+- The stream should start in few minutes
+
 ## Running project
 
 ```bash
