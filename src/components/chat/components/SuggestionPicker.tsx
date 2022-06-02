@@ -41,6 +41,7 @@ const SuggestionPicker: FC<Props> = ({
           return (
             <Button
               plain
+              key={suggestion.id}
               label={
                 'native' in suggestion ? suggestion.native : suggestion.name
               }

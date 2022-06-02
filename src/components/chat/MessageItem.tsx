@@ -6,6 +6,11 @@ import { useSelector } from 'react-redux';
 import { ChatMessage } from '../../store/types/chat.types';
 import InitialsAvatar from '../utils/InitialsAvatar';
 import { AppState } from '../../store/reducers/root.reducer';
+import {
+  LeftShadowBox,
+  RightShadowBox,
+  UserFullName,
+} from './MessageItem.styled';
 
 interface Props {
   message: ChatMessage;
@@ -40,6 +45,7 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
     </ContextMenu>
   );
 
+  const ContentBox = ownMessage ? RightShadowBox : LeftShadowBox;
   return (
     <>
       {renderContextMenu()}
@@ -49,7 +55,7 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
           disableIfShiftIsPressed
           holdToDisplay={-1}
         >
-          <Box
+          <ContentBox
             direction={ownMessage ? 'row-reverse' : 'row'}
             id={`message-item-${message.identifier}`}
             justify="start"
@@ -69,7 +75,7 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
               border={{ color: '#E4E9F2', size: 'small' }}
             >
               <InitialsAvatar
-                size="36px"
+                size="medium"
                 fontSize="small"
                 id={message.createdBy.id}
                 value={`${message.createdBy.firstName} ${message.createdBy.lastName} `}
@@ -83,14 +89,17 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
             >
               <Box direction="row" justify={ownMessage ? 'end' : 'start'}>
                 <Box direction="row">
-                  <Text
+                  <UserFullName
                     size="small"
                     margin={{ right: 'xsmall' }}
                     weight="bold"
                     textAlign={ownMessage ? 'end' : 'start'}
                   >
                     {message.createdBy.firstName} {message.createdBy.lastName}
-                  </Text>
+                    {message.createdBy.firstName} {message.createdBy.lastName}
+                    {message.createdBy.firstName} {message.createdBy.lastName}
+                    {message.createdBy.firstName} {message.createdBy.lastName}
+                  </UserFullName>
                   <Text size="small">
                     {dayjs(message.createdOn).format('hh:mm:a')}
                   </Text>
@@ -120,7 +129,7 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
                 {children}
               </Box>
             </Box>
-          </Box>
+          </ContentBox>
         </ContextMenuTrigger>
       </Box>
     </>

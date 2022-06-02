@@ -3,7 +3,13 @@ import { nanoid } from 'nanoid';
 import { useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { socket } from '../../helpers/socket';
 import PlanMeetingTheme from '../../layers/meeting/custom-theme';
 import { getChatMessages } from '../../store/services/chat.service';
@@ -50,6 +56,31 @@ const Chat: React.FC<Props> = ({
   const {
     auth: { user: currentUser },
   } = useSelector((state: AppState) => state);
+  const scrollTarget = messageScrollRef.current?.getScrollableTarget();
+
+  const checkScrollShouldEnd = () =>
+    scrollTarget &&
+    messages &&
+    messages?.length > 0 &&
+    scrollTarget.offsetTop > scrollTarget.scrollHeight &&
+    scrollTarget.offsetHeight + scrollTarget.scrollTop >
+      scrollTarget.scrollHeight - 100;
+
+  useLayoutEffect(() => {
+    if (scrollTarget) {
+      scrollTarget?.scrollTo({ top: scrollTarget.scrollHeight });
+    }
+  }, [messageScrollRef.current, messages]);
+
+  const updateMessages = (
+    handleFunc: (msgs: ChatMessage[] | null) => ChatMessage[] | null
+  ) => {
+    const scrollShouldEnd = checkScrollShouldEnd();
+    setMessages(handleFunc);
+    if (scrollShouldEnd) {
+      scrollTarget?.scrollTo({ top: scrollTarget.scrollHeight });
+    }
+  };
 
   const fetchMessages = async () => {
     const result = await getChatMessages(
@@ -60,8 +91,7 @@ const Chat: React.FC<Props> = ({
     ).then((res) => res.data);
 
     if (!result.length) setHasMore(false);
-
-    setMessages((msgs) =>
+    updateMessages((msgs) =>
       msgs ? [...result.reverse(), ...msgs] : [...result.reverse()]
     );
   };
@@ -88,7 +118,7 @@ const Chat: React.FC<Props> = ({
         medium: message.medium,
       },
       () => {
-        setMessages(
+        updateMessages(
           (msgs) =>
             msgs &&
             msgs.map((msg) => {
@@ -107,9 +137,6 @@ const Chat: React.FC<Props> = ({
   };
 
   const handleSendMessage = (message: Partial<ChatMessage>) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    console.log({ messageScrollRef });
     setRepliedMessage(null);
     setEditedMessage(null);
     const tempId = message.edited
@@ -117,7 +144,7 @@ const Chat: React.FC<Props> = ({
       : ++tempMsgIdCounter.current;
 
     if (!message.edited) {
-      setMessages(
+      updateMessages(
         (msgs) =>
           msgs && [
             ...msgs,
@@ -127,7 +154,7 @@ const Chat: React.FC<Props> = ({
     }
 
     socket.emit('message', message, (payloadMsg: ChatMessage) => {
-      setMessages(
+      updateMessages(
         (msgs) =>
           msgs &&
           msgs.map((msg) => {
@@ -146,7 +173,7 @@ const Chat: React.FC<Props> = ({
     const messageListener = (message: ChatMessage): void => {
       if (!(message.to === id && message.medium === medium)) return;
       if (message.edited)
-        setMessages(
+        updateMessages(
           (msgs) =>
             msgs &&
             msgs.map((msg) => {
@@ -160,7 +187,7 @@ const Chat: React.FC<Props> = ({
               return msg;
             })
         );
-      else setMessages((msgs) => [...msgs!, message]);
+      else updateMessages((msgs) => [...msgs!, message]);
     };
 
     const typingListener = (payload: {
@@ -186,8 +213,7 @@ const Chat: React.FC<Props> = ({
       medium: string;
     }) => {
       if (!(payload.to === id && payload.medium === medium)) return;
-
-      setMessages(
+      updateMessages(
         (msgs) =>
           msgs &&
           msgs.map((msg) => {

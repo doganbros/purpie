@@ -5,8 +5,8 @@ import { getColorPairFromId } from '../../helpers/utils';
 interface InitialsAvatarProps {
   id: number;
   value: string;
-  size?: 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge' | string;
-  fontSize?: 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge' | string;
+  size?: 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge';
+  fontSize?: 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge';
 }
 
 const InitialsAvatar: FC<InitialsAvatarProps> = ({

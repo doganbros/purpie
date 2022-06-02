@@ -1,15 +1,15 @@
-import { Box, Button, Image } from 'grommet';
+import { Box, Button } from 'grommet';
 import React, { Dispatch, FC, SetStateAction } from 'react';
+import { Attachment, Emoji } from 'grommet-icons';
 import ExtendedBox from '../../utils/ExtendedBox';
-import AttachmentIcon from '../../../assets/icons/attachment.svg';
-import AtIcon from '../../../assets/icons/at.svg';
-import EmojiIcon from '../../../assets/icons/emoji.svg';
+
+import { At as AtIcon } from '../../utils/CustomIcons';
 
 interface Props {
   attachmentToolVisibility: boolean;
   text: string;
-  selectedFiles: File[];
-  setSelectedFiles: Dispatch<SetStateAction<File[]>>;
+  selectedFile: File | null;
+  setSelectedFile: Dispatch<SetStateAction<File | null>>;
   toggleEmojiPicker: () => void;
   toggleMentionPicker: () => void;
 }
@@ -17,8 +17,8 @@ interface Props {
 const MessageAttachments: FC<Props> = ({
   attachmentToolVisibility,
   text,
-  selectedFiles,
-  setSelectedFiles,
+  selectedFile,
+  setSelectedFile,
   toggleEmojiPicker,
   toggleMentionPicker,
 }) => {
@@ -26,20 +26,14 @@ const MessageAttachments: FC<Props> = ({
 
   const onFileChangeCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
-    const fileList = [];
-    if (files && files.length > 0) {
-      for (let i = 0; i < files.length; i++) {
-        fileList.push(files[i]);
-      }
+    if (files?.length) {
+      setSelectedFile(files[0]);
     }
-    const concatList = fileList.concat(selectedFiles);
-    setSelectedFiles(concatList);
   };
 
   return (
     <>
       <input
-        multiple
         type="file"
         ref={inputFileRef}
         onChangeCapture={onFileChangeCapture}
@@ -62,26 +56,31 @@ const MessageAttachments: FC<Props> = ({
           <Button
             size="small"
             margin="0px"
+            disabled={Boolean(selectedFile)}
             onClick={() => {
               inputFileRef?.current?.click();
             }}
-            icon={<Image src={AttachmentIcon} width="14px" height="15px" />}
+            icon={<Attachment size="12px" />}
           />
           <Button
             size="small"
             margin="0px"
             onClick={toggleMentionPicker}
-            icon={<Image src={AtIcon} width="14px" height="15px" />}
+            icon={
+              <Box alignContent="center" justify="center">
+                <AtIcon size="18px" />
+              </Box>
+            }
           />
           <Button
             size="small"
             margin="0px"
             onClick={toggleEmojiPicker}
-            icon={<Image src={EmojiIcon} width="14px" height="15px" />}
+            icon={<Emoji size="12px" />}
           />
         </Box>
         <Box>
-          {(text.length !== 0 || selectedFiles.length > 0) && (
+          {(text.length || selectedFile) && (
             <Button
               size="small"
               primary

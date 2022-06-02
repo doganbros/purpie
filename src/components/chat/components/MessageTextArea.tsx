@@ -7,7 +7,6 @@ import React, {
   RefObject,
   SetStateAction,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -24,7 +23,6 @@ interface Props {
   name?: string;
   onSuggesting?: (value: boolean) => void;
   onKeyDown: KeyboardEventHandler<HTMLTextAreaElement>;
-  setFocused: Dispatch<SetStateAction<boolean>>;
   setText: Dispatch<SetStateAction<string>>;
   emojiPickerVisibility: boolean;
   setEmojiPickerVisibility: Dispatch<SetStateAction<boolean>>;
@@ -46,7 +44,6 @@ const MessageBox: FC<Props> = ({
   text,
   name,
   onKeyDown,
-  setFocused,
   setText,
   onSuggesting,
   emojiPickerVisibility,
@@ -86,8 +83,6 @@ const MessageBox: FC<Props> = ({
   };
 
   const enterEmoji = (emojiData: EmojiData) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     const emoji = 'native' in emojiData ? emojiData.native : emojiData.name;
     const cursor = text.indexOf(editingEmoji) + emoji.length + 1;
     setText(text.replace(editingEmoji, `${emoji}`));
@@ -135,9 +130,10 @@ const MessageBox: FC<Props> = ({
         emoji = emoji.slice(0, -1);
         const currentSuggestions = emojiIndex.search(emoji);
         if (currentSuggestions != null && currentSuggestions.length > 0) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          const emojiReplace = currentSuggestions[0].native;
+          const emojiReplace =
+            'native' in currentSuggestions[0]
+              ? currentSuggestions[0].native
+              : currentSuggestions[0].name;
           resultText = resultText.replace(currentEmoji, emojiReplace);
           handleTextAreaCursor(emojiSentenceIndex + emojiReplace.length);
         }
@@ -229,8 +225,6 @@ const MessageBox: FC<Props> = ({
 
   const handleKeyUp = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     switch (e.key) {
-      case 'Enter':
-        break;
       case 'Tab':
       case ' ':
         setEditingEmoji('');
@@ -245,9 +239,7 @@ const MessageBox: FC<Props> = ({
     const element = textAreaRef.current;
     if (element) {
       const before = text.slice(0, element.selectionStart);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const { native } = emoji;
+      const native = 'native' in emoji ? emoji.native : emoji.name;
       const after = text.slice(element.selectionStart);
       const newText = `${before}${native}${after}`;
       setText(newText);
@@ -269,12 +261,10 @@ const MessageBox: FC<Props> = ({
         (i) => i === '@'
       );
       if (atIndex > -1) before = text.slice(0, atIndex);
-      console.log({ before });
       if (typeof before !== 'undefined') {
         const newText = `${before}@${user.userName}${
           after?.charAt(0) === ' ' ? after : ` ${after}`
         }`;
-        console.log({ newText });
         setText(newText);
         handleTextAreaCursor(before.length + userName.length + 2);
       }
@@ -282,23 +272,16 @@ const MessageBox: FC<Props> = ({
     setMentionPickerVisibility(false);
   };
 
-  const pickerWidth = useMemo(
-    () =>
-      textAreaRef?.current?.clientWidth
-        ? `${textAreaRef?.current?.clientWidth}px`
-        : '100%',
-    [textAreaRef?.current?.clientWidth]
-  );
-
-  const pickerBottom = useMemo(
-    () => `${(componentRef?.current?.clientHeight || 0) + 15}px`,
-    [componentRef?.current?.clientHeight]
-  );
+  const pickerBottom = `${(componentRef?.current?.clientHeight || 0) + 15}px`;
+  const pickerWidth = textAreaRef?.current?.clientWidth
+    ? `${textAreaRef?.current?.clientWidth}px`
+    : '100%';
 
   return (
     <>
       <EmojiPicker
         visibility={emojiPickerVisibility}
+        setVisibility={setEmojiPickerVisibility}
         onSelect={onSelectEmoji}
         bottom={pickerBottom}
         width={pickerWidth}
@@ -324,8 +307,6 @@ const MessageBox: FC<Props> = ({
           ref={textAreaRef}
           resize={false}
           focusIndicator={false}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
           placeholder={`Write ${name ? `to ${name}` : 'your message...'} `}
           onKeyDown={handleKeyDown}
           onKeyPress={handleKeyUp}

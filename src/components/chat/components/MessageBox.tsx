@@ -1,5 +1,5 @@
 import { Box } from 'grommet';
-import React, { FC, useLayoutEffect, useRef, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import { ChatMessage } from '../../../store/types/chat.types';
 import { useThrottle } from '../../../hooks/useThrottle';
 import InitialsAvatar from '../../utils/InitialsAvatar';
@@ -27,17 +27,9 @@ const MessageBox: FC<Props> = ({
 }) => {
   const throttle = useThrottle();
   const componentRef = useRef<HTMLDivElement>(null);
-  const [focused, setFocused] = useState<boolean>(false);
   const [text, setText] = useState<string>('');
-  const [mouseOver, setMouseOver] = useState<boolean>(false);
-  const [
-    attachmentToolVisibility,
-    setAttachmentToolVisibility,
-  ] = useState<boolean>(false);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [emojiPickerVisibility, setEmojiPickerVisibility] = useState<boolean>(
-    false
-  );
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [emojiPickerVisibility, setEmojiPickerVisibility] = useState(false);
   const [
     suggestionPickerVisibility,
     setSuggestionPickerVisibility,
@@ -47,17 +39,6 @@ const MessageBox: FC<Props> = ({
     setMentionPickerVisibility,
   ] = useState<boolean>(false);
 
-  useLayoutEffect(() => {
-    const newValue = focused || text.length > 0;
-    if (newValue !== attachmentToolVisibility) {
-      if (newValue) {
-        setAttachmentToolVisibility(true);
-      } else if (!mouseOver) {
-        setAttachmentToolVisibility(false);
-      }
-    }
-  }, [mouseOver, text, focused]);
-
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey && e.currentTarget.value) {
       e.preventDefault();
@@ -66,9 +47,7 @@ const MessageBox: FC<Props> = ({
       return null;
     }
     if (handleTypingEvent) {
-      return throttle(() => {
-        onTyping();
-      }, TYPING_THROTTLE_INTERVAL);
+      return throttle(onTyping, TYPING_THROTTLE_INTERVAL);
     }
     return null;
   };
@@ -79,8 +58,6 @@ const MessageBox: FC<Props> = ({
       align="center"
       ref={componentRef}
       margin={{ right: 'small', left: 'small' }}
-      onMouseOver={() => setMouseOver(true)}
-      onMouseLeave={() => setMouseOver(false)}
     >
       {user && (
         <Box flex={{ shrink: 0 }}>
@@ -103,7 +80,6 @@ const MessageBox: FC<Props> = ({
         <MessageTextArea
           name={name}
           onKeyDown={onKeyDown}
-          setFocused={setFocused}
           setText={setText}
           text={text}
           emojiPickerVisibility={emojiPickerVisibility}
@@ -114,19 +90,17 @@ const MessageBox: FC<Props> = ({
           componentRef={componentRef}
           mentionPickerVisibility={mentionPickerVisibility}
         />
-        {selectedFiles?.length > 0 && (
+        {selectedFile && (
           <MessageFiles
-            fileList={selectedFiles}
-            deleteFile={(index) =>
-              setSelectedFiles(selectedFiles.filter((_, idx) => index !== idx))
-            }
+            file={selectedFile}
+            deleteFile={() => setSelectedFile(null)}
           />
         )}
         <MessageAttachments
           attachmentToolVisibility
           text={text}
-          selectedFiles={selectedFiles}
-          setSelectedFiles={setSelectedFiles}
+          selectedFile={selectedFile}
+          setSelectedFile={setSelectedFile}
           toggleEmojiPicker={() =>
             setEmojiPickerVisibility(!emojiPickerVisibility)
           }
