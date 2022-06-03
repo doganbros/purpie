@@ -31,7 +31,7 @@ export const useContextMenu = (): {
       document.addEventListener('click', handleClick);
       document.removeEventListener('contextmenu', handleContextMenu);
     };
-  });
+  }, []);
 
   return { xPos, yPos, showMenu };
 };
