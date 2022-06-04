@@ -8,6 +8,9 @@ export class PostReaction extends RecordEntity {
   likesCount: number;
 
   @Column({ default: 0 })
+  dislikesCount: number;
+
+  @Column({ default: 0 })
   commentsCount: number;
 
   @Column({ default: 0 })

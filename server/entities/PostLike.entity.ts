@@ -19,4 +19,8 @@ export class PostLike extends RecordEntity {
 
   @Column()
   postId: number;
+
+  @Column({ default: true })
+  // false depicts dislike
+  positive: boolean;
 }
