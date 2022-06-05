@@ -81,6 +81,7 @@ export interface Post {
   public: boolean;
   record: boolean;
   saved: boolean;
+  streaming: boolean;
   slug: string;
   startDate?: Date;
   title: string;
@@ -90,6 +91,7 @@ export interface Post {
   postReaction: {
     likesCount: number;
     commentsCount: number;
+    liveStreamViewersCount: number;
     viewsCount: number;
   };
 }

@@ -26,6 +26,7 @@ import { CreatePostLikeDto } from '../dto/create-post-like.dto';
 import { CreateSavedPostDto } from '../dto/create-saved-post.dto';
 import { EditPostDto } from '../dto/edit-post.dto';
 import { ListPostFeedQuery } from '../dto/list-post-feed.query';
+import { PostLikeQuery } from '../dto/post-like.query';
 import { VideoViewStats } from '../dto/video-view-stats.dto';
 
 const {
@@ -63,6 +64,9 @@ export class PostService {
         'post.startDate',
         'post.type',
         'post.public',
+        'post.private',
+        'post.allowReaction',
+        'post.allowComment',
       ])
       .leftJoin('post.channel', 'channel')
       .leftJoin('channel.zone', 'zone')
@@ -85,12 +89,20 @@ export class PostService {
         { userId },
       )
       .where(
-        `${
-          typeof identity === 'string'
-            ? 'post.slug = :identity'
-            : 'post.id = :identity'
-        }`,
+        typeof identity === 'string'
+          ? 'post.slug = :identity'
+          : 'post.id = :identity',
         { identity },
+      )
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where('post.private = false').orWhere(
+            'post.private = true and post.createdById = :userId',
+            {
+              userId,
+            },
+          );
+        }),
       )
       .andWhere(
         new Brackets((qb) => {
@@ -144,6 +156,7 @@ export class PostService {
       .create({
         userId,
         postId: info.postId,
+        positive: info.type !== 'dislike',
       })
       .save();
   }
@@ -199,12 +212,13 @@ export class PostService {
       .paginate(query);
   }
 
-  getPostLikes(postId: number, query: PaginationQuery) {
-    return this.postLikeRepository
+  getPostLikes(postId: number, query: PostLikeQuery) {
+    const baseQuery = this.postLikeRepository
       .createQueryBuilder('postLike')
       .select([
         'postLike.id',
         'postLike.createdOn',
+        'postLike.positive',
         'user.id',
         'user.firstName',
         'user.lastName',
@@ -212,8 +226,13 @@ export class PostService {
         'user.email',
       ])
       .innerJoin('postLike.user', 'user')
-      .where('postLike.postId = :postId', { postId })
-      .paginate(query);
+      .where('postLike.postId = :postId', { postId });
+
+    baseQuery.andWhere('postLike.positive = :positive', {
+      postive: query.type !== 'dislikes',
+    });
+
+    return baseQuery.paginate(query);
   }
 
   getPostComments(
@@ -394,14 +413,20 @@ export class PostService {
         'post.type',
         'post.createdOn',
         'post.public',
+        'post.private',
+        'post.allowReaction',
+        'post.allowComment',
         'post.videoName',
         'post.userContactExclusive',
         'post.channelId',
         'post.liveStream',
+        'post.streaming',
         'post.record',
+        'postReaction.dislikesCount',
         'postReaction.likesCount',
         'postReaction.commentsCount',
         'postReaction.viewsCount',
+        'postReaction.liveStreamViewersCount',
         'createdBy.id',
         'createdBy.email',
         'createdBy.firstName',
@@ -413,13 +438,24 @@ export class PostService {
             .select('count(*) > 0')
             .from(PostLike, 'user_post_like')
             .where('user_post_like.postId = post.id')
+            .andWhere('user_post_like.positive = true')
             .andWhere('user_post_like.userId = :currentUserId'),
         'post_liked',
       )
+      .addSelect(
+        (sq) =>
+          sq
+            .select('count(*) > 0')
+            .from(PostLike, 'user_post_like')
+            .where('user_post_like.postId = post.id')
+            .andWhere('user_post_like.positive = false')
+            .andWhere('user_post_like.userId = :currentUserId'),
+        'post_disliked',
+      )
       .setParameter('currentUserId', userId)
       .innerJoin('savedPost.post', 'post')
+      .innerJoin('post.createdBy', 'createdBy')
       .leftJoin('post.postReaction', 'postReaction')
-      .leftJoin('post.createdBy', 'createdBy')
       .leftJoin('post.channel', 'channel')
       .leftJoin(
         UserChannel,
@@ -435,6 +471,13 @@ export class PostService {
         { userId },
       )
       .where('savedPost.userId = :userId', { userId })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where('savedPost.private = false').orWhere(
+            'savedPost.private = true and savedPost.createdById = :userId',
+          );
+        }),
+      )
       .andWhere(
         new Brackets((qb) => {
           qb.where(
@@ -485,8 +528,19 @@ export class PostService {
             .select('count(*) > 0')
             .from(PostLike, 'user_post_like')
             .where('user_post_like.postId = post.id')
+            .andWhere('user_post_like.positive = true')
             .andWhere('user_post_like.userId = :currentUserId'),
         'post_liked',
+      )
+      .addSelect(
+        (sq) =>
+          sq
+            .select('count(*) > 0')
+            .from(PostLike, 'user_post_like')
+            .where('user_post_like.postId = post.id')
+            .andWhere('user_post_like.positive = false')
+            .andWhere('user_post_like.userId = :currentUserId'),
+        'post_disliked',
       )
       .addSelect(
         (sq) =>
@@ -500,7 +554,9 @@ export class PostService {
       .addSelect([
         'postReaction.likesCount',
         'postReaction.viewsCount',
+        'postReaction.dislikesCount',
         'postReaction.commentsCount',
+        'postReaction.liveStreamViewersCount',
         'post.record',
         'createdBy.id',
         'createdBy.email',
@@ -509,9 +565,16 @@ export class PostService {
       ])
 
       .setParameter('currentUserId', userId)
-      .leftJoin('post.createdBy', 'createdBy')
+      .innerJoin('post.createdBy', 'createdBy')
       .leftJoin('post.postReaction', 'postReaction')
       .where(
+        new Brackets((qb) => {
+          qb.where('post.private = false').orWhere(
+            'post.private = true and post.createdById = :currentUserId',
+          );
+        }),
+      )
+      .andWhere(
         new Brackets((qb) => {
           qb.where(
             new Brackets((qbi) => {

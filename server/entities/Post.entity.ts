@@ -56,6 +56,10 @@ export class Post extends RecordEntity {
   public: boolean;
 
   @Column({ default: false })
+  // Should be visible to only user who created
+  private: boolean;
+
+  @Column({ default: false })
   liveStream: boolean;
 
   @Column({ default: false })
@@ -82,9 +86,18 @@ export class Post extends RecordEntity {
   @Column({ nullable: true })
   postReactionId: number;
 
+  @Column({ default: true })
+  allowReaction: boolean;
+
+  @Column({ default: true })
+  allowComment: boolean;
+
   @Column({ select: false, nullable: true, insert: false, type: 'boolean' })
   liked: boolean;
 
   @Column({ select: false, nullable: true, insert: false, type: 'boolean' })
   saved: boolean;
+
+  @Column({ select: false, nullable: true, insert: false, type: 'boolean' })
+  disliked: boolean;
 }

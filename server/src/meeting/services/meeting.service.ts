@@ -292,6 +292,7 @@ export class MeetingService {
           name: `${user.firstName} ${user.lastName}`,
           email: user.email,
           id: user.id,
+          room: meeting.slug,
         },
         group: 'a122-123-456-789',
       },
@@ -362,25 +363,25 @@ export class MeetingService {
   async setMeetingStatus(info: ClientMeetingEventDto) {
     const meetingLog = this.meetingLogRepository.create({
       event: info.event,
-      meetingSlug: info.meetingTitle,
+      meetingSlug: info.slug,
     });
 
-    if (info.event === 'started') {
+    if (info.event === 'created') {
       await this.postRepository.update(
-        { slug: info.meetingTitle },
+        { slug: info.slug },
         { conferenceStartDate: new Date(), conferenceEndDate: null },
       );
     }
 
-    if (info.event === 'ended') {
+    if (info.event === 'destroyed') {
       await this.postRepository.update(
-        { slug: info.meetingTitle },
+        { slug: info.slug },
         { conferenceEndDate: new Date() },
       );
     }
 
     // user events
-    if (['user_joined', 'user_left'].includes(info.event))
+    if (['joined', 'left'].includes(info.event))
       meetingLog.userId = info.userId!;
 
     return meetingLog.save();

@@ -28,7 +28,19 @@ class BasePostFeedList {
   public: boolean;
 
   @ApiProperty()
+  private: boolean;
+
+  @ApiProperty()
   liveStream: boolean;
+
+  @ApiProperty()
+  streaming: boolean;
+
+  @ApiProperty()
+  allowReaction: boolean;
+
+  @ApiProperty()
+  allowComment: boolean;
 
   @ApiProperty()
   record: boolean;

@@ -85,6 +85,28 @@ To test (preview) how mails will appear in email clients . We use `mail dev` cli
 - Use the endpoint `POST /api/mail/test` to send test mail.
 - Visit the swagger UI to learn the payload required.
 
+
+## Development Test Meeting
+
+We provide https://octopus-jitsi.doganbros.com as a server that handles all meetings for development. Currently every developer must connect to this server in order to test how meeting is created, video is streamed etc. Since there is only one server, there is a need to identify each development environment while making requests to server in order to create a meeting. To set up your local environment to support this flow, follow the steps below.
+
+- Set up your jitsi domain env variable to point to the jitsi server (`JITSI_DOMAIN=https://octopus-jitsi.doganbros.com`).
+- Set up a local tunnel to your localhost so that the server can make the request to you. Use the command `npx localtunnel --port 8000 --subdomain yourpreferredsubdomain` where `yourpreferredsubdomain` would be a unique address that will be used to identify you local server later.
+- Add the environment variable `MEETING_HOST=yourpreferredsubdomain.loca.lt` to your `.env` file. This is the endpoint the jitsi server will be making requests to. Note that you shouldn't include (https://)
+- Make sure you have the correct `JITSI_SECRET`, `OCTOPUS_API_KEY`, `OCTOPUS_API_SECRET` and `JWT_APP_ID` env variables set already. If you don't have these already, contact the octopus channel for that.
+- Add the environment variable `REACT_APP_STREAMING_URL=https://octopus-jitsi.doganbros.com:1980/hls` so that streaming works correctly.
+- You are all set! You can now create, record and stream a meeting using the https://octopus-jitsi.doganbros.com server.
+
+
+## Development Streaming
+
+To stream meetings using the https://octopus-jitsi.doganbros.com server, follow the instructions below:
+
+- Create a meeting
+- Click on the three dots, and on start live stream
+- A window will appear, enter `rtmp://octopus-jitsi.doganbros.com/live/<meeting-slug>?uid=1` as a live stream key. (Replace `<meeting-slug>` with the real meeting slug).
+- The stream should start in few minutes
+
 ## Running project
 
 ```bash

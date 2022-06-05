@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import videojs from 'video.js';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -20,15 +20,19 @@ import { http } from '../../../config/http';
 import { postViewStats } from '../../../store/services/post.service';
 import CommentList from './Comments/CommentList';
 import Chat from '../../../components/chat/Chat';
+import { socket } from '../../../helpers/socket';
 
 dayjs.extend(relativeTime);
 interface RouteParams {
   id: string;
 }
 
+const { REACT_APP_STREAMING_URL } = process.env;
+
 const Video: FC = () => {
   const DECISECOND = 10;
   const params = useParams<RouteParams>();
+  const [liveStreamCount, setLiveStreamCount] = useState(0);
   const dispatch = useDispatch();
   const {
     post: {
@@ -82,11 +86,33 @@ const Video: FC = () => {
   }, []);
 
   useEffect(() => {
-    window.addEventListener('beforeunload', maybeSendViewStat);
+    if (data && +params.id === data.id && data.streaming) {
+      setLiveStreamCount(data.postReaction.liveStreamViewersCount);
+      socket.emit('join_post', +params.id);
+
+      socket.on(`stream_viewer_count_change_${params.id}`, setLiveStreamCount);
+
+      return () => {
+        socket.off(
+          `stream_viewer_count_change_${params.id}`,
+          setLiveStreamCount
+        );
+        socket.emit('leave_post', +params.id);
+      };
+    }
+    return undefined;
+  }, [data, params.id]);
+
+  useEffect(() => {
+    const onUnload = () => {
+      maybeSendViewStat();
+      if (data?.streaming) socket.emit('leave_post', +params.id);
+    };
+    window.addEventListener('beforeunload', onUnload);
 
     return () => {
-      window.removeEventListener('beforeunload', maybeSendViewStat);
-      maybeSendViewStat();
+      window.removeEventListener('beforeunload', onUnload);
+      onUnload();
     };
   }, []);
 
@@ -130,8 +156,12 @@ const Video: FC = () => {
                 },
                 sources: [
                   {
-                    src: `${http.defaults.baseURL}/post/video/view/${data.slug}/${data.videoName}`,
-                    type: 'video/mp4',
+                    src: data.streaming
+                      ? `${REACT_APP_STREAMING_URL}/${data.slug}.m3u8`
+                      : `${http.defaults.baseURL}/post/video/view/${data.slug}/${data.videoName}`,
+                    type: data.streaming
+                      ? 'application/x-mpegURL'
+                      : 'video/mp4',
                   },
                 ],
               }}
@@ -165,11 +195,20 @@ const Video: FC = () => {
                   </Text>
                 </Box>
               </Box>
-              <Text color="status-disabled">
-                {data.postReaction.viewsCount === 1
-                  ? `${data.postReaction.viewsCount} view`
-                  : `${data.postReaction.viewsCount} views`}
-              </Text>
+              {data.streaming ? (
+                <Text>
+                  {liveStreamCount}{' '}
+                  {liveStreamCount === 1
+                    ? `user is watching`
+                    : 'users are watching'}
+                </Text>
+              ) : (
+                <Text color="status-disabled">
+                  {data.postReaction.viewsCount === 1
+                    ? `${data.postReaction.viewsCount} view`
+                    : `${data.postReaction.viewsCount} views`}
+                </Text>
+              )}
             </Box>
           </Box>
           <Text color="status-disabled"> {data.description} </Text>

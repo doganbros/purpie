@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   NotFoundException,
   Param,
@@ -45,6 +46,7 @@ import { ListPostFeedQuery } from '../dto/list-post-feed.query';
 import { EditPostDto } from '../dto/edit-post.dto';
 import { VideoViewStats } from '../dto/video-view-stats.dto';
 import { CreatePostCommentLikeDto } from '../dto/create-post-comment-like.dto';
+import { PostLikeQuery } from '../dto/post-like.query';
 
 const {
   S3_VIDEO_POST_DIR = '',
@@ -65,6 +67,8 @@ export class PostController {
         'Post not found or unauthorized',
         'POST_NOT_FOUND',
       );
+
+    return post;
   }
 
   @Post('comment/create')
@@ -86,7 +90,13 @@ export class PostController {
     @Body() info: CreatePostCommentDto,
     @CurrentUser() user: UserTokenPayload,
   ) {
-    await this.validatePost(user.id, info.postId);
+    const post = await this.validatePost(user.id, info.postId);
+
+    if (!post.allowComment)
+      throw new ForbiddenException(
+        `This post doesn't allow comments`,
+        'POST_COMMENTS_NOT_ALLOWED',
+      );
 
     return this.postService.createPostComment(user.id, info);
   }
@@ -298,7 +308,13 @@ export class PostController {
     @Body() info: CreatePostLikeDto,
     @CurrentUser() user: UserTokenPayload,
   ) {
-    await this.validatePost(user.id, info.postId);
+    const post = await this.validatePost(user.id, info.postId);
+
+    if (!post.allowReaction)
+      throw new ForbiddenException(
+        `This post doesn't allow reactions`,
+        'POST_REACTION_NOT_ALLOWED',
+      );
 
     const like = await this.postService.createPostLike(user.id, info);
 
@@ -321,7 +337,7 @@ export class PostController {
   })
   @IsAuthenticated()
   async getPostLikes(
-    @Query() query: PaginationQuery,
+    @Query() query: PostLikeQuery,
     @Param('postId', ParseIntPipe) postId: number,
     @CurrentUser() user: UserTokenPayload,
   ) {

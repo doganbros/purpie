@@ -10,5 +10,5 @@ export class ClientVerifyMeetingAuthDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  meetingTitle: string;
+  slug: string;
 }

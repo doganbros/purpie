@@ -96,7 +96,15 @@ export class ChatGateway {
       socketId: socket.id,
       userId: socket.user.id,
     });
-    // Track no. of users who have joined post
+
+    await this.chatService.addCurrentStreamViewer(socket.user.id, postId);
+    const currentStreamViewersCount = await this.chatService.getTotalNumberOfStreamViewers(
+      postId,
+    );
+
+    socket
+      .to(postId.toString())
+      .emit(`stream_viewer_count_change_${postId}`, currentStreamViewersCount);
 
     return postId;
   }
@@ -110,6 +118,16 @@ export class ChatGateway {
       socketId: socket.id,
       userId: socket.user.id,
     });
+
+    await this.chatService.removeCurrentStreamViewer(socket.user.id, postId);
+    const currentStreamViewersCount = await this.chatService.getTotalNumberOfStreamViewers(
+      postId,
+    );
+
+    socket
+      .to(postId.toString())
+      .emit(`stream_viewer_count_change_${postId}`, currentStreamViewersCount);
+
     await socket.leave(postId.toString());
   }
 

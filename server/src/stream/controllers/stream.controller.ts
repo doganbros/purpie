@@ -38,26 +38,4 @@ export class StreamController {
   ) {
     return this.streamService.getStreamLogs(slug, query);
   }
-
-  @IsAuthenticated()
-  @ApiOkResponse({
-    description: 'Get number of people who have viewed the stream of this slug',
-    schema: { type: 'number', example: 4 },
-  })
-  @Get('viewers/total/count/:slug')
-  async getTotalViewers(@Param('slug') slug: string) {
-    const result = await this.streamService.getTotalViewers(slug);
-
-    return result.total;
-  }
-
-  @IsAuthenticated()
-  @ApiOkResponse({
-    description: 'Get number of people who have viewed the stream of this slug',
-    schema: { type: 'number', example: 4 },
-  })
-  @Get('viewers/current/count/:slug')
-  async getCurrentTotalViewers(@Param('slug') slug: string) {
-    return this.streamService.getCurrentTotalViewers(slug);
-  }
 }

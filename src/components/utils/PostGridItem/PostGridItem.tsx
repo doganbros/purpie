@@ -43,10 +43,10 @@ const PostGridItem: FC<PostGridItemProps> = ({
           gap="small"
           pad={{ bottom: 'small' }}
         >
-          {post.videoName ? (
+          {post.videoName || post.streaming ? (
             <VideoPost
               id={post.id}
-              live={post.liveStream}
+              live={post.streaming}
               onClickSave={onClickSave}
               saved={post.saved}
               slug={post.slug}

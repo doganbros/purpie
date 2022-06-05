@@ -133,6 +133,8 @@ function authenticate_octopus(requestURL)
         response = http_post_with_retry(requestURL .. "/v1/auth/client/login", 1, credJson)
         if response == 403 then
             module:log("warn", "not authorized")
+        elseif response == 404 then
+            module:log("warn", "invalid client auth token secret")
         elseif response == 400 then
             module:log("warn", "bad request")
         else
@@ -187,7 +189,7 @@ function occupant_joined(event)
         userId = userId:get_child("user"):get_child_text("id")
         userId = tonumber(userId)
     end
-    if event.occupant.role then
+    if userId ~= nil and event.occupant.role then
         role = event.occupant.role
         if event.occupant.role ~= "moderator" then
             local room_name = jid.node(event.room.jid)

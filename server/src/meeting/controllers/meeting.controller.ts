@@ -32,6 +32,7 @@ import {
   UserTokenPayload,
 } from 'src/auth/interfaces/user.interface';
 import { PaginationQuery } from 'types/PaginationQuery';
+import { MeetingEvent } from 'types/MeetingEvent';
 import { MeetingConfig } from 'types/Meeting';
 import { errorResponseDoc } from 'helpers/error-response-doc';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
@@ -41,7 +42,6 @@ import { CurrentConferenceUser } from 'src/auth/decorators/current-conference-us
 import { ConferenceRoomName } from 'src/auth/decorators/conference-room-name.decorator';
 import { CreateMeetingDto } from '../dto/create-meeting.dto';
 import { MeetingService } from '../services/meeting.service';
-import { ClientMeetingEventDto } from '../dto/client-meeting-event.dto';
 import { ClientVerifyMeetingAuthDto } from '../dto/client-verify-meeting-auth.dto';
 import { ConferenceInfoResponse } from '../responses/conference-info.response';
 
@@ -260,7 +260,7 @@ export class MeetingController {
     return this.meetingService.getMeetingRecordingList(meetingSlug, query);
   }
 
-  @Post('/client/event')
+  @Post('/events/:identifier/:eventName')
   @ApiCreatedResponse({
     description:
       'Client sends an event relating to a meeting. Client must have manageMeeting permission.',
@@ -268,9 +268,20 @@ export class MeetingController {
   })
   @ValidationBadRequest()
   @IsClientAuthenticated(['manageMeeting'])
-  async setMeetingStatus(@Body() info: ClientMeetingEventDto) {
-    await this.meetingService.setMeetingStatus(info);
-    return 'OK';
+  async handleMeetingEvent(
+    @Body() info: Record<string, any>,
+    @Param('eventName') eventName: MeetingEvent,
+  ) {
+    try {
+      await this.meetingService.setMeetingStatus({
+        userId: info.occupant?.id,
+        event: eventName,
+        slug: info.room_name,
+      });
+      return 'OK';
+    } catch (err) {
+      throw new NotFoundException(err);
+    }
   }
 
   @Post('/client/verify')
@@ -289,7 +300,7 @@ export class MeetingController {
   async verifyMeetingAuthorization(@Body() info: ClientVerifyMeetingAuthDto) {
     const meeting = await this.meetingService.currentUserJoinMeetingValidator(
       info.userId,
-      info.meetingTitle,
+      info.slug,
     );
 
     if (!meeting)
