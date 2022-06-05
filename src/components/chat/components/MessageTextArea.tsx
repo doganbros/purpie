@@ -13,10 +13,14 @@ import React, {
 
 import { EmojiData, emojiIndex } from 'emoji-mart';
 import _ from 'lodash';
+import { useDispatch, useSelector } from 'react-redux';
 import EmojiPicker from './EmojiPicker';
 import SuggestionPicker from './SuggestionPicker';
 import MentionPicker from './MentionPicker';
 import { UserBasic } from '../../../store/types/auth.types';
+import { searchProfileAction } from '../../../store/actions/user.action';
+import { AppState } from '../../../store/reducers/root.reducer';
+import { useDebouncer } from '../../../hooks/useDebouncer';
 
 interface Props {
   text: string;
@@ -33,13 +37,6 @@ interface Props {
   setMentionPickerVisibility: Dispatch<SetStateAction<boolean>>;
 }
 
-const userListForMentions = [
-  { id: 1, firstName: 'User', userName: 'user1', lastName: '1', email: '1@1' },
-  { id: 2, firstName: 'User', userName: 'user2', lastName: '2', email: '2@2' },
-  { id: 3, firstName: 'User', userName: 'user3', lastName: '3', email: '3@3' },
-  { id: 4, firstName: 'User', userName: 'user4', lastName: '4', email: '4@4' },
-];
-
 const MessageBox: FC<Props> = ({
   text,
   name,
@@ -54,9 +51,18 @@ const MessageBox: FC<Props> = ({
   mentionPickerVisibility,
   setMentionPickerVisibility,
 }) => {
+  const dispatch = useDispatch();
+  const debouncer = useDebouncer();
+
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [editingEmoji, setEditingEmoji] = useState<string>('');
   const [suggestions, setSuggestions] = useState<EmojiData[]>([]);
+
+  const {
+    user: {
+      search: { results },
+    },
+  } = useSelector((state: AppState) => state);
 
   useEffect(() => {
     const element = textAreaRef.current;
@@ -70,6 +76,9 @@ const MessageBox: FC<Props> = ({
       !emojiPickerVisibility && suggestions.length > 0
     );
   }, [suggestions, emojiPickerVisibility]);
+
+  const getMentionUserList = (searchText: string) =>
+    dispatch(searchProfileAction({ name: searchText, userContacts: false }));
 
   const handleTextAreaCursor = (cursor: number) => {
     const element = textAreaRef.current;
@@ -164,9 +173,12 @@ const MessageBox: FC<Props> = ({
         break;
       }
     }
-
     if (mentionStartIndex > -1) {
-      // send api request
+      const searchText = resultText.substring(
+        mentionStartIndex,
+        selectionIndex
+      );
+      debouncer(() => getMentionUserList(searchText), 300);
       setMentionPickerVisibility(true);
     } else if (mentionPickerVisibility) {
       setMentionPickerVisibility(false);
@@ -195,13 +207,16 @@ const MessageBox: FC<Props> = ({
         case 'ArrowLeft':
           e.persist();
           getEmojiTextInSentence(value, selectionStart);
-          getMentionInSentence(value, selectionStart);
+          getMentionInSentence(value, Math.max(selectionStart - 1, 0));
           break;
         case 'Right':
         case 'ArrowRight':
           e.persist();
           getEmojiTextInSentence(value, selectionStart, true);
-          getMentionInSentence(value, selectionStart);
+          getMentionInSentence(
+            value,
+            Math.min(selectionStart + 1, e.target.value.length)
+          );
           break;
         case 'Up':
         case 'ArrowUp':
@@ -246,6 +261,7 @@ const MessageBox: FC<Props> = ({
       setEditingEmoji('');
       setSuggestions([]);
       handleTextAreaCursor(before.length + native.length);
+      setEmojiPickerVisibility(false);
     }
   };
 
@@ -297,7 +313,7 @@ const MessageBox: FC<Props> = ({
         visibility={mentionPickerVisibility}
         bottom={pickerBottom}
         width={pickerWidth}
-        userList={userListForMentions}
+        userList={results.data}
         onSelect={onSelectMention}
       />
       <Box round="small" fill gap="small" width="100%" ref={componentRef}>

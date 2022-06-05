@@ -3,6 +3,7 @@ import { Anchor, Box, Text } from 'grommet';
 import React, { FC } from 'react';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import { useSelector } from 'react-redux';
+import uuid from 'uuid';
 import { ChatMessage } from '../../store/types/chat.types';
 import InitialsAvatar from '../utils/InitialsAvatar';
 import { AppState } from '../../store/reducers/root.reducer';
@@ -34,6 +35,7 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
       >
         {menuItems?.map((item: { label: string; onClick: () => void }) => (
           <Box
+            key={uuid.v4()}
             onClick={() => {}}
             pad={{ horizontal: 'small', vertical: 'xsmall' }}
             hoverIndicator={{ background: '#8F9BB3' }}
@@ -95,9 +97,6 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
                     weight="bold"
                     textAlign={ownMessage ? 'end' : 'start'}
                   >
-                    {message.createdBy.firstName} {message.createdBy.lastName}
-                    {message.createdBy.firstName} {message.createdBy.lastName}
-                    {message.createdBy.firstName} {message.createdBy.lastName}
                     {message.createdBy.firstName} {message.createdBy.lastName}
                   </UserFullName>
                   <Text size="small">
