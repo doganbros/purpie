@@ -9,3 +9,43 @@ body {
   margin: 0;
   padding: 0;
 }
+
+.form-field {
+  border: 1px solid #E4E9F2;
+  padding: 18px 18px 10px;
+  border-radius: 25px;
+
+  &:focus-within {
+    border-color: #9060EB;
+  }
+
+  label {
+    margin: 0;
+    font-weight: 500;
+    font-size: 16px;
+
+    & + div {
+      border: none;
+    }
+  }
+
+  input {
+    height: 38px;
+    font-size: 14px;
+    border-radius: 0;
+
+    &:focus {
+      box-shadow: none;
+    }
+  }
+
+  textarea {
+    font-size: 14px;
+    padding: 0;
+    border-radius: 0;
+    margin-top: 10px;
+    resize: none;
+    height: 80px;
+  }
+
+}

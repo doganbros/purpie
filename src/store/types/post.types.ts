@@ -58,6 +58,12 @@ import {
   REMOVE_POST_COMMENT_LIKE_REQUESTED,
   REMOVE_POST_COMMENT_LIKE_SUCCESS,
   REMOVE_POST_COMMENT_LIKE_FAILED,
+  UPDATE_POST_DETAIL_REQUESTED,
+  UPDATE_POST_DETAIL_SUCCESS,
+  UPDATE_POST_DETAIL_FAILED,
+  REMOVE_POST_SUCCESS,
+  REMOVE_POST_REQUESTED,
+  REMOVE_POST_FAILED,
 } from '../constants/post.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
@@ -124,6 +130,7 @@ export interface CreateVideoPayload {
   userContactExclusive?: boolean;
   videoFile: File;
 }
+
 export interface FeedPayload {
   limit?: number;
   skip?: number;
@@ -138,6 +145,7 @@ export interface PostSearchOptions {
   following?: boolean;
   streaming?: boolean;
 }
+
 export interface PostSearchParams extends PostSearchOptions {
   searchTerm: string;
   limit?: number;
@@ -160,6 +168,7 @@ export interface PostCommentState extends PostComment {
     error: ResponseError | null;
   };
 }
+
 export interface PostState {
   feed: PaginatedResponse<Post> & {
     loading: boolean;
@@ -214,8 +223,10 @@ export type PostActionParams =
         | typeof REMOVE_POST_LIKE_REQUESTED
         | typeof CREATE_POST_SAVE_REQUESTED
         | typeof REMOVE_POST_SAVE_REQUESTED
+        | typeof REMOVE_POST_REQUESTED
         | typeof CREATE_POST_SAVE_SUCCESS
-        | typeof REMOVE_POST_SAVE_SUCCESS;
+        | typeof REMOVE_POST_SAVE_SUCCESS
+        | typeof REMOVE_POST_SUCCESS;
       payload: {
         postId: number;
       };
@@ -251,6 +262,16 @@ export type PostActionParams =
         comment: string;
         commentId: number;
         parentId?: number;
+      };
+    }
+  | {
+      type:
+        | typeof UPDATE_POST_DETAIL_REQUESTED
+        | typeof UPDATE_POST_DETAIL_SUCCESS;
+      payload: {
+        postId: number;
+        title: string;
+        description: string;
       };
     }
   | {
@@ -327,10 +348,12 @@ export type PostActionParams =
         | typeof SEARCH_POST_FAILED
         | typeof CREATE_POST_COMMENT_FAILED
         | typeof UPDATE_POST_COMMENT_FAILED
+        | typeof UPDATE_POST_DETAIL_FAILED
         | typeof REMOVE_POST_COMMENT_FAILED
         | typeof LIST_POST_COMMENTS_FAILED
         | typeof CREATE_POST_COMMENT_LIKE_FAILED
-        | typeof REMOVE_POST_COMMENT_LIKE_FAILED;
+        | typeof REMOVE_POST_COMMENT_LIKE_FAILED
+        | typeof REMOVE_POST_FAILED;
       payload: ResponseError;
     }
   | {

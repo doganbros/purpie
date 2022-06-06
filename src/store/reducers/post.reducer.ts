@@ -42,6 +42,7 @@ import {
   CREATE_POST_COMMENT_SUCCESS,
   CREATE_POST_COMMENT_LIKE_SUCCESS,
   REMOVE_POST_COMMENT_LIKE_SUCCESS,
+  UPDATE_POST_DETAIL_SUCCESS,
 } from '../constants/post.constants';
 import { PostActionParams, PostState } from '../types/post.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -84,6 +85,20 @@ const postReducer = (
   action: PostActionParams
 ): PostState => {
   switch (action.type) {
+    case UPDATE_POST_DETAIL_SUCCESS:
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          data: state.postDetail.data
+            ? {
+                ...state.postDetail.data,
+                ...action.payload,
+              }
+            : state.postDetail.data,
+        },
+      };
+      break;
     case PUBLIC_FEED_REQUESTED:
       return {
         ...state,
