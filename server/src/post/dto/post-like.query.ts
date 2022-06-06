@@ -5,7 +5,7 @@ import { PaginationQuery } from 'types/PaginationQuery';
 export class PostLikeQuery extends PaginationQuery {
   @ApiProperty({
     required: false,
-    type: Boolean,
+    enum: ['likes', 'dislikes'],
     description: "Get either post's likes or dislikes, default is likes",
   })
   @IsOptional()
