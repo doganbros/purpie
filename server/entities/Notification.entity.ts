@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { RecordEntity } from './base/RecordEntity';
 import { Post } from './Post.entity';
+import { PostComment } from './PostComment.entity';
 import { User } from './User.entity';
 
 @Entity()
@@ -19,6 +20,13 @@ export class Notification extends RecordEntity {
   @Column({ nullable: true })
   postId: number;
 
+  @ManyToOne(() => PostComment, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'postCommentId', referencedColumnName: 'id' })
+  postComment: PostComment;
+
+  @Column({ nullable: true })
+  postCommentId: number;
+
   @Column({ nullable: true })
   message: string;
 
@@ -30,8 +38,19 @@ export class Notification extends RecordEntity {
   createdById: number;
 
   @Column({ type: 'character varying' })
-  type: 'post' | 'like' | 'comment' | 'mention' | 'system_notification';
+  type:
+    | 'post'
+    | 'post_like'
+    | 'post_comment'
+    | 'comment_like'
+    | 'comment_reply'
+    | 'post_comment_mention'
+    | 'contact_request_accepted'
+    | 'system_notification';
 
   @Column({ nullable: true })
   readOn: Date;
+
+  @Column({ nullable: true })
+  viewedOn: Date;
 }
