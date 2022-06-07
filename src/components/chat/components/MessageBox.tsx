@@ -101,6 +101,10 @@ const MessageBox: FC<Props> = ({
           text={text}
           selectedFile={selectedFile}
           setSelectedFile={setSelectedFile}
+          onSubmit={() => {
+            onSubmit({ message: text });
+            setText('');
+          }}
           toggleEmojiPicker={() =>
             setEmojiPickerVisibility(!emojiPickerVisibility)
           }

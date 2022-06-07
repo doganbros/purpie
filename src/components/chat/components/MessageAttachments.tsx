@@ -12,6 +12,7 @@ interface Props {
   setSelectedFile: Dispatch<SetStateAction<File | null>>;
   toggleEmojiPicker: () => void;
   toggleMentionPicker: () => void;
+  onSubmit: () => void;
 }
 
 const MessageAttachments: FC<Props> = ({
@@ -21,6 +22,7 @@ const MessageAttachments: FC<Props> = ({
   setSelectedFile,
   toggleEmojiPicker,
   toggleMentionPicker,
+  onSubmit,
 }) => {
   const inputFileRef = React.useRef<HTMLInputElement>(null);
 
@@ -85,6 +87,7 @@ const MessageAttachments: FC<Props> = ({
               size="small"
               primary
               label="Send"
+              onClick={onSubmit}
               margin={{ right: 'small', bottom: 'small' }}
             />
           )}
