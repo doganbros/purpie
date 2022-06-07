@@ -5,13 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e4abad43-6efb-4b3f-94e2-0423dc899b26" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/pages/Private/video/Video.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Private/video/Video.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/store/actions/post.action.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/actions/post.action.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/store/constants/post.constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/constants/post.constants.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/store/reducers/post.reducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/reducers/post.reducer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/store/services/post.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/services/post.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/store/types/channel.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/types/channel.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/store/types/post.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/types/post.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/prettier.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/mail/views/templates/account-verification.handlebars" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/mail/views/templates/account-verification.handlebars" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/mail/views/templates/channel-invitation.handlebars" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/mail/views/templates/channel-invitation.handlebars" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/mail/views/templates/new-channel-created.handlebars" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/mail/views/templates/new-channel-created.handlebars" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/mail/views/templates/new-zone-created.handlebars" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/mail/views/templates/new-zone-created.handlebars" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/mail/views/templates/reset-password.handlebars" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/mail/views/templates/reset-password.handlebars" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/mail/views/templates/zone-invitation.handlebars" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/mail/views/templates/zone-invitation.handlebars" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/Private/video/Settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Private/video/Settings.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/styles/index.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/styles/index.scss" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -49,7 +51,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/assets/mail" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -77,7 +79,9 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1654514787096</updated>
-      <workItem from="1654514788380" duration="7778000" />
+      <workItem from="1654514788380" duration="13878000" />
+      <workItem from="1654625799907" duration="237000" />
+      <workItem from="1654626049951" duration="808000" />
     </task>
     <servers />
   </component>

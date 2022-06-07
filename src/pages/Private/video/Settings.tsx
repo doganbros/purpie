@@ -1,5 +1,15 @@
 import React, { FC, useState } from 'react';
-import { FormField, Anchor, TextInput, TextArea, Button, Box } from 'grommet';
+import {
+  FormField,
+  Anchor,
+  CheckBox,
+  TextInput,
+  TextArea,
+  RadioButtonGroup,
+  Button,
+  Text,
+  Box,
+} from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { validators } from '../../../helpers/validators';
 import { updatePostAction } from '../../../store/actions/post.action';
@@ -20,6 +30,9 @@ const Settings: FC<Props> = ({ setSettings, setDeleteConfirmation }) => {
 
   const [title, setTitle] = useState(data?.title);
   const [description, setDescription] = useState(data?.description);
+  const [exclusive, setExclusive] = useState(data?.userContactExclusive);
+  const [publicVisibility, setPublicVisibility] = useState(data?.public);
+  const [value, setValue] = useState('Lorem Ipsum');
 
   const clickHandle = () => {
     if (data && title && description) {
@@ -35,6 +48,7 @@ const Settings: FC<Props> = ({ setSettings, setDeleteConfirmation }) => {
       <FormField
         className="form-field"
         name="title"
+        flex={{ shrink: 0 }}
         htmlFor="videoName"
         label="Video Name"
         validate={[validators.required()]}
@@ -54,6 +68,7 @@ const Settings: FC<Props> = ({ setSettings, setDeleteConfirmation }) => {
         className="form-field"
         name="description"
         htmlFor="videoDescription"
+        flex={{ shrink: 0 }}
         label="Video Description"
         validate={[validators.required()]}
       >
@@ -65,7 +80,33 @@ const Settings: FC<Props> = ({ setSettings, setDeleteConfirmation }) => {
           onChange={(e) => setDescription(e.target.value)}
         />
       </FormField>
-      <Box gap="xsmall" style={{ marginTop: 'auto' }}>
+      <Box className="form-box">
+        <Box as="label" flex={{ shrink: 0 }} direction="row" justify="between">
+          <Text>Exclusive to contacts</Text>
+          <CheckBox
+            toggle
+            checked={exclusive}
+            onChange={(event) => setExclusive(event.target.checked)}
+          />
+        </Box>
+        <Box as="label" flex={{ shrink: 0 }} direction="row" justify="between">
+          <Text>Public</Text>
+          <CheckBox
+            toggle
+            checked={publicVisibility}
+            onChange={(event) => setPublicVisibility(event.target.checked)}
+          />
+        </Box>
+        <Box className="divider" />
+        <RadioButtonGroup
+          name="doc"
+          options={['Lorem Ipsum', 'Lorem Ipsum 2']}
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+        />
+      </Box>
+      <Box margin={{ vertical: 'auto' }} />
+      <Box gap="xsmall" margin={{ top: '20px' }}>
         <Button
           type="submit"
           disabled={notValid}
@@ -78,7 +119,7 @@ const Settings: FC<Props> = ({ setSettings, setDeleteConfirmation }) => {
           label="CLOSE"
           onClick={() => setSettings(false)}
         />
-        <Box align="center" margin={{ top: 'medium' }}>
+        <Box align="center" flex={{ shrink: 0 }} margin={{ top: 'medium' }}>
           <Anchor
             onClick={() => setDeleteConfirmation(true)}
             label="Delete the Video"

@@ -10,6 +10,34 @@ body {
   padding: 0;
 }
 
+.form-box {
+  border: 1px solid #E4E9F2;
+  padding: 18px;
+  border-radius: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+  label span {
+    font-size: 14px;
+  }
+  [role="radiogroup"] {
+    label {
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: center;
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+}
+
+.divider {
+  height: 1px;
+  background: #E4E9F2;
+  margin: 10px 0;
+}
+
 .form-field {
   border: 1px solid #E4E9F2;
   padding: 18px 18px 10px;
