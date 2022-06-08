@@ -11,13 +11,13 @@ import Divider from '../../../utils/Divider';
 interface Props {
   topComponent?: React.ReactNode;
   rightComponent?: React.ReactNode;
-  rightComponentWithoutExtendedBox?: React.ReactNode;
+  rightComponentWithoutOverflow?: boolean;
 }
 
 const Desktop: FC<Props> = ({
   children,
   rightComponent,
-  rightComponentWithoutExtendedBox = false,
+  rightComponentWithoutOverflow = false,
   topComponent,
 }) => {
   const history = useHistory();
@@ -110,15 +110,11 @@ const Desktop: FC<Props> = ({
             background="white"
             round={{ corner: 'left', size: 'large' }}
             elevation="indigo"
-            overflow="auto"
+            overflow={rightComponentWithoutOverflow ? 'hidden' : 'auto'}
           >
-            {rightComponentWithoutExtendedBox ? (
-              rightComponent
-            ) : (
-              <ExtendedBox fill minWidth="min-content">
-                {rightComponent}
-              </ExtendedBox>
-            )}
+            <ExtendedBox fill minWidth="min-content">
+              {rightComponent}
+            </ExtendedBox>
           </ExtendedBox>
         )}
       </ExtendedBox>

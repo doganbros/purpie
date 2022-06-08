@@ -3,15 +3,8 @@ import { nanoid } from 'nanoid';
 import { useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { socket } from '../../helpers/socket';
-import PlanMeetingTheme from '../../layers/meeting/custom-theme';
 import { getChatMessages } from '../../store/services/chat.service';
 import { ChatMessage } from '../../store/types/chat.types';
 import { AppState } from '../../store/reducers/root.reducer';
@@ -20,6 +13,8 @@ import { User } from '../../store/types/auth.types';
 import ReplyMessage from './layers/ReplyMessage';
 import EditMessage from './layers/EditMessage';
 import MessageBox from './components/MessageBox';
+import { MessageBoxContainer } from './ChatStyled';
+import PlanMeetingTheme from '../../layers/meeting/custom-theme';
 
 interface Props {
   medium: 'direct' | 'channel' | 'post';
@@ -46,7 +41,7 @@ const Chat: React.FC<Props> = ({
   const [typingUser, setTypingUser] = useState<User | null>(null);
   const typingTimerId = useRef<NodeJS.Timeout | null>(null);
   const tempMsgIdCounter = useRef(0);
-  const messageScrollRef = useRef<InfiniteScroll>(null);
+  const messageScrollRef = useRef<HTMLDivElement>(null);
   const containerId = useMemo(nanoid, []);
   const [repliedMessage, setRepliedMessage] = useState<ChatMessage | null>(
     null
@@ -56,7 +51,7 @@ const Chat: React.FC<Props> = ({
   const {
     auth: { user: currentUser },
   } = useSelector((state: AppState) => state);
-  const scrollTarget = messageScrollRef.current?.getScrollableTarget();
+  const scrollTarget = messageScrollRef.current;
 
   const checkScrollShouldEnd = () =>
     scrollTarget &&
@@ -66,9 +61,10 @@ const Chat: React.FC<Props> = ({
     scrollTarget.offsetHeight + scrollTarget.scrollTop >
       scrollTarget.scrollHeight - 100;
 
-  useLayoutEffect(() => {
-    if (scrollTarget) {
-      scrollTarget?.scrollTo({ top: scrollTarget.scrollHeight });
+  useEffect(() => {
+    if (messageScrollRef.current) {
+      messageScrollRef.current.scrollTop =
+        messageScrollRef.current.scrollHeight;
     }
   }, [messageScrollRef.current, messages]);
 
@@ -272,115 +268,121 @@ const Chat: React.FC<Props> = ({
 
   return (
     <PlanMeetingTheme>
-      {editedMessage ? (
-        <EditMessage
-          message={editedMessage}
-          onDismiss={() => setEditedMessage(null)}
-          onSubmit={handleSendMessage}
-        />
-      ) : null}
-      {repliedMessage ? (
-        <ReplyMessage
-          message={repliedMessage}
-          name={name}
-          to={id}
-          user={currentUser!}
-          onDismiss={() => setRepliedMessage(null)}
-          onSubmit={handleSendMessage}
-        />
-      ) : null}
-      <Box fill>
-        <Box id={containerId} flex overflow="auto">
-          <InfiniteScroll
-            height="100%"
-            dataLength={messages.length}
-            inverse
-            hasMore={hasMore}
-            next={fetchMessages}
-            loader={<h4>Loading...</h4>}
-            scrollableTarget={containerId}
-            ref={messageScrollRef}
-          >
-            {messages?.map((message) => {
-              const isCurrentUserMsg = currentUser?.id === message.createdBy.id;
-
-              const menuItems = [];
-              if (
-                isCurrentUserMsg &&
-                typeof message.identifier === 'string' &&
-                !message.deleted
-              ) {
-                if (canEdit)
-                  menuItems.push({
-                    label: 'Edit',
-                    onClick: () => {
-                      setEditedMessage(message);
-                    },
-                  });
-                if (canDelete)
-                  menuItems.push({
-                    label: 'Delete',
-                    onClick: async () => {
-                      // eslint-disable-next-line no-alert
-                      const proceed = window.confirm(
-                        'Are you sure you want to delete this message?'
-                      );
-                      if (proceed) {
-                        handleDeleteMsg(message);
-                      }
-                    },
-                  });
-              }
-              if (canReply && !message.deleted)
-                menuItems.push({
-                  label: 'Reply',
-                  onClick: () => {
-                    setRepliedMessage(message);
-                  },
-                });
-              const item = (
-                <Box key={message.identifier} alignSelf="center" align="center">
-                  {!lastDate ||
-                  dayjs(message.createdOn)
-                    .startOf('day')
-                    .diff(dayjs(lastDate).startOf('day'), 'day') > 0
-                    ? renderDayItem(message)
-                    : null}
-                  <MessageItem
-                    key={message.id}
-                    message={message}
-                    id={message.id}
-                    menuItems={menuItems}
-                  />
-                </Box>
-              );
-              lastDate = message.createdOn;
-              return item;
-            })}
-          </InfiniteScroll>
-        </Box>
-        <Box flex={false} pad="small">
-          <MessageBox
-            name={name}
-            handleTypingEvent={handleTypingEvent}
-            onTyping={onTyping}
-            user={currentUser!}
-            onSubmit={({ message }) =>
-              handleSendMessage({
-                message,
-                medium,
-                to: id,
-                createdBy: currentUser as any,
-              })
-            }
+      <Box height="100vh">
+        {editedMessage ? (
+          <EditMessage
+            message={editedMessage}
+            onDismiss={() => setEditedMessage(null)}
+            onSubmit={handleSendMessage}
           />
-        </Box>
-
-        {typingUser ? (
-          <Text size="small" as="i">
-            {typingUser.firstName} {typingUser.lastName} is typing...
-          </Text>
         ) : null}
+        {repliedMessage ? (
+          <ReplyMessage
+            message={repliedMessage}
+            name={name}
+            to={id}
+            user={currentUser!}
+            onDismiss={() => setRepliedMessage(null)}
+            onSubmit={handleSendMessage}
+          />
+        ) : null}
+        <Box fill>
+          <Box id={containerId} flex overflow="auto" ref={messageScrollRef}>
+            <InfiniteScroll
+              height="100%"
+              dataLength={messages.length}
+              inverse
+              hasMore={hasMore}
+              next={fetchMessages}
+              loader={<h4>Loading...</h4>}
+              scrollableTarget={containerId}
+            >
+              {messages?.map((message) => {
+                const isCurrentUserMsg =
+                  currentUser?.id === message.createdBy.id;
+
+                const menuItems = [];
+                if (
+                  isCurrentUserMsg &&
+                  typeof message.identifier === 'string' &&
+                  !message.deleted
+                ) {
+                  if (canEdit)
+                    menuItems.push({
+                      label: 'Edit',
+                      onClick: () => {
+                        setEditedMessage(message);
+                      },
+                    });
+                  if (canDelete)
+                    menuItems.push({
+                      label: 'Delete',
+                      onClick: async () => {
+                        // eslint-disable-next-line no-alert
+                        const proceed = window.confirm(
+                          'Are you sure you want to delete this message?'
+                        );
+                        if (proceed) {
+                          handleDeleteMsg(message);
+                        }
+                      },
+                    });
+                }
+                if (canReply && !message.deleted)
+                  menuItems.push({
+                    label: 'Reply',
+                    onClick: () => {
+                      setRepliedMessage(message);
+                    },
+                  });
+                const item = (
+                  <Box
+                    key={message.identifier}
+                    alignSelf="center"
+                    align="center"
+                  >
+                    {!lastDate ||
+                    dayjs(message.createdOn)
+                      .startOf('day')
+                      .diff(dayjs(lastDate).startOf('day'), 'day') > 0
+                      ? renderDayItem(message)
+                      : null}
+                    <MessageItem
+                      key={message.id}
+                      message={message}
+                      id={message.id}
+                      menuItems={menuItems}
+                    />
+                  </Box>
+                );
+                lastDate = message.createdOn;
+                return item;
+              })}
+            </InfiniteScroll>
+          </Box>
+          <MessageBoxContainer flex={false} pad="small">
+            <MessageBox
+              name={name}
+              handleTypingEvent={handleTypingEvent}
+              onTyping={onTyping}
+              user={currentUser!}
+              onSubmit={({ message }) =>
+                handleSendMessage({
+                  message,
+                  medium,
+                  to: id,
+                  createdBy: currentUser as any,
+                })
+              }
+            />
+          </MessageBoxContainer>
+
+          {typingUser ? (
+            <Text size="small" as="i">
+              {typingUser.firstName} {typingUser.lastName} is typing...
+            </Text>
+          ) : null}
+        </Box>
       </Box>
     </PlanMeetingTheme>
   );

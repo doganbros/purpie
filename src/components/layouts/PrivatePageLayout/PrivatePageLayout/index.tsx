@@ -9,7 +9,7 @@ interface Props {
   changeTitle?: boolean;
   topComponent?: React.ReactNode;
   rightComponent?: React.ReactNode;
-  rightComponentWithoutExtendedBox?: boolean;
+  rightComponentWithoutOverflow?: boolean;
 }
 
 const PrivatePageLayout: FC<Props> = ({
@@ -18,7 +18,7 @@ const PrivatePageLayout: FC<Props> = ({
   rightComponent,
   topComponent,
   changeTitle,
-  rightComponentWithoutExtendedBox = false,
+  rightComponentWithoutOverflow = false,
 }) => {
   useTitle(`${title} - Octopus`, changeTitle);
   const size = useContext(ResponsiveContext);
@@ -31,7 +31,7 @@ const PrivatePageLayout: FC<Props> = ({
     <Desktop
       topComponent={topComponent}
       rightComponent={rightComponent}
-      rightComponentWithoutExtendedBox={rightComponentWithoutExtendedBox}
+      rightComponentWithoutOverflow={rightComponentWithoutOverflow}
     >
       {children}
     </Desktop>
