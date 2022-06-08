@@ -41,7 +41,7 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
             <Box align="center">
               <Avatar
                 alignSelf="center"
-                size="large"
+                size="90px"
                 round="medium"
                 src={Logo}
               />

@@ -115,9 +115,8 @@ const AuthLayout: React.FC<Props> = ({
                 fill="horizontal"
               >
                 <Image
-                  margin={{ right: '8px' }}
-                  width="50px"
-                  height="50px"
+                  margin={{ right: '14px' }}
+                  width="40px"
                   src={theme.dark ? LogoWhite : Logo}
                 />
                 {theme.dark ? (

@@ -39,7 +39,7 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
             icon={
               <Avatar
                 alignSelf="center"
-                size="35px"
+                size="40px"
                 round="medium"
                 src={Logo}
               />
