@@ -8,7 +8,7 @@ export class CreatePostLikeDto {
 
   @ApiProperty({
     required: false,
-    type: Boolean,
+    enum: ['like', 'dislike'],
   })
   @IsOptional()
   @IsIn(['like', 'dislike'])
