@@ -6,7 +6,6 @@ import {
   InfiniteScroll,
   ResponsiveContext,
   Text,
-  Image,
 } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -14,7 +13,6 @@ import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/Pri
 import Divider from '../../../components/utils/Divider';
 import PostGridItem from '../../../components/utils/PostGridItem/PostGridItem';
 import SearchBar from '../../../components/utils/SearchBar';
-import EmptyTimeLineImage from '../../../assets/timeline/empty-timeline.svg';
 import {
   createPostSaveAction,
   getChannelFeedAction,
@@ -28,7 +26,6 @@ import ChannelList from './ChannelList';
 import ChannelsToFollow from './ChannelsToFollow';
 import LastActivities from './LastActivities';
 import ZonesToJoin from './ZonesToJoin';
-import { EmptyTitle, EmptyText, ButtonText } from './TimelineStyled';
 
 const Timeline: FC = () => {
   const size = useContext(ResponsiveContext);
@@ -110,59 +107,6 @@ const Timeline: FC = () => {
     getFeed();
   }, [filters, selectedChannel]);
 
-  const renderTimelineData = () => (
-    <Grid columns={size !== 'small' ? 'medium' : '100%'}>
-      <InfiniteScroll
-        items={feed.data}
-        step={6}
-        onMore={() => {
-          getFeed(feed.data.length);
-        }}
-      >
-        {(item: typeof feed.data[0]) => (
-          <PostGridItem
-            key={item.id}
-            post={item}
-            onClickPlay={() => history.push(`video/${item.id}`)}
-            onClickSave={() => {
-              if (item.saved)
-                dispatch(removePostSaveAction({ postId: item.id }));
-              else dispatch(createPostSaveAction({ postId: item.id }));
-            }}
-          />
-        )}
-      </InfiniteScroll>
-    </Grid>
-  );
-
-  const renderEmptyData = () => (
-    <Box>
-      <Box margin={{ top: 'xlarge' }} alignSelf="center">
-        <Image src={EmptyTimeLineImage} />
-      </Box>
-      <Box margin={{ top: 'large' }}>
-        <EmptyTitle textAlign="center" margin="xxsmall" color="#202631">
-          NO CONTENT AVAILABLE
-        </EmptyTitle>
-        <EmptyText textAlign="center">
-          Start registering new zones and following new channels. Please create
-          your first video content.
-        </EmptyText>
-      </Box>
-      <Box margin="medium" width="fit-content" alignSelf="center">
-        <Button
-          primary
-          size="small"
-          margin={{ right: 'small', bottom: 'small' }}
-        >
-          <Box pad="small">
-            <ButtonText textAlign="center">ADD CONTENT</ButtonText>
-          </Box>
-        </Button>
-      </Box>
-    </Box>
-  );
-
   return (
     <PrivatePageLayout
       title="Timeline"
@@ -201,7 +145,28 @@ const Timeline: FC = () => {
             ))}
           </Box>
         </Box>
-        {feed.data?.length > 0 ? renderTimelineData() : renderEmptyData()}
+        <Grid columns={size !== 'small' ? 'medium' : '100%'}>
+          <InfiniteScroll
+            items={feed.data}
+            step={6}
+            onMore={() => {
+              getFeed(feed.data.length);
+            }}
+          >
+            {(item: typeof feed.data[0]) => (
+              <PostGridItem
+                key={item.id}
+                post={item}
+                onClickPlay={() => history.push(`video/${item.id}`)}
+                onClickSave={() => {
+                  if (item.saved)
+                    dispatch(removePostSaveAction({ postId: item.id }));
+                  else dispatch(createPostSaveAction({ postId: item.id }));
+                }}
+              />
+            )}
+          </InfiniteScroll>
+        </Grid>
       </Box>
     </PrivatePageLayout>
   );
