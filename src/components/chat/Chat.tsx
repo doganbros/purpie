@@ -47,25 +47,27 @@ const Chat: React.FC<Props> = ({
     null
   );
   const [editedMessage, setEditedMessage] = useState<ChatMessage | null>(null);
+  const [messagesLoaded, setMessagesLoaded] = useState<boolean>(false);
 
   const {
     auth: { user: currentUser },
   } = useSelector((state: AppState) => state);
-  const scrollTarget = messageScrollRef.current;
 
   const checkScrollShouldEnd = () =>
-    scrollTarget &&
+    messageScrollRef.current &&
     messages &&
     messages?.length > 0 &&
-    scrollTarget.offsetTop > scrollTarget.scrollHeight &&
-    scrollTarget.offsetHeight + scrollTarget.scrollTop >
-      scrollTarget.scrollHeight - 100;
+    messageScrollRef.current.offsetHeight + messageScrollRef.current.scrollTop >
+      messageScrollRef.current.scrollHeight - 50;
 
   useEffect(() => {
-    if (messageScrollRef.current) {
+    if (messagesLoaded && messageScrollRef.current)
       messageScrollRef.current.scrollTop =
         messageScrollRef.current.scrollHeight;
-    }
+  }, [messagesLoaded]);
+
+  useEffect(() => {
+    if (messageScrollRef.current && messages) setMessagesLoaded(true);
   }, [messageScrollRef.current, messages]);
 
   const updateMessages = (
@@ -73,8 +75,9 @@ const Chat: React.FC<Props> = ({
   ) => {
     const scrollShouldEnd = checkScrollShouldEnd();
     setMessages(handleFunc);
-    if (scrollShouldEnd) {
-      scrollTarget?.scrollTo({ top: scrollTarget.scrollHeight });
+    if (scrollShouldEnd && messageScrollRef.current) {
+      messageScrollRef.current.scrollTop =
+        messageScrollRef.current.scrollHeight;
     }
   };
 
