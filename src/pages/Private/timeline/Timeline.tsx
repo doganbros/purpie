@@ -30,6 +30,7 @@ import LastActivities from './LastActivities';
 import ZonesToJoin from './ZonesToJoin';
 import { EmptyTitle, EmptyText, ButtonText } from './TimelineStyled';
 import AddContent from '../../../layers/add-content/AddContent';
+import { Post } from '../../../store/types/post.types';
 
 const Timeline: FC = () => {
   const size = useContext(ResponsiveContext);
@@ -40,8 +41,8 @@ const Timeline: FC = () => {
     zone: { selectedUserZone },
     channel: { selectedChannel },
   } = useSelector((state: AppState) => state);
-
   const [showAddContent, setShowAddContent] = useState(false);
+  const [screenLoading, setScreenLoading] = useState(true);
   const [filters, setFilters] = useState([
     {
       id: 0,
@@ -109,62 +110,72 @@ const Timeline: FC = () => {
   };
 
   useEffect(() => {
+    setScreenLoading(true);
     getFeed();
+    setScreenLoading(false);
   }, [filters, selectedChannel]);
 
-  const renderTimelineData = () => (
-    <Grid columns={size !== 'small' ? 'medium' : '100%'}>
-      <InfiniteScroll
-        items={feed.data}
-        step={6}
-        onMore={() => {
-          getFeed(feed.data.length);
-        }}
-      >
-        {(item: typeof feed.data[0]) => (
-          <PostGridItem
-            key={item.id}
-            post={item}
-            onClickPlay={() => history.push(`video/${item.id}`)}
-            onClickSave={() => {
-              if (item.saved)
-                dispatch(removePostSaveAction({ postId: item.id }));
-              else dispatch(createPostSaveAction({ postId: item.id }));
-            }}
-          />
-        )}
-      </InfiniteScroll>
-    </Grid>
-  );
-
-  const renderEmptyData = () => (
-    <Box>
-      <Box margin={{ top: 'xlarge' }} alignSelf="center">
-        <Image src={EmptyTimeLineImage} />
-      </Box>
-      <Box margin={{ top: 'large' }}>
-        <EmptyTitle textAlign="center" margin="xxsmall" color="#202631">
-          NO CONTENT AVAILABLE
-        </EmptyTitle>
-        <EmptyText textAlign="center">
-          Start registering new zones and following new channels. Please create
-          your first video content.
-        </EmptyText>
-      </Box>
-      <Box margin="medium" width="fit-content" alignSelf="center">
-        <Button
-          primary
-          size="small"
-          margin={{ right: 'small', bottom: 'small' }}
-          onClick={() => setShowAddContent(true)}
+  const renderTimelineData = () => {
+    return (
+      <Grid columns={size !== 'small' ? 'medium' : '100%'}>
+        <InfiniteScroll
+          items={feed.data}
+          step={6}
+          onMore={() => {
+            getFeed(feed.data.length);
+          }}
         >
-          <Box pad="small">
-            <ButtonText textAlign="center">ADD CONTENT</ButtonText>
-          </Box>
-        </Button>
+          {(item: Post) => {
+            if (screenLoading && feed.loading) return <></>;
+            return (
+              <PostGridItem
+                key={item.id}
+                post={item}
+                onClickPlay={() => history.push(`video/${item.id}`)}
+                onClickSave={() => {
+                  if (item.saved)
+                    dispatch(removePostSaveAction({ postId: item.id }));
+                  else dispatch(createPostSaveAction({ postId: item.id }));
+                }}
+              />
+            );
+          }}
+        </InfiniteScroll>
+      </Grid>
+    );
+  };
+
+  const renderEmptyData = () =>
+    !screenLoading &&
+    !feed.loading &&
+    feed.data.length === 0 && (
+      <Box>
+        <Box margin={{ top: 'xlarge' }} alignSelf="center">
+          <Image src={EmptyTimeLineImage} />
+        </Box>
+        <Box margin={{ top: 'large' }}>
+          <EmptyTitle textAlign="center" margin="xxsmall" color="#202631">
+            NO CONTENT AVAILABLE
+          </EmptyTitle>
+          <EmptyText textAlign="center">
+            Start registering new zones and following new channels. Please
+            create your first video content.
+          </EmptyText>
+        </Box>
+        <Box margin="medium" width="fit-content" alignSelf="center">
+          <Button
+            primary
+            size="small"
+            margin={{ right: 'small', bottom: 'small' }}
+            onClick={() => setShowAddContent(true)}
+          >
+            <Box pad="small">
+              <ButtonText textAlign="center">ADD CONTENT</ButtonText>
+            </Box>
+          </Button>
+        </Box>
       </Box>
-    </Box>
-  );
+    );
 
   return (
     <>
@@ -208,7 +219,8 @@ const Timeline: FC = () => {
               ))}
             </Box>
           </Box>
-          {feed.data?.length === 0 ? renderTimelineData() : renderEmptyData()}
+          {renderEmptyData()}
+          {renderTimelineData()}
         </Box>
       </PrivatePageLayout>
     </>
