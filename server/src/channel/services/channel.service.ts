@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from 'entities/Channel.entity';
@@ -21,6 +22,7 @@ import {
 import { MailService } from 'src/mail/mail.service';
 import { SystemUserListQuery } from 'src/user/dto/system-user-list.query';
 import { Brackets, Not, Repository } from 'typeorm';
+import { PostSettings } from 'types/PostSettings';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { SearchChannelQuery } from '../dto/search-channel.query';
 import { UpdateChannelPermission } from '../dto/update-channel-permission.dto';
@@ -445,5 +447,37 @@ export class ChannelService {
       );
 
     return this.channelRoleRepository.update({ roleCode, channelId }, updates);
+  }
+
+  async getPostSettings(channelId: number) {
+    return this.channelRepository
+      .findOne({
+        where: { id: channelId },
+        select: ['postSettings'],
+      })
+      .then((res) => res?.postSettings);
+  }
+
+  async updatePostSettings(channelId: number, settings: PostSettings) {
+    const updates: Partial<PostSettings> = {};
+
+    const channel = await this.channelRepository.findOne(channelId, {
+      select: ['postSettings'],
+    });
+
+    if (!channel)
+      throw new NotFoundException('Channel not found', 'CHANNEL_NOT_FOUND');
+
+    updates.allowComment =
+      settings.allowComment ?? channel.postSettings.allowComment;
+    updates.allowDislike =
+      settings.allowDislike ?? channel.postSettings.allowDislike;
+    updates.allowReaction =
+      settings.allowReaction ?? channel.postSettings.allowReaction;
+
+    await this.channelRepository.update(
+      { id: channelId },
+      { postSettings: updates },
+    );
   }
 }

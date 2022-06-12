@@ -11,6 +11,7 @@ import { generateLowerAlphaNumId, tsqueryParam } from 'helpers/utils';
 import { BlockedUser } from 'entities/BlockedUser.entity';
 import { UserRole } from 'entities/UserRole.entity';
 import { Invitation } from 'entities/Invitation.entity';
+import { PostSettings } from 'types/PostSettings';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { Brackets, In, Not, Repository } from 'typeorm';
@@ -605,5 +606,34 @@ export class UserService {
         'YOU_CANT_UNBLOCK_YOURSELF',
       );
     await this.blockedUserRepository.delete({ createdById, userId });
+  }
+
+  getPostSettings(userId: number) {
+    return this.userRepository
+      .findOne({
+        where: { id: userId },
+        select: ['postSettings'],
+      })
+      .then((res) => res?.postSettings);
+  }
+
+  async updatePostSettings(userId: number, settings: PostSettings) {
+    const updates: Partial<PostSettings> = {};
+
+    const user = await this.userRepository.findOne(userId, {
+      select: ['postSettings'],
+    });
+
+    if (!user)
+      throw new NotFoundException('Channel not found', 'CHANNEL_NOT_FOUND');
+
+    updates.allowComment =
+      settings.allowComment ?? user.postSettings.allowComment;
+    updates.allowDislike =
+      settings.allowDislike ?? user.postSettings.allowDislike;
+    updates.allowReaction =
+      settings.allowReaction ?? user.postSettings.allowReaction;
+
+    await this.userRepository.update({ id: userId }, { postSettings: updates });
   }
 }

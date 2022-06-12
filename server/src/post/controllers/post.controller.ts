@@ -316,6 +316,9 @@ export class PostController {
         'POST_REACTION_NOT_ALLOWED',
       );
 
+    if (info.type === 'dislike' && !post.allowDislike)
+      throw new ForbiddenException(`This post doesn't allow dislikes`);
+
     const like = await this.postService.createPostLike(user.id, info);
 
     return like.id;

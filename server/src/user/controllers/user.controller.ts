@@ -40,6 +40,7 @@ import {
 } from 'src/auth/interfaces/user.interface';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { User } from 'entities/User.entity';
+import { PostSettings } from 'types/PostSettings';
 import { emptyPaginatedResponse } from 'helpers/utils';
 import { UserRole } from 'entities/UserRole.entity';
 import { PaginationQuery } from 'types/PaginationQuery';
@@ -458,5 +459,24 @@ export class UserController {
     } catch (err: any) {
       return res.status(err.statusCode || 500).json(err);
     }
+  }
+
+  @Get('post-settings')
+  @ApiOkResponse({
+    type: PostSettings,
+    description: 'Retrieves default post settings for a user',
+  })
+  @IsAuthenticated()
+  getCurrentUserPostSettings(@CurrentUser() user: UserTokenPayload) {
+    return this.userService.getPostSettings(user.id);
+  }
+
+  @Put('post-settings/update')
+  @IsAuthenticated()
+  updatePostSettings(
+    @CurrentUser() user: UserTokenPayload,
+    @Body() settings: PostSettings,
+  ) {
+    return this.userService.updatePostSettings(user.id, settings);
   }
 }
