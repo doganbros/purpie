@@ -9,6 +9,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { MeetingConfig } from 'types/Meeting';
 import { UserRoleCode } from 'types/RoleCodes';
+import { PostSettings } from 'types/PostSettings';
 import { RecordEntity } from './base/RecordEntity';
 import { UserChannel } from './UserChannel.entity';
 import { Zone } from './Zone.entity';
@@ -16,6 +17,7 @@ import { UserZone } from './UserZone.entity';
 import { UserRole } from './UserRole.entity';
 import { Contact } from './Contact.entity';
 import { baseMeetingConfig } from './data/base-meeting-config';
+import { defaultPostSettings } from './data/default-post-settings';
 @Entity()
 export class User extends RecordEntity {
   @Column()
@@ -91,4 +93,7 @@ export class User extends RecordEntity {
 
   @Column('tsvector', { select: false })
   search_document: any;
+
+  @Column({ type: 'simple-json', select: false, default: defaultPostSettings })
+  postSettings: PostSettings;
 }

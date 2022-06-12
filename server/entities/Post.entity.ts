@@ -87,6 +87,9 @@ export class Post extends RecordEntity {
   postReactionId: number;
 
   @Column({ default: true })
+  allowDislike: boolean;
+
+  @Column({ default: true })
   allowReaction: boolean;
 
   @Column({ default: true })

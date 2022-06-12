@@ -125,6 +125,9 @@ export class MeetingController {
     if (liveStream) meetingPayload.config.liveStreamingEnabled = true;
     if (record) meetingPayload.config.fileRecordingsEnabled = true;
     if (timeZone) meetingPayload.timeZone = timeZone;
+    meetingPayload.allowComment = createMeetingInfo.allowComment ?? true;
+    meetingPayload.allowDislike = createMeetingInfo.allowDislike ?? true;
+    meetingPayload.allowReaction = createMeetingInfo.allowReaction ?? true;
 
     const meeting = await this.meetingService.createNewMeeting(meetingPayload);
 

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Notification } from 'entities/Notification.entity';
 import { Post } from 'entities/Post.entity';
 import { PostComment } from 'entities/PostComment.entity';
 import { PostCommentLike } from 'entities/PostCommentLike.entity';
@@ -22,6 +23,7 @@ import { PostService } from './services/post.service';
       PostCommentLike,
       SavedPost,
       PostVideo,
+      Notification,
     ]),
   ],
   controllers: [PostController],

@@ -37,13 +37,16 @@ export class Notification extends RecordEntity {
   @Column({ nullable: true })
   createdById: number;
 
+  @Column({ default: 1 })
+  counter: number;
+
   @Column({ type: 'character varying' })
   type:
     | 'post'
     | 'post_like'
     | 'post_comment'
-    | 'comment_like'
-    | 'comment_reply'
+    | 'post_comment_like'
+    | 'post_comment_reply'
     | 'post_comment_mention'
     | 'contact_request_accepted'
     | 'system_notification';
