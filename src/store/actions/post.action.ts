@@ -83,7 +83,7 @@ export const getPublicFeedAction = (payload: FeedPayload): PostAction => {
         type: PUBLIC_FEED_SUCCESS,
         payload: response,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: PUBLIC_FEED_FAILED,
         payload: err?.response?.data,
@@ -104,7 +104,7 @@ export const getUserFeedAction = (payload: FeedPayload): PostAction => {
         type: USER_FEED_SUCCESS,
         payload: response,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: USER_FEED_FAILED,
         payload: err?.response?.data,
@@ -127,7 +127,7 @@ export const getZoneFeedAction = (
         type: ZONE_FEED_SUCCESS,
         payload: response,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: ZONE_FEED_FAILED,
         payload: err?.response?.data,
@@ -150,7 +150,7 @@ export const getChannelFeedAction = (
         type: CHANNEL_FEED_SUCCESS,
         payload: response,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: CHANNEL_FEED_FAILED,
         payload: err?.response?.data,
@@ -171,7 +171,7 @@ export const getPostDetailAction = (postId: number): PostAction => {
         type: POST_DETAIL_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: POST_DETAIL_FAILED,
         payload: err?.response?.data,
@@ -194,7 +194,7 @@ export const createVideoAction = (
       dispatch({
         type: CREATE_VIDEO_SUCCESS,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: CREATE_VIDEO_FAILED,
         payload: err?.response?.data,
@@ -232,7 +232,7 @@ export const createPostLikeAction = (payload: {
       dispatch({
         type: CREATE_POST_LIKE_SUCCESS,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: CREATE_POST_LIKE_FAILED,
         payload: err?.response?.data,
@@ -254,7 +254,7 @@ export const removePostLikeAction = (payload: {
       dispatch({
         type: REMOVE_POST_LIKE_SUCCESS,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: REMOVE_POST_LIKE_FAILED,
         payload: err?.response?.data,
@@ -277,7 +277,7 @@ export const createPostSaveAction = (payload: {
         type: CREATE_POST_SAVE_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: CREATE_POST_SAVE_FAILED,
         payload: err?.response?.data,
@@ -300,7 +300,7 @@ export const removePostSaveAction = (payload: {
         type: REMOVE_POST_SAVE_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: REMOVE_POST_SAVE_FAILED,
         payload: err?.response?.data,
@@ -324,7 +324,7 @@ export const getSavedPostAction = (payload: {
         type: SAVED_POSTS_SUCCESS,
         payload: response,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: SAVED_POSTS_FAILED,
         payload: err?.response?.data,
@@ -345,7 +345,7 @@ export const searchPostAction = (params: PostSearchParams): PostAction => {
         type: SEARCH_POST_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: SEARCH_POST_FAILED,
         payload: err?.reponse?.data,
@@ -382,7 +382,7 @@ export const createPostCommentAction = (
         },
       });
       listPostCommentsAction({ postId });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: CREATE_POST_COMMENT_FAILED,
         payload: err?.reponse?.data,
@@ -415,7 +415,7 @@ export const updatePostCommentAction = (
           parentId,
         },
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: UPDATE_POST_COMMENT_FAILED,
         payload: err?.reponse?.data,
@@ -442,7 +442,7 @@ export const removePostCommentAction = (
         type: REMOVE_POST_COMMENT_SUCCESS,
         payload: { commentId, parentId },
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: REMOVE_POST_COMMENT_FAILED,
         payload: err?.reponse?.data,
@@ -465,7 +465,7 @@ export const listPostCommentsAction = (
         type: LIST_POST_COMMENTS_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: LIST_POST_COMMENTS_FAILED,
         payload: err?.reponse?.data,
@@ -489,7 +489,7 @@ export const listPostCommentRepliesAction = (
         type: LIST_POST_COMMENT_REPLIES_SUCCESS,
         payload: { ...payload, parentId },
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: LIST_POST_COMMENT_REPLIES_FAILED,
         payload: err?.reponse?.data,
@@ -518,7 +518,7 @@ export const createPostCommentLikeAction = (params: {
         type: CREATE_POST_COMMENT_LIKE_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: CREATE_POST_COMMENT_LIKE_FAILED,
         payload: err?.reponse?.data,
@@ -542,7 +542,7 @@ export const removePostCommentLikeAction = (payload: {
         type: REMOVE_POST_COMMENT_LIKE_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: REMOVE_POST_COMMENT_LIKE_FAILED,
         payload: err?.reponse?.data,

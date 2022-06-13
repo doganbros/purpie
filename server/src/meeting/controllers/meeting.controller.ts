@@ -282,7 +282,7 @@ export class MeetingController {
         slug: info.room_name,
       });
       return 'OK';
-    } catch (err) {
+    } catch (err: any) {
       throw new NotFoundException(err);
     }
   }

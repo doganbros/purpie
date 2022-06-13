@@ -24,7 +24,7 @@ export const getZoneSuggestionsAction = (
         type: ZONE_SUGGESTIONS_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: ZONE_SUGGESTIONS_FAILED,
         payload: err?.response?.data,
@@ -47,7 +47,7 @@ export const getChannelSuggestionsAction = (
         type: CHANNEL_SUGGESTIONS_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: CHANNEL_SUGGESTIONS_FAILED,
         payload: err?.response?.data,

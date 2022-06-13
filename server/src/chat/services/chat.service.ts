@@ -85,7 +85,7 @@ export class ChatService {
         );
 
         return { id: userPayload.id };
-      } catch (err) {
+      } catch (err: any) {
         throw new WsException('You not authorized to use this websocket');
       }
     });

@@ -27,7 +27,7 @@ export class ParseTokenPipe implements PipeTransform {
         );
 
       return payload;
-    } catch (err) {
+    } catch (err: any) {
       throw new UnauthorizedException(this.invalidTokenMessage, 'INVALID_JWT');
     }
   }

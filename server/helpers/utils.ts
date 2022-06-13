@@ -111,7 +111,7 @@ export const fetchOrProduceNull = async <T>(
   try {
     const result = await request();
     return result;
-  } catch (err) {
+  } catch (err: any) {
     return null;
   }
 };

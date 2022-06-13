@@ -34,7 +34,7 @@ export class ClientAuthGuard implements CanActivate {
 
       if (req.client.authType !== OCTOPUS_CLIENT_AUTH_TYPE)
         throw new Error('Invalid auth type');
-    } catch (err) {
+    } catch (err: any) {
       throw new UnauthorizedException(
         'You not authorized to use this route',
         'NOT_SIGNED_IN',
