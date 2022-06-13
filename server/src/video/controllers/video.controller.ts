@@ -76,6 +76,9 @@ export class VideoController {
         .replace(path.extname(file.originalname), ''),
       videoName: file.key.replace(S3_VIDEO_POST_DIR, ''),
       createdById: user.id,
+      allowComment: videoInfo.allowComment || true,
+      allowDislike: videoInfo.allowDislike || true,
+      allowReaction: videoInfo.allowReaction || true,
     };
 
     const { public: publicVideo, userContactExclusive, channelId } = videoInfo;

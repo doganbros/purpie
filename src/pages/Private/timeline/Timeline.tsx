@@ -26,6 +26,38 @@ import ChannelList from './ChannelList';
 import ChannelsToFollow from './ChannelsToFollow';
 import LastActivities from './LastActivities';
 import ZonesToJoin from './ZonesToJoin';
+import AddContent from '../../../layers/add-content/AddContent';
+import { Post } from '../../../store/types/post.types';
+import EmptyFeedContent from './EmptyFeedContent';
+import { LoadingState } from '../../../models/utils';
+
+const initialFilters = [
+  {
+    id: 0,
+    filterName: 'All',
+    active: true,
+  },
+  {
+    id: 1,
+    filterName: 'Following',
+    active: false,
+  },
+  {
+    id: 2,
+    filterName: 'Live',
+    active: false,
+  },
+  {
+    id: 3,
+    filterName: 'Newest',
+    active: false,
+  },
+  {
+    id: 4,
+    filterName: 'Popular',
+    active: false,
+  },
+];
 
 const Timeline: FC = () => {
   const size = useContext(ResponsiveContext);
@@ -37,33 +69,9 @@ const Timeline: FC = () => {
     channel: { selectedChannel },
   } = useSelector((state: AppState) => state);
 
-  const [filters, setFilters] = useState([
-    {
-      id: 0,
-      filterName: 'All',
-      active: true,
-    },
-    {
-      id: 1,
-      filterName: 'Following',
-      active: false,
-    },
-    {
-      id: 2,
-      filterName: 'Live',
-      active: false,
-    },
-    {
-      id: 3,
-      filterName: 'Newest',
-      active: false,
-    },
-    {
-      id: 4,
-      filterName: 'Popular',
-      active: false,
-    },
-  ]);
+  const [showAddContent, setShowAddContent] = useState(false);
+  const [filters, setFilters] = useState(initialFilters);
+
   const getFeed = (skip?: number) => {
     const activeFilterId = filters.find((f) => f.active)?.id;
     switch (activeFilterId) {
@@ -107,6 +115,40 @@ const Timeline: FC = () => {
     getFeed();
   }, [filters, selectedChannel]);
 
+  const getTimelineContent = () => {
+    if (feed.loadingState !== LoadingState.done) return 'Loading...'; // We can return a loader component later
+
+    if (!feed.data.length)
+      return <EmptyFeedContent onAddContent={() => setShowAddContent(true)} />;
+
+    return (
+      <Grid columns={size !== 'small' ? 'medium' : '100%'}>
+        <InfiniteScroll
+          items={feed.data}
+          step={6}
+          onMore={() => {
+            getFeed(feed.data.length);
+          }}
+        >
+          {(item: Post) => {
+            return (
+              <PostGridItem
+                key={item.id}
+                post={item}
+                onClickPlay={() => history.push(`video/${item.id}`)}
+                onClickSave={() => {
+                  if (item.saved)
+                    dispatch(removePostSaveAction({ postId: item.id }));
+                  else dispatch(createPostSaveAction({ postId: item.id }));
+                }}
+              />
+            );
+          }}
+        </InfiniteScroll>
+      </Grid>
+    );
+  };
+
   return (
     <PrivatePageLayout
       title="Timeline"
@@ -121,6 +163,9 @@ const Timeline: FC = () => {
       }
       topComponent={<ChannelList />}
     >
+      {showAddContent && (
+        <AddContent onDismiss={() => setShowAddContent(false)} />
+      )}
       <Box pad={{ vertical: 'medium' }} gap="medium">
         <Box direction="row" justify="between" align="center">
           <Text weight="bold">Timeline</Text>
@@ -145,28 +190,7 @@ const Timeline: FC = () => {
             ))}
           </Box>
         </Box>
-        <Grid columns={size !== 'small' ? 'medium' : '100%'}>
-          <InfiniteScroll
-            items={feed.data}
-            step={6}
-            onMore={() => {
-              getFeed(feed.data.length);
-            }}
-          >
-            {(item: typeof feed.data[0]) => (
-              <PostGridItem
-                key={item.id}
-                post={item}
-                onClickPlay={() => history.push(`video/${item.id}`)}
-                onClickSave={() => {
-                  if (item.saved)
-                    dispatch(removePostSaveAction({ postId: item.id }));
-                  else dispatch(createPostSaveAction({ postId: item.id }));
-                }}
-              />
-            )}
-          </InfiniteScroll>
-        </Grid>
+        {getTimelineContent()}
       </Box>
     </PrivatePageLayout>
   );

@@ -8,11 +8,13 @@ import {
   OneToMany,
   OneToOne,
 } from 'typeorm';
+import { PostSettings } from 'types/PostSettings';
 import { RecordEntity } from './base/RecordEntity';
 import { UserChannel } from './UserChannel.entity';
 import { User } from './User.entity';
 import { Zone } from './Zone.entity';
 import { Category } from './Category.entity';
+import { defaultPostSettings } from './data/default-post-settings';
 
 @Entity()
 export class Channel extends RecordEntity {
@@ -68,4 +70,7 @@ export class Channel extends RecordEntity {
 
   @Column('tsvector', { select: false })
   search_document: any;
+
+  @Column({ type: 'simple-json', select: false, default: defaultPostSettings })
+  postSettings: PostSettings;
 }

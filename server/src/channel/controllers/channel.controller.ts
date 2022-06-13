@@ -45,6 +45,7 @@ import {
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { SystemUserListQuery } from 'src/user/dto/system-user-list.query';
 import { CurrentUserZone } from 'src/zone/decorators/current-user-zone.decorator';
+import { PostSettings } from 'types/PostSettings';
 import { UserZoneRole } from 'src/zone/decorators/user-zone-role.decorator';
 import { UserZoneService } from 'src/zone/services/user-zone.service';
 import { ChannelRole } from 'entities/ChannelRole.entity';
@@ -459,5 +460,24 @@ export class ChannelController {
     } catch (err: any) {
       return res.status(err.statusCode || 500).json(err);
     }
+  }
+
+  @Get('post-settings/:channelId')
+  @UserChannelRole()
+  @ApiOkResponse({
+    type: PostSettings,
+    description: 'Retrieves default post settings for a channel',
+  })
+  getChannelPostSettings(@Param('channelId', ParseIntPipe) channelId: number) {
+    return this.channelService.getPostSettings(channelId);
+  }
+
+  @Put('post-settings/update/:channelId')
+  @UserChannelRole(['canEdit'])
+  updatePostSettings(
+    @Param('channelId', ParseIntPipe) channelId: number,
+    @Body() settings: PostSettings,
+  ) {
+    return this.channelService.updatePostSettings(channelId, settings);
   }
 }

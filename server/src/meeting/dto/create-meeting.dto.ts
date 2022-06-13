@@ -79,6 +79,21 @@ export class CreateMeetingDto {
   @ApiProperty()
   @IsOptional()
   @IsBoolean()
+  allowDislike?: boolean;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsBoolean()
+  allowReaction?: boolean;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsBoolean()
+  allowComment?: boolean;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsBoolean()
   record?: boolean;
 
   @ApiProperty({ type: Number, isArray: true })
