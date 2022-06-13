@@ -45,11 +45,12 @@ import {
 } from '../constants/post.constants';
 import { PostActionParams, PostState } from '../types/post.types';
 import { paginationInitialState } from '../../helpers/constants';
+import { LoadingState } from '../../models/utils';
 
 const initialState: PostState = {
   feed: {
     ...paginationInitialState,
-    loading: false,
+    loadingState: LoadingState.pending,
     error: null,
   },
   postDetail: {
@@ -89,7 +90,7 @@ const postReducer = (
         ...state,
         feed: {
           ...state.feed,
-          loading: true,
+          loadingState: LoadingState.loading,
           error: null,
         },
       };
@@ -102,7 +103,7 @@ const postReducer = (
             action.payload.skip > 0
               ? [...state.feed.data, ...action.payload.data]
               : action.payload.data,
-          loading: false,
+          loadingState: LoadingState.done,
           error: null,
         },
       };
@@ -111,7 +112,7 @@ const postReducer = (
         ...state,
         feed: {
           ...state.feed,
-          loading: false,
+          loadingState: LoadingState.done,
           error: action.payload,
         },
       };
@@ -120,7 +121,7 @@ const postReducer = (
         ...state,
         feed: {
           ...state.feed,
-          loading: true,
+          loadingState: LoadingState.loading,
           error: null,
         },
       };
@@ -133,7 +134,7 @@ const postReducer = (
             action.payload.skip > 0
               ? [...state.feed.data, ...action.payload.data]
               : action.payload.data,
-          loading: false,
+          loadingState: LoadingState.done,
           error: null,
         },
       };
@@ -142,7 +143,7 @@ const postReducer = (
         ...state,
         feed: {
           ...state.feed,
-          loading: false,
+          loadingState: LoadingState.done,
           error: action.payload,
         },
       };
@@ -151,7 +152,7 @@ const postReducer = (
         ...state,
         feed: {
           ...state.feed,
-          loading: true,
+          loadingState: LoadingState.loading,
           error: null,
         },
       };
@@ -164,7 +165,7 @@ const postReducer = (
             action.payload.skip > 0
               ? [...state.feed.data, ...action.payload.data]
               : action.payload.data,
-          loading: false,
+          loadingState: LoadingState.done,
           error: null,
         },
       };
@@ -173,7 +174,7 @@ const postReducer = (
         ...state,
         feed: {
           ...state.feed,
-          loading: false,
+          loadingState: LoadingState.done,
           error: action.payload,
         },
       };
@@ -182,7 +183,7 @@ const postReducer = (
         ...state,
         feed: {
           ...state.feed,
-          loading: true,
+          loadingState: LoadingState.loading,
           error: null,
         },
       };
@@ -195,7 +196,7 @@ const postReducer = (
             action.payload.skip > 0
               ? [...state.feed.data, ...action.payload.data]
               : action.payload.data,
-          loading: false,
+          loadingState: LoadingState.done,
           error: null,
         },
       };
@@ -204,7 +205,7 @@ const postReducer = (
         ...state,
         feed: {
           ...state.feed,
-          loading: false,
+          loadingState: LoadingState.done,
           error: action.payload,
         },
       };
