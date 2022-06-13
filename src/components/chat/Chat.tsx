@@ -41,44 +41,21 @@ const Chat: React.FC<Props> = ({
   const [typingUser, setTypingUser] = useState<User | null>(null);
   const typingTimerId = useRef<NodeJS.Timeout | null>(null);
   const tempMsgIdCounter = useRef(0);
-  const messageScrollRef = useRef<HTMLDivElement>(null);
   const containerId = useMemo(nanoid, []);
+  const messageBoxScrollRef = useRef<HTMLDivElement>(null);
   const [repliedMessage, setRepliedMessage] = useState<ChatMessage | null>(
     null
   );
   const [editedMessage, setEditedMessage] = useState<ChatMessage | null>(null);
-  const [messagesLoaded, setMessagesLoaded] = useState<boolean>(false);
 
   const {
     auth: { user: currentUser },
   } = useSelector((state: AppState) => state);
 
-  const checkScrollShouldEnd = () =>
-    messageScrollRef.current &&
-    messages &&
-    messages?.length > 0 &&
-    messageScrollRef.current.offsetHeight + messageScrollRef.current.scrollTop >
-      messageScrollRef.current.scrollHeight - 50;
-
-  useEffect(() => {
-    if (messagesLoaded && messageScrollRef.current)
-      messageScrollRef.current.scrollTop =
-        messageScrollRef.current.scrollHeight;
-  }, [messagesLoaded]);
-
-  useEffect(() => {
-    if (messageScrollRef.current && messages) setMessagesLoaded(true);
-  }, [messageScrollRef.current, messages]);
-
   const updateMessages = (
     handleFunc: (msgs: ChatMessage[] | null) => ChatMessage[] | null
   ) => {
-    const scrollShouldEnd = checkScrollShouldEnd();
     setMessages(handleFunc);
-    if (scrollShouldEnd && messageScrollRef.current) {
-      messageScrollRef.current.scrollTop =
-        messageScrollRef.current.scrollHeight;
-    }
   };
 
   const fetchMessages = async () => {
@@ -150,6 +127,10 @@ const Chat: React.FC<Props> = ({
             { ...message, createdBy: currentUser, identifier: tempId } as any,
           ]
       );
+      messageBoxScrollRef.current?.scrollTo({
+        behavior: 'smooth',
+        top: messageBoxScrollRef.current.scrollHeight,
+      });
     }
 
     socket.emit('message', message, (payloadMsg: ChatMessage) => {
@@ -271,7 +252,7 @@ const Chat: React.FC<Props> = ({
 
   return (
     <PlanMeetingTheme>
-      <Box height="100vh">
+      <Box>
         {editedMessage ? (
           <EditMessage
             message={editedMessage}
@@ -289,8 +270,15 @@ const Chat: React.FC<Props> = ({
             onSubmit={handleSendMessage}
           />
         ) : null}
-        <Box fill>
-          <Box id={containerId} flex overflow="auto" ref={messageScrollRef}>
+        <Box>
+          <Box
+            overflow="auto"
+            flex={{ grow: 1 }}
+            direction="column-reverse"
+            ref={messageBoxScrollRef}
+            height="calc(100vh - 150px)"
+            id={containerId}
+          >
             <InfiniteScroll
               height="100%"
               dataLength={messages.length}
