@@ -4,6 +4,16 @@ import { Post } from './Post.entity';
 import { PostComment } from './PostComment.entity';
 import { User } from './User.entity';
 
+export type NotificationType =
+  | 'post'
+  | 'post_like'
+  | 'post_comment'
+  | 'post_comment_like'
+  | 'post_comment_reply'
+  | 'post_comment_mention'
+  | 'contact_request_accepted'
+  | 'system_notification';
+
 @Entity()
 export class Notification extends RecordEntity {
   @Column()
@@ -41,15 +51,7 @@ export class Notification extends RecordEntity {
   counter: number;
 
   @Column({ type: 'character varying' })
-  type:
-    | 'post'
-    | 'post_like'
-    | 'post_comment'
-    | 'post_comment_like'
-    | 'post_comment_reply'
-    | 'post_comment_mention'
-    | 'contact_request_accepted'
-    | 'system_notification';
+  type: NotificationType;
 
   @Column({ nullable: true })
   readOn: Date;
