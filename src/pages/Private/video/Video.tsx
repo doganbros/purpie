@@ -118,6 +118,7 @@ const Video: FC = () => {
 
   return (
     <PrivatePageLayout
+      rightComponentWithoutOverflow
       title={data?.title || 'Loading'}
       rightComponent={
         data ? <Chat medium="post" id={+params.id} handleTypingEvent /> : null

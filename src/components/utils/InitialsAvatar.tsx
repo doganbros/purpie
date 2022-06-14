@@ -5,14 +5,24 @@ import { getColorPairFromId } from '../../helpers/utils';
 interface InitialsAvatarProps {
   id: number;
   value: string;
-  size?: string;
+  size?: 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge';
+  fontSize?: 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge';
 }
 
-const InitialsAvatar: FC<InitialsAvatarProps> = ({ id, value, size }) => {
+const InitialsAvatar: FC<InitialsAvatarProps> = ({
+  id,
+  value,
+  size,
+  fontSize,
+}) => {
   const { background, foreground } = getColorPairFromId(id);
   return value ? (
     <Avatar round background={{ color: background }} size={size}>
-      <Text color={foreground} size={size}>
+      <Text
+        color={foreground}
+        size={fontSize || size}
+        style={{ userSelect: 'none' }}
+      >
         {value
           .split(' ')
           .filter((_v, i: number) => i < 2)
