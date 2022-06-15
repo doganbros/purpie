@@ -11,6 +11,7 @@ export interface ChatMessage {
   deleted: boolean;
   systemMessage: boolean;
   to: number;
+  roomName: string;
   parent?: ChatMessage;
   createdOn: Date;
   createdBy: {

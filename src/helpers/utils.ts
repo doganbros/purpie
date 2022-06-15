@@ -59,3 +59,8 @@ export function getCookie(name: string): string | null {
 
 export const getColorPairFromId = (id: number): typeof colorPair[0] =>
   colorPair[id % colorPair.length];
+
+export const getChatRoomName = (
+  id: number,
+  medium: 'post' | 'direct' | 'channel' = 'direct'
+): string => `${medium}_${id}`;

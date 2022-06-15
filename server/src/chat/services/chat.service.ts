@@ -265,4 +265,8 @@ export class ChatService {
   async getTotalNumberOfStreamViewers(postId: number) {
     return this.currentStreamViewerRepository.count({ postId });
   }
+
+  getRoomName(id: number, medium: 'direct' | 'channel' | 'post' = 'direct') {
+    return `${medium}_${id}`;
+  }
 }

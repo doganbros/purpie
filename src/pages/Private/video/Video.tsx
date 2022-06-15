@@ -86,18 +86,25 @@ const Video: FC = () => {
   }, []);
 
   useEffect(() => {
-    if (data && +params.id === data.id && data.streaming) {
-      setLiveStreamCount(data.postReaction.liveStreamViewersCount);
-      socket.emit('join_post', +params.id);
+    if (data) setLiveStreamCount(data.postReaction.liveStreamViewersCount);
+  }, [data]);
 
-      socket.on(`stream_viewer_count_change_${params.id}`, setLiveStreamCount);
+  useEffect(() => {
+    if (data && +params.id === data.id && data.streaming) {
+      const handleCountChange = ({
+        counter,
+        postId,
+      }: {
+        counter: number;
+        postId: number;
+      }) => {
+        if (postId === data.id) setLiveStreamCount(counter);
+      };
+
+      socket.on('stream_viewer_count_change', handleCountChange);
 
       return () => {
-        socket.off(
-          `stream_viewer_count_change_${params.id}`,
-          setLiveStreamCount
-        );
-        socket.emit('leave_post', +params.id);
+        socket.off('stream_viewer_count_change', handleCountChange);
       };
     }
     return undefined;

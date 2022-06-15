@@ -15,6 +15,7 @@ import EditMessage from './layers/EditMessage';
 import MessageBox from './components/MessageBox';
 import { MessageBoxContainer } from './ChatStyled';
 import PlanMeetingTheme from '../../layers/meeting/custom-theme';
+import { getChatRoomName } from '../../helpers/utils';
 
 interface Props {
   medium: 'direct' | 'channel' | 'post';
@@ -47,6 +48,7 @@ const Chat: React.FC<Props> = ({
     null
   );
   const [editedMessage, setEditedMessage] = useState<ChatMessage | null>(null);
+  const roomName = getChatRoomName(id, medium);
 
   const {
     auth: { user: currentUser },
@@ -146,12 +148,12 @@ const Chat: React.FC<Props> = ({
   };
 
   const onTyping = () => {
-    socket.emit('typing', { to: id, user: currentUser });
+    socket.emit('typing', { to: id, user: currentUser, medium });
   };
 
   useEffect(() => {
     const messageListener = (message: ChatMessage): void => {
-      if (!(message.to === id && message.medium === medium)) return;
+      if (message.roomName !== roomName) return;
       if (message.edited)
         updateMessages(
           (msgs) =>
@@ -173,9 +175,13 @@ const Chat: React.FC<Props> = ({
     const typingListener = (payload: {
       id: number;
       to: number;
+      roomName: string;
       user: Record<string, any>;
     }) => {
-      if (payload.user.id !== currentUser?.id && payload.to === id) {
+      if (
+        payload.user.id !== currentUser?.id &&
+        payload.roomName === roomName
+      ) {
         if (typingTimerId.current) {
           clearTimeout(typingTimerId.current);
           typingTimerId.current = null;
@@ -191,8 +197,9 @@ const Chat: React.FC<Props> = ({
       identifier: string;
       to: number;
       medium: string;
+      roomName: string;
     }) => {
-      if (!(payload.to === id && payload.medium === medium)) return;
+      if (payload.roomName !== roomName) return;
       updateMessages(
         (msgs) =>
           msgs &&
@@ -229,6 +236,7 @@ const Chat: React.FC<Props> = ({
         socket.emit('leave_post', id);
       };
     }
+    fetchMessages();
     return undefined;
   }, [medium, id]);
 
@@ -276,7 +284,7 @@ const Chat: React.FC<Props> = ({
             flex={{ grow: 1 }}
             direction="column-reverse"
             ref={messageBoxScrollRef}
-            height="calc(100vh - 150px)"
+            height="calc(100vh - 175px)"
             id={containerId}
           >
             <InfiniteScroll
@@ -360,6 +368,7 @@ const Chat: React.FC<Props> = ({
               onSubmit={({ message }) =>
                 handleSendMessage({
                   message,
+                  roomName,
                   medium,
                   to: id,
                   createdBy: currentUser as any,
@@ -369,7 +378,7 @@ const Chat: React.FC<Props> = ({
           </MessageBoxContainer>
 
           {typingUser ? (
-            <Text size="small" as="i">
+            <Text size="small" as="i" textAlign="center">
               {typingUser.firstName} {typingUser.lastName} is typing...
             </Text>
           ) : null}
