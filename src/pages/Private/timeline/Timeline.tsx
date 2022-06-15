@@ -116,7 +116,10 @@ const Timeline: FC = () => {
   }, [filters, selectedChannel]);
 
   const getTimelineContent = () => {
-    if (feed.loadingState !== LoadingState.done) return 'Loading...'; // We can return a loader component later
+    if (
+      [LoadingState.loading, LoadingState.pending].includes(feed.loadingState)
+    )
+      return 'Loading...'; // We can return a loader component later
 
     if (!feed.data.length)
       return <EmptyFeedContent onAddContent={() => setShowAddContent(true)} />;

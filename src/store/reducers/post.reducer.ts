@@ -90,7 +90,10 @@ const postReducer = (
         ...state,
         feed: {
           ...state.feed,
-          loadingState: LoadingState.loading,
+          loadingState:
+            (action.payload.skip || 0) > 0
+              ? LoadingState.more
+              : LoadingState.loading,
           error: null,
         },
       };
@@ -121,7 +124,10 @@ const postReducer = (
         ...state,
         feed: {
           ...state.feed,
-          loadingState: LoadingState.loading,
+          loadingState:
+            (action.payload.skip || 0) > 0
+              ? LoadingState.more
+              : LoadingState.loading,
           error: null,
         },
       };
@@ -152,7 +158,10 @@ const postReducer = (
         ...state,
         feed: {
           ...state.feed,
-          loadingState: LoadingState.loading,
+          loadingState:
+            (action.payload.skip || 0) > 0
+              ? LoadingState.more
+              : LoadingState.loading,
           error: null,
         },
       };
@@ -183,7 +192,10 @@ const postReducer = (
         ...state,
         feed: {
           ...state.feed,
-          loadingState: LoadingState.loading,
+          loadingState:
+            (action.payload.skip || 0) > 0
+              ? LoadingState.more
+              : LoadingState.loading,
           error: null,
         },
       };

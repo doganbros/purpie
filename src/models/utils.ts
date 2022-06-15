@@ -19,5 +19,6 @@ export interface SearchParams {
 export enum LoadingState {
   pending,
   loading,
+  more,
   done,
 }
