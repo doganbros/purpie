@@ -21,6 +21,7 @@ export class PostListener {
     return this.postRepository.findOne(postId);
   }
 
+
   getUnviewedNotification(
     post: Post,
     type: NotificationType,
