@@ -128,7 +128,9 @@ const Video: FC = () => {
       rightComponentWithoutOverflow
       title={data?.title || 'Loading'}
       rightComponent={
-        data ? <Chat medium="post" id={+params.id} handleTypingEvent /> : null
+        data ? (
+          <Chat medium="post" id={+params.id} handleTypingEvent canAddFile />
+        ) : null
       }
     >
       {loading || !data ? (

@@ -64,3 +64,6 @@ export const getChatRoomName = (
   id: number,
   medium: 'post' | 'direct' | 'channel' = 'direct'
 ): string => `${medium}_${id}`;
+
+export const getFileKey = (file: File): string =>
+  `${file.name}_${file.size}_${file.type}`;

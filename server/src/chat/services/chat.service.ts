@@ -5,8 +5,9 @@ import { ChatMessageAttachment } from 'entities/ChatMessageAttachment.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { CurrentStreamViewer } from 'entities/CurrentStreamViewer.entity';
 import { deleteObject } from 'config/s3-storage';
+import { PaginationQuery } from 'types/PaginationQuery';
 import { Socket } from 'socket.io';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import cookie from 'cookie';
 import { WsException } from '@nestjs/websockets';
 import { verifyJWT } from 'helpers/jwt';
@@ -234,7 +235,12 @@ export class ChatService {
     if (payload.attachments?.length) {
       for (const attachment of payload.attachments) {
         await this.chatMessageAttachmentRepo
-          .create({ name: attachment.name, chatMessageId })
+          .create({
+            name: attachment.name,
+            originalFileName: attachment.originalFileName,
+            chatMessageId,
+            createdById: payload.createdBy.id,
+          })
           .save();
       }
     }
@@ -264,6 +270,39 @@ export class ChatService {
 
   async getTotalNumberOfStreamViewers(postId: number) {
     return this.currentStreamViewerRepository.count({ postId });
+  }
+
+  async getChatAttachments(
+    userId: number,
+    id: number,
+    medium: 'direct' | 'channel' | 'post',
+    query: PaginationQuery,
+  ) {
+    // post might not be supported in the future because it requires more logic to determine if
+    // the user is authorized or not
+    // for now we support it for demonstration purpose
+
+    return this.chatMessageAttachmentRepo
+      .createQueryBuilder('chat_msg_attachment')
+      .innerJoin('chat_msg_attachment.chatMessage', 'chatMessage')
+      .where('chatMessage.medium = :medium', { medium })
+      .andWhere('chatMessage.to = :to', { to: id })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where('chatMessage.createdBy = :userId', {
+            userId,
+          })
+            .orWhere(
+              'chatMessage.medium = :directMedium and chatMessage.to = :userId',
+              { directMedium: 'direct', userId },
+            )
+            .orWhere(
+              'chatMessage.medium = :channelMedium and exists (select id from user_channel where "channelId" = :channelId and "userId" = :userId)',
+              { channelId: id, channelMedium: 'channel', userId },
+            );
+        }),
+      )
+      .paginate(query);
   }
 
   getRoomName(id: number, medium: 'direct' | 'channel' | 'post' = 'direct') {

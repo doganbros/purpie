@@ -14,6 +14,7 @@ import { ChatMessageAttachment } from 'entities/ChatMessageAttachment.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { PaginationQuery } from 'types/PaginationQuery';
 import { s3, s3HeadObject, s3Storage } from 'config/s3-storage';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
@@ -37,6 +38,17 @@ export class ChatController {
     @Query() query: ChatMessageListQuery,
   ) {
     return this.chatService.getChatMessages(user.id, medium, id, query);
+  }
+
+  @Get('list/attachments/:medium/:id')
+  @IsAuthenticated()
+  listChatAttachments(
+    @Param('medium') medium: 'channel' | 'post' | 'direct',
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: UserTokenPayload,
+    @Query() query: PaginationQuery,
+  ) {
+    return this.chatService.getChatAttachments(user.id, id, medium, query);
   }
 
   @Get('attachment/:name')
@@ -84,6 +96,7 @@ export class ChatController {
   addChatAttachment(@UploadedFile() file: Express.MulterS3.File) {
     const payload: Partial<ChatMessageAttachment> = {
       name: file.key.replace(S3_CHAT_MESSAGE_DIR, ''),
+      originalFileName: file.originalname,
     };
 
     return payload;

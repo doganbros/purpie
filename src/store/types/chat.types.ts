@@ -1,10 +1,16 @@
 export interface ChatState {
   usersOnline: Array<number>;
 }
+
+export interface ChatAttachment {
+  name: string;
+  originalFileName: string;
+}
 export interface ChatMessage {
   id?: number;
   identifier: string | number;
   parentIdentifier?: string | null;
+  attachments?: Array<ChatAttachment>;
   message: string;
   medium: string;
   edited: boolean;
