@@ -2,6 +2,7 @@ import React, { FC, useContext, useState } from 'react';
 import { Avatar, Box, DropButton, ResponsiveContext, Text } from 'grommet';
 import { Add, SettingsOption, User } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
 import { getZoneAvatarSrc } from '../../../../pages/Private/timeline/data/zone-avatars';
 import { AppState } from '../../../../store/reducers/root.reducer';
@@ -19,6 +20,7 @@ const ZoneSelector: FC = () => {
     },
     auth: { user },
   } = useSelector((state: AppState) => state);
+  const history = useHistory();
   const dispatch = useDispatch();
   const size = useContext(ResponsiveContext);
   const [hover, setHover] = useState(false);
@@ -90,6 +92,7 @@ const ZoneSelector: FC = () => {
             />
             <Divider />
             <ZoneSelectorListItem
+              onClick={() => history.push('/settings')}
               label="Settings"
               rightIcon={<SettingsOption size="small" color="black" />}
             />

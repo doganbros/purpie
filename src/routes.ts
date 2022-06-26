@@ -3,6 +3,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import Channels from './pages/Private/channels/Channels';
 import Saved from './pages/Private/saved/Saved';
 import Search from './pages/Private/search/Search';
+import Settings from './pages/Private/settings/Settings';
 import Timeline from './pages/Private/timeline/Timeline';
 import Video from './pages/Private/video/Video';
 import ForgotPassword from './pages/Public/ForgotPassword';
@@ -98,5 +99,11 @@ export const privateRoutes: Array<AppRoute> = [
     path: '/search/:scope/:value',
     component: Search,
     description: 'User views a search results',
+  },
+  {
+    id: nanoid(),
+    path: '/settings',
+    component: Settings,
+    description: 'Settings',
   },
 ];
