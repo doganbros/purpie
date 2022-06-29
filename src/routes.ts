@@ -4,6 +4,7 @@ import Channels from './pages/Private/channels/Channels';
 import Saved from './pages/Private/saved/Saved';
 import Search from './pages/Private/search/Search';
 import Settings from './pages/Private/settings/Settings';
+import Settings2 from './pages/Private/settings/Settings2';
 import Timeline from './pages/Private/timeline/Timeline';
 import Video from './pages/Private/video/Video';
 import ForgotPassword from './pages/Public/ForgotPassword';
@@ -104,6 +105,12 @@ export const privateRoutes: Array<AppRoute> = [
     id: nanoid(),
     path: '/settings',
     component: Settings,
+    description: 'Settings',
+  },
+  {
+    id: nanoid(),
+    path: '/settings2',
+    component: Settings2,
     description: 'Settings',
   },
 ];

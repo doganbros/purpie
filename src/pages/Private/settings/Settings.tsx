@@ -1,9 +1,31 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { Box, TextInput, Text } from 'grommet';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
+import { useDebouncer } from '../../../hooks/useDebouncer';
 
-const data = [
+type SettingFormItem = {
+  key: string;
+  title: string;
+  description: string;
+  component: JSX.Element;
+};
+
+type SettingItem = {
+  key: string;
+  title: string;
+  items: SettingFormItem[];
+};
+
+type DataItemInterface = {
+  id: number;
+  key: string;
+  label: string;
+  url: string;
+  items: SettingItem[];
+};
+
+const data: DataItemInterface[] = [
   {
     id: 0,
     key: 'settings1',
@@ -109,16 +131,93 @@ const data = [
 ];
 
 const Settings: FC = () => {
-  const [selectedIndex, setSelectedIndex] = useState<number>(0);
-  const menuItems = data;
-  const selectedItem = menuItems[selectedIndex];
+  const debouncer = useDebouncer();
 
-  const renderSettings = () => {
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [searchText, setSearchText] = useState<string>('');
+  const [searchTextValue, setSearchTextValue] = useState<string>('');
+  const menuItems = data;
+
+  const selectedItems = useMemo(() => {
+    if (searchText?.length > 0) {
+      if (data.length > 0) {
+        const result: DataItemInterface[] = [];
+        for (let i = 0; i < data.length; i++) {
+          const menuItem: DataItemInterface = data[i];
+          const menuItemKey = menuItem.key.replace(/ /g, '').toLowerCase();
+          const menuItemLabel = menuItem.label.replace(/ /g, '').toLowerCase();
+          const search = searchText.replace(/ /g, '').toLowerCase();
+          if (menuItemKey.includes(search) || menuItemLabel.includes(search)) {
+            result.push(menuItem);
+          } else {
+            const menuItemsResult = [];
+            for (let j = 0; j < menuItem.items.length; j++) {
+              const settingItem = menuItem.items[j];
+              const settingItemKey = settingItem.key
+                .replace(/ /g, '')
+                .toLowerCase();
+              const settingItemLabel = settingItem.title
+                .replace(/ /g, '')
+                .toLowerCase();
+
+              if (
+                settingItemKey.includes(search) ||
+                settingItemLabel.includes(search)
+              ) {
+                menuItemsResult.push(settingItem);
+              } else {
+                const formItemResult = [];
+                for (let k = 0; k < settingItem.items.length; k++) {
+                  const settingFormItem = settingItem.items[k];
+                  const formItemKey = settingFormItem.key
+                    .replace(/ /g, '')
+                    .toLowerCase();
+                  const formItemTitle = settingFormItem.title
+                    .replace(/ /g, '')
+                    .toLowerCase();
+                  const formItemDescription = settingFormItem.description
+                    .replace(/ /g, '')
+                    .toLowerCase();
+
+                  if (
+                    formItemKey.includes(search) ||
+                    formItemTitle.includes(search) ||
+                    formItemDescription.includes(search)
+                  ) {
+                    formItemResult.push(settingFormItem);
+                  }
+                }
+                if (formItemResult.length > 0) {
+                  settingItem.items = formItemResult;
+                  menuItemsResult.push(settingItem);
+                }
+              }
+            }
+            if (menuItemsResult.length > 0) {
+              menuItem.items = menuItemsResult;
+              result.push(menuItem);
+            }
+          }
+        }
+        return result;
+      }
+      return [];
+    }
+    return [data[selectedIndex]];
+  }, [searchText, selectedIndex]);
+
+  useEffect(() => {
+    debouncer(() => setSearchText(searchTextValue), 300);
+  }, [searchTextValue]);
+
+  const renderSettings = (selectedItem: DataItemInterface) => {
     return (
       <Box flex="grow" pad={{ horizontal: 'small' }}>
-        <Box>
-          <Text size="xlarge">{selectedItem.label}</Text>
-        </Box>
+        {searchText.length === 0 && (
+          <Box>
+            <Text size="xlarge">{selectedItem.label}</Text>
+          </Box>
+        )}
         <Box flex="grow">
           {selectedItem.items.map<React.ReactNode>((setting) => (
             <Box key={setting.key} flex="grow" pad={{ vertical: 'small' }}>
@@ -157,24 +256,39 @@ const Settings: FC = () => {
     <PrivatePageLayout title="Settings">
       <Box flex={{ grow: 1 }} pad={{ vertical: 'medium' }}>
         <Box>
-          <input placeholder="Search" />
+          <input
+            placeholder="Search"
+            value={searchTextValue}
+            onChange={(e) => setSearchTextValue(e.target.value)}
+          />
         </Box>
         <Box direction="row" margin={{ vertical: 'medium' }}>
           <Box>
             {menuItems.map<React.ReactNode>((menuItem, index) => (
               <Box
                 key={menuItem.key}
-                onClick={() => setSelectedIndex(index)}
+                onClick={() => {
+                  setSelectedIndex(index);
+                  setSearchTextValue('');
+                }}
                 pad="small"
                 background={
-                  selectedIndex === index ? 'rgba(0,0,0,0.5)' : undefined
+                  searchText.length === 0 && selectedIndex === index
+                    ? 'rgba(0,0,0,0.5)'
+                    : undefined
                 }
               >
                 <Text>{menuItem.label}</Text>
               </Box>
             ))}
           </Box>
-          <Box flex="grow">{renderSettings()}</Box>
+          <Box flex="grow">
+            {selectedItems.map((item) => (
+              <Box key={item.key} flex="grow">
+                {renderSettings(item)}
+              </Box>
+            ))}
+          </Box>
         </Box>
       </Box>
     </PrivatePageLayout>
