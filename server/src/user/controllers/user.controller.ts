@@ -40,6 +40,7 @@ import {
 } from 'src/auth/interfaces/user.interface';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { User } from 'entities/User.entity';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PostSettings } from 'types/PostSettings';
 import { emptyPaginatedResponse } from 'helpers/utils';
 import { UserRole } from 'entities/UserRole.entity';
@@ -60,13 +61,17 @@ import { UpdateProfileDto } from '../dto/update-profile.dto';
 import { UpdateUserPermission } from '../dto/update-permissions.dto';
 import { SystemUserListQuery } from '../dto/system-user-list.query';
 import { CreateBlockedUserDto } from '../dto/create-blocked-user.dto';
+import { UserEvent } from '../listeners/user.event';
 
 const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 
 @Controller({ path: 'user', version: '1' })
 @ApiTags('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   @Post('/contact/invitation/response')
   @ApiCreatedResponse({
@@ -93,6 +98,11 @@ export class UserController {
 
     await this.userService.createNewContact(user.id, invitation.createdById);
 
+    this.eventEmitter.emit(UserEvent.acceptContactRequestNotification, {
+      userId: user.id,
+      createdById: invitation.createdById,
+    });
+
     await this.userService.removeContactInvitation(contactInvitationId);
     return 'OK';
   }
@@ -111,6 +121,11 @@ export class UserController {
       email,
       user.id,
     );
+
+    this.eventEmitter.emit(UserEvent.sendContactRequestNotification, {
+      user,
+      email,
+    });
 
     return contactInvitation.id;
   }

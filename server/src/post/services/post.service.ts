@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { deleteObject } from 'config/s3-storage';
 import dayjs from 'dayjs';
@@ -28,6 +29,7 @@ import { EditPostDto } from '../dto/edit-post.dto';
 import { ListPostFeedQuery } from '../dto/list-post-feed.query';
 import { PostLikeQuery } from '../dto/post-like.query';
 import { VideoViewStats } from '../dto/video-view-stats.dto';
+import { PostEvent } from '../listeners/post-events';
 
 const {
   S3_VIDEO_BUCKET_NAME = '',
@@ -51,6 +53,7 @@ export class PostService {
     private savedPostRepository: Repository<SavedPost>,
     @InjectRepository(PostVideo)
     private postVideoRepository: Repository<PostVideo>,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   getOnePost(userId: number, identity: number | string, preview = false) {
@@ -140,8 +143,8 @@ export class PostService {
       .getOne();
   }
 
-  createPostComment(userId: number, info: CreatePostCommentDto) {
-    return this.postCommentRepository
+  async createPostComment(userId: number, info: CreatePostCommentDto) {
+    const postComment = await this.postCommentRepository
       .create({
         comment: info.comment,
         userId,
@@ -149,26 +152,63 @@ export class PostService {
         postId: info.postId,
       })
       .save();
+
+    const mentions = info.comment
+      .match(/@[a-z0-9_]{2,25}/g)
+      ?.map((v) => v.slice(1));
+
+    if (mentions?.length) {
+      for (const mentionUserName of mentions) {
+        this.eventEmitter.emit(PostEvent.postCommentMentionNotification, {
+          postComment,
+          mentionUserName,
+        });
+      }
+    }
+
+    if (info.parentId) {
+      this.eventEmitter.emit(PostEvent.postCommentReplyNotification, {
+        postComment,
+        parentId: info.parentId,
+      });
+    } else {
+      this.eventEmitter.emit(PostEvent.postCommentNotification, {
+        postComment,
+      });
+    }
+
+    return postComment;
   }
 
-  createPostLike(userId: number, info: CreatePostLikeDto) {
-    return this.postLikeRepository
+  async createPostLike(userId: number, info: CreatePostLikeDto) {
+    const positive = info.type !== 'dislike';
+    const postLike = await this.postLikeRepository
       .create({
         userId,
+        positive,
         postId: info.postId,
-        positive: info.type !== 'dislike',
       })
       .save();
+
+    this.eventEmitter.emit(PostEvent.postLikeNotification, { postLike });
+
+    return postLike;
   }
 
-  createPostCommentLike(userId: number, info: CreatePostCommentLikeDto) {
-    return this.postCommentLikeRepository
+  async createPostCommentLike(userId: number, info: CreatePostCommentLikeDto) {
+    const postCommentLike = await this.postCommentLikeRepository
       .create({
         userId,
         postId: info.postId,
         commentId: info.postCommentId,
       })
       .save();
+
+    this.eventEmitter.emit(PostEvent.postCommentLikeNotification, {
+      postCommentLike,
+    });
+
+    return postCommentLike;
   }
 
   getPostCommentLikeCount(postId: number, commentId: number) {

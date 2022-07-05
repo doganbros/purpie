@@ -8,6 +8,7 @@ import {
 import { APP_FILTER } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import ormConfig from 'ormconfig';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmExceptionFilter } from './utils/exceptions/typeorm.exception';
@@ -27,6 +28,7 @@ import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     TypeOrmModule.forRoot(ormConfig),
     ServeStaticModule.forRoot({
       rootPath: path.join(__dirname, '..', '..', '..', 'src', 'assets'),

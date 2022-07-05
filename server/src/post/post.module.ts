@@ -10,6 +10,7 @@ import { PostView } from 'entities/PostView.entity';
 import { SavedPost } from 'entities/SavedPost.entity';
 import { User } from 'entities/User.entity';
 import { PostController } from './controllers/post.controller';
+import { PostListener } from './listeners/post.listener';
 import { PostService } from './services/post.service';
 
 @Module({
@@ -27,7 +28,7 @@ import { PostService } from './services/post.service';
     ]),
   ],
   controllers: [PostController],
-  providers: [PostService],
+  providers: [PostService, PostListener],
   exports: [PostService],
 })
 export class PostModule {}
