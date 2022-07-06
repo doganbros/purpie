@@ -199,11 +199,15 @@ const Video: FC = () => {
             <Box justify="between" align="center" direction="row">
               {(data?.type === 'video' && (
                 <Box direction="row" align="center" gap="medium">
-                  <ChannelBadge name={data?.channel?.name} url="/" />
-                  <ZoneBadge
-                    name={data?.channel?.zone?.name}
-                    subdomain={data?.channel?.zone?.subdomain}
-                  />
+                  {data?.channel?.name && (
+                    <ChannelBadge name={data.channel.name} url="/" />
+                  )}
+                  {data?.channel?.zone && (
+                    <ZoneBadge
+                      name={data.channel.zone.name}
+                      subdomain={data.channel.zone.subdomain}
+                    />
+                  )}
                   <UserBadge
                     url="/"
                     firstName={data?.createdBy?.firstName}
