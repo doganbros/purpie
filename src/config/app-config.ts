@@ -1,4 +1,4 @@
-import { grommet, base, ThemeType } from 'grommet';
+import { base, grommet, ThemeType } from 'grommet';
 import { deepMerge } from 'grommet/utils';
 
 export const theme: typeof grommet = deepMerge(base, {
@@ -37,9 +37,13 @@ export const theme: typeof grommet = deepMerge(base, {
       light: {
         indigo: '-5px 5px 30px #3D138D26',
         peach: '0px 2px 20px 0px #FFE7E380',
+        left: '-2px 0px 3px rgb(255 231 227 / 50%)',
+        right: '2px 0px 3px rgb(255 231 227 / 50%)',
       },
       dark: {
         indigo: '0 5px 15px #3D138D35',
+        left: '-2px 0px 3px rgb(255 231 227 / 50%)',
+        right: '2px 0px 3px rgb(255 231 227 / 50%)',
       },
     },
     control: {

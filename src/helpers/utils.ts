@@ -45,7 +45,7 @@ export const fetchOrProduceNull = async <T>(
   try {
     const result = await request();
     return result;
-  } catch (err) {
+  } catch (err: any) {
     return null;
   }
 };
@@ -61,3 +61,11 @@ export const getColorPairFromId = (id: number): typeof colorPair[0] =>
   colorPair[id % colorPair.length];
 
 export const matchDescriptionTags = /(#\w+)/gi;
+
+export const getChatRoomName = (
+  id: number,
+  medium: 'post' | 'direct' | 'channel' = 'direct'
+): string => `${medium}_${id}`;
+
+export const getFileKey = (file: File): string =>
+  `${file.name}_${file.size}_${file.type}`;

@@ -37,7 +37,7 @@ export const getUserChannelsAction = (): ChannelAction => {
         type: GET_USER_CHANNELS_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: GET_USER_CHANNELS_FAILED,
         payload: err?.response?.data,
@@ -59,7 +59,7 @@ export const joinChannelAction = (id: number): ChannelAction => {
       });
       getUserChannelsAction()(dispatch);
       getUserZonesAction()(dispatch);
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: JOIN_CHANNEL_FAILED,
         payload: err?.response?.data,
@@ -103,7 +103,7 @@ export const createChannelAction = (
       });
       setToastAction('ok', `Channel created successfully`)(dispatch);
       getUserChannelsAction()(dispatch);
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: CREATE_CHANNEL_FAILED,
         payload: err?.response?.data,
@@ -145,7 +145,7 @@ export const searchChannelAction = (
         type: SEARCH_CHANNEL_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: SEARCH_CHANNEL_FAILED,
         payload: err?.reponse?.data,

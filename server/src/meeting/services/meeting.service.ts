@@ -115,7 +115,7 @@ export class MeetingService {
 
         const meeting = await this.postRepository.create(payload).save();
         return meeting;
-      } catch (err) {
+      } catch (err: any) {
         if (createAttempts === maxCreateAttempts) throw err;
         createAttempts++;
       }

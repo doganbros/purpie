@@ -44,4 +44,22 @@ export class CreateVideoDto {
 
   @ApiProperty({ type: String, format: 'binary' })
   videoFile: string;
+
+  @ApiProperty({ required: false })
+  @Transform(({ value }) => ['true', true, 1, '1'].includes(value))
+  @IsOptional()
+  @IsBoolean()
+  allowDislike?: boolean;
+
+  @ApiProperty({ required: false })
+  @Transform(({ value }) => ['true', true, 1, '1'].includes(value))
+  @IsOptional()
+  @IsBoolean()
+  allowReaction?: boolean;
+
+  @ApiProperty({ required: false })
+  @Transform(({ value }) => ['true', true, 1, '1'].includes(value))
+  @IsOptional()
+  @IsBoolean()
+  allowComment?: boolean;
 }

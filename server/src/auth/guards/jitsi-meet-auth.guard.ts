@@ -32,7 +32,7 @@ export class JitsiMeetAuthGuard implements CanActivate {
           'You not authorized to use this route, Invalid payload',
           'NOT_SIGNED_IN',
         );
-    } catch (err) {
+    } catch (err: any) {
       throw new UnauthorizedException(
         'You not authorized to use this route',
         'NOT_SIGNED_IN',

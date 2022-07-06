@@ -11,9 +11,15 @@ import Divider from '../../../utils/Divider';
 interface Props {
   topComponent?: React.ReactNode;
   rightComponent?: React.ReactNode;
+  rightComponentWithoutOverflow?: boolean;
 }
 
-const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
+const Desktop: FC<Props> = ({
+  children,
+  rightComponent,
+  rightComponentWithoutOverflow = false,
+  topComponent,
+}) => {
   const history = useHistory();
 
   const leftComponentWidth = 135;
@@ -104,7 +110,7 @@ const Desktop: FC<Props> = ({ children, rightComponent, topComponent }) => {
             background="white"
             round={{ corner: 'left', size: 'large' }}
             elevation="indigo"
-            overflow="auto"
+            overflow={rightComponentWithoutOverflow ? 'hidden' : 'auto'}
           >
             <ExtendedBox fill minWidth="min-content">
               {rightComponent}

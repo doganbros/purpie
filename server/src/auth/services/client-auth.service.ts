@@ -100,7 +100,7 @@ export class ClientAuthService {
       client.refreshToken = await hash(tokens.refreshToken);
       await client.save();
       return tokens;
-    } catch (err) {
+    } catch (err: any) {
       throw new UnauthorizedException(
         'Invalid Refresh Token',
         'INVALID_REFRESH_TOKEN',

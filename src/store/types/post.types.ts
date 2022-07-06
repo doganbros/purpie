@@ -69,6 +69,7 @@ import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
 import { UserBasic } from './auth.types';
 import { ChannelBasic } from './channel.types';
+import { LoadingState } from '../../models/utils';
 
 export enum PostType {
   meeting = 'meeting',
@@ -171,7 +172,7 @@ export interface PostCommentState extends PostComment {
 
 export interface PostState {
   feed: PaginatedResponse<Post> & {
-    loading: boolean;
+    loadingState: LoadingState;
     error: ResponseError | null;
   };
   postDetail: {

@@ -3,7 +3,9 @@ export class ChatMessageDto {
 
   message: string;
 
-  attachments?: [{ name: string }];
+  roomName: string;
+
+  attachments?: [{ name: string; originalFileName: string }];
 
   edited?: boolean;
 

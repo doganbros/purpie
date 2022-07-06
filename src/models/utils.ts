@@ -15,3 +15,10 @@ export interface SearchParams {
   value: string;
   scope: SearchScope;
 }
+
+export enum LoadingState {
+  pending,
+  loading,
+  more,
+  done,
+}

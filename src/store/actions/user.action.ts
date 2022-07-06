@@ -20,7 +20,7 @@ export const searchProfileAction = (
         type: SEARCH_PROFILE_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: SEARCH_PROFILE_FAILED,
         payload: err?.reponse?.data,
