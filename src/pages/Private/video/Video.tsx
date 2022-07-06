@@ -13,7 +13,7 @@ import {
   AddCircle,
 } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import {
   createPostLikeAction,
@@ -31,13 +31,13 @@ import { postViewStats } from '../../../store/services/post.service';
 import CommentList from './Comments/CommentList';
 import Chat from '../../../components/chat/Chat';
 import { socket } from '../../../helpers/socket';
-import Settings from './Settings';
-import appHistory from '../../../helpers/history';
+import VideoSettings from './VideoSettings';
 import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 import ChannelBadge from '../../../components/utils/channel/ChannelBadge';
 import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
 import UserBadge from '../../../components/utils/UserBadge';
 import Highlight from '../../../components/utils/Highlight';
+import { matchDescriptionTags } from '../../../helpers/utils';
 
 dayjs.extend(relativeTime);
 
@@ -58,9 +58,9 @@ const Video: FC = () => {
     },
     auth: { user },
   } = useSelector((state: AppState) => state);
-  const [settings, setSettings] = useState(false);
-  const [deleteConfirmation, setDeleteConfirmation] = useState(false);
-
+  const history = useHistory();
+  const [showSettings, setShowSettings] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const previousTime = useRef(0);
   const currentTime = useRef(0);
   const startedFrom = useRef(0);
@@ -102,22 +102,20 @@ const Video: FC = () => {
     });
   };
 
-  const rightComponent = useMemo(() => {
-    return settings ? (
-      <Settings
-        setSettings={setSettings}
-        setDeleteConfirmation={setDeleteConfirmation}
-      />
-    ) : (
-      <Chat medium="post" id={+params.id} handleTypingEvent />
-    );
-  }, [data, settings]);
+  const rightComponent = showSettings ? (
+    <VideoSettings
+      setShowSettings={setShowSettings}
+      setShowDeleteConfirmation={setShowDeleteConfirmation}
+    />
+  ) : (
+    <Chat medium="post" id={+params.id} handleTypingEvent />
+  );
 
   const actionMenu = useMemo(() => {
     if (data?.createdBy?.id === user?.id) {
       return [
-        { label: 'Edit', onClick: () => setSettings((state) => !state) },
-        { label: 'Delete', onClick: () => setDeleteConfirmation(true) },
+        { label: 'Edit', onClick: () => setShowSettings((state) => !state) },
+        { label: 'Delete', onClick: () => setShowDeleteConfirmation(true) },
       ];
     }
     return [
@@ -311,20 +309,24 @@ const Video: FC = () => {
               </Box>
             </Box>
           </Box>
-          <Highlight
-            startsWith="#"
-            render={(tag: string) => <Text color="#9060EB">{tag}</Text>}
-            text={data.description}
-          />
+          {data.description && (
+            <Highlight
+              match={matchDescriptionTags}
+              renderHighlight={({ match }) => (
+                <Text color="brand">{match}</Text>
+              )}
+              text={data.description}
+            />
+          )}
           <RecommendedVideos />
           <CommentList postId={+params.id} />
-          {deleteConfirmation && (
+          {showDeleteConfirmation && (
             <ConfirmDialog
               onConfirm={() => {
                 dispatch(removePostAction({ postId: data.id }));
-                appHistory.replace('/');
+                history.replace('/');
               }}
-              onDismiss={() => setDeleteConfirmation(false)}
+              onDismiss={() => setShowDeleteConfirmation(false)}
               message="Are you sure you want to remove this post?"
               confirmButtonText="Remove"
             />

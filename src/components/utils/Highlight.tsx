@@ -1,34 +1,28 @@
-import React from 'react';
-import { Text } from 'grommet';
+import React, { FC, useMemo } from 'react';
+import { Text, TextExtendedProps } from 'grommet';
 
-const Highlight: ({
+interface RenderHighlightProps {
+  match: string;
+}
+
+interface HighlightProps {
+  text: string;
+  match: RegExp;
+  textProps?: TextExtendedProps;
+  renderHighlight: FC<RenderHighlightProps>;
+}
+
+const Highlight: FC<HighlightProps> = ({
   text,
-  render,
-  startsWith,
+  textProps,
+  renderHighlight,
   match,
-  includes,
-}: {
-  text: any;
-  render: any;
-  startsWith?: any;
-  match?: any;
-  includes?: any;
-}) => JSX.Element = ({
-  text,
-  render,
-  startsWith = null,
-  match = '[a-z]+',
-  includes = null,
 }) => {
-  const parts = text.split(
-    new RegExp(startsWith ? `(${startsWith}${match})` : `(${includes})`, 'gi')
-  );
+  const parts = useMemo(() => text.split(match), [text, match]);
   return (
-    <Text style={{ whiteSpace: 'break-spaces' }}>
+    <Text {...textProps}>
       {parts.map((part: string) =>
-        (startsWith ? part.startsWith(startsWith) : part.includes(includes))
-          ? render(part)
-          : part
+        part.match(match) ? renderHighlight({ match: part }) : part
       )}
     </Text>
   );

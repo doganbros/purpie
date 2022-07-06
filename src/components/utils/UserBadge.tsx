@@ -1,26 +1,28 @@
 import React, { FC } from 'react';
-import { Box, Text } from 'grommet';
+import { Text, TextExtendedProps } from 'grommet';
 import { AnchorLink } from './AnchorLink';
 
 interface UserBadgeProps {
   firstName?: string;
   lastName?: string;
   url: string;
+  textProps?: TextExtendedProps;
 }
 
-const UserBadge: FC<UserBadgeProps> = ({ firstName, lastName, url }) => {
+const UserBadge: FC<UserBadgeProps> = ({
+  firstName,
+  lastName,
+  url,
+  textProps,
+}) => {
   return (
     <AnchorLink
       to={url}
       label={
-        <Box gap="xsmall" align="center" direction="row">
-          <Text size="18px">@</Text>
-          <Text size="15px">
-            {firstName} {lastName}
-          </Text>
-        </Box>
+        <Text {...textProps}>
+          @ {firstName} {lastName}
+        </Text>
       }
-      size="15px"
     />
   );
 };
