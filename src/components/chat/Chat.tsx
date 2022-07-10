@@ -13,7 +13,7 @@ import { User } from '../../store/types/auth.types';
 import ReplyMessage from './layers/ReplyMessage';
 import EditMessage from './layers/EditMessage';
 import MessageBox from './components/MessageBox';
-import { MessageBoxContainer } from './ChatStyled';
+import { MessageBoxContainer, DayContainer, DayDivider } from './ChatStyled';
 import PlanMeetingTheme from '../../layers/meeting/custom-theme';
 import { errorResponseMessage, getChatRoomName } from '../../helpers/utils';
 import { http } from '../../config/http';
@@ -295,17 +295,27 @@ const Chat: React.FC<Props> = ({
 
   const renderDayItem = (message: ChatMessage) => {
     return (
-      <Header
-        round="small"
-        pad={{ horizontal: 'small', vertical: 'xsmall' }}
-        margin={{ vertical: 'xsmall' }}
-        justify="center"
-        border={{ color: 'rgba(0,0,0,0.1)', size: 'xsmall' }}
-      >
-        <Text textAlign="center" size="small">
-          {parseDateToString(message.createdOn)}
-        </Text>
-      </Header>
+      <DayContainer width="100%" justify="start" alignSelf="start">
+        <DayDivider width="100%" height="3px">
+          <Box
+            width="100%"
+            height="3px"
+            background="linear-gradient(315deg, rgba(255, 248, 247, 0.0001) 0%, rgba(255, 240, 237, 0.815838) 52.11%, #FFEEEB 100%)"
+          />
+        </DayDivider>
+        <Header
+          round="xsmall"
+          width="fit-content"
+          pad={{ horizontal: 'small', vertical: 'xsmall' }}
+          margin={{ vertical: 'xsmall', horizontal: 'medium' }}
+          justify="start"
+          background="#FFEEEB"
+        >
+          <Text textAlign="center" size="small">
+            {parseDateToString(message.createdOn)}
+          </Text>
+        </Header>
+      </DayContainer>
     );
   };
 
@@ -329,7 +339,7 @@ const Chat: React.FC<Props> = ({
             onSubmit={handleSendMessage}
           />
         ) : null}
-        <Box>
+        <Box height={`${window.innerHeight}px`}>
           <Box
             overflow="auto"
             flex={{ grow: 1 }}
@@ -390,6 +400,7 @@ const Chat: React.FC<Props> = ({
                     key={message.identifier}
                     alignSelf="center"
                     align="center"
+                    width="100%"
                   >
                     {!lastDate ||
                     dayjs(message.createdOn)
@@ -410,7 +421,7 @@ const Chat: React.FC<Props> = ({
               })}
             </InfiniteScroll>
           </Box>
-          <MessageBoxContainer flex={false} pad="small">
+          <MessageBoxContainer pad="small">
             <MessageBox
               name={name}
               handleTypingEvent={handleTypingEvent}

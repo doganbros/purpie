@@ -7,7 +7,6 @@ import React, {
   RefObject,
   SetStateAction,
   useEffect,
-  useRef,
   useState,
 } from 'react';
 
@@ -23,6 +22,7 @@ import { AppState } from '../../../store/reducers/root.reducer';
 import { useDebouncer } from '../../../hooks/useDebouncer';
 
 interface Props {
+  textAreaRef: React.RefObject<HTMLTextAreaElement>;
   text: string;
   name?: string;
   onSuggesting?: (value: boolean) => void;
@@ -35,9 +35,11 @@ interface Props {
   setSuggestionPickerVisibility: Dispatch<SetStateAction<boolean>>;
   mentionPickerVisibility: boolean;
   setMentionPickerVisibility: Dispatch<SetStateAction<boolean>>;
+  setInputFocused: Dispatch<SetStateAction<boolean>>;
 }
 
 const MessageBox: FC<Props> = ({
+  textAreaRef,
   text,
   name,
   onKeyDown,
@@ -50,11 +52,11 @@ const MessageBox: FC<Props> = ({
   setSuggestionPickerVisibility,
   mentionPickerVisibility,
   setMentionPickerVisibility,
+  setInputFocused,
 }) => {
   const dispatch = useDispatch();
   const debouncer = useDebouncer();
 
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [editingEmoji, setEditingEmoji] = useState<string>('');
   const [suggestions, setSuggestions] = useState<EmojiData[]>([]);
 
@@ -329,6 +331,8 @@ const MessageBox: FC<Props> = ({
           onChange={handleChange}
           style={{ overflow: 'none' }}
           rows={1}
+          onFocusCapture={() => setInputFocused(true)}
+          onBlurCapture={() => setInputFocused(false)}
         />
       </Box>
     </>

@@ -1,5 +1,5 @@
 import { Box, Button, Text } from 'grommet';
-import React, { FC, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { ChatMessage } from '../../../store/types/chat.types';
 import { useThrottle } from '../../../hooks/useThrottle';
 import InitialsAvatar from '../../utils/InitialsAvatar';
@@ -40,6 +40,8 @@ const MessageBox: FC<Props> = ({
 }) => {
   const throttle = useThrottle();
   const componentRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const timer: { current: NodeJS.Timeout | null } = useRef(null);
   const [text, setText] = useState<string>('');
   const [emojiPickerVisibility, setEmojiPickerVisibility] = useState(false);
   const [suggestionPickerVisibility, setSuggestionPickerVisibility] = useState(
@@ -47,6 +49,30 @@ const MessageBox: FC<Props> = ({
   );
   const [mentionPickerVisibility, setMentionPickerVisibility] = useState(false);
   const [attachments, setAttachments] = useState<Array<File>>([]);
+  const [inputFocused, setInputFocused] = useState<boolean>(false);
+  const [attachmentToolVisibility, setAttachmentToolVisibility] = useState(
+    false
+  );
+  const [attachmentToolFocused, setAttachmentToolFocused] = useState(false);
+  useEffect(() => {
+    return () => timer && clearTimeout(timer.current as NodeJS.Timeout);
+  }, []);
+  useEffect(() => {
+    if (document.activeElement === inputRef.current) {
+      setAttachmentToolVisibility(true);
+      clearInterval(timer.current as NodeJS.Timeout);
+    } else if (inputFocused) {
+      setAttachmentToolVisibility(true);
+      clearInterval(timer.current as NodeJS.Timeout);
+    } else if (attachmentToolFocused) {
+      setAttachmentToolVisibility(true);
+      clearInterval(timer.current as NodeJS.Timeout);
+    } else if (text.length > 0) {
+      setAttachmentToolVisibility(true);
+    } else {
+      timer.current = setTimeout(() => setAttachmentToolVisibility(false), 350);
+    }
+  }, [document.activeElement, inputRef]);
 
   const onSend = (message: string) => {
     onSubmit({ message }, attachments);
@@ -67,11 +93,38 @@ const MessageBox: FC<Props> = ({
     return null;
   };
 
+  const onFileSelected = (files: File[]) => {
+    if (canAddFile) {
+      const incomingFileKeys = files.map(getFileKey);
+      setAttachments((existingFiles) => [
+        ...existingFiles.filter(
+          (f) => !incomingFileKeys.includes(getFileKey(f))
+        ),
+        ...files,
+      ]);
+    }
+  };
+
+  const toggleEmojiPicker = () => {
+    const newValue = !emojiPickerVisibility;
+    if (!newValue) {
+      inputRef.current?.focus();
+    }
+    setAttachmentToolFocused(newValue);
+    setEmojiPickerVisibility(newValue);
+  };
+
+  const toggleMentionPicker = () => {
+    const newValue = !mentionPickerVisibility;
+    if (!newValue) inputRef.current?.focus();
+    setAttachmentToolFocused(newValue);
+    setMentionPickerVisibility(newValue);
+  };
+
   return (
     <Box
       direction="row"
       align="center"
-      ref={componentRef}
       margin={{ right: 'small', left: 'small' }}
     >
       {user && (
@@ -92,6 +145,14 @@ const MessageBox: FC<Props> = ({
         height="fit-content"
         width="100%"
       >
+        {canAddFile && attachments && (
+          <MessageFiles
+            files={attachments}
+            onDeleteFile={(file) =>
+              setAttachments((files) => files.filter((f) => f !== file))
+            }
+          />
+        )}
         <MessageTextArea
           name={name}
           onKeyDown={onKeyDown}
@@ -102,17 +163,12 @@ const MessageBox: FC<Props> = ({
           setSuggestionPickerVisibility={setSuggestionPickerVisibility}
           setMentionPickerVisibility={setMentionPickerVisibility}
           suggestionPickerVisibility={suggestionPickerVisibility}
+          textAreaRef={inputRef}
           componentRef={componentRef}
           mentionPickerVisibility={mentionPickerVisibility}
+          setInputFocused={setInputFocused}
         />
-        {canAddFile && attachments && (
-          <MessageFiles
-            files={attachments}
-            onDeleteFile={(file) =>
-              setAttachments((files) => files.filter((f) => f !== file))
-            }
-          />
-        )}
+
         {uploadingFiles && <Text size="small">Uploading Files...</Text>}
         {messageErrorDraft ? (
           <Button
@@ -123,27 +179,11 @@ const MessageBox: FC<Props> = ({
           />
         ) : null}
         <MessageAttachments
-          attachmentToolVisibility
-          onFilesSelected={
-            canAddFile
-              ? (files) => {
-                  const incomingFileKeys = files.map(getFileKey);
-
-                  setAttachments((existingFiles) => [
-                    ...existingFiles.filter(
-                      (f) => !incomingFileKeys.includes(getFileKey(f))
-                    ),
-                    ...files,
-                  ]);
-                }
-              : null
-          }
-          toggleEmojiPicker={() =>
-            setEmojiPickerVisibility(!emojiPickerVisibility)
-          }
-          toggleMentionPicker={() =>
-            setMentionPickerVisibility(!mentionPickerVisibility)
-          }
+          attachmentToolVisibility={attachmentToolVisibility}
+          onFilesSelected={onFileSelected}
+          toggleEmojiPicker={toggleEmojiPicker}
+          toggleMentionPicker={toggleMentionPicker}
+          setAttachmentToolFocused={setAttachmentToolFocused}
           sendButton={
             <Box>
               {(text.length || !!attachments.length) && (
