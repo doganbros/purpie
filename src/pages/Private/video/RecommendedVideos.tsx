@@ -2,7 +2,7 @@ import React, { FC, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Grid, Text } from 'grommet';
-import PostGridItem from '../../../components/utils/PostGridItem/PostGridItem';
+import PostGridItem from '../../../components/post/PostGridItem';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
   createPostSaveAction,

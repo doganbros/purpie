@@ -9,7 +9,15 @@ interface HeaderProps {
 
 const Header: FC<HeaderProps> = ({ user }) => (
   <Box flex="grow" direction="row" align="center" gap="small">
-    <InitialsAvatar id={user.id} value={`${user.firstName} ${user.lastName}`} />
+    <InitialsAvatar
+      id={user.id}
+      value={`${user.firstName} ${user.lastName}`}
+      size="70px"
+      round="full"
+      textProps={{
+        size: '25px',
+      }}
+    />
     <Box>
       <Text weight="bold">
         {user.firstName} {user.lastName}

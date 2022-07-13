@@ -1,11 +1,10 @@
-import { Box, Button, Spinner, Text } from 'grommet';
+import { Box, Button, Spinner } from 'grommet';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import ConfirmDialog from '../../../components/utils/ConfirmDialog';
-import Divider from '../../../components/utils/Divider';
-import InitialsAvatar from '../../../components/utils/InitialsAvatar';
 import { removeContactAction } from '../../../store/actions/user.action';
 import { User } from '../../../store/types/auth.types';
+import { UserSummary } from '../user/UserSummary';
 
 interface SelectedUserProps {
   user: User | null;
@@ -23,23 +22,13 @@ const SelectedUser: FC<SelectedUserProps> = ({ user, contactId }) => {
   ) : (
     <>
       <Box pad="medium" gap="medium">
-        <InitialsAvatar
-          value={`${user.firstName} ${user.lastName}`}
+        <UserSummary
           id={user.id}
-          size="355px"
-          round="medium"
-          textProps={{ size: '120px' }}
+          userName={user.userName}
+          firstName={user.firstName}
+          lastName={user.lastName}
+          email={user.email}
         />
-        <Text weight="bold" size="large" alignSelf="end">
-          {user.firstName} {user.lastName}
-        </Text>
-        <Divider />
-        <Box align="end" gap="small">
-          <Text weight="bold">User Name</Text>
-          <Text color="status-disabled">{user.userName}</Text>
-          <Text weight="bold">Email</Text>
-          <Text color="status-disabled">{user.email}</Text>
-        </Box>
         {contactId && (
           <>
             <Button

@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
-import PostGridItem from '../../../components/utils/PostGridItem/PostGridItem';
+import PostGridItem from '../../../components/post/PostGridItem';
 import SearchBar from '../../../components/utils/SearchBar';
 import {
   getSavedPostAction,

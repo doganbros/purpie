@@ -2,9 +2,9 @@ import { Box } from 'grommet';
 import videojs from 'video.js';
 import { Bookmark, PlayFill } from 'grommet-icons';
 import React, { FC, useRef, useState } from 'react';
-import { http } from '../../../config/http';
-import { BookmarkFill } from '../CustomIcons';
-import ExtendedBox from '../ExtendedBox';
+import { http } from '../../config/http';
+import { BookmarkFill } from '../utils/CustomIcons';
+import ExtendedBox from '../utils/ExtendedBox';
 import VideoJs from './VideoJs';
 
 interface VideoPostProps {
