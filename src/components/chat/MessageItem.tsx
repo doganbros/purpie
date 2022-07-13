@@ -1,58 +1,151 @@
 import dayjs from 'dayjs';
 import { Anchor, Box, Text } from 'grommet';
 import React, { FC } from 'react';
+import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
+import { useSelector } from 'react-redux';
 import { ChatMessage } from '../../store/types/chat.types';
 import InitialsAvatar from '../utils/InitialsAvatar';
+import { AppState } from '../../store/reducers/root.reducer';
+import {
+  LeftShadowBox,
+  RightShadowBox,
+  UserFullName,
+} from './MessageItem.styled';
 
 interface Props {
   message: ChatMessage;
-  side?: 'right' | 'left';
-  actions?: React.ReactNode | null;
+  id?: number;
+  menuItems?: { label: string; onClick: () => void }[] | null;
 }
 
-const MessageItem: FC<Props> = ({ message, side, children, actions }) => {
-  return (
-    <Box
-      direction="row"
-      id={`message-item-${message.identifier}`}
-      justify={side === 'right' ? 'end' : 'start'}
-      alignContent="end"
-      gap="small"
-      margin="small"
-    >
-      <InitialsAvatar
-        id={message.createdBy.id}
-        value={`${message.createdBy.firstName} ${message.createdBy.lastName} `}
-      />
-      <Box direction="column" width={{ min: '300px', width: '50%' }}>
-        <Box direction="row" justify="between" align="center">
-          <Box direction="row">
-            <Text size="small" margin={{ right: 'xsmall' }} weight="bold">
-              {message.createdBy.firstName} {message.createdBy.lastName}
-            </Text>
-            <Text size="small">
-              {dayjs(message.createdOn).format('hh:mm:a')}
-            </Text>
+const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
+  const {
+    auth: { user: currentUser },
+  } = useSelector((state: AppState) => state);
+  const ownMessage = message.createdBy.id === currentUser?.id;
+
+  const renderContextMenu = () => (
+    <ContextMenu id={`message_${id}`} preventHideOnContextMenu>
+      <Box
+        border={{ color: 'rgba(0,0,0,0.02)', size: 'small' }}
+        background="white"
+        round="small"
+        elevation="right"
+      >
+        {menuItems?.map((item: { label: string; onClick: () => void }) => (
+          <Box
+            key={item.label}
+            onClick={() => {}}
+            pad={{ horizontal: 'small', vertical: 'xsmall' }}
+            hoverIndicator={{ background: '#8F9BB3' }}
+          >
+            <MenuItem onClick={item.onClick}>{item.label}</MenuItem>
           </Box>
-          {actions}
-        </Box>
-        <Box>
-          {message.parent ? (
-            <Text size="xsmall" margin={{ bottom: 'xsmall' }}>
-              <Text size="xsmall" as="i" margin={{ right: 'xsmall' }}>
-                Replied to:
-              </Text>
-              <Anchor href={`#message-item-${message.parent.identifier}`}>
-                {message.parent.message}
-              </Anchor>
-            </Text>
-          ) : null}
-          {message.deleted ? 'This message has been deleted' : message.message}
-          {message.edited ? <Text size="xsmall">(edited)</Text> : null}
-          {children}
-        </Box>
+        ))}
       </Box>
-    </Box>
+    </ContextMenu>
+  );
+
+  const ContentBox = ownMessage ? RightShadowBox : LeftShadowBox;
+  return (
+    <>
+      {renderContextMenu()}
+      <Box width="95%">
+        <ContextMenuTrigger
+          id={`message_${message.id}`}
+          disableIfShiftIsPressed
+          holdToDisplay={-1}
+        >
+          <ContentBox
+            direction={ownMessage ? 'row-reverse' : 'row'}
+            id={`message-item-${message.identifier}`}
+            justify="start"
+            alignContent="end"
+            gap="small"
+            margin="small"
+            pad={{ top: 'medium' }}
+            round="small"
+            elevation={ownMessage ? 'right' : 'left'}
+          >
+            <Box
+              margin={{ [ownMessage ? 'right' : 'left']: '-15.5px' }}
+              pad="1px"
+              height="42px"
+              width={ownMessage ? '42px' : '48px'}
+              round="xlarge"
+              border={{ color: '#E4E9F2', size: 'small' }}
+            >
+              <InitialsAvatar
+                size="medium"
+                textProps={{
+                  size: 'small',
+                }}
+                id={message.createdBy.id}
+                value={`${message.createdBy.firstName} ${message.createdBy.lastName} `}
+              />
+            </Box>
+            <Box
+              direction="column"
+              justify="end"
+              margin={{ right: 'small' }}
+              width={{ width: ownMessage ? '50%' : '100%' }}
+            >
+              <Box direction="row" justify={ownMessage ? 'end' : 'start'}>
+                <Box direction="row">
+                  <UserFullName
+                    size="small"
+                    margin={{ right: 'xsmall' }}
+                    weight="bold"
+                    textAlign={ownMessage ? 'end' : 'start'}
+                  >
+                    {ownMessage
+                      ? 'You'
+                      : `${message.createdBy.firstName} ${message.createdBy.lastName}`}
+                  </UserFullName>
+                  <Text size="small">
+                    {dayjs(message.createdOn).format('hh:mm:a')}
+                  </Text>
+                </Box>
+              </Box>
+              <Box>
+                {message.parent ? (
+                  <Text size="xsmall" margin={{ bottom: 'xsmall' }}>
+                    <Text size="xsmall" as="i" margin={{ right: 'xsmall' }}>
+                      Replied to:
+                    </Text>
+                    <Anchor href={`#message-item-${message.parent.identifier}`}>
+                      {message.parent.message}
+                    </Anchor>
+                  </Text>
+                ) : null}
+                <Text
+                  size="small"
+                  margin={{ right: 'xsmall' }}
+                  textAlign={ownMessage ? 'end' : 'start'}
+                >
+                  {message.deleted
+                    ? 'This message has been deleted'
+                    : message.message}
+                </Text>
+                {message.attachments?.map((attachment) => (
+                  <Text key={attachment.name}>
+                    <a
+                      href={`${process.env.REACT_APP_SERVER_HOST}/v1/chat/attachment/${attachment.name}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {attachment.originalFileName}
+                    </a>
+                  </Text>
+                ))}
+                {message.edited ? <Text size="xsmall">(edited)</Text> : null}
+                {children}
+              </Box>
+            </Box>
+          </ContentBox>
+        </ContextMenuTrigger>
+      </Box>
+    </>
   );
 };
 

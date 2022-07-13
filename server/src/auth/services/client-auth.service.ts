@@ -95,11 +95,12 @@ export class ClientAuthService {
         id: client.id,
         name: client.name,
         clientRole: client.clientRole,
+        authType: OCTOPUS_CLIENT_AUTH_TYPE,
       });
       client.refreshToken = await hash(tokens.refreshToken);
       await client.save();
       return tokens;
-    } catch (err) {
+    } catch (err: any) {
       throw new UnauthorizedException(
         'Invalid Refresh Token',
         'INVALID_REFRESH_TOKEN',

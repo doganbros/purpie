@@ -40,7 +40,7 @@ export const getUserZonesAction = (): ZoneAction => {
         type: GET_USER_ZONES_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: GET_USER_ZONES_FAILED,
         payload: err?.response?.data,
@@ -61,7 +61,7 @@ export const joinZoneAction = (id: number): ZoneAction => {
         type: JOIN_ZONE_SUCCESS,
       });
       getUserZonesAction()(dispatch);
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: JOIN_ZONE_FAILED,
         payload: err?.response?.data,
@@ -98,7 +98,7 @@ export const getCategoriesAction = (): ZoneAction => {
         type: GET_CATEGORIES_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: GET_CATEGORIES_FAILED,
         payload: err?.response?.data,
@@ -123,7 +123,7 @@ export const getZoneCategoriesAction = (zoneId: number): ZoneAction => {
           zoneId,
         },
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: GET_ZONE_CATEGORIES_FAILED,
         payload: err?.response?.data,
@@ -145,7 +145,7 @@ export const createZoneAction = (payload: CreateZonePayload): ZoneAction => {
       });
       setToastAction('ok', `Zone created successfully`)(dispatch);
       getUserZonesAction()(dispatch);
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: CREATE_ZONE_FAILED,
         payload: err?.response?.data,
@@ -166,7 +166,7 @@ export const searchZoneAction = (params: ZoneSearchParams): ZoneAction => {
         type: SEARCH_ZONE_SUCCESS,
         payload,
       });
-    } catch (err) {
+    } catch (err: any) {
       dispatch({
         type: SEARCH_ZONE_FAILED,
         payload: err?.reponse?.data,

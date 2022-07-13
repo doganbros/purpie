@@ -42,6 +42,7 @@ export class ClientAuthController {
   }
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
     type: ClientTokens,
     description: `Signs in client and returns access and refresh token`,
@@ -51,6 +52,7 @@ export class ClientAuthController {
   }
 
   @Post('logout')
+  @HttpCode(HttpStatus.OK)
   @IsClientAuthenticated()
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({

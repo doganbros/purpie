@@ -1,4 +1,4 @@
-name: Octopus CI
+name: Octopus Deployment
 
 on:
   push:

@@ -71,7 +71,7 @@ export class AuthGuard implements CanActivate {
           userPayload.refreshTokenId = newRefreshTokenId;
 
           req.user = userPayload;
-        } catch (err) {
+        } catch (err: any) {
           if (userPermissionOptions.removeAccessTokens)
             this.authService.removeAccessTokens(res);
 

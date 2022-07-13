@@ -43,17 +43,18 @@ export class ChatGateway {
     @MessageBody()
     payload: {
       identifier: string;
-      to: number | string;
-      medium: string;
+      to: number;
+      medium: 'direct' | 'channel' | 'post';
     },
   ) {
+    const roomName = this.chatService.getRoomName(payload.to, payload.medium);
     const result = await this.chatService.removeChatMessage(
       payload.identifier,
       socket.user.id,
     );
     if (!result) throw new WsException('Could not delete message');
 
-    socket.to(payload.to.toString()).emit('message_deleted', payload);
+    socket.to(roomName).emit('message_deleted', { ...payload, roomName });
 
     return payload;
   }
@@ -64,8 +65,8 @@ export class ChatGateway {
     @MessageBody()
     payload: ChatMessageDto,
   ) {
-    if (!socket.rooms.has(payload.to.toString()))
-      throw new WsException('Not Authorized');
+    const roomName = this.chatService.getRoomName(payload.to, payload.medium);
+    if (!socket.rooms.has(roomName)) throw new WsException('Not Authorized');
 
     const isEdit = !!payload.identifier;
 
@@ -73,8 +74,9 @@ export class ChatGateway {
     else payload.edited = true;
 
     payload.createdOn = new Date();
+    payload.roomName = roomName;
 
-    socket.to(payload.to.toString()).emit('new_message', payload);
+    socket.to(roomName).emit('new_message', payload);
 
     await this.chatService.saveChatMessage(socket.user.id, payload, isEdit);
 
@@ -86,17 +88,26 @@ export class ChatGateway {
     @ConnectedSocket() socket: SocketWithTokenPayload,
     @MessageBody() postId: number,
   ) {
+    const roomName = this.chatService.getRoomName(postId, 'post');
     const post = await this.postService.getOnePost(socket.user.id, postId);
 
     if (!post) throw new WsException('Post not found');
 
-    await socket.join(postId.toString());
+    await socket.join(roomName);
 
-    socket.to(postId.toString()).emit('new_user_joined_post', {
+    socket.to(roomName).emit('new_user_joined_post', {
       socketId: socket.id,
       userId: socket.user.id,
     });
-    // Track no. of users who have joined post
+
+    await this.chatService.addCurrentStreamViewer(socket.user.id, postId);
+    const currentStreamViewersCount = await this.chatService.getTotalNumberOfStreamViewers(
+      postId,
+    );
+
+    socket
+      .to(roomName)
+      .emit('stream_viewer_count_change', currentStreamViewersCount);
 
     return postId;
   }
@@ -106,24 +117,41 @@ export class ChatGateway {
     @ConnectedSocket() socket: SocketWithTokenPayload,
     @MessageBody() postId: number,
   ) {
-    socket.to(postId.toString()).emit('user_left_post', {
+    const roomName = this.chatService.getRoomName(postId, 'post');
+
+    socket.to(roomName).emit('user_left_post', {
       socketId: socket.id,
       userId: socket.user.id,
     });
-    await socket.leave(postId.toString());
+
+    await this.chatService.removeCurrentStreamViewer(socket.user.id, postId);
+    const counter = await this.chatService.getTotalNumberOfStreamViewers(
+      postId,
+    );
+
+    socket.to(roomName).emit('stream_viewer_count_change', { counter, postId });
+
+    await socket.leave(roomName);
   }
 
   @SubscribeMessage('typing')
   handleTyping(
     @ConnectedSocket() socket: SocketWithTokenPayload,
-    @MessageBody() payload: { to: string | number; user: Record<string, any> },
+    @MessageBody()
+    payload: {
+      to: number;
+      user: Record<string, any>;
+      medium: 'direct' | 'post' | 'channel';
+    },
   ) {
-    if (!socket.rooms.has(payload.to.toString()))
-      throw new WsException('Not Authorized');
+    const roomName = this.chatService.getRoomName(payload.to, payload.medium);
+    if (!socket.rooms.has(roomName)) throw new WsException('Not Authorized');
 
-    socket.to(payload.to.toString()).emit('typing', {
+    socket.to(roomName).emit('typing', {
       socketId: socket.id,
       to: payload.to,
+      medium: payload.medium,
+      roomName,
       user: {
         ...payload.user,
         id: socket.user.id,
@@ -134,28 +162,28 @@ export class ChatGateway {
   @SubscribeMessage('send_presence')
   async announcePresenceToContact(
     @ConnectedSocket() socket: SocketWithTokenPayload,
-    @MessageBody() to: string | number,
+    @MessageBody() to: number,
   ) {
-    if (!socket.rooms.has(to.toString()))
-      throw new WsException('Not Authorized');
+    const roomName = this.chatService.getRoomName(to);
+    if (!socket.rooms.has(roomName)) throw new WsException('Not Authorized');
 
-    socket.to(to.toString()).emit('presence', socket.user.id);
+    socket.to(roomName).emit('presence', socket.user.id);
   }
 
   async handleConnection(socket: SocketWithTokenPayload) {
     const currentUser = await this.chatService.getCurrentUser(socket);
     socket.user = currentUser;
 
-    socket.join(socket.user.id.toString());
+    socket.join(this.chatService.getRoomName(socket.user.id));
 
     const contactIds = await this.chatService.fetchUserContactUserIds(
       socket.user.id,
     );
 
     contactIds.forEach((contactId) => {
-      socket.join(contactId.toString());
+      socket.join(this.chatService.getRoomName(contactId));
       socket
-        .to(contactId.toString())
+        .to(this.chatService.getRoomName(contactId))
         .emit('contact_user_connected', socket.user.id);
     });
 
@@ -165,7 +193,7 @@ export class ChatGateway {
     // );
 
     // channelIds.forEach((channelId) => {
-    //   socket.join(channelId.toString());
+    // socket.join(this.chatService.getRoomName(channelId, 'channel'));
     // });
 
     socket.on('disconnecting', () => this.handleDisconnecting(socket));
@@ -177,10 +205,12 @@ export class ChatGateway {
     );
 
     contactIds.forEach((contactId) => {
-      socket.to(contactId.toString()).emit('socket_disconnected', {
-        socketId: socket.id,
-        userId: socket.user.id,
-      });
+      socket
+        .to(this.chatService.getRoomName(contactId))
+        .emit('socket_disconnected', {
+          socketId: socket.id,
+          userId: socket.user.id,
+        });
     });
   }
 }

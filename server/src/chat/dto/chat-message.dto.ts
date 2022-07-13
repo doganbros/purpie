@@ -3,6 +3,10 @@ export class ChatMessageDto {
 
   message: string;
 
+  roomName: string;
+
+  attachments?: [{ name: string; originalFileName: string }];
+
   edited?: boolean;
 
   createdOn: Date;

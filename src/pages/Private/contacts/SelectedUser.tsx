@@ -26,10 +26,8 @@ const SelectedUser: FC<SelectedUserProps> = ({ user, contactId }) => {
         <InitialsAvatar
           value={`${user.firstName} ${user.lastName}`}
           id={user.id}
-          avatarProps={{
-            size: '355px',
-            round: 'medium',
-          }}
+          size="355px"
+          round="medium"
           textProps={{ size: '120px' }}
         />
         <Text weight="bold" size="large" alignSelf="end">

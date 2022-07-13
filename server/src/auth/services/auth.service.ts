@@ -398,7 +398,7 @@ export class AuthService {
       );
 
       return userPayload;
-    } catch (err) {
+    } catch (err: any) {
       await user.remove();
       throw err;
     }

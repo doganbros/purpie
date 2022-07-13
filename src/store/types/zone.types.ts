@@ -173,11 +173,11 @@ export type ZoneActionParams =
       type: typeof GET_USER_ZONES_SUCCESS;
       payload: Array<UserZoneListItem>;
     }
-    | {
+  | {
       type: typeof SEARCH_ZONE_REQUESTED;
       payload: ZoneSearchParams;
     }
-    | {
+  | {
       type: typeof SEARCH_ZONE_SUCCESS;
       payload: PaginatedResponse<ZoneListItem>;
     }
