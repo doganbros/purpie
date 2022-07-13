@@ -5,11 +5,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
 import { AppState } from '../../../../store/reducers/root.reducer';
 import Divider from './Divider';
-import ZoneSelectorListItem from './ZoneSelectorListItem';
 import { openCreateZoneLayerAction } from '../../../../store/actions/zone.action';
 import { openCreateChannelLayerAction } from '../../../../store/actions/channel.action';
 import { logoutAction } from '../../../../store/actions/auth.action';
 import InitialsAvatar from '../../../utils/InitialsAvatar';
+import ListButton from '../../../utils/ListButton';
 
 const ZoneSelector: FC = () => {
   const {
@@ -45,7 +45,7 @@ const ZoneSelector: FC = () => {
         dropAlign={{ left: 'left', top: 'bottom' }}
         dropContent={
           <Box width={{ min: '250px' }}>
-            <ZoneSelectorListItem
+            <ListButton
               selected={!selectedUserZone}
               onClick={() => {
                 navigateToSubdomain();
@@ -55,6 +55,8 @@ const ZoneSelector: FC = () => {
                   <InitialsAvatar
                     id={user.id}
                     value={`${user.firstName} ${user.lastName}`}
+                    size="small"
+                    textProps={{ size: 'xsmall', weight: 'normal' }}
                   />
                 )
               }
@@ -62,20 +64,25 @@ const ZoneSelector: FC = () => {
             />
             {userZones &&
               userZones.map((z) => (
-                <ZoneSelectorListItem
+                <ListButton
                   selected={selectedUserZone?.zone.id === z.zone.id}
                   onClick={() => {
                     navigateToSubdomain(z.zone.subdomain);
                   }}
                   leftIcon={
-                    <InitialsAvatar id={z.zone.id} value={z.zone.name} />
+                    <InitialsAvatar
+                      id={z.zone.id}
+                      value={z.zone.name}
+                      size="small"
+                      textProps={{ size: 'xsmall', weight: 'normal' }}
+                    />
                   }
                   key={z.zone.id}
                   label={z.zone.name}
                 />
               ))}
             <Divider />
-            <ZoneSelectorListItem
+            <ListButton
               onClick={() => {
                 setOpen(false);
                 dispatch(openCreateChannelLayerAction());
@@ -83,7 +90,7 @@ const ZoneSelector: FC = () => {
               label="Create Channel"
               rightIcon={<Add size="small" color="black" />}
             />
-            <ZoneSelectorListItem
+            <ListButton
               onClick={() => {
                 setOpen(false);
                 dispatch(openCreateZoneLayerAction());
@@ -92,12 +99,12 @@ const ZoneSelector: FC = () => {
               rightIcon={<Add size="small" color="black" />}
             />
             <Divider />
-            <ZoneSelectorListItem
+            <ListButton
               label="Settings"
               rightIcon={<SettingsOption size="small" color="black" />}
             />
             <Divider />
-            <ZoneSelectorListItem
+            <ListButton
               onClick={() => dispatch(logoutAction())}
               label="Sign Out"
             />
