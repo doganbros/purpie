@@ -17,7 +17,12 @@ const InitialsAvatar: FC<InitialsAvatarProps> = ({
 }) => {
   const { background, foreground } = getColorPairFromId(id);
   return value ? (
-    <Avatar round background={{ color: background }} size={size}>
+    <Avatar
+      round="full"
+      background={{ color: background }}
+      width={size}
+      height={size}
+    >
       <Text
         color={foreground}
         size={fontSize || size}

@@ -1,4 +1,4 @@
-import { Box, Button, Text } from 'grommet';
+import { Box, Button } from 'grommet';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { ChatMessage } from '../../../store/types/chat.types';
 import { useThrottle } from '../../../hooks/useThrottle';
@@ -8,12 +8,15 @@ import MessageFiles from './MessageFiles';
 import MessageAttachments from './MessageAttachments';
 import MessageTextArea from './MessageTextArea';
 import { getFileKey } from '../../../helpers/utils';
+import { SendButton, SendButtonContainer } from './ChatComponentsStyle';
 
 interface Props {
   name?: string;
   handleTypingEvent?: boolean;
   onTyping: () => void;
-  uploadingFiles: boolean;
+  uploadingFiles: string[];
+  uploadedFiles: string[];
+  uploadErrors: string[];
   user: User;
   messageErrorDraft: null | {
     message: Partial<ChatMessage>;
@@ -32,6 +35,8 @@ const MessageBox: FC<Props> = ({
   onSubmit,
   handleTypingEvent,
   uploadingFiles,
+  uploadedFiles,
+  uploadErrors,
   onTyping,
   messageErrorDraft,
   onSendAgain,
@@ -145,9 +150,12 @@ const MessageBox: FC<Props> = ({
         height="fit-content"
         width="100%"
       >
-        {canAddFile && attachments && (
+        {canAddFile && attachments?.length > 0 && (
           <MessageFiles
             files={attachments}
+            uploadingFiles={uploadingFiles}
+            uploadedFiles={uploadedFiles}
+            uploadErrors={uploadErrors}
             onDeleteFile={(file) =>
               setAttachments((files) => files.filter((f) => f !== file))
             }
@@ -168,8 +176,6 @@ const MessageBox: FC<Props> = ({
           mentionPickerVisibility={mentionPickerVisibility}
           setInputFocused={setInputFocused}
         />
-
-        {uploadingFiles && <Text size="small">Uploading Files...</Text>}
         {messageErrorDraft ? (
           <Button
             label="Send Message Again"
@@ -178,28 +184,28 @@ const MessageBox: FC<Props> = ({
             }}
           />
         ) : null}
-        <MessageAttachments
-          attachmentToolVisibility={attachmentToolVisibility}
-          onFilesSelected={onFileSelected}
-          toggleEmojiPicker={toggleEmojiPicker}
-          toggleMentionPicker={toggleMentionPicker}
-          setAttachmentToolFocused={setAttachmentToolFocused}
-          sendButton={
-            <Box>
-              {(text.length || !!attachments.length) && (
-                <Button
-                  size="small"
-                  primary
-                  label="Send"
-                  onClick={() => {
-                    onSend(text);
-                  }}
-                  margin={{ right: 'small', bottom: 'small' }}
-                />
-              )}
-            </Box>
-          }
-        />
+        {attachmentToolVisibility && (
+          <MessageAttachments
+            onFilesSelected={onFileSelected}
+            toggleEmojiPicker={toggleEmojiPicker}
+            toggleMentionPicker={toggleMentionPicker}
+            setAttachmentToolFocused={setAttachmentToolFocused}
+            sendButton={
+              <SendButtonContainer margin="small">
+                {(text.length || !!attachments.length) && (
+                  <SendButton
+                    size="small"
+                    primary
+                    label="Send"
+                    onClick={() => {
+                      onSend(text);
+                    }}
+                  />
+                )}
+              </SendButtonContainer>
+            }
+          />
+        )}
       </Box>
     </Box>
   );

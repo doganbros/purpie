@@ -1,4 +1,4 @@
-import { Box, Header, Text } from 'grommet';
+import { Box, Text } from 'grommet';
 import { nanoid } from 'nanoid';
 import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
@@ -13,7 +13,13 @@ import { User } from '../../store/types/auth.types';
 import ReplyMessage from './layers/ReplyMessage';
 import EditMessage from './layers/EditMessage';
 import MessageBox from './components/MessageBox';
-import { MessageBoxContainer, DayContainer, DayDivider } from './ChatStyled';
+import {
+  MessageBoxContainer,
+  DayContainer,
+  DayDivider,
+  ScrollContainer,
+  DayHeader,
+} from './ChatStyled';
 import PlanMeetingTheme from '../../layers/meeting/custom-theme';
 import { errorResponseMessage, getChatRoomName } from '../../helpers/utils';
 import { http } from '../../config/http';
@@ -51,7 +57,9 @@ const Chat: React.FC<Props> = ({
     null
   );
   const [editedMessage, setEditedMessage] = useState<ChatMessage | null>(null);
-  const [uploadingFiles, setUploadingFiles] = useState(false);
+  const [uploadingFiles, setUploadingFiles] = useState<string[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+  const [uploadErrors, setUploadErrors] = useState<string[]>([]);
   const roomName = getChatRoomName(id, medium);
   const dispatch = useDispatch();
   const [messageErrorDraft, setMessageErrorDraft] = useState<{
@@ -151,18 +159,21 @@ const Chat: React.FC<Props> = ({
         });
       }
 
-      if (attachments?.length) setUploadingFiles(true);
-
       const attachmentsResponse: Array<ChatAttachment> = !attachments?.length
         ? []
         : await Promise.all(
             attachments.map(async (attachment) => {
+              setUploadingFiles((i) => [...i, attachment.name]);
               const formData = new FormData();
               formData.append('file', attachment);
 
               return http
                 .post('/chat/attachment', formData)
-                .then((res) => res.data);
+                .then((res) => {
+                  setUploadedFiles((i) => [...i, attachment.name]);
+                  return res.data;
+                })
+                .catch(() => setUploadErrors((i) => [...i, attachment.name]));
             })
           );
 
@@ -194,7 +205,8 @@ const Chat: React.FC<Props> = ({
         },
       });
     } finally {
-      setUploadingFiles(false);
+      setUploadingFiles([]);
+      setUploadedFiles([]);
     }
   };
 
@@ -303,7 +315,7 @@ const Chat: React.FC<Props> = ({
             background="linear-gradient(315deg, rgba(255, 248, 247, 0.0001) 0%, rgba(255, 240, 237, 0.815838) 52.11%, #FFEEEB 100%)"
           />
         </DayDivider>
-        <Header
+        <DayHeader
           round="xsmall"
           width="fit-content"
           pad={{ horizontal: 'small', vertical: 'xsmall' }}
@@ -311,10 +323,10 @@ const Chat: React.FC<Props> = ({
           justify="start"
           background="#FFEEEB"
         >
-          <Text textAlign="center" size="small">
-            {parseDateToString(message.createdOn)}
+          <Text textAlign="center" size="small" weight={400} color="#202631">
+            <i>{parseDateToString(message.createdOn)}</i>
           </Text>
-        </Header>
+        </DayHeader>
       </DayContainer>
     );
   };
@@ -340,12 +352,12 @@ const Chat: React.FC<Props> = ({
           />
         ) : null}
         <Box height={`${window.innerHeight}px`}>
-          <Box
+          <ScrollContainer
             overflow="auto"
             flex={{ grow: 1 }}
             direction="column-reverse"
             ref={messageBoxScrollRef}
-            height="calc(100vh - 175px)"
+            height="calc(100vh - 500px)"
             id={containerId}
           >
             <InfiniteScroll
@@ -420,12 +432,14 @@ const Chat: React.FC<Props> = ({
                 return item;
               })}
             </InfiniteScroll>
-          </Box>
+          </ScrollContainer>
           <MessageBoxContainer pad="small">
             <MessageBox
               name={name}
               handleTypingEvent={handleTypingEvent}
               uploadingFiles={uploadingFiles}
+              uploadedFiles={uploadedFiles}
+              uploadErrors={uploadErrors}
               onTyping={onTyping}
               user={currentUser!}
               canAddFile={canAddFile}

@@ -1,5 +1,5 @@
 import 'emoji-mart/css/emoji-mart.css';
-import { Box, TextArea } from 'grommet';
+import { Box } from 'grommet';
 import React, {
   Dispatch,
   FC,
@@ -20,6 +20,7 @@ import { UserBasic } from '../../../store/types/auth.types';
 import { searchProfileAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { useDebouncer } from '../../../hooks/useDebouncer';
+import { MessageTextAreaComponent } from './ChatComponentsStyle';
 
 interface Props {
   textAreaRef: React.RefObject<HTMLTextAreaElement>;
@@ -319,17 +320,16 @@ const MessageBox: FC<Props> = ({
         onSelect={onSelectMention}
       />
       <Box round="small" fill gap="small" width="100%" ref={componentRef}>
-        <TextArea
+        <MessageTextAreaComponent
           plain
           value={text}
           ref={textAreaRef}
           resize={false}
           focusIndicator={false}
-          placeholder={`Write ${name ? `to ${name}` : 'your message...'} `}
+          placeholder={name ? `Write to ${name}` : 'Write a  comment…'}
           onKeyDown={handleKeyDown}
           onKeyPress={handleKeyUp}
           onChange={handleChange}
-          style={{ overflow: 'none' }}
           rows={1}
           onFocusCapture={() => setInputFocused(true)}
           onBlurCapture={() => setInputFocused(false)}
