@@ -1,5 +1,6 @@
 import { Box, Button } from 'grommet';
 import React, { FC, useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { ChatMessage } from '../../../store/types/chat.types';
 import { useThrottle } from '../../../hooks/useThrottle';
 import InitialsAvatar from '../../utils/InitialsAvatar';
@@ -9,6 +10,7 @@ import MessageAttachments from './MessageAttachments';
 import MessageTextArea from './MessageTextArea';
 import { getFileKey } from '../../../helpers/utils';
 import { SendButton, SendButtonContainer } from './ChatComponentsStyle';
+import { searchProfileAction } from '../../../store/actions/user.action';
 
 interface Props {
   name?: string;
@@ -44,6 +46,7 @@ const MessageBox: FC<Props> = ({
   user,
 }) => {
   const throttle = useThrottle();
+  const dispatch = useDispatch();
   const componentRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const timer: { current: NodeJS.Timeout | null } = useRef(null);
@@ -114,6 +117,8 @@ const MessageBox: FC<Props> = ({
     const newValue = !emojiPickerVisibility;
     if (!newValue) {
       inputRef.current?.focus();
+    } else {
+      dispatch(searchProfileAction({ name: '', userContacts: false }));
     }
     setAttachmentToolFocused(newValue);
     setEmojiPickerVisibility(newValue);

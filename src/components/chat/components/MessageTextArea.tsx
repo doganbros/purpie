@@ -60,6 +60,7 @@ const MessageBox: FC<Props> = ({
 
   const [editingEmoji, setEditingEmoji] = useState<string>('');
   const [suggestions, setSuggestions] = useState<EmojiData[]>([]);
+  const [search, setSearch] = useState<string>('');
 
   const {
     user: {
@@ -82,6 +83,10 @@ const MessageBox: FC<Props> = ({
 
   const getMentionUserList = (searchText: string) =>
     dispatch(searchProfileAction({ name: searchText, userContacts: false }));
+
+  useEffect(() => {
+    debouncer(() => getMentionUserList(search), 300);
+  }, [search, mentionPickerVisibility]);
 
   const handleTextAreaCursor = (cursor: number) => {
     const element = textAreaRef.current;
@@ -161,7 +166,7 @@ const MessageBox: FC<Props> = ({
     return resultText;
   };
 
-  const getMentionInSentence = (
+  const getMentionInSentence = async (
     textMessage: string,
     selectionIndex: number
   ) => {
@@ -181,7 +186,7 @@ const MessageBox: FC<Props> = ({
         mentionStartIndex,
         selectionIndex
       );
-      debouncer(() => getMentionUserList(searchText), 300);
+      await setSearch(searchText);
       setMentionPickerVisibility(true);
     } else if (mentionPickerVisibility) {
       setMentionPickerVisibility(false);
@@ -190,11 +195,11 @@ const MessageBox: FC<Props> = ({
     return resultText;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.persist();
     const { value, selectionStart } = e.target;
     let currentText = getEmojiTextInSentence(value, selectionStart);
-    currentText = getMentionInSentence(currentText, selectionStart);
+    currentText = await getMentionInSentence(currentText, selectionStart);
     setText(currentText);
   };
 
