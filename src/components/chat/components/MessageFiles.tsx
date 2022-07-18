@@ -8,13 +8,12 @@ import {
   ImageErrorIcon,
   UploadedImage,
   UploadedImageContainer,
-  UploadingProgressBar,
-  UploadingProgressBarContainer,
 } from './ChatComponentsStyle';
+import ImageProgressBar from './ImageProgressBar';
 
 type Props = {
   files: Array<File>;
-  uploadingFiles: string[];
+  uploadingFiles: Array<File>;
   uploadedFiles: string[];
   uploadErrors: string[];
   onDeleteFile: (file: File) => void;
@@ -27,60 +26,45 @@ const MessageFiles: React.FC<Props> = ({
   uploadErrors = [],
   onDeleteFile = () => {},
 }) => {
-  if (files.length === 0) return <></>;
+  const fileList = [...files, ...uploadingFiles].filter(
+    (i) => !uploadedFiles.includes(i.name)
+  );
+
+  if (fileList.length === 0) return <> </>;
   return (
     <Box direction="row" overflow="auto" width="100%" pad="small">
-      {files
-        .filter((i) => !uploadedFiles.includes(i.name))
-        .map((file) => {
-          return (
-            <UploadedImageContainer
-              key={getFileKey(file)}
-              direction="row"
-              justify="between"
-              align="center"
-              margin="xxsmall"
-              hoverIndicator={{ background: 'rgba(0,0,0,0.1)' }}
-              round="small"
+      {fileList.map((file) => {
+        return (
+          <UploadedImageContainer
+            key={getFileKey(file)}
+            direction="row"
+            justify="between"
+            align="center"
+            margin="xxsmall"
+            hoverIndicator={{ background: 'rgba(0,0,0,0.1)' }}
+            round="small"
+            width="100%"
+          >
+            <UploadedImage
               width="100%"
-            >
-              <UploadedImage
-                width="100%"
-                height="100%"
-                src={URL.createObjectURL(file)}
-              />
-              <ImageDeleteButton
-                margin="xsmall"
-                color="green"
-                onClick={() => onDeleteFile(file)}
-                icon={<Close size="small" color="brand-2" />}
-              />
-              {uploadErrors.includes(file.name) && (
-                <ImageErrorIcon src={Warning} />
-              )}
-              {uploadingFiles.includes(file.name) &&
-                !uploadedFiles.includes(file.name) &&
-                !uploadErrors.includes(file.name) && (
-                  <UploadingProgressBarContainer>
-                    <Box
-                      width="80%"
-                      height="8px"
-                      background="white"
-                      round="small"
-                    >
-                      <Box direction="row">
-                        <UploadingProgressBar
-                          background="brand"
-                          height="8px"
-                          round="small"
-                        />
-                      </Box>
-                    </Box>
-                  </UploadingProgressBarContainer>
-                )}
-            </UploadedImageContainer>
-          );
-        })}
+              height="100%"
+              src={URL.createObjectURL(file)}
+            />
+            <ImageDeleteButton
+              margin="xsmall"
+              color="green"
+              onClick={() => onDeleteFile(file)}
+              icon={<Close size="small" color="brand-2" />}
+            />
+            {uploadErrors.includes(file.name) && (
+              <ImageErrorIcon src={Warning} />
+            )}
+            {uploadingFiles.includes(file) &&
+              !uploadedFiles.includes(file.name) &&
+              !uploadErrors.includes(file.name) && <ImageProgressBar />}
+          </UploadedImageContainer>
+        );
+      })}
     </Box>
   );
 };

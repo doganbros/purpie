@@ -302,7 +302,7 @@ const MessageBox: FC<Props> = ({
     : '100%';
 
   return (
-    <>
+    <Box>
       <EmojiPicker
         visibility={emojiPickerVisibility}
         setVisibility={setEmojiPickerVisibility}
@@ -340,7 +340,7 @@ const MessageBox: FC<Props> = ({
           onBlurCapture={() => setInputFocused(false)}
         />
       </Box>
-    </>
+    </Box>
   );
 };
 

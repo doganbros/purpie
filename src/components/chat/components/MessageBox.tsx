@@ -16,7 +16,7 @@ interface Props {
   name?: string;
   handleTypingEvent?: boolean;
   onTyping: () => void;
-  uploadingFiles: string[];
+  uploadingFiles: Array<File>;
   uploadedFiles: string[];
   uploadErrors: string[];
   user: User;
@@ -155,7 +155,7 @@ const MessageBox: FC<Props> = ({
         height="fit-content"
         width="100%"
       >
-        {canAddFile && attachments?.length > 0 && (
+        {canAddFile && (
           <MessageFiles
             files={attachments}
             uploadingFiles={uploadingFiles}

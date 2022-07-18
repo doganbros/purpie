@@ -57,7 +57,7 @@ const Chat: React.FC<Props> = ({
     null
   );
   const [editedMessage, setEditedMessage] = useState<ChatMessage | null>(null);
-  const [uploadingFiles, setUploadingFiles] = useState<string[]>([]);
+  const [uploadingFiles, setUploadingFiles] = useState<Array<File>>([]);
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [uploadErrors, setUploadErrors] = useState<string[]>([]);
   const roomName = getChatRoomName(id, medium);
@@ -163,20 +163,19 @@ const Chat: React.FC<Props> = ({
         ? []
         : await Promise.all(
             attachments.map(async (attachment) => {
-              setUploadingFiles((i) => [...i, attachment.name]);
+              setUploadingFiles((i) => [...i, attachment]);
               const formData = new FormData();
               formData.append('file', attachment);
 
               return http
                 .post('/chat/attachment', formData)
-                .then((res) => {
-                  setUploadedFiles((i) => [...i, attachment.name]);
+                .then(async (res) => {
+                  await setUploadedFiles((i) => [...i, attachment.name]);
                   return res.data;
                 })
                 .catch(() => setUploadErrors((i) => [...i, attachment.name]));
             })
           );
-
       message.attachments = attachmentsResponse;
 
       socket.emit('message', message, (payloadMsg: ChatMessage) => {

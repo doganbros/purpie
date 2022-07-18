@@ -15,6 +15,7 @@ import {
   MessageBoxHorizontalScroll,
   UploadedImage,
   UploadedImageContainer,
+  // ImageLoading,
 } from './components/ChatComponentsStyle';
 
 interface Props {
@@ -67,9 +68,11 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
               pad={{ bottom: 'small' }}
               hoverIndicator={{ background: 'rgba(0,0,0,0.1)' }}
               round="small"
-              width="100%"
+              width="fit-content"
+              height={attachments.length === 1 ? 'fit-content' : 'xsmall'}
             >
               <UploadedImage width="100%" height="100%" src={url} />
+              {/* <ImageLoading size="small" /> */}
             </UploadedImageContainer>
           );
         })}

@@ -1,4 +1,4 @@
-import { Box, Button, Image, TextArea } from 'grommet';
+import { Box, Button, Image, Spinner, TextArea } from 'grommet';
 import styled, { keyframes } from 'styled-components';
 import { theme } from '../../../config/app-config';
 
@@ -7,17 +7,15 @@ export const UploadedImageContainer = styled(Box)`
   white-space: nowrap;
   min-width: 45%;
   display: block;
-  width: fit-content;
-  height: fit-content;
 `;
 
 export const UploadedImage = styled(Image)`
   box-shadow: 0px 2px 20px #ffe7e380;
   border-radius: 12px;
-  min-width: 100%;
   display: block;
   object-fit: scale-down;
   display: inline-block;
+  z-index: 131231231233;
 `;
 
 export const ImageDeleteButton = styled(Button)`
@@ -114,4 +112,14 @@ export const MessageBoxHorizontalScroll = styled(Box)`
     width: 0;
     height: 0;
   }
+`;
+
+export const ImageLoading = styled(Spinner)`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  z-index: -1;
 `;
