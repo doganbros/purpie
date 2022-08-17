@@ -366,6 +366,16 @@ export class UserController {
     };
   }
 
+  @Get('/zone/list/:userName')
+  @IsAuthenticated()
+  listPublicUserZones(
+    @CurrentUser() user: UserTokenPayload,
+    @Param('userName') userName: string,
+    @Query() query: PaginationQuery,
+  ) {
+    return this.userService.getUserZones(user.id, userName, query);
+  }
+
   @Get('/channel/list/:userName')
   @IsAuthenticated()
   listPublicUserChannels(
