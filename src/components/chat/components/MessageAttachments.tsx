@@ -1,5 +1,5 @@
 import { Box, Button } from 'grommet';
-import React, { Dispatch, FC, SetStateAction } from 'react';
+import React, { FC } from 'react';
 import { Attachment, Emoji } from 'grommet-icons';
 import ExtendedBox from '../../utils/ExtendedBox';
 
@@ -7,40 +7,38 @@ import { At as AtIcon } from '../../utils/CustomIcons';
 
 interface Props {
   attachmentToolVisibility: boolean;
-  text: string;
-  selectedFile: File | null;
-  setSelectedFile: Dispatch<SetStateAction<File | null>>;
+  onFilesSelected?: ((files: Array<File>) => void) | null;
   toggleEmojiPicker: () => void;
   toggleMentionPicker: () => void;
-  onSubmit: () => void;
+  sendButton: JSX.Element;
 }
 
 const MessageAttachments: FC<Props> = ({
   attachmentToolVisibility,
-  text,
-  selectedFile,
-  setSelectedFile,
+  onFilesSelected,
   toggleEmojiPicker,
   toggleMentionPicker,
-  onSubmit,
+  sendButton,
 }) => {
   const inputFileRef = React.useRef<HTMLInputElement>(null);
 
   const onFileChangeCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
-    if (files?.length) {
-      setSelectedFile(files[0]);
+    if (files?.length && onFilesSelected) {
+      onFilesSelected(Array.from(files));
     }
   };
 
   return (
     <>
-      <input
-        type="file"
-        ref={inputFileRef}
-        onChangeCapture={onFileChangeCapture}
-        style={{ display: 'none' }}
-      />
+      {onFilesSelected && (
+        <input
+          type="file"
+          ref={inputFileRef}
+          onChangeCapture={onFileChangeCapture}
+          style={{ display: 'none' }}
+        />
+      )}
       <ExtendedBox
         gap="small"
         round={{ corner: 'bottom', size: 'small' }}
@@ -55,15 +53,16 @@ const MessageAttachments: FC<Props> = ({
           direction="row"
           margin={{ left: 'small', bottom: 'small', top: 'small' }}
         >
-          <Button
-            size="small"
-            margin="0px"
-            disabled={Boolean(selectedFile)}
-            onClick={() => {
-              inputFileRef?.current?.click();
-            }}
-            icon={<Attachment size="12px" />}
-          />
+          {onFilesSelected ? (
+            <Button
+              size="small"
+              margin="0px"
+              onClick={() => {
+                inputFileRef?.current?.click();
+              }}
+              icon={<Attachment size="12px" />}
+            />
+          ) : null}
           <Button
             size="small"
             margin="0px"
@@ -80,17 +79,7 @@ const MessageAttachments: FC<Props> = ({
             onClick={toggleEmojiPicker}
             icon={<Emoji size="12px" />}
           />
-        </Box>
-        <Box>
-          {(text.length || selectedFile) && (
-            <Button
-              size="small"
-              primary
-              label="Send"
-              onClick={onSubmit}
-              margin={{ right: 'small', bottom: 'small' }}
-            />
-          )}
+          {sendButton}
         </Box>
       </ExtendedBox>
     </>

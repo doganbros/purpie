@@ -15,6 +15,9 @@ export class ChatMessageAttachment extends RecordEntity {
   @Column()
   name: string;
 
+  @Column()
+  originalFileName: string;
+
   @OneToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'createdById', referencedColumnName: 'id' })
   createdBy: User;

@@ -1,12 +1,12 @@
 import { Box, Header, Text } from 'grommet';
 import { nanoid } from 'nanoid';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { socket } from '../../helpers/socket';
 import { getChatMessages } from '../../store/services/chat.service';
-import { ChatMessage } from '../../store/types/chat.types';
+import { ChatAttachment, ChatMessage } from '../../store/types/chat.types';
 import { AppState } from '../../store/reducers/root.reducer';
 import MessageItem from './MessageItem';
 import { User } from '../../store/types/auth.types';
@@ -15,7 +15,8 @@ import EditMessage from './layers/EditMessage';
 import MessageBox from './components/MessageBox';
 import { MessageBoxContainer } from './ChatStyled';
 import PlanMeetingTheme from '../../layers/meeting/custom-theme';
-import { getChatRoomName } from '../../helpers/utils';
+import { errorResponseMessage, getChatRoomName } from '../../helpers/utils';
+import { http } from '../../config/http';
 
 interface Props {
   medium: 'direct' | 'channel' | 'post';
@@ -25,6 +26,7 @@ interface Props {
   canDelete?: boolean;
   canEdit?: boolean;
   handleTypingEvent?: boolean;
+  canAddFile?: boolean;
 }
 const FETCH_MESSAGE_LIMIT = 50;
 
@@ -36,6 +38,7 @@ const Chat: React.FC<Props> = ({
   canDelete = true,
   canReply = true,
   canEdit = true,
+  canAddFile = false,
 }) => {
   const [messages, setMessages] = useState<Array<ChatMessage> | null>(null);
   const [hasMore, setHasMore] = useState(true);
@@ -48,7 +51,13 @@ const Chat: React.FC<Props> = ({
     null
   );
   const [editedMessage, setEditedMessage] = useState<ChatMessage | null>(null);
+  const [uploadingFiles, setUploadingFiles] = useState(false);
   const roomName = getChatRoomName(id, medium);
+  const dispatch = useDispatch();
+  const [messageErrorDraft, setMessageErrorDraft] = useState<{
+    message: Partial<ChatMessage>;
+    attachments?: Array<File>;
+  } | null>(null);
 
   const {
     auth: { user: currentUser },
@@ -114,37 +123,79 @@ const Chat: React.FC<Props> = ({
     );
   };
 
-  const handleSendMessage = (message: Partial<ChatMessage>) => {
-    setRepliedMessage(null);
-    setEditedMessage(null);
+  const handleSendMessage = async (
+    incomingMsg: Partial<ChatMessage>,
+    attachments?: Array<File>
+  ) => {
+    const message = { ...incomingMsg };
     const tempId = message.edited
       ? message.identifier
       : ++tempMsgIdCounter.current;
 
-    if (!message.edited) {
-      updateMessages(
-        (msgs) =>
-          msgs && [
-            ...msgs,
-            { ...message, createdBy: currentUser, identifier: tempId } as any,
-          ]
-      );
-      messageBoxScrollRef.current?.scrollTo({
-        behavior: 'smooth',
-        top: messageBoxScrollRef.current.scrollHeight,
-      });
-    }
+    try {
+      setRepliedMessage(null);
+      setEditedMessage(null);
+      setMessageErrorDraft(null);
 
-    socket.emit('message', message, (payloadMsg: ChatMessage) => {
+      if (!message.edited) {
+        updateMessages(
+          (msgs) =>
+            msgs && [
+              ...msgs,
+              { ...message, createdBy: currentUser, identifier: tempId } as any,
+            ]
+        );
+        messageBoxScrollRef.current?.scrollTo({
+          behavior: 'smooth',
+          top: messageBoxScrollRef.current.scrollHeight,
+        });
+      }
+
+      if (attachments?.length) setUploadingFiles(true);
+
+      const attachmentsResponse: Array<ChatAttachment> = !attachments?.length
+        ? []
+        : await Promise.all(
+            attachments.map(async (attachment) => {
+              const formData = new FormData();
+              formData.append('file', attachment);
+
+              return http
+                .post('/chat/attachment', formData)
+                .then((res) => res.data);
+            })
+          );
+
+      message.attachments = attachmentsResponse;
+
+      socket.emit('message', message, (payloadMsg: ChatMessage) => {
+        updateMessages(
+          (msgs) =>
+            msgs &&
+            msgs.map((msg) => {
+              if (msg.identifier === tempId) return payloadMsg;
+              return msg;
+            })
+        );
+      });
+    } catch (err: any) {
+      setMessageErrorDraft({ message, attachments });
       updateMessages(
-        (msgs) =>
-          msgs &&
-          msgs.map((msg) => {
-            if (msg.identifier === tempId) return payloadMsg;
-            return msg;
-          })
+        (msgs) => msgs?.filter((msg) => msg.identifier !== tempId) || null
       );
-    });
+      const toastId = nanoid();
+      dispatch({
+        type: 'SET_TOAST',
+        payload: {
+          toastId,
+          timeOut: 1000,
+          status: 'error',
+          message: errorResponseMessage(err?.response?.data || err),
+        },
+      });
+    } finally {
+      setUploadingFiles(false);
+    }
   };
 
   const onTyping = () => {
@@ -363,16 +414,29 @@ const Chat: React.FC<Props> = ({
             <MessageBox
               name={name}
               handleTypingEvent={handleTypingEvent}
+              uploadingFiles={uploadingFiles}
               onTyping={onTyping}
               user={currentUser!}
-              onSubmit={({ message }) =>
-                handleSendMessage({
-                  message,
-                  roomName,
-                  medium,
-                  to: id,
-                  createdBy: currentUser as any,
-                })
+              canAddFile={canAddFile}
+              messageErrorDraft={messageErrorDraft}
+              onSendAgain={() =>
+                messageErrorDraft &&
+                handleSendMessage(
+                  messageErrorDraft?.message,
+                  messageErrorDraft?.attachments
+                )
+              }
+              onSubmit={({ message }, attachments) =>
+                handleSendMessage(
+                  {
+                    message,
+                    roomName,
+                    medium,
+                    to: id,
+                    createdBy: currentUser as any,
+                  },
+                  attachments
+                )
               }
             />
           </MessageBoxContainer>

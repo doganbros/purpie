@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { RecordEntity } from './base/RecordEntity';
 import { Post } from './Post.entity';
 import { User } from './User.entity';
@@ -21,6 +21,10 @@ export class PostComment extends RecordEntity {
 
   @Column()
   comment: string;
+
+  @OneToOne(() => PostComment, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'parentId', referencedColumnName: 'id' })
+  parent?: PostComment;
 
   @Column({ nullable: true, type: 'int' })
   parentId: number | null;

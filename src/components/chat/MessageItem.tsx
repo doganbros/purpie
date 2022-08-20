@@ -125,6 +125,17 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
                     ? 'This message has been deleted'
                     : message.message}
                 </Text>
+                {message.attachments?.map((attachment) => (
+                  <Text key={attachment.name}>
+                    <a
+                      href={`${process.env.REACT_APP_SERVER_HOST}/v1/chat/attachment/${attachment.name}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {attachment.originalFileName}
+                    </a>
+                  </Text>
+                ))}
                 {message.edited ? <Text size="xsmall">(edited)</Text> : null}
                 {children}
               </Box>

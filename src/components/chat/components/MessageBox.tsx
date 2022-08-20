@@ -1,4 +1,4 @@
-import { Box } from 'grommet';
+import { Box, Button, Text } from 'grommet';
 import React, { FC, useRef, useState } from 'react';
 import { ChatMessage } from '../../../store/types/chat.types';
 import { useThrottle } from '../../../hooks/useThrottle';
@@ -7,13 +7,22 @@ import { User } from '../../../store/types/auth.types';
 import MessageFiles from './MessageFiles';
 import MessageAttachments from './MessageAttachments';
 import MessageTextArea from './MessageTextArea';
+import { getFileKey } from '../../../helpers/utils';
 
 interface Props {
   name?: string;
   handleTypingEvent?: boolean;
   onTyping: () => void;
+  uploadingFiles: boolean;
   user: User;
-  onSubmit: (message: Partial<ChatMessage>) => void;
+  messageErrorDraft: null | {
+    message: Partial<ChatMessage>;
+    attachments?: Array<File>;
+  };
+  onSendAgain: () => void;
+  onSubmit: (message: Partial<ChatMessage>, attachments: Array<File>) => void;
+  attachments?: Array<File>;
+  canAddFile?: boolean;
 }
 
 const TYPING_THROTTLE_INTERVAL = 700;
@@ -22,28 +31,34 @@ const MessageBox: FC<Props> = ({
   name,
   onSubmit,
   handleTypingEvent,
+  uploadingFiles,
   onTyping,
+  messageErrorDraft,
+  onSendAgain,
+  canAddFile,
   user,
 }) => {
   const throttle = useThrottle();
   const componentRef = useRef<HTMLDivElement>(null);
   const [text, setText] = useState<string>('');
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [emojiPickerVisibility, setEmojiPickerVisibility] = useState(false);
-  const [
-    suggestionPickerVisibility,
-    setSuggestionPickerVisibility,
-  ] = useState<boolean>(false);
-  const [
-    mentionPickerVisibility,
-    setMentionPickerVisibility,
-  ] = useState<boolean>(false);
+  const [suggestionPickerVisibility, setSuggestionPickerVisibility] = useState(
+    false
+  );
+  const [mentionPickerVisibility, setMentionPickerVisibility] = useState(false);
+  const [attachments, setAttachments] = useState<Array<File>>([]);
+
+  const onSend = (message: string) => {
+    onSubmit({ message }, attachments);
+    setText('');
+    setAttachments([]);
+    return null;
+  };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey && e.currentTarget.value) {
       e.preventDefault();
-      onSubmit({ message: e.currentTarget.value });
-      setText('');
+      onSend(e.currentTarget.value);
       return null;
     }
     if (handleTypingEvent) {
@@ -90,26 +105,59 @@ const MessageBox: FC<Props> = ({
           componentRef={componentRef}
           mentionPickerVisibility={mentionPickerVisibility}
         />
-        {selectedFile && (
+        {canAddFile && attachments && (
           <MessageFiles
-            file={selectedFile}
-            deleteFile={() => setSelectedFile(null)}
+            files={attachments}
+            onDeleteFile={(file) =>
+              setAttachments((files) => files.filter((f) => f !== file))
+            }
           />
         )}
+        {uploadingFiles && <Text size="small">Uploading Files...</Text>}
+        {messageErrorDraft ? (
+          <Button
+            label="Send Message Again"
+            onClick={() => {
+              onSendAgain();
+            }}
+          />
+        ) : null}
         <MessageAttachments
           attachmentToolVisibility
-          text={text}
-          selectedFile={selectedFile}
-          setSelectedFile={setSelectedFile}
-          onSubmit={() => {
-            onSubmit({ message: text });
-            setText('');
-          }}
+          onFilesSelected={
+            canAddFile
+              ? (files) => {
+                  const incomingFileKeys = files.map(getFileKey);
+
+                  setAttachments((existingFiles) => [
+                    ...existingFiles.filter(
+                      (f) => !incomingFileKeys.includes(getFileKey(f))
+                    ),
+                    ...files,
+                  ]);
+                }
+              : null
+          }
           toggleEmojiPicker={() =>
             setEmojiPickerVisibility(!emojiPickerVisibility)
           }
           toggleMentionPicker={() =>
             setMentionPickerVisibility(!mentionPickerVisibility)
+          }
+          sendButton={
+            <Box>
+              {(text.length || !!attachments.length) && (
+                <Button
+                  size="small"
+                  primary
+                  label="Send"
+                  onClick={() => {
+                    onSend(text);
+                  }}
+                  margin={{ right: 'small', bottom: 'small' }}
+                />
+              )}
+            </Box>
           }
         />
       </Box>

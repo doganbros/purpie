@@ -48,6 +48,7 @@ export class NotificationService {
         'notification.type',
         'notification.readOn',
         'notification.viewedOn',
+        'notification.counter',
         'createdBy.id',
         'createdBy.firstName',
         'createdBy.lastName',
@@ -78,6 +79,7 @@ export class NotificationService {
       .leftJoin('channel.zone', 'zone')
       .leftJoin('notification.createdBy', 'createdBy')
       .leftJoinAndSelect('notification.postComment', 'postComment')
+      .leftJoinAndSelect('postComment.parent', 'parent')
       .where('notification.userId = :userId', { userId });
 
     if (query.type === 'read')

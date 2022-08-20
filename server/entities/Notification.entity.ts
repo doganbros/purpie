@@ -2,6 +2,8 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { RecordEntity } from './base/RecordEntity';
 import { Post } from './Post.entity';
 import { PostComment } from './PostComment.entity';
+import { PostCommentLike } from './PostCommentLike.entity';
+import { PostLike } from './PostLike.entity';
 import { User } from './User.entity';
 
 export type NotificationType =
@@ -12,6 +14,7 @@ export type NotificationType =
   | 'post_comment_reply'
   | 'post_comment_mention'
   | 'contact_request_accepted'
+  | 'contact_request_received'
   | 'system_notification';
 
 @Entity()
@@ -30,12 +33,26 @@ export class Notification extends RecordEntity {
   @Column({ nullable: true })
   postId: number;
 
-  @ManyToOne(() => PostComment, { onDelete: 'CASCADE' })
+  @ManyToOne(() => PostComment)
   @JoinColumn({ name: 'postCommentId', referencedColumnName: 'id' })
   postComment: PostComment;
 
   @Column({ nullable: true })
   postCommentId: number;
+
+  @ManyToOne(() => PostLike)
+  @JoinColumn({ name: 'postLikeId', referencedColumnName: 'id' })
+  postLike: PostLike;
+
+  @Column({ nullable: true })
+  postLikeId: number;
+
+  @ManyToOne(() => PostCommentLike)
+  @JoinColumn({ name: 'postCommentLikeId', referencedColumnName: 'id' })
+  postCommentLike: PostCommentLike;
+
+  @Column({ nullable: true })
+  postCommentLikeId: number;
 
   @Column({ nullable: true })
   message: string;
