@@ -504,4 +504,13 @@ export class UserController {
   ) {
     return this.userService.updatePostSettings(user.id, settings);
   }
+
+  @Put('featured-post/set/:postId')
+  @IsAuthenticated()
+  setFeaturedPost(
+    @CurrentUser() user: UserTokenPayload,
+    @Param('postId', ParseIntPipe) postId: number,
+  ) {
+    return this.userService.setFeaturedPost(user.id, postId);
+  }
 }

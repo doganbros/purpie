@@ -722,4 +722,13 @@ export class PostController {
 
     return 'OK';
   }
+
+  @Get('featured/user/:userId')
+  @IsAuthenticated()
+  getFeaturedPost(
+    @CurrentUser() user: UserTokenPayload,
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
+    return this.postService.getFeaturedPost(userId, user.id);
+  }
 }
