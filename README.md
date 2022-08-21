@@ -152,12 +152,14 @@ $ yarn server:test:cov
 
 Runs the app server in the development mode.
 
+Visit http://octopus.localhost:<SERVER_PORT>/swagger to get all the endpoints and documentation for the rest api
+
 ### `npm start`
 
 Runs the app in the development mode.\
 Open [http://octopus.localhost:<PORT>](http://octopus.localhost:<PORT>) to view it in the browser.
 
-The page will reload if you make edits.\
+The page will reload if you make updates.\
 You will also see any lint errors in the console.
 
 ### `yarn build`
