@@ -71,7 +71,7 @@ Please follow the steps below to get a development Postgres server running. The 
 3. Enter the command `docker run --name octopus-postgres-dev -e POSTGRES_PASSWORD=YOUR_DB_PASSWORD -p 5432:5432 -d postgres` Postgres docker image will be downloaded and Postgres Docker container with the name `octopus-postgres-dev` will up and serve from port 5432 after this command.
 4. Run `docker exec -it octopus-postgres-dev psql -U postgres` to connect your Postgres database.
 5. Run `CREATE DATABASE octopus;` to create your Octopus database.
-6. Update your .env file with YOUR_DB_PASSWORD. 
+6. Update your `.env` file with `YOUR_DB_PASSWORD`. 
 7. Run `\q` to quit from Psql and Docker container.
 
 ## Setting web server and routing
