@@ -1,7 +1,7 @@
 # Octopus (Typescript React App - Express REST API with postgres using Node.js, Express and Sequelize)
 
 ## Frontend Features
-
+ 
 - Typescript (Strict Mode)
 - ESNext
 - React 17
