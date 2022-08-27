@@ -18,6 +18,7 @@ import ChannelsToFollow from '../timeline/ChannelsToFollow';
 import LastActivities from '../timeline/LastActivities';
 import ZonesToJoin from '../timeline/ZonesToJoin';
 import ConfirmDialog from '../../../components/utils/ConfirmDialog';
+import SavedVideo from '../../../layers/saved-video/SavedVideo';
 
 dayjs.extend(relativeTime);
 
@@ -114,6 +115,11 @@ const Saved: FC = () => {
             confirmButtonText="Remove"
           />
         )}
+      </Box>
+      <Box gap="xlarge">
+        <SavedVideo text="UX Design" numberOfVideos={3} />
+        <SavedVideo text="Development" numberOfVideos={50} />
+        <SavedVideo text="Financial" numberOfVideos={4} />
       </Box>
     </PrivatePageLayout>
   );
