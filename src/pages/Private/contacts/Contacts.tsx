@@ -55,7 +55,7 @@ const Contacts: FC = () => {
             getContacts(contacts.data.length);
           }}
         >
-          {(item: typeof contacts.data[0]) => (
+          {(item: ContactUser) => (
             <ContactListItem
               selected={contacts.selected.contactId === item.id}
               contact={item}

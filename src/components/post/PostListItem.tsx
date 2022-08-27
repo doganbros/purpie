@@ -22,6 +22,7 @@ const PostListItem: FC<PostListItemProps> = ({
   onClickSave,
 }) => {
   const [hover, setHover] = useState(false);
+  const isVideoPost = post.videoName || post.streaming;
   return (
     <Stack
       onMouseEnter={() => setHover(true)}
@@ -34,13 +35,13 @@ const PostListItem: FC<PostListItemProps> = ({
         gap="medium"
         direction="row"
         onClick={() => {
-          onClickPlay(post.id);
+          if (isVideoPost) onClickPlay(post.id);
         }}
         focusIndicator={false}
       >
         <Box width="320px">
           <Box round={{ size: 'medium' }} overflow="hidden" gap="small">
-            {post.videoName || post.streaming ? (
+            {isVideoPost ? (
               <VideoPost
                 id={post.id}
                 live={post.streaming}

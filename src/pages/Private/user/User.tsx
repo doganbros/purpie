@@ -1,12 +1,16 @@
 import { Box, Grid, Layer, Spinner, Text } from 'grommet';
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import PostListItem from '../../../components/post/PostListItem';
 import Divider from '../../../components/utils/Divider';
 import GradientScroll from '../../../components/utils/GradientScroll';
 import InitialsAvatar from '../../../components/utils/InitialsAvatar';
+import {
+  createPostSaveAction,
+  removePostSaveAction,
+} from '../../../store/actions/post.action';
 import { getUserDetailAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import Header from './Header';
@@ -23,6 +27,7 @@ const User: FC = () => {
   const {
     user: { detail },
   } = useSelector((state: AppState) => state);
+  const history = useHistory();
 
   useEffect(() => {
     dispatch(getUserDetailAction(params));
@@ -145,8 +150,12 @@ const User: FC = () => {
                     <PostListItem
                       key={p.id}
                       post={p}
-                      onClickPlay={() => {}}
-                      onClickSave={() => {}}
+                      onClickPlay={() => history.push(`video/${p.id}`)}
+                      onClickSave={() => {
+                        if (p.saved)
+                          dispatch(removePostSaveAction({ postId: p.id }));
+                        else dispatch(createPostSaveAction({ postId: p.id }));
+                      }}
                     />
                   ))}
                 </Grid>
