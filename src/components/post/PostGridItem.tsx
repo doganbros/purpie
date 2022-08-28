@@ -3,12 +3,12 @@ import { Box, Stack, Text } from 'grommet';
 import { Chat, Favorite } from 'grommet-icons';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import ExtendedBox from '../ExtendedBox';
-import InitialsAvatar from '../InitialsAvatar';
+import ExtendedBox from '../utils/ExtendedBox';
+import InitialsAvatar from '../utils/InitialsAvatar';
 import { VideoPost } from './VideoPost';
 import { ImagePost } from './ImagePost';
-import { Post } from '../../../store/types/post.types';
-import { FavoriteFill } from '../CustomIcons';
+import { Post } from '../../store/types/post.types';
+import { FavoriteFill } from '../utils/CustomIcons';
 
 dayjs.extend(relativeTime);
 

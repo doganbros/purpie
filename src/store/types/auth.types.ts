@@ -44,14 +44,16 @@ export interface ExistenceResult {
 export interface UserRole {
   roleCode: UserRoleCode;
   roleName: string;
+  isSystemRole: boolean;
   canCreateZone: boolean;
   canCreateClient: boolean;
+  canManageRole: boolean;
 }
 
 export interface UserBasic {
   id: number;
   firstName: string;
-  userName?: string;
+  userName: string;
   lastName: string;
   email: string;
 }

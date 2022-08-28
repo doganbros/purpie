@@ -32,7 +32,7 @@ export const SidebarButton: FC<Props> = ({
           size: 'medium',
         },
         background: {
-          color: 'brand-2',
+          color: 'brand-alt',
         },
         align: { left: 'right' },
       }}
