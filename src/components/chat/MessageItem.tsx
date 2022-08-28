@@ -77,7 +77,9 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
             >
               <InitialsAvatar
                 size="medium"
-                fontSize="small"
+                textProps={{
+                  size: 'small',
+                }}
                 id={message.createdBy.id}
                 value={`${message.createdBy.firstName} ${message.createdBy.lastName} `}
               />

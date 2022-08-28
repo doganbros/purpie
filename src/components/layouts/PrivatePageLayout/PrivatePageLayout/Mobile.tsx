@@ -24,7 +24,7 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
   return (
     <Box height="100vh">
       <Header
-        background="brand-2"
+        background="brand-alt"
         pad={{ horizontal: 'medium', vertical: 'xsmall' }}
       >
         <Box direction="row" align="center" gap="medium" justify="between" fill>
@@ -93,7 +93,7 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
               horizontal: 'medium',
             }}
             fill="vertical"
-            background="brand-2"
+            background="brand-alt"
             justify="between"
           >
             <ZoneSelector />
