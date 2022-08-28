@@ -12,6 +12,9 @@ export class Playlist extends RecordEntity {
   @Column({ default: true })
   public: boolean;
 
+  @Column({ nullable: true, type: 'character varying' })
+  description: string | null;
+
   @ManyToOne(() => Channel, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'channelId', referencedColumnName: 'id' })
   channel: Channel;

@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { AddPlaylistItemDto } from '../dto/add-playlist-item.dto';
 import { CreatePlaylistDto } from '../dto/create-playlist.dto';
+import { UpdatePlaylistDto } from '../dto/update-playlist.dto';
 import { PostService } from './post.service';
 
 @Injectable()
@@ -41,6 +42,23 @@ export class PlaylistService {
       .paginate(query);
   }
 
+  async getPublicUserPlaylists(userId: number, query: PaginationQuery) {
+    return this.playlistRepository
+      .createQueryBuilder('playlist')
+      .addSelect(
+        (sq) =>
+          sq
+            .select('cast(count(*) as int)')
+            .from(PlaylistItem, 'playlistItem')
+            .where('playlistItem.playlistId = playlist.id'),
+        'playlist_itemCount',
+      )
+      .where('playlist.createdById = :userId', { userId })
+      .andWhere('playlist.public = true')
+      .andWhere('playlist.channelId is null')
+      .paginate(query);
+  }
+
   async getChannelPlaylists(channelId: number, query: PaginationQuery) {
     return this.playlistRepository
       .createQueryBuilder('playlist')
@@ -61,6 +79,7 @@ export class PlaylistService {
       title: info.title,
       public: info.public ?? true,
       createdById: userId,
+      description: info.description ?? null,
     };
 
     if (info.channelId) {
@@ -90,6 +109,27 @@ export class PlaylistService {
     }
 
     return playlist;
+  }
+
+  async updatePlaylist(userId: number, info: UpdatePlaylistDto) {
+    const payload: Partial<Playlist> = {};
+
+    if (info.description) {
+      payload.description = info.description;
+    }
+
+    if (info.title) {
+      payload.title = info.title;
+    }
+
+    if (info.public !== undefined) {
+      payload.public = info.public;
+    }
+
+    await this.playlistRepository.update(
+      { id: info.playlistId, createdById: userId },
+      payload,
+    );
   }
 
   async addPlaylistItem(userId: number, info: AddPlaylistItemDto) {
