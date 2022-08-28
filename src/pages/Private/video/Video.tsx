@@ -15,7 +15,7 @@ import {
 import { AppState } from '../../../store/reducers/root.reducer';
 import { FavoriteFill } from '../../../components/utils/CustomIcons';
 import RecommendedVideos from './RecommendedVideos';
-import VideoJs from '../../../components/utils/PostGridItem/VideoJs';
+import VideoJs from '../../../components/post/VideoJs';
 import { http } from '../../../config/http';
 import { postViewStats } from '../../../store/services/post.service';
 import CommentList from './Comments/CommentList';

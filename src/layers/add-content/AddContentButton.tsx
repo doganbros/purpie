@@ -31,7 +31,7 @@ const AddContentButton: FC<AddContentButtonProps> = ({
         background={
           hover
             ? `linear-gradient(180deg, ${theme.global?.colors?.['neutral-2']} 0%, #643FBB 52.62%, #74C0BF 100%)`
-            : `linear-gradient(180deg, ${theme.global?.colors?.['neutral-2']} 0%, ${theme.global?.colors?.['brand-2']} 100%)`
+            : `linear-gradient(180deg, ${theme.global?.colors?.['neutral-2']} 0%, ${theme.global?.colors?.['brand-alt']} 100%)`
         }
       >
         {icon}
