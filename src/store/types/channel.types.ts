@@ -29,7 +29,7 @@ export interface ChannelBasic {
   topic: string;
   description: string;
   public: boolean;
-  zone: {
+  zone?: {
     id: number;
     name: string;
     subdomain: string;
