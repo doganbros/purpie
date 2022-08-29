@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import { Text, TextExtendedProps } from 'grommet';
 
 interface RenderHighlightProps {
@@ -12,20 +12,18 @@ interface HighlightProps {
   renderHighlight: FC<RenderHighlightProps>;
 }
 
-const Highlight: FC<HighlightProps> = ({
-  text,
-  textProps,
-  renderHighlight,
-  match,
-}) => {
-  const parts = useMemo(() => text.split(match), [text, match]);
-  return (
-    <Text {...textProps}>
-      {parts.map((part: string) =>
-        part.match(match) ? renderHighlight({ match: part }) : part
-      )}
-    </Text>
-  );
-};
+const Highlight: FC<HighlightProps> = React.memo(
+  ({ text, textProps, renderHighlight, match }) => {
+    return (
+      <Text {...textProps}>
+        {text
+          .split(match)
+          .map((part: string) =>
+            part.match(match) ? renderHighlight({ match: part }) : part
+          )}
+      </Text>
+    );
+  }
+);
 
 export default Highlight;
