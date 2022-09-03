@@ -22,12 +22,12 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
 
   useEffect(() => {
     if (invitation.zone) {
-      setInvitationType(InvitationType.CHANNEL);
+      setInvitationType(InvitationType.ZONE);
       setInvitationMessage(
         `${invitation.createdBy.firstName} invited you to ${invitation.zone.zone_name} zone.`
       );
     } else if (invitation.channel) {
-      setInvitationType(InvitationType.ZONE);
+      setInvitationType(InvitationType.CHANNEL);
       setInvitationMessage(
         `${invitation.createdBy.firstName} invited you to ${invitation.channel.channel_name} channel.`
       );
