@@ -5,6 +5,9 @@ import {
   LIST_INVITATION_FAILED,
   LIST_INVITATION_REQUESTED,
   LIST_INVITATION_SUCCESS,
+  RESPONSE_INVITATION_FAILED,
+  RESPONSE_INVITATION_REQUESTED,
+  RESPONSE_INVITATION_SUCCESS,
   ZONE_SUGGESTIONS_FAILED,
   ZONE_SUGGESTIONS_REQUESTED,
   ZONE_SUGGESTIONS_SUCCESS,
@@ -25,6 +28,10 @@ const initialState: ActivityState = {
   },
   invitations: {
     ...paginationInitialState,
+    loading: false,
+    error: null,
+  },
+  responseInvitation: {
     loading: false,
     error: null,
   },
@@ -114,6 +121,37 @@ const activityReducer = (
         ...state,
         invitations: {
           ...state.invitations,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case RESPONSE_INVITATION_REQUESTED:
+      return {
+        ...state,
+        responseInvitation: {
+          loading: true,
+          error: null,
+        },
+      };
+    case RESPONSE_INVITATION_SUCCESS:
+      return {
+        ...state,
+        invitations: {
+          ...state.invitations,
+          total: state.invitations.total - 1,
+          data: state.invitations.data.filter(
+            (i) => i.id !== action.payload.id
+          ),
+        },
+        responseInvitation: {
+          loading: false,
+          error: null,
+        },
+      };
+    case RESPONSE_INVITATION_FAILED:
+      return {
+        ...state,
+        responseInvitation: {
           loading: false,
           error: action.payload,
         },

@@ -14,30 +14,28 @@ const InvitationList: FC = () => {
     activity: { invitations },
   } = useSelector((state: AppState) => state);
 
-  const [seeInvitations, setSeeInvitations] = useState(true);
+  const [seeInvitations, setSeeInvitations] = useState(false);
 
   useEffect(() => {
     dispatch(getInvitationListAction(5, 0));
   }, []);
 
   return (
-    <Box gap="small">
+    <Box gap={invitations.total !== 0 ? 'medium' : 'none'}>
       <InvitationListHeader
         count={invitations.total}
         seeAll={() => setSeeInvitations((see) => !see)}
       />
-      <InvitationListItem />
-      <Divider width="25%" size="1px" />
-      <InvitationListItem />
-      <Divider width="25%" size="1px" />
-      <InvitationListItem />
-      <Divider width="25%" size="1px" />
-      <InvitationListItem />
       {seeInvitations && (
         <>
           {invitations.loading && <Text size="small">Loading</Text>}
-          {invitations.data.map((c) => (
-            <Box key={c.id}>{c.id}</Box>
+          {invitations.data.map((invitation, index) => (
+            <Box gap="small" key={invitation.id}>
+              <InvitationListItem invitation={invitation} />
+              {invitations.data.length !== index + 1 && (
+                <Divider width="25%" size="1px" />
+              )}
+            </Box>
           ))}
         </>
       )}

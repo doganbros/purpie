@@ -5,6 +5,9 @@ import {
   LIST_INVITATION_FAILED,
   LIST_INVITATION_REQUESTED,
   LIST_INVITATION_SUCCESS,
+  RESPONSE_INVITATION_FAILED,
+  RESPONSE_INVITATION_REQUESTED,
+  RESPONSE_INVITATION_SUCCESS,
   ZONE_SUGGESTIONS_FAILED,
   ZONE_SUGGESTIONS_REQUESTED,
   ZONE_SUGGESTIONS_SUCCESS,
@@ -12,7 +15,7 @@ import {
 
 import * as ActivityService from '../services/activity.service';
 import * as UserService from '../services/user.service';
-import { ActivityAction } from '../types/activity.types';
+import { ActivityAction, InvitationResponse } from '../types/activity.types';
 
 export const getZoneSuggestionsAction = (
   limit: number,
@@ -77,6 +80,28 @@ export const getInvitationListAction = (
     } catch (err: any) {
       dispatch({
         type: LIST_INVITATION_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const responseInvitationActions = (
+  payload: InvitationResponse
+): ActivityAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: RESPONSE_INVITATION_REQUESTED,
+    });
+    try {
+      await ActivityService.responseInvitation(payload);
+      dispatch({
+        type: RESPONSE_INVITATION_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: RESPONSE_INVITATION_FAILED,
         payload: err?.response?.data,
       });
     }

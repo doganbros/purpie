@@ -8,11 +8,16 @@ import {
   LIST_INVITATION_SUCCESS,
   LIST_INVITATION_FAILED,
   LIST_INVITATION_REQUESTED,
+  RESPONSE_INVITATION_REQUESTED,
+  RESPONSE_INVITATION_FAILED,
+  RESPONSE_INVITATION_SUCCESS,
 } from '../constants/activity.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
 import { INVITE_TO_ZONE_FAILED } from '../constants/zone.constants';
 import { ApiProperty } from '@nestjs/swagger';
+import exp from 'constants';
+import { InvitationResponseType, InvitationType } from '../../models/utils';
 
 export interface ZoneSuggestionListItem {
   zone_id: number;
@@ -42,7 +47,7 @@ export interface ChannelSuggestionListItem {
   channel_membersCount: string;
 }
 
-export interface Inviter {
+export interface User {
   id: number;
   email: string;
   firstName: string;
@@ -54,7 +59,15 @@ export interface Inviter {
 export interface InvitationListItem {
   id: number;
   createdOn: Date;
-  inviter: Inviter;
+  createdBy: User;
+  zone: ZoneSuggestionListItem;
+  channel: ChannelSuggestionListItem;
+}
+
+export interface InvitationResponse {
+  id: number;
+  response: InvitationResponseType;
+  type: InvitationType;
 }
 
 export interface ActivityState {
@@ -70,6 +83,10 @@ export interface ActivityState {
     loading: boolean;
     error: ResponseError | null;
   };
+  responseInvitation: {
+    loading: boolean;
+    error: ResponseError | null;
+  };
 }
 
 export type ActivityActionParams =
@@ -77,7 +94,8 @@ export type ActivityActionParams =
       type:
         | typeof ZONE_SUGGESTIONS_REQUESTED
         | typeof CHANNEL_SUGGESTIONS_REQUESTED
-        | typeof LIST_INVITATION_REQUESTED;
+        | typeof LIST_INVITATION_REQUESTED
+        | typeof RESPONSE_INVITATION_REQUESTED;
     }
   | {
       type: typeof ZONE_SUGGESTIONS_SUCCESS;
@@ -92,10 +110,15 @@ export type ActivityActionParams =
       payload: PaginatedResponse<InvitationListItem>;
     }
   | {
+      type: typeof RESPONSE_INVITATION_SUCCESS;
+      payload: InvitationResponse;
+    }
+  | {
       type:
         | typeof CHANNEL_SUGGESTIONS_FAILED
         | typeof ZONE_SUGGESTIONS_FAILED
-        | typeof LIST_INVITATION_FAILED;
+        | typeof LIST_INVITATION_FAILED
+        | typeof RESPONSE_INVITATION_FAILED;
       payload: ResponseError;
     };
 
