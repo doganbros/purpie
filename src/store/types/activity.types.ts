@@ -5,9 +5,14 @@ import {
   CHANNEL_SUGGESTIONS_REQUESTED,
   CHANNEL_SUGGESTIONS_SUCCESS,
   CHANNEL_SUGGESTIONS_FAILED,
+  LIST_INVITATION_SUCCESS,
+  LIST_INVITATION_FAILED,
+  LIST_INVITATION_REQUESTED,
 } from '../constants/activity.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
+import { INVITE_TO_ZONE_FAILED } from '../constants/zone.constants';
+import { ApiProperty } from '@nestjs/swagger';
 
 export interface ZoneSuggestionListItem {
   zone_id: number;
@@ -37,6 +42,21 @@ export interface ChannelSuggestionListItem {
   channel_membersCount: string;
 }
 
+export interface Inviter {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  userName: string;
+  displayPhoto: string;
+}
+
+export interface InvitationListItem {
+  id: number;
+  createdOn: Date;
+  inviter: Inviter;
+}
+
 export interface ActivityState {
   zoneSuggestions: PaginatedResponse<ZoneSuggestionListItem> & {
     loading: boolean;
@@ -46,13 +66,18 @@ export interface ActivityState {
     loading: boolean;
     error: ResponseError | null;
   };
+  invitations: PaginatedResponse<InvitationListItem> & {
+    loading: boolean;
+    error: ResponseError | null;
+  };
 }
 
 export type ActivityActionParams =
   | {
       type:
         | typeof ZONE_SUGGESTIONS_REQUESTED
-        | typeof CHANNEL_SUGGESTIONS_REQUESTED;
+        | typeof CHANNEL_SUGGESTIONS_REQUESTED
+        | typeof LIST_INVITATION_REQUESTED;
     }
   | {
       type: typeof ZONE_SUGGESTIONS_SUCCESS;
@@ -63,7 +88,14 @@ export type ActivityActionParams =
       payload: PaginatedResponse<ChannelSuggestionListItem>;
     }
   | {
-      type: typeof CHANNEL_SUGGESTIONS_FAILED | typeof ZONE_SUGGESTIONS_FAILED;
+      type: typeof LIST_INVITATION_SUCCESS;
+      payload: PaginatedResponse<InvitationListItem>;
+    }
+  | {
+      type:
+        | typeof CHANNEL_SUGGESTIONS_FAILED
+        | typeof ZONE_SUGGESTIONS_FAILED
+        | typeof LIST_INVITATION_FAILED;
       payload: ResponseError;
     };
 

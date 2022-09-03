@@ -1,10 +1,13 @@
 import {
-  ZONE_SUGGESTIONS_REQUESTED,
-  ZONE_SUGGESTIONS_SUCCESS,
-  ZONE_SUGGESTIONS_FAILED,
+  CHANNEL_SUGGESTIONS_FAILED,
   CHANNEL_SUGGESTIONS_REQUESTED,
   CHANNEL_SUGGESTIONS_SUCCESS,
-  CHANNEL_SUGGESTIONS_FAILED,
+  LIST_INVITATION_FAILED,
+  LIST_INVITATION_REQUESTED,
+  LIST_INVITATION_SUCCESS,
+  ZONE_SUGGESTIONS_FAILED,
+  ZONE_SUGGESTIONS_REQUESTED,
+  ZONE_SUGGESTIONS_SUCCESS,
 } from '../constants/activity.constants';
 import { ActivityActionParams, ActivityState } from '../types/activity.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -16,6 +19,11 @@ const initialState: ActivityState = {
     error: null,
   },
   channelSuggestions: {
+    ...paginationInitialState,
+    loading: false,
+    error: null,
+  },
+  invitations: {
     ...paginationInitialState,
     loading: false,
     error: null,
@@ -79,6 +87,33 @@ const activityReducer = (
 
         channelSuggestions: {
           ...state.channelSuggestions,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case LIST_INVITATION_REQUESTED:
+      return {
+        ...state,
+        invitations: {
+          ...state.invitations,
+          loading: true,
+          error: null,
+        },
+      };
+    case LIST_INVITATION_SUCCESS:
+      return {
+        ...state,
+        invitations: {
+          ...action.payload,
+          loading: false,
+          error: null,
+        },
+      };
+    case LIST_INVITATION_FAILED:
+      return {
+        ...state,
+        invitations: {
+          ...state.invitations,
           loading: false,
           error: action.payload,
         },

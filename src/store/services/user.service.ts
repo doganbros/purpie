@@ -2,6 +2,7 @@ import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { User, UserBasic } from '../types/auth.types';
 import { ContactUser, ProfileSearchParams } from '../types/user.types';
+import { InvitationListItem } from '../types/activity.types';
 
 export const searchUser = (
   params: ProfileSearchParams
@@ -19,3 +20,9 @@ export const getUserProfile = (userName?: string): Promise<User> =>
 
 export const removeContact = (contactId: number): Promise<string> =>
   http.delete(`/user/contact/remove/${contactId}`).then((res) => res.data);
+
+export const listInvitations = (params: {
+  limit?: number;
+  skip?: number;
+}): Promise<PaginatedResponse<InvitationListItem>> =>
+  http.get('/user/invitations/list', { params }).then((res) => res.data);
