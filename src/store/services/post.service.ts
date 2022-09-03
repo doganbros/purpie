@@ -54,6 +54,15 @@ export const getChannelFeed = (
 export const getPostDetail = (postId: number): Promise<Post> =>
   http.get(`/post/detail/feed/${postId}`).then((res) => res.data);
 
+export const updatePostDetail = (
+  postId: number,
+  title: string,
+  description: string
+): Promise<Post> =>
+  http
+    .put(`/post/update/${postId}`, { title, description })
+    .then((res) => res.data);
+
 export const createVideo = (
   data: CreateVideoPayload,
   onUploadProgress: (progressEvent: ProgressEvent<XMLHttpRequestUpload>) => void
@@ -70,6 +79,9 @@ export const createPostLike = (postId: number): Promise<Post> =>
 
 export const removePostLike = (postId: number): Promise<Post> =>
   http.delete(`/post/like/remove/${postId}`).then((res) => res.data);
+
+export const removePost = (postId: number): Promise<Post> =>
+  http.delete(`/post/remove/${postId}`).then((res) => res.data);
 
 export const createPostSave = (postId: number): Promise<Post> =>
   http.post('/post/saved/create', { postId }).then((res) => res.data);

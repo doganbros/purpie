@@ -7,6 +7,11 @@ export class CreatePlaylistDto {
   title: string;
 
   @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @ApiProperty({ required: false })
   @IsBoolean()
   @IsOptional()
   public: boolean;
