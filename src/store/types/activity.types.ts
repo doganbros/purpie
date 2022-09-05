@@ -1,22 +1,19 @@
 import {
-  ZONE_SUGGESTIONS_REQUESTED,
-  ZONE_SUGGESTIONS_SUCCESS,
-  ZONE_SUGGESTIONS_FAILED,
+  CHANNEL_SUGGESTIONS_FAILED,
   CHANNEL_SUGGESTIONS_REQUESTED,
   CHANNEL_SUGGESTIONS_SUCCESS,
-  CHANNEL_SUGGESTIONS_FAILED,
-  LIST_INVITATION_SUCCESS,
   LIST_INVITATION_FAILED,
   LIST_INVITATION_REQUESTED,
-  RESPONSE_INVITATION_REQUESTED,
+  LIST_INVITATION_SUCCESS,
   RESPONSE_INVITATION_FAILED,
+  RESPONSE_INVITATION_REQUESTED,
   RESPONSE_INVITATION_SUCCESS,
+  ZONE_SUGGESTIONS_FAILED,
+  ZONE_SUGGESTIONS_REQUESTED,
+  ZONE_SUGGESTIONS_SUCCESS,
 } from '../constants/activity.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
-import { INVITE_TO_ZONE_FAILED } from '../constants/zone.constants';
-import { ApiProperty } from '@nestjs/swagger';
-import exp from 'constants';
 import { InvitationResponseType, InvitationType } from '../../models/utils';
 
 export interface ZoneSuggestionListItem {
