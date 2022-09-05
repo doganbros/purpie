@@ -1,11 +1,11 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Box, Text } from 'grommet';
+import { Box, InfiniteScroll, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../../store/reducers/root.reducer';
 import InvitationListItem from '../../../components/utils/invitation/InvitationListItem';
 import InvitationListHeader from '../../../components/utils/invitation/InvitationListHeader';
-import Divider from '../../../components/utils/Divider';
 import { getInvitationListAction } from '../../../store/actions/activity.action';
+import { InvitationListItem as InvitationListItemType } from '../../../store/types/activity.types';
 
 const InvitationList: FC = () => {
   const dispatch = useDispatch();
@@ -17,8 +17,30 @@ const InvitationList: FC = () => {
   const [seeInvitations, setSeeInvitations] = useState(false);
 
   useEffect(() => {
-    dispatch(getInvitationListAction(5, 0));
+    getSearchResults(0);
   }, []);
+
+  const getSearchResults = (skip: number) => {
+    dispatch(getInvitationListAction(5, skip));
+  };
+
+  const renderResults = () => {
+    return (
+      <InfiniteScroll
+        items={invitations.data}
+        onMore={() => {
+          // TODO onMore function works immediately
+          // getSearchResults(invitations.data.length);
+        }}
+      >
+        {(invitation: InvitationListItemType) => (
+          <Box gap="small" key={invitation.id}>
+            <InvitationListItem invitation={invitation} />
+          </Box>
+        )}
+      </InfiniteScroll>
+    );
+  };
 
   return (
     <Box gap={invitations.total !== 0 ? 'medium' : 'none'}>
@@ -29,14 +51,7 @@ const InvitationList: FC = () => {
       {seeInvitations && (
         <>
           {invitations.loading && <Text size="small">Loading</Text>}
-          {invitations.data.map((invitation, index) => (
-            <Box gap="small" key={invitation.id}>
-              <InvitationListItem invitation={invitation} />
-              {invitations.data.length !== index + 1 && (
-                <Divider width="25%" size="1px" />
-              )}
-            </Box>
-          ))}
+          {renderResults()}
         </>
       )}
     </Box>

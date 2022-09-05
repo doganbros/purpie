@@ -13,26 +13,26 @@ const InvitationListHeader: FC<InvitationListHeaderProps> = ({
   return (
     <Box direction="row" justify="between">
       <Box direction="row" gap="small" align="center">
-        <Text color="#3D138D" size="small" weight="bold">
+        <Text color="neutral-2" size="small" weight="bold">
           Invitations
         </Text>
         <Box
-          background="#6FFFB0"
+          background="accent-1"
           round="full"
           width="28px"
           height="28px"
           align="center"
           justify="center"
         >
-          <Text color="#3D138D" size="small" weight="bold">
+          <Text color="neutral-2" size="small" weight="bold">
             {count}
           </Text>
         </Box>
       </Box>
 
       {count !== 0 && (
-        <Button onClick={() => seeAll()}>
-          <Text size="small" color="#3D138D" weight={500}>
+        <Button onClick={seeAll}>
+          <Text size="small" color="neutral-2" weight={500}>
             See all
           </Text>
         </Button>

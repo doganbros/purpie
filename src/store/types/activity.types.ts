@@ -2,12 +2,12 @@ import {
   CHANNEL_SUGGESTIONS_FAILED,
   CHANNEL_SUGGESTIONS_REQUESTED,
   CHANNEL_SUGGESTIONS_SUCCESS,
+  GET_INVITATION_RESPONSE_FAILED,
+  GET_INVITATION_RESPONSE_REQUESTED,
+  GET_INVITATION_RESPONSE_SUCCESS,
   LIST_INVITATION_FAILED,
   LIST_INVITATION_REQUESTED,
   LIST_INVITATION_SUCCESS,
-  RESPONSE_INVITATION_FAILED,
-  RESPONSE_INVITATION_REQUESTED,
-  RESPONSE_INVITATION_SUCCESS,
   ZONE_SUGGESTIONS_FAILED,
   ZONE_SUGGESTIONS_REQUESTED,
   ZONE_SUGGESTIONS_SUCCESS,
@@ -15,6 +15,7 @@ import {
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
 import { InvitationResponseType, InvitationType } from '../../models/utils';
+import { User } from './auth.types';
 
 export interface ZoneSuggestionListItem {
   zone_id: number;
@@ -42,15 +43,6 @@ export interface ChannelSuggestionListItem {
   category_id: number;
   category_name: string;
   channel_membersCount: string;
-}
-
-export interface User {
-  id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  userName: string;
-  displayPhoto: string;
 }
 
 export interface InvitationListItem {
@@ -81,6 +73,7 @@ export interface ActivityState {
     error: ResponseError | null;
   };
   responseInvitation: {
+    response?: InvitationResponse | null;
     loading: boolean;
     error: ResponseError | null;
   };
@@ -91,9 +84,9 @@ export type ActivityActionParams =
       type:
         | typeof ZONE_SUGGESTIONS_REQUESTED
         | typeof CHANNEL_SUGGESTIONS_REQUESTED
-        | typeof LIST_INVITATION_REQUESTED
-        | typeof RESPONSE_INVITATION_REQUESTED;
+        | typeof LIST_INVITATION_REQUESTED;
     }
+  | { type: typeof GET_INVITATION_RESPONSE_REQUESTED; id: number }
   | {
       type: typeof ZONE_SUGGESTIONS_SUCCESS;
       payload: PaginatedResponse<ZoneSuggestionListItem>;
@@ -107,7 +100,7 @@ export type ActivityActionParams =
       payload: PaginatedResponse<InvitationListItem>;
     }
   | {
-      type: typeof RESPONSE_INVITATION_SUCCESS;
+      type: typeof GET_INVITATION_RESPONSE_SUCCESS;
       payload: InvitationResponse;
     }
   | {
@@ -115,7 +108,7 @@ export type ActivityActionParams =
         | typeof CHANNEL_SUGGESTIONS_FAILED
         | typeof ZONE_SUGGESTIONS_FAILED
         | typeof LIST_INVITATION_FAILED
-        | typeof RESPONSE_INVITATION_FAILED;
+        | typeof GET_INVITATION_RESPONSE_FAILED;
       payload: ResponseError;
     };
 

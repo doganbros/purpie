@@ -1,10 +1,11 @@
 import React, { FC, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, Text } from 'grommet';
 import InitialsAvatar from '../InitialsAvatar';
 import { InvitationListItem as InvitationListItemType } from '../../../store/types/activity.types';
 import { InvitationResponseType, InvitationType } from '../../../models/utils';
 import { responseInvitationActions } from '../../../store/actions/activity.action';
+import { AppState } from '../../../store/reducers/root.reducer';
 
 interface InvitationListItemProps {
   invitation: InvitationListItemType;
@@ -12,6 +13,10 @@ interface InvitationListItemProps {
 
 const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
   const dispatch = useDispatch();
+
+  const {
+    activity: { responseInvitation },
+  } = useSelector((state: AppState) => state);
 
   const [invitationType, setInvitationType] = useState<InvitationType>(
     InvitationType.CONTACT
@@ -49,9 +54,14 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
     );
   };
 
+  const invitationResponse =
+    responseInvitation.response &&
+    responseInvitation.response.id === invitation.id
+      ? responseInvitation
+      : null;
   return (
-    <Box gap="xsmall">
-      <Text size="xsmall" weight={500} color="#3D138D">
+    <Box gap="xsmall" key={invitation.id}>
+      <Text size="xsmall" weight={500} color="neutral-2">
         {invitationMessage}
       </Text>
       <Box direction="row" justify="between" align="center">
@@ -69,36 +79,55 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
             </Text>
           </Box>
         </Box>
-        <Box direction="row" gap="xsmall">
-          <Button
-            primary
-            onClick={() =>
-              submitInvitationResponse(InvitationResponseType.ACCEPT)
-            }
-          >
+        {invitationResponse ? (
+          <Button reverse>
             <Box
               pad={{ vertical: 'xsmall', horizontal: 'medium' }}
               direction="row"
               align="center"
             >
               <Text size="xsmall" weight={500}>
-                Join
+                {invitationResponse.response?.response ===
+                InvitationResponseType.ACCEPT
+                  ? 'Joined'
+                  : 'Ignored'}
               </Text>
             </Box>
           </Button>
-          <Button
-            plain
-            onClick={() =>
-              submitInvitationResponse(InvitationResponseType.REJECT)
-            }
-          >
-            <Box pad={{ vertical: 'xsmall' }} direction="row" align="center">
-              <Text size="xsmall" color="#9060EB" weight={500}>
-                Ignore
-              </Text>
-            </Box>
-          </Button>
-        </Box>
+        ) : (
+          <Box direction="row" gap="xsmall">
+            <Button
+              primary
+              disabled={responseInvitation.loading}
+              onClick={() =>
+                submitInvitationResponse(InvitationResponseType.ACCEPT)
+              }
+            >
+              <Box
+                pad={{ vertical: 'xsmall', horizontal: 'medium' }}
+                direction="row"
+                align="center"
+              >
+                <Text size="xsmall" weight={500}>
+                  Join
+                </Text>
+              </Box>
+            </Button>
+            <Button
+              disabled={responseInvitation.loading}
+              plain
+              onClick={() =>
+                submitInvitationResponse(InvitationResponseType.REJECT)
+              }
+            >
+              <Box pad={{ vertical: 'xsmall' }} direction="row" align="center">
+                <Text size="xsmall" color="brand" weight={500}>
+                  Ignore
+                </Text>
+              </Box>
+            </Button>
+          </Box>
+        )}
       </Box>
     </Box>
   );

@@ -5,9 +5,9 @@ import {
   LIST_INVITATION_FAILED,
   LIST_INVITATION_REQUESTED,
   LIST_INVITATION_SUCCESS,
-  RESPONSE_INVITATION_FAILED,
-  RESPONSE_INVITATION_REQUESTED,
-  RESPONSE_INVITATION_SUCCESS,
+  GET_INVITATION_RESPONSE_FAILED,
+  GET_INVITATION_RESPONSE_REQUESTED,
+  GET_INVITATION_RESPONSE_SUCCESS,
   ZONE_SUGGESTIONS_FAILED,
   ZONE_SUGGESTIONS_REQUESTED,
   ZONE_SUGGESTIONS_SUCCESS,
@@ -32,6 +32,7 @@ const initialState: ActivityState = {
     error: null,
   },
   responseInvitation: {
+    response: null,
     loading: false,
     error: null,
   },
@@ -125,7 +126,7 @@ const activityReducer = (
           error: action.payload,
         },
       };
-    case RESPONSE_INVITATION_REQUESTED:
+    case GET_INVITATION_RESPONSE_REQUESTED:
       return {
         ...state,
         responseInvitation: {
@@ -133,25 +134,20 @@ const activityReducer = (
           error: null,
         },
       };
-    case RESPONSE_INVITATION_SUCCESS:
+    case GET_INVITATION_RESPONSE_SUCCESS:
       return {
         ...state,
-        invitations: {
-          ...state.invitations,
-          total: state.invitations.total - 1,
-          data: state.invitations.data.filter(
-            (i) => i.id !== action.payload.id
-          ),
-        },
         responseInvitation: {
+          response: action.payload,
           loading: false,
           error: null,
         },
       };
-    case RESPONSE_INVITATION_FAILED:
+    case GET_INVITATION_RESPONSE_FAILED:
       return {
         ...state,
         responseInvitation: {
+          response: null,
           loading: false,
           error: action.payload,
         },

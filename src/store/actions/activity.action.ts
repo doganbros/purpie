@@ -2,12 +2,12 @@ import {
   CHANNEL_SUGGESTIONS_FAILED,
   CHANNEL_SUGGESTIONS_REQUESTED,
   CHANNEL_SUGGESTIONS_SUCCESS,
+  GET_INVITATION_RESPONSE_FAILED,
+  GET_INVITATION_RESPONSE_REQUESTED,
+  GET_INVITATION_RESPONSE_SUCCESS,
   LIST_INVITATION_FAILED,
   LIST_INVITATION_REQUESTED,
   LIST_INVITATION_SUCCESS,
-  RESPONSE_INVITATION_FAILED,
-  RESPONSE_INVITATION_REQUESTED,
-  RESPONSE_INVITATION_SUCCESS,
   ZONE_SUGGESTIONS_FAILED,
   ZONE_SUGGESTIONS_REQUESTED,
   ZONE_SUGGESTIONS_SUCCESS,
@@ -91,17 +91,18 @@ export const responseInvitationActions = (
 ): ActivityAction => {
   return async (dispatch) => {
     dispatch({
-      type: RESPONSE_INVITATION_REQUESTED,
+      type: GET_INVITATION_RESPONSE_REQUESTED,
+      id: payload.id,
     });
     try {
       await ActivityService.responseInvitation(payload);
       dispatch({
-        type: RESPONSE_INVITATION_SUCCESS,
+        type: GET_INVITATION_RESPONSE_SUCCESS,
         payload,
       });
     } catch (err: any) {
       dispatch({
-        type: RESPONSE_INVITATION_FAILED,
+        type: GET_INVITATION_RESPONSE_FAILED,
         payload: err?.response?.data,
       });
     }
