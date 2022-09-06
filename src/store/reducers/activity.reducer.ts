@@ -32,7 +32,6 @@ const initialState: ActivityState = {
     error: null,
   },
   responseInvitation: {
-    response: null,
     loading: false,
     error: null,
   },
@@ -135,10 +134,19 @@ const activityReducer = (
         },
       };
     case GET_INVITATION_RESPONSE_SUCCESS:
+      // TODO need to delete eslint-disable comment
+      // eslint-disable-next-line  no-case-declarations
+      const index = state.invitations.data.findIndex(
+        (invitation) => invitation.id === action.payload.id
+      );
+      // eslint-disable-next-line  no-case-declarations
+      const newInvitations = [...state.invitations.data];
+      newInvitations[index].response = action.payload.response;
+
       return {
         ...state,
+        invitations: { ...state.invitations, data: newInvitations },
         responseInvitation: {
-          response: action.payload,
           loading: false,
           error: null,
         },
@@ -147,7 +155,6 @@ const activityReducer = (
       return {
         ...state,
         responseInvitation: {
-          response: null,
           loading: false,
           error: action.payload,
         },

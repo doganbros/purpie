@@ -49,8 +49,29 @@ export interface InvitationListItem {
   id: number;
   createdOn: Date;
   createdBy: User;
-  zone: ZoneSuggestionListItem;
-  channel: ChannelSuggestionListItem;
+  zone: InvitationZone;
+  channel: InvitationChannel;
+  response?: InvitationResponseType;
+}
+
+export interface InvitationZone {
+  id: number;
+  createdOn: Date;
+  name: string;
+  displayPhoto: string;
+  subdomain: string;
+  description: string;
+  public: boolean;
+}
+
+export interface InvitationChannel {
+  id: number;
+  createdOn: Date;
+  name: string;
+  displayPhoto: string;
+  topic: string;
+  description: string;
+  public: boolean;
 }
 
 export interface InvitationResponse {
@@ -73,7 +94,6 @@ export interface ActivityState {
     error: ResponseError | null;
   };
   responseInvitation: {
-    response?: InvitationResponse | null;
     loading: boolean;
     error: ResponseError | null;
   };
@@ -84,9 +104,9 @@ export type ActivityActionParams =
       type:
         | typeof ZONE_SUGGESTIONS_REQUESTED
         | typeof CHANNEL_SUGGESTIONS_REQUESTED
-        | typeof LIST_INVITATION_REQUESTED;
+        | typeof LIST_INVITATION_REQUESTED
+        | typeof GET_INVITATION_RESPONSE_REQUESTED;
     }
-  | { type: typeof GET_INVITATION_RESPONSE_REQUESTED; id: number }
   | {
       type: typeof ZONE_SUGGESTIONS_SUCCESS;
       payload: PaginatedResponse<ZoneSuggestionListItem>;

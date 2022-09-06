@@ -17,10 +17,10 @@ const InvitationList: FC = () => {
   const [seeInvitations, setSeeInvitations] = useState(false);
 
   useEffect(() => {
-    getSearchResults(0);
+    getInvitations();
   }, []);
 
-  const getSearchResults = (skip: number) => {
+  const getInvitations = (skip?: number) => {
     dispatch(getInvitationListAction(5, skip));
   };
 
@@ -29,30 +29,27 @@ const InvitationList: FC = () => {
       <InfiniteScroll
         items={invitations.data}
         onMore={() => {
-          // TODO onMore function works immediately
-          // getSearchResults(invitations.data.length);
+          // getInvitations(invitations.data.length);
         }}
       >
         {(invitation: InvitationListItemType) => (
-          <Box gap="small" key={invitation.id}>
-            <InvitationListItem invitation={invitation} />
-          </Box>
+          <InvitationListItem key={invitation.id} invitation={invitation} />
         )}
       </InfiniteScroll>
     );
   };
 
   return (
-    <Box gap={invitations.total !== 0 ? 'medium' : 'none'}>
+    <Box>
       <InvitationListHeader
-        count={invitations.total}
+        count={invitations.data.filter((i) => !i.response).length}
         seeAll={() => setSeeInvitations((see) => !see)}
       />
       {seeInvitations && (
-        <>
+        <Box gap="small">
           {invitations.loading && <Text size="small">Loading</Text>}
           {renderResults()}
-        </>
+        </Box>
       )}
     </Box>
   );

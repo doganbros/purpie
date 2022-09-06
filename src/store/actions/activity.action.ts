@@ -65,7 +65,7 @@ export const getChannelSuggestionsAction = (
 
 export const getInvitationListAction = (
   limit: number,
-  skip: number
+  skip?: number
 ): ActivityAction => {
   return async (dispatch) => {
     dispatch({
@@ -92,7 +92,6 @@ export const responseInvitationActions = (
   return async (dispatch) => {
     dispatch({
       type: GET_INVITATION_RESPONSE_REQUESTED,
-      id: payload.id,
     });
     try {
       await ActivityService.responseInvitation(payload);

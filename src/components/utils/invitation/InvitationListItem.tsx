@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, Text } from 'grommet';
 import InitialsAvatar from '../InitialsAvatar';
@@ -18,51 +18,38 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
     activity: { responseInvitation },
   } = useSelector((state: AppState) => state);
 
-  const [invitationType, setInvitationType] = useState<InvitationType>(
-    InvitationType.CONTACT
-  );
-  const [invitationMessage, setInvitationMessage] = useState<string | null>(
-    null
-  );
-
-  useEffect(() => {
+  const getInvitationPayload = () => {
+    let invitationType;
+    let invitationMessage;
     if (invitation.zone) {
-      setInvitationType(InvitationType.ZONE);
-      setInvitationMessage(
-        `${invitation.createdBy.firstName} invited you to ${invitation.zone.zone_name} zone.`
-      );
+      invitationType = InvitationType.ZONE;
+      invitationMessage = `${invitation.createdBy.firstName} invited you to ${invitation.zone.name} zone.`;
     } else if (invitation.channel) {
-      setInvitationType(InvitationType.CHANNEL);
-      setInvitationMessage(
-        `${invitation.createdBy.firstName} invited you to ${invitation.channel.channel_name} channel.`
-      );
+      invitationType = InvitationType.CHANNEL;
+      invitationMessage = `${invitation.createdBy.firstName} invited you to ${invitation.channel.name} channel.`;
     } else {
-      setInvitationType(InvitationType.CONTACT);
-      setInvitationMessage(
-        `${invitation.createdBy.firstName} invited you to as a contact.`
-      );
+      invitationType = InvitationType.CONTACT;
+      invitationMessage = `${invitation.createdBy.firstName} wants to invite you to as a contact.`;
     }
-  }, [invitation]);
+    return { type: invitationType, message: invitationMessage };
+  };
+
+  const { type, message } = useMemo(() => getInvitationPayload(), [invitation]);
 
   const submitInvitationResponse = (response: InvitationResponseType) => {
     dispatch(
       responseInvitationActions({
         id: invitation.id,
         response,
-        type: invitationType,
+        type,
       })
     );
   };
 
-  const invitationResponse =
-    responseInvitation.response &&
-    responseInvitation.response.id === invitation.id
-      ? responseInvitation
-      : null;
   return (
-    <Box gap="xsmall" key={invitation.id}>
+    <Box gap="xsmall" margin={{ top: 'small' }} key={invitation.id}>
       <Text size="xsmall" weight={500} color="neutral-2">
-        {invitationMessage}
+        {message}
       </Text>
       <Box direction="row" justify="between" align="center">
         <Box direction="row" align="center" gap="small">
@@ -75,11 +62,11 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
               {`${invitation.createdBy.firstName} ${invitation.createdBy.lastName}`}
             </Text>
             <Text size="10px" color="status-disabled">
-              {`@${invitation.createdBy.userName}`}
+              @{invitation.createdBy.userName}
             </Text>
           </Box>
         </Box>
-        {invitationResponse ? (
+        {invitation.response ? (
           <Button reverse>
             <Box
               pad={{ vertical: 'xsmall', horizontal: 'medium' }}
@@ -87,8 +74,7 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
               align="center"
             >
               <Text size="xsmall" weight={500}>
-                {invitationResponse.response?.response ===
-                InvitationResponseType.ACCEPT
+                {invitation.response === InvitationResponseType.ACCEPT
                   ? 'Joined'
                   : 'Ignored'}
               </Text>
@@ -132,5 +118,4 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
     </Box>
   );
 };
-
 export default InvitationListItem;
