@@ -172,6 +172,8 @@ export class ChatGateway {
 
   async handleConnection(socket: SocketWithTokenPayload) {
     const currentUser = await this.chatService.getCurrentUser(socket);
+
+    if (!currentUser) return null;
     socket.user = currentUser;
 
     socket.join(this.chatService.getRoomName(socket.user.id));
@@ -197,6 +199,7 @@ export class ChatGateway {
     // });
 
     socket.on('disconnecting', () => this.handleDisconnecting(socket));
+    return null;
   }
 
   async handleDisconnecting(socket: SocketWithTokenPayload) {

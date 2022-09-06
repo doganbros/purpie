@@ -63,6 +63,8 @@ export class ChatService {
   getCurrentUser(socket: Socket): any {
     const { cookie: socketCookie } = socket.handshake.headers;
 
+    if (!socketCookie) return null;
+
     const cookies = cookie.parse(socketCookie!);
 
     const token = cookies.OCTOPUS_ACCESS_TOKEN;
