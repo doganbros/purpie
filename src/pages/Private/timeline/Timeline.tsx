@@ -24,7 +24,7 @@ import {
 import { AppState } from '../../../store/reducers/root.reducer';
 import ChannelList from './ChannelList';
 import ChannelsToFollow from './ChannelsToFollow';
-import LastActivities from './LastActivities';
+import Notifications from './Notifications';
 import ZonesToJoin from './ZonesToJoin';
 import AddContent from '../../../layers/add-content/AddContent';
 import { Post } from '../../../store/types/post.types';
@@ -161,7 +161,7 @@ const Timeline: FC = () => {
           <ChannelsToFollow />
           <Divider />
           <ZonesToJoin />
-          <LastActivities />
+          <Notifications />
         </Box>
       }
       topComponent={<ChannelList />}

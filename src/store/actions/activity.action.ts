@@ -5,6 +5,9 @@ import {
   CHANNEL_SUGGESTIONS_REQUESTED,
   CHANNEL_SUGGESTIONS_SUCCESS,
   CHANNEL_SUGGESTIONS_FAILED,
+  NOTIFICATION_REQUESTED,
+  NOTIFICATION_SUCCESS,
+  NOTIFICATION_FAILED,
 } from '../constants/activity.constants';
 
 import * as ActivityService from '../services/activity.service';
@@ -50,6 +53,30 @@ export const getChannelSuggestionsAction = (
     } catch (err: any) {
       dispatch({
         type: CHANNEL_SUGGESTIONS_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const getNotificationsAction = (
+  limit: number,
+  skip: number,
+  type?: 'all' | 'unread' | 'read'
+): ActivityAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: NOTIFICATION_REQUESTED,
+    });
+    try {
+      const payload = await ActivityService.getNotifications(limit, skip, type);
+      dispatch({
+        type: NOTIFICATION_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: NOTIFICATION_FAILED,
         payload: err?.response?.data,
       });
     }

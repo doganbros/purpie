@@ -5,6 +5,9 @@ import {
   CHANNEL_SUGGESTIONS_REQUESTED,
   CHANNEL_SUGGESTIONS_SUCCESS,
   CHANNEL_SUGGESTIONS_FAILED,
+  NOTIFICATION_REQUESTED,
+  NOTIFICATION_SUCCESS,
+  NOTIFICATION_FAILED,
 } from '../constants/activity.constants';
 import { ActivityActionParams, ActivityState } from '../types/activity.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -16,6 +19,11 @@ const initialState: ActivityState = {
     error: null,
   },
   channelSuggestions: {
+    ...paginationInitialState,
+    loading: false,
+    error: null,
+  },
+  notification: {
     ...paginationInitialState,
     loading: false,
     error: null,
@@ -79,6 +87,35 @@ const activityReducer = (
 
         channelSuggestions: {
           ...state.channelSuggestions,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case NOTIFICATION_REQUESTED:
+      return {
+        ...state,
+        notification: {
+          ...state.notification,
+          loading: true,
+          error: null,
+        },
+      };
+    case NOTIFICATION_SUCCESS:
+      return {
+        ...state,
+
+        notification: {
+          ...action.payload,
+          loading: false,
+          error: null,
+        },
+      };
+    case NOTIFICATION_FAILED:
+      return {
+        ...state,
+
+        notification: {
+          ...state.notification,
           loading: false,
           error: action.payload,
         },

@@ -10,7 +10,7 @@ import { searchChannelAction } from '../../../store/actions/channel.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { ChannelListItem } from '../../../store/types/channel.types';
 import ChannelsToFollow from '../timeline/ChannelsToFollow';
-import LastActivities from '../timeline/LastActivities';
+import Notifications from '../timeline/Notifications';
 import ZonesToJoin from '../timeline/ZonesToJoin';
 import SearchInput from './SearchInput';
 
@@ -66,7 +66,7 @@ const ChannelSearch: FC = () => {
           <ChannelsToFollow />
           <Divider />
           <ZonesToJoin />
-          <LastActivities />
+          <Notifications />
         </Box>
       }
     >

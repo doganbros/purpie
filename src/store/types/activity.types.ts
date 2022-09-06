@@ -5,6 +5,9 @@ import {
   CHANNEL_SUGGESTIONS_REQUESTED,
   CHANNEL_SUGGESTIONS_SUCCESS,
   CHANNEL_SUGGESTIONS_FAILED,
+  NOTIFICATION_REQUESTED,
+  NOTIFICATION_SUCCESS,
+  NOTIFICATION_FAILED,
 } from '../constants/activity.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
@@ -37,6 +40,10 @@ export interface ChannelSuggestionListItem {
   channel_membersCount: string;
 }
 
+export interface NotificationListItem {
+  [key: string]: any; // TODO: bthnorhan fix any.
+}
+
 export interface ActivityState {
   zoneSuggestions: PaginatedResponse<ZoneSuggestionListItem> & {
     loading: boolean;
@@ -46,13 +53,18 @@ export interface ActivityState {
     loading: boolean;
     error: ResponseError | null;
   };
+  notification: PaginatedResponse<NotificationListItem> & {
+    loading: boolean;
+    error: ResponseError | null;
+  };
 }
 
 export type ActivityActionParams =
   | {
       type:
         | typeof ZONE_SUGGESTIONS_REQUESTED
-        | typeof CHANNEL_SUGGESTIONS_REQUESTED;
+        | typeof CHANNEL_SUGGESTIONS_REQUESTED
+        | typeof NOTIFICATION_REQUESTED;
     }
   | {
       type: typeof ZONE_SUGGESTIONS_SUCCESS;
@@ -63,7 +75,14 @@ export type ActivityActionParams =
       payload: PaginatedResponse<ChannelSuggestionListItem>;
     }
   | {
-      type: typeof CHANNEL_SUGGESTIONS_FAILED | typeof ZONE_SUGGESTIONS_FAILED;
+      type: typeof NOTIFICATION_SUCCESS;
+      payload: PaginatedResponse<NotificationListItem>;
+    }
+  | {
+      type:
+        | typeof CHANNEL_SUGGESTIONS_FAILED
+        | typeof ZONE_SUGGESTIONS_FAILED
+        | typeof NOTIFICATION_FAILED;
       payload: ResponseError;
     };
 
