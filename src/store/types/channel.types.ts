@@ -29,6 +29,12 @@ export interface ChannelBasic {
   topic: string;
   description: string;
   public: boolean;
+  zone?: {
+    id: number;
+    name: string;
+    subdomain: string;
+    public: boolean;
+  };
 }
 
 export interface ChannelListItem extends ChannelBasic {
