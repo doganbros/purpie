@@ -15,7 +15,6 @@ import {
   MessageBoxHorizontalScroll,
   UploadedImage,
   UploadedImageContainer,
-  // ImageLoading,
 } from './components/ChatComponentsStyle';
 
 interface Props {
@@ -52,8 +51,8 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
     </ContextMenu>
   );
 
-  const renderAttachments = (attachments: ChatAttachment[] | undefined) => {
-    if (!attachments) return <></>;
+  const renderAttachments = (attachments?: ChatAttachment[]) => {
+    if (!attachments) return null;
     return (
       <MessageBoxHorizontalScroll direction="row" overflow="auto" width="100%">
         {attachments?.map((attachment) => {
@@ -72,7 +71,6 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
               height={attachments.length === 1 ? 'fit-content' : 'xsmall'}
             >
               <UploadedImage width="100%" height="100%" src={url} />
-              {/* <ImageLoading size="small" /> */}
             </UploadedImageContainer>
           );
         })}

@@ -30,7 +30,7 @@ const MessageFiles: React.FC<Props> = ({
     (i) => !uploadedFiles.includes(i.name)
   );
 
-  if (fileList.length === 0) return <> </>;
+  if (fileList.length === 0) return null;
   return (
     <Box direction="row" overflow="auto" width="100%" pad="small">
       {fileList.map((file) => {

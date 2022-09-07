@@ -63,7 +63,9 @@ const MessageBox: FC<Props> = ({
   );
   const [attachmentToolFocused, setAttachmentToolFocused] = useState(false);
   useEffect(() => {
-    return () => timer && clearTimeout(timer.current as NodeJS.Timeout);
+    return () => {
+      if (timer.current) clearTimeout(timer.current);
+    };
   }, []);
   useEffect(() => {
     if (document.activeElement === inputRef.current) {

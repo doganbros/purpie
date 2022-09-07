@@ -15,7 +15,7 @@ export const UploadedImage = styled(Image)`
   display: block;
   object-fit: scale-down;
   display: inline-block;
-  z-index: 131231231233;
+  z-index: 4;
 `;
 
 export const ImageDeleteButton = styled(Button)`
