@@ -28,6 +28,7 @@ async function bootstrap() {
         )}$`,
       ),
       credentials: true,
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     }),
   );
   app.use(cookieParser());

@@ -50,6 +50,7 @@ import { PostLikeQuery } from '../dto/post-like.query';
 import { PlaylistService } from '../services/playlist.service';
 import { CreatePlaylistDto } from '../dto/create-playlist.dto';
 import { AddPlaylistItemDto } from '../dto/add-playlist-item.dto';
+import { UpdatePlaylistDto } from '../dto/update-playlist.dto';
 
 const {
   S3_VIDEO_POST_DIR = '',
@@ -674,6 +675,15 @@ export class PostController {
     return this.playlistService.getUserPlaylists(user.id, query);
   }
 
+  @Get('playlist/list/user/:userId')
+  @IsAuthenticated()
+  getPublicUserPlaylists(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Query() query: PaginationQuery,
+  ) {
+    return this.playlistService.getPublicUserPlaylists(userId, query);
+  }
+
   @Get('playlist/list/channel/:channelId')
   @IsAuthenticated()
   getChannelPlaylists(
@@ -690,6 +700,15 @@ export class PostController {
     @Body() info: CreatePlaylistDto,
   ) {
     return this.playlistService.createPlaylist(user.id, info);
+  }
+
+  @Put('playlist/update')
+  @IsAuthenticated()
+  updateUserPlaylist(
+    @CurrentUser() user: UserTokenPayload,
+    @Body() info: UpdatePlaylistDto,
+  ) {
+    return this.playlistService.updatePlaylist(user.id, info);
   }
 
   @Delete('playlist/remove/:playlistId')

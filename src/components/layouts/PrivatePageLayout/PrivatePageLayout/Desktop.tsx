@@ -47,7 +47,7 @@ const Desktop: FC<Props> = ({
             <Box align="center">
               <Avatar
                 alignSelf="center"
-                size="large"
+                size="90px"
                 round="medium"
                 src={Logo}
               />
@@ -112,7 +112,13 @@ const Desktop: FC<Props> = ({
             elevation="indigo"
             overflow={rightComponentWithoutOverflow ? 'hidden' : 'auto'}
           >
-            <ExtendedBox fill minWidth="min-content">
+            <ExtendedBox
+              fill
+              minWidth={rightComponentWithoutOverflow ? '' : 'min-content'}
+              maxWidth={
+                rightComponentWithoutOverflow ? `${rightComponentWidth}px` : ''
+              }
+            >
               {rightComponent}
             </ExtendedBox>
           </ExtendedBox>

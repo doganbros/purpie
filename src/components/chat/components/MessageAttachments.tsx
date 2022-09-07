@@ -1,24 +1,25 @@
-import { Box, Button } from 'grommet';
-import React, { FC } from 'react';
+import { Box } from 'grommet';
+import React, { Dispatch, FC, SetStateAction } from 'react';
 import { Attachment, Emoji } from 'grommet-icons';
 import ExtendedBox from '../../utils/ExtendedBox';
 
 import { At as AtIcon } from '../../utils/CustomIcons';
+import { AttachmentButton } from './ChatComponentsStyle';
 
 interface Props {
-  attachmentToolVisibility: boolean;
   onFilesSelected?: ((files: Array<File>) => void) | null;
   toggleEmojiPicker: () => void;
   toggleMentionPicker: () => void;
   sendButton: JSX.Element;
+  setAttachmentToolFocused: Dispatch<SetStateAction<boolean>>;
 }
 
 const MessageAttachments: FC<Props> = ({
-  attachmentToolVisibility,
   onFilesSelected,
   toggleEmojiPicker,
   toggleMentionPicker,
   sendButton,
+  setAttachmentToolFocused,
 }) => {
   const inputFileRef = React.useRef<HTMLInputElement>(null);
 
@@ -31,53 +32,55 @@ const MessageAttachments: FC<Props> = ({
 
   return (
     <>
-      {onFilesSelected && (
-        <input
-          type="file"
-          ref={inputFileRef}
-          onChangeCapture={onFileChangeCapture}
-          style={{ display: 'none' }}
-        />
-      )}
+      <input
+        multiple
+        type="file"
+        accept="image/*"
+        ref={inputFileRef}
+        onChangeCapture={onFileChangeCapture}
+        style={{ display: 'none' }}
+        onAbortCapture={() => setAttachmentToolFocused(false)}
+        onFocusCapture={() => setAttachmentToolFocused(true)}
+        onBlurCapture={() => setAttachmentToolFocused(false)}
+      />
       <ExtendedBox
         gap="small"
         round={{ corner: 'bottom', size: 'small' }}
         animation="slideUp"
         transition="all 0.5s"
-        height={attachmentToolVisibility ? 'fit-content' : '0'}
-        opacity={attachmentToolVisibility ? '1' : '0'}
+        height="fit-content"
+        opacity="1"
         justify="between"
         direction="row"
       >
         <Box
           direction="row"
-          margin={{ left: 'small', bottom: 'small', top: 'small' }}
+          margin={{ left: 'xsmall', bottom: 'xsmall', top: 'small' }}
         >
-          {onFilesSelected ? (
-            <Button
-              size="small"
-              margin="0px"
-              onClick={() => {
-                inputFileRef?.current?.click();
-              }}
-              icon={<Attachment size="12px" />}
-            />
-          ) : null}
-          <Button
+          <AttachmentButton
+            size="large"
+            margin="0px"
+            onClick={() => {
+              setAttachmentToolFocused(true);
+              inputFileRef?.current?.click();
+            }}
+            icon={<Attachment size="15px" />}
+          />
+          <AttachmentButton
             size="small"
             margin="0px"
             onClick={toggleMentionPicker}
             icon={
               <Box alignContent="center" justify="center">
-                <AtIcon size="18px" />
+                <AtIcon size="20px" />
               </Box>
             }
           />
-          <Button
+          <AttachmentButton
             size="small"
             margin="0px"
             onClick={toggleEmojiPicker}
-            icon={<Emoji size="12px" />}
+            icon={<Emoji size="15px" />}
           />
           {sendButton}
         </Box>
