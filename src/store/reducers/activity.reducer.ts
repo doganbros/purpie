@@ -8,6 +8,9 @@ import {
   NOTIFICATION_REQUESTED,
   NOTIFICATION_SUCCESS,
   NOTIFICATION_FAILED,
+  NOTIFICATION_COUNT_FAILED,
+  NOTIFICATION_COUNT_REQUESTED,
+  NOTIFICATION_COUNT_SUCCESS,
 } from '../constants/activity.constants';
 import { ActivityActionParams, ActivityState } from '../types/activity.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -25,6 +28,12 @@ const initialState: ActivityState = {
   },
   notification: {
     ...paginationInitialState,
+    loading: false,
+    error: null,
+  },
+  notificationCount: {
+    unviewedCount: '0',
+    unreadCount: '0',
     loading: false,
     error: null,
   },
@@ -116,6 +125,36 @@ const activityReducer = (
 
         notification: {
           ...state.notification,
+          loading: false,
+          error: action.payload,
+        },
+      };
+
+    case NOTIFICATION_COUNT_REQUESTED:
+      return {
+        ...state,
+        notificationCount: {
+          ...state.notificationCount,
+          loading: true,
+          error: null,
+        },
+      };
+    case NOTIFICATION_COUNT_SUCCESS:
+      return {
+        ...state,
+
+        notificationCount: {
+          ...action.payload,
+          loading: false,
+          error: null,
+        },
+      };
+    case NOTIFICATION_COUNT_FAILED:
+      return {
+        ...state,
+
+        notificationCount: {
+          ...state.notificationCount,
           loading: false,
           error: action.payload,
         },

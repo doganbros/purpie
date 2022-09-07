@@ -8,6 +8,9 @@ import {
   NOTIFICATION_REQUESTED,
   NOTIFICATION_SUCCESS,
   NOTIFICATION_FAILED,
+  NOTIFICATION_COUNT_REQUESTED,
+  NOTIFICATION_COUNT_FAILED,
+  NOTIFICATION_COUNT_SUCCESS,
 } from '../constants/activity.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
@@ -44,6 +47,11 @@ export interface NotificationListItem {
   [key: string]: any; // TODO: bthnorhan fix any.
 }
 
+export interface NotificationCount {
+  unviewedCount: string;
+  unreadCount: string;
+}
+
 export interface ActivityState {
   zoneSuggestions: PaginatedResponse<ZoneSuggestionListItem> & {
     loading: boolean;
@@ -57,6 +65,10 @@ export interface ActivityState {
     loading: boolean;
     error: ResponseError | null;
   };
+  notificationCount: NotificationCount & {
+    loading: boolean;
+    error: ResponseError | null;
+  };
 }
 
 export type ActivityActionParams =
@@ -64,7 +76,8 @@ export type ActivityActionParams =
       type:
         | typeof ZONE_SUGGESTIONS_REQUESTED
         | typeof CHANNEL_SUGGESTIONS_REQUESTED
-        | typeof NOTIFICATION_REQUESTED;
+        | typeof NOTIFICATION_REQUESTED
+        | typeof NOTIFICATION_COUNT_REQUESTED;
     }
   | {
       type: typeof ZONE_SUGGESTIONS_SUCCESS;
@@ -79,10 +92,15 @@ export type ActivityActionParams =
       payload: PaginatedResponse<NotificationListItem>;
     }
   | {
+      type: typeof NOTIFICATION_COUNT_SUCCESS;
+      payload: NotificationCount;
+    }
+  | {
       type:
         | typeof CHANNEL_SUGGESTIONS_FAILED
         | typeof ZONE_SUGGESTIONS_FAILED
-        | typeof NOTIFICATION_FAILED;
+        | typeof NOTIFICATION_FAILED
+        | typeof NOTIFICATION_COUNT_FAILED;
       payload: ResponseError;
     };
 

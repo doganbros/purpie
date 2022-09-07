@@ -8,6 +8,9 @@ import {
   NOTIFICATION_REQUESTED,
   NOTIFICATION_SUCCESS,
   NOTIFICATION_FAILED,
+  NOTIFICATION_COUNT_FAILED,
+  NOTIFICATION_COUNT_REQUESTED,
+  NOTIFICATION_COUNT_SUCCESS,
 } from '../constants/activity.constants';
 
 import * as ActivityService from '../services/activity.service';
@@ -77,6 +80,26 @@ export const getNotificationsAction = (
     } catch (err: any) {
       dispatch({
         type: NOTIFICATION_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const getNotificationCountAction = (): ActivityAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: NOTIFICATION_COUNT_REQUESTED,
+    });
+    try {
+      const payload = await ActivityService.getNotificationCount();
+      dispatch({
+        type: NOTIFICATION_COUNT_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: NOTIFICATION_COUNT_FAILED,
         payload: err?.response?.data,
       });
     }

@@ -4,6 +4,7 @@ import {
   ZoneSuggestionListItem,
   ChannelSuggestionListItem,
   NotificationListItem,
+  NotificationCount,
 } from '../types/activity.types';
 
 export const getZoneSuggestions = (
@@ -30,3 +31,6 @@ export const getNotifications = (
   http
     .get('/notification/list', { params: { limit, skip, type } })
     .then((res) => res.data);
+
+export const getNotificationCount = (): Promise<NotificationCount> =>
+  http.get('/notification/count').then((res) => res.data);

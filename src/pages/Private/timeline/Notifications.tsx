@@ -6,9 +6,13 @@ import {
   SUGGESTION_AMOUNT_LESS,
   SUGGESTION_AMOUNT_MORE,
 } from '../../../helpers/constants';
-import { getNotificationsAction } from '../../../store/actions/activity.action';
+import {
+  getNotificationsAction,
+  getNotificationCountAction,
+} from '../../../store/actions/activity.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 
+// TODO: bthnorhan remove dummy data.
 // const activities = [
 //   {
 //     id: 1,
@@ -99,6 +103,7 @@ const Notifications: FC = () => {
   } = useSelector((state: AppState) => state);
 
   const getNotifications = () => {
+    dispatch(getNotificationCountAction());
     dispatch(getNotificationsAction(0, 0, 'all'));
   };
 
