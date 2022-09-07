@@ -111,12 +111,14 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
               icon={<MoreVertical color="status-disabled-light" />}
               dropContent={
                 <>
-                  <ListButton onClick={() => setIsEditing(true)}>
-                    <Text>Edit Comment</Text>
-                  </ListButton>
-                  <ListButton onClick={() => setShowDeleteDialog(true)}>
-                    <Text>Delete</Text>
-                  </ListButton>
+                  <ListButton
+                    label="Edit Comment"
+                    onClick={() => setIsEditing(true)}
+                  />
+                  <ListButton
+                    label="Delete"
+                    onClick={() => setShowDeleteDialog(true)}
+                  />
                 </>
               }
               dropAlign={{ top: 'bottom', right: 'right' }}

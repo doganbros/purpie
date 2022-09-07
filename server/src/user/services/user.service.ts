@@ -11,8 +11,10 @@ import { generateLowerAlphaNumId, tsqueryParam } from 'helpers/utils';
 import { BlockedUser } from 'entities/BlockedUser.entity';
 import { UserRole } from 'entities/UserRole.entity';
 import { Invitation } from 'entities/Invitation.entity';
+import { UserZone } from 'entities/UserZone.entity';
 import { PostSettings } from 'types/PostSettings';
 import { User } from 'entities/User.entity';
+import { FeaturedPost } from 'entities/FeaturedPost.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { Brackets, In, Not, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
@@ -27,12 +29,16 @@ export class UserService {
   constructor(
     @InjectRepository(Contact)
     private contactRepository: Repository<Contact>,
+    @InjectRepository(FeaturedPost)
+    private featuredPost: Repository<FeaturedPost>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
     @InjectRepository(UserRole)
     private userRoleRepository: Repository<UserRole>,
     @InjectRepository(UserChannel)
     private userChannelRepository: Repository<UserChannel>,
+    @InjectRepository(UserZone)
+    private userZoneRepository: Repository<UserZone>,
     @InjectRepository(Invitation)
     private invitationRepository: Repository<Invitation>,
     @InjectRepository(BlockedUser)
@@ -531,6 +537,40 @@ export class UserService {
       .paginate(query);
   }
 
+  getUserZones(userId: number, userName: string, query: PaginationQuery) {
+    return this.userZoneRepository
+      .createQueryBuilder('user_zone')
+      .select('user_zone.id')
+      .addSelect([
+        'zone.id',
+        'zone.subdomain',
+        'zone.name',
+        'category.id',
+        'category.name',
+        'zone.createdOn',
+        'zone.displayPhoto',
+        'zone.description',
+        'zone.public',
+      ])
+      .innerJoin('user_zone.zone', 'zone')
+      .innerJoin('zone.category', 'category')
+      .innerJoin('user_zone.user', 'user')
+      .where('user.userName = :userName', { userName })
+      .andWhere(
+        new Brackets((qb) => {
+          const userQb = this.userZoneRepository
+            .createQueryBuilder('user_zone_user')
+            .select('user_zone_user.id')
+            .where('user_zone_user.userId = :userId');
+
+          qb.where(
+            'zone.public = true',
+          ).orWhere(`EXISTS (${userQb.getQuery()})`, { userId });
+        }),
+      )
+      .paginate(query);
+  }
+
   getBlockedUsers(userId: number, query: PaginationQuery) {
     return this.blockedUserRepository
       .createQueryBuilder('blocked_user')
@@ -635,5 +675,21 @@ export class UserService {
       settings.allowReaction ?? user.postSettings.allowReaction;
 
     await this.userRepository.update({ id: userId }, { postSettings: updates });
+  }
+
+  async setFeaturedPost(userId: number, postId: number) {
+    const hasFeaturedPost = await this.featuredPost.count({
+      where: { userId, postId },
+    });
+
+    if (hasFeaturedPost) {
+      return this.featuredPost.update({ userId }, { postId });
+    }
+
+    return this.featuredPost.create({ userId, postId });
+  }
+
+  async removeFeaturedPost(userId: number) {
+    return this.featuredPost.delete({ userId });
   }
 }

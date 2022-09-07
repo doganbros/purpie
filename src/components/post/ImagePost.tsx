@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Box, Stack } from 'grommet';
 import { Group } from 'grommet-icons';
-import { getColorPairFromId } from '../../../helpers/utils';
+import { getColorPairFromId } from '../../helpers/utils';
 
 interface ImagePostProps {
   id: number;

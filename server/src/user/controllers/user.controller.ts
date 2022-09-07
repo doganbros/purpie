@@ -366,6 +366,16 @@ export class UserController {
     };
   }
 
+  @Get('/zone/list/:userName')
+  @IsAuthenticated()
+  listPublicUserZones(
+    @CurrentUser() user: UserTokenPayload,
+    @Param('userName') userName: string,
+    @Query() query: PaginationQuery,
+  ) {
+    return this.userService.getUserZones(user.id, userName, query);
+  }
+
   @Get('/channel/list/:userName')
   @IsAuthenticated()
   listPublicUserChannels(
@@ -493,5 +503,14 @@ export class UserController {
     @Body() settings: PostSettings,
   ) {
     return this.userService.updatePostSettings(user.id, settings);
+  }
+
+  @Put('featured-post/set/:postId')
+  @IsAuthenticated()
+  setFeaturedPost(
+    @CurrentUser() user: UserTokenPayload,
+    @Param('postId', ParseIntPipe) postId: number,
+  ) {
+    return this.userService.setFeaturedPost(user.id, postId);
   }
 }

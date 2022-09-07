@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useRef } from 'react';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
-import '../../../styles/video-player.scss';
+import '../../styles/video-player.scss';
 
 interface Props {
   classNames?: string;

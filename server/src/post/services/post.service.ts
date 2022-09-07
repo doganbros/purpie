@@ -8,6 +8,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { deleteObject } from 'config/s3-storage';
 import dayjs from 'dayjs';
 import { Contact } from 'entities/Contact.entity';
+import { FeaturedPost } from 'entities/FeaturedPost.entity';
+import { Playlist } from 'entities/Playlist.entity';
 import { Post } from 'entities/Post.entity';
 import { PostComment } from 'entities/PostComment.entity';
 import { PostCommentLike } from 'entities/PostCommentLike.entity';
@@ -42,6 +44,10 @@ export class PostService {
   constructor(
     @InjectRepository(PostView)
     private postViewRepository: Repository<PostView>,
+    @InjectRepository(Playlist)
+    private playlistRepository: Repository<Playlist>,
+    @InjectRepository(FeaturedPost)
+    private featuredPostRepository: Repository<FeaturedPost>,
     @InjectRepository(Post) private postRepository: Repository<Post>,
     @InjectRepository(PostLike)
     private postLikeRepository: Repository<PostLike>,
@@ -687,6 +693,25 @@ export class PostService {
       builder.addOrderBy('search_rank', 'DESC');
     }
 
+    if (query.playlistId) {
+      builder.andWhere(
+        new Brackets((qb) => {
+          const playlistQb = this.playlistRepository
+            .createQueryBuilder('playlist')
+            .select('playlist.id')
+            .innerJoin('playlist.playlistItems', 'playlistItems')
+            .where('playlist.id = :playlistId')
+            .andWhere('playlistItems.postId = post.id')
+            .limit(1)
+            .getQuery();
+
+          qb.where(`EXISTS (${playlistQb})`, {
+            playlistId: Number(query.playlistId),
+          });
+        }),
+      );
+    }
+
     return builder;
   }
 
@@ -863,6 +888,27 @@ export class PostService {
     return this.basePost(query, userId)
       .andWhere('post.public = true')
       .paginate(query);
+  }
+
+  async getFeaturedPost(userId: number, currentUserId: number) {
+    const featuredPost = await this.featuredPostRepository
+      .createQueryBuilder('featuredPost')
+      .select(['featuredPost.id', 'featuredPost.createdOn'])
+      .innerJoin('featuredPost.post', 'post')
+      .where('featuredPost.userId = :userId', { userId })
+      .getOne();
+
+    if (!featuredPost) return null;
+
+    const result = { ...featuredPost };
+
+    const post = await this.getPostById(currentUserId, featuredPost.postId);
+
+    if (!post) return null;
+
+    result.post = post;
+
+    return post;
   }
 
   editPost(postId: number, userId: number, payload: EditPostDto) {

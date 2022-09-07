@@ -15,6 +15,7 @@ import { getUserZonesAction } from './store/actions/zone.action';
 import { AppState } from './store/reducers/root.reducer';
 import InitializeUser from './pages/Public/InitializeUser';
 import { initializeSocket } from './helpers/socket';
+import { getUserChannelsAction } from './store/actions/channel.action';
 
 const App: FC = () => {
   const dispatch = useDispatch();
@@ -30,6 +31,7 @@ const App: FC = () => {
 
   useEffect(() => {
     dispatch(retrieveUserAction());
+    dispatch(getUserChannelsAction());
   }, []);
 
   useEffect(() => {

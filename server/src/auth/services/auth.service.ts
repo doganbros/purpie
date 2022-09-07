@@ -37,6 +37,7 @@ const {
   AUTH_TOKEN_REFRESH_LIFE = '30d',
   REACT_APP_CLIENT_HOST = '',
   REACT_APP_SERVER_HOST = '',
+  NODE_ENV = '',
   VERIFICATION_TOKEN_SECRET = '',
 } = process.env;
 
@@ -117,13 +118,13 @@ export class AuthService {
       expires: dayjs().add(30, 'days').toDate(),
       domain: `.${new URL(REACT_APP_SERVER_HOST).hostname}`,
       httpOnly: true,
-      secure: true,
+      secure: NODE_ENV === 'production',
     });
     res.cookie('OCTOPUS_REFRESH_ACCESS_TOKEN', refreshToken, {
       expires: dayjs().add(30, 'days').toDate(),
       domain: `.${new URL(REACT_APP_SERVER_HOST).hostname}`,
       httpOnly: true,
-      secure: true,
+      secure: NODE_ENV === 'production',
     });
     return refreshTokenId;
   }
