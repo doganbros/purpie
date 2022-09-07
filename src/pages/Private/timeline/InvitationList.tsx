@@ -52,28 +52,29 @@ const InvitationList: FC = () => {
           </Button>
         )}
       </Box>
-      {invitations.loading && <Text size="small">Loading</Text>}
-      {!invitations.loading &&
-        (invitations.data.length === 0 ? (
-          <Text size="small">No invitations found</Text>
-        ) : (
-          <Box overflow="auto" style={{ maxHeight: '460px' }}>
-            <InfiniteScroll
-              step={6}
-              items={data}
-              onMore={() => {
-                // getInvitations(invitations.data.length);
-              }}
-            >
-              {(invitation: InvitationListItemType) => (
-                <Box height={{ min: '92px' }} gap="small" key={invitation.id}>
-                  <InvitationListItem invitation={invitation} />
-                  <Divider width="25%" size="1px" />
-                </Box>
-              )}
-            </InfiniteScroll>
-          </Box>
-        ))}
+      {invitations.loading && data.length === 0 && (
+        <Text size="small">Loading</Text>
+      )}
+      {!invitations.loading && data.length === 0 && (
+        <Text size="small">No invitations found</Text>
+      )}
+
+      <Box overflow="auto" style={{ maxHeight: '472px' }}>
+        <InfiniteScroll
+          step={6}
+          items={data}
+          onMore={() => {
+            getInvitations(invitations.data.length);
+          }}
+        >
+          {(invitation: InvitationListItemType, index: number) => (
+            <Box height={{ min: 'unset' }} gap="small" key={invitation.id}>
+              <InvitationListItem invitation={invitation} />
+              {data.length !== index + 1 && <Divider width="25%" size="1px" />}
+            </Box>
+          )}
+        </InfiniteScroll>
+      </Box>
     </Box>
   );
 };
