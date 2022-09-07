@@ -48,7 +48,7 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
 
   return (
     <Box gap="xsmall" margin={{ top: 'small' }} key={invitation.id}>
-      <Text size="xsmall" weight={500} color="neutral-2">
+      <Text size="xsmall" weight="bold" color="neutral-2">
         {message}
       </Text>
       <Box direction="row" justify="between" align="center">

@@ -112,10 +112,15 @@ const activityReducer = (
         ...state,
         invitations: {
           ...action.payload,
+          data:
+            action.payload.skip > 0
+              ? [...state.invitations.data, ...action.payload.data]
+              : action.payload.data,
           loading: false,
           error: null,
         },
       };
+
     case LIST_INVITATION_FAILED:
       return {
         ...state,
