@@ -27,7 +27,10 @@ const InvitationList: FC = () => {
     dispatch(getInvitationListAction(INVITATION_AMOUNT_MORE, skip));
   };
 
-  const data = invitations.data.slice(0, displayCount);
+  const data =
+    displayCount === INVITATION_AMOUNT_LESS
+      ? invitations.data.slice(0, displayCount)
+      : invitations.data;
   return (
     <Box gap="xsmall">
       <Box direction="row" align="center" justify="between">
@@ -59,7 +62,7 @@ const InvitationList: FC = () => {
         <Text size="small">No invitations found</Text>
       )}
 
-      <Box overflow="auto" style={{ maxHeight: '472px' }}>
+      <Box overflow="auto" height={{ max: '472px' }}>
         <InfiniteScroll
           step={6}
           items={data}

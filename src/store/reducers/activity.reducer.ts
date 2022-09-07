@@ -138,13 +138,10 @@ const activityReducer = (
           error: null,
         },
       };
-    case GET_INVITATION_RESPONSE_SUCCESS:
-      // TODO need to delete eslint-disable comment
-      // eslint-disable-next-line  no-case-declarations
+    case GET_INVITATION_RESPONSE_SUCCESS: {
       const index = state.invitations.data.findIndex(
         (invitation) => invitation.id === action.payload.id
       );
-      // eslint-disable-next-line  no-case-declarations
       const newInvitations = [...state.invitations.data];
       newInvitations[index].response = action.payload.response;
 
@@ -156,6 +153,8 @@ const activityReducer = (
           error: null,
         },
       };
+    }
+
     case GET_INVITATION_RESPONSE_FAILED:
       return {
         ...state,
