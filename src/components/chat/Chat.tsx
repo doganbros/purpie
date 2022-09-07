@@ -1,4 +1,4 @@
-import { Box, Header, Text } from 'grommet';
+import { Box, Text } from 'grommet';
 import { nanoid } from 'nanoid';
 import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
@@ -13,7 +13,13 @@ import { User } from '../../store/types/auth.types';
 import ReplyMessage from './layers/ReplyMessage';
 import EditMessage from './layers/EditMessage';
 import MessageBox from './components/MessageBox';
-import { MessageBoxContainer } from './ChatStyled';
+import {
+  MessageBoxContainer,
+  DayContainer,
+  DayDivider,
+  ScrollContainer,
+  DayHeader,
+} from './ChatStyled';
 import PlanMeetingTheme from '../../layers/meeting/custom-theme';
 import { errorResponseMessage, getChatRoomName } from '../../helpers/utils';
 import { http } from '../../config/http';
@@ -51,7 +57,9 @@ const Chat: React.FC<Props> = ({
     null
   );
   const [editedMessage, setEditedMessage] = useState<ChatMessage | null>(null);
-  const [uploadingFiles, setUploadingFiles] = useState(false);
+  const [uploadingFiles, setUploadingFiles] = useState<Array<File>>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+  const [uploadErrors, setUploadErrors] = useState<string[]>([]);
   const roomName = getChatRoomName(id, medium);
   const dispatch = useDispatch();
   const [messageErrorDraft, setMessageErrorDraft] = useState<{
@@ -151,21 +159,23 @@ const Chat: React.FC<Props> = ({
         });
       }
 
-      if (attachments?.length) setUploadingFiles(true);
-
       const attachmentsResponse: Array<ChatAttachment> = !attachments?.length
         ? []
         : await Promise.all(
             attachments.map(async (attachment) => {
+              setUploadingFiles((i) => [...i, attachment]);
               const formData = new FormData();
               formData.append('file', attachment);
 
               return http
                 .post('/chat/attachment', formData)
-                .then((res) => res.data);
+                .then(async (res) => {
+                  await setUploadedFiles((i) => [...i, attachment.name]);
+                  return res.data;
+                })
+                .catch(() => setUploadErrors((i) => [...i, attachment.name]));
             })
           );
-
       message.attachments = attachmentsResponse;
 
       socket.emit('message', message, (payloadMsg: ChatMessage) => {
@@ -194,7 +204,8 @@ const Chat: React.FC<Props> = ({
         },
       });
     } finally {
-      setUploadingFiles(false);
+      setUploadingFiles([]);
+      setUploadedFiles([]);
     }
   };
 
@@ -295,17 +306,27 @@ const Chat: React.FC<Props> = ({
 
   const renderDayItem = (message: ChatMessage) => {
     return (
-      <Header
-        round="small"
-        pad={{ horizontal: 'small', vertical: 'xsmall' }}
-        margin={{ vertical: 'xsmall' }}
-        justify="center"
-        border={{ color: 'rgba(0,0,0,0.1)', size: 'xsmall' }}
-      >
-        <Text textAlign="center" size="small">
-          {parseDateToString(message.createdOn)}
-        </Text>
-      </Header>
+      <DayContainer width="100%" justify="start" alignSelf="start">
+        <DayDivider width="100%" height="3px">
+          <Box
+            width="100%"
+            height="3px"
+            background="linear-gradient(315deg, rgba(255, 248, 247, 0.0001) 0%, rgba(255, 240, 237, 0.815838) 52.11%, #FFEEEB 100%)"
+          />
+        </DayDivider>
+        <DayHeader
+          round="xsmall"
+          width="fit-content"
+          pad={{ horizontal: 'small', vertical: 'xsmall' }}
+          margin={{ vertical: 'xsmall', horizontal: 'medium' }}
+          justify="start"
+          background="#FFEEEB"
+        >
+          <Text textAlign="center" size="small" weight={400} color="#202631">
+            <i>{parseDateToString(message.createdOn)}</i>
+          </Text>
+        </DayHeader>
+      </DayContainer>
     );
   };
 
@@ -329,13 +350,13 @@ const Chat: React.FC<Props> = ({
             onSubmit={handleSendMessage}
           />
         ) : null}
-        <Box>
-          <Box
+        <Box height={`${window.innerHeight}px`}>
+          <ScrollContainer
             overflow="auto"
             flex={{ grow: 1 }}
             direction="column-reverse"
             ref={messageBoxScrollRef}
-            height="calc(100vh - 175px)"
+            height="calc(100vh - 500px)"
             id={containerId}
           >
             <InfiniteScroll
@@ -390,6 +411,7 @@ const Chat: React.FC<Props> = ({
                     key={message.identifier}
                     alignSelf="center"
                     align="center"
+                    width="100%"
                   >
                     {!lastDate ||
                     dayjs(message.createdOn)
@@ -409,12 +431,14 @@ const Chat: React.FC<Props> = ({
                 return item;
               })}
             </InfiniteScroll>
-          </Box>
-          <MessageBoxContainer flex={false} pad="small">
+          </ScrollContainer>
+          <MessageBoxContainer pad="small">
             <MessageBox
               name={name}
               handleTypingEvent={handleTypingEvent}
               uploadingFiles={uploadingFiles}
+              uploadedFiles={uploadedFiles}
+              uploadErrors={uploadErrors}
               onTyping={onTyping}
               user={currentUser!}
               canAddFile={canAddFile}
