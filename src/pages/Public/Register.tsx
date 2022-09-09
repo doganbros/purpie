@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Button, Image, Form, FormField, TextInput } from 'grommet';
+import { Form, FormField, Image, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -10,7 +10,7 @@ import AuthLayout from '../../components/layouts/AuthLayout';
 import { FormSubmitEvent } from '../../models/form-submit-event';
 import { validators } from '../../helpers/validators';
 import Figure from '../../assets/register-bg/figure.png';
-import { useResponsive } from '../../hooks/useResponsive';
+import ExtendedButton from '../../components/auth/ExtendedButton';
 
 const Register: FC = () => {
   const dispatch = useDispatch();
@@ -23,8 +23,6 @@ const Register: FC = () => {
   const handleSubmit: FormSubmitEvent<RegisterPayload> = ({ value }) => {
     dispatch(registerAction(value));
   };
-
-  const size = useResponsive();
 
   return (
     <AuthLayout
@@ -95,10 +93,8 @@ const Register: FC = () => {
           >
             <TextInput id="password1Input" name="password1" type="password" />
           </FormField>
-          <Button
-            fill="horizontal"
+          <ExtendedButton
             primary
-            size={size}
             margin={{ top: 'medium' }}
             disabled={loading}
             type="submit"

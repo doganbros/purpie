@@ -1,13 +1,12 @@
 import React, { useContext } from 'react';
 import {
-  ThemeContext,
   Box,
   Card,
   CardBody,
-  Text,
-  Button,
-  Image,
   Heading,
+  Image,
+  Text,
+  ThemeContext,
 } from 'grommet';
 import { useHistory } from 'react-router-dom';
 import PublicPageLayout from './PublicPageLayout/PublicPageLayout';
@@ -15,6 +14,7 @@ import { useResponsive } from '../../hooks/useResponsive';
 import Logo from '../../assets/octopus-logo/logo-color.png';
 import LogoWhite from '../../assets/octopus-logo/logo-white.png';
 import OctopusText from '../../assets/octopus-logo/octopus-text.png';
+import ExtendedButton from '../auth/ExtendedButton';
 
 interface Props {
   title: string;
@@ -74,18 +74,13 @@ const AuthLayout: React.FC<Props> = ({
             <Box basis="25%" align="center">
               {callToAction && (
                 <>
-                  <Text size="16px" margin={{ bottom: '19px', top: '20px' }}>
+                  <Text size="16px" margin={{ bottom: '14px', top: '20px' }}>
                     {callToAction.title}
                   </Text>
-                  <Button
+                  <ExtendedButton
+                    fontSize="16px"
                     disabled={callToAction.disabled || false}
-                    style={{
-                      paddingRight: size === 'large' ? '150px' : '80px',
-                      paddingLeft: size === 'large' ? '150px' : '80px',
-                      maxWidth: '600px',
-                    }}
-                    fill={false}
-                    size={size}
+                    minWidth={size === 'large' ? '430px' : '320px'}
                     onClick={callToAction.onClick}
                     primary
                     label={callToAction.body}
@@ -133,13 +128,15 @@ const AuthLayout: React.FC<Props> = ({
               </Text>
               {children}
               {size === 'small' && callToAction && (
-                <Box align="center">
-                  <Text margin={{ bottom: '20px', top: '20px' }}>
+                <Box>
+                  <Text
+                    textAlign="center"
+                    margin={{ bottom: '20px', top: '20px' }}
+                  >
                     {callToAction.title}
                   </Text>
-                  <Button
-                    fill="horizontal"
-                    size={size}
+                  <ExtendedButton
+                    fontSize="16px"
                     onClick={callToAction.onClick}
                     primary
                     label={callToAction.body}

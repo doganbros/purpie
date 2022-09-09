@@ -1,5 +1,5 @@
-import { Box, Form, FormField, Button, Image, Text, TextInput } from 'grommet';
-import { Google, FacebookOption } from 'grommet-icons';
+import { Box, Form, FormField, Image, Text, TextInput } from 'grommet';
+import { FacebookOption, Google } from 'grommet-icons';
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -16,7 +16,7 @@ import AuthLayout from '../../components/layouts/AuthLayout';
 import SignInRect from '../../assets/sign-in-rect.svg';
 import Figure from '../../assets/login-bg/figure.png';
 import Banner from '../../assets/login-bg/banner.png';
-import { useResponsive } from '../../hooks/useResponsive';
+import ExtendedButton from '../../components/auth/ExtendedButton';
 
 const Login: FC = () => {
   const dispatch = useDispatch();
@@ -31,8 +31,6 @@ const Login: FC = () => {
   const handleSubmit: FormSubmitEvent<LoginPayload> = ({ value }) => {
     dispatch(loginAction(value));
   };
-
-  const size = useResponsive();
 
   return (
     <AuthLayout
@@ -94,11 +92,9 @@ const Login: FC = () => {
               to="/forgot-password"
             />
           </Box>
-          <Button
-            fill="horizontal"
+          <ExtendedButton
             primary
             margin={{ top: 'medium' }}
-            size={size}
             disabled={loading}
             type="submit"
             label="SIGN IN"
@@ -124,42 +120,24 @@ const Login: FC = () => {
             </Box>
           </Box>
 
-          <Box
-            margin={{ vertical: 'small' }}
-            align="center"
-            style={{ textAlign: 'center' }}
-          >
-            <Button
+          <Box margin={{ vertical: 'small' }} style={{ textAlign: 'center' }}>
+            <ExtendedButton
               label={<span />}
-              size={size}
               color="#F3F3F3"
-              style={{ backgroundColor: '#F3F3F3' }}
+              backgroundColor="#F3F3F3"
               disabled={googleAuthBtnLoading}
-              fill="horizontal"
               onClick={() => dispatch(getThirdPartyUrlAction('google'))}
-              icon={
-                <Google
-                  color="plain"
-                  size={size === 'large' ? '30px' : 'medium'}
-                />
-              }
+              icon={<Google color="plain" size="28px" />}
               margin={{ bottom: 'small' }}
             />
 
-            <Button
-              size={size}
+            <ExtendedButton
               label={<span />}
               color="#3B5998"
-              style={{ backgroundColor: '#3B5998' }}
-              fill="horizontal"
+              backgroundColor="#3B5998"
               disabled={facebookAuthBtnLoading}
               onClick={() => dispatch(getThirdPartyUrlAction('facebook'))}
-              icon={
-                <FacebookOption
-                  color="white"
-                  size={size === 'large' ? '33px' : 'medium'}
-                />
-              }
+              icon={<FacebookOption color="white" size="28px" />}
             />
           </Box>
         </Form>

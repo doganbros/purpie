@@ -1,4 +1,4 @@
-import { Button, Image } from 'grommet';
+import { Image } from 'grommet';
 import React, { FC } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -6,14 +6,13 @@ import AuthLayout from '../../components/layouts/AuthLayout';
 import { AppState } from '../../store/reducers/root.reducer';
 import Figure from '../../assets/verify-email-bg/figure-1.png';
 import Banner from '../../assets/verify-email-bg/banner.png';
-import { useResponsive } from '../../hooks/useResponsive';
+import ExtendedButton from '../../components/auth/ExtendedButton';
 
 const VerifyEmail: FC = () => {
   const {
     forgotPassword: { loading },
   } = useSelector((state: AppState) => state.auth);
 
-  const size = useResponsive();
   const history = useHistory();
 
   return (
@@ -46,11 +45,9 @@ const VerifyEmail: FC = () => {
         </>
       }
     >
-      <Button
-        fill="horizontal"
+      <ExtendedButton
         primary
         onClick={() => history.push('/login')}
-        size={size}
         margin={{ top: '55%' }}
         disabled={loading}
         type="submit"

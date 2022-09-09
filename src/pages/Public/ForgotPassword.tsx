@@ -1,4 +1,4 @@
-import { Button, Form, FormField, TextInput, Image } from 'grommet';
+import { Form, FormField, Image, TextInput } from 'grommet';
 import React, { FC } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,7 +9,7 @@ import { resetPasswordRequestAction } from '../../store/actions/auth.action';
 import { AppState } from '../../store/reducers/root.reducer';
 import Figure from '../../assets/forgotten-password-bg/figure-1.png';
 import Banner from '../../assets/forgotten-password-bg/banner.png';
-import { useResponsive } from '../../hooks/useResponsive';
+import ExtendedButton from '../../components/auth/ExtendedButton';
 
 const ForgotPassword: FC = () => {
   const dispatch = useDispatch();
@@ -22,8 +22,6 @@ const ForgotPassword: FC = () => {
   const handleSubmit: FormSubmitEvent<{ email: string }> = ({ value }) => {
     dispatch(resetPasswordRequestAction(value.email));
   };
-
-  const size = useResponsive();
 
   return (
     <AuthLayout
@@ -67,10 +65,8 @@ const ForgotPassword: FC = () => {
           >
             <TextInput id="emailInput" name="email" type="email" />
           </FormField>
-          <Button
-            fill="horizontal"
+          <ExtendedButton
             primary
-            size={size}
             margin={{ top: '55%' }}
             disabled={loading}
             type="submit"

@@ -1,4 +1,4 @@
-import { Button, Form, FormField, TextInput, Image } from 'grommet';
+import { Form, FormField, Image, TextInput } from 'grommet';
 import React, { FC } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,6 +8,7 @@ import AuthLayout from '../../components/layouts/AuthLayout';
 import { validators } from '../../helpers/validators';
 import Figure from '../../assets/forgotten-password-bg/figure-1.png';
 import Banner from '../../assets/forgotten-password-bg/banner.png';
+import ExtendedButton from '../../components/auth/ExtendedButton';
 
 interface Params {
   token: string;
@@ -78,10 +79,8 @@ const ResetPassword: FC = () => {
           >
             <TextInput id="password1Input" name="password1" type="password" />
           </FormField>
-          <Button
-            fill="horizontal"
+          <ExtendedButton
             primary
-            size="large"
             margin={{ top: 'large' }}
             disabled={loading}
             type="submit"
