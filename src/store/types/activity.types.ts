@@ -14,6 +14,9 @@ import {
 } from '../constants/activity.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
+import { ChannelBasic } from './channel.types';
+import { PostComment, PostType } from './post.types';
+import { UserBasic } from './auth.types';
 
 export interface ZoneSuggestionListItem {
   zone_id: number;
@@ -44,7 +47,38 @@ export interface ChannelSuggestionListItem {
 }
 
 export interface NotificationListItem {
-  [key: string]: any; // TODO: bthnorhan fix any.
+  id: number;
+  createdOn: Date;
+  message: string;
+  counter: number;
+  type: 'post_like';
+  readOn: Date;
+  viewedOn: Date;
+  post: {
+    id: number;
+    createdOn: Date;
+    title: string;
+    description: string;
+    slug: string;
+    type: PostType;
+    public: boolean;
+    videoName: string;
+    userContactExclusive: boolean;
+    postReaction: {
+      id: number;
+      createdOn: Date;
+      updatedOn: Date;
+      likesCount: number;
+      dislikesCount: number;
+      commentsCount: number;
+      viewsCount: number;
+      liveStreamViewersCount: number;
+      postId: number;
+    };
+    channel: ChannelBasic;
+    createdBy: UserBasic;
+    postComment: PostComment;
+  };
 }
 
 export interface NotificationCount {

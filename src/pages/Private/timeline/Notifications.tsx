@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Box, Button, Text } from 'grommet';
-// import { Chat, Play, Favorite } from 'grommet-icons';
+import { Favorite } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   SUGGESTION_AMOUNT_LESS,
@@ -11,89 +11,6 @@ import {
   getNotificationCountAction,
 } from '../../../store/actions/activity.action';
 import { AppState } from '../../../store/reducers/root.reducer';
-
-// TODO: bthnorhan remove dummy data.
-// const activities = [
-//   {
-//     id: 1,
-//     icon: <Chat />,
-//     message: "Maaike has commented on Philips' video",
-//   },
-//   {
-//     id: 2,
-//     icon: <Play />,
-//     message: 'Philips has started a live stream',
-//   },
-
-//   {
-//     id: 3,
-//     icon: <Favorite />,
-//     message: "Maaike has liked Leonita's post",
-//   },
-
-//   {
-//     id: 4,
-//     icon: <Chat />,
-//     message: "Maaike has commented on Leonita's video",
-//   },
-
-//   {
-//     id: 5,
-//     icon: <Favorite />,
-//     message: "Leonita has liked Maaike's video",
-//   },
-
-//   {
-//     id: 6,
-//     icon: <Play />,
-//     message: 'Jane has started a live stream',
-//   },
-//   {
-//     id: 7,
-//     icon: <Chat />,
-//     message: "Maaike has commented on Philips' video",
-//   },
-//   {
-//     id: 8,
-//     icon: <Play />,
-//     message: 'Philips has started a live stream',
-//   },
-
-//   {
-//     id: 9,
-//     icon: <Favorite />,
-//     message: "Maaike has liked Leonita's post",
-//   },
-
-//   {
-//     id: 10,
-//     icon: <Chat />,
-//     message: "Maaike has commented on Leonita's video",
-//   },
-
-//   {
-//     id: 11,
-//     icon: <Favorite />,
-//     message: "Leonita has liked Maaike's video",
-//   },
-//   {
-//     id: 12,
-//     icon: <Favorite />,
-//     message: "Maaike has liked Leonita's post",
-//   },
-
-//   {
-//     id: 13,
-//     icon: <Chat />,
-//     message: "Maaike has commented on Leonita's video",
-//   },
-
-//   {
-//     id: 14,
-//     icon: <Favorite />,
-//     message: "Leonita has liked Maaike's video",
-//   },
-// ];
 
 const Notifications: FC = () => {
   const [displayCount, setDisplayCount] = useState(SUGGESTION_AMOUNT_LESS);
@@ -110,6 +27,14 @@ const Notifications: FC = () => {
   useEffect(() => {
     getNotifications();
   }, []);
+
+  const getIcon = (type: string): JSX.Element => {
+    if (type === 'post_like') {
+      return <Favorite />;
+    }
+
+    return <></>;
+  };
 
   return (
     <Box gap="small">
@@ -156,7 +81,7 @@ const Notifications: FC = () => {
               }}
             >
               <Box direction="row" align="center" gap="small">
-                {a.icon}
+                {getIcon(a.type)}
                 <Text size="xsmall">{a.message}</Text>
               </Box>
             </Box>
