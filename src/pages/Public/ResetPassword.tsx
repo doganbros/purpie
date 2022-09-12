@@ -8,7 +8,7 @@ import AuthLayout from '../../components/layouts/AuthLayout';
 import { validators } from '../../helpers/validators';
 import Figure from '../../assets/forgotten-password-bg/figure-1.png';
 import Banner from '../../assets/forgotten-password-bg/banner.png';
-import ExtendedButton from '../../components/auth/ExtendedButton';
+import AuthFormButton from '../../components/auth/AuthFormButton';
 
 interface Params {
   token: string;
@@ -79,7 +79,7 @@ const ResetPassword: FC = () => {
           >
             <TextInput id="password1Input" name="password1" type="password" />
           </FormField>
-          <ExtendedButton
+          <AuthFormButton
             primary
             margin={{ top: 'large' }}
             disabled={loading}

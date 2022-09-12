@@ -14,7 +14,7 @@ import { useResponsive } from '../../hooks/useResponsive';
 import Logo from '../../assets/octopus-logo/logo-color.png';
 import LogoWhite from '../../assets/octopus-logo/logo-white.png';
 import OctopusText from '../../assets/octopus-logo/octopus-text.png';
-import ExtendedButton from '../auth/ExtendedButton';
+import AuthFormButton from '../auth/AuthFormButton';
 
 interface Props {
   title: string;
@@ -77,10 +77,11 @@ const AuthLayout: React.FC<Props> = ({
                   <Text size="16px" margin={{ bottom: '14px', top: '20px' }}>
                     {callToAction.title}
                   </Text>
-                  <ExtendedButton
+                  <AuthFormButton
                     fontSize="16px"
                     disabled={callToAction.disabled || false}
                     minWidth={size === 'large' ? '430px' : '320px'}
+                    maxWidth={size === 'large' ? '600px' : '320px'}
                     onClick={callToAction.onClick}
                     primary
                     label={callToAction.body}
@@ -120,10 +121,18 @@ const AuthLayout: React.FC<Props> = ({
                   <Image src={OctopusText} height="24px" />
                 )}
               </Box>
-              <Heading size={headingSize[size]} margin={{ bottom: 'xxsmall' }}>
+              <Heading
+                color="dark"
+                size={headingSize[size]}
+                margin={{ bottom: 'xxsmall' }}
+              >
                 {formTitle}
               </Heading>
-              <Text size="14px" margin={{ left: 'xsmall', bottom: size }}>
+              <Text
+                size="14px"
+                weight={300}
+                margin={{ left: 'xsmall', bottom: size }}
+              >
                 {formSubTitle}
               </Text>
               {children}
@@ -135,7 +144,7 @@ const AuthLayout: React.FC<Props> = ({
                   >
                     {callToAction.title}
                   </Text>
-                  <ExtendedButton
+                  <AuthFormButton
                     fontSize="16px"
                     onClick={callToAction.onClick}
                     primary

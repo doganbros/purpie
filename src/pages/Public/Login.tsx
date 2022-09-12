@@ -16,7 +16,7 @@ import AuthLayout from '../../components/layouts/AuthLayout';
 import SignInRect from '../../assets/sign-in-rect.svg';
 import Figure from '../../assets/login-bg/figure.png';
 import Banner from '../../assets/login-bg/banner.png';
-import ExtendedButton from '../../components/auth/ExtendedButton';
+import AuthFormButton from '../../components/auth/AuthFormButton';
 
 const Login: FC = () => {
   const dispatch = useDispatch();
@@ -92,7 +92,7 @@ const Login: FC = () => {
               to="/forgot-password"
             />
           </Box>
-          <ExtendedButton
+          <AuthFormButton
             primary
             margin={{ top: 'medium' }}
             disabled={loading}
@@ -121,7 +121,7 @@ const Login: FC = () => {
           </Box>
 
           <Box margin={{ vertical: 'small' }} style={{ textAlign: 'center' }}>
-            <ExtendedButton
+            <AuthFormButton
               label={<span />}
               color="#F3F3F3"
               backgroundColor="#F3F3F3"
@@ -131,7 +131,7 @@ const Login: FC = () => {
               margin={{ bottom: 'small' }}
             />
 
-            <ExtendedButton
+            <AuthFormButton
               label={<span />}
               color="#3B5998"
               backgroundColor="#3B5998"

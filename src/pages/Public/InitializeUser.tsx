@@ -11,7 +11,7 @@ import { useResponsive } from '../../hooks/useResponsive';
 import { FormSubmitEvent } from '../../models/form-submit-event';
 import { initializeUserAction } from '../../store/actions/auth.action';
 import { RegisterPayload } from '../../store/types/auth.types';
-import ExtendedButton from '../../components/auth/ExtendedButton';
+import AuthFormButton from '../../components/auth/AuthFormButton';
 
 const InitializeUser: FC = () => {
   const {
@@ -113,7 +113,7 @@ const InitializeUser: FC = () => {
             >
               <TextInput id="password1Input" name="password1" type="password" />
             </FormField>
-            <ExtendedButton
+            <AuthFormButton
               primary
               margin={{ top: 'medium' }}
               disabled={loading}

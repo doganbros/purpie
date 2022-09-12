@@ -1,4 +1,4 @@
-import { Button, ButtonExtendedProps, Grommet } from 'grommet';
+import { Button, ButtonExtendedProps, ThemeContext } from 'grommet';
 import React, { FC } from 'react';
 import { css } from 'styled-components';
 import { theme } from '../../config/app-config';
@@ -14,23 +14,22 @@ const ExtendedButtonCSS = css`
   font-size: ${(props: Props) => props.fontSize || '15px'};
   background-color: ${(props: Props) => props.backgroundColor};
   min-width: ${(props: Props) => props.minWidth};
-  min-width: ${(props: Props) => props.maxWidth};
+  max-width: ${(props: Props) => props.maxWidth};
 `;
 
-const ExtendedButton: FC<Props> = (props) => {
+const AuthFormButton: FC<Props> = (props) => {
   return (
-    <Grommet
-      plain
-      theme={{
+    <ThemeContext.Extend
+      value={{
         button: {
           ...theme.button,
           extend: ExtendedButtonCSS,
         },
       }}
     >
-      <Button {...props} fill="horizontal" size="large" />
-    </Grommet>
+      <Button fill="horizontal" size="large" {...props} />
+    </ThemeContext.Extend>
   );
 };
 
-export default ExtendedButton;
+export default AuthFormButton;

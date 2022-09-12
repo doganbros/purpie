@@ -6,7 +6,7 @@ import AuthLayout from '../../components/layouts/AuthLayout';
 import { AppState } from '../../store/reducers/root.reducer';
 import Figure from '../../assets/verify-email-bg/figure-1.png';
 import Banner from '../../assets/verify-email-bg/banner.png';
-import ExtendedButton from '../../components/auth/ExtendedButton';
+import AuthFormButton from '../../components/auth/AuthFormButton';
 
 const VerifyEmail: FC = () => {
   const {
@@ -45,7 +45,7 @@ const VerifyEmail: FC = () => {
         </>
       }
     >
-      <ExtendedButton
+      <AuthFormButton
         primary
         onClick={() => history.push('/login')}
         margin={{ top: '55%' }}

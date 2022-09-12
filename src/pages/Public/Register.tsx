@@ -10,7 +10,7 @@ import AuthLayout from '../../components/layouts/AuthLayout';
 import { FormSubmitEvent } from '../../models/form-submit-event';
 import { validators } from '../../helpers/validators';
 import Figure from '../../assets/register-bg/figure.png';
-import ExtendedButton from '../../components/auth/ExtendedButton';
+import AuthFormButton from '../../components/auth/AuthFormButton';
 
 const Register: FC = () => {
   const dispatch = useDispatch();
@@ -93,7 +93,7 @@ const Register: FC = () => {
           >
             <TextInput id="password1Input" name="password1" type="password" />
           </FormField>
-          <ExtendedButton
+          <AuthFormButton
             primary
             margin={{ top: 'medium' }}
             disabled={loading}

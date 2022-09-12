@@ -9,7 +9,7 @@ import { resetPasswordRequestAction } from '../../store/actions/auth.action';
 import { AppState } from '../../store/reducers/root.reducer';
 import Figure from '../../assets/forgotten-password-bg/figure-1.png';
 import Banner from '../../assets/forgotten-password-bg/banner.png';
-import ExtendedButton from '../../components/auth/ExtendedButton';
+import AuthFormButton from '../../components/auth/AuthFormButton';
 
 const ForgotPassword: FC = () => {
   const dispatch = useDispatch();
@@ -65,7 +65,7 @@ const ForgotPassword: FC = () => {
           >
             <TextInput id="emailInput" name="email" type="email" />
           </FormField>
-          <ExtendedButton
+          <AuthFormButton
             primary
             margin={{ top: '55%' }}
             disabled={loading}
