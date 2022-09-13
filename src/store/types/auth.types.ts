@@ -52,9 +52,8 @@ export interface UserRole {
 
 export interface UserBasic {
   id: number;
-  firstName: string;
+  fullName: string;
   userName: string;
-  lastName: string;
   email: string;
 }
 
@@ -118,8 +117,7 @@ export interface LoginPayload {
 export interface RegisterPayload {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
 }
 
 export interface ResetPasswordPayload {

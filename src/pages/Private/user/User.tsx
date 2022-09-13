@@ -35,11 +35,7 @@ const User: FC = () => {
 
   return (
     <PrivatePageLayout
-      title={
-        detail.user
-          ? `${detail.user.firstName} ${detail.user.lastName}`
-          : 'Loading'
-      }
+      title={detail.user ? detail.user.fullName : 'Loading'}
       topComponent={detail.user && <Header user={detail.user} />}
       rightComponent={
         detail.user && (
@@ -47,8 +43,7 @@ const User: FC = () => {
             <UserSummary
               id={detail.user.id}
               userName={detail.user.userName}
-              firstName={detail.user.firstName}
-              lastName={detail.user.lastName}
+              fullName={detail.user.fullName}
               email={detail.user.email}
             />
           </Box>
@@ -74,13 +69,10 @@ const User: FC = () => {
             <Box direction="row" gap="medium">
               {userData.friends.map((f) => (
                 <Box key={f.id} gap="small" align="center">
-                  <InitialsAvatar
-                    id={f.id}
-                    value={`${f.firstName} ${f.lastName}`}
-                  />
+                  <InitialsAvatar id={f.id} value={f.fullName} />
                   <Box align="center">
                     <Text size="small" weight="bold">
-                      {f.firstName} {f.lastName}
+                      {f.fullName}
                     </Text>
                     <Text size="small" color="status-disabled">
                       @{f.userName}

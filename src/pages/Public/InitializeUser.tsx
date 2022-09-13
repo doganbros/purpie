@@ -71,20 +71,12 @@ const InitializeUser: FC = () => {
           </Box>
           <Form onSubmit={handleSubmit}>
             <FormField
-              label="FIRST NAME"
+              label="FULL NAME"
               validate={validators.required()}
-              name="firstName"
-              htmlFor="firstNameInput"
+              name="fullName"
+              htmlFor="fullNameInput"
             >
-              <TextInput name="firstName" />
-            </FormField>
-            <FormField
-              label="LAST NAME"
-              validate={validators.required()}
-              name="lastName"
-              htmlFor="lastNameInput"
-            >
-              <TextInput name="lastName" />
+              <TextInput name="fullName" />
             </FormField>
             <FormField
               label="USERNAME"

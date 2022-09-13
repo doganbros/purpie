@@ -52,8 +52,7 @@ export class StreamService {
         'user.id',
         'user.userName',
         'user.email',
-        'user.firstName',
-        'user.lastName',
+        'user.fullName',
       ])
       .leftJoin('stream_log.user', 'user')
       .where('stream_log.slug = :slug', { slug })

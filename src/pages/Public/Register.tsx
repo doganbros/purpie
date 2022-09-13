@@ -51,20 +51,12 @@ const Register: FC = () => {
       <>
         <Form onSubmit={handleSubmit}>
           <FormField
-            label="FIRST NAME"
-            name="firstName"
-            htmlFor="firstNameInput"
+            label="FULL NAME"
+            name="fullName"
+            htmlFor="fullNameInput"
             validate={validators.required()}
           >
-            <TextInput id="firstNameInput" name="firstName" />
-          </FormField>
-          <FormField
-            label="LAST NAME"
-            name="lastName"
-            htmlFor="lastNameInput"
-            validate={validators.required()}
-          >
-            <TextInput id="lastNameInput" name="lastName" />
+            <TextInput id="fullNameInput" name="fullName" />
           </FormField>
 
           <FormField

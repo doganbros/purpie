@@ -11,7 +11,7 @@ const Header: FC<HeaderProps> = ({ user }) => (
   <Box flex="grow" direction="row" align="center" gap="small">
     <InitialsAvatar
       id={user.id}
-      value={`${user.firstName} ${user.lastName}`}
+      value={user.fullName}
       size="70px"
       round="full"
       textProps={{
@@ -19,9 +19,7 @@ const Header: FC<HeaderProps> = ({ user }) => (
       }}
     />
     <Box>
-      <Text weight="bold">
-        {user.firstName} {user.lastName}
-      </Text>
+      <Text weight="bold">{user.fullName}</Text>
       <Text size="small" color="status-disabiled">
         {user.userName}
       </Text>

@@ -23,8 +23,7 @@ export interface ChatMessage {
   createdBy: {
     id: number;
     displayPhoto?: string;
-    firstName?: string;
-    lastName?: string;
+    fullName: string;
     userName?: string;
   };
   createdByFullName: string;

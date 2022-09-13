@@ -61,8 +61,7 @@ export class VideoService {
 
   async sendVideoInfoMail(user: UserProfile, videoPost: Post) {
     const context = {
-      firstName: user.firstName,
-      lastName: user.lastName,
+      fullName: user.fullName,
       videoPost: {
         ...videoPost,
         createdOn: dayjs(videoPost.createdOn).format(
@@ -91,8 +90,7 @@ export class VideoService {
         'videoPost.userContactExclusive',
         'tags.value',
         'createdBy.id',
-        'createdBy.firstName',
-        'createdBy.lastName',
+        'createdBy.fullName',
         'createdBy.userName',
       ])
       .innerJoin('videoPost.createdBy', 'createdBy')

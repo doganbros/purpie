@@ -24,10 +24,7 @@ const Input: FC<InputProps> = ({ user, postId }) => {
     <Box direction="row" align="center" gap="small">
       {user && (
         <Box flex={{ shrink: 0 }}>
-          <InitialsAvatar
-            id={user.id}
-            value={`${user?.firstName} ${user?.lastName}`}
-          />
+          <InitialsAvatar id={user.id} value={user?.fullName} />
         </Box>
       )}
       <Box

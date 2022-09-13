@@ -36,8 +36,7 @@ export class UserZoneService {
         'zone.description',
         'zone.public',
         'createdBy.id',
-        'createdBy.firstName',
-        'createdBy.lastName',
+        'createdBy.fullName',
         'createdBy.email',
       ])
       .leftJoin('zone.createdBy', 'createdBy')
@@ -77,8 +76,7 @@ export class UserZoneService {
         },
         createdBy: {
           id: record.createdBy_id,
-          firstName: record.createdBy_firstName,
-          lastName: record.createdBy_lastName,
+          fullName: record.createdBy_fullName,
           email: record.createdBy_email,
         },
       },
