@@ -56,8 +56,7 @@ export class UserChannelService {
         'channel.public',
         'channel.zoneId',
         'createdBy.id',
-        'createdBy.firstName',
-        'createdBy.lastName',
+        'createdBy.fullName',
         'createdBy.email',
       ])
       .innerJoin('channel.zone', 'zone')
@@ -113,8 +112,7 @@ export class UserChannelService {
         zoneId: record.channel_zoneId,
         createdBy: {
           id: record.createdBy_id,
-          firstName: record.createdBy_firstName,
-          lastName: record.createdBy_lastName,
+          fullName: record.createdBy_fullName,
           email: record.createdBy_email,
         },
       },
@@ -149,8 +147,7 @@ export class UserChannelService {
         'channel.public',
         'channel.zoneId',
         'createdBy.id',
-        'createdBy.firstName',
-        'createdBy.lastName',
+        'createdBy.fullName',
         'createdBy.email',
       ])
       .leftJoin('user_channel.channel', 'channel')

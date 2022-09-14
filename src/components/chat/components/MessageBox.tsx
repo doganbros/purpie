@@ -141,11 +141,7 @@ const MessageBox: FC<Props> = ({
     >
       {user && (
         <Box flex={{ shrink: 0 }}>
-          <InitialsAvatar
-            size="medium"
-            id={user.id}
-            value={`${user?.firstName} ${user?.lastName}`}
-          />
+          <InitialsAvatar size="medium" id={user.id} value={user.fullName} />
         </Box>
       )}
       <Box

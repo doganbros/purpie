@@ -70,16 +70,14 @@ export class AuthThirdPartyService {
   }
 
   async registerUserByThirdParty({
-    firstName,
-    lastName,
+    fullName,
     email,
     googleId,
     facebookId,
   }: UserBasic) {
     return this.userRepository
       .create({
-        firstName,
-        lastName,
+        fullName,
         email,
         googleId,
         facebookId,

@@ -2,10 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 class ConferenceInfoUser {
   @ApiProperty()
-  firstName: string;
-
-  @ApiProperty()
-  lastName: string;
+  fullName: string;
 
   @ApiProperty()
   email: string;

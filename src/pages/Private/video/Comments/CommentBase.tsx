@@ -85,12 +85,12 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
           <Box pad={{ right: 'xsmall' }}>
             <InitialsAvatar
               id={comment.user.id}
-              value={`${comment.user.firstName} ${comment.user.lastName}`}
+              value={comment.user.fullName}
             />
           </Box>
         )}
         <Box flex="grow">
-          <Text weight="bold">{`${comment.user.firstName} ${comment.user.lastName}`}</Text>
+          <Text weight="bold">{comment.user.fullName}</Text>
         </Box>
         <Box direction="row" align="start">
           {comment.edited && (
@@ -196,10 +196,7 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
         <Box gap="small">
           <Box direction="row" gap="small">
             <Box flex={{ shrink: 0 }}>
-              <InitialsAvatar
-                id={user.id}
-                value={`${user.firstName} ${user.lastName}`}
-              />
+              <InitialsAvatar id={user.id} value={`${user.fullName}`} />
             </Box>
             <Box border={{ color: 'status-disabled', side: 'bottom' }} fill>
               <TextInput

@@ -73,8 +73,7 @@ export class UserService {
       .setParameter('searchTerm', tsqueryParam(query.name))
       .select([
         'user.id',
-        'user.firstName',
-        'user.lastName',
+        'user.fullName',
         'user.email',
         'user.userName',
         'user.displayPhoto',
@@ -174,8 +173,7 @@ export class UserService {
         'contact_invitation.createdOn',
         'inviter.id',
         'inviter.email',
-        'inviter.firstName',
-        'inviter.lastName',
+        'inviter.fullName',
         'inviter.displayPhoto',
         'inviter.userName',
       ])
@@ -216,8 +214,7 @@ export class UserService {
         'invitation.createdOn',
         'inviter.id',
         'inviter.email',
-        'inviter.firstName',
-        'inviter.lastName',
+        'inviter.fullName',
         'inviter.displayPhoto',
         'inviter.userName',
         'zone.id',
@@ -259,8 +256,7 @@ export class UserService {
         'contactUser.id',
         'contactUser.userName',
         'contactUser.email',
-        'contactUser.firstName',
-        'contactUser.lastName',
+        'contactUser.fullName',
         'contactUser.displayPhoto',
       ])
       .innerJoin('contact.contactUser', 'contactUser');
@@ -295,8 +291,7 @@ export class UserService {
       .createQueryBuilder('user')
       .select([
         'user.id',
-        'user.firstName',
-        'user.lastName',
+        'user.fullName',
         'user.userName',
         'user.displayPhoto',
         'user.email',
@@ -326,8 +321,7 @@ export class UserService {
 
     return {
       id: result.user_id,
-      firstName: result.user_firstName,
-      lastName: result.user_lastName,
+      fullName: result.user_fullName,
       userName: result.user_userName,
       displayPhoto: result.user_displayPhoto,
       email: result.user_email,
@@ -340,8 +334,7 @@ export class UserService {
       .createQueryBuilder('user')
       .select([
         'user.id',
-        'user.firstName',
-        'user.lastName',
+        'user.fullName',
         'user.email',
         'user.userName',
         'user.userRoleCode',
@@ -359,7 +352,7 @@ export class UserService {
         .where(`user.search_document @@ to_tsquery('simple', :searchTerm)`)
         .orderBy('search_rank', 'DESC');
     } else {
-      baseQuery.orderBy('user.firstName').addOrderBy('user.lastName');
+      baseQuery.orderBy('user.fullName');
     }
 
     return baseQuery.paginate(query);
@@ -461,11 +454,8 @@ export class UserService {
 
     const updates: Record<string, any> = {};
 
-    if (payload.firstName && payload.firstName !== userProfile.firstName) {
-      updates.firstName = payload.firstName;
-    }
-    if (payload.lastName && payload.lastName !== userProfile.lastName) {
-      updates.lastName = payload.lastName;
+    if (payload.fullName && payload.fullName !== userProfile.fullName) {
+      updates.fullName = payload.fullName;
     }
     if (payload.userName && payload.userName !== userProfile.userName) {
       updates.userName = payload.userName;
@@ -579,8 +569,7 @@ export class UserService {
         'blocked_user.id',
         'blocked_user.createdOn',
         'user.id',
-        'user.firstName',
-        'user.lastName',
+        'user.fullName',
         'user.email',
         'user.userName',
         'user.userRoleCode',

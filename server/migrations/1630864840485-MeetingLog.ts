@@ -1,4 +1,3 @@
-import { User } from 'entities/User.entity';
 import {
   MigrationInterface,
   QueryRunner,
@@ -67,24 +66,6 @@ export class MeetingLog1630864840485 implements MigrationInterface {
       }),
     );
 
-    const users = await queryRunner.manager.find(User, {
-      select: ['firstName', 'lastName', 'id'],
-    });
-
-    for (const { firstName, lastName, id } of users) {
-      const userName = `${firstName} ${lastName}`
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, '')
-        .replace(/ö/g, 'o')
-        .replace(/ı/g, 'i')
-        .replace(/ç/g, 'c')
-        .replace(/ğ/g, 'g')
-        .replace(/ş/g, 's')
-        .replace(/ü/g, 'u');
-
-      await queryRunner.manager.update(User, { id }, { userName });
-    }
     await queryRunner.query(`DROP TABLE meeting_attendance CASCADE;`);
   }
 

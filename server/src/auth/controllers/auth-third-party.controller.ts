@@ -115,8 +115,7 @@ export class AuthThirdPartyController {
         }
       } else {
         user = await this.authThirdPartyService.registerUserByThirdParty({
-          firstName: userInfo.given_name,
-          lastName: userInfo.family_name,
+          fullName: `${userInfo.given_name} ${userInfo.family_name}`,
           email: userInfo.email,
           googleId: userInfo.id,
         });
@@ -138,10 +137,9 @@ export class AuthThirdPartyController {
         }
       } else {
         user = await this.authThirdPartyService.registerUserByThirdParty({
-          firstName:
-            userInfo.first_name +
-            (userInfo.middle_name ? ` ${userInfo.middle_name}` : ''),
-          lastName: userInfo.last_name,
+          fullName: `${userInfo.first_name}${
+            userInfo.middle_name ? ` ${userInfo.middle_name} ` : ''
+          }${userInfo.last_name}`,
           email: userInfo.email,
           facebookId: userInfo.id,
         });
@@ -150,8 +148,7 @@ export class AuthThirdPartyController {
     if (user) {
       const userPayload: UserProfile = {
         id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        fullName: user.fullName,
         email: user.email,
         userName: user.userName,
         userRole: {

@@ -148,8 +148,7 @@ export class AuthController {
 
     const userPayload: UserProfile = {
       id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      fullName: user.fullName,
       email: user.email,
       userName: user.userName,
       userRole: {
@@ -294,8 +293,7 @@ export class AuthController {
 
     const userBasicWithToken = {
       user: {
-        firstName: user.firstName,
-        lastName: user.lastName,
+        fullName: user.fullName,
         email: user.email,
       },
       token,

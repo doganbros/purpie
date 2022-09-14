@@ -467,7 +467,7 @@ const Chat: React.FC<Props> = ({
 
           {typingUser ? (
             <Text size="small" as="i" textAlign="center">
-              {typingUser.firstName} {typingUser.lastName} is typing...
+              {typingUser.fullName} is typing...
             </Text>
           ) : null}
         </Box>
