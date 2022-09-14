@@ -207,17 +207,21 @@ export class ChatGateway {
   }
 
   async handleDisconnecting(socket: SocketWithTokenPayload) {
-    const contactIds = await this.chatService.fetchUserContactUserIds(
-      socket.user.id,
-    );
+    try {
+      const contactIds = await this.chatService.fetchUserContactUserIds(
+        socket.user.id,
+      );
 
-    contactIds.forEach((contactId) => {
-      socket
-        .to(this.chatService.getRoomName(contactId))
-        .emit('socket_disconnected', {
-          socketId: socket.id,
-          userId: socket.user.id,
-        });
-    });
+      contactIds.forEach((contactId) => {
+        socket
+          .to(this.chatService.getRoomName(contactId))
+          .emit('socket_disconnected', {
+            socketId: socket.id,
+            userId: socket.user.id,
+          });
+      });
+    } catch (error) {
+      //
+    }
   }
 }
