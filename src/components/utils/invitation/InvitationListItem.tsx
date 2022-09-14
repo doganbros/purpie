@@ -23,13 +23,13 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
     let invitationMessage;
     if (invitation.zone) {
       invitationType = InvitationType.ZONE;
-      invitationMessage = `${invitation.createdBy.firstName} invited you to ${invitation.zone.name} zone.`;
+      invitationMessage = `${invitation.createdBy.fullName} invited you to ${invitation.zone.name} zone.`;
     } else if (invitation.channel) {
       invitationType = InvitationType.CHANNEL;
-      invitationMessage = `${invitation.createdBy.firstName} invited you to ${invitation.channel.name} channel.`;
+      invitationMessage = `${invitation.createdBy.fullName} invited you to ${invitation.channel.name} channel.`;
     } else {
       invitationType = InvitationType.CONTACT;
-      invitationMessage = `${invitation.createdBy.firstName} wants to invite you to as a contact.`;
+      invitationMessage = `${invitation.createdBy.fullName} wants to invite you to as a contact.`;
     }
     return { type: invitationType, message: invitationMessage };
   };
@@ -55,11 +55,11 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
         <Box direction="row" align="center" gap="small">
           <InitialsAvatar
             id={invitation.createdBy.id}
-            value={`${invitation.createdBy.firstName} ${invitation.createdBy.lastName}`}
+            value={invitation.createdBy.fullName}
           />
           <Box>
             <Text size="small" weight={500} color="#202631">
-              {`${invitation.createdBy.firstName} ${invitation.createdBy.lastName}`}
+              {invitation.createdBy.fullName}
             </Text>
             <Text size="10px" color="status-disabled">
               @{invitation.createdBy.userName}
