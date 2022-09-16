@@ -15,6 +15,7 @@ export const theme: typeof grommet = deepMerge(base, {
       'status-unkown-light': '#E4E9F2',
       'status-info': '#16A8DE',
       blue: '#0091FF',
+      dark: '#202631',
     },
     drop: {
       background: 'white',

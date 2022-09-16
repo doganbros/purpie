@@ -1,16 +1,7 @@
 import React, { FC, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Box,
-  Button,
-  Form,
-  FormField,
-  Image,
-  Main,
-  Text,
-  TextInput,
-} from 'grommet';
+import { Box, Form, FormField, Image, Main, Text, TextInput } from 'grommet';
 import { AppState } from '../../store/reducers/root.reducer';
 import Logo from '../../assets/octopus-logo/logo-color.svg';
 import OctopusText from '../../assets/octopus-logo/octopus-text-2.png';
@@ -20,6 +11,7 @@ import { useResponsive } from '../../hooks/useResponsive';
 import { FormSubmitEvent } from '../../models/form-submit-event';
 import { initializeUserAction } from '../../store/actions/auth.action';
 import { RegisterPayload } from '../../store/types/auth.types';
+import AuthFormButton from '../../components/auth/AuthFormButton';
 
 const InitializeUser: FC = () => {
   const {
@@ -113,8 +105,7 @@ const InitializeUser: FC = () => {
             >
               <TextInput id="password1Input" name="password1" type="password" />
             </FormField>
-            <Button
-              fill="horizontal"
+            <AuthFormButton
               primary
               margin={{ top: 'medium' }}
               disabled={loading}
