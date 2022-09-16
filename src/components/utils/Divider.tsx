@@ -6,12 +6,18 @@ interface Props {
   dashed?: boolean;
   color?: string;
   size?: string;
+  width?: string;
 }
 
-const Divider: FC<Props> = ({ dashed, color = 'light-3', size = '3px' }) => (
+const Divider: FC<Props> = ({
+  dashed,
+  color = 'light-3',
+  size = '3px',
+  width = '100%',
+}) => (
   <Box
     height={size}
-    fill="horizontal"
+    width={width}
     background={
       dashed
         ? `linear-gradient(to right, ${theme.global?.colors?.[color]} 50%, rgba(255, 255, 255, 0) 0%) top/30px 1px repeat-x`
