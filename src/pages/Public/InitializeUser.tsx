@@ -12,6 +12,7 @@ import { FormSubmitEvent } from '../../models/form-submit-event';
 import { initializeUserAction } from '../../store/actions/auth.action';
 import { RegisterPayload } from '../../store/types/auth.types';
 import AuthFormButton from '../../components/auth/AuthFormButton';
+import { USER_NAME_CONSTRAINT } from '../../helpers/constants';
 
 const InitializeUser: FC = () => {
   const {
@@ -72,7 +73,11 @@ const InitializeUser: FC = () => {
             </FormField>
             <FormField
               label="USERNAME"
-              validate={validators.required()}
+              validate={[
+                validators.required(),
+                validators.minLength(6),
+                validators.matches(USER_NAME_CONSTRAINT, 'Invalid Username'),
+              ]}
               name="userName"
               htmlFor="userNameInput"
             >
