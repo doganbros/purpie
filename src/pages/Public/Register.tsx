@@ -52,7 +52,7 @@ const Register: FC = () => {
             label="FULL NAME"
             name="fullName"
             htmlFor="fullNameInput"
-            validate={validators.required()}
+            validate={validators.required('Full name')}
           >
             <TextInput id="fullNameInput" name="fullName" />
           </FormField>
@@ -61,16 +61,19 @@ const Register: FC = () => {
             name="email"
             htmlFor="emailInput"
             label="EMAIL"
-            validate={[validators.required(), validators.email()]}
+            validate={[validators.required('Email'), validators.email()]}
           >
-            <TextInput id="emailInput" name="email" type="email" />
+            <TextInput id="emailInput" name="email" />
           </FormField>
 
           <FormField
             name="password"
             htmlFor="passwordInput"
             label="PASSWORD"
-            validate={[validators.required(), validators.minLength(6)]}
+            validate={[
+              validators.required('Password'),
+              validators.minLength('Password', 6),
+            ]}
           >
             <TextInput id="passwordInput" name="password" type="password" />
           </FormField>
@@ -79,8 +82,8 @@ const Register: FC = () => {
             htmlFor="password1Input"
             label="CONFIRM PASSWORD"
             validate={[
-              validators.required(),
-              validators.equalsField('password', 'Password'),
+              validators.required('Confirm password'),
+              validators.equalsField('password', 'Passwords'),
             ]}
           >
             <TextInput id="password1Input" name="password1" type="password" />

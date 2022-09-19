@@ -61,7 +61,7 @@ const ForgotPassword: FC = () => {
             name="email"
             htmlFor="emailInput"
             label="EMAIL"
-            validate={[validators.required(), validators.email()]}
+            validate={[validators.required('Email'), validators.email()]}
           >
             <TextInput id="emailInput" name="email" type="email" />
           </FormField>

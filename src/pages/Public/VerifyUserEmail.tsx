@@ -99,7 +99,7 @@ const VerifyUserEmail: FC = () => {
               )
             }
             validate={[
-              validators.required(),
+              validators.required('User name'),
               validators.matches(USER_NAME_CONSTRAINT, 'User Name is invalid'),
             ]}
             contentProps={
