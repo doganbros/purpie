@@ -67,7 +67,7 @@ const Login: FC = () => {
             name="emailOrUserName"
             htmlFor="emailOrUserNameInput"
             label="EMAIL / USERNAME"
-            validate={[validators.required()]}
+            validate={[validators.required('Email / Username')]}
           >
             <TextInput id="emailOrUserNameInput" name="emailOrUserName" />
           </FormField>
@@ -75,7 +75,10 @@ const Login: FC = () => {
             name="password"
             htmlFor="passwordInput"
             label="PASSWORD"
-            validate={[validators.required(), validators.minLength(6)]}
+            validate={[
+              validators.required('Password'),
+              validators.minLength('Password', 6),
+            ]}
           >
             <TextInput id="passwordInput" name="password" type="password" />
           </FormField>

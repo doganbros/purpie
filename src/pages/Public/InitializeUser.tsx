@@ -12,6 +12,7 @@ import { FormSubmitEvent } from '../../models/form-submit-event';
 import { initializeUserAction } from '../../store/actions/auth.action';
 import { RegisterPayload } from '../../store/types/auth.types';
 import AuthFormButton from '../../components/auth/AuthFormButton';
+import { USER_NAME_CONSTRAINT } from '../../helpers/constants';
 
 const InitializeUser: FC = () => {
   const {
@@ -64,7 +65,7 @@ const InitializeUser: FC = () => {
           <Form onSubmit={handleSubmit}>
             <FormField
               label="FULL NAME"
-              validate={validators.required()}
+              validate={validators.required('Full name')}
               name="fullName"
               htmlFor="fullNameInput"
             >
@@ -72,7 +73,11 @@ const InitializeUser: FC = () => {
             </FormField>
             <FormField
               label="USERNAME"
-              validate={validators.required()}
+              validate={[
+                validators.required('User name'),
+                validators.minLength('Username', 6),
+                validators.matches(USER_NAME_CONSTRAINT, 'Invalid Username'),
+              ]}
               name="userName"
               htmlFor="userNameInput"
             >
@@ -82,7 +87,7 @@ const InitializeUser: FC = () => {
               name="email"
               htmlFor="emailInput"
               label="EMAIL"
-              validate={[validators.required(), validators.email()]}
+              validate={[validators.required('Email'), validators.email()]}
             >
               <TextInput id="emailInput" name="email" type="email" />
             </FormField>
@@ -90,7 +95,10 @@ const InitializeUser: FC = () => {
               label="PASSWORD"
               name="password"
               htmlFor="passwordInput"
-              validate={[validators.required(), validators.minLength(6)]}
+              validate={[
+                validators.required('Password'),
+                validators.minLength('Password', 6),
+              ]}
             >
               <TextInput id="passwordInput" name="password" type="password" />
             </FormField>
@@ -99,7 +107,7 @@ const InitializeUser: FC = () => {
               name="password1"
               htmlFor="password1Input"
               validate={[
-                validators.required(),
+                validators.required('Confirm password'),
                 validators.equalsField('password', 'password'),
               ]}
             >

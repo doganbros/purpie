@@ -64,7 +64,10 @@ const ResetPassword: FC = () => {
             name="password"
             htmlFor="passwordInput"
             label="Password"
-            validate={[validators.required(), validators.minLength(6)]}
+            validate={[
+              validators.required('Password'),
+              validators.minLength('Password', 6),
+            ]}
           >
             <TextInput id="passwordInput" name="password" type="password" />
           </FormField>
@@ -73,7 +76,7 @@ const ResetPassword: FC = () => {
             htmlFor="password1Input"
             label="Confirm Password"
             validate={[
-              validators.required(),
+              validators.required('Confirm password'),
               validators.equalsField('password', 'Password'),
             ]}
           >
