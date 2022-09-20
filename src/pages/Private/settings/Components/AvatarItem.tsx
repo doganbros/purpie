@@ -2,7 +2,7 @@
 import React, { FC } from 'react';
 import { Avatar, Box, Button, Text } from 'grommet';
 import { Edit } from 'grommet-icons';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import ExtendedBox from '../../../../components/utils/ExtendedBox';
 import { AppState } from '../../../../store/reducers/root.reducer';
 import {
