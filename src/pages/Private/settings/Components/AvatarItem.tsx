@@ -5,12 +5,10 @@ import { Edit } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import ExtendedBox from '../../../../components/utils/ExtendedBox';
 import { AppState } from '../../../../store/reducers/root.reducer';
-import { showProfilePic } from '../../../../store/services/auth.service';
 import {
   REACT_APP_API_VERSION,
   REACT_APP_SERVER_HOST,
 } from '../../../../config/http';
-import { getProfilePicture } from '../../../../store/actions/auth.action';
 
 export const AvatarItem: FC<{
   label: string;
@@ -21,7 +19,6 @@ export const AvatarItem: FC<{
   const {
     auth: { user },
   } = useSelector((state: AppState) => state);
-  const dispatch = useDispatch();
   return (
     <Box direction="row">
       <ExtendedBox align="end" justify="center" position="relative" top="-10px">
