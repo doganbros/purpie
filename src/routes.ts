@@ -1,11 +1,12 @@
 import { nanoid } from 'nanoid';
 import { RouteComponentProps } from 'react-router-dom';
 import Channels from './pages/Private/channels/Channels';
+import Contacts from './pages/Private/contacts/Contacts';
 import Saved from './pages/Private/saved/Saved';
 import Search from './pages/Private/search/Search';
 import Settings from './pages/Private/settings/Settings';
-import Settings2 from './pages/Private/settings/Settings2';
 import Timeline from './pages/Private/timeline/Timeline';
+import User from './pages/Private/user/User';
 import Video from './pages/Private/video/Video';
 import ForgotPassword from './pages/Public/ForgotPassword';
 import Login from './pages/Public/Login';
@@ -52,12 +53,6 @@ export const publicRoutes: Array<AppRoute> = [
   },
   {
     id: nanoid(),
-    path: '/reset-password/:token',
-    component: ResetPassword,
-    description: 'User resets after redirected from email',
-  },
-  {
-    id: nanoid(),
     path: '/verify-email-info/:userId',
     component: VerifyUserEmailInfo,
     description: 'User is asked to verify email',
@@ -99,7 +94,19 @@ export const privateRoutes: Array<AppRoute> = [
     id: nanoid(),
     path: '/search/:scope/:value',
     component: Search,
-    description: 'User views a search results',
+    description: 'User views search results',
+  },
+  {
+    id: nanoid(),
+    path: '/contacts',
+    component: Contacts,
+    description: 'User views contacts list',
+  },
+  {
+    id: nanoid(),
+    path: '/user/:userName',
+    component: User,
+    description: 'User view a profile',
   },
   {
     id: nanoid(),
@@ -109,8 +116,8 @@ export const privateRoutes: Array<AppRoute> = [
   },
   {
     id: nanoid(),
-    path: '/settings2',
-    component: Settings2,
-    description: 'Settings',
+    path: '/reset-password/:token',
+    component: ResetPassword,
+    description: 'User resets after redirected from email',
   },
 ];

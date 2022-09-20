@@ -1,16 +1,16 @@
 import React, { FC, useContext, useState } from 'react';
-import { Avatar, Box, DropButton, ResponsiveContext, Text } from 'grommet';
-import { Add, SettingsOption, User } from 'grommet-icons';
+import { Box, DropButton, ResponsiveContext, Text } from 'grommet';
+import { Add, SettingsOption } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
-import { getZoneAvatarSrc } from '../../../../pages/Private/timeline/data/zone-avatars';
 import { AppState } from '../../../../store/reducers/root.reducer';
 import Divider from './Divider';
-import ZoneSelectorListItem from './ZoneSelectorListItem';
 import { openCreateZoneLayerAction } from '../../../../store/actions/zone.action';
 import { openCreateChannelLayerAction } from '../../../../store/actions/channel.action';
 import { logoutAction } from '../../../../store/actions/auth.action';
+import InitialsAvatar from '../../../utils/InitialsAvatar';
+import ListButton from '../../../utils/ListButton';
 
 const ZoneSelector: FC = () => {
   const {
@@ -20,8 +20,8 @@ const ZoneSelector: FC = () => {
     },
     auth: { user },
   } = useSelector((state: AppState) => state);
-  const history = useHistory();
   const dispatch = useDispatch();
+  const history = useHistory();
   const size = useContext(ResponsiveContext);
   const [hover, setHover] = useState(false);
   const [open, setOpen] = useState(false);
@@ -47,34 +47,44 @@ const ZoneSelector: FC = () => {
         dropAlign={{ left: 'left', top: 'bottom' }}
         dropContent={
           <Box width={{ min: '250px' }}>
-            <ZoneSelectorListItem
+            <ListButton
               selected={!selectedUserZone}
               onClick={() => {
                 navigateToSubdomain();
               }}
               leftIcon={
-                <Avatar background="accent-4" size="small">
-                  <User size="small" />
-                </Avatar>
+                user && (
+                  <InitialsAvatar
+                    id={user.id}
+                    value={`${user.firstName} ${user.lastName}`}
+                    size="small"
+                    textProps={{ size: 'xsmall', weight: 'normal' }}
+                  />
+                )
               }
               label={`${user?.firstName} ${user?.lastName}`}
             />
             {userZones &&
               userZones.map((z) => (
-                <ZoneSelectorListItem
+                <ListButton
                   selected={selectedUserZone?.zone.id === z.zone.id}
                   onClick={() => {
                     navigateToSubdomain(z.zone.subdomain);
                   }}
                   leftIcon={
-                    <Avatar size="small" src={getZoneAvatarSrc(z.zone.id)} />
+                    <InitialsAvatar
+                      id={z.zone.id}
+                      value={z.zone.name}
+                      size="small"
+                      textProps={{ size: 'xsmall', weight: 'normal' }}
+                    />
                   }
                   key={z.zone.id}
                   label={z.zone.name}
                 />
               ))}
             <Divider />
-            <ZoneSelectorListItem
+            <ListButton
               onClick={() => {
                 setOpen(false);
                 dispatch(openCreateChannelLayerAction());
@@ -82,7 +92,7 @@ const ZoneSelector: FC = () => {
               label="Create Channel"
               rightIcon={<Add size="small" color="black" />}
             />
-            <ZoneSelectorListItem
+            <ListButton
               onClick={() => {
                 setOpen(false);
                 dispatch(openCreateZoneLayerAction());
@@ -91,13 +101,13 @@ const ZoneSelector: FC = () => {
               rightIcon={<Add size="small" color="black" />}
             />
             <Divider />
-            <ZoneSelectorListItem
-              onClick={() => history.push('/settings')}
+            <ListButton
               label="Settings"
+              onClick={() => history.push('/settings')}
               rightIcon={<SettingsOption size="small" color="black" />}
             />
             <Divider />
-            <ZoneSelectorListItem
+            <ListButton
               onClick={() => dispatch(logoutAction())}
               label="Sign Out"
             />
@@ -124,14 +134,17 @@ const ZoneSelector: FC = () => {
             elevation={hover ? 'indigo' : 'none'}
           >
             {selectedUserZone ? (
-              <Avatar
-                size="medium"
-                src={getZoneAvatarSrc(selectedUserZone.zone.id)}
+              <InitialsAvatar
+                id={selectedUserZone.zone.id}
+                value={selectedUserZone.zone.name}
               />
             ) : (
-              <Avatar background="accent-4" size="medium">
-                <User />
-              </Avatar>
+              user && (
+                <InitialsAvatar
+                  id={user.id}
+                  value={`${user.firstName} ${user.lastName}`}
+                />
+              )
             )}
             <Box align="center">
               <Text

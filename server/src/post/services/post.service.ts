@@ -3,10 +3,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { deleteObject } from 'config/s3-storage';
 import dayjs from 'dayjs';
 import { Contact } from 'entities/Contact.entity';
+import { FeaturedPost } from 'entities/FeaturedPost.entity';
+import { Playlist } from 'entities/Playlist.entity';
 import { Post } from 'entities/Post.entity';
 import { PostComment } from 'entities/PostComment.entity';
 import { PostCommentLike } from 'entities/PostCommentLike.entity';
@@ -28,6 +31,7 @@ import { EditPostDto } from '../dto/edit-post.dto';
 import { ListPostFeedQuery } from '../dto/list-post-feed.query';
 import { PostLikeQuery } from '../dto/post-like.query';
 import { VideoViewStats } from '../dto/video-view-stats.dto';
+import { PostEvent } from '../listeners/post-events';
 
 const {
   S3_VIDEO_BUCKET_NAME = '',
@@ -40,6 +44,10 @@ export class PostService {
   constructor(
     @InjectRepository(PostView)
     private postViewRepository: Repository<PostView>,
+    @InjectRepository(Playlist)
+    private playlistRepository: Repository<Playlist>,
+    @InjectRepository(FeaturedPost)
+    private featuredPostRepository: Repository<FeaturedPost>,
     @InjectRepository(Post) private postRepository: Repository<Post>,
     @InjectRepository(PostLike)
     private postLikeRepository: Repository<PostLike>,
@@ -51,6 +59,7 @@ export class PostService {
     private savedPostRepository: Repository<SavedPost>,
     @InjectRepository(PostVideo)
     private postVideoRepository: Repository<PostVideo>,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   getOnePost(userId: number, identity: number | string, preview = false) {
@@ -140,8 +149,8 @@ export class PostService {
       .getOne();
   }
 
-  createPostComment(userId: number, info: CreatePostCommentDto) {
-    return this.postCommentRepository
+  async createPostComment(userId: number, info: CreatePostCommentDto) {
+    const postComment = await this.postCommentRepository
       .create({
         comment: info.comment,
         userId,
@@ -149,26 +158,63 @@ export class PostService {
         postId: info.postId,
       })
       .save();
+
+    const mentions = info.comment
+      .match(/@[a-z0-9_]{2,25}/g)
+      ?.map((v) => v.slice(1));
+
+    if (mentions?.length) {
+      for (const mentionUserName of mentions) {
+        this.eventEmitter.emit(PostEvent.postCommentMentionNotification, {
+          postComment,
+          mentionUserName,
+        });
+      }
+    }
+
+    if (info.parentId) {
+      this.eventEmitter.emit(PostEvent.postCommentReplyNotification, {
+        postComment,
+        parentId: info.parentId,
+      });
+    } else {
+      this.eventEmitter.emit(PostEvent.postCommentNotification, {
+        postComment,
+      });
+    }
+
+    return postComment;
   }
 
-  createPostLike(userId: number, info: CreatePostLikeDto) {
-    return this.postLikeRepository
+  async createPostLike(userId: number, info: CreatePostLikeDto) {
+    const positive = info.type !== 'dislike';
+    const postLike = await this.postLikeRepository
       .create({
         userId,
+        positive,
         postId: info.postId,
-        positive: info.type !== 'dislike',
       })
       .save();
+
+    this.eventEmitter.emit(PostEvent.postLikeNotification, { postLike });
+
+    return postLike;
   }
 
-  createPostCommentLike(userId: number, info: CreatePostCommentLikeDto) {
-    return this.postCommentLikeRepository
+  async createPostCommentLike(userId: number, info: CreatePostCommentLikeDto) {
+    const postCommentLike = await this.postCommentLikeRepository
       .create({
         userId,
         postId: info.postId,
         commentId: info.postCommentId,
       })
       .save();
+
+    this.eventEmitter.emit(PostEvent.postCommentLikeNotification, {
+      postCommentLike,
+    });
+
+    return postCommentLike;
   }
 
   getPostCommentLikeCount(postId: number, commentId: number) {
@@ -647,6 +693,25 @@ export class PostService {
       builder.addOrderBy('search_rank', 'DESC');
     }
 
+    if (query.playlistId) {
+      builder.andWhere(
+        new Brackets((qb) => {
+          const playlistQb = this.playlistRepository
+            .createQueryBuilder('playlist')
+            .select('playlist.id')
+            .innerJoin('playlist.playlistItems', 'playlistItems')
+            .where('playlist.id = :playlistId')
+            .andWhere('playlistItems.postId = post.id')
+            .limit(1)
+            .getQuery();
+
+          qb.where(`EXISTS (${playlistQb})`, {
+            playlistId: Number(query.playlistId),
+          });
+        }),
+      );
+    }
+
     return builder;
   }
 
@@ -823,6 +888,27 @@ export class PostService {
     return this.basePost(query, userId)
       .andWhere('post.public = true')
       .paginate(query);
+  }
+
+  async getFeaturedPost(userId: number, currentUserId: number) {
+    const featuredPost = await this.featuredPostRepository
+      .createQueryBuilder('featuredPost')
+      .select(['featuredPost.id', 'featuredPost.createdOn'])
+      .innerJoin('featuredPost.post', 'post')
+      .where('featuredPost.userId = :userId', { userId })
+      .getOne();
+
+    if (!featuredPost) return null;
+
+    const result = { ...featuredPost };
+
+    const post = await this.getPostById(currentUserId, featuredPost.postId);
+
+    if (!post) return null;
+
+    result.post = post;
+
+    return post;
   }
 
   editPost(postId: number, userId: number, payload: EditPostDto) {

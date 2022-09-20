@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
-import PostGridItem from '../../../components/utils/PostGridItem/PostGridItem';
+import PostGridItem from '../../../components/post/PostGridItem';
 import { useResponsive } from '../../../hooks/useResponsive';
 
 import { AppState } from '../../../store/reducers/root.reducer';

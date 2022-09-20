@@ -47,6 +47,10 @@ import { EditPostDto } from '../dto/edit-post.dto';
 import { VideoViewStats } from '../dto/video-view-stats.dto';
 import { CreatePostCommentLikeDto } from '../dto/create-post-comment-like.dto';
 import { PostLikeQuery } from '../dto/post-like.query';
+import { PlaylistService } from '../services/playlist.service';
+import { CreatePlaylistDto } from '../dto/create-playlist.dto';
+import { AddPlaylistItemDto } from '../dto/add-playlist-item.dto';
+import { UpdatePlaylistDto } from '../dto/update-playlist.dto';
 
 const {
   S3_VIDEO_POST_DIR = '',
@@ -57,7 +61,10 @@ const {
 @Controller({ version: '1', path: 'post' })
 @ApiTags('post')
 export class PostController {
-  constructor(private readonly postService: PostService) {}
+  constructor(
+    private readonly postService: PostService,
+    private readonly playlistService: PlaylistService,
+  ) {}
 
   async validatePost(userId: number, postId: number) {
     const post = await this.postService.getOnePost(userId, postId, true);
@@ -657,5 +664,90 @@ export class PostController {
     await this.postService.removePostVideo(postId, user.id, videoName);
 
     return 'OK';
+  }
+
+  @Get('playlist/list/user')
+  @IsAuthenticated()
+  getUserPlaylists(
+    @CurrentUser() user: UserTokenPayload,
+    @Query() query: PaginationQuery,
+  ) {
+    return this.playlistService.getUserPlaylists(user.id, query);
+  }
+
+  @Get('playlist/list/user/:userId')
+  @IsAuthenticated()
+  getPublicUserPlaylists(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Query() query: PaginationQuery,
+  ) {
+    return this.playlistService.getPublicUserPlaylists(userId, query);
+  }
+
+  @Get('playlist/list/channel/:channelId')
+  @IsAuthenticated()
+  getChannelPlaylists(
+    @Query() query: PaginationQuery,
+    @Param('channelId', ParseIntPipe) channelId: number,
+  ) {
+    return this.playlistService.getChannelPlaylists(channelId, query);
+  }
+
+  @Post('playlist/create')
+  @IsAuthenticated()
+  createUserPlaylist(
+    @CurrentUser() user: UserTokenPayload,
+    @Body() info: CreatePlaylistDto,
+  ) {
+    return this.playlistService.createPlaylist(user.id, info);
+  }
+
+  @Put('playlist/update')
+  @IsAuthenticated()
+  updateUserPlaylist(
+    @CurrentUser() user: UserTokenPayload,
+    @Body() info: UpdatePlaylistDto,
+  ) {
+    return this.playlistService.updatePlaylist(user.id, info);
+  }
+
+  @Delete('playlist/remove/:playlistId')
+  @IsAuthenticated()
+  async removePlaylist(
+    @CurrentUser() user: UserTokenPayload,
+    @Param('playlistId', ParseIntPipe) playlistId: number,
+  ) {
+    await this.playlistService.removePlaylist(user.id, playlistId);
+
+    return 'OK';
+  }
+
+  @Post('playlist-item/add')
+  @IsAuthenticated()
+  addPlaylistItem(
+    @CurrentUser() user: UserTokenPayload,
+    @Body() info: AddPlaylistItemDto,
+  ) {
+    return this.playlistService.addPlaylistItem(user.id, info);
+  }
+
+  @Delete('playlist-item/remove/:playlistItemId')
+  @IsAuthenticated()
+  async removePlaylistItem(
+    @CurrentUser() user: UserTokenPayload,
+    @Param('playlistItemId', ParseIntPipe) playlistItemId: number,
+  ) {
+    await this.playlistService.removePlaylistItem(user.id, playlistItemId);
+
+    return 'OK';
+  }
+
+  @Get('featured/user/:userId')
+  @IsAuthenticated()
+  getFeaturedPost(
+    @CurrentUser() user: UserTokenPayload,
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
+    return this.postService.getFeaturedPost(userId, user.id);
   }
 }

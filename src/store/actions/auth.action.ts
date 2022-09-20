@@ -29,10 +29,17 @@ import {
   INITIALIZE_USER_REQUESTED,
   INITIALIZE_USER_SUCCESS,
   INITIALIZE_USER_FAILED,
+  CHANGE_PROFILE_INFO_FAILED,
+  CHANGE_PROFILE_INFO_SUCCESS,
+  CHANGE_PROFILE_INFO_REQUESTED,
+  SHOW_PROFILE_PICTURE_REQUESTED,
+  SHOW_PROFILE_PICTURE_FAILED,
+  SHOW_PROFILE_PICTURE_SUCCESS,
 } from '../constants/auth.constants';
 import * as AuthService from '../services/auth.service';
 import {
   AuthAction,
+  ChangeProfileInfo,
   LoginPayload,
   RegisterPayload,
   ResetPasswordPayload,
@@ -263,6 +270,46 @@ export const initializeUserAction = (user: RegisterPayload): AuthAction => {
     } catch (err: any) {
       dispatch({
         type: INITIALIZE_USER_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const changeProfileInfo = (user: ChangeProfileInfo): AuthAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: CHANGE_PROFILE_INFO_REQUESTED,
+    });
+    try {
+      const payload = await AuthService.changeProfileService(user);
+      dispatch({
+        type: CHANGE_PROFILE_INFO_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: CHANGE_PROFILE_INFO_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const getProfilePicture = (profileString: string): AuthAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: SHOW_PROFILE_PICTURE_REQUESTED,
+    });
+    try {
+      const payload = await AuthService.showProfilePic(profileString);
+      dispatch({
+        type: SHOW_PROFILE_PICTURE_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: SHOW_PROFILE_PICTURE_FAILED,
         payload: err?.response?.data,
       });
     }

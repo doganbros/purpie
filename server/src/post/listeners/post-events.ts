@@ -4,4 +4,5 @@ export enum PostEvent {
   postCommentNotification = 'post.comment.notification',
   postCommentLikeNotification = 'post.comment.like.notification',
   postCommentReplyNotification = 'post.comment.reply.notification',
+  postCommentMentionNotification = 'post.comment.mention.notification',
 }

@@ -1,9 +1,8 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { Box, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
-  getUserChannelsAction,
   setSelectedChannelAction,
   unsetSelectedChannelAction,
 } from '../../../store/actions/channel.action';
@@ -15,10 +14,6 @@ const ChannelList: FC = () => {
     channel: { selectedChannel, userChannels },
     zone: { selectedUserZone },
   } = useSelector((state: AppState) => state);
-
-  useEffect(() => {
-    dispatch(getUserChannelsAction());
-  }, []);
 
   const userChannelsFiltered: typeof userChannels = selectedUserZone
     ? {

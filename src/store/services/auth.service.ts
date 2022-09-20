@@ -6,6 +6,7 @@ import {
   ResetPasswordPayload,
   User,
   VerifyEmailPayload,
+  ChangeProfileInfo,
 } from '../types/auth.types';
 
 export const login = async (user: LoginPayload): Promise<User> =>
@@ -74,3 +75,9 @@ export const authenticateWithThirdPartyCode = async (
 
 export const initializeUser = (user: RegisterPayload): Promise<User> =>
   http.post('auth/initial-user', user).then((res) => res.data);
+
+export const changeProfileService = (user: ChangeProfileInfo): Promise<User> =>
+  http.put('user/profile', user).then((res) => res.data);
+
+export const showProfilePic = (photoFile: string): Promise<string> =>
+  http.get(`user/display-photo/${photoFile}`).then((res) => res.data);

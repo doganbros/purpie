@@ -1,14 +1,28 @@
-import React, { FC, useState } from 'react';
-import { Box, BoxExtendedProps } from 'grommet';
+import React, { FC, ReactNode, useState } from 'react';
+import { Box, BoxExtendedProps, Text, TextExtendedProps } from 'grommet';
 
-const ListButton: FC<BoxExtendedProps & { selected?: boolean }> = (props) => {
+interface ListButtonProps extends BoxExtendedProps {
+  label: string;
+  rightIcon?: ReactNode;
+  leftIcon?: ReactNode;
+  selected?: boolean;
+  textProps?: TextExtendedProps;
+}
+
+const ListButton: FC<ListButtonProps> = ({
+  label,
+  rightIcon,
+  leftIcon,
+  selected,
+  textProps,
+  ...props
+}) => {
   const [hover, setHover] = useState(false);
   const setBackgroundColor = () => {
     if (hover) return 'status-disabled-light';
-    if (props.selected) return 'brand';
+    if (selected) return 'brand';
     return 'white';
   };
-
   return (
     <Box
       fill
@@ -21,7 +35,22 @@ const ListButton: FC<BoxExtendedProps & { selected?: boolean }> = (props) => {
       }}
       pad="small"
       {...props}
-    />
+    >
+      <Box fill direction="row" align="center" gap="small">
+        {leftIcon}
+        <Box flex={{ grow: 1 }}>
+          <Text
+            weight={selected ? 'bold' : 'normal'}
+            size="small"
+            color={selected && !hover ? 'white' : 'black'}
+            {...textProps}
+          >
+            {label}
+          </Text>
+        </Box>
+        {rightIcon}
+      </Box>
+    </Box>
   );
 };
 

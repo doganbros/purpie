@@ -58,6 +58,11 @@ import {
   REMOVE_POST_COMMENT_LIKE_REQUESTED,
   REMOVE_POST_COMMENT_LIKE_SUCCESS,
   REMOVE_POST_COMMENT_LIKE_FAILED,
+  UPDATE_POST_DETAIL_REQUESTED,
+  UPDATE_POST_DETAIL_SUCCESS,
+  UPDATE_POST_DETAIL_FAILED,
+  REMOVE_POST_SUCCESS,
+  REMOVE_POST_FAILED,
 } from '../constants/post.constants';
 
 import * as PostService from '../services/post.service';
@@ -70,6 +75,23 @@ import {
   PostAction,
   PostSearchParams,
 } from '../types/post.types';
+
+export const removePostAction = (payload: { postId: number }): PostAction => {
+  return async (dispatch) => {
+    try {
+      await PostService.removePost(payload.postId);
+      dispatch({
+        type: REMOVE_POST_SUCCESS,
+        payload,
+      });
+    } catch (err) {
+      dispatch({
+        type: REMOVE_POST_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
 
 export const getPublicFeedAction = (payload: FeedPayload): PostAction => {
   return async (dispatch) => {
@@ -385,6 +407,39 @@ export const createPostCommentAction = (
     } catch (err: any) {
       dispatch({
         type: CREATE_POST_COMMENT_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const updatePostAction = (
+  postId: number,
+  title: string,
+  description: string
+): PostAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: UPDATE_POST_DETAIL_REQUESTED,
+      payload: {
+        postId,
+        title,
+        description,
+      },
+    });
+    try {
+      await PostService.updatePostDetail(postId, title, description);
+      dispatch({
+        type: UPDATE_POST_DETAIL_SUCCESS,
+        payload: {
+          postId,
+          title,
+          description,
+        },
+      });
+    } catch (err) {
+      dispatch({
+        type: UPDATE_POST_DETAIL_FAILED,
         payload: err?.reponse?.data,
       });
     }

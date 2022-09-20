@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import {
   Body,
   Controller,
+  ForbiddenException,
   Headers,
   HttpCode,
   HttpStatus,
@@ -126,6 +127,12 @@ export class AuthController {
       throw new NotFoundException(
         'Error user name or password',
         'ERROR_USERNAME_OR_PASSWORD',
+      );
+
+    if (!user.password)
+      throw new ForbiddenException(
+        'User did not register with password',
+        'USER_DIDNT_REGISTER_WITH_PASSWORD',
       );
 
     const validPassword = await bcrypt.compare(

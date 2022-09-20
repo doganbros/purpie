@@ -4,9 +4,9 @@ import React, { FC } from 'react';
 import ExtendedBox from '../../../utils/ExtendedBox';
 import Logo from '../../../../assets/octopus-logo/logo-white.svg';
 import Sidebar from '../Sidebar';
-import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import GradientScroll from '../../../utils/GradientScroll';
 import Divider from '../../../utils/Divider';
+import ZoneSelector from '../ZoneSelector/ZoneSelector';
 
 interface Props {
   topComponent?: React.ReactNode;
@@ -29,7 +29,7 @@ const Desktop: FC<Props> = ({
   return (
     <Box width="100vw" height="100vh" elevation="xlarge" round="large">
       <ExtendedBox
-        background="brand-2"
+        background="brand-alt"
         position="fixed"
         top="0"
         bottom="0"
@@ -47,7 +47,7 @@ const Desktop: FC<Props> = ({
             <Box align="center">
               <Avatar
                 alignSelf="center"
-                size="large"
+                size="90px"
                 round="medium"
                 src={Logo}
               />

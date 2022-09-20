@@ -1,7 +1,7 @@
 import { Box, CheckBox, Form, FormField, InfiniteScroll, Text } from 'grommet';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
 import UserSearchItem from '../../../components/utils/UserSearchItem';
@@ -19,6 +19,7 @@ import SearchInput from './SearchInput';
 const ProfileSearch: FC = () => {
   const { value } = useParams<SearchParams>();
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const [options, setOptions] = useState<ProfileSearchOptions>({
     userContacts: false,
@@ -58,7 +59,10 @@ const ProfileSearch: FC = () => {
         }}
       >
         {(item: UserBasic) => (
-          <Box margin={{ vertical: 'xsmall' }}>
+          <Box
+            margin={{ vertical: 'xsmall' }}
+            onClick={() => history.push(`/user/${item.userName}`)}
+          >
             <UserSearchItem user={item} />
           </Box>
         )}

@@ -1,6 +1,7 @@
-import { IsIn, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsInt, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginationQuery } from 'types/PaginationQuery';
+import { Type } from 'class-transformer';
 
 export class ListPostFeedQuery extends PaginationQuery {
   @ApiProperty({
@@ -66,4 +67,10 @@ export class ListPostFeedQuery extends PaginationQuery {
   @IsOptional()
   @IsString()
   searchTerm: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  playlistId: number;
 }
