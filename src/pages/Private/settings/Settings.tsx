@@ -1,32 +1,15 @@
-/* eslint-disable no-unused-vars */
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import {
-  Box,
-  TextInput,
-  Text,
-  Avatar,
-  Accordion,
-  Select,
-  Button,
-} from 'grommet';
-import { CaretRightFill, Edit, FormEdit, Search } from 'grommet-icons';
+import { Box, TextInput, Text, Accordion, Select, Button } from 'grommet';
+import { CaretRightFill, Edit, Search } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import { useDebouncer } from '../../../hooks/useDebouncer';
-import ExtendedBox from '../../../components/utils/ExtendedBox';
 import ModifiedAccordionPanel from '../../../components/utils/ModifiedAccordionPanel';
 import Divider from '../../../components/layouts/PrivatePageLayout/ZoneSelector/Divider';
 import { AppState } from '../../../store/reducers/root.reducer';
-import { setSelectedChannelAction } from '../../../store/actions/channel.action';
 import { AvatarItem } from './Components/AvatarItem';
-import { navigateToSubdomain } from '../../../helpers/app-subdomain';
-import {
-  changeProfileInfo,
-  getProfilePicture,
-} from '../../../store/actions/auth.action';
-import { showProfilePic } from '../../../store/services/auth.service';
-import { http } from '../../../config/http';
+import { changeProfileInfo } from '../../../store/actions/auth.action';
 
 type SettingFormItem = {
   key: string;
@@ -69,8 +52,6 @@ const Settings: FC = () => {
   const [searchTextValue, setSearchTextValue] = useState<string>('');
   const [channelValue, setChannelValue] = useState<any>();
   const [zoneValue, setZoneValue] = useState<any>();
-  const [deneme, setDeneme] = useState<any>();
-  const [aaa, setAAA] = useState<any>();
   const history = useHistory();
   const {
     channel: { userChannels, selectedChannel },
@@ -87,12 +68,6 @@ const Settings: FC = () => {
   });
   const dispatch = useDispatch();
 
-  const filterChannel = (option: any) => {
-    const filteredChannel = userChannels.data.filter(
-      (item) => item.channel.name === option.props.label
-    );
-    return filteredChannel[0];
-  };
   const data: DataItemInterface[] = [
     {
       id: 0,
@@ -342,15 +317,6 @@ const Settings: FC = () => {
 
   const menuItems = data;
 
-  const userChannelsFiltered: typeof userChannels = selectedUserZone
-    ? {
-        ...userChannels,
-        data: userChannels.data.filter(
-          (c) => c.channel.zoneId === selectedUserZone.zone.id
-        ),
-      }
-    : userChannels;
-
   const userChannelsString = () => {
     const tempArray: Array<any> = [];
 
@@ -499,7 +465,6 @@ const Settings: FC = () => {
                         } else {
                           setZoneValue(option);
                         }
-                        setDeneme(option);
                       }}
                     />
                   </Box>
