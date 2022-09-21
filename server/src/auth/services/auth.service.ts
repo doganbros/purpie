@@ -37,6 +37,7 @@ const {
   AUTH_TOKEN_REFRESH_LIFE = '30d',
   REACT_APP_CLIENT_HOST = '',
   REACT_APP_SERVER_HOST = '',
+  NODE_ENV = '',
   VERIFICATION_TOKEN_SECRET = '',
 } = process.env;
 
@@ -117,13 +118,13 @@ export class AuthService {
       expires: dayjs().add(30, 'days').toDate(),
       domain: `.${new URL(REACT_APP_SERVER_HOST).hostname}`,
       httpOnly: true,
-      secure: true,
+      secure: NODE_ENV === 'production',
     });
     res.cookie('OCTOPUS_REFRESH_ACCESS_TOKEN', refreshToken, {
       expires: dayjs().add(30, 'days').toDate(),
       domain: `.${new URL(REACT_APP_SERVER_HOST).hostname}`,
       httpOnly: true,
-      secure: true,
+      secure: NODE_ENV === 'production',
     });
     return refreshTokenId;
   }
@@ -181,8 +182,7 @@ export class AuthService {
       .createQueryBuilder('user')
       .select([
         'user.id',
-        'user.firstName',
-        'user.lastName',
+        'user.fullName',
         'user.userName',
         'user.displayPhoto',
         'user.email',
@@ -193,16 +193,14 @@ export class AuthService {
   }
 
   async registerUser({
-    firstName,
-    lastName,
+    fullName,
     email,
     password: unhashedPassword,
   }: RegisterUserDto): Promise<UserBasicWithToken> {
     const password = await bcrypt.hash(unhashedPassword, 10);
 
     const user = this.userRepository.create({
-      firstName,
-      lastName,
+      fullName,
       email,
       password,
       userRoleCode: 'NORMAL',
@@ -213,8 +211,7 @@ export class AuthService {
 
   async setMailVerificationToken(user: User) {
     const userInfo = {
-      firstName: user.firstName,
-      lastName: user.lastName,
+      fullName: user.fullName,
       email: user.email,
       verificationType: MAIL_VERIFICATION_TYPE,
     };
@@ -354,8 +351,7 @@ export class AuthService {
     await user.save();
 
     return {
-      firstName: user.firstName,
-      lastName: user.lastName,
+      fullName: user.fullName,
       email: user.email,
     };
   }
@@ -363,8 +359,7 @@ export class AuthService {
   async initializeUser(info: InitializeUserDto, res: Response) {
     const user = await this.userRepository
       .create({
-        firstName: info.firstName,
-        lastName: info.lastName,
+        fullName: info.fullName,
         userName: info.userName,
         email: info.email,
         emailConfirmed: true,
@@ -381,8 +376,7 @@ export class AuthService {
 
       const userPayload: UserProfile = {
         id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        fullName: user.fullName,
         email: user.email,
         userName: user.userName,
         userRole: {
@@ -405,12 +399,11 @@ export class AuthService {
   }
 
   async sendAccountVerificationMail({
-    user: { firstName, lastName, email },
+    user: { fullName, email },
     token,
   }: UserBasicWithToken) {
     const context = {
-      firstName,
-      lastName,
+      fullName,
       link: `${REACT_APP_CLIENT_HOST}/verify-email/${token}`,
     };
     return this.mailService.sendMailByView(
@@ -422,12 +415,11 @@ export class AuthService {
   }
 
   async sendResetPasswordMail({
-    user: { firstName, lastName, email },
+    user: { fullName, email },
     token,
   }: UserBasicWithToken) {
     const context = {
-      firstName,
-      lastName,
+      fullName,
       link: `${REACT_APP_CLIENT_HOST}/reset-password/${token}`,
     };
     return this.mailService.sendMailByView(

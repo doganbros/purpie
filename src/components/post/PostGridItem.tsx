@@ -71,12 +71,10 @@ const PostGridItem: FC<PostGridItemProps> = ({
               >
                 <InitialsAvatar
                   id={post.createdBy.id}
-                  value={`${post.createdBy.firstName} ${post.createdBy.lastName} `}
+                  value={post.createdBy.fullName}
                 />
               </Box>
-              <Text color="status-disabled">
-                {post.createdBy?.firstName} {post.createdBy?.lastName}
-              </Text>
+              <Text color="status-disabled">{post.createdBy?.fullName}</Text>
             </Box>
             <Text color="status-disabled">
               {dayjs(post.createdOn).fromNow()}

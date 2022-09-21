@@ -2,7 +2,7 @@ import React, { FC, ReactNode, useState } from 'react';
 import { Box, BoxExtendedProps, Text, TextExtendedProps } from 'grommet';
 
 interface ListButtonProps extends BoxExtendedProps {
-  label: string;
+  label?: string;
   rightIcon?: ReactNode;
   leftIcon?: ReactNode;
   selected?: boolean;

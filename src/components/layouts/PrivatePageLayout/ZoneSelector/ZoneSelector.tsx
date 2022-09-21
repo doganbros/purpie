@@ -54,13 +54,13 @@ const ZoneSelector: FC = () => {
                 user && (
                   <InitialsAvatar
                     id={user.id}
-                    value={`${user.firstName} ${user.lastName}`}
+                    value={user.fullName}
                     size="small"
                     textProps={{ size: 'xsmall', weight: 'normal' }}
                   />
                 )
               }
-              label={`${user?.firstName} ${user?.lastName}`}
+              label={user?.fullName}
             />
             {userZones &&
               userZones.map((z) => (
@@ -136,12 +136,7 @@ const ZoneSelector: FC = () => {
                 value={selectedUserZone.zone.name}
               />
             ) : (
-              user && (
-                <InitialsAvatar
-                  id={user.id}
-                  value={`${user.firstName} ${user.lastName}`}
-                />
-              )
+              user && <InitialsAvatar id={user.id} value={user.fullName} />
             )}
             <Box align="center">
               <Text
@@ -150,9 +145,7 @@ const ZoneSelector: FC = () => {
                 size="xsmall"
                 color="white"
               >
-                {selectedUserZone
-                  ? selectedUserZone.zone.name
-                  : `${user?.firstName} ${user?.lastName}`}
+                {selectedUserZone ? selectedUserZone.zone.name : user?.fullName}
               </Text>
             </Box>
           </Box>

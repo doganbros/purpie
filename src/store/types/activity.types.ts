@@ -1,4 +1,10 @@
 import {
+  GET_INVITATION_RESPONSE_FAILED,
+  GET_INVITATION_RESPONSE_REQUESTED,
+  GET_INVITATION_RESPONSE_SUCCESS,
+  LIST_INVITATION_FAILED,
+  LIST_INVITATION_REQUESTED,
+  LIST_INVITATION_SUCCESS,
   ZONE_SUGGESTIONS_REQUESTED,
   ZONE_SUGGESTIONS_SUCCESS,
   ZONE_SUGGESTIONS_FAILED,
@@ -16,7 +22,8 @@ import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
 import { ChannelBasic } from './channel.types';
 import { PostComment, PostType } from './post.types';
-import { UserBasic } from './auth.types';
+import { UserBasic, User } from './auth.types';
+import { InvitationResponseType, InvitationType } from '../../models/utils';
 
 export interface ZoneSuggestionListItem {
   zone_id: number;
@@ -44,6 +51,41 @@ export interface ChannelSuggestionListItem {
   category_id: number;
   category_name: string;
   channel_membersCount: string;
+}
+
+export interface InvitationListItem {
+  id: number;
+  createdOn: Date;
+  createdBy: User;
+  zone: InvitationZone;
+  channel: InvitationChannel;
+  response?: InvitationResponseType;
+}
+
+export interface InvitationZone {
+  id: number;
+  createdOn: Date;
+  name: string;
+  displayPhoto: string;
+  subdomain: string;
+  description: string;
+  public: boolean;
+}
+
+export interface InvitationChannel {
+  id: number;
+  createdOn: Date;
+  name: string;
+  displayPhoto: string;
+  topic: string;
+  description: string;
+  public: boolean;
+}
+
+export interface InvitationResponse {
+  id: number;
+  response: InvitationResponseType;
+  type: InvitationType;
 }
 
 export interface NotificationListItem {
@@ -95,6 +137,14 @@ export interface ActivityState {
     loading: boolean;
     error: ResponseError | null;
   };
+  invitations: PaginatedResponse<InvitationListItem> & {
+    loading: boolean;
+    error: ResponseError | null;
+  };
+  responseInvitation: {
+    loading: boolean;
+    error: ResponseError | null;
+  };
   notification: PaginatedResponse<NotificationListItem> & {
     loading: boolean;
     error: ResponseError | null;
@@ -110,6 +160,9 @@ export type ActivityActionParams =
       type:
         | typeof ZONE_SUGGESTIONS_REQUESTED
         | typeof CHANNEL_SUGGESTIONS_REQUESTED
+        | typeof LIST_INVITATION_REQUESTED
+        | typeof GET_INVITATION_RESPONSE_REQUESTED
+        | typeof CHANNEL_SUGGESTIONS_REQUESTED
         | typeof NOTIFICATION_REQUESTED
         | typeof NOTIFICATION_COUNT_REQUESTED;
     }
@@ -120,6 +173,22 @@ export type ActivityActionParams =
   | {
       type: typeof CHANNEL_SUGGESTIONS_SUCCESS;
       payload: PaginatedResponse<ChannelSuggestionListItem>;
+    }
+  | {
+      type: typeof LIST_INVITATION_SUCCESS;
+      payload: PaginatedResponse<InvitationListItem>;
+    }
+  | {
+      type: typeof GET_INVITATION_RESPONSE_SUCCESS;
+      payload: InvitationResponse;
+    }
+  | {
+      type:
+        | typeof CHANNEL_SUGGESTIONS_FAILED
+        | typeof ZONE_SUGGESTIONS_FAILED
+        | typeof LIST_INVITATION_FAILED
+        | typeof GET_INVITATION_RESPONSE_FAILED;
+      payload: ResponseError;
     }
   | {
       type: typeof NOTIFICATION_SUCCESS;

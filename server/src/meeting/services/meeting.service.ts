@@ -144,8 +144,7 @@ export class MeetingService {
 
   async sendMeetingInfoMail(user: UserProfile, meeting: Post, creator = false) {
     const context = {
-      firstName: user.firstName,
-      lastName: user.lastName,
+      fullName: user.fullName,
       creator,
       meeting: {
         ...meeting,
@@ -289,7 +288,7 @@ export class MeetingService {
             .createHash('md5')
             .update(user.email)
             .digest('hex')}`,
-          name: `${user.firstName} ${user.lastName}`,
+          name: user.fullName,
           email: user.email,
           id: user.id,
           room: meeting.slug,
@@ -324,8 +323,7 @@ export class MeetingService {
         'meeting.liveStream',
         'createdBy.id',
         'createdBy.email',
-        'createdBy.firstName',
-        'createdBy.lastName',
+        'createdBy.fullName',
       ]);
   }
 
@@ -348,8 +346,7 @@ export class MeetingService {
         'user.id',
         'user.userName',
         'user.email',
-        'user.firstName',
-        'user.lastName',
+        'user.fullName',
       ])
       .innerJoin('meeting_log.meeting', 'meeting')
       .leftJoin('meeting_log.user', 'user')
@@ -457,8 +454,7 @@ export class MeetingService {
       description: meeting.description,
       type: 'user',
       user: {
-        firstName: meeting.createdBy.firstName,
-        lastName: meeting.createdBy.lastName,
+        fullName: meeting.createdBy.fullName,
         email: meeting.createdBy.email,
         userName: meeting.createdBy.userName,
         photoURL: meeting.createdBy.displayPhoto

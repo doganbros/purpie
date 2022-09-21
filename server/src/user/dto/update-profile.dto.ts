@@ -6,12 +6,7 @@ export class UpdateProfileDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  firstName: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  lastName: string;
+  fullName: string;
 
   @ApiProperty()
   @IsString()

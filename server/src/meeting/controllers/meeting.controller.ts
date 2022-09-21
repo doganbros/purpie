@@ -136,7 +136,12 @@ export class MeetingController {
       meeting.description,
     );
 
-    this.meetingService.sendMeetingInfoMail(user, meeting, true);
+    this.meetingService
+      .sendMeetingInfoMail(user, meeting, true)
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
 
     if (
       createMeetingInfo.invitationIds &&

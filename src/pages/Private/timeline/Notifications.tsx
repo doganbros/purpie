@@ -36,6 +36,7 @@ const Notifications: FC = () => {
     return <></>;
   };
 
+  console.log(notification);
   return (
     <Box gap="small">
       <Box direction="row" align="center" justify="between">

@@ -55,7 +55,7 @@ const VideoSettings: FC<VideoSettingsProps> = ({
           name="title"
           htmlFor="videoName"
           label="Video Name"
-          validate={[validators.required()]}
+          validate={[validators.required('Video name')]}
         >
           <TextInput
             id="videoName"
@@ -73,7 +73,7 @@ const VideoSettings: FC<VideoSettingsProps> = ({
           htmlFor="videoDescription"
           flex={{ shrink: 0 }}
           label="Video Description"
-          validate={[validators.required()]}
+          validate={[validators.required('Video description')]}
         >
           <TextArea
             id="videoDescription"

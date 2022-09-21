@@ -1,16 +1,7 @@
 import React, { FC, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Box,
-  Button,
-  Form,
-  FormField,
-  Image,
-  Main,
-  Text,
-  TextInput,
-} from 'grommet';
+import { Box, Form, FormField, Image, Main, Text, TextInput } from 'grommet';
 import { AppState } from '../../store/reducers/root.reducer';
 import Logo from '../../assets/octopus-logo/logo-color.svg';
 import OctopusText from '../../assets/octopus-logo/octopus-text-2.png';
@@ -20,6 +11,8 @@ import { useResponsive } from '../../hooks/useResponsive';
 import { FormSubmitEvent } from '../../models/form-submit-event';
 import { initializeUserAction } from '../../store/actions/auth.action';
 import { RegisterPayload } from '../../store/types/auth.types';
+import AuthFormButton from '../../components/auth/AuthFormButton';
+import { USER_NAME_CONSTRAINT } from '../../helpers/constants';
 
 const InitializeUser: FC = () => {
   const {
@@ -71,24 +64,20 @@ const InitializeUser: FC = () => {
           </Box>
           <Form onSubmit={handleSubmit}>
             <FormField
-              label="FIRST NAME"
-              validate={validators.required()}
-              name="firstName"
-              htmlFor="firstNameInput"
+              label="FULL NAME"
+              validate={validators.required('Full name')}
+              name="fullName"
+              htmlFor="fullNameInput"
             >
-              <TextInput name="firstName" />
-            </FormField>
-            <FormField
-              label="LAST NAME"
-              validate={validators.required()}
-              name="lastName"
-              htmlFor="lastNameInput"
-            >
-              <TextInput name="lastName" />
+              <TextInput name="fullName" />
             </FormField>
             <FormField
               label="USERNAME"
-              validate={validators.required()}
+              validate={[
+                validators.required('User name'),
+                validators.minLength('Username', 6),
+                validators.matches(USER_NAME_CONSTRAINT, 'Invalid Username'),
+              ]}
               name="userName"
               htmlFor="userNameInput"
             >
@@ -98,7 +87,7 @@ const InitializeUser: FC = () => {
               name="email"
               htmlFor="emailInput"
               label="EMAIL"
-              validate={[validators.required(), validators.email()]}
+              validate={[validators.required('Email'), validators.email()]}
             >
               <TextInput id="emailInput" name="email" type="email" />
             </FormField>
@@ -106,7 +95,10 @@ const InitializeUser: FC = () => {
               label="PASSWORD"
               name="password"
               htmlFor="passwordInput"
-              validate={[validators.required(), validators.minLength(6)]}
+              validate={[
+                validators.required('Password'),
+                validators.minLength('Password', 6),
+              ]}
             >
               <TextInput id="passwordInput" name="password" type="password" />
             </FormField>
@@ -115,14 +107,13 @@ const InitializeUser: FC = () => {
               name="password1"
               htmlFor="password1Input"
               validate={[
-                validators.required(),
+                validators.required('Confirm password'),
                 validators.equalsField('password', 'password'),
               ]}
             >
               <TextInput id="password1Input" name="password1" type="password" />
             </FormField>
-            <Button
-              fill="horizontal"
+            <AuthFormButton
               primary
               margin={{ top: 'medium' }}
               disabled={loading}

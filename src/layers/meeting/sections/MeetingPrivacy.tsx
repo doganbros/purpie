@@ -67,7 +67,7 @@ const MeetingPrivacy: FC = () => {
             <FormField
               label="Select Channel"
               name="select"
-              validate={validators.required()}
+              validate={validators.required('Select channel')}
             >
               <Select
                 name="select"

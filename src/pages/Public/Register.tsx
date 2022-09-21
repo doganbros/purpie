@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Button, Image, Form, FormField, TextInput } from 'grommet';
+import { Form, FormField, Image, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -10,7 +10,7 @@ import AuthLayout from '../../components/layouts/AuthLayout';
 import { FormSubmitEvent } from '../../models/form-submit-event';
 import { validators } from '../../helpers/validators';
 import Figure from '../../assets/register-bg/figure.png';
-import { useResponsive } from '../../hooks/useResponsive';
+import AuthFormButton from '../../components/auth/AuthFormButton';
 
 const Register: FC = () => {
   const dispatch = useDispatch();
@@ -23,8 +23,6 @@ const Register: FC = () => {
   const handleSubmit: FormSubmitEvent<RegisterPayload> = ({ value }) => {
     dispatch(registerAction(value));
   };
-
-  const size = useResponsive();
 
   return (
     <AuthLayout
@@ -51,36 +49,31 @@ const Register: FC = () => {
       <>
         <Form onSubmit={handleSubmit}>
           <FormField
-            label="FIRST NAME"
-            name="firstName"
-            htmlFor="firstNameInput"
-            validate={validators.required()}
+            label="FULL NAME"
+            name="fullName"
+            htmlFor="fullNameInput"
+            validate={validators.required('Full name')}
           >
-            <TextInput id="firstNameInput" name="firstName" />
-          </FormField>
-          <FormField
-            label="LAST NAME"
-            name="lastName"
-            htmlFor="lastNameInput"
-            validate={validators.required()}
-          >
-            <TextInput id="lastNameInput" name="lastName" />
+            <TextInput id="fullNameInput" name="fullName" />
           </FormField>
 
           <FormField
             name="email"
             htmlFor="emailInput"
             label="EMAIL"
-            validate={[validators.required(), validators.email()]}
+            validate={[validators.required('Email'), validators.email()]}
           >
-            <TextInput id="emailInput" name="email" type="email" />
+            <TextInput id="emailInput" name="email" />
           </FormField>
 
           <FormField
             name="password"
             htmlFor="passwordInput"
             label="PASSWORD"
-            validate={[validators.required(), validators.minLength(6)]}
+            validate={[
+              validators.required('Password'),
+              validators.minLength('Password', 6),
+            ]}
           >
             <TextInput id="passwordInput" name="password" type="password" />
           </FormField>
@@ -89,16 +82,14 @@ const Register: FC = () => {
             htmlFor="password1Input"
             label="CONFIRM PASSWORD"
             validate={[
-              validators.required(),
-              validators.equalsField('password', 'Password'),
+              validators.required('Confirm password'),
+              validators.equalsField('password', 'Passwords'),
             ]}
           >
             <TextInput id="password1Input" name="password1" type="password" />
           </FormField>
-          <Button
-            fill="horizontal"
+          <AuthFormButton
             primary
-            size={size}
             margin={{ top: 'medium' }}
             disabled={loading}
             type="submit"

@@ -20,8 +20,7 @@ export class ChatMessageDto {
   createdBy: {
     id: number;
     displayPhoto?: string;
-    firstName?: string;
-    lastName?: string;
+    fullName?: string;
     userName?: string;
   };
 }

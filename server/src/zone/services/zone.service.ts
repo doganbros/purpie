@@ -166,8 +166,7 @@ export class ZoneService {
 
     const context = {
       name: zone.name,
-      firstName: userPayload.firstName,
-      lastName: userPayload.lastName,
+      fullName: userPayload.fullName,
       link: `${clientUrl.protocol}//${zone.subdomain}.${clientUrl.host}`,
     };
     return this.mailService.sendMailByView(
@@ -228,8 +227,7 @@ export class ZoneService {
         'userZone.id',
         'userZone.createdOn',
         'user.id',
-        'user.firstName',
-        'user.lastName',
+        'user.fullName',
         'user.email',
         'user.userName',
         'user.displayPhoto',
@@ -253,7 +251,7 @@ export class ZoneService {
         .andWhere(`user.search_document @@ to_tsquery('simple', :searchTerm)`)
         .orderBy('search_rank', 'DESC');
     } else {
-      baseQuery.orderBy('user.firstName').addOrderBy('user.lastName');
+      baseQuery.orderBy('user.fullName');
     }
 
     return baseQuery.paginate(query);

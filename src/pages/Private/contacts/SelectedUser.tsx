@@ -25,8 +25,7 @@ const SelectedUser: FC<SelectedUserProps> = ({ user, contactId }) => {
         <UserSummary
           id={user.id}
           userName={user.userName}
-          firstName={user.firstName}
-          lastName={user.lastName}
+          fullName={user.fullName}
           email={user.email}
         />
         {contactId && (
@@ -49,7 +48,7 @@ const SelectedUser: FC<SelectedUserProps> = ({ user, contactId }) => {
                   dispatch(removeContactAction(contactId));
                 }}
                 confirmButtonText="Remove"
-                message={`Are you sure you want to remove ${user.firstName} ${user.lastName} from you contacts?`}
+                message={`Are you sure you want to remove ${user.fullName} from you contacts?`}
               />
             )}
           </>

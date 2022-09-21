@@ -29,8 +29,7 @@ const post1 = {
   disliked: false,
   createdBy: {
     id: 1,
-    firstName: 'Fecri Kaan',
-    lastName: 'Ulubey',
+    fullName: 'Fecri Kaan Ulubey',
     email: 'f.kaan93@gmail.com',
     userName: 'f.kaan93',
   },
@@ -84,8 +83,7 @@ const post2 = {
   disliked: false,
   createdBy: {
     id: 1,
-    firstName: 'Fecri Kaan',
-    lastName: 'Ulubey',
+    fullName: 'Fecri Kaan Ulubey',
     email: 'f.kaan93@gmail.com',
     userName: 'f.kaan93',
   },
@@ -115,26 +113,22 @@ export const userData = {
   friends: [
     {
       id: 1,
-      firstName: 'John',
-      lastName: 'Doe',
+      fullName: 'John Doe',
       userName: 'john-doe',
     },
     {
       id: 2,
-      firstName: 'Jane',
-      lastName: 'Doe',
+      fullName: 'Jane Doe',
       userName: 'john-doe',
     },
     {
       id: 3,
-      firstName: 'Jill',
-      lastName: 'Doe',
+      fullName: 'Jill Doe',
       userName: 'jill-doe',
     },
     {
       id: 4,
-      firstName: 'Jake',
-      lastName: 'Doe',
+      fullName: 'Jake Doe',
       userName: 'jake-doe',
     },
   ],
