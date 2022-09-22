@@ -67,6 +67,8 @@ export interface UserBasic {
 export interface User extends UserBasic {
   userRole?: UserRole;
   displayPhoto?: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 export interface AuthState {
