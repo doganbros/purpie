@@ -5,7 +5,7 @@ import { errorResponseMessage } from '../helpers/utils';
 import { REMOVE_TOAST } from '../store/constants/util.constants';
 import { store } from '../store/store';
 
-const {
+export const {
   REACT_APP_API_VERSION = 'v1',
   REACT_APP_SERVER_HOST = 'http://localhost:8000',
 } = process.env;

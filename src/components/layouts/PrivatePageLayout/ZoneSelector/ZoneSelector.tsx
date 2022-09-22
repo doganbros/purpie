@@ -2,6 +2,7 @@ import React, { FC, useContext, useState } from 'react';
 import { Box, DropButton, ResponsiveContext, Text } from 'grommet';
 import { Add, SettingsOption } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
 import { AppState } from '../../../../store/reducers/root.reducer';
 import Divider from './Divider';
@@ -20,6 +21,7 @@ const ZoneSelector: FC = () => {
     auth: { user },
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
+  const history = useHistory();
   const size = useContext(ResponsiveContext);
   const [hover, setHover] = useState(false);
   const [open, setOpen] = useState(false);
@@ -101,6 +103,7 @@ const ZoneSelector: FC = () => {
             <Divider />
             <ListButton
               label="Settings"
+              onClick={() => history.push('/settings')}
               rightIcon={<SettingsOption size="small" color="black" />}
             />
             <Divider />

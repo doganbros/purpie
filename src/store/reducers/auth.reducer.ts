@@ -1,4 +1,7 @@
 import {
+  CHANGE_PROFILE_INFO_FAILED,
+  CHANGE_PROFILE_INFO_REQUESTED,
+  CHANGE_PROFILE_INFO_SUCCESS,
   USER_RETRIEVED_SUCCESS,
   USER_RETRIEVED_FAILED,
   LOGIN_REQUESTED,
@@ -26,7 +29,7 @@ import {
   INITIALIZE_USER_SUCCESS,
   INITIALIZE_USER_FAILED,
 } from '../constants/auth.constants';
-import { AuthState, AuthActionParams } from '../types/auth.types';
+import { AuthActionParams, AuthState } from '../types/auth.types';
 
 const initialState: AuthState = {
   user: null,
@@ -72,6 +75,10 @@ const initialState: AuthState = {
   loginWithGoogle: {
     buttonLoading: false,
     authenticating: false,
+    error: null,
+  },
+  changeProfileInfo: {
+    loading: false,
     error: null,
   },
 };
@@ -310,6 +317,30 @@ const authReducer = (
         initializeUser: {
           loading: false,
           error: action.payload,
+        },
+      };
+    case CHANGE_PROFILE_INFO_SUCCESS:
+      return {
+        ...state,
+        changeProfileInfo: {
+          loading: false,
+          error: null,
+        },
+      };
+    case CHANGE_PROFILE_INFO_FAILED:
+      return {
+        ...state,
+        changeProfileInfo: {
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case CHANGE_PROFILE_INFO_REQUESTED:
+      return {
+        ...state,
+        changeProfileInfo: {
+          loading: true,
+          error: null,
         },
       };
     default:

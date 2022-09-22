@@ -1,5 +1,7 @@
-import { ResponseError } from '../../models/response-error';
 import {
+  SHOW_PROFILE_PICTURE_FAILED,
+  SHOW_PROFILE_PICTURE_REQUESTED,
+  SHOW_PROFILE_PICTURE_SUCCESS,
   LOGIN_REQUESTED,
   RESET_PASSWORD_REQUESTED,
   FORGOT_PASSWORD_REQUESTED,
@@ -30,7 +32,12 @@ import {
   INITIALIZE_USER_REQUESTED,
   INITIALIZE_USER_SUCCESS,
   INITIALIZE_USER_FAILED,
+  CHANGE_PROFILE_INFO_FAILED,
+  CHANGE_PROFILE_INFO_SUCCESS,
+  CHANGE_PROFILE_INFO_REQUESTED,
 } from '../constants/auth.constants';
+import { ResponseError } from '../../models/response-error';
+
 import { UtilActionParams } from './util.types';
 
 export type UserRoleCode = 'SUPER_ADMIN' | 'ADMIN' | 'NORMAL';
@@ -59,6 +66,7 @@ export interface UserBasic {
 
 export interface User extends UserBasic {
   userRole?: UserRole;
+  displayPhoto?: string;
 }
 
 export interface AuthState {
@@ -107,6 +115,10 @@ export interface AuthState {
     loading: boolean;
     error: ResponseError | null;
   };
+  changeProfileInfo: {
+    loading: boolean;
+    error: ResponseError | null;
+  };
 }
 
 export interface LoginPayload {
@@ -130,6 +142,12 @@ export interface VerifyEmailPayload {
   userName: string;
 }
 
+export interface ChangeProfileInfo {
+  firstName: string;
+  lastName: string;
+  userName: string;
+}
+
 export type AuthActionParams =
   | {
       type:
@@ -145,10 +163,14 @@ export type AuthActionParams =
         | typeof RESEND_MAIL_VERIFICATION_TOKEN_SUCCESS
         | typeof LOGOUT
         | typeof RESET_PASSWORD_SUCCESS
-        | typeof INITIALIZE_USER_REQUESTED;
+        | typeof INITIALIZE_USER_REQUESTED
+        | typeof CHANGE_PROFILE_INFO_REQUESTED
+        | typeof SHOW_PROFILE_PICTURE_REQUESTED;
     }
   | {
-      type: typeof THIRD_PARTY_URL_REQUESTED;
+      type:
+        | typeof THIRD_PARTY_URL_REQUESTED
+        | typeof SHOW_PROFILE_PICTURE_SUCCESS;
       payload: string;
     }
   | {
@@ -158,7 +180,8 @@ export type AuthActionParams =
         | typeof VERIFY_USER_EMAIL_SUCCESS
         | typeof THIRD_PARTY_AUTH_WITH_CODE_SUCCESS
         | typeof USER_RETRIEVED_SUCCESS
-        | typeof INITIALIZE_USER_SUCCESS;
+        | typeof INITIALIZE_USER_SUCCESS
+        | typeof CHANGE_PROFILE_INFO_SUCCESS;
       payload: User;
     }
   | {
@@ -176,7 +199,9 @@ export type AuthActionParams =
         | typeof RESEND_MAIL_VERIFICATION_TOKEN_FAILED
         | typeof USER_RETRIEVED_FAILED
         | typeof FORGOT_PASSWORD_FAILED
-        | typeof INITIALIZE_USER_FAILED;
+        | typeof INITIALIZE_USER_FAILED
+        | typeof CHANGE_PROFILE_INFO_FAILED
+        | typeof SHOW_PROFILE_PICTURE_FAILED;
       payload: ResponseError;
     };
 
