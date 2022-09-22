@@ -116,7 +116,7 @@ export const responseInvitationActions = (
 
 export const getNotificationsAction = (
   limit: number,
-  skip: number,
+  skip?: number,
   type?: 'all' | 'unread' | 'read'
 ): ActivityAction => {
   return async (dispatch) => {

@@ -164,6 +164,7 @@ const Timeline: FC = () => {
           <ChannelsToFollow />
           <Divider />
           <ZonesToJoin />
+          <Divider />
           <Notifications />
         </Box>
       }

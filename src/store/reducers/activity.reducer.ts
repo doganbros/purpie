@@ -191,7 +191,6 @@ const activityReducer = (
     case NOTIFICATION_SUCCESS:
       return {
         ...state,
-
         notification: {
           ...action.payload,
           loading: false,
@@ -201,7 +200,6 @@ const activityReducer = (
     case NOTIFICATION_FAILED:
       return {
         ...state,
-
         notification: {
           ...state.notification,
           loading: false,
@@ -221,7 +219,6 @@ const activityReducer = (
     case NOTIFICATION_COUNT_SUCCESS:
       return {
         ...state,
-
         notificationCount: {
           ...action.payload,
           loading: false,
@@ -231,7 +228,6 @@ const activityReducer = (
     case NOTIFICATION_COUNT_FAILED:
       return {
         ...state,
-
         notificationCount: {
           ...state.notificationCount,
           loading: false,

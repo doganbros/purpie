@@ -50,7 +50,7 @@ export const responseInvitation = async (
 
 export const getNotifications = (
   limit: number,
-  skip: number,
+  skip?: number,
   type?: 'all' | 'unread' | 'read'
 ): Promise<PaginatedResponse<NotificationListItem>> =>
   http

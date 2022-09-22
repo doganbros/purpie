@@ -21,9 +21,13 @@ import {
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
 import { ChannelBasic } from './channel.types';
-import { PostComment, PostType } from './post.types';
+import { Post, PostComment, PostType } from './post.types';
 import { UserBasic, User } from './auth.types';
-import { InvitationResponseType, InvitationType } from '../../models/utils';
+import {
+  InvitationResponseType,
+  InvitationType,
+  NotificationType,
+} from '../../models/utils';
 
 export interface ZoneSuggestionListItem {
   zone_id: number;
@@ -90,37 +94,14 @@ export interface InvitationResponse {
 
 export interface NotificationListItem {
   id: number;
+  createdBy: User;
   createdOn: Date;
   message: string;
   counter: number;
-  type: 'post_like';
+  type: NotificationType;
   readOn: Date;
   viewedOn: Date;
-  post: {
-    id: number;
-    createdOn: Date;
-    title: string;
-    description: string;
-    slug: string;
-    type: PostType;
-    public: boolean;
-    videoName: string;
-    userContactExclusive: boolean;
-    postReaction: {
-      id: number;
-      createdOn: Date;
-      updatedOn: Date;
-      likesCount: number;
-      dislikesCount: number;
-      commentsCount: number;
-      viewsCount: number;
-      liveStreamViewersCount: number;
-      postId: number;
-    };
-    channel: ChannelBasic;
-    createdBy: UserBasic;
-    postComment: PostComment;
-  };
+  post: Post;
 }
 
 export interface NotificationCount {
