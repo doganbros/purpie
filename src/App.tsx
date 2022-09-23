@@ -31,12 +31,12 @@ const App: FC = () => {
 
   useEffect(() => {
     dispatch(retrieveUserAction());
-    dispatch(getUserChannelsAction());
   }, []);
 
   useEffect(() => {
     if (isAuthenticated) {
       initializeSocket();
+      dispatch(getUserChannelsAction());
       dispatch(getUserZonesAction());
     }
   }, [isAuthenticated]);
