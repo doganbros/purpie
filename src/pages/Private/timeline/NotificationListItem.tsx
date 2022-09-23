@@ -3,7 +3,6 @@ import { Box, Text } from 'grommet';
 import { Chat, Favorite, TextWrap, User, UserAdd } from 'grommet-icons';
 import { NotificationType } from '../../../models/utils';
 import { NotificationListItem as NotificationListItemType } from '../../../store/types/activity.types';
-import ExtendedBox from '../../../components/utils/ExtendedBox';
 
 interface NotificationListItemProps {
   notification: NotificationListItemType;
@@ -64,17 +63,10 @@ const NotificationListItem: FC<NotificationListItemProps> = ({
   ]);
 
   return (
-    <ExtendedBox
-      direction="row"
-      justify="between"
-      align="center"
-      minHeight="16px"
-    >
-      <Box direction="row" align="center" gap="small">
-        {icon}
-        <Text size="xsmall">{title}</Text>
-      </Box>
-    </ExtendedBox>
+    <Box direction="row" align="center" gap="small">
+      {icon}
+      <Text size="xsmall">{title}</Text>
+    </Box>
   );
 };
 export default NotificationListItem;
