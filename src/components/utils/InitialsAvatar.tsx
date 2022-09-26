@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { Avatar, AvatarExtendedProps, Text, TextExtendedProps } from 'grommet';
 import { getColorPairFromId } from '../../helpers/utils';
 
@@ -8,24 +8,22 @@ interface InitialsAvatarProps extends Omit<AvatarExtendedProps, 'id'> {
   textProps?: TextExtendedProps;
 }
 
-const InitialsAvatar: FC<InitialsAvatarProps> = (props) => {
-  const { id, value, textProps, ...avatarProps } = props;
+const InitialsAvatar: FC<InitialsAvatarProps> = ({
+  id,
+  value,
+  textProps,
+  ...avatarProps
+}) => {
   const { background, foreground } = getColorPairFromId(id);
-  const [avatarText, setAvatarText] = useState<string>('');
-
-  useEffect(() => {
-    const values = value.trim().split(' ');
-    const firstLetter = values[0].charAt(0).toUpperCase();
-    const lastLetter = values[values.length - 1].charAt(0).toUpperCase();
-    setAvatarText(
-      values.length > 1 ? `${firstLetter}${lastLetter}` : firstLetter
-    );
-  }, [value]);
-
   return value ? (
     <Avatar round background={{ color: background }} {...avatarProps}>
       <Text color={foreground} {...textProps}>
-        {avatarText}
+        {value
+          .replace(/[^a-zA-Z ]/g, '')
+          .split(' ')
+          .filter((_v, i: number) => i < 2)
+          .map((v) => v && v[0].toUpperCase())
+          .join('')}
       </Text>
     </Avatar>
   ) : (
