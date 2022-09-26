@@ -67,11 +67,11 @@ const Notifications: FC = () => {
           step={6}
           items={data}
           onMore={() => {
-            getNotifications(notification.data.length);
+            // getNotifications(notification.data.length);
           }}
         >
           {(item: typeof notification.data[0]) => (
-            <Box height={{ min: 'unset' }} gap="small" key={item.id}>
+            <Box height={{ min: '24px' }} gap="small" key={item.id}>
               <NotificationListItem notification={item} />
             </Box>
           )}

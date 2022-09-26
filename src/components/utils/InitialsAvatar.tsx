@@ -21,7 +21,7 @@ const InitialsAvatar: FC<InitialsAvatarProps> = ({
         {value
           .split(' ')
           .filter((_v, i: number) => i < 2)
-          .map((v) => v[0].toUpperCase())
+          .map((v) => v && v[0].toUpperCase())
           .join('')}
       </Text>
     </Avatar>
