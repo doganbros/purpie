@@ -18,13 +18,14 @@ async function bootstrap() {
   app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'combined'));
   app.enableVersioning();
   app.use(helmet());
+  const originRegex = new RegExp(
+    `(\\b|\\.)${new URL(REACT_APP_CLIENT_HOST as string).host.replace(
+      /\./g,
+      '\\.',
+    )}$`,
+  );
   app.enableCors({
-    origin: new RegExp(
-      `(\\b|\\.)${new URL(REACT_APP_CLIENT_HOST as string).host.replace(
-        /\./g,
-        '\\.',
-      )}$`,
-    ),
+    origin: [originRegex, 'http://localhost:3000'],
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   });
