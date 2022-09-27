@@ -519,8 +519,8 @@ export class PostService {
       .where('savedPost.userId = :userId', { userId })
       .andWhere(
         new Brackets((qb) => {
-          qb.where('savedPost.private = false').orWhere(
-            'savedPost.private = true and savedPost.createdById = :userId',
+          qb.where('post.private = false').orWhere(
+            'post.private = true and post."createdById" = :userId',
           );
         }),
       )
