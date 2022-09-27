@@ -6,16 +6,21 @@ import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/Pri
 import PostListItem from '../../../components/post/PostListItem';
 import Divider from '../../../components/utils/Divider';
 import GradientScroll from '../../../components/utils/GradientScroll';
-import InitialsAvatar from '../../../components/utils/InitialsAvatar';
 import {
   createPostSaveAction,
   removePostSaveAction,
 } from '../../../store/actions/post.action';
-import { getUserDetailAction } from '../../../store/actions/user.action';
+import {
+  getUserDetailAction,
+  listUserPublicChannelsAction,
+} from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import Header from './Header';
 import { userData } from './mock-data';
 import { UserSummary } from './UserSummary';
+import UserFriends from './UserFriends';
+import UserPublicChannels from './UserPublicChannels';
+import UserPublicZones from './UserPublicZones';
 
 interface UserParams {
   userName: string;
@@ -31,6 +36,7 @@ const User: FC = () => {
 
   useEffect(() => {
     dispatch(getUserDetailAction(params));
+    dispatch(listUserPublicChannelsAction(params.userName));
   }, []);
 
   return (
@@ -62,64 +68,10 @@ const User: FC = () => {
             onClickSave={() => {}}
           />
           <Divider />
-          <Text size="large" color="brand" weight="bold">
-            Friends
-          </Text>
-          <GradientScroll>
-            <Box direction="row" gap="medium">
-              {userData.friends.map((f) => (
-                <Box key={f.id} gap="small" align="center">
-                  <InitialsAvatar id={f.id} value={f.fullName} />
-                  <Box align="center">
-                    <Text size="small" weight="bold">
-                      {f.fullName}
-                    </Text>
-                    <Text size="small" color="status-disabled">
-                      @{f.userName}
-                    </Text>
-                  </Box>
-                </Box>
-              ))}
-            </Box>
-          </GradientScroll>
+          <UserFriends userName={params.userName} />
           <Divider />
-          <Text size="large" color="brand" weight="bold">
-            Channels Subscribed To
-          </Text>
-          <GradientScroll>
-            <Box direction="row" gap="medium">
-              {userData.joinedChannels.map((c) => (
-                <Box key={c.channel_id} gap="small" align="center">
-                  <InitialsAvatar id={c.channel_id} value={c.channel_name} />
-                  <Box align="center">
-                    <Text size="small">{c.channel_name}</Text>
-                  </Box>
-                </Box>
-              ))}
-            </Box>
-          </GradientScroll>
-          <Text size="large" color="brand" weight="bold">
-            Zones Joined To
-          </Text>
-          <GradientScroll>
-            <Box direction="row" gap="medium">
-              {userData.joinedZones.map((z) => (
-                <Box key={z.zone_id} gap="small" align="center">
-                  <InitialsAvatar
-                    id={z.zone_id}
-                    value={z.zone_name}
-                    round="small"
-                  />
-                  <Box align="center">
-                    <Text size="small">{z.zone_name}</Text>
-                    <Text size="small" color="status-disabled">
-                      {z.zone_subdomain}
-                    </Text>
-                  </Box>
-                </Box>
-              ))}
-            </Box>
-          </GradientScroll>
+          <UserPublicChannels userName={params.userName} />
+          <UserPublicZones userName={params.userName} />
           <Text size="large" color="brand" weight="bold">
             Shared Lists
           </Text>
