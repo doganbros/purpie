@@ -12,25 +12,23 @@ import { AppModule } from './app.module';
 
 initApp();
 
-const { REACT_APP_CLIENT_HOST = '' } = process.env;
+const { REACT_APP_CLIENT_HOST } = process.env;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'combined'));
   app.enableVersioning();
   app.use(helmet());
-  app.use(
-    cors({
-      origin: new RegExp(
-        `(\\b|\\.)${new URL(REACT_APP_CLIENT_HOST).host.replace(
-          /\./g,
-          '\\.',
-        )}$`,
-      ),
-      credentials: true,
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    }),
-  );
+  app.enableCors({
+    origin: new RegExp(
+      `(\\b|\\.)${new URL(REACT_APP_CLIENT_HOST as string).host.replace(
+        /\./g,
+        '\\.',
+      )}$`,
+    ),
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  });
   app.use(cookieParser());
   app.use(compression());
 
