@@ -3,7 +3,6 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 import { Logger, ValidationPipe } from '@nestjs/common';
-import cors from 'cors';
 import { initApp } from 'populators/init-app';
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
