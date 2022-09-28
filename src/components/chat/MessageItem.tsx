@@ -113,7 +113,7 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
                   size: 'small',
                 }}
                 id={message.createdBy.id}
-                value={`${message.createdBy.firstName} ${message.createdBy.lastName} `}
+                value={message.createdBy.fullName}
               />
             </Box>
             <Box
@@ -130,9 +130,7 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
                     weight="bold"
                     textAlign={ownMessage ? 'end' : 'start'}
                   >
-                    {ownMessage
-                      ? 'You'
-                      : `${message.createdBy.firstName} ${message.createdBy.lastName}`}
+                    {ownMessage ? 'You' : message.createdBy.fullName}
                   </UserFullName>
                   <Text size="small">
                     {dayjs(message.createdOn).format('hh:mm:a')}

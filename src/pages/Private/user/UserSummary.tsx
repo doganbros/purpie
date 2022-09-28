@@ -5,22 +5,21 @@ import InitialsAvatar from '../../../components/utils/InitialsAvatar';
 import { UserBasic } from '../../../store/types/auth.types';
 
 export const UserSummary: FC<UserBasic> = ({
-  firstName,
-  lastName,
+  fullName,
   id,
   userName,
   email,
 }) => (
   <Box gap="medium">
     <InitialsAvatar
-      value={`${firstName} ${lastName}`}
+      value={fullName}
       id={id}
       size="355px"
       round="medium"
       textProps={{ size: '120px' }}
     />
     <Text weight="bold" size="large" alignSelf="end">
-      {firstName} {lastName}
+      {fullName}
     </Text>
     <Divider />
     <Box align="end" gap="small">

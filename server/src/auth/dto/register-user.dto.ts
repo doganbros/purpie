@@ -4,11 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class RegisterUserDto {
   @ApiProperty()
   @IsNotEmpty()
-  firstName: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  lastName: string;
+  fullName: string;
 
   @ApiProperty()
   @IsNotEmpty()

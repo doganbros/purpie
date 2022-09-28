@@ -84,7 +84,7 @@ export class AuthController {
     description: "Error thrown when user's email or password is invalid ",
     schema: errorResponseDoc(
       404,
-      'Error user name or password',
+      'Invalid username or password.',
       'ERROR_USERNAME_OR_PASSWORD',
     ),
   })
@@ -92,7 +92,7 @@ export class AuthController {
     description: 'Error thrown when email is not yet verified',
     schema: errorResponseDoc(
       401,
-      'Error user name or password',
+      'Invalid username or password.',
       'ERROR_USERNAME_OR_PASSWORD',
       {
         user: {
@@ -125,7 +125,7 @@ export class AuthController {
 
     if (!user)
       throw new NotFoundException(
-        'Error user name or password',
+        'Invalid username or password.',
         'ERROR_USERNAME_OR_PASSWORD',
       );
 
@@ -142,14 +142,13 @@ export class AuthController {
 
     if (!validPassword)
       throw new NotFoundException(
-        'Error user name or password',
+        'Invalid username or password.',
         'ERROR_USERNAME_OR_PASSWORD',
       );
 
     const userPayload: UserProfile = {
       id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      fullName: user.fullName,
       email: user.email,
       userName: user.userName,
       userRole: {
@@ -294,8 +293,7 @@ export class AuthController {
 
     const userBasicWithToken = {
       user: {
-        firstName: user.firstName,
-        lastName: user.lastName,
+        fullName: user.fullName,
         email: user.email,
       },
       token,

@@ -3,27 +3,14 @@ import { Text, TextExtendedProps } from 'grommet';
 import { AnchorLink } from './AnchorLink';
 
 interface UserBadgeProps {
-  firstName?: string;
-  lastName?: string;
+  fullName?: string;
   url: string;
   textProps?: TextExtendedProps;
 }
 
-const UserBadge: FC<UserBadgeProps> = ({
-  firstName,
-  lastName,
-  url,
-  textProps,
-}) => {
+const UserBadge: FC<UserBadgeProps> = ({ fullName, url, textProps }) => {
   return (
-    <AnchorLink
-      to={url}
-      label={
-        <Text {...textProps}>
-          @ {firstName} {lastName}
-        </Text>
-      }
-    />
+    <AnchorLink to={url} label={<Text {...textProps}>@ {fullName}</Text>} />
   );
 };
 

@@ -30,6 +30,7 @@ import AddContent from '../../../layers/add-content/AddContent';
 import { Post } from '../../../store/types/post.types';
 import EmptyFeedContent from './EmptyFeedContent';
 import { LoadingState } from '../../../models/utils';
+import InvitationList from './InvitationList';
 
 const initialFilters = [
   {
@@ -158,6 +159,8 @@ const Timeline: FC = () => {
       rightComponent={
         <Box pad="medium" gap="medium">
           <SearchBar />
+          <InvitationList />
+          <Divider />
           <ChannelsToFollow />
           <Divider />
           <ZonesToJoin />

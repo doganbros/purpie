@@ -1,4 +1,4 @@
-import { Button, Form, FormField, TextInput, Image } from 'grommet';
+import { Form, FormField, Image, TextInput } from 'grommet';
 import React, { FC } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,6 +8,7 @@ import AuthLayout from '../../components/layouts/AuthLayout';
 import { validators } from '../../helpers/validators';
 import Figure from '../../assets/forgotten-password-bg/figure-1.png';
 import Banner from '../../assets/forgotten-password-bg/banner.png';
+import AuthFormButton from '../../components/auth/AuthFormButton';
 
 interface Params {
   token: string;
@@ -63,7 +64,10 @@ const ResetPassword: FC = () => {
             name="password"
             htmlFor="passwordInput"
             label="Password"
-            validate={[validators.required(), validators.minLength(6)]}
+            validate={[
+              validators.required('Password'),
+              validators.minLength('Password', 6),
+            ]}
           >
             <TextInput id="passwordInput" name="password" type="password" />
           </FormField>
@@ -72,16 +76,14 @@ const ResetPassword: FC = () => {
             htmlFor="password1Input"
             label="Confirm Password"
             validate={[
-              validators.required(),
+              validators.required('Confirm password'),
               validators.equalsField('password', 'Password'),
             ]}
           >
             <TextInput id="password1Input" name="password1" type="password" />
           </FormField>
-          <Button
-            fill="horizontal"
+          <AuthFormButton
             primary
-            size="large"
             margin={{ top: 'large' }}
             disabled={loading}
             type="submit"

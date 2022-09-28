@@ -45,10 +45,10 @@ const ContactListItem: FC<ContactListItemProps> = ({
       <Box direction="row" align="center" gap="small">
         <InitialsAvatar
           id={contact.contactUser.id}
-          value={`${contact.contactUser.firstName} ${contact.contactUser.lastName}`}
+          value={contact.contactUser.fullName}
         />
         <Text weight="bold" color={selected ? 'white' : 'brand'}>
-          {contact.contactUser.firstName} {contact.contactUser.lastName}
+          {contact.contactUser.fullName}
         </Text>
         <Text color={selected ? 'status-disabled-light' : 'status-disabled'}>
           @{contact.contactUser.userName}

@@ -22,11 +22,7 @@ const UserItem: FC<Props> = ({ user, onClick }) => {
       pad={{ vertical: 'xsmall', horizontal: 'small' }}
     >
       <Box flex={{ shrink: 0 }}>
-        <InitialsAvatar
-          size="small"
-          id={user.id}
-          value={`${user.firstName} ${user.lastName}`}
-        />
+        <InitialsAvatar size="small" id={user.id} value={user.fullName} />
       </Box>
       <Box>
         <Text
@@ -35,7 +31,7 @@ const UserItem: FC<Props> = ({ user, onClick }) => {
           size="small"
           style={{ userSelect: 'none' }}
         >
-          {user.firstName} {user.lastName}
+          {user.fullName}
         </Text>
         <Text
           color="status-disabled"

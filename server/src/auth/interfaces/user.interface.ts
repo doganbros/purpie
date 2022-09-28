@@ -7,10 +7,7 @@ export class UserProfile {
   id: number;
 
   @ApiProperty()
-  firstName: string;
-
-  @ApiProperty()
-  lastName: string;
+  fullName: string;
 
   @ApiProperty()
   email: string;
@@ -58,10 +55,7 @@ export interface UserPermissionOptions {
 
 export class UserBasic {
   @ApiProperty()
-  firstName: string;
-
-  @ApiProperty()
-  lastName: string;
+  fullName: string;
 
   @ApiProperty()
   email: string;

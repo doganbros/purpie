@@ -22,3 +22,14 @@ export enum LoadingState {
   more,
   done,
 }
+
+export enum InvitationResponseType {
+  ACCEPT = 'accept',
+  REJECT = 'reject',
+}
+
+export enum InvitationType {
+  CHANNEL = 'CHANNEL',
+  ZONE = 'ZONE',
+  CONTACT = 'CONTACT',
+}

@@ -1,4 +1,4 @@
-import { Button, Form, FormField, TextInput, Image, Text } from 'grommet';
+import { Form, FormField, Image, Text, TextInput } from 'grommet';
 import React, { FC, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -8,12 +8,12 @@ import { FormSubmitEvent } from '../../models/form-submit-event';
 import { verifyUserEmailAction } from '../../store/actions/auth.action';
 import Figure from '../../assets/verify-email-bg/figure-2.svg';
 import Banner from '../../assets/verify-email-bg/banner.png';
-import { useResponsive } from '../../hooks/useResponsive';
 import { userNameExistsCheck } from '../../store/services/auth.service';
 import { useDebouncer } from '../../hooks/useDebouncer';
 import { theme } from '../../config/app-config';
 import { USER_NAME_CONSTRAINT } from '../../helpers/constants';
 import { ExistenceResult } from '../../store/types/auth.types';
+import AuthFormButton from '../../components/auth/AuthFormButton';
 
 interface Params {
   token: string;
@@ -50,13 +50,11 @@ const VerifyUserEmail: FC = () => {
     }
   };
 
-  const size = useResponsive();
-
   return (
     <AuthLayout
       title="Email Verification"
       formTitle="Email Verification"
-      formSubTitle="Please create a user name to continue email verification process."
+      formSubTitle="Please create a username to continue email verification process."
       background={
         <>
           <Image
@@ -84,23 +82,23 @@ const VerifyUserEmail: FC = () => {
           <FormField
             name="userName"
             htmlFor="userNameInput"
-            label="User Name"
+            label="Username"
             error={
               existenceResult &&
               existenceResult.exists &&
-              `User Name ${existenceResult.userName} already exists!`
+              `Username "${existenceResult.userName}" is not available`
             }
             info={
               existenceResult &&
               !existenceResult.exists && (
                 <Text color="status-ok" size="small">
-                  User Name {existenceResult.userName} can be used!
+                  {`Username "${existenceResult.userName}" is available`}
                 </Text>
               )
             }
             validate={[
-              validators.required(),
-              validators.matches(USER_NAME_CONSTRAINT, 'User Name is invalid'),
+              validators.required('Username'),
+              validators.matches(USER_NAME_CONSTRAINT, 'Invalid username'),
             ]}
             contentProps={
               existenceResult && !existenceResult.exists
@@ -121,13 +119,11 @@ const VerifyUserEmail: FC = () => {
               name="userName"
             />
           </FormField>
-          <Button
-            fill="horizontal"
+          <AuthFormButton
             primary
-            size={size}
             margin={{ top: '55%' }}
             type="submit"
-            label="SEND"
+            label="CONTINUE"
           />
         </Form>
       </>

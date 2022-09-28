@@ -46,9 +46,9 @@ const isBiggerOrEqual = (n: number) => (value: any) =>
 const isSmallerOrEqual = (n: number) => (value: any) =>
   !isExisty(value) || value <= n;
 
-const requiredMsg = 'This field is required';
+const requiredMsg = (field: string) => `${field} is required`;
 const urlMsg = 'Please enter a valid url';
-const emailMsg = 'Please enter a valid email';
+const emailMsg = 'Invalid email';
 const notEmptyStringMsg = "This field can't be empty";
 const numericMsg = 'Please enter a numeric value';
 const alphaMsg = 'Please enter only alphabets';
@@ -65,16 +65,17 @@ const ruleWrapper = (
 ) => {
   return (value: any, data: any) => {
     if (rule(value, data)) return undefined;
-    return defaultMsg || customMsg;
+    return customMsg || defaultMsg;
   };
 };
 
 export const validators = {
-  required: (message?: string) => ruleWrapper(required, requiredMsg, message),
+  required: (field: string, message?: string) =>
+    ruleWrapper(required, requiredMsg(field), message),
   email: (message?: string) => ruleWrapper(isEmail, emailMsg, message),
   url: (message?: string) => ruleWrapper(isUrl, urlMsg, message),
-  defaultRequired: (message?: string) =>
-    ruleWrapper(isDefaultRequiredValue, requiredMsg, message),
+  defaultRequired: (field: string, message?: string) =>
+    ruleWrapper(isDefaultRequiredValue, requiredMsg(field), message),
   notEmptyString: (message?: string) =>
     ruleWrapper(notEmptyString, notEmptyStringMsg, message),
   numeric: (message?: string) => ruleWrapper(isNumeric, numericMsg, message),
@@ -88,10 +89,10 @@ export const validators = {
   words: (message?: string) => ruleWrapper(isWords, wordsMsg, message),
   length: (length: number, message?: string) =>
     ruleWrapper(isLength(length), `must be ${length} characters long`, message),
-  minLength: (length: number, message?: string) =>
+  minLength: (field: string, length: number, message?: string) =>
     ruleWrapper(
       minLength(length),
-      `Please enter at least ${length} characters long`,
+      `${field} can be at least ${length} characters long`,
       message
     ),
   maxLength: (length: number, message?: string) =>
@@ -103,11 +104,7 @@ export const validators = {
   equals: (value: any, message?: string) =>
     ruleWrapper(equals(value), `This field must be equal to ${value}`, message),
   equalsField: (field: any, fieldLabel: any, message?: string) =>
-    ruleWrapper(
-      equalsField(field),
-      `This field does not match ${fieldLabel}`,
-      message
-    ),
+    ruleWrapper(equalsField(field), `${fieldLabel} do not match`, message),
   True: (message?: string) =>
     ruleWrapper(isTrue, `This field must be True`, message),
   False: (message?: string) =>

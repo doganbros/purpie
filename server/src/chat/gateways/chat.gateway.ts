@@ -171,49 +171,57 @@ export class ChatGateway {
   }
 
   async handleConnection(socket: SocketWithTokenPayload) {
-    const currentUser = await this.chatService.getCurrentUser(socket);
+    try {
+      const currentUser = await this.chatService.getCurrentUser(socket);
 
-    if (!currentUser) return null;
-    socket.user = currentUser;
+      if (!currentUser) return null;
+      socket.user = currentUser;
 
-    socket.join(this.chatService.getRoomName(socket.user.id));
+      socket.join(this.chatService.getRoomName(socket.user.id));
 
-    const contactIds = await this.chatService.fetchUserContactUserIds(
-      socket.user.id,
-    );
+      const contactIds = await this.chatService.fetchUserContactUserIds(
+        socket.user.id,
+      );
 
-    contactIds.forEach((contactId) => {
-      socket.join(this.chatService.getRoomName(contactId));
-      socket
-        .to(this.chatService.getRoomName(contactId))
-        .emit('contact_user_connected', socket.user.id);
-    });
+      contactIds.forEach((contactId) => {
+        socket.join(this.chatService.getRoomName(contactId));
+        socket
+          .to(this.chatService.getRoomName(contactId))
+          .emit('contact_user_connected', socket.user.id);
+      });
 
-    // Will be implmented when channel chat is needed.
-    // const channelIds = await this.chatService.fetchUserChannelIds(
-    //   socket.user.id,
-    // );
+      // Will be implmented when channel chat is needed.
+      // const channelIds = await this.chatService.fetchUserChannelIds(
+      //   socket.user.id,
+      // );
 
-    // channelIds.forEach((channelId) => {
-    // socket.join(this.chatService.getRoomName(channelId, 'channel'));
-    // });
+      // channelIds.forEach((channelId) => {
+      // socket.join(this.chatService.getRoomName(channelId, 'channel'));
+      // });
 
-    socket.on('disconnecting', () => this.handleDisconnecting(socket));
-    return null;
+      socket.on('disconnecting', () => this.handleDisconnecting(socket));
+      return null;
+    } catch (err) {
+      return null;
+    }
   }
 
   async handleDisconnecting(socket: SocketWithTokenPayload) {
-    const contactIds = await this.chatService.fetchUserContactUserIds(
-      socket.user.id,
-    );
+    try {
+      const contactIds = await this.chatService.fetchUserContactUserIds(
+        socket.user.id,
+      );
 
-    contactIds.forEach((contactId) => {
-      socket
-        .to(this.chatService.getRoomName(contactId))
-        .emit('socket_disconnected', {
-          socketId: socket.id,
-          userId: socket.user.id,
-        });
-    });
+      contactIds.forEach((contactId) => {
+        socket
+          .to(this.chatService.getRoomName(contactId))
+          .emit('socket_disconnected', {
+            socketId: socket.id,
+            userId: socket.user.id,
+          });
+      });
+    } catch (error) {
+      //
+    }
   }
 }

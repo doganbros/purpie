@@ -8,10 +8,7 @@ class Inviter {
   email: string;
 
   @ApiProperty()
-  firstName: string;
-
-  @ApiProperty()
-  lastName: string;
+  fullName: string;
 
   @ApiProperty()
   userName: string;
@@ -56,10 +53,7 @@ class ContactUser {
   userName: string;
 
   @ApiProperty()
-  firstName: string;
-
-  @ApiProperty()
-  lastName: string;
+  fullName: string;
 }
 
 class ContactList {

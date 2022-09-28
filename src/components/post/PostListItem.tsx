@@ -62,9 +62,7 @@ const PostListItem: FC<PostListItemProps> = ({
           <Text color="status-disabled" weight="bold">
             {dayjs(post.createdOn).format('DD.MM.YYYY')}
           </Text>
-          <Text color="status-disabled">
-            {post.createdBy?.firstName} {post.createdBy?.lastName}
-          </Text>
+          <Text color="status-disabled">{post.createdBy?.fullName}</Text>
 
           <Text color="status-disabled">{post.description}</Text>
 

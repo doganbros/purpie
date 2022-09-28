@@ -22,15 +22,11 @@ import { defaultPostSettings } from './data/default-post-settings';
 export class User extends RecordEntity {
   @Column()
   @ApiProperty()
-  firstName: string;
+  fullName: string;
 
   @Column()
   @ApiProperty()
   userName: string;
-
-  @Column()
-  @ApiProperty()
-  lastName: string;
 
   @Column({ unique: true })
   @ApiProperty()

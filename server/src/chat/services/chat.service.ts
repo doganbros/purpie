@@ -174,15 +174,11 @@ export class ChatService {
         'parentChat.createdById',
         'createdBy.id',
         'createdBy.userName',
-        'createdBy.firstName',
-        'createdBy.lastName',
-        'createdBy.lastName',
+        'createdBy.fullName',
         'createdBy.displayPhoto',
         'parentChatCreatedBy.id',
         'parentChatCreatedBy.userName',
-        'parentChatCreatedBy.firstName',
-        'parentChatCreatedBy.lastName',
-        'parentChatCreatedBy.lastName',
+        'parentChatCreatedBy.fullName',
         'parentChatCreatedBy.displayPhoto',
       ])
       .leftJoin('chat.createdBy', 'createdBy')

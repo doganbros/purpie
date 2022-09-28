@@ -247,8 +247,7 @@ export class PostService {
         'postCommentLike.id',
         'postCommentLike.createdOn',
         'user.id',
-        'user.firstName',
-        'user.lastName',
+        'user.fullName',
         'user.userName',
         'user.email',
       ])
@@ -266,8 +265,7 @@ export class PostService {
         'postLike.createdOn',
         'postLike.positive',
         'user.id',
-        'user.firstName',
-        'user.lastName',
+        'user.fullName',
         'user.userName',
         'user.email',
       ])
@@ -298,8 +296,7 @@ export class PostService {
         'postComment.edited',
         'postComment.publishedInLiveStream',
         'user.id',
-        'user.firstName',
-        'user.lastName',
+        'user.fullName',
         'user.userName',
         'user.email',
       ])
@@ -475,8 +472,7 @@ export class PostService {
         'postReaction.liveStreamViewersCount',
         'createdBy.id',
         'createdBy.email',
-        'createdBy.firstName',
-        'createdBy.lastName',
+        'createdBy.fullName',
       ])
       .addSelect(
         (sq) =>
@@ -606,8 +602,7 @@ export class PostService {
         'post.record',
         'createdBy.id',
         'createdBy.email',
-        'createdBy.firstName',
-        'createdBy.lastName',
+        'createdBy.fullName',
       ])
 
       .setParameter('currentUserId', userId)

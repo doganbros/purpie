@@ -53,7 +53,7 @@ const MeetingInvitation: FC = () => {
           placeholder="Type a name, username or email"
           suggestions={userSuggestions.map((user) => ({
             value: user,
-            label: `${user.firstName} ${user.lastName}${
+            label: `${user.fullName}${
               user.userName ? ` @${user.userName}` : ''
             }`,
           }))}
@@ -84,7 +84,7 @@ const MeetingInvitation: FC = () => {
               </Avatar>
               <Box>
                 <Text size="small" weight="bold">
-                  {item.firstName} {item.lastName}
+                  {item.fullName}
                 </Text>
                 <Text size="xsmall">
                   {item.userName && `@${item.userName}`}

@@ -208,11 +208,7 @@ const Video: FC = () => {
                       subdomain={data.channel.zone.subdomain}
                     />
                   )}
-                  <UserBadge
-                    url="/"
-                    firstName={data?.createdBy?.firstName}
-                    lastName={data?.createdBy?.lastName}
-                  />
+                  <UserBadge url="/" fullName={data?.createdBy?.fullName} />
                 </Box>
               )) || <Box />}
               <Menu
