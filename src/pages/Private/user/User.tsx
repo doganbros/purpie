@@ -8,12 +8,10 @@ import Divider from '../../../components/utils/Divider';
 import GradientScroll from '../../../components/utils/GradientScroll';
 import {
   createPostSaveAction,
+  getFeaturedPostAction,
   removePostSaveAction,
 } from '../../../store/actions/post.action';
-import {
-  getUserDetailAction,
-  listUserPublicChannelsAction,
-} from '../../../store/actions/user.action';
+import { getUserDetailAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import Header from './Header';
 import { userData } from './mock-data';
@@ -36,8 +34,12 @@ const User: FC = () => {
 
   useEffect(() => {
     dispatch(getUserDetailAction(params));
-    dispatch(listUserPublicChannelsAction(params.userName));
   }, []);
+
+  useEffect(() => {
+    if (detail.user)
+      dispatch(getFeaturedPostAction({ userId: detail.user.id }));
+  }, [detail]);
 
   return (
     <PrivatePageLayout
