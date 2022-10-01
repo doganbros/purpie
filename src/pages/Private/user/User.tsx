@@ -29,6 +29,7 @@ const User: FC = () => {
   const dispatch = useDispatch();
   const {
     user: { detail },
+    post: { featuredPost },
   } = useSelector((state: AppState) => state);
   const history = useHistory();
 
@@ -64,11 +65,18 @@ const User: FC = () => {
         </Layer>
       ) : (
         <Box gap="medium" pad={{ vertical: 'medium' }}>
-          <PostListItem
-            post={userData.featuredPost}
-            onClickPlay={() => {}}
-            onClickSave={() => {}}
-          />
+          {featuredPost.loading && <Text size="small">Loading</Text>}
+          {!featuredPost.loading && !featuredPost.data && (
+            <Text size="small">No Data</Text>
+          )}
+          {featuredPost.data && (
+            <PostListItem
+              post={featuredPost.data}
+              onClickPlay={() => history.push(`video/${featuredPost.data?.id}`)}
+              onClickSave={() => {}}
+            />
+          )}
+
           <Divider />
           <UserFriends userName={params.userName} />
           <Divider />

@@ -173,10 +173,6 @@ export interface PostCommentState extends PostComment {
   };
 }
 
-export interface FeaturedPost {
-  post: Post;
-}
-
 export interface PostState {
   feed: PaginatedResponse<Post> & {
     loadingState: LoadingState;
@@ -206,7 +202,7 @@ export interface PostState {
     error: ResponseError | null;
   };
   featuredPost: {
-    data: FeaturedPost | null;
+    data: Post | null;
     loading: boolean;
     error: ResponseError | null;
   };
@@ -342,7 +338,7 @@ export type PostActionParams =
     }
   | {
       type: typeof GET_FEATURED_POST_SUCCESS;
-      payload: FeaturedPost;
+      payload: Post;
     }
   | {
       type:
