@@ -19,9 +19,10 @@ const InitialsAvatar: FC<InitialsAvatarProps> = ({
     <Avatar round background={{ color: background }} {...avatarProps}>
       <Text color={foreground} {...textProps}>
         {value
+          .replace(/[^a-zA-Z ]/g, '')
           .split(' ')
           .filter((_v, i: number) => i < 2)
-          .map((v) => v[0].toUpperCase())
+          .map((v) => v && v[0].toUpperCase())
           .join('')}
       </Text>
     </Avatar>
