@@ -66,8 +66,8 @@ const User: FC = () => {
       ) : (
         <Box gap="medium" pad={{ vertical: 'medium' }}>
           {featuredPost.loading && <Text size="small">Loading</Text>}
-          {!featuredPost.loading && !featuredPost.data && (
-            <Text size="small">No Data</Text>
+          {!featuredPost.loading && featuredPost.data && (
+            <Text size="small">No pinned post found</Text>
           )}
           {featuredPost.data && (
             <PostListItem
