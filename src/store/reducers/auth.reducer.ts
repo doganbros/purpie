@@ -1,6 +1,4 @@
 import {
-  CHANGE_PROFILE_INFO_FAILED,
-  CHANGE_PROFILE_INFO_REQUESTED,
   CHANGE_PROFILE_INFO_SUCCESS,
   USER_RETRIEVED_SUCCESS,
   USER_RETRIEVED_FAILED,
@@ -28,6 +26,7 @@ import {
   INITIALIZE_USER_REQUESTED,
   INITIALIZE_USER_SUCCESS,
   INITIALIZE_USER_FAILED,
+  CHANGE_PROFILE_PICTURE_SUCCESS,
 } from '../constants/auth.constants';
 import { AuthActionParams, AuthState } from '../types/auth.types';
 
@@ -322,27 +321,17 @@ const authReducer = (
     case CHANGE_PROFILE_INFO_SUCCESS:
       return {
         ...state,
-        changeProfileInfo: {
-          loading: false,
-          error: null,
-        },
+        user: state.user ? { ...state.user, ...action.payload } : null,
       };
-    case CHANGE_PROFILE_INFO_FAILED:
+
+    case CHANGE_PROFILE_PICTURE_SUCCESS:
       return {
         ...state,
-        changeProfileInfo: {
-          loading: false,
-          error: action.payload,
-        },
+        user: state.user
+          ? { ...state.user, displayPhoto: action.payload }
+          : null,
       };
-    case CHANGE_PROFILE_INFO_REQUESTED:
-      return {
-        ...state,
-        changeProfileInfo: {
-          loading: true,
-          error: null,
-        },
-      };
+
     default:
       return state;
   }

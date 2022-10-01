@@ -15,6 +15,9 @@ import {
   SEARCH_CHANNEL_REQUESTED,
   SEARCH_CHANNEL_SUCCESS,
   SEARCH_CHANNEL_FAILED,
+  CHANGE_CHANNEL_PICTURE_REQUESTED,
+  CHANGE_CHANNEL_PICTURE_SUCCESS,
+  CHANGE_CHANNEL_PICTURE_FAILED,
 } from '../constants/channel.constants';
 import * as ChannelService from '../services/channel.service';
 import {
@@ -149,6 +152,32 @@ export const searchChannelAction = (
       dispatch({
         type: SEARCH_CHANNEL_FAILED,
         payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const changeChannelPhoto = (
+  profilePhoto: any,
+  channelId: string
+): ChannelAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: CHANGE_CHANNEL_PICTURE_REQUESTED,
+    });
+    try {
+      const payload = await ChannelService.changeChannelPic(
+        profilePhoto,
+        channelId
+      );
+      dispatch({
+        type: CHANGE_CHANNEL_PICTURE_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: CHANGE_CHANNEL_PICTURE_FAILED,
+        payload: err?.response?.data,
       });
     }
   };

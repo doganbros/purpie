@@ -18,6 +18,9 @@ import {
   SEARCH_CHANNEL_REQUESTED,
   SEARCH_CHANNEL_SUCCESS,
   SEARCH_CHANNEL_FAILED,
+  CHANGE_CHANNEL_PICTURE_REQUESTED,
+  CHANGE_CHANNEL_PICTURE_SUCCESS,
+  CHANGE_CHANNEL_PICTURE_FAILED,
 } from '../constants/channel.constants';
 import { User } from './auth.types';
 import { UtilActionParams } from './util.types';
@@ -121,14 +124,20 @@ export type ChannelActionParams =
         | typeof OPEN_CREATE_CHANNEL_LAYER
         | typeof CLOSE_CREATE_CHANNEL_LAYER
         | typeof CREATE_CHANNEL_SUCCESS
-        | typeof UNSET_SELECTED_CHANNEL;
+        | typeof UNSET_SELECTED_CHANNEL
+        | typeof CHANGE_CHANNEL_PICTURE_REQUESTED;
+    }
+  | {
+      type: typeof CHANGE_CHANNEL_PICTURE_SUCCESS;
+      payload: string;
     }
   | {
       type:
         | typeof JOIN_CHANNEL_FAILED
         | typeof GET_USER_CHANNELS_FAILED
         | typeof CREATE_CHANNEL_FAILED
-        | typeof SEARCH_CHANNEL_FAILED;
+        | typeof SEARCH_CHANNEL_FAILED
+        | typeof CHANGE_CHANNEL_PICTURE_FAILED;
       payload: ResponseError;
     };
 

@@ -32,9 +32,9 @@ import {
   CHANGE_PROFILE_INFO_FAILED,
   CHANGE_PROFILE_INFO_SUCCESS,
   CHANGE_PROFILE_INFO_REQUESTED,
-  SHOW_PROFILE_PICTURE_REQUESTED,
-  SHOW_PROFILE_PICTURE_FAILED,
-  SHOW_PROFILE_PICTURE_SUCCESS,
+  CHANGE_PROFILE_PICTURE_REQUESTED,
+  CHANGE_PROFILE_PICTURE_FAILED,
+  CHANGE_PROFILE_PICTURE_SUCCESS,
 } from '../constants/auth.constants';
 import * as AuthService from '../services/auth.service';
 import {
@@ -282,10 +282,10 @@ export const changeProfileInfo = (user: ChangeProfileInfo): AuthAction => {
       type: CHANGE_PROFILE_INFO_REQUESTED,
     });
     try {
-      const payload = await AuthService.changeProfileService(user);
+      await AuthService.changeProfileService(user);
       dispatch({
         type: CHANGE_PROFILE_INFO_SUCCESS,
-        payload,
+        payload: user,
       });
     } catch (err: any) {
       dispatch({
@@ -296,20 +296,20 @@ export const changeProfileInfo = (user: ChangeProfileInfo): AuthAction => {
   };
 };
 
-export const getProfilePicture = (profileString: string): AuthAction => {
+export const changeProfilePicture = (profilePhoto: any): AuthAction => {
   return async (dispatch) => {
     dispatch({
-      type: SHOW_PROFILE_PICTURE_REQUESTED,
+      type: CHANGE_PROFILE_PICTURE_REQUESTED,
     });
     try {
-      const payload = await AuthService.showProfilePic(profileString);
+      const payload = await AuthService.changeProfilePic(profilePhoto);
       dispatch({
-        type: SHOW_PROFILE_PICTURE_SUCCESS,
+        type: CHANGE_PROFILE_PICTURE_SUCCESS,
         payload,
       });
     } catch (err: any) {
       dispatch({
-        type: SHOW_PROFILE_PICTURE_FAILED,
+        type: CHANGE_PROFILE_PICTURE_FAILED,
         payload: err?.response?.data,
       });
     }

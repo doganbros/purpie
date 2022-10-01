@@ -13,6 +13,7 @@ import {
   SEARCH_CHANNEL_SUCCESS,
   SET_SELECTED_CHANNEL,
   UNSET_SELECTED_CHANNEL,
+  CHANGE_CHANNEL_PICTURE_SUCCESS,
 } from '../constants/channel.constants';
 import { ChannelActionParams, ChannelState } from '../types/channel.types';
 
@@ -143,6 +144,10 @@ const channelReducer = (
           loading: false,
           error: action.payload,
         },
+      };
+    case CHANGE_CHANNEL_PICTURE_SUCCESS:
+      return {
+        ...state,
       };
     default:
       return state;

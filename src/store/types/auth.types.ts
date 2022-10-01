@@ -1,7 +1,7 @@
 import {
-  SHOW_PROFILE_PICTURE_FAILED,
-  SHOW_PROFILE_PICTURE_REQUESTED,
-  SHOW_PROFILE_PICTURE_SUCCESS,
+  CHANGE_PROFILE_PICTURE_FAILED,
+  CHANGE_PROFILE_PICTURE_REQUESTED,
+  CHANGE_PROFILE_PICTURE_SUCCESS,
   LOGIN_REQUESTED,
   RESET_PASSWORD_REQUESTED,
   FORGOT_PASSWORD_REQUESTED,
@@ -67,8 +67,7 @@ export interface UserBasic {
 export interface User extends UserBasic {
   userRole?: UserRole;
   displayPhoto?: string;
-  firstName?: string;
-  lastName?: string;
+  fullName: string;
 }
 
 export interface AuthState {
@@ -145,9 +144,8 @@ export interface VerifyEmailPayload {
 }
 
 export interface ChangeProfileInfo {
-  firstName: string;
-  lastName: string;
   userName: string;
+  fullName: string;
 }
 
 export type AuthActionParams =
@@ -167,12 +165,12 @@ export type AuthActionParams =
         | typeof RESET_PASSWORD_SUCCESS
         | typeof INITIALIZE_USER_REQUESTED
         | typeof CHANGE_PROFILE_INFO_REQUESTED
-        | typeof SHOW_PROFILE_PICTURE_REQUESTED;
+        | typeof CHANGE_PROFILE_PICTURE_REQUESTED;
     }
   | {
       type:
         | typeof THIRD_PARTY_URL_REQUESTED
-        | typeof SHOW_PROFILE_PICTURE_SUCCESS;
+        | typeof CHANGE_PROFILE_PICTURE_SUCCESS;
       payload: string;
     }
   | {
@@ -182,9 +180,12 @@ export type AuthActionParams =
         | typeof VERIFY_USER_EMAIL_SUCCESS
         | typeof THIRD_PARTY_AUTH_WITH_CODE_SUCCESS
         | typeof USER_RETRIEVED_SUCCESS
-        | typeof INITIALIZE_USER_SUCCESS
-        | typeof CHANGE_PROFILE_INFO_SUCCESS;
+        | typeof INITIALIZE_USER_SUCCESS;
       payload: User;
+    }
+  | {
+      type: typeof CHANGE_PROFILE_INFO_SUCCESS;
+      payload: { userName: string; fullName: string };
     }
   | {
       type: typeof LOGIN_SUCCESS | typeof REGISTER_SUCCESS;
@@ -203,7 +204,7 @@ export type AuthActionParams =
         | typeof FORGOT_PASSWORD_FAILED
         | typeof INITIALIZE_USER_FAILED
         | typeof CHANGE_PROFILE_INFO_FAILED
-        | typeof SHOW_PROFILE_PICTURE_FAILED;
+        | typeof CHANGE_PROFILE_PICTURE_FAILED;
       payload: ResponseError;
     };
 

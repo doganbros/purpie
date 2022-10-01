@@ -1,3 +1,4 @@
+import { serialize } from 'object-to-formdata';
 import { http } from '../../config/http';
 import {
   ExistenceResult,
@@ -79,5 +80,5 @@ export const initializeUser = (user: RegisterPayload): Promise<User> =>
 export const changeProfileService = (user: ChangeProfileInfo): Promise<User> =>
   http.put('user/profile', user).then((res) => res.data);
 
-export const showProfilePic = (photoFile: string): Promise<string> =>
-  http.get(`user/display-photo/${photoFile}`).then((res) => res.data);
+export const changeProfilePic = (photoFile: any): Promise<any> =>
+  http.put(`user/display-photo/`, serialize(photoFile)).then((res) => res.data);

@@ -1,3 +1,4 @@
+import { serialize } from 'object-to-formdata';
 import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
 import {
@@ -47,3 +48,11 @@ export const searchChannel = (
   params: ChannelSearchParams
 ): Promise<PaginatedResponse<ChannelListItem>> =>
   http.get(`/channel/search`, { params }).then((res) => res.data);
+
+export const changeChannelPic = (
+  photoFile: any,
+  channelId: string
+): Promise<any> =>
+  http
+    .put(`channel/display-photo/${channelId}`, serialize(photoFile))
+    .then((res) => res.data);

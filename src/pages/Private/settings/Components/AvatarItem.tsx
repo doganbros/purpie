@@ -12,33 +12,36 @@ import {
 
 export const AvatarItem: FC<{
   label: string;
-  menuItems: any;
+  menuItems?: any;
   selectedIndex: number;
   changeProfilePic?: any;
-}> = ({ label, menuItems, selectedIndex, changeProfilePic }) => {
+  isEditable?: boolean;
+}> = ({ label, menuItems, selectedIndex, changeProfilePic, isEditable }) => {
   const {
     auth: { user },
   } = useSelector((state: AppState) => state);
   return (
     <Box direction="row">
-      <ExtendedBox align="end" justify="center" position="relative" top="-10px">
-        <ExtendedBox
-          background="#6FFFB0"
-          width="20px"
-          height="20px"
-          round="full"
-          justify="center"
-          align="center"
-          left="0"
-          position="relative"
-          top="30px"
-        >
-          <Button
-            onClick={changeProfilePic ? () => changeProfilePic() : () => {}}
+      <ExtendedBox align="end" justify="center" position="relative">
+        {isEditable && (
+          <ExtendedBox
+            background="#6FFFB0"
+            width="20px"
+            height="20px"
+            round="full"
+            justify="center"
+            align="center"
+            left="0"
+            position="relative"
+            top="30px"
           >
-            <Edit size="small" />
-          </Button>
-        </ExtendedBox>
+            <Button
+              onClick={changeProfilePic ? () => changeProfilePic() : () => {}}
+            >
+              <Edit size="small" />
+            </Button>
+          </ExtendedBox>
+        )}
         <Box
           round="full"
           width="80px"
@@ -62,10 +65,13 @@ export const AvatarItem: FC<{
         </Box>
 
         <Text color="#8F9BB3">
-          {menuItems[selectedIndex]?.role ||
-            `${menuItems[selectedIndex]?.members} Members`}
+          {menuItems &&
+            (menuItems[selectedIndex]?.role ||
+              `${menuItems[selectedIndex]?.members} Members`)}
         </Text>
-        <Text color="#8F9BB3">{menuItems[selectedIndex]?.whichZone || ''}</Text>
+        <Text color="#8F9BB3">
+          {(menuItems && menuItems[selectedIndex]?.whichZone) || ''}
+        </Text>
       </Box>
     </Box>
   );
