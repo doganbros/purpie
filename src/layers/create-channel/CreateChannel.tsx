@@ -10,6 +10,7 @@ import {
   ResponsiveContext,
   Select,
   Text,
+  TextArea,
   TextInput,
 } from 'grommet';
 import { Close } from 'grommet-icons';
@@ -45,11 +46,14 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
 
   const notValid = !name || !description || !topic || !userZone;
 
+  const formFieldContentProps = {
+    round: 'small',
+    border: { color: 'brand-alt' },
+  };
   return (
     <Layer onClickOutside={onDismiss}>
       <Box
         width={size !== 'small' ? '720px' : undefined}
-        height={size !== 'small' ? '505px' : undefined}
         round={size !== 'small' ? '20px' : undefined}
         fill={size === 'small'}
         background="white"
@@ -58,12 +62,10 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
       >
         <Box direction="row" justify="between" align="start">
           <Box pad="xsmall">
-            <Text size="large" weight="bold">
-              Create Channel
-            </Text>
+            <Text size="large">Create Channel</Text>
           </Box>
           <Button plain onClick={onDismiss}>
-            <Close color="brand" />
+            <Close color="brand-alt" />
           </Button>
         </Box>
         <Form
@@ -75,30 +77,50 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
             dispatch(closeCreateChannelLayerAction());
           }}
         >
-          <Box height="320px" flex={false} overflow="auto">
+          <Box height="262px" flex={false} overflow="auto">
             <Box height={{ min: 'min-content' }}>
-              <FormField required name="name" label="Name">
+              <FormField
+                required
+                name="name"
+                contentProps={formFieldContentProps}
+              >
                 <TextInput
+                  placeholder="Channel Name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   name="name"
                 />
               </FormField>
-              <FormField required name="topic" label="Topic">
+              <FormField
+                required
+                name="topic"
+                contentProps={formFieldContentProps}
+              >
                 <TextInput
+                  placeholder="Topics"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   name="topic"
                 />
               </FormField>
-              <FormField required name="description" label="Description">
-                <TextInput
+              <FormField
+                required
+                name="description"
+                contentProps={formFieldContentProps}
+              >
+                <TextArea
+                  resize={false}
+                  placeholder="Channel Description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   name="description"
                 />
               </FormField>
-              <FormField required name="zoneId" label="Zone">
+              <FormField
+                required
+                name="zoneId"
+                contentProps={formFieldContentProps}
+              >
                 <Select
                   name="zoneId"
                   options={
@@ -115,7 +137,7 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                   labelKey="name"
                   valueKey={{ key: 'id', reduce: true }}
                   value={userZone}
-                  placeholder="Select zone"
+                  placeholder="Zone"
                   onChange={({ option }) => {
                     setUserZone(option.id);
                     setCategory(undefined);
@@ -123,39 +145,60 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                   }}
                 />
               </FormField>
-              <FormField name="categoryId" label="Category">
-                <Select
-                  options={categories || []}
-                  disabled={!userZone}
+              <Box direction="row" justify="between" align="start" gap="small">
+                <FormField
                   name="categoryId"
-                  placeholder="Select category"
-                  labelKey="name"
-                  valueKey={{ key: 'id', reduce: true }}
-                  value={category}
-                  onChange={({ value }) => setCategory(value)}
-                />
-              </FormField>
-              <FormField name="public">
-                <CheckBox
-                  toggle
-                  label="Public"
+                  width="100%"
+                  contentProps={formFieldContentProps}
+                >
+                  <Select
+                    options={categories || []}
+                    disabled={!userZone}
+                    name="categoryId"
+                    placeholder="Category"
+                    labelKey="name"
+                    valueKey={{ key: 'id', reduce: true }}
+                    value={category}
+                    onChange={({ value }) => setCategory(value)}
+                  />
+                </FormField>
+                <FormField
                   name="public"
-                  checked={publicChannel}
-                  onChange={(e) => {
-                    setPublicChannel(e.target.checked);
-                  }}
-                />
-              </FormField>
+                  width="100%"
+                  contentProps={formFieldContentProps}
+                >
+                  <Box
+                    pad="11px"
+                    as="label"
+                    flex={{ shrink: 0 }}
+                    direction="row"
+                    justify="between"
+                  >
+                    <Text size="small">Public</Text>
+                    <CheckBox
+                      toggle
+                      name="public"
+                      checked={publicChannel}
+                      onChange={(e) => {
+                        setPublicChannel(e.target.checked);
+                      }}
+                    />
+                  </Box>
+                </FormField>
+              </Box>
             </Box>
           </Box>
-          <Box
-            direction="row"
-            gap="medium"
-            justify="center"
+
+          <Button
+            type="submit"
+            disabled={notValid}
+            primary
+            label="Create"
+            style={{ borderRadius: '10px' }}
+            size="large"
+            fill="horizontal"
             margin={{ top: 'medium' }}
-          >
-            <Button type="submit" disabled={notValid} primary label="Create" />
-          </Box>
+          />
         </Form>
       </Box>
     </Layer>
