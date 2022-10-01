@@ -22,6 +22,7 @@ import {
   createChannelAction,
 } from '../../store/actions/channel.action';
 import { getZoneCategoriesAction } from '../../store/actions/zone.action';
+import { validators } from '../../helpers/validators';
 
 interface CreateChannelProps {
   onDismiss: () => void;
@@ -37,14 +38,9 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
     },
   } = useSelector((state: AppState) => state);
   const size = useContext(ResponsiveContext);
+
   const [userZone, setUserZone] = useState<any>(selectedUserZone?.id);
   const [category, setCategory] = useState();
-  const [name, setName] = useState('');
-  const [topic, setTopic] = useState('');
-  const [description, setDescription] = useState('');
-  const [publicChannel, setPublicChannel] = useState(true);
-
-  const notValid = !name || !description || !topic || !userZone;
 
   const formFieldContentProps = {
     round: 'small',
@@ -80,39 +76,22 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
           <Box height="262px" flex={false} overflow="auto">
             <Box height={{ min: 'min-content' }}>
               <FormField
-                required
                 name="name"
                 contentProps={formFieldContentProps}
+                validate={[validators.required('Channel name')]}
               >
-                <TextInput
-                  placeholder="Channel Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  name="name"
-                />
+                <TextInput placeholder="Channel Name" name="name" />
+              </FormField>
+              <FormField name="topic" contentProps={formFieldContentProps}>
+                <TextInput placeholder="Topics" name="topic" />
               </FormField>
               <FormField
-                required
-                name="topic"
-                contentProps={formFieldContentProps}
-              >
-                <TextInput
-                  placeholder="Topics"
-                  value={topic}
-                  onChange={(e) => setTopic(e.target.value)}
-                  name="topic"
-                />
-              </FormField>
-              <FormField
-                required
                 name="description"
                 contentProps={formFieldContentProps}
               >
                 <TextArea
                   resize={false}
                   placeholder="Channel Description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
                   name="description"
                 />
               </FormField>
@@ -120,6 +99,7 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                 required
                 name="zoneId"
                 contentProps={formFieldContentProps}
+                validate={[validators.required('Zone')]}
               >
                 <Select
                   name="zoneId"
@@ -136,7 +116,6 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                   disabledKey="cannotCreateChannel"
                   labelKey="name"
                   valueKey={{ key: 'id', reduce: true }}
-                  value={userZone}
                   placeholder="Zone"
                   onChange={({ option }) => {
                     setUserZone(option.id);
@@ -175,14 +154,7 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                     justify="between"
                   >
                     <Text size="small">Public</Text>
-                    <CheckBox
-                      toggle
-                      name="public"
-                      checked={publicChannel}
-                      onChange={(e) => {
-                        setPublicChannel(e.target.checked);
-                      }}
-                    />
+                    <CheckBox toggle name="public" />
                   </Box>
                 </FormField>
               </Box>
@@ -191,7 +163,6 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
 
           <Button
             type="submit"
-            disabled={notValid}
             primary
             label="Create"
             style={{ borderRadius: '10px' }}

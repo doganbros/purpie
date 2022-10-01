@@ -24,6 +24,7 @@ import { AppState } from '../../store/reducers/root.reducer';
 import { CreateZonePayload } from '../../store/types/zone.types';
 import { nameToSubdomain } from '../../helpers/utils';
 import { hostname } from '../../helpers/app-subdomain';
+import { validators } from '../../helpers/validators';
 
 interface CreateZoneProps {
   onDismiss: () => void;
@@ -38,14 +39,8 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
   } = useSelector((state: AppState) => state);
   const size = useContext(ResponsiveContext);
 
-  const [name, setName] = useState('');
   const [subdomain, setSubdomain] = useState('');
   const [subdomainInputFocus, setSubdomainInputFocus] = useState(false);
-  const [description, setDescription] = useState('');
-  const [publicZone, setPublicZone] = useState(true);
-  const [category, setCategory] = useState();
-
-  const notValid = !name || !description || !subdomain || !category;
 
   useEffect(() => {
     dispatch(getCategoriesAction());
@@ -83,26 +78,25 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
             <Box height="262px" flex={false} overflow="auto">
               <Box height={{ min: 'min-content' }}>
                 <FormField
-                  required
                   name="name"
                   contentProps={formFieldContentProps}
+                  validate={[validators.required('Zone name')]}
                 >
                   <TextInput
                     placeholder="Zone Name"
-                    value={name}
+                    name="name"
                     onChange={({ target: { value } }) => {
-                      setName(value);
                       setSubdomain(nameToSubdomain(value));
                     }}
-                    name="name"
                   />
                 </FormField>
                 <FormField
-                  required
                   name="subdomain"
                   contentProps={formFieldContentProps}
+                  validate={[validators.required('Zone address')]}
                 >
                   <TextInput
+                    name="subdomain"
                     placeholder="Zone Address"
                     value={
                       subdomainInputFocus || !subdomain
@@ -114,21 +108,15 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                     }}
                     onFocus={() => setSubdomainInputFocus(true)}
                     onBlur={() => setSubdomainInputFocus(false)}
-                    name="subdomain"
                   />
                 </FormField>
                 <FormField
-                  required
                   name="description"
                   contentProps={formFieldContentProps}
                 >
                   <TextArea
                     resize={false}
                     placeholder="Zone Description"
-                    value={description}
-                    onChange={(e) => {
-                      setDescription(e.target.value);
-                    }}
                     name="description"
                   />
                 </FormField>
@@ -140,9 +128,9 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                 >
                   <FormField
                     width="100%"
-                    required
                     name="categoryId"
                     contentProps={formFieldContentProps}
+                    validate={[validators.required('Category')]}
                   >
                     <Select
                       placeholder="Category"
@@ -150,10 +138,6 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                       options={categories || []}
                       labelKey="name"
                       valueKey={{ key: 'id', reduce: true }}
-                      value={category}
-                      onChange={({ option }) => {
-                        setCategory(option.id);
-                      }}
                     />
                   </FormField>
                   <FormField
@@ -169,14 +153,7 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                       justify="between"
                     >
                       <Text size="small">Public</Text>
-                      <CheckBox
-                        name="public"
-                        toggle
-                        checked={publicZone}
-                        onChange={(e) => {
-                          setPublicZone(e.target.checked);
-                        }}
-                      />
+                      <CheckBox name="public" toggle />
                     </Box>
                   </FormField>
                 </Box>
@@ -188,7 +165,6 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
               fill="horizontal"
               margin={{ top: 'medium' }}
               type="submit"
-              disabled={notValid}
               primary
               label="Create"
             />
