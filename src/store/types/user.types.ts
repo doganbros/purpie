@@ -2,28 +2,37 @@ import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
 import { User, UserBasic } from './auth.types';
 import {
-  SEARCH_PROFILE_REQUESTED,
-  SEARCH_PROFILE_SUCCESS,
-  SEARCH_PROFILE_FAILED,
+  GET_USER_DETAIL_FAILED,
+  GET_USER_DETAIL_REQUESTED,
+  GET_USER_DETAIL_SUCCESS,
+  LIST_CONTACTS_FAILED,
   LIST_CONTACTS_REQUESTED,
   LIST_CONTACTS_SUCCESS,
-  LIST_CONTACTS_FAILED,
-  SELECT_CONTACT_REQUESTED,
-  SELECT_CONTACT_SUCCESS,
-  SELECT_CONTACT_FAILED,
+  LIST_USER_PUBLIC_CHANNELS_FAILED,
+  LIST_USER_PUBLIC_CHANNELS_REQUESTED,
+  LIST_USER_PUBLIC_CHANNELS_SUCCESS,
+  LIST_USER_PUBLIC_ZONES_FAILED,
+  LIST_USER_PUBLIC_ZONES_REQUESTED,
+  LIST_USER_PUBLIC_ZONES_SUCCESS,
   REMOVE_CONTACT_FAILED,
   REMOVE_CONTACT_REQUESTED,
   REMOVE_CONTACT_SUCCESS,
-  GET_USER_DETAIL_REQUESTED,
-  GET_USER_DETAIL_SUCCESS,
-  GET_USER_DETAIL_FAILED,
+  SEARCH_PROFILE_FAILED,
+  SEARCH_PROFILE_REQUESTED,
+  SEARCH_PROFILE_SUCCESS,
+  SELECT_CONTACT_FAILED,
+  SELECT_CONTACT_REQUESTED,
+  SELECT_CONTACT_SUCCESS,
 } from '../constants/user.constants';
+import { UserChannelListItem } from './channel.types';
+import { UserZoneListItem } from './zone.types';
 
 export interface ProfileSearchOptions {
   excludeIds?: string;
   channelId?: number;
   userContacts?: boolean;
 }
+
 export interface ProfileSearchParams extends ProfileSearchOptions {
   name: string;
   limit?: number;
@@ -35,6 +44,7 @@ export interface ContactUser {
   createdOn: Date;
   contactUser: UserBasic;
 }
+
 export interface UserState {
   search: {
     results: PaginatedResponse<UserBasic>;
@@ -51,6 +61,14 @@ export interface UserState {
       error: ResponseError | null;
     };
   };
+  publicChannels: PaginatedResponse<UserChannelListItem> & {
+    loading: boolean;
+    error: ResponseError | null;
+  };
+  publicZones: PaginatedResponse<UserZoneListItem> & {
+    loading: boolean;
+    error: ResponseError | null;
+  };
   detail: {
     user: User | null;
     loading: boolean;
@@ -65,7 +83,10 @@ export interface UserState {
 
 export type UserActionParams =
   | {
-      type: typeof LIST_CONTACTS_REQUESTED;
+      type:
+        | typeof LIST_CONTACTS_REQUESTED
+        | typeof LIST_USER_PUBLIC_CHANNELS_REQUESTED
+        | typeof LIST_USER_PUBLIC_ZONES_REQUESTED;
     }
   | {
       type: typeof SEARCH_PROFILE_REQUESTED;
@@ -78,6 +99,14 @@ export type UserActionParams =
   | {
       type: typeof LIST_CONTACTS_SUCCESS;
       payload: PaginatedResponse<ContactUser>;
+    }
+  | {
+      type: typeof LIST_USER_PUBLIC_CHANNELS_SUCCESS;
+      payload: PaginatedResponse<UserChannelListItem>;
+    }
+  | {
+      type: typeof LIST_USER_PUBLIC_ZONES_SUCCESS;
+      payload: PaginatedResponse<UserZoneListItem>;
     }
   | {
       type: typeof SELECT_CONTACT_REQUESTED;
@@ -108,7 +137,9 @@ export type UserActionParams =
         | typeof LIST_CONTACTS_FAILED
         | typeof SELECT_CONTACT_FAILED
         | typeof REMOVE_CONTACT_FAILED
-        | typeof GET_USER_DETAIL_FAILED;
+        | typeof GET_USER_DETAIL_FAILED
+        | typeof LIST_USER_PUBLIC_CHANNELS_FAILED
+        | typeof LIST_USER_PUBLIC_ZONES_FAILED;
       payload: ResponseError;
     };
 

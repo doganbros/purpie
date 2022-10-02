@@ -897,7 +897,7 @@ export class PostService {
 
     const result = { ...featuredPost };
 
-    const post = await this.getPostById(currentUserId, featuredPost.postId);
+    const post = await this.getPostById(currentUserId, featuredPost.id);
 
     if (!post) return null;
 

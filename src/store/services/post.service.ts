@@ -156,3 +156,6 @@ export const createPostCommentLike = (params: {
 
 export const removePostCommentLike = (commentId: number): Promise<string> =>
   http.delete(`/post/comment/like/remove/${commentId}`).then((res) => res.data);
+
+export const getFeaturedPost = (userId: number): Promise<Post> =>
+  http.get(`/post/featured/user/${userId}`).then((res) => res.data);
