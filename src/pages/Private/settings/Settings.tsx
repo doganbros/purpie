@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import {
   Box,
   TextInput,
@@ -541,7 +541,7 @@ const Settings: FC = () => {
     return ['test'];
   };
 
-  const selectedItems = useMemo(() => {
+  const getSelectedItems = () => {
     if (searchText?.length > 0) {
       if (data.length > 0) {
         const result: DataItemInterface[] = [];
@@ -607,7 +607,7 @@ const Settings: FC = () => {
       return [];
     }
     return [data[selectedIndex]];
-  }, [searchText, selectedIndex, userInfo]);
+  };
 
   useEffect(() => {
     debouncer(() => setSearchText(searchTextValue), 300);
@@ -766,7 +766,7 @@ const Settings: FC = () => {
             ))}
           </Box>
           <Box flex="grow">
-            {selectedItems.map((item) => (
+            {getSelectedItems().map((item) => (
               <Box key={item.key} margin={{ vertical: 'xsmall' }}>
                 {renderSettings(item)}
               </Box>
