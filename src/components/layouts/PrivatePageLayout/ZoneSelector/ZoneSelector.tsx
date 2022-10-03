@@ -26,6 +26,7 @@ const ZoneSelector: FC = () => {
   const [hover, setHover] = useState(false);
   const [open, setOpen] = useState(false);
 
+  const createChannelButtonDisabled = userZones?.length === 0;
   return (
     <Box fill="horizontal" pad={{ horizontal: 'small' }}>
       <DropButton
@@ -86,11 +87,21 @@ const ZoneSelector: FC = () => {
             <Divider />
             <ListButton
               onClick={() => {
-                setOpen(false);
-                dispatch(openCreateChannelLayerAction());
+                if (!createChannelButtonDisabled) {
+                  setOpen(false);
+                  dispatch(openCreateChannelLayerAction());
+                }
               }}
+              disabled={createChannelButtonDisabled}
               label="Create Channel"
-              rightIcon={<Add size="small" color="black" />}
+              rightIcon={
+                <Add
+                  size="small"
+                  color={
+                    createChannelButtonDisabled ? 'status-disabled' : 'black'
+                  }
+                />
+              }
             />
             <ListButton
               onClick={() => {

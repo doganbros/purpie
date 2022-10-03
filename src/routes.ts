@@ -15,6 +15,7 @@ import ResetPassword from './pages/Public/ResetPassword';
 import ThirdPartyAuth from './pages/Public/ThirdPartyAuth';
 import VerifyUserEmail from './pages/Public/VerifyUserEmail';
 import VerifyUserEmailInfo from './pages/Public/VerifyUserEmailInfo';
+import ComingSoon from './pages/Private/ComingSoon';
 
 interface AppRoute {
   id: string;
@@ -119,5 +120,11 @@ export const privateRoutes: Array<AppRoute> = [
     path: '/reset-password/:token',
     component: ResetPassword,
     description: 'User resets after redirected from email',
+  },
+  {
+    id: nanoid(),
+    path: '/messages',
+    component: ComingSoon,
+    description: 'User views and write a message',
   },
 ];
