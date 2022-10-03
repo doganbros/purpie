@@ -10,6 +10,7 @@ import {
   ResponsiveContext,
   Select,
   Text,
+  TextArea,
   TextInput,
 } from 'grommet';
 import { Close } from 'grommet-icons';
@@ -23,6 +24,7 @@ import { AppState } from '../../store/reducers/root.reducer';
 import { CreateZonePayload } from '../../store/types/zone.types';
 import { nameToSubdomain } from '../../helpers/utils';
 import { hostname } from '../../helpers/app-subdomain';
+import { validators } from '../../helpers/validators';
 
 interface CreateZoneProps {
   onDismiss: () => void;
@@ -37,24 +39,21 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
   } = useSelector((state: AppState) => state);
   const size = useContext(ResponsiveContext);
 
-  const [name, setName] = useState('');
   const [subdomain, setSubdomain] = useState('');
   const [subdomainInputFocus, setSubdomainInputFocus] = useState(false);
-  const [description, setDescription] = useState('');
-  const [publicZone, setPublicZone] = useState(true);
-  const [category, setCategory] = useState();
-
-  const notValid = !name || !description || !subdomain || !category;
 
   useEffect(() => {
     dispatch(getCategoriesAction());
   }, []);
 
+  const formFieldContentProps = {
+    round: 'small',
+    border: { color: 'brand-alt' },
+  };
   return (
     <Layer onClickOutside={onDismiss}>
       <Box
-        width={size !== 'small' ? '720px' : undefined}
-        height={size !== 'small' ? '505px' : undefined}
+        width={size !== 'small' ? '710px' : undefined}
         round={size !== 'small' ? '20px' : undefined}
         fill={size === 'small'}
         background="white"
@@ -63,12 +62,10 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
       >
         <Box direction="row" justify="between" align="start">
           <Box pad="xsmall">
-            <Text size="large" weight="bold">
-              Create Zone
-            </Text>
+            <Text size="large">Create Zone</Text>
           </Box>
           <Button plain onClick={onDismiss}>
-            <Close color="brand" />
+            <Close color="brand-alt" />
           </Button>
         </Box>
         <Box height="100%">
@@ -78,20 +75,29 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
               dispatch(closeCreateZoneLayerAction());
             }}
           >
-            <Box height="320px" flex={false} overflow="auto">
+            <Box height="262px" flex={false} overflow="auto">
               <Box height={{ min: 'min-content' }}>
-                <FormField required name="name" label="Name">
+                <FormField
+                  name="name"
+                  contentProps={formFieldContentProps}
+                  validate={[validators.required('Zone name')]}
+                >
                   <TextInput
-                    value={name}
+                    placeholder="Zone Name"
+                    name="name"
                     onChange={({ target: { value } }) => {
-                      setName(value);
                       setSubdomain(nameToSubdomain(value));
                     }}
-                    name="name"
                   />
                 </FormField>
-                <FormField required name="subdomain" label="Zone Address">
+                <FormField
+                  name="subdomain"
+                  contentProps={formFieldContentProps}
+                  validate={[validators.required('Zone address')]}
+                >
                   <TextInput
+                    name="subdomain"
+                    placeholder="Zone Address"
                     value={
                       subdomainInputFocus || !subdomain
                         ? subdomain
@@ -102,57 +108,66 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                     }}
                     onFocus={() => setSubdomainInputFocus(true)}
                     onBlur={() => setSubdomainInputFocus(false)}
-                    name="subdomain"
                   />
                 </FormField>
-                <FormField required name="description" label="Description">
-                  <TextInput
-                    value={description}
-                    onChange={(e) => {
-                      setDescription(e.target.value);
-                    }}
+                <FormField
+                  name="description"
+                  contentProps={formFieldContentProps}
+                >
+                  <TextArea
+                    resize={false}
+                    placeholder="Zone Description"
                     name="description"
                   />
                 </FormField>
-                <FormField required name="categoryId" label="Category">
-                  <Select
+                <Box
+                  direction="row"
+                  justify="between"
+                  align="start"
+                  gap="small"
+                >
+                  <FormField
+                    width="100%"
                     name="categoryId"
-                    options={categories || []}
-                    labelKey="name"
-                    placeholder="Select category"
-                    valueKey={{ key: 'id', reduce: true }}
-                    value={category}
-                    onChange={({ option }) => {
-                      setCategory(option.id);
-                    }}
-                  />
-                </FormField>
-                <FormField name="public">
-                  <CheckBox
-                    toggle
-                    checked={publicZone}
-                    onChange={(e) => {
-                      setPublicZone(e.target.checked);
-                    }}
-                    label="Public"
+                    contentProps={formFieldContentProps}
+                    validate={[validators.required('Category')]}
+                  >
+                    <Select
+                      placeholder="Category"
+                      name="categoryId"
+                      options={categories || []}
+                      labelKey="name"
+                      valueKey={{ key: 'id', reduce: true }}
+                    />
+                  </FormField>
+                  <FormField
+                    width="100%"
                     name="public"
-                  />
-                </FormField>
+                    contentProps={formFieldContentProps}
+                  >
+                    <Box
+                      pad="11px"
+                      as="label"
+                      flex={{ shrink: 0 }}
+                      direction="row"
+                      justify="between"
+                    >
+                      <Text size="small">Public</Text>
+                      <CheckBox name="public" toggle />
+                    </Box>
+                  </FormField>
+                </Box>
               </Box>
             </Box>
-            <Box
-              direction="row"
-              gap="medium"
-              justify="center"
+            <Button
+              style={{ borderRadius: '10px' }}
+              size="large"
+              fill="horizontal"
               margin={{ top: 'medium' }}
-            >
-              <Button
-                type="submit"
-                disabled={notValid}
-                primary
-                label="Create"
-              />
-            </Box>
+              type="submit"
+              primary
+              label="Create"
+            />
           </Form>
         </Box>
       </Box>
