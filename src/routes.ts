@@ -14,6 +14,7 @@ import ResetPassword from './pages/Public/ResetPassword';
 import ThirdPartyAuth from './pages/Public/ThirdPartyAuth';
 import VerifyUserEmail from './pages/Public/VerifyUserEmail';
 import VerifyUserEmailInfo from './pages/Public/VerifyUserEmailInfo';
+import ComingSoon from './pages/Private/ComingSoon';
 
 interface AppRoute {
   id: string;
@@ -112,5 +113,11 @@ export const privateRoutes: Array<AppRoute> = [
     path: '/user/:userName',
     component: User,
     description: 'User view a profile',
+  },
+  {
+    id: nanoid(),
+    path: '/messages',
+    component: ComingSoon,
+    description: 'User views and write a message',
   },
 ];
