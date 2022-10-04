@@ -6,13 +6,15 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { initApp } from 'populators/init-app';
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { json } from 'express';
 import { AppModule } from './app.module';
+import { GlobalExceptionHandler } from './error/GlobalExceptionHandler';
 
 initApp();
 
 const { REACT_APP_CLIENT_HOST, HTTP_MAX_BODY_SIZE } = process.env;
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -40,6 +42,9 @@ async function bootstrap() {
     }),
   );
 
+  // Global Exception Handler for non handled errors
+  app.useGlobalFilters(new GlobalExceptionHandler());
+
   const logger = new Logger('Main');
 
   const { SERVER_PORT = 8000 } = process.env;
@@ -62,4 +67,5 @@ async function bootstrap() {
     .listen(SERVER_PORT)
     .then(() => logger.log(`Server started on port ${SERVER_PORT}`));
 }
+
 bootstrap();
