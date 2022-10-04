@@ -55,6 +55,13 @@ export const theme: typeof grommet = deepMerge(base, {
       },
     },
   },
+  checkBox: {
+    hover: {
+      border: {
+        color: 'accent-1',
+      },
+    },
+  },
   layer: {
     border: {
       radius: '20px',
