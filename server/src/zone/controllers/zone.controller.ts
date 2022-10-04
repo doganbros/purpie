@@ -266,8 +266,12 @@ export class ZoneController {
     return 'OK';
   }
 
-  @Put('display-photo')
+  @Put('/:userZoneId/display-photo')
   @ApiConsumes('multipart/form-data')
+  @ApiParam({
+    name: 'userZoneId',
+    description: 'Alternatively you can use zoneId',
+  })
   @ApiBody({
     schema: {
       type: 'object',
@@ -312,10 +316,11 @@ export class ZoneController {
   async changeDisplayPhoto(
     @CurrentUserZone() userZone: UserZone,
     @UploadedFile() file: Express.MulterS3.File,
+    @Param('userZoneId', ParseIntPipe) userZoneId: number,
   ) {
     const fileName = file.key.replace(`${S3_PROFILE_PHOTO_DIR}/zone-dp/`, '');
 
-    await this.zoneService.changeDisplayPhoto(userZone.zone.id, fileName);
+    await this.zoneService.changeDisplayPhoto(userZoneId, fileName);
 
     return fileName;
   }
