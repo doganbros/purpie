@@ -59,3 +59,6 @@ export const getNotifications = (
 
 export const getNotificationCount = (): Promise<NotificationCount> =>
   http.get('/notification/count').then((res) => res.data);
+
+export const viewNotifications = (): Promise<string> =>
+  http.post('/notification/view').then((res) => res.data);

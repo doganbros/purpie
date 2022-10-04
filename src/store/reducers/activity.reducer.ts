@@ -1,22 +1,24 @@
 import {
+  CHANNEL_SUGGESTIONS_FAILED,
   CHANNEL_SUGGESTIONS_REQUESTED,
   CHANNEL_SUGGESTIONS_SUCCESS,
-  LIST_INVITATION_FAILED,
-  LIST_INVITATION_REQUESTED,
-  LIST_INVITATION_SUCCESS,
   GET_INVITATION_RESPONSE_FAILED,
   GET_INVITATION_RESPONSE_REQUESTED,
   GET_INVITATION_RESPONSE_SUCCESS,
-  ZONE_SUGGESTIONS_FAILED,
-  ZONE_SUGGESTIONS_REQUESTED,
-  ZONE_SUGGESTIONS_SUCCESS,
-  CHANNEL_SUGGESTIONS_FAILED,
-  NOTIFICATION_REQUESTED,
-  NOTIFICATION_SUCCESS,
-  NOTIFICATION_FAILED,
+  LIST_INVITATION_FAILED,
+  LIST_INVITATION_REQUESTED,
+  LIST_INVITATION_SUCCESS,
   NOTIFICATION_COUNT_FAILED,
   NOTIFICATION_COUNT_REQUESTED,
   NOTIFICATION_COUNT_SUCCESS,
+  NOTIFICATION_FAILED,
+  NOTIFICATION_REQUESTED,
+  NOTIFICATION_SUCCESS,
+  VIEW_NOTIFICATION_REQUESTED,
+  VIEW_NOTIFICATION_SUCCESS,
+  ZONE_SUGGESTIONS_FAILED,
+  ZONE_SUGGESTIONS_REQUESTED,
+  ZONE_SUGGESTIONS_SUCCESS,
 } from '../constants/activity.constants';
 import { ActivityActionParams, ActivityState } from '../types/activity.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -38,8 +40,8 @@ const initialState: ActivityState = {
     error: null,
   },
   notificationCount: {
-    unviewedCount: '0',
-    unreadCount: '0',
+    unviewedCount: 0,
+    unreadCount: 0,
     loading: false,
     error: null,
   },
@@ -207,7 +209,7 @@ const activityReducer = (
         },
       };
 
-    case NOTIFICATION_COUNT_REQUESTED:
+    case NOTIFICATION_COUNT_REQUESTED || VIEW_NOTIFICATION_REQUESTED:
       return {
         ...state,
         notificationCount: {
@@ -225,13 +227,23 @@ const activityReducer = (
           error: null,
         },
       };
-    case NOTIFICATION_COUNT_FAILED:
+    case NOTIFICATION_COUNT_FAILED || NOTIFICATION_COUNT_FAILED:
       return {
         ...state,
         notificationCount: {
           ...state.notificationCount,
           loading: false,
           error: action.payload,
+        },
+      };
+    case VIEW_NOTIFICATION_SUCCESS:
+      return {
+        ...state,
+        notificationCount: {
+          ...state.notificationCount,
+          unviewedCount: state.notificationCount.unviewedCount - action.payload,
+          loading: false,
+          error: null,
         },
       };
     default:

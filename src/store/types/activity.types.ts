@@ -14,6 +14,9 @@ import {
   NOTIFICATION_FAILED,
   NOTIFICATION_REQUESTED,
   NOTIFICATION_SUCCESS,
+  VIEW_NOTIFICATION_FAILED,
+  VIEW_NOTIFICATION_REQUESTED,
+  VIEW_NOTIFICATION_SUCCESS,
   ZONE_SUGGESTIONS_FAILED,
   ZONE_SUGGESTIONS_REQUESTED,
   ZONE_SUGGESTIONS_SUCCESS,
@@ -104,8 +107,8 @@ export interface NotificationListItem {
 }
 
 export interface NotificationCount {
-  unviewedCount: string;
-  unreadCount: string;
+  unviewedCount: number;
+  unreadCount: number;
 }
 
 export interface ActivityState {
@@ -144,7 +147,8 @@ export type ActivityActionParams =
         | typeof GET_INVITATION_RESPONSE_REQUESTED
         | typeof CHANNEL_SUGGESTIONS_REQUESTED
         | typeof NOTIFICATION_REQUESTED
-        | typeof NOTIFICATION_COUNT_REQUESTED;
+        | typeof NOTIFICATION_COUNT_REQUESTED
+        | typeof VIEW_NOTIFICATION_REQUESTED;
     }
   | {
       type: typeof ZONE_SUGGESTIONS_SUCCESS;
@@ -179,11 +183,16 @@ export type ActivityActionParams =
       payload: NotificationCount;
     }
   | {
+      type: typeof VIEW_NOTIFICATION_SUCCESS;
+      payload: number;
+    }
+  | {
       type:
         | typeof CHANNEL_SUGGESTIONS_FAILED
         | typeof ZONE_SUGGESTIONS_FAILED
         | typeof NOTIFICATION_FAILED
-        | typeof NOTIFICATION_COUNT_FAILED;
+        | typeof NOTIFICATION_COUNT_FAILED
+        | typeof VIEW_NOTIFICATION_FAILED;
       payload: ResponseError;
     };
 

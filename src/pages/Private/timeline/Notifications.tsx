@@ -8,6 +8,7 @@ import {
 import {
   getNotificationCountAction,
   getNotificationsAction,
+  viewNotificationsAction,
 } from '../../../store/actions/activity.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import NotificationListItem from './NotificationListItem';
@@ -21,6 +22,10 @@ const Notifications: FC = () => {
 
   useEffect(() => {
     getNotifications();
+
+    return () => {
+      dispatch(viewNotificationsAction(displayCount));
+    };
   }, []);
 
   const getNotifications = (skip?: number) => {

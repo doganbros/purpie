@@ -17,6 +17,8 @@ import {
   NOTIFICATION_COUNT_FAILED,
   NOTIFICATION_COUNT_REQUESTED,
   NOTIFICATION_COUNT_SUCCESS,
+  VIEW_NOTIFICATION_REQUESTED,
+  VIEW_NOTIFICATION_SUCCESS,
 } from '../constants/activity.constants';
 
 import * as ActivityService from '../services/activity.service';
@@ -152,6 +154,26 @@ export const getNotificationCountAction = (): ActivityAction => {
     } catch (err: any) {
       dispatch({
         type: NOTIFICATION_COUNT_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const viewNotificationsAction = (viewCount: number): ActivityAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: VIEW_NOTIFICATION_REQUESTED,
+    });
+    try {
+      await ActivityService.viewNotifications();
+      dispatch({
+        type: VIEW_NOTIFICATION_SUCCESS,
+        payload: viewCount,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: NOTIFICATION_FAILED,
         payload: err?.response?.data,
       });
     }

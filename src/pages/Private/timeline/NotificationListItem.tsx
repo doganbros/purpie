@@ -18,32 +18,32 @@ const NotificationListItem: FC<NotificationListItemProps> = ({
       case NotificationType.POST:
         return {
           icon: <TextWrap size="16" color={iconColor} />,
-          title: `${notification.createdBy.fullName} has started a ${notification.post.title} post..`,
+          title: `${notification.createdBy.fullName} has started new post.`,
         };
       case NotificationType.POST_LIKE:
         return {
           icon: <Favorite size="16" color={iconColor} />,
-          title: `${notification.createdBy.fullName} has liked your ${notification.post.title} post.`,
+          title: `${notification.createdBy.fullName} has liked your post.`,
         };
       case NotificationType.POST_COMMENT:
         return {
           icon: <Chat size="16" color={iconColor} />,
-          title: `${notification.createdBy.fullName} has commented on your ${notification.post.title} post.`,
+          title: `${notification.createdBy.fullName} has commented on your post.`,
         };
       case NotificationType.POST_COMMENT_LIKE:
         return {
           icon: <Favorite size="16" color={iconColor} />,
-          title: `${notification.createdBy.fullName} has liked ${notification.post.title} post comment.`,
+          title: `${notification.createdBy.fullName} has liked your post comment.`,
         };
       case NotificationType.POST_COMMENT_REPLY:
         return {
           icon: <Chat size="16" color={iconColor} />,
-          title: `${notification.createdBy.fullName} has replied ${notification.post.title} post comment.`,
+          title: `${notification.createdBy.fullName} has replied your post comment.`,
         };
       case NotificationType.POST_COMMENT_MENTION:
         return {
           icon: <UserAdd size="16" color={iconColor} />,
-          title: `${notification.createdBy.fullName} has mentioned ${notification.post.title} post comment.`,
+          title: `${notification.createdBy.fullName} has mentioned your post comment.`,
         };
       case NotificationType.CONTACT_REQUEST_ACCEPTED:
         return {
