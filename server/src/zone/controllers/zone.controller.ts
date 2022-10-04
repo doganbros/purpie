@@ -84,7 +84,7 @@ export class ZoneController {
       createZoneInfo,
     );
 
-    await this.zoneService.sendZoneInfoMail(userZone.zone, userProfile);
+    this.zoneService.sendZoneInfoMail(userZone.zone, userProfile);
 
     return userZone.id;
   }
