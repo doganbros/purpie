@@ -53,17 +53,6 @@ const Switch: FC<Props> = ({
         checked={currentValue}
         onChange={({ target: { checked } }) => handleChange(checked)}
       />
-      {/* <ReactSwitch */}
-      {/*  onChange={handleChange} */}
-      {/*  checked={currentValue} */}
-      {/*  onColor={theme.global?.colors?.brand?.toString()} */}
-      {/*  offColor={theme.global?.colors?.['light-6']?.toString()} */}
-      {/*  uncheckedIcon={false} */}
-      {/*  checkedIcon={false} */}
-      {/*  height={27} */}
-      {/*  width={43} */}
-      {/*  handleDiameter={20} */}
-      {/* /> */}
     </Box>
   );
 };
