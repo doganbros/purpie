@@ -2,7 +2,6 @@ import React, { FC, useContext, useEffect, useState } from 'react';
 import {
   Box,
   Button,
-  CheckBox,
   Form,
   FormExtendedEvent,
   FormField,
@@ -25,6 +24,7 @@ import { CreateZonePayload } from '../../store/types/zone.types';
 import { nameToSubdomain } from '../../helpers/utils';
 import { hostname } from '../../helpers/app-subdomain';
 import { validators } from '../../helpers/validators';
+import Switch from '../../components/utils/Switch';
 
 interface CreateZoneProps {
   onDismiss: () => void;
@@ -145,16 +145,7 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                     name="public"
                     contentProps={formFieldContentProps}
                   >
-                    <Box
-                      pad="11px"
-                      as="label"
-                      flex={{ shrink: 0 }}
-                      direction="row"
-                      justify="between"
-                    >
-                      <Text size="small">Public</Text>
-                      <CheckBox name="public" toggle />
-                    </Box>
+                    <Switch label="Public" name="public" />
                   </FormField>
                 </Box>
               </Box>

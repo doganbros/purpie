@@ -1,13 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import {
-  Box,
-  CheckBox,
-  Form,
-  FormField,
-  Grid,
-  InfiniteScroll,
-  Text,
-} from 'grommet';
+import { Box, Form, FormField, Grid, InfiniteScroll, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
@@ -27,6 +19,7 @@ import {
   searchPostAction,
 } from '../../../store/actions/post.action';
 import { SearchParams } from '../../../models/utils';
+import Switch from '../../../components/utils/Switch';
 
 const PostSearch: FC = () => {
   const { value } = useParams<SearchParams>();
@@ -98,10 +91,10 @@ const PostSearch: FC = () => {
           <FilterWrapper>
             <Form value={options} onChange={setOptions}>
               <FormField name="following">
-                <CheckBox toggle name="following" label="Following" />
+                <Switch label="Following" name="following" />
               </FormField>
               <FormField name="streaming">
-                <CheckBox toggle name="streaming" label="Streaming" />
+                <Switch label="Streaming" name="streaming" />
               </FormField>
             </Form>
           </FilterWrapper>

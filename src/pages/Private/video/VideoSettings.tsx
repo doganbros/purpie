@@ -1,14 +1,12 @@
 import React, { FC, useState } from 'react';
 import {
-  FormField,
   Anchor,
-  CheckBox,
-  TextInput,
-  TextArea,
-  RadioButtonGroup,
-  Button,
-  Text,
   Box,
+  Button,
+  FormField,
+  RadioButtonGroup,
+  TextArea,
+  TextInput,
 } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { validators } from '../../../helpers/validators';
@@ -16,6 +14,7 @@ import { updatePostAction } from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import Divider from '../../../components/utils/Divider';
 import VideoSettingsTheme from './video-settings-theme';
+import Switch from '../../../components/utils/Switch';
 
 interface VideoSettingsProps {
   setShowSettings: (settings: boolean) => void;
@@ -90,32 +89,16 @@ const VideoSettings: FC<VideoSettingsProps> = ({
           gap="medium"
         >
           <Box gap="small">
-            <Box
-              as="label"
-              flex={{ shrink: 0 }}
-              direction="row"
-              justify="between"
-            >
-              <Text size="small">Exclusive to contacts</Text>
-              <CheckBox
-                toggle
-                checked={exclusive}
-                onChange={(event) => setExclusive(event.target.checked)}
-              />
-            </Box>
-            <Box
-              as="label"
-              flex={{ shrink: 0 }}
-              direction="row"
-              justify="between"
-            >
-              <Text size="small">Public</Text>
-              <CheckBox
-                toggle
-                checked={publicVisibility}
-                onChange={(event) => setPublicVisibility(event.target.checked)}
-              />
-            </Box>
+            <Switch
+              label="Exclusive to contacts"
+              value={exclusive}
+              onChange={(checked) => setExclusive(checked)}
+            />
+            <Switch
+              label="Public"
+              value={publicVisibility}
+              onChange={(checked) => setPublicVisibility(checked)}
+            />
           </Box>
           <Divider size="1px" />
           <RadioButtonGroup
