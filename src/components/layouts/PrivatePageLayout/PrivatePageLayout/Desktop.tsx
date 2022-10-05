@@ -1,8 +1,8 @@
-import { Avatar, Box, Button } from 'grommet';
+import { Box, Button, Image } from 'grommet';
 import { useHistory } from 'react-router-dom';
 import React, { FC } from 'react';
 import ExtendedBox from '../../../utils/ExtendedBox';
-import Logo from '../../../../assets/octopus-logo/logo-white.svg';
+import LogoVerticalWhite from '../../../../assets/octopus-logo/logo-vertical-white.svg';
 import Sidebar from '../Sidebar';
 import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import GradientScroll from '../../../utils/GradientScroll';
@@ -45,12 +45,7 @@ const Desktop: FC<Props> = ({
             onClick={() => history.push('/')}
           >
             <Box align="center">
-              <Avatar
-                alignSelf="center"
-                size="90px"
-                round="medium"
-                src={Logo}
-              />
+              <Image width="72px" src={LogoVerticalWhite} />
             </Box>
           </Button>
           <Box>

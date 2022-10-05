@@ -76,26 +76,6 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
           <Box height="262px" flex={false} overflow="auto">
             <Box height={{ min: 'min-content' }}>
               <FormField
-                name="name"
-                contentProps={formFieldContentProps}
-                validate={[validators.required('Channel name')]}
-              >
-                <TextInput placeholder="Channel Name" name="name" />
-              </FormField>
-              <FormField name="topic" contentProps={formFieldContentProps}>
-                <TextInput placeholder="Topics" name="topic" />
-              </FormField>
-              <FormField
-                name="description"
-                contentProps={formFieldContentProps}
-              >
-                <TextArea
-                  resize={false}
-                  placeholder="Channel Description"
-                  name="description"
-                />
-              </FormField>
-              <FormField
                 required
                 name="zoneId"
                 contentProps={formFieldContentProps}
@@ -122,6 +102,26 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                     setCategory(undefined);
                     dispatch(getZoneCategoriesAction(option.zoneId));
                   }}
+                />
+              </FormField>
+              <FormField
+                name="name"
+                contentProps={formFieldContentProps}
+                validate={[validators.required('Channel name')]}
+              >
+                <TextInput placeholder="Channel Name" name="name" />
+              </FormField>
+              <FormField name="topic" contentProps={formFieldContentProps}>
+                <TextInput placeholder="Topics" name="topic" />
+              </FormField>
+              <FormField
+                name="description"
+                contentProps={formFieldContentProps}
+              >
+                <TextArea
+                  resize={false}
+                  placeholder="Channel Description"
+                  name="description"
                 />
               </FormField>
               <Box direction="row" justify="between" align="start" gap="small">

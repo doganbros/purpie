@@ -3,8 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Form, FormField, Image, Main, Text, TextInput } from 'grommet';
 import { AppState } from '../../store/reducers/root.reducer';
-import Logo from '../../assets/octopus-logo/logo-color.svg';
-import OctopusText from '../../assets/octopus-logo/octopus-text-2.png';
+import LogoHorizontalColor from '../../assets/octopus-logo/logo-horizontal-color.svg';
 import { validators } from '../../helpers/validators';
 import { useTitle } from '../../hooks/useTitle';
 import { useResponsive } from '../../hooks/useResponsive';
@@ -28,7 +27,9 @@ const InitializeUser: FC = () => {
   useTitle('Initialize User - Octopus');
 
   useEffect(() => {
-    if (!isInitialUserSetup) history.push('/login');
+    if (!isInitialUserSetup) {
+      history.push('/login');
+    }
   }, []);
 
   const handleSubmit: FormSubmitEvent<RegisterPayload> = ({ value }) => {
@@ -51,8 +52,10 @@ const InitializeUser: FC = () => {
       >
         <Box gap="medium">
           <Box direction="row" align="center" gap="small">
-            <Image height="54px" width="54px" src={Logo} />
-            <Image height="24px" src={OctopusText} />
+            <Image
+              width={size === 'small' ? '140px' : '180px'}
+              src={LogoHorizontalColor}
+            />
           </Box>
           <Box gap="small">
             <Text size="xlarge" weight="bold">
