@@ -153,7 +153,7 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                       justify="between"
                     >
                       <Text size="small">Public</Text>
-                      <CheckBox name="public" toggle />
+                      <CheckBox name="public" defaultChecked toggle />
                     </Box>
                   </FormField>
                 </Box>
