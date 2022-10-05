@@ -380,7 +380,7 @@ export class ChannelController {
     return 'OK';
   }
 
-  @Put('display-photo')
+  @Put('/:userChannelId/display-photo')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -426,16 +426,14 @@ export class ChannelController {
   async changeDisplayPhoto(
     @CurrentUserChannel() userChannel: UserChannel,
     @UploadedFile() file: Express.MulterS3.File,
+    @Param('userChannelId', ParseIntPipe) userChannelId: number,
   ) {
     const fileName = file.key.replace(
       `${S3_PROFILE_PHOTO_DIR}/channel-dp/`,
       '',
     );
 
-    await this.channelService.changeDisplayPhoto(
-      userChannel.channel.id,
-      fileName,
-    );
+    await this.channelService.changeDisplayPhoto(userChannelId, fileName);
 
     return fileName;
   }
