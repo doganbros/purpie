@@ -81,8 +81,8 @@ const Chat: React.FC<Props> = ({
     const result = await getChatMessages(
       medium,
       id,
-      FETCH_MESSAGE_LIMIT,
-      messages?.length ? messages[0].createdOn : undefined
+      FETCH_MESSAGE_LIMIT
+      // messages?.length ? messages[0].createdOn : undefined // TODO what is this 'lastDate' logic
     ).then((res) => res.data);
 
     if (!result.length) setHasMore(false);
