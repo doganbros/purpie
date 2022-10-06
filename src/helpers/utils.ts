@@ -36,8 +36,27 @@ export const ceilTime = (time: Date | string | number, minutes = 30): Date => {
   return timeToReturn;
 };
 
-export const nameToSubdomain = (name: string): string =>
-  name.toLowerCase().replaceAll(' ', '-');
+export const nameToSubdomain = (name: string): string => {
+  const result = name.toLowerCase().replaceAll(' ', '-');
+  return sanitizeTurkishCharacters(result);
+};
+
+export const sanitizeTurkishCharacters = (value: string): string => {
+  return value
+    .replaceAll('Ğ', 'G')
+    .replaceAll('Ü', 'U')
+    .replaceAll('Ş', 'S')
+    .replaceAll('I', 'I')
+    .replaceAll('İ', 'I')
+    .replaceAll('Ö', 'O')
+    .replaceAll('Ç', 'C')
+    .replaceAll('ğ', 'g')
+    .replaceAll('ü', 'u')
+    .replaceAll('ş', 's')
+    .replaceAll('ı', 'i')
+    .replaceAll('ö', 'o')
+    .replaceAll('ç', 'c');
+};
 
 export const fetchOrProduceNull = async <T>(
   request: () => Promise<T>

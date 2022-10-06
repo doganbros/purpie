@@ -22,7 +22,10 @@ import {
 } from '../../store/actions/zone.action';
 import { AppState } from '../../store/reducers/root.reducer';
 import { CreateZonePayload } from '../../store/types/zone.types';
-import { nameToSubdomain } from '../../helpers/utils';
+import {
+  nameToSubdomain,
+  sanitizeTurkishCharacters,
+} from '../../helpers/utils';
 import { hostname } from '../../helpers/app-subdomain';
 import { validators } from '../../helpers/validators';
 
@@ -104,7 +107,7 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                         : `${subdomain}.${hostname}`
                     }
                     onChange={(e) => {
-                      setSubdomain(e.target.value);
+                      setSubdomain(sanitizeTurkishCharacters(e.target.value));
                     }}
                     onFocus={() => setSubdomainInputFocus(true)}
                     onBlur={() => setSubdomainInputFocus(false)}
