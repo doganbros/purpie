@@ -296,6 +296,7 @@ export const changeProfileInfo = (user: ChangeProfileInfo): AuthAction => {
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const changeProfilePicture = (profilePhoto: any): AuthAction => {
   return async (dispatch) => {
     dispatch({

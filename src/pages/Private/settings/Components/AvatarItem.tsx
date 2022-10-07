@@ -2,9 +2,7 @@
 import React, { FC } from 'react';
 import { Avatar, Box, Button, Text } from 'grommet';
 import { Edit } from 'grommet-icons';
-import { useSelector } from 'react-redux';
 import ExtendedBox from '../../../../components/utils/ExtendedBox';
-import { AppState } from '../../../../store/reducers/root.reducer';
 import {
   REACT_APP_API_VERSION,
   REACT_APP_SERVER_HOST,
@@ -28,9 +26,6 @@ export const AvatarItem: FC<{
   medium,
   photoName,
 }) => {
-  const {
-    auth: { user },
-  } = useSelector((state: AppState) => state);
   return (
     <Box direction="row">
       <ExtendedBox align="end" justify="center" position="relative">
