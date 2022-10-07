@@ -16,7 +16,18 @@ export const AvatarItem: FC<{
   selectedIndex: number;
   changeProfilePic?: any;
   isEditable?: boolean;
-}> = ({ label, menuItems, selectedIndex, changeProfilePic, isEditable }) => {
+  id?: number;
+  medium: string;
+  photoName?: string;
+}> = ({
+  label,
+  menuItems,
+  selectedIndex,
+  changeProfilePic,
+  isEditable,
+  medium,
+  photoName,
+}) => {
   const {
     auth: { user },
   } = useSelector((state: AppState) => state);
@@ -55,7 +66,7 @@ export const AvatarItem: FC<{
             alignSelf="center"
             size="large"
             round="full"
-            src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/user/display-photo/${user?.displayPhoto}`}
+            src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/${medium}/display-photo/${photoName}`}
           />
         </Box>
       </ExtendedBox>

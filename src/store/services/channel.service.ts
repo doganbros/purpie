@@ -1,11 +1,15 @@
 import { serialize } from 'object-to-formdata';
-import { http } from '../../config/http';
-import { PaginatedResponse } from '../../models/paginated-response';
 import {
+  UserChannelPermissionList,
+  ChannelBasic,
   ChannelListItem,
   ChannelSearchParams,
   CreateChannelPayload,
+  // eslint-disable-next-line import/named
 } from '../types/channel.types';
+
+import { http } from '../../config/http';
+import { PaginatedResponse } from '../../models/paginated-response';
 
 export const createChannel = (
   userZoneId: number,
@@ -50,9 +54,24 @@ export const searchChannel = (
   http.get(`/channel/search`, { params }).then((res) => res.data);
 
 export const changeChannelPic = (
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   photoFile: any,
-  channelId: string
+  channelId: number
 ): Promise<any> =>
   http
-    .put(`channel/display-photo/${channelId}`, serialize(photoFile))
+    .put(`channel/${channelId}/display-photo`, serialize(photoFile))
+    .then((res) => res.data);
+
+export const changeChannelInfo = (
+  channelId: number,
+  params: ChannelBasic
+): Promise<any> =>
+  http.put(`channel/update/${channelId}`, params).then((res) => res.data);
+
+export const changeChannelPermissions = (
+  channelId: number,
+  params: UserChannelPermissionList
+): Promise<any> =>
+  http
+    .put(`channel/permissions/update/${channelId}`, params)
     .then((res) => res.data);

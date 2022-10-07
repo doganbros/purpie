@@ -25,6 +25,7 @@ import {
   SEARCH_ZONE_REQUESTED,
   SEARCH_ZONE_SUCCESS,
   SEARCH_ZONE_FAILED,
+  CHANGE_ZONE_PICTURE_SUCCESS,
 } from '../constants/zone.constants';
 import { ZoneActionParams, ZoneState } from '../types/zone.types';
 
@@ -291,6 +292,24 @@ const zoneReducer = (
           error: action.payload,
         },
       };
+    case CHANGE_ZONE_PICTURE_SUCCESS: {
+      const modifiedData = state?.getUserZones?.userZones?.map((item) =>
+        item.id === action.zoneId
+          ? {
+              ...item,
+              zone: { ...item.zone, displayPhoto: action.payload },
+            }
+          : item
+      );
+      return {
+        ...state,
+        getUserZones: {
+          userZones: modifiedData,
+          loading: false,
+          error: null,
+        },
+      };
+    }
     default:
       return state;
   }

@@ -145,10 +145,24 @@ const channelReducer = (
           error: action.payload,
         },
       };
-    case CHANGE_CHANNEL_PICTURE_SUCCESS:
+    case CHANGE_CHANNEL_PICTURE_SUCCESS: {
+      const test = state.userChannels.data.map((item) =>
+        item.id === action.channelId
+          ? {
+              ...item,
+              channel: { ...item.channel, displayPhoto: action.payload },
+            }
+          : item
+      );
       return {
         ...state,
+        userChannels: {
+          data: test,
+          loading: false,
+          error: null,
+        },
       };
+    }
     default:
       return state;
   }

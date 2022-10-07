@@ -1,20 +1,21 @@
 import React, { FC, useEffect, useState } from 'react';
 import {
   Box,
-  TextInput,
   Text,
   Accordion,
-  Select,
   Button,
   Layer,
   FileInput,
   Form,
   FormField,
   Image,
+  TextInput,
+  Grid,
+  DropButton,
+  CheckBox,
 } from 'grommet';
-import { CaretRightFill, Edit, Search } from 'grommet-icons';
+import { CaretRightFill, Hide, Search, View } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import { useDebouncer } from '../../../hooks/useDebouncer';
 import ModifiedAccordionPanel from '../../../components/utils/ModifiedAccordionPanel';
@@ -25,8 +26,17 @@ import {
   changeProfileInfo,
   changeProfilePicture,
 } from '../../../store/actions/auth.action';
-import Switch from '../../../components/utils/Switch';
-// import { changeChannelPhoto } from '../../../store/actions/channel.action';
+import SectionContainer from '../../../components/utils/SectionContainer';
+import {
+  changeChannelInformationAction,
+  changeChannelPermissionsAction,
+  changeChannelPhoto,
+} from '../../../store/actions/channel.action';
+import {
+  changeZoneInformationAction,
+  changeZonePermissionsAction,
+  changeZonePhoto,
+} from '../../../store/actions/zone.action';
 
 type SettingFormItem = {
   key: string;
@@ -52,7 +62,6 @@ type DataItemInterface = {
   members?: string;
   whichZone?: string;
   value?: any;
-  changeValue?: any;
   saveButton?: any;
   items: SettingItem[];
 };
@@ -67,20 +76,21 @@ const Settings: FC = () => {
   const [searchText, setSearchText] = useState<string>('');
   const [searchTextValue, setSearchTextValue] = useState<string>('');
   const [channelValue, setChannelValue] = useState<any>();
-  const [channelName, setChannelName] = useState<any>({
-    name: 'deneme',
-    description: 'desc',
-  });
-  const [zoneName, setZoneName] = useState<any>('');
   const [zoneValue, setZoneValue] = useState<any>();
   const [show, setShow] = useState(false);
   const [imgSrc, setImgSrc] = useState<any>(null);
-  // const [fileList, setFileList] = useState('');
-  const history = useHistory();
+  const [reveal, setReveal] = useState<any>({
+    current: false,
+    new: false,
+    confirm: false,
+  });
+  const [medium, setMedium] = useState<{ name: string; id: number }>({
+    name: 'user',
+    id: 1,
+  });
 
-  const token = 'asd';
   const {
-    channel: { userChannels, selectedChannel },
+    channel: { userChannels },
     zone: {
       getUserZones: { userZones },
     },
@@ -92,6 +102,35 @@ const Settings: FC = () => {
   });
   const dispatch = useDispatch();
 
+  const [channelName, setChannelName] = useState<any>({
+    name: userChannels.data[0].channel.name,
+    description: userChannels.data[0].channel.description,
+    topic: userChannels.data[0].channel.topic,
+    id: userChannels.data[0].channel.id,
+    public: userChannels.data[0].channel.public,
+  });
+  const [zoneName, setZoneName] = useState<any>({
+    name: userZones?.[0].zone.name,
+    description: userZones?.[0].zone.description,
+    subdomain: userZones?.[0].zone.subdomain,
+    id: userZones?.[0].zone.id,
+    public: userZones?.[0].zone.public,
+  });
+
+  const [channelPermissions, setChannelPermissions] = useState<any>({
+    canInvite: userChannels.data[0].channelRole.canInvite,
+    canDelete: userChannels.data[0].channelRole.canDelete,
+    canEdit: userChannels.data[0].channelRole.canEdit,
+    canManageRole: userChannels.data[0].channelRole.canManageRole,
+  });
+  const [zonePermissions, setZonePermissions] = useState<any>({
+    canInvite: userZones?.[0].zoneRole.canInvite,
+    canDelete: userZones?.[0].zoneRole.canDelete,
+    canEdit: userZones?.[0].zoneRole.canEdit,
+    canManageRole: userZones?.[0].zoneRole.canManageRole,
+    canCreateChannel: userZones?.[0].zoneRole.canDelete,
+  });
+
   const data: DataItemInterface[] = [
     {
       id: 0,
@@ -102,11 +141,15 @@ const Settings: FC = () => {
       role: 'Developer',
       saveButton: (
         <Button
-          primary
-          label="Save"
           onClick={() => {
             dispatch(changeProfileInfo(userInfo));
           }}
+          primary
+          label="Save"
+          style={{ borderRadius: '10px' }}
+          size="large"
+          fill="horizontal"
+          margin={{ top: 'medium' }}
         />
       ),
       items: [
@@ -124,9 +167,9 @@ const Settings: FC = () => {
                   direction="row"
                   justify="between"
                   align="center"
+                  border={{ size: 'xsmall', color: 'brand' }}
+                  round="small"
                   gap="small"
-                  border={{ size: 'small' }}
-                  round="medium"
                   pad="xxsmall"
                 >
                   <TextInput
@@ -140,10 +183,6 @@ const Settings: FC = () => {
                       })
                     }
                   />
-
-                  <Button>
-                    <Edit />
-                  </Button>
                 </Box>
               ),
             },
@@ -157,9 +196,9 @@ const Settings: FC = () => {
                   direction="row"
                   justify="between"
                   align="center"
+                  border={{ size: 'xsmall', color: 'brand' }}
+                  round="small"
                   gap="small"
-                  border={{ size: 'small' }}
-                  round="medium"
                   pad="xxsmall"
                 >
                   <TextInput
@@ -173,10 +212,6 @@ const Settings: FC = () => {
                       })
                     }
                   />
-
-                  <Button>
-                    <Edit />
-                  </Button>
                 </Box>
               ),
             },
@@ -186,19 +221,112 @@ const Settings: FC = () => {
               title: 'Email',
               description: 'Your main email address',
               value: user?.email,
-              component: <TextInput value={user?.email} />,
+              component: (
+                <Box
+                  direction="row"
+                  justify="between"
+                  align="center"
+                  border={{ size: 'xsmall', color: 'brand' }}
+                  round="small"
+                  gap="small"
+                  pad="xxsmall"
+                >
+                  <TextInput value={user?.email} plain focusIndicator={false} />
+                </Box>
+              ),
             },
             {
               key: 'pasword',
               title: 'Password Change',
               description: 'Change your password',
               component: (
-                <Button
-                  primary
-                  justify="center"
-                  label="Change Password"
-                  onClick={() => history.push(`/reset-password/${token}`)}
-                />
+                <Box gap="small">
+                  <Box
+                    direction="row"
+                    justify="between"
+                    align="center"
+                    gap="small"
+                    border={{ size: 'xsmall', color: 'brand' }}
+                    round="small"
+                    pad="xxsmall"
+                  >
+                    <TextInput
+                      plain
+                      type={reveal.current ? 'text' : 'password'}
+                      placeholder="Current Password"
+                      focusIndicator={false}
+                      onChange={() => {}}
+                    />
+                    <Button
+                      icon={
+                        reveal.current ? (
+                          <View size="medium" />
+                        ) : (
+                          <Hide size="medium" />
+                        )
+                      }
+                      onClick={() =>
+                        setReveal({ ...reveal, current: !reveal.current })
+                      }
+                    />
+                  </Box>
+                  <Box
+                    direction="row"
+                    justify="between"
+                    align="center"
+                    gap="small"
+                    border={{ size: 'xsmall', color: 'brand' }}
+                    round="small"
+                    pad="xxsmall"
+                  >
+                    <TextInput
+                      plain
+                      type={reveal.new ? 'text' : 'password'}
+                      placeholder="New Password"
+                      focusIndicator={false}
+                      onChange={() => {}}
+                    />
+                    <Button
+                      icon={
+                        reveal.new ? (
+                          <View size="medium" />
+                        ) : (
+                          <Hide size="medium" />
+                        )
+                      }
+                      onClick={() => setReveal({ ...reveal, new: !reveal.new })}
+                    />
+                  </Box>
+                  <Box
+                    direction="row"
+                    justify="between"
+                    align="center"
+                    gap="small"
+                    border={{ size: 'xsmall', color: 'brand' }}
+                    round="small"
+                    pad="xxsmall"
+                  >
+                    <TextInput
+                      plain
+                      type={reveal.confirm ? 'text' : 'password'}
+                      placeholder="Confirm New Password"
+                      focusIndicator={false}
+                      onChange={() => {}}
+                    />
+                    <Button
+                      icon={
+                        reveal.confirm ? (
+                          <View size="medium" />
+                        ) : (
+                          <Hide size="medium" />
+                        )
+                      }
+                      onClick={() =>
+                        setReveal({ ...reveal, confirm: !reveal.confirm })
+                      }
+                    />
+                  </Box>
+                </Box>
               ),
             },
           ],
@@ -228,17 +356,25 @@ const Settings: FC = () => {
       key: 'channel',
       label: 'Channel Settings',
       url: 'channel',
-      name: selectedChannel?.channel?.name || '',
+      name: '',
       members: '203',
       whichZone: 'in Car Zone',
       value: channelValue,
-      changeValue: (option: any) => setChannelValue(option),
       saveButton: (
         <Button
           primary
           label="Save"
+          style={{ borderRadius: '10px' }}
+          size="large"
+          fill="horizontal"
+          margin={{ top: 'medium' }}
           onClick={() => {
-            dispatch(changeProfileInfo(userInfo));
+            dispatch(
+              changeChannelInformationAction(channelName.id, channelName)
+            );
+            dispatch(
+              changeChannelPermissionsAction(channelName.id, channelPermissions)
+            );
           }}
         />
       ),
@@ -247,22 +383,6 @@ const Settings: FC = () => {
           key: 'channel1',
           title: 'Channel',
           items: [
-            {
-              key: 'changeChannelPhoto',
-              title: 'Channel Photo',
-              description: 'Change channel photo',
-              value: 'value',
-              component: (
-                <AvatarItem
-                  label={channelName.name || 'Placeholder'}
-                  selectedIndex={0}
-                  changeProfilePic={() => {
-                    setShow(true);
-                  }}
-                  isEditable
-                />
-              ),
-            },
             {
               key: 'name1',
               title: 'Channel Name',
@@ -274,8 +394,8 @@ const Settings: FC = () => {
                   justify="between"
                   align="center"
                   gap="small"
-                  border={{ size: 'small' }}
-                  round="medium"
+                  border={{ size: 'xsmall', color: 'brand' }}
+                  round="small"
                   pad="xxsmall"
                 >
                   <TextInput
@@ -283,23 +403,19 @@ const Settings: FC = () => {
                     plain
                     focusIndicator={false}
                     onChange={(event) =>
-                      setUserInfo({
-                        ...userInfo,
-                        userName: event.target.value,
+                      setChannelName({
+                        ...channelName,
+                        name: event.target.value,
                       })
                     }
                   />
-
-                  <Button>
-                    <Edit />
-                  </Button>
                 </Box>
               ),
             },
             {
-              key: 'channelTitle',
-              title: 'Channel Title',
-              description: 'Change channel title',
+              key: 'Topic',
+              title: 'Channel Topic',
+              description: 'Change channel topic',
               value: 'value',
               component: (
                 <Box
@@ -307,8 +423,37 @@ const Settings: FC = () => {
                   justify="between"
                   align="center"
                   gap="small"
-                  border={{ size: 'small' }}
-                  round="medium"
+                  border={{ size: 'xsmall', color: 'brand' }}
+                  round="small"
+                  pad="xxsmall"
+                >
+                  <TextInput
+                    value={channelName.topic}
+                    plain
+                    focusIndicator={false}
+                    onChange={(event) =>
+                      setChannelName({
+                        ...channelName,
+                        topic: event.target.value,
+                      })
+                    }
+                  />
+                </Box>
+              ),
+            },
+            {
+              key: 'channelTitle',
+              title: 'Channel Description',
+              description: 'Change channel description',
+              value: 'value',
+              component: (
+                <Box
+                  direction="row"
+                  justify="between"
+                  align="center"
+                  gap="small"
+                  border={{ size: 'xsmall', color: 'brand' }}
+                  round="small"
                   pad="xxsmall"
                 >
                   <TextInput
@@ -316,46 +461,128 @@ const Settings: FC = () => {
                     plain
                     focusIndicator={false}
                     onChange={(event) =>
-                      setUserInfo({
-                        ...userInfo,
-                        userName: event.target.value,
+                      setChannelName({
+                        ...channelName,
+                        description: event.target.value,
                       })
                     }
                   />
-
-                  <Button>
-                    <Edit />
-                  </Button>
                 </Box>
               ),
             },
+
             {
-              key: 'usersReact',
-              title: 'React',
-              description: 'Users can react',
+              key: 'usersPermissions',
+              title: 'Permissions',
+              description: '',
               value: 'value',
-              component: <Switch onChange={() => console.log('deneme')} />,
+              component: (
+                <SectionContainer label="User Permissions">
+                  <Grid
+                    rows={['xxsmall', 'xxsmall']}
+                    columns={['medium', 'medium']}
+                    gap="small"
+                  >
+                    <Box
+                      align="center"
+                      justify="between"
+                      direction="row"
+                      gap="xsmall"
+                    >
+                      <Text>Can edit</Text>
+                      <CheckBox
+                        checked={channelPermissions.canEdit}
+                        onChange={() =>
+                          setChannelPermissions({
+                            ...channelPermissions,
+                            canEdit: !channelPermissions.canEdit,
+                          })
+                        }
+                      />
+                    </Box>
+                    <Box
+                      align="center"
+                      justify="between"
+                      direction="row"
+                      gap="xsmall"
+                    >
+                      <Text>Can delete</Text>
+                      <CheckBox
+                        checked={channelPermissions.canDelete}
+                        onChange={() =>
+                          setChannelPermissions({
+                            ...channelPermissions,
+                            canDelete: !channelPermissions.canDelete,
+                          })
+                        }
+                      />
+                    </Box>
+                    <Box
+                      align="center"
+                      justify="between"
+                      direction="row"
+                      gap="xsmall"
+                    >
+                      <Text>Can invite</Text>
+                      <CheckBox
+                        checked={channelPermissions.canInvite}
+                        onChange={() =>
+                          setChannelPermissions({
+                            ...channelPermissions,
+                            canInvite: !channelPermissions.canInvite,
+                          })
+                        }
+                      />
+                    </Box>
+                    <Box
+                      align="center"
+                      justify="between"
+                      direction="row"
+                      gap="xsmall"
+                    >
+                      <Text>Can manage role</Text>
+                      <CheckBox
+                        checked={channelPermissions.canManageRole}
+                        onChange={() =>
+                          setChannelPermissions({
+                            ...channelPermissions,
+                            canManageRole: !channelPermissions.canManageRole,
+                          })
+                        }
+                      />
+                    </Box>
+                  </Grid>
+                </SectionContainer>
+              ),
             },
-            {
-              key: 'usersDislike',
-              title: 'Dislike',
-              description: 'Users can dislike',
-              value: 'value',
-              component: <Switch onChange={() => console.log('deneme')} />,
-            },
-            {
-              key: 'usersComment',
-              title: 'Comment',
-              description: 'Users can comment',
-              value: 'value',
-              component: <Switch onChange={() => console.log('deneme')} />,
-            },
+
             {
               key: 'channelPublic',
-              title: 'Channel Visibility',
-              description: 'Change channel visibility (public/private)',
+              title: '',
+              description: '',
               value: 'value',
-              component: <Switch onChange={() => console.log('deneme')} />,
+              component: (
+                <SectionContainer label="Channel Visibility">
+                  <Grid
+                    rows={['xxsmall']}
+                    columns={['medium', 'medium']}
+                    gap="small"
+                  >
+                    <Box direction="row" justify="between" gap="xsmall">
+                      <Text>Public</Text>
+                      <CheckBox
+                        checked={channelName.public}
+                        onChange={() =>
+                          setChannelName({
+                            ...channelName,
+                            public: !channelName.public,
+                          })
+                        }
+                      />
+                    </Box>
+                  </Grid>
+                </SectionContainer>
+              ),
             },
           ],
         },
@@ -369,13 +596,17 @@ const Settings: FC = () => {
       name: 'Car Zone',
       members: '23 Zone',
       value: zoneValue,
-      changeValue: (option: any) => setZoneValue(option),
       saveButton: (
         <Button
           primary
+          style={{ borderRadius: '10px' }}
+          size="large"
+          fill="horizontal"
+          margin={{ top: 'medium' }}
           label="Save"
           onClick={() => {
-            dispatch(changeProfileInfo(userInfo));
+            dispatch(changeZoneInformationAction(zoneName.id, zoneName));
+            dispatch(changeZonePermissionsAction(zoneName.id, zonePermissions));
           }}
         />
       ),
@@ -395,8 +626,8 @@ const Settings: FC = () => {
                   justify="between"
                   align="center"
                   gap="small"
-                  border={{ size: 'small' }}
-                  round="medium"
+                  border={{ size: 'xsmall', color: 'brand' }}
+                  round="small"
                   pad="xxsmall"
                 >
                   <TextInput
@@ -404,23 +635,19 @@ const Settings: FC = () => {
                     plain
                     focusIndicator={false}
                     onChange={(event) =>
-                      setUserInfo({
-                        ...userInfo,
-                        userName: event.target.value,
+                      setZoneName({
+                        ...zoneName,
+                        name: event.target.value,
                       })
                     }
                   />
-
-                  <Button>
-                    <Edit />
-                  </Button>
                 </Box>
               ),
             },
             {
               key: 'zoneTitle',
-              title: 'Zone Title',
-              description: 'Change zone title',
+              title: 'Zone Subdomain',
+              description: 'Change zone subdomain',
               value: 'value',
               component: (
                 <Box
@@ -428,8 +655,37 @@ const Settings: FC = () => {
                   justify="between"
                   align="center"
                   gap="small"
-                  border={{ size: 'small' }}
-                  round="medium"
+                  border={{ size: 'xsmall', color: 'brand' }}
+                  round="small"
+                  pad="xxsmall"
+                >
+                  <TextInput
+                    value={zoneName.subdomain}
+                    plain
+                    focusIndicator={false}
+                    onChange={(event) =>
+                      setZoneName({
+                        ...zoneName,
+                        subdomain: event.target.value,
+                      })
+                    }
+                  />
+                </Box>
+              ),
+            },
+            {
+              key: 'zoneDescription',
+              title: 'Zone Description',
+              description: 'Change zone description',
+              value: 'value',
+              component: (
+                <Box
+                  direction="row"
+                  justify="between"
+                  align="center"
+                  gap="small"
+                  border={{ size: 'xsmall', color: 'brand' }}
+                  round="small"
                   pad="xxsmall"
                 >
                   <TextInput
@@ -437,61 +693,147 @@ const Settings: FC = () => {
                     plain
                     focusIndicator={false}
                     onChange={(event) =>
-                      setUserInfo({
-                        ...userInfo,
-                        userName: event.target.value,
+                      setZoneName({
+                        ...zoneName,
+                        description: event.target.value,
                       })
                     }
                   />
-
-                  <Button>
-                    <Edit />
-                  </Button>
                 </Box>
+              ),
+            },
+
+            {
+              key: 'zoneManageRole',
+              title: 'Permissions',
+              description: '',
+              value: 'value',
+              component: (
+                <SectionContainer label="User Permissions">
+                  <Grid
+                    rows={['xxsmall', 'xxsmall', 'xxsmall']}
+                    columns={['medium', 'medium']}
+                    gap="small"
+                  >
+                    <Box
+                      align="center"
+                      direction="row"
+                      gap="xsmall"
+                      justify="between"
+                    >
+                      <Text>Can manage roles</Text>
+                      <CheckBox
+                        checked={zonePermissions.canManageRole}
+                        onChange={() =>
+                          setZonePermissions({
+                            ...zonePermissions,
+                            canManageRole: !zonePermissions.canManageRole,
+                          })
+                        }
+                      />
+                    </Box>
+                    <Box
+                      align="center"
+                      justify="between"
+                      direction="row"
+                      gap="xsmall"
+                    >
+                      <Text>Can edit</Text>
+                      <CheckBox
+                        checked={zonePermissions.canEdit}
+                        onChange={() =>
+                          setZonePermissions({
+                            ...zonePermissions,
+                            canEdit: !zonePermissions.canEdit,
+                          })
+                        }
+                      />
+                    </Box>
+                    <Box
+                      align="center"
+                      justify="between"
+                      direction="row"
+                      gap="xsmall"
+                    >
+                      <Text>Can delete</Text>
+                      <CheckBox
+                        checked={zonePermissions.canDelete}
+                        onChange={() =>
+                          setZonePermissions({
+                            ...zonePermissions,
+                            canDelete: !zonePermissions.canDelete,
+                          })
+                        }
+                      />
+                    </Box>
+
+                    <Box
+                      align="center"
+                      justify="between"
+                      direction="row"
+                      gap="xsmall"
+                    >
+                      <Text>Can invite</Text>
+                      <CheckBox
+                        checked={zonePermissions.canInvite}
+                        onChange={() =>
+                          setZonePermissions({
+                            ...zonePermissions,
+                            canInvite: !zonePermissions.canInvite,
+                          })
+                        }
+                      />
+                    </Box>
+                    <Box
+                      align="center"
+                      justify="between"
+                      direction="row"
+                      gap="xsmall"
+                    >
+                      <Text>Can create channels</Text>
+                      <CheckBox
+                        checked={zonePermissions.canCreateChannel}
+                        onChange={() =>
+                          setZonePermissions({
+                            ...zonePermissions,
+                            canCreateChannel: !zonePermissions.canCreateChannel,
+                          })
+                        }
+                      />
+                    </Box>
+                  </Grid>
+                </SectionContainer>
               ),
             },
             {
               key: 'zonePublic',
-              title: 'Zone Visibility',
-              description: 'Change zone visibility (public/private)',
+              title: '',
+              description: '',
               value: 'value',
-              component: <Switch onChange={() => console.log('deneme')} />,
-            },
-            {
-              key: 'zoneCreateChannel',
-              title: 'Create Channel',
-              description: 'Users can create channels',
-              value: 'value',
-              component: <Switch onChange={() => console.log('deneme')} />,
-            },
-            {
-              key: 'zoneInvite',
-              title: 'Invite',
-              description: 'Users can invite other users',
-              value: 'value',
-              component: <Switch onChange={() => console.log('deneme')} />,
-            },
-
-            {
-              key: 'zoneDelete',
-              title: 'Delete',
-              description: 'Users can delete',
-              value: 'value',
-              component: <Switch onChange={() => console.log('deneme')} />,
-            },
-            {
-              key: 'zoneEdit',
-              title: 'Edit',
-              description: 'Users can edit',
-              value: 'value',
-              component: <Switch onChange={() => console.log('deneme')} />,
-            },
-            {
-              key: 'zoneManageRole',
-              title: 'Manage Roles',
-              description: 'Users can manage roles',
-              value: 'value',
-              component: <Switch onChange={() => console.log('deneme')} />,
+              component: (
+                <SectionContainer label="Zone Visibility">
+                  <Grid
+                    rows={['xxsmall']}
+                    columns={['medium', 'medium']}
+                    gap="small"
+                  >
+                    <Box
+                      align="center"
+                      justify="between"
+                      direction="row"
+                      gap="xsmall"
+                    >
+                      <Text>Public</Text>
+                      <CheckBox
+                        checked={zoneName.public}
+                        onChange={() =>
+                          setZoneName({ ...zoneName, public: !zoneName.public })
+                        }
+                      />
+                    </Box>
+                  </Grid>
+                </SectionContainer>
+              ),
             },
           ],
         },
@@ -508,9 +850,17 @@ const Settings: FC = () => {
     userChannels.data.forEach((item) =>
       tempArray.push(
         <AvatarItem
+          id={item.channel.id}
           label={item.channel.name}
           menuItems={menuItems}
           selectedIndex={selectedIndex}
+          isEditable
+          changeProfilePic={() => {
+            setMedium({ name: 'channel', id: item.channel.id });
+            setShow(true);
+          }}
+          medium="channel"
+          photoName={item.channel.displayPhoto}
         />
       )
     );
@@ -522,9 +872,17 @@ const Settings: FC = () => {
     userZones?.forEach((item) => {
       tempArray.push(
         <AvatarItem
+          id={item.zone.id}
           label={item.zone.name}
           menuItems={menuItems}
           selectedIndex={selectedIndex}
+          isEditable
+          medium="zone"
+          photoName={item.zone.displayPhoto}
+          changeProfilePic={() => {
+            setMedium({ name: 'zone', id: item.zone.id });
+            setShow(true);
+          }}
         />
       );
     });
@@ -636,29 +994,78 @@ const Settings: FC = () => {
               >
                 {index === 0 && selectedItem.label !== 'Personal Settings' ? (
                   <Box direction="row" gap="small">
-                    <Select
-                      options={dropDownItems(selectedItem.label)}
-                      value={
-                        selectedItem.label === 'Channel Settings'
-                          ? channelValue
-                          : zoneValue
-                      }
-                      defaultValue={dropDownItems(selectedItem.label)[0]}
-                      onChange={({ option }) => {
-                        if (selectedItem.label === 'Channel Settings') {
-                          setChannelValue(option);
-                          setChannelName({
-                            name: option.props.label,
-                            description: option.props.description,
-                          });
-                        } else {
-                          setZoneValue(option);
-                          setZoneName({
-                            name: option.props.label,
-                            description: option.props.description,
-                          });
-                        }
+                    <DropButton
+                      dropProps={{
+                        responsive: false,
+                        stretch: false,
+                        overflow: { vertical: 'scroll' },
                       }}
+                      label={
+                        selectedItem.label === 'Channel Settings'
+                          ? 'Select Channel'
+                          : 'Select Zone'
+                      }
+                      dropContent={
+                        <Box
+                          pad="xsmall"
+                          background="light-1"
+                          gap="small"
+                          round="medium"
+                        >
+                          {dropDownItems(selectedItem.label).map((item) => (
+                            <Box
+                              border={{ color: 'brand', size: 'medium' }}
+                              key={Math.random() * 1000}
+                              height={{ min: '120px' }}
+                            >
+                              <Button
+                                onClick={() => {
+                                  if (
+                                    selectedItem.label === 'Channel Settings'
+                                  ) {
+                                    setChannelValue(item);
+                                    setChannelName({
+                                      ...channelName,
+                                      name: item.props.label,
+                                      id: item.props.id,
+                                      description: userChannels.data.filter(
+                                        (channel) =>
+                                          channel.channel.id === item.props.id
+                                      )[0].channel.description,
+                                      topic: userChannels.data.filter(
+                                        (channel) =>
+                                          channel.channel.id === item.props.id
+                                      )[0].channel.topic,
+                                      public: userChannels.data.filter(
+                                        (channel) =>
+                                          channel.channel.id === item.props.id
+                                      )[0].channel.public,
+                                    });
+                                  } else {
+                                    setZoneValue(item);
+                                    setZoneName({
+                                      ...zoneName,
+                                      name: item.props.label,
+                                      id: item.props.id,
+                                      subdomain: userZones?.filter(
+                                        (zone) => zone.id === item.props.id
+                                      )[0].zone.subdomain,
+                                      public: userZones?.filter(
+                                        (zone) => zone.id === item.props.id
+                                      )[0].zone.public,
+                                      description: userZones?.filter(
+                                        (zone) => zone.id === item.props.id
+                                      )[0].zone.description,
+                                    });
+                                  }
+                                }}
+                              >
+                                {item}
+                              </Button>
+                            </Box>
+                          ))}
+                        </Box>
+                      }
                     />
                   </Box>
                 ) : (
@@ -668,9 +1075,12 @@ const Settings: FC = () => {
                       menuItems={menuItems}
                       selectedIndex={0}
                       changeProfilePic={() => {
+                        setMedium({ ...medium, name: 'user' });
                         setShow(true);
                       }}
                       isEditable
+                      medium="user"
+                      photoName={user?.displayPhoto}
                     />
                   )
                 )}
@@ -787,10 +1197,28 @@ const Settings: FC = () => {
           >
             <Form
               onSubmit={({ value }: any) => {
-                dispatch(
-                  changeProfilePicture({ photoFile: value.photoFile[0] })
-                );
-                // setTimeout(() => setShow(false), 1000);
+                if (medium.name === 'user') {
+                  dispatch(
+                    changeProfilePicture({ photoFile: value.photoFile[0] })
+                  );
+                }
+
+                if (medium.name === 'channel') {
+                  dispatch(
+                    changeChannelPhoto(
+                      { photoFile: value.photoFile[0] },
+                      medium.id
+                    )
+                  );
+                }
+                if (medium.name === 'zone') {
+                  dispatch(
+                    changeZonePhoto(
+                      { photoFile: value.photoFile[0] },
+                      medium.id
+                    )
+                  );
+                }
                 setShow(false);
               }}
             >
@@ -809,12 +1237,7 @@ const Settings: FC = () => {
                   multiple={false}
                   renderFile={(file) => {
                     <Box width="small" height="small">
-                      <Text>
-                        {/* {file.name.length > 10
-                          ? `${file.name.substring(0, 10)}...`
-                          : file.name} */}
-                        {file.name}
-                      </Text>
+                      <Text>{file.name}</Text>
                     </Box>;
                   }}
                   onChange={(file) => {
@@ -828,13 +1251,24 @@ const Settings: FC = () => {
                   }}
                 />
               </FormField>
-              <Box justify="center" direction="row">
+              <Box justify="center" direction="row" gap="small">
                 <Button
                   label="Cancel"
-                  onClick={() => setShow(false)}
+                  style={{ borderRadius: '10px' }}
                   size="large"
+                  fill="horizontal"
+                  margin={{ top: 'medium' }}
+                  onClick={() => setShow(false)}
                 />
-                <Button label="Submit" type="submit" size="large" primary />
+                <Button
+                  label="Submit"
+                  type="submit"
+                  primary
+                  style={{ borderRadius: '10px' }}
+                  size="large"
+                  fill="horizontal"
+                  margin={{ top: 'medium' }}
+                />
               </Box>
             </Form>
           </Box>

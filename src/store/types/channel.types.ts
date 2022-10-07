@@ -1,7 +1,6 @@
-import { PaginatedResponse } from '../../models/paginated-response';
-import { ResponseError } from '../../models/response-error';
-import { Category } from '../../models/utils';
 import {
+  CHANGE_CHANNEL_INFO_REQUESTED,
+  CHANGE_CHANNEL_PERMISSIONS_REQUESTED,
   CLOSE_CREATE_CHANNEL_LAYER,
   GET_USER_CHANNELS_FAILED,
   GET_USER_CHANNELS_REQUESTED,
@@ -21,7 +20,15 @@ import {
   CHANGE_CHANNEL_PICTURE_REQUESTED,
   CHANGE_CHANNEL_PICTURE_SUCCESS,
   CHANGE_CHANNEL_PICTURE_FAILED,
+  CHANGE_CHANNEL_PERMISSIONS_SUCCESS,
+  CHANGE_CHANNEL_INFO_SUCCESS,
+  CHANGE_CHANNEL_INFO_FAILED,
+  CHANGE_CHANNEL_PERMISSIONS_FAILED,
 } from '../constants/channel.constants';
+import { PaginatedResponse } from '../../models/paginated-response';
+import { ResponseError } from '../../models/response-error';
+import { Category } from '../../models/utils';
+
 import { User } from './auth.types';
 import { UtilActionParams } from './util.types';
 import { ZoneActionParams } from './zone.types';
@@ -41,15 +48,24 @@ export interface ChannelBasic {
 }
 
 export interface ChannelListItem extends ChannelBasic {
+  displayPhoto: string | undefined;
   createdBy?: User;
   category?: Category;
   zoneId: number;
 }
 
 export interface UserChannelListItem {
+  channelRole: any;
   id?: number | null;
   createdOn?: Date | null;
   channel: ChannelListItem;
+  displayPhoto: string | null;
+}
+export interface UserChannelPermissionList {
+  canInvite: boolean;
+  canDelete: boolean;
+  canEdit: boolean;
+  canManageRole: boolean;
 }
 
 export interface UserChannelDetail extends UserChannelListItem {
@@ -125,11 +141,16 @@ export type ChannelActionParams =
         | typeof CLOSE_CREATE_CHANNEL_LAYER
         | typeof CREATE_CHANNEL_SUCCESS
         | typeof UNSET_SELECTED_CHANNEL
-        | typeof CHANGE_CHANNEL_PICTURE_REQUESTED;
+        | typeof CHANGE_CHANNEL_PICTURE_REQUESTED
+        | typeof CHANGE_CHANNEL_INFO_REQUESTED
+        | typeof CHANGE_CHANNEL_PERMISSIONS_REQUESTED
+        | typeof CHANGE_CHANNEL_INFO_SUCCESS
+        | typeof CHANGE_CHANNEL_PERMISSIONS_SUCCESS;
     }
   | {
       type: typeof CHANGE_CHANNEL_PICTURE_SUCCESS;
       payload: string;
+      channelId: number;
     }
   | {
       type:
@@ -137,7 +158,9 @@ export type ChannelActionParams =
         | typeof GET_USER_CHANNELS_FAILED
         | typeof CREATE_CHANNEL_FAILED
         | typeof SEARCH_CHANNEL_FAILED
-        | typeof CHANGE_CHANNEL_PICTURE_FAILED;
+        | typeof CHANGE_CHANNEL_PICTURE_FAILED
+        | typeof CHANGE_CHANNEL_INFO_FAILED
+        | typeof CHANGE_CHANNEL_PERMISSIONS_FAILED;
       payload: ResponseError;
     };
 

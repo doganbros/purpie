@@ -1,4 +1,11 @@
 import {
+  ZoneBasic,
+  CreateZonePayload,
+  ZoneAction,
+  ZoneRole,
+  ZoneSearchParams,
+} from '../types/zone.types';
+import {
   CLOSE_CREATE_ZONE_LAYER,
   CREATE_ZONE_FAILED,
   CREATE_ZONE_REQUESTED,
@@ -19,12 +26,17 @@ import {
   SEARCH_ZONE_REQUESTED,
   SEARCH_ZONE_SUCCESS,
   SEARCH_ZONE_FAILED,
+  CHANGE_ZONE_PICTURE_SUCCESS,
+  CHANGE_ZONE_PICTURE_REQUESTED,
+  CHANGE_ZONE_PICTURE_FAILED,
+  CHANGE_ZONE_INFO_REQUESTED,
+  CHANGE_ZONE_INFO_SUCCESS,
+  CHANGE_ZONE_INFO_FAILED,
+  CHANGE_ZONE_PERMISSIONS_REQUESTED,
+  CHANGE_ZONE_PERMISSIONS_SUCCESS,
+  CHANGE_ZONE_PERMISSIONS_FAILED,
 } from '../constants/zone.constants';
-import {
-  CreateZonePayload,
-  ZoneAction,
-  ZoneSearchParams,
-} from '../types/zone.types';
+
 import * as ZoneService from '../services/zone.service';
 import { setToastAction } from './util.action';
 
@@ -170,6 +182,75 @@ export const searchZoneAction = (params: ZoneSearchParams): ZoneAction => {
       dispatch({
         type: SEARCH_ZONE_FAILED,
         payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const changeZonePhoto = (
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  profilePhoto: any,
+  zoneId: number
+): ZoneAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: CHANGE_ZONE_PICTURE_REQUESTED,
+    });
+    try {
+      const payload = await ZoneService.changeZonePic(profilePhoto, zoneId);
+      dispatch({
+        type: CHANGE_ZONE_PICTURE_SUCCESS,
+        payload,
+        zoneId,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: CHANGE_ZONE_PICTURE_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const changeZoneInformationAction = (
+  zoneId: number,
+  params: ZoneBasic
+): ZoneAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: CHANGE_ZONE_INFO_REQUESTED,
+    });
+    try {
+      await ZoneService.changeZoneInfo(zoneId, params);
+      dispatch({
+        type: CHANGE_ZONE_INFO_SUCCESS,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: CHANGE_ZONE_INFO_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const changeZonePermissionsAction = (
+  zoneId: number,
+  params: ZoneRole
+): ZoneAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: CHANGE_ZONE_PERMISSIONS_REQUESTED,
+    });
+    try {
+      await ZoneService.changeZonePermissions(zoneId, params);
+      dispatch({
+        type: CHANGE_ZONE_PERMISSIONS_SUCCESS,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: CHANGE_ZONE_PERMISSIONS_FAILED,
+        payload: err?.response?.data,
       });
     }
   };
