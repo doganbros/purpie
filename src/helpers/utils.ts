@@ -38,11 +38,12 @@ export const ceilTime = (time: Date | string | number, minutes = 30): Date => {
 
 export const nameToSubdomain = (name: string): string => {
   const result = name.toLowerCase().replaceAll(' ', '-');
-  return sanitizeTurkishCharacters(result);
+  return sanitizeSubdomain(result);
 };
 
-export const sanitizeTurkishCharacters = (value: string): string => {
+export const sanitizeSubdomain = (value: string): string => {
   return value
+    .replaceAll(/[`~!@#&$%^*()_|+=?;:'",.<>{}[\]\\/]/gi, '')
     .replaceAll('Ğ', 'G')
     .replaceAll('Ü', 'U')
     .replaceAll('Ş', 'S')
