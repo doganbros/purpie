@@ -11,10 +11,12 @@ import { FormSubmitEvent } from '../../models/form-submit-event';
 import { validators } from '../../helpers/validators';
 import Figure from '../../assets/register-bg/figure.png';
 import AuthFormButton from '../../components/auth/AuthFormButton';
+import { useTranslate } from '../../hooks/useTranslate';
 
 const Register: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const translate = useTranslate('Register');
 
   const {
     register: { loading },
@@ -26,12 +28,12 @@ const Register: FC = () => {
 
   return (
     <AuthLayout
-      title="Register"
-      formTitle="Create an Account"
-      formSubTitle="Sign up to continue"
+      title={translate('title')}
+      formTitle={translate('formTitle')}
+      formSubTitle={translate('formSubTitle')}
       callToAction={{
-        title: 'Already have an account?',
-        body: 'SIGN IN',
+        title: translate('alreadyHaveAccount'),
+        body: translate('signIn', true),
         onClick: () => history.push('/login'),
       }}
       background={
@@ -49,10 +51,10 @@ const Register: FC = () => {
       <>
         <Form onSubmit={handleSubmit}>
           <FormField
-            label="FULL NAME"
+            label={translate('fullName')}
             name="fullName"
             htmlFor="fullNameInput"
-            validate={validators.required('Full name')}
+            validate={validators.required(translate('fullName'))}
           >
             <TextInput id="fullNameInput" name="fullName" />
           </FormField>
@@ -60,8 +62,11 @@ const Register: FC = () => {
           <FormField
             name="email"
             htmlFor="emailInput"
-            label="EMAIL"
-            validate={[validators.required('Email'), validators.email()]}
+            label={translate('email')}
+            validate={[
+              validators.required(translate('email')),
+              validators.email(),
+            ]}
           >
             <TextInput id="emailInput" name="email" />
           </FormField>
@@ -69,10 +74,10 @@ const Register: FC = () => {
           <FormField
             name="password"
             htmlFor="passwordInput"
-            label="PASSWORD"
+            label={translate('password', true)}
             validate={[
-              validators.required('Password'),
-              validators.minLength('Password', 6),
+              validators.required(translate('password', true)),
+              validators.minLength(translate('password', true), 6),
             ]}
           >
             <TextInput id="passwordInput" name="password" type="password" />
@@ -80,10 +85,10 @@ const Register: FC = () => {
           <FormField
             name="password1"
             htmlFor="password1Input"
-            label="CONFIRM PASSWORD"
+            label={translate('confirmPassword')}
             validate={[
-              validators.required('Confirm password'),
-              validators.equalsField('password', 'Passwords'),
+              validators.required(translate('confirmPassword')),
+              validators.equalsField('password', translate('passwords')),
             ]}
           >
             <TextInput id="password1Input" name="password1" type="password" />
@@ -93,7 +98,7 @@ const Register: FC = () => {
             margin={{ top: 'medium' }}
             disabled={loading}
             type="submit"
-            label="SIGN UP"
+            label={translate('signUp')}
           />
         </Form>
       </>

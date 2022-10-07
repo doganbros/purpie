@@ -1,0 +1,27 @@
+{
+  "common": {
+    "signIn": "SIGN IN",
+    "password": "PASSWORD"
+  },
+  "Login": {
+    "title": "Login",
+    "formTitle": "Welcome Back!",
+    "formSubTitle": "Sign In to continue.",
+    "dontHaveAccount": "Don’t have an account?",
+    "createAccount": "CREATE AN ACCOUNT",
+    "emailOrUserName": "EMAIL / USERNAME",
+    "forgotPassword": "Forgot Password?",
+    "orSignInWith": "Or Sign in With"
+  },
+  "Register": {
+    "title": "Register",
+    "formTitle": "Create an Account",
+    "formSubTitle": "Sign up to continue",
+    "alreadyHaveAccount": "Already have an account?",
+    "fullName": "FULL NAME",
+    "email": "EMAIL",
+    "confirmPassword": "CONFIRM PASSWORD",
+    "passwords": "Passwords",
+    "signUp": "SIGN UP"
+  }
+}
