@@ -1,4 +1,4 @@
-import { Box, CheckBox, Form, FormField, InfiniteScroll, Text } from 'grommet';
+import { Box, Form, FormField, InfiniteScroll, Text } from 'grommet';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
@@ -15,6 +15,7 @@ import LastActivities from '../timeline/LastActivities';
 import ZonesToJoin from '../timeline/ZonesToJoin';
 import FilterWrapper from './FilterWrapper';
 import SearchInput from './SearchInput';
+import Switch from '../../../components/utils/Switch';
 
 const ProfileSearch: FC = () => {
   const { value } = useParams<SearchParams>();
@@ -79,7 +80,7 @@ const ProfileSearch: FC = () => {
           <FilterWrapper>
             <Form value={options} onChange={setOptions}>
               <FormField name="userContacts">
-                <CheckBox toggle name="userContacts" label="Contacts only" />
+                <Switch label="Contacts only" name="userContacts" />
               </FormField>
             </Form>
           </FilterWrapper>

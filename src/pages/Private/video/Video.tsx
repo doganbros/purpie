@@ -126,7 +126,7 @@ const Video: FC = () => {
 
   useEffect(() => {
     dispatch(getPostDetailAction(+params.id));
-  }, []);
+  }, [params.id]);
 
   useEffect(() => {
     if (data) setLiveStreamCount(data.postReaction.liveStreamViewersCount);

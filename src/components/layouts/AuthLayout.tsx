@@ -58,7 +58,6 @@ const AuthLayout: React.FC<Props> = ({
       <Box
         direction="row"
         justify="between"
-        round="large"
         height={{ min: '100vh' }}
         background={{ color: '#FFE7E3' }}
       >
@@ -94,7 +93,7 @@ const AuthLayout: React.FC<Props> = ({
           <Card
             elevation="indigo"
             background={theme.dark ? 'dark-2' : 'white'}
-            round="large"
+            round={{ corner: 'left', size: 'large' }}
             width="100%"
             height="100%"
             align="center"
@@ -110,7 +109,7 @@ const AuthLayout: React.FC<Props> = ({
                 fill="horizontal"
               >
                 <Image
-                  width={size === 'small' ? '160px' : '200px'}
+                  width={size === 'small' ? '150px' : '172px'}
                   src={theme.dark ? LogoHorizontalWhite : LogoHorizontalColor}
                 />
               </Box>

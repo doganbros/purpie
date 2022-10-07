@@ -2,7 +2,6 @@ import React, { FC, useContext, useState } from 'react';
 import {
   Box,
   Button,
-  CheckBox,
   Form,
   FormExtendedEvent,
   FormField,
@@ -23,6 +22,7 @@ import {
 } from '../../store/actions/channel.action';
 import { getZoneCategoriesAction } from '../../store/actions/zone.action';
 import { validators } from '../../helpers/validators';
+import Switch from '../../components/utils/Switch';
 
 interface CreateChannelProps {
   onDismiss: () => void;
@@ -146,16 +146,7 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                   width="100%"
                   contentProps={formFieldContentProps}
                 >
-                  <Box
-                    pad="11px"
-                    as="label"
-                    flex={{ shrink: 0 }}
-                    direction="row"
-                    justify="between"
-                  >
-                    <Text size="small">Public</Text>
-                    <CheckBox toggle defaultChecked name="public" />
-                  </Box>
+                  <Switch label="Public" name="public" />
                 </FormField>
               </Box>
             </Box>

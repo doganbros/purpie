@@ -47,7 +47,7 @@ const Desktop: FC<Props> = ({
             <Box align="center">
               <Avatar
                 alignSelf="center"
-                size="82px"
+                size="large"
                 round="0"
                 src={LogoWhite}
               />
