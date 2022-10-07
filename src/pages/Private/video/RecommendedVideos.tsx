@@ -40,7 +40,7 @@ const RecommendedVideos: FC = () => {
             <PostGridItem
               key={post.id}
               post={post}
-              onClickPlay={() => history.push(`video/${post.id}`)}
+              onClickPlay={() => history.push(`${post.id}`)}
               onClickSave={() => {
                 if (post.saved)
                   dispatch(removePostSaveAction({ postId: post.id }));

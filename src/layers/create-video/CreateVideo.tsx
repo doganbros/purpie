@@ -39,7 +39,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
   const [publicVideo, setPublicVideo] = useState(true);
   const [userContactExclusive, setUserContactExclusive] = useState(false);
   const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [uplaodStarted, setUploadStarted] = useState(false);
+  const [uploadStarted, setUploadStarted] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleUploadProgress = (
@@ -80,13 +80,16 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
           }: FormExtendedEvent<
             CreateVideoPayload & { videoFile: FileList }
           >) => {
-            dispatch(
-              createVideoAction(
-                { ...value, videoFile: value.videoFile[0] },
-                handleUploadProgress
-              )
-            );
-            setUploadStarted(true);
+            if (!uploading && !error && uploadStarted) onDismiss();
+            else {
+              dispatch(
+                createVideoAction(
+                  { ...value, videoFile: value.videoFile[0] },
+                  handleUploadProgress
+                )
+              );
+              setUploadStarted(true);
+            }
           }}
         >
           <Box height="320px" flex={false} overflow="auto">
@@ -176,8 +179,8 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
                 if (uploading) {
                   return `Uploading ${uploadProgress}%`;
                 }
-                if (!uploading && !error && uplaodStarted) {
-                  return 'Upload complete!';
+                if (!uploading && !error && uploadStarted) {
+                  return 'Upload completed! Close';
                 }
                 return 'Share';
               })()}
