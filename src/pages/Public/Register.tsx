@@ -16,7 +16,7 @@ import { useTranslate } from '../../hooks/useTranslate';
 const Register: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const translate = useTranslate('Register');
+  const t = useTranslate('Register');
 
   const {
     register: { loading },
@@ -28,12 +28,12 @@ const Register: FC = () => {
 
   return (
     <AuthLayout
-      title={translate('title')}
-      formTitle={translate('formTitle')}
-      formSubTitle={translate('formSubTitle')}
+      title={t('title')}
+      formTitle={t('formTitle')}
+      formSubTitle={t('formSubTitle')}
       callToAction={{
-        title: translate('alreadyHaveAccount'),
-        body: translate('signIn', true),
+        title: t('alreadyHaveAccount'),
+        body: t('signIn', true),
         onClick: () => history.push('/login'),
       }}
       background={
@@ -51,10 +51,10 @@ const Register: FC = () => {
       <>
         <Form onSubmit={handleSubmit}>
           <FormField
-            label={translate('fullName')}
+            label={t('fullName', true)}
             name="fullName"
             htmlFor="fullNameInput"
-            validate={validators.required(translate('fullName'))}
+            validate={validators.required(t('fullName', true))}
           >
             <TextInput id="fullNameInput" name="fullName" />
           </FormField>
@@ -62,9 +62,9 @@ const Register: FC = () => {
           <FormField
             name="email"
             htmlFor="emailInput"
-            label={translate('email')}
+            label={t('email', true)}
             validate={[
-              validators.required(translate('email')),
+              validators.required(t('email', true)),
               validators.email(),
             ]}
           >
@@ -74,10 +74,10 @@ const Register: FC = () => {
           <FormField
             name="password"
             htmlFor="passwordInput"
-            label={translate('password', true)}
+            label={t('password', true)}
             validate={[
-              validators.required(translate('password', true)),
-              validators.minLength(translate('password', true), 6),
+              validators.required(t('password', true)),
+              validators.minLength(t('password', true), 6),
             ]}
           >
             <TextInput id="passwordInput" name="password" type="password" />
@@ -85,10 +85,10 @@ const Register: FC = () => {
           <FormField
             name="password1"
             htmlFor="password1Input"
-            label={translate('confirmPassword')}
+            label={t('confirmPassword', true)}
             validate={[
-              validators.required(translate('confirmPassword')),
-              validators.equalsField('password', translate('passwords')),
+              validators.required(t('confirmPassword', true)),
+              validators.equalsField('password', t('passwords', true)),
             ]}
           >
             <TextInput id="password1Input" name="password1" type="password" />
@@ -98,7 +98,7 @@ const Register: FC = () => {
             margin={{ top: 'medium' }}
             disabled={loading}
             type="submit"
-            label={translate('signUp')}
+            label={t('signUp')}
           />
         </Form>
       </>

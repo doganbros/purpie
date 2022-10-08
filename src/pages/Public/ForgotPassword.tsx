@@ -10,10 +10,12 @@ import { AppState } from '../../store/reducers/root.reducer';
 import Figure from '../../assets/forgotten-password-bg/figure-1.png';
 import Banner from '../../assets/forgotten-password-bg/banner.png';
 import AuthFormButton from '../../components/auth/AuthFormButton';
+import { useTranslate } from '../../hooks/useTranslate';
 
 const ForgotPassword: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const t = useTranslate('ForgotPassword');
 
   const {
     forgotPassword: { loading },
@@ -25,12 +27,12 @@ const ForgotPassword: FC = () => {
 
   return (
     <AuthLayout
-      title="Forgot Password"
-      formTitle="Password Recovery"
-      formSubTitle="Enter email to receive your password."
+      title={t('title')}
+      formTitle={t('formTitle')}
+      formSubTitle={t('formSubTitle')}
       callToAction={{
-        title: 'Remember Password?',
-        body: 'SIGN IN',
+        title: t('rememberPassword'),
+        body: t('signIn', true),
         onClick: () => history.push('/login'),
       }}
       background={
@@ -60,8 +62,11 @@ const ForgotPassword: FC = () => {
           <FormField
             name="email"
             htmlFor="emailInput"
-            label="EMAIL"
-            validate={[validators.required('Email'), validators.email()]}
+            label={t('email', true)}
+            validate={[
+              validators.required(t('email', true)),
+              validators.email(),
+            ]}
           >
             <TextInput id="emailInput" name="email" />
           </FormField>
@@ -70,7 +75,7 @@ const ForgotPassword: FC = () => {
             margin={{ top: '55%' }}
             disabled={loading}
             type="submit"
-            label="SEND"
+            label={t('send')}
           />
         </Form>
       </>

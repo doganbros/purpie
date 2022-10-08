@@ -2,8 +2,8 @@ import { useTranslation } from 'react-i18next';
 
 export const useTranslate = (
   page: string
-): ((key: string, isCommon?: boolean) => string) => {
+): ((key: string, isCommon?: boolean, options?: any) => string) => {
   const { t } = useTranslation();
-  return (key: string, isCommon?: boolean) =>
-    t(`${isCommon ? 'common' : page}.${key}`);
+  return (key, isCommon, options) =>
+    t(`${isCommon ? 'common' : page}.${key}`, options);
 };

@@ -1,7 +1,15 @@
 {
   "common": {
     "signIn": "SIGN IN",
-    "password": "PASSWORD"
+    "password": "PASSWORD",
+    "confirmPassword": "CONFIRM PASSWORD",
+    "passwords": "Passwords",
+    "email": "EMAIL",
+    "fullName": "FULL NAME",
+    "userName": "USERNAME",
+    "invalidUserName": "Invalid Username",
+    "go": "GO",
+    "continue": "CONTINUE"
   },
   "Login": {
     "title": "Login",
@@ -18,10 +26,37 @@
     "formTitle": "Create an Account",
     "formSubTitle": "Sign up to continue",
     "alreadyHaveAccount": "Already have an account?",
-    "fullName": "FULL NAME",
-    "email": "EMAIL",
-    "confirmPassword": "CONFIRM PASSWORD",
-    "passwords": "Passwords",
     "signUp": "SIGN UP"
+  },
+  "ForgotPassword": {
+    "title": "Forgot Password",
+    "formTitle": "Password Recovery",
+    "formSubTitle": "Enter email to receive your password.",
+    "rememberPassword": "Remember Password",
+    "send": "SEND"
+  },
+  "InitializeUser": {
+    "title": "Initialize User - Octopus",
+    "formTitle": "Welcome to Purpie!",
+    "formSubTitle": "Sign up with an account to continue",
+    "createAccount": "CREATE ACCOUNT"
+  },
+  "ResetPassword": {
+    "title": "Reset Password",
+    "formTitle": "Change Password",
+    "formSubTitle": "Enter a new password for your account."
+  },
+  "VerifyUserEmail": {
+    "title": "Email Verification",
+    "formSubTitle": "Please create a username to continue email verification process.",
+    "userNameNotAvailable": "Username \"{{userName}}\" is not available",
+    "userNameAvailable": "Username \"{{userName}}\" is available"
+  },
+  "VerifyUserEmailInfo": {
+    "title": "Email Confirmation",
+    "formSubTitle": "<0>Verify your email to finish signing up for Octopus.</0><1></1><2>Please check your email box.</2>",
+    "resendLink": "Resend mail verification link?",
+    "resend": "RESEND",
+    "goToSignIn": "GO TO SIGN IN"
   }
 }

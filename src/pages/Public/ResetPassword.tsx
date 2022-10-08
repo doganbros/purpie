@@ -9,6 +9,7 @@ import { validators } from '../../helpers/validators';
 import Figure from '../../assets/forgotten-password-bg/figure-1.png';
 import Banner from '../../assets/forgotten-password-bg/banner.png';
 import AuthFormButton from '../../components/auth/AuthFormButton';
+import { useTranslate } from '../../hooks/useTranslate';
 
 interface Params {
   token: string;
@@ -17,6 +18,7 @@ interface Params {
 const ResetPassword: FC = () => {
   const dispatch = useDispatch();
   const { token } = useParams<Params>();
+  const t = useTranslate('ResetPassword');
 
   const {
     resetPassword: { loading },
@@ -33,9 +35,9 @@ const ResetPassword: FC = () => {
 
   return (
     <AuthLayout
-      title="Reset Password"
-      formTitle="Change Password"
-      formSubTitle="Enter a new password for your account."
+      title={t('title')}
+      formTitle={t('formTitle')}
+      formSubTitle={t('formSubTitle')}
       background={
         <>
           <Image
@@ -63,10 +65,10 @@ const ResetPassword: FC = () => {
           <FormField
             name="password"
             htmlFor="passwordInput"
-            label="Password"
+            label={t('password', true)}
             validate={[
-              validators.required('Password'),
-              validators.minLength('Password', 6),
+              validators.required(t('password', true)),
+              validators.minLength(t('password', true), 6),
             ]}
           >
             <TextInput id="passwordInput" name="password" type="password" />
@@ -74,10 +76,10 @@ const ResetPassword: FC = () => {
           <FormField
             name="password1"
             htmlFor="password1Input"
-            label="Confirm Password"
+            label={t('confirmPassword', true)}
             validate={[
-              validators.required('Confirm password'),
-              validators.equalsField('password', 'Password'),
+              validators.required(t('confirmPassword', true)),
+              validators.equalsField('password', t('passwords', true)),
             ]}
           >
             <TextInput id="password1Input" name="password1" type="password" />
@@ -87,7 +89,7 @@ const ResetPassword: FC = () => {
             margin={{ top: 'large' }}
             disabled={loading}
             type="submit"
-            label="GO"
+            label={t('go', true)}
           />
         </Form>
       </>

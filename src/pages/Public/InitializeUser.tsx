@@ -12,6 +12,7 @@ import { initializeUserAction } from '../../store/actions/auth.action';
 import { RegisterPayload } from '../../store/types/auth.types';
 import AuthFormButton from '../../components/auth/AuthFormButton';
 import { USER_NAME_CONSTRAINT } from '../../helpers/constants';
+import { useTranslate } from '../../hooks/useTranslate';
 
 const InitializeUser: FC = () => {
   const {
@@ -19,12 +20,13 @@ const InitializeUser: FC = () => {
     initializeUser: { loading },
   } = useSelector((state: AppState) => state.auth);
   const dispatch = useDispatch();
+  const t = useTranslate('InitializeUser');
 
   const history = useHistory();
 
   const size = useResponsive();
 
-  useTitle('Initialize User - Octopus');
+  useTitle(t('title'));
 
   useEffect(() => {
     if (!isInitialUserSetup) {
@@ -59,27 +61,30 @@ const InitializeUser: FC = () => {
           </Box>
           <Box gap="small">
             <Text size="xlarge" weight="bold">
-              Welcome to Octopus!
+              {t('formTitle')}
             </Text>
             <Text size="small" margin="">
-              Sign up with an account to continue
+              {t('formSubTitle')}
             </Text>
           </Box>
           <Form onSubmit={handleSubmit}>
             <FormField
-              label="FULL NAME"
-              validate={validators.required('Full name')}
+              label={t('fullName', true)}
+              validate={validators.required(t('fullName', true))}
               name="fullName"
               htmlFor="fullNameInput"
             >
               <TextInput name="fullName" />
             </FormField>
             <FormField
-              label="USERNAME"
+              label={t('userName', true)}
               validate={[
-                validators.required('User name'),
-                validators.minLength('Username', 6),
-                validators.matches(USER_NAME_CONSTRAINT, 'Invalid Username'),
+                validators.required(t('userName', true)),
+                validators.minLength(t('userName', true), 6),
+                validators.matches(
+                  USER_NAME_CONSTRAINT,
+                  t('invalidUserName', true)
+                ),
               ]}
               name="userName"
               htmlFor="userNameInput"
@@ -89,29 +94,32 @@ const InitializeUser: FC = () => {
             <FormField
               name="email"
               htmlFor="emailInput"
-              label="EMAIL"
-              validate={[validators.required('Email'), validators.email()]}
+              label={t('email', true)}
+              validate={[
+                validators.required(t('email', true)),
+                validators.email(),
+              ]}
             >
               <TextInput id="emailInput" name="email" type="email" />
             </FormField>
             <FormField
-              label="PASSWORD"
+              label={t('password', true)}
               name="password"
               htmlFor="passwordInput"
               validate={[
-                validators.required('Password'),
-                validators.minLength('Password', 6),
+                validators.required(t('password', true)),
+                validators.minLength(t('password', true), 6),
               ]}
             >
               <TextInput id="passwordInput" name="password" type="password" />
             </FormField>
             <FormField
-              label="CONFIRM PASSWORD"
+              label={t('confirmPassword', true)}
               name="password1"
               htmlFor="password1Input"
               validate={[
-                validators.required('Confirm password'),
-                validators.equalsField('password', 'password'),
+                validators.required(t('confirmPassword', true)),
+                validators.equalsField('password', t('passwords', true)),
               ]}
             >
               <TextInput id="password1Input" name="password1" type="password" />
@@ -121,7 +129,7 @@ const InitializeUser: FC = () => {
               margin={{ top: 'medium' }}
               disabled={loading}
               type="submit"
-              label="CREATE ACCOUNT"
+              label={t('createAccount')}
             />
           </Form>
         </Box>

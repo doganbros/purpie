@@ -22,7 +22,7 @@ import { useTranslate } from '../../hooks/useTranslate';
 const Login: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const translate = useTranslate('Login');
+  const t = useTranslate('Login');
 
   const {
     login: { loading },
@@ -36,9 +36,9 @@ const Login: FC = () => {
 
   return (
     <AuthLayout
-      title={translate('title')}
-      formTitle={translate('formTitle')}
-      formSubTitle={translate('formSubTitle')}
+      title={t('title')}
+      formTitle={t('formTitle')}
+      formSubTitle={t('formSubTitle')}
       background={
         <>
           <Image
@@ -58,8 +58,8 @@ const Login: FC = () => {
         </>
       }
       callToAction={{
-        title: translate('dontHaveAccount'),
-        body: translate('createAccount'),
+        title: t('dontHaveAccount'),
+        body: t('createAccount'),
         onClick: () => history.push('/register'),
       }}
     >
@@ -68,18 +68,18 @@ const Login: FC = () => {
           <FormField
             name="emailOrUserName"
             htmlFor="emailOrUserNameInput"
-            label={translate('emailOrUserName')}
-            validate={[validators.required(translate('emailOrUserName'))]}
+            label={t('emailOrUserName')}
+            validate={[validators.required(t('emailOrUserName'))]}
           >
             <TextInput id="emailOrUserNameInput" name="emailOrUserName" />
           </FormField>
           <FormField
             name="password"
             htmlFor="passwordInput"
-            label={translate('password', true)}
+            label={t('password', true)}
             validate={[
-              validators.required(translate('password', true)),
-              validators.minLength(translate('password', true), 6),
+              validators.required(t('password', true)),
+              validators.minLength(t('password', true), 6),
             ]}
           >
             <TextInput id="passwordInput" name="password" type="password" />
@@ -93,7 +93,7 @@ const Login: FC = () => {
             <AnchorLink
               weight="normal"
               size="small"
-              label={translate('forgotPassword')}
+              label={t('forgotPassword')}
               to="/forgot-password"
             />
           </Box>
@@ -102,7 +102,7 @@ const Login: FC = () => {
             margin={{ top: 'medium' }}
             disabled={loading}
             type="submit"
-            label={translate('signIn', true)}
+            label={t('signIn', true)}
           />
 
           <Box
@@ -117,7 +117,7 @@ const Login: FC = () => {
             </Box>
             <Box basis="100%" direction="row" justify="center">
               <Text margin={{ horizontal: 'small' }} size="small">
-                {translate('orSignInWith')}
+                {t('orSignInWith')}
               </Text>
             </Box>
             <Box basis="80%">

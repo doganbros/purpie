@@ -14,6 +14,7 @@ import { theme } from '../../config/app-config';
 import { USER_NAME_CONSTRAINT } from '../../helpers/constants';
 import { ExistenceResult } from '../../store/types/auth.types';
 import AuthFormButton from '../../components/auth/AuthFormButton';
+import { useTranslate } from '../../hooks/useTranslate';
 
 interface Params {
   token: string;
@@ -25,6 +26,7 @@ const VerifyUserEmail: FC = () => {
   const debouncer = useDebouncer();
 
   const { token } = useParams<Params>();
+  const t = useTranslate('VerifyUserEmail');
 
   const [
     existenceResult,
@@ -52,9 +54,9 @@ const VerifyUserEmail: FC = () => {
 
   return (
     <AuthLayout
-      title="Email Verification"
-      formTitle="Email Verification"
-      formSubTitle="Please create a username to continue email verification process."
+      title={t('title')}
+      formTitle={t('title')}
+      formSubTitle={t('formSubTitle')}
       background={
         <>
           <Image
@@ -82,23 +84,30 @@ const VerifyUserEmail: FC = () => {
           <FormField
             name="userName"
             htmlFor="userNameInput"
-            label="Username"
+            label={t('userName', true)}
             error={
               existenceResult &&
               existenceResult.exists &&
-              `Username "${existenceResult.userName}" is not available`
+              t('userNameNotAvailable', false, {
+                userName: existenceResult.userName,
+              })
             }
             info={
               existenceResult &&
               !existenceResult.exists && (
                 <Text color="status-ok" size="small">
-                  {`Username "${existenceResult.userName}" is available`}
+                  {t('userNameAvailable', false, {
+                    userName: existenceResult.userName,
+                  })}
                 </Text>
               )
             }
             validate={[
-              validators.required('Username'),
-              validators.matches(USER_NAME_CONSTRAINT, 'Invalid username'),
+              validators.required(t('userName', true)),
+              validators.matches(
+                USER_NAME_CONSTRAINT,
+                t('invalidUserName', true)
+              ),
             ]}
             contentProps={
               existenceResult && !existenceResult.exists
@@ -123,7 +132,7 @@ const VerifyUserEmail: FC = () => {
             primary
             margin={{ top: '55%' }}
             type="submit"
-            label="CONTINUE"
+            label={t('continue', true)}
           />
         </Form>
       </>
