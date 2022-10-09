@@ -14,21 +14,28 @@ export class CreateZoneDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+  })
   @IsInt()
-  @IsNotEmpty()
-  categoryId: number;
+  @IsOptional()
+  categoryId?: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+  })
   @IsString()
-  description: string;
+  @IsOptional()
+  description?: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @Matches(/([a-z.])+([a-z])$/, { message: 'Please enter a valid subdomain' })
   subdomain: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+  })
   @IsOptional()
   @IsBoolean()
   public?: boolean;

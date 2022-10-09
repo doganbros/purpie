@@ -40,12 +40,12 @@ export class Channel extends RecordEntity {
   @Column({ nullable: true })
   displayPhoto: string;
 
-  @OneToOne(() => Category, { onDelete: 'RESTRICT' })
+  @OneToOne(() => Category, { onDelete: 'RESTRICT', nullable: true })
   @JoinColumn({ name: 'categoryId' })
-  category: Category;
+  category?: Category;
 
   @Column('int', { nullable: true })
-  categoryId: number | null;
+  categoryId?: number | null;
 
   @ManyToOne(() => Zone, (zone) => zone.channels, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'zoneId' })
