@@ -65,7 +65,6 @@ export class NotificationService {
         'post.createdOn',
         'channel.id',
         'channel.name',
-        'channel.topic',
         'channel.description',
         'zone.id',
         'zone.name',

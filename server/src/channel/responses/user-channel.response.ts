@@ -11,9 +11,6 @@ class ChannelForUserChannelList {
   name: string;
 
   @ApiProperty()
-  topic: string;
-
-  @ApiProperty()
   description: string;
 
   @ApiProperty()

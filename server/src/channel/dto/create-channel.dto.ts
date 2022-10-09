@@ -13,11 +13,6 @@ export class CreateChannelDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  topic?: string;
-
   @ApiProperty({ type: Number, description: 'can be a number or null' })
   @IsOptional()
   @IsInt()

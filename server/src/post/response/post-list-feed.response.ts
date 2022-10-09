@@ -60,9 +60,6 @@ class PostFeedChannel {
   name: string;
 
   @ApiProperty()
-  topic: string;
-
-  @ApiProperty()
   description: string;
 }
 

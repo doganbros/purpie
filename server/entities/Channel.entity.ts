@@ -22,9 +22,6 @@ export class Channel extends RecordEntity {
   name: string;
 
   @Column({ nullable: true })
-  topic: string;
-
-  @Column({ nullable: true })
   description: string;
 
   @Column({ default: true })
