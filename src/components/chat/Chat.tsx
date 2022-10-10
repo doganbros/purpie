@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { socket } from '../../helpers/socket';
 import { getChatMessages } from '../../store/services/chat.service';
 import { ChatAttachment, ChatMessage } from '../../store/types/chat.types';
@@ -23,7 +24,6 @@ import {
 import PlanMeetingTheme from '../../layers/meeting/custom-theme';
 import { errorResponseMessage, getChatRoomName } from '../../helpers/utils';
 import { http } from '../../config/http';
-import { useTranslate } from '../../hooks/useTranslate';
 
 interface Props {
   medium: 'direct' | 'channel' | 'post';
@@ -48,7 +48,7 @@ const Chat: React.FC<Props> = ({
   canEdit = true,
   canAddFile = false,
 }) => {
-  const t = useTranslate('Chat');
+  const { t } = useTranslation();
 
   const [messages, setMessages] = useState<Array<ChatMessage> | null>(null);
   const [hasMore, setHasMore] = useState(true);
@@ -99,9 +99,9 @@ const Chat: React.FC<Props> = ({
 
   const parseDateToString = (date: Date) => {
     const diff = dayjs().startOf('day').diff(dayjs(date).startOf('day'), 'day');
-    if (diff === 0) return t('today');
+    if (diff === 0) return t('Chat.today');
 
-    if (diff === 1) return t('yesterday');
+    if (diff === 1) return t('Chat.yesterday');
 
     const equalYears = dayjs(date).get('year') === dayjs().get('year');
 
@@ -369,7 +369,7 @@ const Chat: React.FC<Props> = ({
               inverse
               hasMore={hasMore}
               next={fetchMessages}
-              loader={<h4>{t('loading', true)}</h4>}
+              loader={<h4>{t('common.loading')}</h4>}
               scrollableTarget={containerId}
             >
               {messages?.map((message) => {
@@ -384,17 +384,17 @@ const Chat: React.FC<Props> = ({
                 ) {
                   if (canEdit)
                     menuItems.push({
-                      label: t('edit', true),
+                      label: t('common.edit'),
                       onClick: () => {
                         setEditedMessage(message);
                       },
                     });
                   if (canDelete)
                     menuItems.push({
-                      label: t('delete', true),
+                      label: t('common.delete'),
                       onClick: async () => {
                         // eslint-disable-next-line no-alert
-                        const proceed = window.confirm(t('deleteConfirm'));
+                        const proceed = window.confirm(t('Chat.deleteConfirm'));
                         if (proceed) {
                           handleDeleteMsg(message);
                         }
@@ -403,7 +403,7 @@ const Chat: React.FC<Props> = ({
                 }
                 if (canReply && !message.deleted)
                   menuItems.push({
-                    label: t('reply', true),
+                    label: t('common.reply'),
                     onClick: () => {
                       setRepliedMessage(message);
                     },
@@ -469,7 +469,7 @@ const Chat: React.FC<Props> = ({
 
           {typingUser ? (
             <Text size="small" as="i" textAlign="center">
-              {t('typing', false, { name: typingUser.fullName })}
+              {t('common.typing', { name: typingUser.fullName })}
             </Text>
           ) : null}
         </Box>

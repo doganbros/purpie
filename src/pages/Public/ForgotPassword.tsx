@@ -2,6 +2,7 @@ import { Form, FormField, Image, TextInput } from 'grommet';
 import React, { FC } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import AuthLayout from '../../components/layouts/AuthLayout';
 import { validators } from '../../helpers/validators';
 import { FormSubmitEvent } from '../../models/form-submit-event';
@@ -10,12 +11,11 @@ import { AppState } from '../../store/reducers/root.reducer';
 import Figure from '../../assets/forgotten-password-bg/figure-1.png';
 import Banner from '../../assets/forgotten-password-bg/banner.png';
 import AuthFormButton from '../../components/auth/AuthFormButton';
-import { useTranslate } from '../../hooks/useTranslate';
 
 const ForgotPassword: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const t = useTranslate('ForgotPassword');
+  const { t } = useTranslation();
 
   const {
     forgotPassword: { loading },
@@ -27,12 +27,12 @@ const ForgotPassword: FC = () => {
 
   return (
     <AuthLayout
-      title={t('title')}
-      formTitle={t('formTitle')}
-      formSubTitle={t('formSubTitle')}
+      title={t('ForgotPassword.title')}
+      formTitle={t('ForgotPassword.formTitle')}
+      formSubTitle={t('ForgotPassword.formSubTitle')}
       callToAction={{
-        title: t('rememberPassword'),
-        body: t('signIn', true),
+        title: t('ForgotPassword.rememberPassword'),
+        body: t('common.signIn'),
         onClick: () => history.push('/login'),
       }}
       background={
@@ -62,9 +62,9 @@ const ForgotPassword: FC = () => {
           <FormField
             name="email"
             htmlFor="emailInput"
-            label={t('email', true)}
+            label={t('common.email')}
             validate={[
-              validators.required(t('email', true)),
+              validators.required(t('common.email')),
               validators.email(),
             ]}
           >
@@ -75,7 +75,7 @@ const ForgotPassword: FC = () => {
             margin={{ top: '55%' }}
             disabled={loading}
             type="submit"
-            label={t('send')}
+            label={t('ForgotPassword.send')}
           />
         </Form>
       </>

@@ -3,6 +3,7 @@ import { Anchor, Box, Text } from 'grommet';
 import React, { FC } from 'react';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { ChatAttachment, ChatMessage } from '../../store/types/chat.types';
 import InitialsAvatar from '../utils/InitialsAvatar';
 import { AppState } from '../../store/reducers/root.reducer';
@@ -16,7 +17,6 @@ import {
   UploadedImage,
   UploadedImageContainer,
 } from './components/ChatComponentsStyle';
-import { useTranslate } from '../../hooks/useTranslate';
 
 interface Props {
   message: ChatMessage;
@@ -28,7 +28,7 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
   const {
     auth: { user: currentUser },
   } = useSelector((state: AppState) => state);
-  const t = useTranslate('MessageItem');
+  const { t } = useTranslation();
 
   const ownMessage = message.createdBy.id === currentUser?.id;
 
@@ -133,7 +133,9 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
                     weight="bold"
                     textAlign={ownMessage ? 'end' : 'start'}
                   >
-                    {ownMessage ? t('you') : message.createdBy.fullName}
+                    {ownMessage
+                      ? t('MessageItem.you')
+                      : message.createdBy.fullName}
                   </UserFullName>
                   <Text size="small">
                     {dayjs(message.createdOn).format('hh:mm:a')}
@@ -145,7 +147,7 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
                   {message.parent ? (
                     <Text size="xsmall" margin={{ bottom: 'xsmall' }}>
                       <Text size="xsmall" as="i" margin={{ right: 'xsmall' }}>
-                        {t('repliedTo')}
+                        {t('MessageItem.repliedTo')}
                       </Text>
                       <Anchor
                         href={`#message-item-${message.parent.identifier}`}
@@ -161,7 +163,9 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
                     margin={{ right: 'xsmall' }}
                     textAlign={ownMessage ? 'end' : 'start'}
                   >
-                    {message.deleted ? t('messageDeleted') : message.message}
+                    {message.deleted
+                      ? t('MessageItem.messageDeleted')
+                      : message.message}
                   </Text>
                 </Box>
                 {renderAttachments(message.attachments)}

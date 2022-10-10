@@ -3,6 +3,7 @@ import { Form, FormField, Image, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
+import { useTranslation } from 'react-i18next';
 import { RegisterPayload } from '../../store/types/auth.types';
 import { registerAction } from '../../store/actions/auth.action';
 import { AppState } from '../../store/reducers/root.reducer';
@@ -11,12 +12,11 @@ import { FormSubmitEvent } from '../../models/form-submit-event';
 import { validators } from '../../helpers/validators';
 import Figure from '../../assets/register-bg/figure.png';
 import AuthFormButton from '../../components/auth/AuthFormButton';
-import { useTranslate } from '../../hooks/useTranslate';
 
 const Register: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const t = useTranslate('Register');
+  const { t } = useTranslation();
 
   const {
     register: { loading },
@@ -28,12 +28,12 @@ const Register: FC = () => {
 
   return (
     <AuthLayout
-      title={t('title')}
-      formTitle={t('formTitle')}
-      formSubTitle={t('formSubTitle')}
+      title={t('Register.title')}
+      formTitle={t('Register.formTitle')}
+      formSubTitle={t('Register.formSubTitle')}
       callToAction={{
-        title: t('alreadyHaveAccount'),
-        body: t('signIn', true),
+        title: t('Register.alreadyHaveAccount'),
+        body: t('common.signIn'),
         onClick: () => history.push('/login'),
       }}
       background={
@@ -51,10 +51,10 @@ const Register: FC = () => {
       <>
         <Form onSubmit={handleSubmit}>
           <FormField
-            label={t('fullName', true)}
+            label={t('common.fullName')}
             name="fullName"
             htmlFor="fullNameInput"
-            validate={validators.required(t('fullName', true))}
+            validate={validators.required(t('common.fullName'))}
           >
             <TextInput id="fullNameInput" name="fullName" />
           </FormField>
@@ -62,9 +62,9 @@ const Register: FC = () => {
           <FormField
             name="email"
             htmlFor="emailInput"
-            label={t('email', true)}
+            label={t('common.email')}
             validate={[
-              validators.required(t('email', true)),
+              validators.required(t('common.email')),
               validators.email(),
             ]}
           >
@@ -74,10 +74,10 @@ const Register: FC = () => {
           <FormField
             name="password"
             htmlFor="passwordInput"
-            label={t('password', true)}
+            label={t('common.password')}
             validate={[
-              validators.required(t('password', true)),
-              validators.minLength(t('password', true), 6),
+              validators.required(t('common.password')),
+              validators.minLength(t('common.password'), 6),
             ]}
           >
             <TextInput id="passwordInput" name="password" type="password" />
@@ -85,10 +85,10 @@ const Register: FC = () => {
           <FormField
             name="password1"
             htmlFor="password1Input"
-            label={t('confirmPassword', true)}
+            label={t('common.confirmPassword')}
             validate={[
-              validators.required(t('confirmPassword', true)),
-              validators.equalsField('password', t('passwords', true)),
+              validators.required(t('common.confirmPassword')),
+              validators.equalsField('password', t('common.passwords')),
             ]}
           >
             <TextInput id="password1Input" name="password1" type="password" />
@@ -98,7 +98,7 @@ const Register: FC = () => {
             margin={{ top: 'medium' }}
             disabled={loading}
             type="submit"
-            label={t('signUp')}
+            label={t('Register.signUp')}
           />
         </Form>
       </>

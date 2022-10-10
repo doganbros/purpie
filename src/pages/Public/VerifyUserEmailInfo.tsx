@@ -2,14 +2,13 @@ import { Button, Image } from 'grommet';
 import React, { FC } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import AuthLayout from '../../components/layouts/AuthLayout';
 import { AppState } from '../../store/reducers/root.reducer';
 import Figure from '../../assets/verify-email-bg/figure-1.png';
 import Banner from '../../assets/verify-email-bg/banner.png';
 import { useResponsive } from '../../hooks/useResponsive';
 import { resendMailVerificationTokenAction } from '../../store/actions/auth.action';
-import { useTranslate } from '../../hooks/useTranslate';
 
 interface Params {
   userId: string;
@@ -17,7 +16,7 @@ interface Params {
 
 const VerifyUserEmailInfo: FC = () => {
   const dispatch = useDispatch();
-  const t = useTranslate('VerifyUserEmailInfo');
+  const { t } = useTranslation();
 
   const {
     resendMailVerificationToken: { loading },
@@ -32,8 +31,8 @@ const VerifyUserEmailInfo: FC = () => {
 
   return (
     <AuthLayout
-      title={t('title')}
-      formTitle={t('title')}
+      title={t('VerifyUserEmailInfo.title')}
+      formTitle={t('VerifyUserEmailInfo.title')}
       formSubTitle={
         <Trans i18nKey="VerifyUserEmailInfo.formSubTitle">
           <span />
@@ -60,8 +59,8 @@ const VerifyUserEmailInfo: FC = () => {
         </>
       }
       callToAction={{
-        title: t('resendLink'),
-        body: t('resend'),
+        title: t('VerifyUserEmailInfo.resendLink'),
+        body: t('VerifyUserEmailInfo.resend'),
         disabled: loading,
         onClick: submitResendMailVerificationToken,
       }}
@@ -73,7 +72,7 @@ const VerifyUserEmailInfo: FC = () => {
         size={size}
         margin={{ top: '55%' }}
         type="submit"
-        label={t('goToSignIn')}
+        label={t('VerifyUserEmailInfo.goToSignIn')}
       />
     </AuthLayout>
   );

@@ -9,6 +9,7 @@ import {
 } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
 import PostGridItem from '../../../components/post/PostGridItem';
@@ -32,7 +33,6 @@ import EmptyFeedContent from './EmptyFeedContent';
 import { LoadingState } from '../../../models/utils';
 import InvitationList from './InvitationList';
 import i18n from '../../../config/i18n/i18n-config';
-import { useTranslate } from '../../../hooks/useTranslate';
 
 const initialFilters = [
   {
@@ -66,7 +66,7 @@ const Timeline: FC = () => {
   const size = useContext(ResponsiveContext);
   const history = useHistory();
   const dispatch = useDispatch();
-  const t = useTranslate('Timeline');
+  const { t } = useTranslation();
   const {
     post: { feed },
     zone: { selectedUserZone },
@@ -123,7 +123,7 @@ const Timeline: FC = () => {
     if (
       [LoadingState.loading, LoadingState.pending].includes(feed.loadingState)
     )
-      return 'Loading...'; // We can return a loader component later
+      return t('common.loading'); // We can return a loader component later
 
     if (feed.data.length)
       return <EmptyFeedContent onAddContent={() => setShowAddContent(true)} />;
@@ -158,7 +158,7 @@ const Timeline: FC = () => {
 
   return (
     <PrivatePageLayout
-      title={t('title')}
+      title={t('Timeline.title')}
       rightComponent={
         <Box pad="medium" gap="medium">
           <SearchBar />

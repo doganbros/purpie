@@ -2,6 +2,7 @@ import { Form, FormField, Image, Text, TextInput } from 'grommet';
 import React, { FC, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import AuthLayout from '../../components/layouts/AuthLayout';
 import { validators } from '../../helpers/validators';
 import { FormSubmitEvent } from '../../models/form-submit-event';
@@ -14,7 +15,6 @@ import { theme } from '../../config/app-config';
 import { USER_NAME_CONSTRAINT } from '../../helpers/constants';
 import { ExistenceResult } from '../../store/types/auth.types';
 import AuthFormButton from '../../components/auth/AuthFormButton';
-import { useTranslate } from '../../hooks/useTranslate';
 
 interface Params {
   token: string;
@@ -26,7 +26,7 @@ const VerifyUserEmail: FC = () => {
   const debouncer = useDebouncer();
 
   const { token } = useParams<Params>();
-  const t = useTranslate('VerifyUserEmail');
+  const { t } = useTranslation();
 
   const [
     existenceResult,
@@ -54,9 +54,9 @@ const VerifyUserEmail: FC = () => {
 
   return (
     <AuthLayout
-      title={t('title')}
-      formTitle={t('title')}
-      formSubTitle={t('formSubTitle')}
+      title={t('VerifyUserEmail.title')}
+      formTitle={t('VerifyUserEmail.title')}
+      formSubTitle={t('VerifyUserEmail.formSubTitle')}
       background={
         <>
           <Image
@@ -84,11 +84,11 @@ const VerifyUserEmail: FC = () => {
           <FormField
             name="userName"
             htmlFor="userNameInput"
-            label={t('userName', true)}
+            label={t('common.userName')}
             error={
               existenceResult &&
               existenceResult.exists &&
-              t('userNameNotAvailable', false, {
+              t('VerifyUserEmail.userNameNotAvailable', {
                 userName: existenceResult.userName,
               })
             }
@@ -96,17 +96,17 @@ const VerifyUserEmail: FC = () => {
               existenceResult &&
               !existenceResult.exists && (
                 <Text color="status-ok" size="small">
-                  {t('userNameAvailable', false, {
+                  {t('VerifyUserEmail.userNameAvailable', {
                     userName: existenceResult.userName,
                   })}
                 </Text>
               )
             }
             validate={[
-              validators.required(t('userName', true)),
+              validators.required(t('common.userName')),
               validators.matches(
                 USER_NAME_CONSTRAINT,
-                t('invalidUserName', true)
+                t('common.invalidUserName')
               ),
             ]}
             contentProps={
@@ -132,7 +132,7 @@ const VerifyUserEmail: FC = () => {
             primary
             margin={{ top: '55%' }}
             type="submit"
-            label={t('continue', true)}
+            label={t('common.continue')}
           />
         </Form>
       </>

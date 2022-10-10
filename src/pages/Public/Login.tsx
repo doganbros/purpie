@@ -3,6 +3,7 @@ import { FacebookOption, Google } from 'grommet-icons';
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { AnchorLink } from '../../components/utils/AnchorLink';
 import { validators } from '../../helpers/validators';
 import { FormSubmitEvent } from '../../models/form-submit-event';
@@ -17,12 +18,11 @@ import SignInRect from '../../assets/sign-in-rect.svg';
 import Figure from '../../assets/login-bg/figure.png';
 import Banner from '../../assets/login-bg/banner.png';
 import AuthFormButton from '../../components/auth/AuthFormButton';
-import { useTranslate } from '../../hooks/useTranslate';
 
 const Login: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const t = useTranslate('Login');
+  const { t } = useTranslation();
 
   const {
     login: { loading },
@@ -36,9 +36,9 @@ const Login: FC = () => {
 
   return (
     <AuthLayout
-      title={t('title')}
-      formTitle={t('formTitle')}
-      formSubTitle={t('formSubTitle')}
+      title={t('Login.title')}
+      formTitle={t('Login.formTitle')}
+      formSubTitle={t('Login.formSubTitle')}
       background={
         <>
           <Image
@@ -58,8 +58,8 @@ const Login: FC = () => {
         </>
       }
       callToAction={{
-        title: t('dontHaveAccount'),
-        body: t('createAccount'),
+        title: t('Login.dontHaveAccount'),
+        body: t('Login.createAccount'),
         onClick: () => history.push('/register'),
       }}
     >
@@ -68,18 +68,18 @@ const Login: FC = () => {
           <FormField
             name="emailOrUserName"
             htmlFor="emailOrUserNameInput"
-            label={t('emailOrUserName')}
-            validate={[validators.required(t('emailOrUserName'))]}
+            label={t('Login.emailOrUserName')}
+            validate={[validators.required(t('Login.emailOrUserName'))]}
           >
             <TextInput id="emailOrUserNameInput" name="emailOrUserName" />
           </FormField>
           <FormField
             name="password"
             htmlFor="passwordInput"
-            label={t('password', true)}
+            label={t('common.password')}
             validate={[
-              validators.required(t('password', true)),
-              validators.minLength(t('password', true), 6),
+              validators.required(t('common.password')),
+              validators.minLength(t('common.password'), 6),
             ]}
           >
             <TextInput id="passwordInput" name="password" type="password" />
@@ -93,7 +93,7 @@ const Login: FC = () => {
             <AnchorLink
               weight="normal"
               size="small"
-              label={t('forgotPassword')}
+              label={t('Login.forgotPassword')}
               to="/forgot-password"
             />
           </Box>
@@ -102,7 +102,7 @@ const Login: FC = () => {
             margin={{ top: 'medium' }}
             disabled={loading}
             type="submit"
-            label={t('signIn', true)}
+            label={t('common.signIn')}
           />
 
           <Box
@@ -117,7 +117,7 @@ const Login: FC = () => {
             </Box>
             <Box basis="100%" direction="row" justify="center">
               <Text margin={{ horizontal: 'small' }} size="small">
-                {t('orSignInWith')}
+                {t('Login.orSignInWith')}
               </Text>
             </Box>
             <Box basis="80%">

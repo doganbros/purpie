@@ -1,17 +1,17 @@
 import React, { FC } from 'react';
 import { Box, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
   setSelectedChannelAction,
   unsetSelectedChannelAction,
 } from '../../../store/actions/channel.action';
 import InitialsAvatar from '../../../components/utils/InitialsAvatar';
-import { useTranslate } from '../../../hooks/useTranslate';
 
 const ChannelList: FC = () => {
   const dispatch = useDispatch();
-  const t = useTranslate('ChannelList');
+  const { t } = useTranslation();
   const {
     channel: { selectedChannel, userChannels },
     zone: { selectedUserZone },
@@ -29,13 +29,13 @@ const ChannelList: FC = () => {
   return (
     <Box fill direction="row" align="center">
       {userChannelsFiltered.loading && (
-        <Text size="small">{t('loading', true)}</Text>
+        <Text size="small">{t('common.loading')}</Text>
       )}
       {!userChannelsFiltered.loading &&
         (userChannelsFiltered.data.length === 0 ? (
           <Text size="small">
-            {t('noFollowedChannel', false, {
-              zone: selectedUserZone ? t('onThisZone') : '',
+            {t('ChannelList.noFollowedChannel', {
+              zone: selectedUserZone ? t('ChannelList.onThisZone') : '',
             })}
           </Text>
         ) : (

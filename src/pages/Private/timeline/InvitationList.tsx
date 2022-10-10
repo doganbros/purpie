@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Box, Button, InfiniteScroll, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { getInvitationListAction } from '../../../store/actions/activity.action';
 import {
@@ -11,11 +12,10 @@ import InvitationListItem from '../../../components/utils/invitation/InvitationL
 import InvitationListHeader from '../../../components/utils/invitation/InvitationListHeader';
 import Divider from '../../../components/utils/Divider';
 import { InvitationListItem as InvitationListItemType } from '../../../store/types/activity.types';
-import { useTranslate } from '../../../hooks/useTranslate';
 
 const InvitationList: FC = () => {
   const dispatch = useDispatch();
-  const t = useTranslate('Invitations');
+  const { t } = useTranslation();
   const {
     activity: { invitations },
   } = useSelector((state: AppState) => state);
@@ -51,17 +51,17 @@ const InvitationList: FC = () => {
           >
             <Text size="small" color="brand">
               {displayCount === INVITATION_AMOUNT_LESS
-                ? t('seeMore', true)
-                : t('seeLess', true)}
+                ? t('common.seeMore')
+                : t('common.seeLess')}
             </Text>
           </Button>
         )}
       </Box>
       {invitations.loading && data.length === 0 && (
-        <Text size="small">{t('loading', true)}</Text>
+        <Text size="small">{t('common.loading')}</Text>
       )}
       {!invitations.loading && data.length === 0 && (
-        <Text size="small">{t('noInvitations')}</Text>
+        <Text size="small">{t('Invitations.noInvitations')}</Text>
       )}
 
       <Box overflow="auto" height={{ max: '472px' }}>

@@ -1,8 +1,8 @@
 import { Box, Button, Text, Image } from 'grommet';
 import React, { FC } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import EmptyTimeLineImage from '../../../assets/timeline/empty-timeline.svg';
-import { useTranslate } from '../../../hooks/useTranslate';
 
 const EmptyTitle = styled(Text)`
   font-family: Poppins;
@@ -29,7 +29,7 @@ interface Props {
 }
 
 const EmptyFeedContent: FC<Props> = ({ onAddContent }) => {
-  const t = useTranslate('EmptyFeedContent');
+  const { t } = useTranslation();
 
   return (
     <Box>
@@ -38,9 +38,11 @@ const EmptyFeedContent: FC<Props> = ({ onAddContent }) => {
       </Box>
       <Box margin={{ top: 'large' }}>
         <EmptyTitle textAlign="center" margin="xxsmall" color="#202631">
-          {t('noContent')}
+          {t('EmptyFeedContent.noContent')}
         </EmptyTitle>
-        <EmptyText textAlign="center">{t('noContentDescription')}</EmptyText>
+        <EmptyText textAlign="center">
+          {t('EmptyFeedContent.noContentDescription')}
+        </EmptyText>
       </Box>
       <Box margin="medium" width="fit-content" alignSelf="center">
         <Button
@@ -50,7 +52,9 @@ const EmptyFeedContent: FC<Props> = ({ onAddContent }) => {
           onClick={onAddContent}
         >
           <Box pad="small">
-            <ButtonText textAlign="center">{t('addContent')}</ButtonText>
+            <ButtonText textAlign="center">
+              {t('EmptyFeedContent.addContent')}
+            </ButtonText>
           </Box>
         </Button>
       </Box>

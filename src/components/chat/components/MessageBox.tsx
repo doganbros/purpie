@@ -1,6 +1,7 @@
 import { Box, Button } from 'grommet';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { ChatMessage } from '../../../store/types/chat.types';
 import { useThrottle } from '../../../hooks/useThrottle';
 import InitialsAvatar from '../../utils/InitialsAvatar';
@@ -11,7 +12,6 @@ import MessageTextArea from './MessageTextArea';
 import { getFileKey } from '../../../helpers/utils';
 import { SendButton, SendButtonContainer } from './ChatComponentsStyle';
 import { searchProfileAction } from '../../../store/actions/user.action';
-import { useTranslate } from '../../../hooks/useTranslate';
 
 interface Props {
   name?: string;
@@ -46,7 +46,7 @@ const MessageBox: FC<Props> = ({
   canAddFile,
   user,
 }) => {
-  const t = useTranslate('MessageBox');
+  const { t } = useTranslation();
   const throttle = useThrottle();
   const dispatch = useDispatch();
   const componentRef = useRef<HTMLDivElement>(null);
@@ -183,7 +183,7 @@ const MessageBox: FC<Props> = ({
         />
         {messageErrorDraft ? (
           <Button
-            label={t('sendAgain')}
+            label={t('MessageBox.sendAgain')}
             onClick={() => {
               onSendAgain();
             }}
@@ -201,7 +201,7 @@ const MessageBox: FC<Props> = ({
                   <SendButton
                     size="small"
                     primary
-                    label={t('send', true)}
+                    label={t('common.send')}
                     onClick={() => {
                       onSend(text);
                     }}

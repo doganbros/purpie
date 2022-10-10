@@ -13,6 +13,7 @@ import React, {
 import { EmojiData, emojiIndex } from 'emoji-mart';
 import _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import EmojiPicker from './EmojiPicker';
 import SuggestionPicker from './SuggestionPicker';
 import MentionPicker from './MentionPicker';
@@ -21,7 +22,6 @@ import { searchProfileAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { useDebouncer } from '../../../hooks/useDebouncer';
 import { MessageTextAreaComponent } from './ChatComponentsStyle';
-import { useTranslate } from '../../../hooks/useTranslate';
 
 interface Props {
   textAreaRef: React.RefObject<HTMLTextAreaElement>;
@@ -58,7 +58,7 @@ const MessageBox: FC<Props> = ({
 }) => {
   const dispatch = useDispatch();
   const debouncer = useDebouncer();
-  const t = useTranslate('MessageBox');
+  const { t } = useTranslation();
 
   const [editingEmoji, setEditingEmoji] = useState<string>('');
   const [suggestions, setSuggestions] = useState<EmojiData[]>([]);
@@ -333,7 +333,11 @@ const MessageBox: FC<Props> = ({
           ref={textAreaRef}
           resize={false}
           focusIndicator={false}
-          placeholder={name ? t('writeTo', false, { name }) : t('writeComment')}
+          placeholder={
+            name
+              ? t('MessageBox.writeTo', { name })
+              : t('MessageBox.writeComment')
+          }
           onKeyDown={handleKeyDown}
           onKeyPress={handleKeyUp}
           onChange={handleChange}

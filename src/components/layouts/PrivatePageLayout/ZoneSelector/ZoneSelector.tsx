@@ -2,6 +2,7 @@ import React, { FC, useContext, useState } from 'react';
 import { Box, DropButton, ResponsiveContext, Text } from 'grommet';
 import { Add, SettingsOption } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
 import { AppState } from '../../../../store/reducers/root.reducer';
 import Divider from './Divider';
@@ -10,10 +11,9 @@ import { openCreateChannelLayerAction } from '../../../../store/actions/channel.
 import { logoutAction } from '../../../../store/actions/auth.action';
 import InitialsAvatar from '../../../utils/InitialsAvatar';
 import ListButton from '../../../utils/ListButton';
-import { useTranslate } from '../../../../hooks/useTranslate';
 
 const ZoneSelector: FC = () => {
-  const t = useTranslate('ZoneSelector');
+  const { t } = useTranslation();
   const {
     zone: {
       getUserZones: { userZones },
@@ -93,7 +93,7 @@ const ZoneSelector: FC = () => {
                 }
               }}
               disabled={createChannelButtonDisabled}
-              label={t('createChannel')}
+              label={t('ZoneSelector.createChannel')}
               rightIcon={
                 <Add
                   size="small"
@@ -108,18 +108,18 @@ const ZoneSelector: FC = () => {
                 setOpen(false);
                 dispatch(openCreateZoneLayerAction());
               }}
-              label={t('createZone')}
+              label={t('ZoneSelector.createZone')}
               rightIcon={<Add size="small" color="black" />}
             />
             <Divider />
             <ListButton
-              label={t('settings')}
+              label={t('ZoneSelector.settings')}
               rightIcon={<SettingsOption size="small" color="black" />}
             />
             <Divider />
             <ListButton
               onClick={() => dispatch(logoutAction())}
-              label={t('signOut')}
+              label={t('ZoneSelector.signOut')}
             />
           </Box>
         }

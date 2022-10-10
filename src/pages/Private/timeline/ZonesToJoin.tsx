@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Box, Button, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { getZoneSuggestionsAction } from '../../../store/actions/activity.action';
 import ZoneListItem from '../../../components/utils/zone/ZoneListItem';
@@ -8,11 +9,10 @@ import {
   SUGGESTION_AMOUNT_LESS,
   SUGGESTION_AMOUNT_MORE,
 } from '../../../helpers/constants';
-import { useTranslate } from '../../../hooks/useTranslate';
 
 const ZonesToJoin: FC = () => {
   const dispatch = useDispatch();
-  const t = useTranslate('ZonesToJoin');
+  const { t } = useTranslation();
   const {
     activity: { zoneSuggestions },
   } = useSelector((state: AppState) => state);
@@ -26,7 +26,7 @@ const ZonesToJoin: FC = () => {
     <Box gap="small">
       <Box direction="row" align="center" justify="between">
         <Text size="small" weight="bold">
-          {t('title')}
+          {t('ZonesToJoin.title')}
         </Text>
         {zoneSuggestions.data.length > SUGGESTION_AMOUNT_LESS && (
           <Button
@@ -40,20 +40,20 @@ const ZonesToJoin: FC = () => {
           >
             <Text size="small" color="brand">
               {displayCount === SUGGESTION_AMOUNT_LESS
-                ? t('seeMore', true)
-                : t('seeLess', true)}
+                ? t('common.seeMore')
+                : t('common.seeLess')}
             </Text>
           </Button>
         )}
       </Box>
 
       {zoneSuggestions.loading && (
-        <Text size="small">{t('loading', true)}</Text>
+        <Text size="small">{t('common.loading')}</Text>
       )}
 
       {!zoneSuggestions.loading &&
         (zoneSuggestions.data.length === 0 ? (
-          <Text size="small">{t('noZonesFound')}</Text>
+          <Text size="small">{t('ZonesToJoin.noZonesFound')}</Text>
         ) : (
           zoneSuggestions.data
             .slice(0, displayCount)
@@ -71,7 +71,7 @@ const ZonesToJoin: FC = () => {
       {displayCount > SUGGESTION_AMOUNT_LESS && (
         <Button alignSelf="end">
           <Text size="small" color="brand">
-            {t('seeAll', true)}
+            {t('common.seeAll')}
           </Text>
         </Button>
       )}

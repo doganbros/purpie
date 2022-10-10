@@ -2,6 +2,7 @@ import { Box, Button, ResponsiveContext } from 'grommet';
 import { Add, Bookmark, Chat, Group, Home } from 'grommet-icons';
 import React, { FC, useContext, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { SidebarButton } from './SidebarButton';
 import PlanMeeting from '../../../layers/meeting/PlanMeeting';
 import { closePlanCreateMeetingLayerAction } from '../../../store/actions/meeting.action';
@@ -13,7 +14,6 @@ import CreateChannel from '../../../layers/create-channel/CreateChannel';
 import { closeCreateChannelLayerAction } from '../../../store/actions/channel.action';
 import CreateVideo from '../../../layers/create-video/CreateVideo';
 import { closeCreateVideoLayerAction } from '../../../store/actions/post.action';
-import { useTranslate } from '../../../hooks/useTranslate';
 
 const sidebarBtns = [
   {
@@ -46,7 +46,7 @@ const sidebarBtns = [
 const Sidebar: FC = () => {
   const dispatch = useDispatch();
   const size = useContext(ResponsiveContext);
-  const t = useTranslate('Sidebar');
+  const { t } = useTranslation();
 
   const [showAddContent, setShowAddContent] = useState(false);
   const {
@@ -101,7 +101,7 @@ const Sidebar: FC = () => {
       ) : null}
 
       {sidebarBtns.map(({ titleKey, ...v }) => (
-        <SidebarButton key={titleKey} title={t(titleKey)} {...v} />
+        <SidebarButton key={titleKey} title={t(`Sidebar.${titleKey}`)} {...v} />
       ))}
     </Box>
   );
