@@ -28,9 +28,17 @@ export class CreateZoneDto {
   @IsOptional()
   description?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    minimum: 6,
+    maximum: 64,
+    pattern: '/^(?![0-9]+$)(?!.*-$)(?!-)[a-zA-Z0-9-]{6,32}$/g',
+    description:
+      'Subdomain which will be used as zone address. See: https://datatracker.ietf.org/doc/html/rfc1035',
+  })
   @IsNotEmpty()
-  @Matches(/([a-z.])+([a-z])$/, { message: 'Please enter a valid subdomain' })
+  @Matches(/^(?![0-9]+$)(?!.*-$)(?!-)[a-zA-Z0-9-]{6,32}$/g, {
+    message: 'Please enter a valid subdomain',
+  })
   subdomain: string;
 
   @ApiProperty({
