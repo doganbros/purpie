@@ -36,18 +36,11 @@ export const ceilTime = (time: Date | string | number, minutes = 30): Date => {
   return timeToReturn;
 };
 
-export const nameToSubdomain = (name: string): string => {
-  const result = name.toLowerCase().replaceAll(' ', '-');
-  return sanitizeSubdomain(result);
-};
-
-export const sanitizeSubdomain = (value: string): string => {
-  return value
-    .replaceAll(/[`~!@#&$%^*()_|+=?;:'",.<>{}[\]\\/]/gi, '')
+export const nameToSubdomain = (name: string): string =>
+  name
     .replaceAll('Ğ', 'G')
     .replaceAll('Ü', 'U')
     .replaceAll('Ş', 'S')
-    .replaceAll('I', 'I')
     .replaceAll('İ', 'I')
     .replaceAll('Ö', 'O')
     .replaceAll('Ç', 'C')
@@ -56,8 +49,10 @@ export const sanitizeSubdomain = (value: string): string => {
     .replaceAll('ş', 's')
     .replaceAll('ı', 'i')
     .replaceAll('ö', 'o')
-    .replaceAll('ç', 'c');
-};
+    .replaceAll('ç', 'c')
+    .replaceAll(' ', '-')
+    .replaceAll(/[^\w^\d^-]/g, '')
+    .toLowerCase();
 
 export const fetchOrProduceNull = async <T>(
   request: () => Promise<T>
