@@ -16,6 +16,7 @@ import {
   UploadedImage,
   UploadedImageContainer,
 } from './components/ChatComponentsStyle';
+import { useTranslate } from '../../hooks/useTranslate';
 
 interface Props {
   message: ChatMessage;
@@ -27,6 +28,8 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
   const {
     auth: { user: currentUser },
   } = useSelector((state: AppState) => state);
+  const t = useTranslate('MessageItem');
+
   const ownMessage = message.createdBy.id === currentUser?.id;
 
   const renderContextMenu = () => (
@@ -130,7 +133,7 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
                     weight="bold"
                     textAlign={ownMessage ? 'end' : 'start'}
                   >
-                    {ownMessage ? 'You' : message.createdBy.fullName}
+                    {ownMessage ? t('you') : message.createdBy.fullName}
                   </UserFullName>
                   <Text size="small">
                     {dayjs(message.createdOn).format('hh:mm:a')}
@@ -142,7 +145,7 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
                   {message.parent ? (
                     <Text size="xsmall" margin={{ bottom: 'xsmall' }}>
                       <Text size="xsmall" as="i" margin={{ right: 'xsmall' }}>
-                        Replied to:
+                        {t('repliedTo')}
                       </Text>
                       <Anchor
                         href={`#message-item-${message.parent.identifier}`}
@@ -158,9 +161,7 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
                     margin={{ right: 'xsmall' }}
                     textAlign={ownMessage ? 'end' : 'start'}
                   >
-                    {message.deleted
-                      ? 'This message has been deleted'
-                      : message.message}
+                    {message.deleted ? t('messageDeleted') : message.message}
                   </Text>
                 </Box>
                 {renderAttachments(message.attachments)}

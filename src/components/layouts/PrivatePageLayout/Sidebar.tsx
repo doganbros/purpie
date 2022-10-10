@@ -13,10 +13,11 @@ import CreateChannel from '../../../layers/create-channel/CreateChannel';
 import { closeCreateChannelLayerAction } from '../../../store/actions/channel.action';
 import CreateVideo from '../../../layers/create-video/CreateVideo';
 import { closeCreateVideoLayerAction } from '../../../store/actions/post.action';
+import { useTranslate } from '../../../hooks/useTranslate';
 
 const sidebarBtns = [
   {
-    title: 'Home',
+    titleKey: 'home',
     icon: Home,
     path: '/',
   },
@@ -26,17 +27,17 @@ const sidebarBtns = [
   //   path: '/channels',
   // },
   {
-    title: 'Messages',
+    titleKey: 'messages',
     icon: Chat,
     path: '/messages',
   },
   {
-    title: 'Contacts',
+    titleKey: 'contacts',
     icon: Group,
     path: '/contacts',
   },
   {
-    title: 'Saved Posts',
+    titleKey: 'saved',
     icon: Bookmark,
     path: '/saved-posts',
   },
@@ -45,6 +46,7 @@ const sidebarBtns = [
 const Sidebar: FC = () => {
   const dispatch = useDispatch();
   const size = useContext(ResponsiveContext);
+  const t = useTranslate('Sidebar');
 
   const [showAddContent, setShowAddContent] = useState(false);
   const {
@@ -98,8 +100,8 @@ const Sidebar: FC = () => {
         </Button>
       ) : null}
 
-      {sidebarBtns.map((v) => (
-        <SidebarButton key={v.title} {...v} />
+      {sidebarBtns.map(({ titleKey, ...v }) => (
+        <SidebarButton key={titleKey} title={t(titleKey)} {...v} />
       ))}
     </Box>
   );

@@ -8,9 +8,11 @@ import {
   SUGGESTION_AMOUNT_LESS,
   SUGGESTION_AMOUNT_MORE,
 } from '../../../helpers/constants';
+import { useTranslate } from '../../../hooks/useTranslate';
 
 const ChannelsToFollow: FC = () => {
   const dispatch = useDispatch();
+  const t = useTranslate('ChannelsToFollow');
   const {
     activity: { channelSuggestions },
   } = useSelector((state: AppState) => state);
@@ -23,7 +25,7 @@ const ChannelsToFollow: FC = () => {
     <Box gap="small">
       <Box direction="row" align="center" justify="between">
         <Text size="small" weight="bold">
-          Channels to follow
+          {t('title')}
         </Text>
         {channelSuggestions.data.length > SUGGESTION_AMOUNT_LESS && (
           <Button
@@ -37,8 +39,8 @@ const ChannelsToFollow: FC = () => {
           >
             <Text size="small" color="brand">
               {displayCount === SUGGESTION_AMOUNT_LESS
-                ? 'See more'
-                : 'See less'}
+                ? t('seeMore', true)
+                : t('seeLess', true)}
             </Text>
           </Button>
         )}
@@ -46,7 +48,7 @@ const ChannelsToFollow: FC = () => {
       {channelSuggestions.loading && <Text size="small">Loading</Text>}
       {!channelSuggestions.loading &&
         (channelSuggestions.data.length === 0 ? (
-          <Text size="small">No channels found</Text>
+          <Text size="small">{t('noChannelsFound')}</Text>
         ) : (
           channelSuggestions.data
             .slice(0, displayCount)
@@ -63,7 +65,7 @@ const ChannelsToFollow: FC = () => {
       {displayCount > SUGGESTION_AMOUNT_LESS && (
         <Button alignSelf="end">
           <Text size="small" color="brand">
-            See all
+            {t('seeAll', true)}
           </Text>
         </Button>
       )}

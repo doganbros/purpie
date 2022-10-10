@@ -23,6 +23,7 @@ import {
 import PlanMeetingTheme from '../../layers/meeting/custom-theme';
 import { errorResponseMessage, getChatRoomName } from '../../helpers/utils';
 import { http } from '../../config/http';
+import { useTranslate } from '../../hooks/useTranslate';
 
 interface Props {
   medium: 'direct' | 'channel' | 'post';
@@ -34,6 +35,7 @@ interface Props {
   handleTypingEvent?: boolean;
   canAddFile?: boolean;
 }
+
 const FETCH_MESSAGE_LIMIT = 50;
 
 const Chat: React.FC<Props> = ({
@@ -46,6 +48,8 @@ const Chat: React.FC<Props> = ({
   canEdit = true,
   canAddFile = false,
 }) => {
+  const t = useTranslate('Chat');
+
   const [messages, setMessages] = useState<Array<ChatMessage> | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [typingUser, setTypingUser] = useState<User | null>(null);
@@ -95,9 +99,9 @@ const Chat: React.FC<Props> = ({
 
   const parseDateToString = (date: Date) => {
     const diff = dayjs().startOf('day').diff(dayjs(date).startOf('day'), 'day');
-    if (diff === 0) return 'Today';
+    if (diff === 0) return t('today');
 
-    if (diff === 1) return 'Yesterday';
+    if (diff === 1) return t('yesterday');
 
     const equalYears = dayjs(date).get('year') === dayjs().get('year');
 
@@ -365,7 +369,7 @@ const Chat: React.FC<Props> = ({
               inverse
               hasMore={hasMore}
               next={fetchMessages}
-              loader={<h4>Loading...</h4>}
+              loader={<h4>{t('loading', true)}</h4>}
               scrollableTarget={containerId}
             >
               {messages?.map((message) => {
@@ -380,19 +384,17 @@ const Chat: React.FC<Props> = ({
                 ) {
                   if (canEdit)
                     menuItems.push({
-                      label: 'Edit',
+                      label: t('edit', true),
                       onClick: () => {
                         setEditedMessage(message);
                       },
                     });
                   if (canDelete)
                     menuItems.push({
-                      label: 'Delete',
+                      label: t('delete', true),
                       onClick: async () => {
                         // eslint-disable-next-line no-alert
-                        const proceed = window.confirm(
-                          'Are you sure you want to delete this message?'
-                        );
+                        const proceed = window.confirm(t('deleteConfirm'));
                         if (proceed) {
                           handleDeleteMsg(message);
                         }
@@ -401,7 +403,7 @@ const Chat: React.FC<Props> = ({
                 }
                 if (canReply && !message.deleted)
                   menuItems.push({
-                    label: 'Reply',
+                    label: t('reply', true),
                     onClick: () => {
                       setRepliedMessage(message);
                     },
@@ -467,7 +469,7 @@ const Chat: React.FC<Props> = ({
 
           {typingUser ? (
             <Text size="small" as="i" textAlign="center">
-              {typingUser.fullName} is typing...
+              {t('typing', false, { name: typingUser.fullName })}
             </Text>
           ) : null}
         </Box>

@@ -7,9 +7,11 @@ import {
   unsetSelectedChannelAction,
 } from '../../../store/actions/channel.action';
 import InitialsAvatar from '../../../components/utils/InitialsAvatar';
+import { useTranslate } from '../../../hooks/useTranslate';
 
 const ChannelList: FC = () => {
   const dispatch = useDispatch();
+  const t = useTranslate('ChannelList');
   const {
     channel: { selectedChannel, userChannels },
     zone: { selectedUserZone },
@@ -26,11 +28,15 @@ const ChannelList: FC = () => {
 
   return (
     <Box fill direction="row" align="center">
-      {userChannelsFiltered.loading && <Text size="small">Loading</Text>}
+      {userChannelsFiltered.loading && (
+        <Text size="small">{t('loading', true)}</Text>
+      )}
       {!userChannelsFiltered.loading &&
         (userChannelsFiltered.data.length === 0 ? (
           <Text size="small">
-            No channels are followed{selectedUserZone ? ' on this zone' : ''}
+            {t('noFollowedChannel', false, {
+              zone: selectedUserZone ? t('onThisZone') : '',
+            })}
           </Text>
         ) : (
           userChannelsFiltered.data.map((c) => (

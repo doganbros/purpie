@@ -10,8 +10,10 @@ import { openCreateChannelLayerAction } from '../../../../store/actions/channel.
 import { logoutAction } from '../../../../store/actions/auth.action';
 import InitialsAvatar from '../../../utils/InitialsAvatar';
 import ListButton from '../../../utils/ListButton';
+import { useTranslate } from '../../../../hooks/useTranslate';
 
 const ZoneSelector: FC = () => {
+  const t = useTranslate('ZoneSelector');
   const {
     zone: {
       getUserZones: { userZones },
@@ -91,7 +93,7 @@ const ZoneSelector: FC = () => {
                 }
               }}
               disabled={createChannelButtonDisabled}
-              label="Create Channel"
+              label={t('createChannel')}
               rightIcon={
                 <Add
                   size="small"
@@ -106,18 +108,18 @@ const ZoneSelector: FC = () => {
                 setOpen(false);
                 dispatch(openCreateZoneLayerAction());
               }}
-              label="Create Zone"
+              label={t('createZone')}
               rightIcon={<Add size="small" color="black" />}
             />
             <Divider />
             <ListButton
-              label="Settings"
+              label={t('settings')}
               rightIcon={<SettingsOption size="small" color="black" />}
             />
             <Divider />
             <ListButton
               onClick={() => dispatch(logoutAction())}
-              label="Sign Out"
+              label={t('signOut')}
             />
           </Box>
         }

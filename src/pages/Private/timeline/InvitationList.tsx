@@ -11,9 +11,11 @@ import InvitationListItem from '../../../components/utils/invitation/InvitationL
 import InvitationListHeader from '../../../components/utils/invitation/InvitationListHeader';
 import Divider from '../../../components/utils/Divider';
 import { InvitationListItem as InvitationListItemType } from '../../../store/types/activity.types';
+import { useTranslate } from '../../../hooks/useTranslate';
 
 const InvitationList: FC = () => {
   const dispatch = useDispatch();
+  const t = useTranslate('Invitations');
   const {
     activity: { invitations },
   } = useSelector((state: AppState) => state);
@@ -49,17 +51,17 @@ const InvitationList: FC = () => {
           >
             <Text size="small" color="brand">
               {displayCount === INVITATION_AMOUNT_LESS
-                ? 'See more'
-                : 'See less'}
+                ? t('seeMore', true)
+                : t('seeLess', true)}
             </Text>
           </Button>
         )}
       </Box>
       {invitations.loading && data.length === 0 && (
-        <Text size="small">Loading</Text>
+        <Text size="small">{t('loading', true)}</Text>
       )}
       {!invitations.loading && data.length === 0 && (
-        <Text size="small">No invitations found</Text>
+        <Text size="small">{t('noInvitations')}</Text>
       )}
 
       <Box overflow="auto" height={{ max: '472px' }}>

@@ -8,9 +8,11 @@ import {
   SUGGESTION_AMOUNT_LESS,
   SUGGESTION_AMOUNT_MORE,
 } from '../../../helpers/constants';
+import { useTranslate } from '../../../hooks/useTranslate';
 
 const ZonesToJoin: FC = () => {
   const dispatch = useDispatch();
+  const t = useTranslate('ZonesToJoin');
   const {
     activity: { zoneSuggestions },
   } = useSelector((state: AppState) => state);
@@ -24,7 +26,7 @@ const ZonesToJoin: FC = () => {
     <Box gap="small">
       <Box direction="row" align="center" justify="between">
         <Text size="small" weight="bold">
-          Zones to join
+          {t('title')}
         </Text>
         {zoneSuggestions.data.length > SUGGESTION_AMOUNT_LESS && (
           <Button
@@ -38,18 +40,20 @@ const ZonesToJoin: FC = () => {
           >
             <Text size="small" color="brand">
               {displayCount === SUGGESTION_AMOUNT_LESS
-                ? 'See more'
-                : 'See less'}
+                ? t('seeMore', true)
+                : t('seeLess', true)}
             </Text>
           </Button>
         )}
       </Box>
 
-      {zoneSuggestions.loading && <Text size="small">Loading</Text>}
+      {zoneSuggestions.loading && (
+        <Text size="small">{t('loading', true)}</Text>
+      )}
 
       {!zoneSuggestions.loading &&
         (zoneSuggestions.data.length === 0 ? (
-          <Text size="small">No zones found</Text>
+          <Text size="small">{t('noZonesFound')}</Text>
         ) : (
           zoneSuggestions.data
             .slice(0, displayCount)
@@ -67,7 +71,7 @@ const ZonesToJoin: FC = () => {
       {displayCount > SUGGESTION_AMOUNT_LESS && (
         <Button alignSelf="end">
           <Text size="small" color="brand">
-            See all
+            {t('seeAll', true)}
           </Text>
         </Button>
       )}

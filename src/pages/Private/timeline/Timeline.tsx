@@ -31,31 +31,33 @@ import { Post } from '../../../store/types/post.types';
 import EmptyFeedContent from './EmptyFeedContent';
 import { LoadingState } from '../../../models/utils';
 import InvitationList from './InvitationList';
+import i18n from '../../../config/i18n/i18n-config';
+import { useTranslate } from '../../../hooks/useTranslate';
 
 const initialFilters = [
   {
     id: 0,
-    filterName: 'All',
+    filterName: i18n.t('Timeline.all'),
     active: true,
   },
   {
     id: 1,
-    filterName: 'Following',
+    filterName: i18n.t('Timeline.following'),
     active: false,
   },
   {
     id: 2,
-    filterName: 'Live',
+    filterName: i18n.t('Timeline.live'),
     active: false,
   },
   {
     id: 3,
-    filterName: 'Newest',
+    filterName: i18n.t('Timeline.newest'),
     active: false,
   },
   {
     id: 4,
-    filterName: 'Popular',
+    filterName: i18n.t('Timeline.popular'),
     active: false,
   },
 ];
@@ -64,6 +66,7 @@ const Timeline: FC = () => {
   const size = useContext(ResponsiveContext);
   const history = useHistory();
   const dispatch = useDispatch();
+  const t = useTranslate('Timeline');
   const {
     post: { feed },
     zone: { selectedUserZone },
@@ -122,7 +125,7 @@ const Timeline: FC = () => {
     )
       return 'Loading...'; // We can return a loader component later
 
-    if (!feed.data.length)
+    if (feed.data.length)
       return <EmptyFeedContent onAddContent={() => setShowAddContent(true)} />;
 
     return (
@@ -155,7 +158,7 @@ const Timeline: FC = () => {
 
   return (
     <PrivatePageLayout
-      title="Timeline"
+      title={t('title')}
       rightComponent={
         <Box pad="medium" gap="medium">
           <SearchBar />

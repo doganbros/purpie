@@ -21,6 +21,7 @@ import { searchProfileAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { useDebouncer } from '../../../hooks/useDebouncer';
 import { MessageTextAreaComponent } from './ChatComponentsStyle';
+import { useTranslate } from '../../../hooks/useTranslate';
 
 interface Props {
   textAreaRef: React.RefObject<HTMLTextAreaElement>;
@@ -57,6 +58,7 @@ const MessageBox: FC<Props> = ({
 }) => {
   const dispatch = useDispatch();
   const debouncer = useDebouncer();
+  const t = useTranslate('MessageBox');
 
   const [editingEmoji, setEditingEmoji] = useState<string>('');
   const [suggestions, setSuggestions] = useState<EmojiData[]>([]);
@@ -331,7 +333,7 @@ const MessageBox: FC<Props> = ({
           ref={textAreaRef}
           resize={false}
           focusIndicator={false}
-          placeholder={name ? `Write to ${name}` : 'Write a  comment…'}
+          placeholder={name ? t('writeTo', false, { name }) : t('writeComment')}
           onKeyDown={handleKeyDown}
           onKeyPress={handleKeyUp}
           onChange={handleChange}

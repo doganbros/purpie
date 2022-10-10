@@ -2,6 +2,7 @@ import { Box, Button, Layer, ResponsiveContext, Text, TextArea } from 'grommet';
 import { Close } from 'grommet-icons';
 import React, { FC, useContext, useRef } from 'react';
 import { ChatMessage } from '../../../store/types/chat.types';
+import { useTranslate } from '../../../hooks/useTranslate';
 
 interface Props {
   message: ChatMessage;
@@ -12,6 +13,7 @@ interface Props {
 const EditMessage: FC<Props> = ({ onDismiss, message, onSubmit }) => {
   const size = useContext(ResponsiveContext);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const t = useTranslate('EditMessage');
 
   return (
     <Layer
@@ -30,7 +32,7 @@ const EditMessage: FC<Props> = ({ onDismiss, message, onSubmit }) => {
         <Box direction="row" justify="between" align="start">
           <Box pad="xsmall">
             <Text size="large" weight="bold">
-              Edit Post
+              {t('edit')}
             </Text>
           </Box>
           <Button plain onClick={onDismiss}>
@@ -38,7 +40,7 @@ const EditMessage: FC<Props> = ({ onDismiss, message, onSubmit }) => {
           </Button>
         </Box>
         <TextArea
-          placeholder="Edit Post"
+          placeholder={t('edit')}
           ref={textAreaRef}
           defaultValue={message.message}
           resize="vertical"
