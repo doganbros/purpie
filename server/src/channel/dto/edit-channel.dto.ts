@@ -10,12 +10,6 @@ export class EditChannelDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  @IsOptional()
-  topic?: string;
-
-  @ApiProperty()
-  @IsString()
   @IsOptional()
   description?: string;
 

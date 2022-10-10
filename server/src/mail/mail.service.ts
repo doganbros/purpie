@@ -22,20 +22,20 @@ sendGrid.setApiKey(SENDGRID_API_KEY);
 
 @Injectable()
 export class MailService {
-  private mailTransport: nodemailer.Transporter;
+  // private mailTransport: nodemailer.Transporter;
 
   private testMailTransport: nodemailer.Transporter;
 
   constructor() {
-    this.mailTransport = nodemailer.createTransport({
-      host: 'smtp.sendgrid.net',
-      port: 587,
-      ignoreTLS: true,
-      auth: {
-        user: 'apikey',
-        pass: SENDGRID_API_KEY,
-      },
-    });
+    // this.mailTransport = nodemailer.createTransport({
+    //   host: 'smtp.sendgrid.net',
+    //   port: 587,
+    //   ignoreTLS: true,
+    //   auth: {
+    //     user: 'apikey',
+    //     pass: SENDGRID_API_KEY,
+    //   },
+    // });
 
     if (process.env.NODE_ENV === 'development') {
       this.testMailTransport = nodemailer.createTransport({
@@ -52,14 +52,15 @@ export class MailService {
     context: Record<string, any> = {},
   ) {
     const result = await this.renderMail(viewName, context);
+    // Todo: Maybe make the sendgrid do templating
     const message = {
       to,
       from: SENDGRID_FROM_EMAIL,
       subject,
       html: result,
     };
-    // return sendGrid.send(message);
-    return this.mailTransport.sendMail(message);
+    return sendGrid.send(message);
+    // return this.sendg.sendMail(message);
   }
 
   async sendTestMail(
@@ -84,8 +85,8 @@ export class MailService {
       subject,
       html: msg,
     };
-    // return sendGrid.send(message);
-    return this.mailTransport.sendMail(message);
+    return sendGrid.send(message);
+    // return this.mailTransport.sendMail(message);
   }
 
   renderMail(

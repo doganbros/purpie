@@ -37,7 +37,22 @@ export const ceilTime = (time: Date | string | number, minutes = 30): Date => {
 };
 
 export const nameToSubdomain = (name: string): string =>
-  name.toLowerCase().replaceAll(' ', '-');
+  name
+    .replaceAll('Ğ', 'G')
+    .replaceAll('Ü', 'U')
+    .replaceAll('Ş', 'S')
+    .replaceAll('İ', 'I')
+    .replaceAll('Ö', 'O')
+    .replaceAll('Ç', 'C')
+    .replaceAll('ğ', 'g')
+    .replaceAll('ü', 'u')
+    .replaceAll('ş', 's')
+    .replaceAll('ı', 'i')
+    .replaceAll('ö', 'o')
+    .replaceAll('ç', 'c')
+    .replaceAll(' ', '-')
+    .replaceAll(/[^\w^\d^-]/g, '')
+    .toLowerCase();
 
 export const fetchOrProduceNull = async <T>(
   request: () => Promise<T>

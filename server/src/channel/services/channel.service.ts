@@ -61,7 +61,6 @@ export class ChannelService {
             zoneId,
             public: createChannelInfo.public,
             description: createChannelInfo.description,
-            topic: createChannelInfo.topic,
             categoryId: defaultChannel ? null : createChannelInfo.categoryId,
             createdById: userId,
           })
@@ -108,7 +107,6 @@ export class ChannelService {
         'channel.createdOn',
         'channel.name',
         'channel.displayPhoto',
-        'channel.topic',
         'channel.description',
         'channel.public',
       ])
@@ -156,7 +154,6 @@ export class ChannelService {
         'channel.id',
         'channel.createdOn',
         'channel.name',
-        'channel.topic',
         'channel.description',
         'channel.displayPhoto',
         'channel.public',
@@ -321,7 +318,7 @@ export class ChannelService {
   async editChannelById(id: number, editInfo: any) {
     return this.channelRepository.update(
       { id },
-      pick(editInfo, ['name', 'description', 'topic', 'public']),
+      pick(editInfo, ['name', 'description', 'public']),
     );
   }
 

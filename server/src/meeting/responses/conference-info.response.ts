@@ -38,9 +38,6 @@ class ConferenceInfoChannel {
   description: string;
 
   @ApiProperty()
-  topic: string;
-
-  @ApiProperty()
   public: boolean;
 
   @ApiProperty({ nullable: true, type: 'string' })

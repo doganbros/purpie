@@ -100,12 +100,7 @@ export class VideoService {
 
   getVideoPostQuery(userId: number) {
     return this.videoPostSelection
-      .addSelect([
-        'channel.id',
-        'channel.name',
-        'channel.topic',
-        'channel.description',
-      ])
+      .addSelect(['channel.id', 'channel.name', 'channel.description'])
       .leftJoin(
         UserChannel,
         'user_channel',

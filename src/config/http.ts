@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { nanoid } from 'nanoid';
 import { appSubdomain } from '../helpers/app-subdomain';
-import { errorResponseMessage } from '../helpers/utils';
+import { errorResponseMessage, getCookie } from '../helpers/utils';
 import { REMOVE_TOAST } from '../store/constants/util.constants';
 import { store } from '../store/store';
 
@@ -37,8 +37,13 @@ axios.interceptors.response.use(
     } else if (showErrorToast ? showErrorToast(error) : true) {
       const toastId = nanoid();
 
-      // eslint-disable-next-line no-console
-      console.error(error);
+      if (
+        error &&
+        error?.response.status === 401 &&
+        !getCookie('OCTOPUS_REFRESH_ACCESS_TOKEN')
+      ) {
+        return Promise.reject();
+      }
       store.dispatch({
         type: 'SET_TOAST',
         payload: {
