@@ -11,9 +11,6 @@ class PublicChannelSuggestionList {
   channel_name: string;
 
   @ApiProperty()
-  channel_topic: string;
-
-  @ApiProperty()
   channel_description: string;
 
   @ApiProperty()

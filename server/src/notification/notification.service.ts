@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from 'entities/Notification.entity';
-import { Connection, IsNull, Repository } from 'typeorm';
+import { Connection, In, IsNull, Repository } from 'typeorm';
 import { ListNotificationQuery } from './dto/list-notification.query';
 
 @Injectable()
@@ -24,9 +24,9 @@ export class NotificationService {
     return result;
   }
 
-  async markNotificationsAsViewed(userId: number) {
+  async markNotificationsAsViewed(userId: number, notificationIds: number[]) {
     return this.notificationRepository.update(
-      { userId, viewedOn: IsNull() },
+      { id: In([...notificationIds]), userId },
       { viewedOn: new Date() },
     );
   }
@@ -65,7 +65,6 @@ export class NotificationService {
         'post.createdOn',
         'channel.id',
         'channel.name',
-        'channel.topic',
         'channel.description',
         'zone.id',
         'zone.name',

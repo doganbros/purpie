@@ -725,7 +725,6 @@ export class PostService {
         'zone.public',
         'channel.id',
         'channel.name',
-        'channel.topic',
         'channel.description',
         'channel.public',
       ])
@@ -830,7 +829,6 @@ export class PostService {
         'zone.public',
         'channel.id',
         'channel.name',
-        'channel.topic',
         'channel.description',
         'channel.public',
       ])

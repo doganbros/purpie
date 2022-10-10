@@ -41,14 +41,14 @@ export class Zone extends RecordEntity {
   @JoinColumn({ name: 'createdById' })
   createdBy: User;
 
-  @Column('int')
+  @Column({ type: 'int' })
   createdById: number;
 
-  @OneToOne(() => Category, { onDelete: 'RESTRICT' })
+  @OneToOne(() => Category, { onDelete: 'RESTRICT', nullable: true })
   @JoinColumn({ name: 'categoryId' })
   category: Category;
 
-  @Column('int')
+  @Column({ type: 'int', nullable: true })
   categoryId: number;
 
   @OneToMany(() => UserZone, (userZone) => userZone.zone)
