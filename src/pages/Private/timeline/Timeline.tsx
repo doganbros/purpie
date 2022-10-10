@@ -42,7 +42,7 @@ const initialFilters = [
   },
   {
     id: 1,
-    filterName: i18n.t('Timeline.following'),
+    filterName: i18n.t('common.following'),
     active: false,
   },
   {

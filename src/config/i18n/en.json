@@ -16,7 +16,14 @@
     "seeAll": "See all",
     "edit": "Edit",
     "delete": "Delete",
-    "reply": "Reply"
+    "reply": "Reply",
+    "following": "Following",
+    "follow": "Follow",
+    "join": "Join",
+    "ignore": "Ignore",
+    "joined": "Joined",
+    "ignored": "Ignored",
+    "search": "Search"
   },
   "Login": {
     "title": "Login",
@@ -68,7 +75,6 @@
   },
   "Timeline": {
     "all": "All",
-    "following": "Following",
     "live": "Live",
     "newest": "Newest",
     "popular": "Popular",
@@ -88,7 +94,11 @@
     "addContent": "ADD CONTENT"
   },
   "Invitations": {
-    "noInvitations": "No invitations found"
+    "noInvitations": "No invitations found",
+    "title": "Invitations",
+    "zoneInvitationMessage": "{{fullName}} invited you to {{zone}} zone.",
+    "channelInvitationMessage": "{{fullName}} invited you to {{channel}} channel.",
+    "contactInvitationMessage": "{{fullName}} wants to invite you to as a contact."
   },
   "ZonesToJoin": {
     "title": "Zones to join",
@@ -130,5 +140,54 @@
     "messages": "Messages",
     "contacts": "Contacts",
     "saved": "Saved Posts"
+  },
+  "ZoneListItem": {
+    "channelCount": "{{count}} channels",
+    "memberCount": "{{count}} members"
+  },
+  "AppToast": {
+    "error": "Error!",
+    "info": "Info!",
+    "warn": "Warning!",
+    "ok": "Successful!"
+  },
+  "TimeInput": {
+    "pickTime": "Pick Time"
+  },
+  "AddContent": {
+    "title": "Take Your Pick",
+    "meet": "Meet!",
+    "meetDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
+    "stream": "Stream!",
+    "streamDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
+    "shareVideo": "Share a Video",
+    "shareVideoDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
+    "planMeeting": "Plan a Meeting",
+    "planMeetingDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt."
+  },
+  "validators": {
+    "requiredMsg": "{{field}} is required",
+    "urlMsg": "Please enter a valid url",
+    "emailMsg": "Invalid email",
+    "notEmptyStringMsg": "This field can't be empty",
+    "numericMsg": "Please enter a numeric value",
+    "alphaMsg": "Please enter only alphabets",
+    "regexMsg": "Value is invalid",
+    "alphaNumericMsg": "Please enter only alphabets and numbers",
+    "intMsg": "Please enter only numbers",
+    "floatMsg": "Please enter only decimal numbers",
+    "wordsMsg": "Please enter a collection of words",
+    "lengthDefaultMsg": "must be {{length}} characters long",
+    "minLengthDefaultMsg": "{{field}} can be at least {{length}} characters long",
+    "maxLengthDefaultMsg": "Please enter up to {{length}} characters long",
+    "equalsDefaultMsg": "This field must be equal to {{value}}",
+    "equalsFieldDefaultMsg": "{{fieldLabel}} do not match",
+    "trueDefaultMsg": "This field must be True",
+    "falseDefaultMsg": "This field must be False",
+    "biggerDefaultMsg": "must be bigger than {{value}}",
+    "biggerOrEqualDefaultMsg": "This field must be bigger or equal to {{value}}",
+    "smallerDefaultMsg": "This field must be smaller than {{value}}",
+    "smallerOrEqualDefaultMsg": "This field must be smaller or equal to {{value}}",
+    "startsWithDefaultMsg": "This field must start with {{value}}"
   }
 }

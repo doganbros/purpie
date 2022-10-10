@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Box, Button, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { joinChannelAction } from '../../../store/actions/channel.action';
 import InitialsAvatar from '../InitialsAvatar';
@@ -17,6 +18,7 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
   zoneSubdomain,
 }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     channel: { userChannels },
   } = useSelector((state: AppState) => state);
@@ -43,7 +45,7 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
           dispatch(joinChannelAction(id));
         }}
         disabled={isFollowing}
-        label={isFollowing ? 'Following' : 'Follow'}
+        label={t(isFollowing ? 'common.following' : 'common.follow')}
         size="small"
       />
     </Box>

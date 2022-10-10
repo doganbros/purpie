@@ -1,15 +1,17 @@
 import React, { FC } from 'react';
 import { Box, Text } from 'grommet';
+import { useTranslation } from 'react-i18next';
 
 interface InvitationListHeaderProps {
   count: number;
 }
 
 const InvitationListHeader: FC<InvitationListHeaderProps> = ({ count }) => {
+  const { t } = useTranslation();
   return (
     <Box direction="row" gap="small" align="center">
       <Text color="#202631" size="small" weight="bold">
-        Invitations
+        {t('Invitations.title')}
       </Text>
       <Box
         background="accent-1"
