@@ -49,17 +49,17 @@ const isSmallerOrEqual = (n: number) => (value: any) =>
   !isExisty(value) || value <= n;
 
 const requiredMsg = (field: string) =>
-  i18n.t('validator.requiredMsg', { field });
-const urlMsg = i18n.t('validator.urlMsg');
-const emailMsg = i18n.t('validator.emailMsg');
-const notEmptyStringMsg = i18n.t('validator.notEmptyStringMsg');
-const numericMsg = i18n.t('validator.numericMsg');
-const alphaMsg = i18n.t('validator.alphaMsg');
-const regexMsg = i18n.t('validator.regexMsg');
-const alphaNumericMsg = i18n.t('validator.alphaNumericMsg');
-const intMsg = i18n.t('validator.intMsg');
-const floatMsg = i18n.t('validator.floatMsg');
-const wordsMsg = i18n.t('validator.wordsMsg');
+  i18n.t('validators.requiredMsg', { field });
+const urlMsg = i18n.t('validators.urlMsg');
+const emailMsg = i18n.t('validators.emailMsg');
+const notEmptyStringMsg = i18n.t('validators.notEmptyStringMsg');
+const numericMsg = i18n.t('validators.numericMsg');
+const alphaMsg = i18n.t('validators.alphaMsg');
+const regexMsg = i18n.t('validators.regexMsg');
+const alphaNumericMsg = i18n.t('validators.alphaNumericMsg');
+const intMsg = i18n.t('validators.intMsg');
+const floatMsg = i18n.t('validators.floatMsg');
+const wordsMsg = i18n.t('validators.wordsMsg');
 
 const ruleWrapper = (
   rule: (...args: any[]) => boolean,

@@ -15,6 +15,7 @@ import {
 } from 'grommet';
 import { Close } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { AppState } from '../../store/reducers/root.reducer';
 import { CreateVideoPayload } from '../../store/types/post.types';
 import { createVideoAction } from '../../store/actions/post.action';
@@ -26,6 +27,7 @@ interface CreateVideoProps {
 
 const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     channel: { userChannels },
     post: {
@@ -67,7 +69,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
         <Box direction="row" justify="between" align="start">
           <Box pad="xsmall">
             <Text size="large" weight="bold">
-              Share a Video
+              {t('CreateVideo.title')}
             </Text>
           </Box>
           <Button plain onClick={onDismiss}>
@@ -94,21 +96,25 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
         >
           <Box height="320px" flex={false} overflow="auto">
             <Box height={{ min: 'min-content' }}>
-              <FormField required name="title" label="Video Title">
+              <FormField
+                required
+                name="title"
+                label={t('CreateVideo.videoTitle')}
+              >
                 <TextInput
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   name="title"
                 />
               </FormField>
-              <FormField name="description" label="Description">
+              <FormField name="description" label={t('common.description')}>
                 <TextInput
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   name="description"
                 />
               </FormField>
-              <FormField name="channelId" label="Channel">
+              <FormField name="channelId" label={t('common.channel')}>
                 <Select
                   name="channelId"
                   options={userChannels.data.map(
@@ -120,7 +126,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
                   labelKey="name"
                   valueKey={{ key: 'id', reduce: true }}
                   value={channelId}
-                  placeholder="Select a channel"
+                  placeholder={t('CreateVideo.selectChannel')}
                   onChange={({ option }) => {
                     setChannelId(option.id);
                     setUserContactExclusive(false);
@@ -131,7 +137,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
                 <Switch
                   width="fit-content"
                   direction="row-reverse"
-                  label="Exclusive to contacts"
+                  label={t('CreateVideo.exclusiveContacts')}
                   name="userContactExclusive"
                   value={userContactExclusive}
                   onChange={(checked) => {
@@ -147,7 +153,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
                 <Switch
                   width="fit-content"
                   direction="row-reverse"
-                  label="Public"
+                  label={t('common.public')}
                   name="public"
                   value={publicVideo}
                   onChange={(checked) => {
@@ -179,12 +185,12 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
               icon={uploading ? <Spinner /> : undefined}
               label={(() => {
                 if (uploading) {
-                  return `Uploading ${uploadProgress}%`;
+                  return t('CreateVideo.uploading', { uploadProgress });
                 }
                 if (!uploading && !error && uploadStarted) {
-                  return 'Upload completed! Close';
+                  return t('CreateVideo.uploadCompleted');
                 }
-                return 'Share';
+                return t('CreateVideo.share');
               })()}
             />
           </Box>

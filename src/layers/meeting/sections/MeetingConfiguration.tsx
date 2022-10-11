@@ -1,6 +1,7 @@
 import React, { FC, useContext } from 'react';
 import { Box, Grid, ResponsiveContext } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import SectionContainer from '../../../components/utils/SectionContainer';
 import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action';
 import { AppState } from '../../../store/reducers/root.reducer';
@@ -19,13 +20,14 @@ const MeetingConfiguration: FC = () => {
   } = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const size = useContext(ResponsiveContext);
 
   if (!(userMeetingConfig?.config && formPayload?.config)) return null;
 
   return (
     <Box gap="medium">
-      <SectionContainer label="Toolbar Settings">
+      <SectionContainer label={t('MeetingConfiguration.toolbarSettings')}>
         <Grid
           columns={size === 'small' ? '100%' : { count: 2, size: 'small' }}
           gap={{ column: 'large' }}
@@ -33,7 +35,7 @@ const MeetingConfiguration: FC = () => {
           {formPayload.config.toolbarButtons &&
             baseMeetingConfig.toolbarButtons.map((toolbarBtn) => (
               <Switch
-                label={toolbarBtn.label}
+                label={t(`meetingConfig.${toolbarBtn.setting}`)}
                 key={toolbarBtn.setting}
                 margin={{ bottom: 'xsmall' }}
                 value={formPayload.config!.toolbarButtons.includes(
@@ -50,7 +52,7 @@ const MeetingConfiguration: FC = () => {
                               toolbarBtn.setting,
                             ]
                           : formPayload.config!.toolbarButtons.filter(
-                              (t: string) => t !== toolbarBtn.setting
+                              (tb: string) => tb !== toolbarBtn.setting
                             ),
                       },
                     })
@@ -60,11 +62,12 @@ const MeetingConfiguration: FC = () => {
             ))}
         </Grid>
       </SectionContainer>
-      <SectionContainer label="Advanced">
+      <SectionContainer label={t('MeetingConfiguration.advanced')}>
         <Grid
           columns={size === 'small' ? '100%' : { count: 2, size: 'small' }}
           gap={{ column: 'large' }}
         >
+          {/* TODO this checkbox texts comes from backend so cannot translated */}
           {formPayload?.config &&
             Object.keys(formPayload.config).map((setting) => {
               if (typeof formPayload.config![setting] === 'boolean')

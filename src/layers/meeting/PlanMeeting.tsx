@@ -6,6 +6,7 @@ import { isEqual } from 'lodash';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import { useTranslation } from 'react-i18next';
 import MeetingDetails from './sections/MeetingDetails';
 import MeetingPrivacy from './sections/MeetingPrivacy';
 import MeetingInvitation from './sections/MeetingInvitation';
@@ -36,6 +37,7 @@ interface Props {
 
 const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const size = useResponsive();
   const [showPersistance, setShowPersistance] = useState(false);
 
@@ -126,22 +128,22 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
   const content = [
     {
       id: 1,
-      title: 'Meeting Details',
+      title: t('PlanMeeting.details'),
       component: <MeetingDetails />,
     },
     {
       id: 2,
-      title: 'Invite',
+      title: t('PlanMeeting.invite'),
       component: <MeetingInvitation />,
     },
     {
       id: 3,
-      title: 'Privacy',
+      title: t('PlanMeeting.privacy'),
       component: <MeetingPrivacy />,
     },
     {
       id: 4,
-      title: 'More',
+      title: t('PlanMeeting.more'),
       component: <MeetingConfiguration />,
     },
   ];
@@ -165,7 +167,7 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
           >
             <Box pad="xsmall">
               <Text size="large" weight="bold">
-                Plan A Meeting
+                {t('PlanMeeting.title')}
               </Text>
             </Box>
             <Button plain onClick={onClose}>
@@ -176,7 +178,7 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
             <Box flex gap="medium" align="center" justify="center">
               <Box direction="row" gap="large" pad="medium" align="center">
                 <Text color="status-disabled" size="small">
-                  Save meeting configuration?
+                  {t('PlanMeeting.saveConfiguration')}
                 </Text>
                 <Switch
                   value={formPayload?.saveConfig}
@@ -250,7 +252,7 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
                 height="46px"
               >
                 <Text weight="bold" size="small" color="white">
-                  Back
+                  {t('common.back')}
                 </Text>
               </Box>
             )}
@@ -267,7 +269,7 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
               margin={{ bottom: size === 'small' ? 'medium' : 'none' }}
             >
               <Text weight="bold" size="small" color="dark-1">
-                {!submitting ? 'Go!' : 'Creating Meeting...'}
+                {!submitting ? t('common.go') : t('PlanMeeting.createMeeting')}
               </Text>
             </Box>
           </Box>

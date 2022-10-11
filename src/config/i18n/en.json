@@ -8,12 +8,13 @@
     "fullName": "FULL NAME",
     "userName": "USERNAME",
     "invalidUserName": "Invalid Username",
-    "go": "GO",
+    "go": "Go!",
     "continue": "CONTINUE",
     "loading": "Loading...",
     "seeMore": "See more",
     "seeLess": "See less",
     "seeAll": "See all",
+    "create": "Create",
     "edit": "Edit",
     "delete": "Delete",
     "reply": "Reply",
@@ -23,7 +24,21 @@
     "ignore": "Ignore",
     "joined": "Joined",
     "ignored": "Ignored",
-    "search": "Search"
+    "search": "Search",
+    "zone": "Zone",
+    "channel": "Channel",
+    "post": "Post",
+    "public": "Public",
+    "description": "Description",
+    "category": "Category",
+    "choose": "Choose",
+    "back": "Back",
+    "contacts": "Contacts",
+    "remove": "Remove",
+    "nothingFound": "Nothing Found",
+    "searchResult": "{{title}} Results",
+    "searchFilter": "Search Filter",
+    "streaming": "Streaming"
   },
   "Login": {
     "title": "Login",
@@ -189,5 +204,104 @@
     "smallerDefaultMsg": "This field must be smaller than {{value}}",
     "smallerOrEqualDefaultMsg": "This field must be smaller or equal to {{value}}",
     "startsWithDefaultMsg": "This field must start with {{value}}"
+  },
+  "CreateChannel":{
+    "title": "Create Channel",
+    "channelName": "Channel name",
+    "channelDescription": "Channel Description"
+  },
+  "CreateVideo": {
+    "title": "Share a Video",
+    "videoTitle": "Video Title",
+    "selectChannel": "Select a channel",
+    "exclusiveContacts": "Exclusive to contacts",
+    "uploading": "Uploading {{progress}}%",
+    "uploadCompleted": "Upload completed! Close",
+    "share": "Share"
+  },
+  "CreateZone": {
+    "title": "Create Zone",
+    "zoneName": "Zone name",
+    "zoneAddress": "Zone address",
+    "zoneAddressTooLong": "Zone address is too long",
+    "notValidZoneAddress": "Not a valid zone address",
+    "zoneDescription": "Zone Description"
+  },
+  "MeetingConfiguration": {
+    "toolbarSettings": "Toolbar Settings",
+    "advanced": "Advanced"
+  },
+  "meetingConfig": {
+    "microphone": "Microphone",
+    "camera": "Camera",
+    "closedcaptions": "Closed captions",
+    "desktop": "Desktop",
+    "embedmeeting": "Embed meeting",
+    "fullscreen": "Fullscreen",
+    "fodeviceselection": "Device selection",
+    "hangup": "Hangup",
+    "profile": "Profile",
+    "chat": "Chat",
+    "recording": "Recording",
+    "livestreaming": "Live streaming",
+    "etherpad": "Etherpad",
+    "sharedvideo": "Shared video",
+    "shareaudio": "Share audio",
+    "settings": "Settings",
+    "raisehand": "Raise hand",
+    "videoquality": "Video quality",
+    "filmstrip": "Filmstrip",
+    "feedback": "Feedback",
+    "stats": "Stats",
+    "shortcuts": "Shotcuts",
+    "tileview": "Tileview",
+    "select-background": "Select background",
+    "download": "Download",
+    "help": "Help",
+    "mute-everyone": "Mute everyone",
+    "mute-video-everyone": "Mute video everyone",
+    "security": "Security"
+  },
+  "MeetingDetails": {
+    "meetingName": "Meeting Name",
+    "meetingDescription": "Meeting Description",
+    "planForLater": "Plan For Later",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "setDate": "Set Date",
+    "timeZone": "Time Zone"
+  },
+  "MeetingInvitation": {
+    "placeholder": "Type a name, username or email"
+  },
+  "MeetingPrivacy": {
+    "joining": "Joining",
+    "publicMeeting": "Public Meeting",
+    "openContacts": "Open To Contacts",
+    "selectChannel": "Select Channel",
+    "streamingRecording": "Streaming &amp; Recording",
+    "liveStreamOrMeeting": "Live stream the meeting?",
+    "enableRecording": "Enable Recording?"
+  },
+  "PlanMeeting": {
+    "details": "Meeting Details",
+    "invite": "Invite",
+    "privacy": "Privacy",
+    "more": "More",
+    "title": "Plan A Meeting",
+    "saveConfiguration": "Save meeting configuration?",
+    "createMeeting": "Creating Meeting..."
+  },
+  "ContactListItem": {
+    "viewProfile": "View full profile"
+  },
+  "SelectedUser": {
+    "removeContact": "Remove from Contacts",
+    "removeConfirmMsg": "Are you sure you want to remove {{fullName}} from you contacts?"
+  },
+  "Saved":{
+    "title": "Saved Posts",
+    "emptyMsg": "Your saved posts will appear here",
+    "removeConfirmMsg": "Are you sure you want to remove this post from your saved list?"
   }
 }

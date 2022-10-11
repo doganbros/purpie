@@ -15,6 +15,7 @@ import {
 } from 'grommet';
 import { Close } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   closeCreateZoneLayerAction,
   createZoneAction,
@@ -38,6 +39,7 @@ interface CreateZoneProps {
 
 const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     zone: {
       getCategories: { categories },
@@ -65,7 +67,7 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
         >
           <Box direction="row" justify="between" align="start">
             <Box pad="xsmall">
-              <Text size="large">Create Zone</Text>
+              <Text size="large">{t('CreateZone.title')}</Text>
             </Box>
             <Button plain onClick={onDismiss}>
               <Close color="brand-alt" />
@@ -82,10 +84,10 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                 <Box height={{ min: 'min-content' }}>
                   <FormField
                     name="name"
-                    validate={[validators.required('Zone name')]}
+                    validate={[validators.required(t('CreateZone.zoneName'))]}
                   >
                     <TextInput
-                      placeholder="Zone Name"
+                      placeholder={t('CreateZone.zoneName')}
                       name="name"
                       onChange={({ target: { value } }) => {
                         setSubdomain(nameToSubdomain(value));
@@ -96,25 +98,28 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                     name="subdomain"
                     // Validating subdomain state since component value can contain the full URL
                     validate={(_, data) =>
-                      validators.required('Zone address')(subdomain, data) ||
-                      validators.minLength('Zone address', 7)(
+                      validators.required(t('CreateZone.zoneAddress'))(
                         subdomain,
                         data
                       ) ||
-                      validators.maxLength(32, 'Zone adress is too long')(
+                      validators.minLength(t('CreateZone.zoneAddress'), 7)(
                         subdomain,
                         data
                       ) ||
+                      validators.maxLength(
+                        32,
+                        t('CreateZone.zoneAddressTooLong')
+                      )(subdomain, data) ||
                       validators.matches(
                         /^([a-z|\d][a-z|\d|-]+[a-z|\d])$/,
-                        'Not a valid zone address'
+                        t('CreateZone.notValidZoneAddress')
                       )(subdomain, data) ||
                       undefined
                     }
                   >
                     <TextInput
                       name="subdomain"
-                      placeholder="Zone Address"
+                      placeholder={t('CreateZone.zoneAddress')}
                       value={
                         subdomainInputFocus || !subdomain
                           ? subdomain
@@ -130,7 +135,7 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                   <FormField name="description">
                     <TextArea
                       resize={false}
-                      placeholder="Zone Description"
+                      placeholder={t('CreateZone.zoneDescription')}
                       name="description"
                     />
                   </FormField>
@@ -143,10 +148,10 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                     <FormField
                       width="100%"
                       name="categoryId"
-                      validate={[validators.required('Category')]}
+                      validate={[validators.required(t('common.category'))]}
                     >
                       <Select
-                        placeholder="Category"
+                        placeholder={t('common.category')}
                         name="categoryId"
                         options={categories || []}
                         labelKey="name"
@@ -154,7 +159,7 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                       />
                     </FormField>
                     <FormField width="100%" name="public">
-                      <Switch label="Public" name="public" />
+                      <Switch label={t('common.public')} name="public" />
                     </FormField>
                   </Box>
                 </Box>
@@ -165,7 +170,7 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                 margin={{ top: 'medium' }}
                 type="submit"
                 primary
-                label="Create"
+                label={t('common.create')}
               />
             </Form>
           </Box>
