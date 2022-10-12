@@ -54,7 +54,6 @@ export class ClientAuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   @IsClientAuthenticated()
-  @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
     schema: { type: 'string', example: 'OK' },
   })
