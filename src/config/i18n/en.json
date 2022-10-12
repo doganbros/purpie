@@ -45,7 +45,8 @@
     "saved": "Saved",
     "save": "Save",
     "exclusiveContacts": "Exclusive to contacts",
-    "close": "CLOSE"
+    "close": "CLOSE",
+    "send": "Send"
   },
   "Login": {
     "title": "Login",
@@ -154,7 +155,7 @@
   "ZoneSelector": {
     "createChannel": "Create Channel",
     "createZone": "Create Zone",
-    "setting": "Settings",
+    "settings": "Settings",
     "signOut": "Sign Out"
   },
   "Sidebar": {
@@ -338,8 +339,7 @@
   "CommentList": {
     "comments": "Comments",
     "noCommentMsg": "No comments yet. Be the first one to comment!",
-    "writeComment": "Write a comment",
-    "send": "Send"
+    "writeComment": "Write a comment"
   },
   "Replies": {
     "hideReplies": "Hide replies",

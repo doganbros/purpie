@@ -48,7 +48,7 @@ const Input: FC<InputProps> = ({ user, postId }) => {
         />
         <Button
           onClick={handleSend}
-          label={t('CommentList.send')}
+          label={t('common.send')}
           size="small"
           primary
         />

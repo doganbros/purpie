@@ -335,8 +335,8 @@ const MessageBox: FC<Props> = ({
           focusIndicator={false}
           placeholder={
             name
-              ? t('MessageBox.writeTo', { name })
-              : t('MessageBox.writeComment')
+              ? t('MessageTextArea.writeTo', { name })
+              : t('MessageTextArea.writeComment')
           }
           onKeyDown={handleKeyDown}
           onKeyPress={handleKeyUp}
