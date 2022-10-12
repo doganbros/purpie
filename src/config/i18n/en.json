@@ -17,6 +17,7 @@
     "create": "Create",
     "edit": "Edit",
     "delete": "Delete",
+    "cancel": "Cancel",
     "reply": "Reply",
     "following": "Following",
     "follow": "Follow",
@@ -28,6 +29,7 @@
     "zone": "Zone",
     "channel": "Channel",
     "post": "Post",
+    "profile": "Profile",
     "public": "Public",
     "description": "Description",
     "category": "Category",
@@ -38,7 +40,12 @@
     "nothingFound": "Nothing Found",
     "searchResult": "{{title}} Results",
     "searchFilter": "Search Filter",
-    "streaming": "Streaming"
+    "streaming": "Streaming",
+    "share": "Share",
+    "saved": "Saved",
+    "save": "Save",
+    "exclusiveContacts": "Exclusive to contacts",
+    "close": "CLOSE"
   },
   "Login": {
     "title": "Login",
@@ -205,7 +212,7 @@
     "smallerOrEqualDefaultMsg": "This field must be smaller or equal to {{value}}",
     "startsWithDefaultMsg": "This field must start with {{value}}"
   },
-  "CreateChannel":{
+  "CreateChannel": {
     "title": "Create Channel",
     "channelName": "Channel name",
     "channelDescription": "Channel Description"
@@ -214,10 +221,8 @@
     "title": "Share a Video",
     "videoTitle": "Video Title",
     "selectChannel": "Select a channel",
-    "exclusiveContacts": "Exclusive to contacts",
     "uploading": "Uploading {{progress}}%",
-    "uploadCompleted": "Upload completed! Close",
-    "share": "Share"
+    "uploadCompleted": "Upload completed! Close"
   },
   "CreateZone": {
     "title": "Create Zone",
@@ -299,9 +304,79 @@
     "removeContact": "Remove from Contacts",
     "removeConfirmMsg": "Are you sure you want to remove {{fullName}} from you contacts?"
   },
-  "Saved":{
+  "Saved": {
     "title": "Saved Posts",
     "emptyMsg": "Your saved posts will appear here",
     "removeConfirmMsg": "Are you sure you want to remove this post from your saved list?"
+  },
+  "ProfileSearch": {
+    "contactsOnly": "Contacts only"
+  },
+  "User": {
+    "noPinnedPost": "No pinned post found",
+    "sharedLists": "Shared Lists",
+    "post": "post",
+    "posts": "posts"
+  },
+  "UserFriends": {
+    "title": "Friends",
+    "noFriendsFound": "No friends found"
+  },
+  "UserPublicChannels": {
+    "title": "Channels Subscribed To",
+    "noChannelsFound": "No channels found"
+  },
+  "UserPublicZones": {
+    "title": "Zones Joined To",
+    "noZonesFound": "No zones found"
+  },
+  "CommentBase": {
+    "editComment": "Edit Comment",
+    "writePublicReply": "Write a public reply",
+    "deleteCommentConfirmMsg": "Are you sure you want to delete the comment?"
+  },
+  "CommentList": {
+    "comments": "Comments",
+    "noCommentMsg": "No comments yet. Be the first one to comment!",
+    "writeComment": "Write a comment",
+    "send": "Send"
+  },
+  "Replies": {
+    "hideReplies": "Hide replies",
+    "reply": "reply",
+    "replies": "replies",
+    "showReplies": "Show {{count}} {{reply}}",
+    "loadMore": "Load more"
+  },
+  "RecommendedVideos": {
+    "title": "Recommended Videos"
+  },
+  "Video": {
+    "followChannel": "Follow This Channel",
+    "joinZone": "Join This Zone",
+    "report": "Report",
+    "userWatching": "{{count}} user is watching",
+    "usersWatching": "{{count}} users are watching",
+    "viewCount": "{{count}} view",
+    "viewsCount": "{{count}} views",
+    "dislike": "Dislike",
+    "removePostConfirmMsg": "Are you sure you want to remove this post?"
+  },
+  "VideoSettings": {
+    "videoName": "Video Name",
+    "videoNamePlaceholder": "Write a video name",
+    "videoDescription": "Video Description",
+    "videoDescriptionPlaceholder": "Write a video description",
+    "deleteVideo": "Delete the Video"
+  },
+  "ComingSoon": {
+    "title": "Coming Soon",
+    "description": "Stay tuned. We are launching soon. We are working hard. We are almost ready to launch."
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "It looks like you may have taken a wrong turn. Do not worry... it happens to the best of us.",
+    "zones": "Zones",
+    "login": "Login"
   }
 }

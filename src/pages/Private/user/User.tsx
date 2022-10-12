@@ -2,6 +2,7 @@ import { Box, Grid, Layer, Spinner, Text } from 'grommet';
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import PostListItem from '../../../components/post/PostListItem';
 import Divider from '../../../components/utils/Divider';
@@ -27,6 +28,7 @@ interface UserParams {
 const User: FC = () => {
   const params = useParams<UserParams>();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     user: { detail },
     post: { featuredPost },
@@ -44,7 +46,7 @@ const User: FC = () => {
 
   return (
     <PrivatePageLayout
-      title={detail.user ? detail.user.fullName : 'Loading'}
+      title={detail.user ? detail.user.fullName : t('common.loading')}
       topComponent={detail.user && <Header user={detail.user} />}
       rightComponent={
         detail.user && (
@@ -65,9 +67,11 @@ const User: FC = () => {
         </Layer>
       ) : (
         <Box gap="medium" pad={{ vertical: 'medium' }}>
-          {featuredPost.loading && <Text size="small">Loading</Text>}
+          {featuredPost.loading && (
+            <Text size="small">{t('common.loading')}</Text>
+          )}
           {!featuredPost.loading && featuredPost.data && (
-            <Text size="small">No pinned post found</Text>
+            <Text size="small">{t('User.noPinnedPost')}</Text>
           )}
           {featuredPost.data && (
             <PostListItem
@@ -83,7 +87,7 @@ const User: FC = () => {
           <UserPublicChannels userName={params.userName} />
           <UserPublicZones userName={params.userName} />
           <Text size="large" color="brand" weight="bold">
-            Shared Lists
+            {t('User.sharedLists')}
           </Text>
           {userData.sharedLists.map((list) => (
             <Box key={list.id} gap="medium">
@@ -92,7 +96,8 @@ const User: FC = () => {
                   {list.name}
                 </Text>
                 <Text>
-                  {list.posts.length} {list.posts.length < 2 ? 'post' : 'posts'}
+                  {list.posts.length}{' '}
+                  {list.posts.length < 2 ? t('User.post') : t('User.posts')}
                 </Text>
               </Box>
               <GradientScroll>

@@ -137,7 +137,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
                 <Switch
                   width="fit-content"
                   direction="row-reverse"
-                  label={t('CreateVideo.exclusiveContacts')}
+                  label={t('common.exclusiveContacts')}
                   name="userContactExclusive"
                   value={userContactExclusive}
                   onChange={(checked) => {
@@ -185,12 +185,14 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
               icon={uploading ? <Spinner /> : undefined}
               label={(() => {
                 if (uploading) {
-                  return t('CreateVideo.uploading', { uploadProgress });
+                  return t('CreateVideo.uploading', {
+                    progress: uploadProgress,
+                  });
                 }
                 if (!uploading && !error && uploadStarted) {
                   return t('CreateVideo.uploadCompleted');
                 }
-                return t('CreateVideo.share');
+                return t('common.share');
               })()}
             />
           </Box>

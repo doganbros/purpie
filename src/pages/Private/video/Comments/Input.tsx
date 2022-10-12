@@ -1,6 +1,7 @@
 import { Box, Button, TextArea } from 'grommet';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import InitialsAvatar from '../../../../components/utils/InitialsAvatar';
 import { createPostCommentAction } from '../../../../store/actions/post.action';
 import { User } from '../../../../store/types/auth.types';
@@ -11,6 +12,7 @@ interface InputProps {
 }
 const Input: FC<InputProps> = ({ user, postId }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
 
   const handleSend = () => {
@@ -40,11 +42,16 @@ const Input: FC<InputProps> = ({ user, postId }) => {
           resize={false}
           plain
           focusIndicator={false}
-          placeholder="Write a comment"
+          placeholder={t('CommentList.writeComment')}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         />
-        <Button onClick={handleSend} label="Send" size="small" primary />
+        <Button
+          onClick={handleSend}
+          label={t('CommentList.send')}
+          size="small"
+          primary
+        />
       </Box>
     </Box>
   );

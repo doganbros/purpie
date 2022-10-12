@@ -2,6 +2,7 @@ import { Box, Form, FormField, InfiniteScroll, Text } from 'grommet';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
 import UserSearchItem from '../../../components/utils/UserSearchItem';
@@ -21,6 +22,7 @@ const ProfileSearch: FC = () => {
   const { value } = useParams<SearchParams>();
   const dispatch = useDispatch();
   const history = useHistory();
+  const { t } = useTranslation();
 
   const [options, setOptions] = useState<ProfileSearchOptions>({
     userContacts: false,
@@ -49,7 +51,7 @@ const ProfileSearch: FC = () => {
 
   const renderResults = () => {
     if (results.data.length === 0) {
-      return <Text>Nothing Found</Text>;
+      return <Text>{t('common.nothingFound')}</Text>;
     }
     return (
       <InfiniteScroll
@@ -73,14 +75,17 @@ const ProfileSearch: FC = () => {
 
   return (
     <PrivatePageLayout
-      title="Search"
+      title={t('common.search')}
       topComponent={<SearchInput />}
       rightComponent={
         <Box pad="medium" gap="medium">
           <FilterWrapper>
             <Form value={options} onChange={setOptions}>
               <FormField name="userContacts">
-                <Switch label="Contacts only" name="userContacts" />
+                <Switch
+                  label={t('ProfileSearch.contactsOnly')}
+                  name="userContacts"
+                />
               </FormField>
             </Form>
           </FilterWrapper>
@@ -93,7 +98,9 @@ const ProfileSearch: FC = () => {
       }
     >
       <Box pad={{ vertical: 'medium' }} gap="medium">
-        <Text weight="bold">Profile Results</Text>
+        <Text weight="bold">
+          {t('common.searchResult', { title: t('common.profile') })}
+        </Text>
         {renderResults()}
       </Box>
     </PrivatePageLayout>
