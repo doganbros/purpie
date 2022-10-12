@@ -47,7 +47,7 @@ async function bootstrap() {
   );
 
   // Global Exception Handler for non handled errors
-  app.useGlobalFilters(new GlobalExceptionHandler());
+  // app.useGlobalFilters(new GlobalExceptionHandler());
 
   const logger = new Logger('Main');
 
