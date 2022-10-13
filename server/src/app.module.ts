@@ -25,6 +25,7 @@ import { VideoModule } from './video/video.module';
 import { PostModule } from './post/post.module';
 import { ChatModule } from './chat/chat.module';
 import { NotificationModule } from './notification/notification.module';
+import { ResponseCodeMiddleware } from './utils/middlewares/response-code.middleware';
 
 @Module({
   imports: [
@@ -63,5 +64,9 @@ export class AppModule implements NestModule {
     consumer
       .apply(PaginationMiddleware)
       .forRoutes({ path: '*', method: RequestMethod.GET });
+
+    consumer
+      .apply(ResponseCodeMiddleware)
+      .forRoutes({ path: '*/auth/client/*', method: RequestMethod.POST });
   }
 }

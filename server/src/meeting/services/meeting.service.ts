@@ -431,7 +431,6 @@ export class MeetingService {
         channel: {
           name: meeting.channel.name,
           description: meeting.channel.description,
-          topic: meeting.channel.topic,
           public: meeting.channel.public,
           photoURL: meeting.channel.displayPhoto
             ? `${REACT_APP_SERVER_HOST}/v1/channel/display-photo/${meeting.channel.displayPhoto}`

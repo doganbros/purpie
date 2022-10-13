@@ -1,4 +1,11 @@
-import { Controller, Get, Post, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseArrayPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
@@ -28,9 +35,17 @@ export class NotificationController {
 
   @Post('view')
   @IsAuthenticated()
-  async viewNotifications(@CurrentUser() user: UserTokenPayload) {
+  async viewNotifications(
+    @CurrentUser() user: UserTokenPayload,
+    @Query(
+      'notificationIds',
+      new ParseArrayPipe({ items: Number, separator: ',' }),
+    )
+    notificationIds: Array<number>,
+  ) {
     const result = await this.notificationService.markNotificationsAsViewed(
       user.id,
+      notificationIds,
     );
 
     return result.affected ? 'Created' : 'OK';

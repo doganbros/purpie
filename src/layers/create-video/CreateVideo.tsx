@@ -2,7 +2,6 @@ import React, { FC, useContext, useState } from 'react';
 import {
   Box,
   Button,
-  CheckBox,
   FileInput,
   Form,
   FormExtendedEvent,
@@ -19,6 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../store/reducers/root.reducer';
 import { CreateVideoPayload } from '../../store/types/post.types';
 import { createVideoAction } from '../../store/actions/post.action';
+import Switch from '../../components/utils/Switch';
 
 interface CreateVideoProps {
   onDismiss: () => void;
@@ -39,7 +39,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
   const [publicVideo, setPublicVideo] = useState(true);
   const [userContactExclusive, setUserContactExclusive] = useState(false);
   const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [uplaodStarted, setUploadStarted] = useState(false);
+  const [uploadStarted, setUploadStarted] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleUploadProgress = (
@@ -80,13 +80,16 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
           }: FormExtendedEvent<
             CreateVideoPayload & { videoFile: FileList }
           >) => {
-            dispatch(
-              createVideoAction(
-                { ...value, videoFile: value.videoFile[0] },
-                handleUploadProgress
-              )
-            );
-            setUploadStarted(true);
+            if (!uploading && !error && uploadStarted) onDismiss();
+            else {
+              dispatch(
+                createVideoAction(
+                  { ...value, videoFile: value.videoFile[0] },
+                  handleUploadProgress
+                )
+              );
+              setUploadStarted(true);
+            }
           }}
         >
           <Box height="320px" flex={false} overflow="auto">
@@ -125,28 +128,30 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
                 />
               </FormField>
               <FormField name="userContactExclusive">
-                <CheckBox
-                  toggle
+                <Switch
+                  width="fit-content"
+                  direction="row-reverse"
                   label="Exclusive to contacts"
                   name="userContactExclusive"
-                  checked={userContactExclusive}
-                  onChange={(e) => {
-                    if (e.target.checked) {
+                  value={userContactExclusive}
+                  onChange={(checked) => {
+                    if (checked) {
                       setPublicVideo(false);
                       setChannelId(undefined);
-                      setUserContactExclusive(e.target.checked);
+                      setUserContactExclusive(checked);
                     }
                   }}
                 />
               </FormField>
               <FormField name="public">
-                <CheckBox
-                  toggle
+                <Switch
+                  width="fit-content"
+                  direction="row-reverse"
                   label="Public"
                   name="public"
-                  checked={publicVideo}
-                  onChange={(e) => {
-                    setPublicVideo(e.target.checked);
+                  value={publicVideo}
+                  onChange={(checked) => {
+                    setPublicVideo(checked);
                     setUserContactExclusive(false);
                   }}
                 />
@@ -176,8 +181,8 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
                 if (uploading) {
                   return `Uploading ${uploadProgress}%`;
                 }
-                if (!uploading && !error && uplaodStarted) {
-                  return 'Upload complete!';
+                if (!uploading && !error && uploadStarted) {
+                  return 'Upload completed! Close';
                 }
                 return 'Share';
               })()}

@@ -2,7 +2,7 @@ import { Avatar, Box, Button } from 'grommet';
 import { useHistory } from 'react-router-dom';
 import React, { FC } from 'react';
 import ExtendedBox from '../../../utils/ExtendedBox';
-import Logo from '../../../../assets/octopus-logo/logo-white.svg';
+import LogoWhite from '../../../../assets/octopus-logo/logo-white.svg';
 import Sidebar from '../Sidebar';
 import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import GradientScroll from '../../../utils/GradientScroll';
@@ -47,9 +47,9 @@ const Desktop: FC<Props> = ({
             <Box align="center">
               <Avatar
                 alignSelf="center"
-                size="90px"
-                round="medium"
-                src={Logo}
+                size="large"
+                round="0"
+                src={LogoWhite}
               />
             </Box>
           </Button>

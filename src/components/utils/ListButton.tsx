@@ -6,6 +6,7 @@ interface ListButtonProps extends BoxExtendedProps {
   rightIcon?: ReactNode;
   leftIcon?: ReactNode;
   selected?: boolean;
+  disabled?: boolean;
   textProps?: TextExtendedProps;
 }
 
@@ -14,6 +15,7 @@ const ListButton: FC<ListButtonProps> = ({
   rightIcon,
   leftIcon,
   selected,
+  disabled,
   textProps,
   ...props
 }) => {
@@ -23,6 +25,13 @@ const ListButton: FC<ListButtonProps> = ({
     if (selected) return 'brand';
     return 'white';
   };
+
+  const setTextColor = () => {
+    if (disabled) return 'status-disabled';
+    if (selected && !hover) return 'white';
+    return 'black';
+  };
+
   return (
     <Box
       fill
@@ -42,7 +51,7 @@ const ListButton: FC<ListButtonProps> = ({
           <Text
             weight={selected ? 'bold' : 'normal'}
             size="small"
-            color={selected && !hover ? 'white' : 'black'}
+            color={setTextColor()}
             {...textProps}
           >
             {label}

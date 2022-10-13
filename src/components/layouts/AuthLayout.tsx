@@ -11,9 +11,8 @@ import {
 import { useHistory } from 'react-router-dom';
 import PublicPageLayout from './PublicPageLayout/PublicPageLayout';
 import { useResponsive } from '../../hooks/useResponsive';
-import Logo from '../../assets/octopus-logo/logo-color.png';
-import LogoWhite from '../../assets/octopus-logo/logo-white.png';
-import OctopusText from '../../assets/octopus-logo/octopus-text.png';
+import LogoHorizontalColor from '../../assets/octopus-logo/logo-horizontal-color.svg';
+import LogoHorizontalWhite from '../../assets/octopus-logo/logo-horizontal-white.svg';
 import AuthFormButton from '../auth/AuthFormButton';
 
 interface Props {
@@ -59,7 +58,6 @@ const AuthLayout: React.FC<Props> = ({
       <Box
         direction="row"
         justify="between"
-        round="large"
         height={{ min: '100vh' }}
         background={{ color: '#FFE7E3' }}
       >
@@ -95,7 +93,7 @@ const AuthLayout: React.FC<Props> = ({
           <Card
             elevation="indigo"
             background={theme.dark ? 'dark-2' : 'white'}
-            round="large"
+            round={{ corner: 'left', size: 'large' }}
             width="100%"
             height="100%"
             align="center"
@@ -111,15 +109,9 @@ const AuthLayout: React.FC<Props> = ({
                 fill="horizontal"
               >
                 <Image
-                  margin={{ right: '14px' }}
-                  width="40px"
-                  src={theme.dark ? LogoWhite : Logo}
+                  width={size === 'small' ? '150px' : '172px'}
+                  src={theme.dark ? LogoHorizontalWhite : LogoHorizontalColor}
                 />
-                {theme.dark ? (
-                  <Text>octopus</Text>
-                ) : (
-                  <Image src={OctopusText} height="24px" />
-                )}
               </Box>
               <Heading
                 color="dark"

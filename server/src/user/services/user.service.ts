@@ -30,7 +30,7 @@ export class UserService {
     @InjectRepository(Contact)
     private contactRepository: Repository<Contact>,
     @InjectRepository(FeaturedPost)
-    private featuredPost: Repository<FeaturedPost>,
+    private featuredPostRepository: Repository<FeaturedPost>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
     @InjectRepository(UserRole)
@@ -228,7 +228,6 @@ export class UserService {
         'channel.createdOn',
         'channel.name',
         'channel.displayPhoto',
-        'channel.topic',
         'channel.description',
         'channel.public',
         'channel_zone.id',
@@ -503,7 +502,6 @@ export class UserService {
         'channel.id',
         'channel.createdOn',
         'channel.name',
-        'channel.topic',
         'channel.displayPhoto',
         'channel.description',
         'channel.public',
@@ -667,18 +665,18 @@ export class UserService {
   }
 
   async setFeaturedPost(userId: number, postId: number) {
-    const hasFeaturedPost = await this.featuredPost.count({
+    const hasFeaturedPost = await this.featuredPostRepository.count({
       where: { userId, postId },
     });
 
     if (hasFeaturedPost) {
-      return this.featuredPost.update({ userId }, { postId });
+      return this.featuredPostRepository.update({ userId }, { postId });
     }
 
-    return this.featuredPost.create({ userId, postId });
+    return this.featuredPostRepository.create({ userId, postId }).save();
   }
 
   async removeFeaturedPost(userId: number) {
-    return this.featuredPost.delete({ userId });
+    return this.featuredPostRepository.delete({ userId });
   }
 }

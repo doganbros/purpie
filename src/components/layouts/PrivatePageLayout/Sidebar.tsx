@@ -1,6 +1,6 @@
 import { Box, Button, ResponsiveContext } from 'grommet';
-import { Add, Bookmark, Channel, Chat, Group, Home } from 'grommet-icons';
-import React, { FC, useState, useContext } from 'react';
+import { Add, Bookmark, Chat, Group, Home } from 'grommet-icons';
+import React, { FC, useContext, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SidebarButton } from './SidebarButton';
 import PlanMeeting from '../../../layers/meeting/PlanMeeting';
@@ -20,11 +20,11 @@ const sidebarBtns = [
     icon: Home,
     path: '/',
   },
-  {
-    title: 'Channels',
-    icon: Channel,
-    path: '/channels',
-  },
+  // {
+  //   title: 'Channels',
+  //   icon: Channel,
+  //   path: '/channels',
+  // },
   {
     title: 'Messages',
     icon: Chat,
