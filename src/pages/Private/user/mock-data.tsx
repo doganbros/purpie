@@ -43,7 +43,6 @@ const post1 = {
   channel: {
     id: 5,
     name: 'Jazz',
-    topic: 'jazz',
     description: 'Jazz',
     public: true,
     zone: {
@@ -97,7 +96,6 @@ const post2 = {
   channel: {
     id: 5,
     name: 'Jazz',
-    topic: 'jazz',
     description: 'Jazz',
     public: true,
     zone: {
