@@ -111,6 +111,9 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
               >
                 <TextInput placeholder="Channel Name" name="name" />
               </FormField>
+              <FormField name="topic" contentProps={formFieldContentProps}>
+                <TextInput placeholder="Topics" name="topic" />
+              </FormField>
               <FormField
                 name="description"
                 contentProps={formFieldContentProps}

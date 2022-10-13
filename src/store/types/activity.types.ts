@@ -34,6 +34,7 @@ export interface ChannelSuggestionListItem {
   channel_id: number;
   channel_createdOn: Date;
   channel_name: string;
+  channel_topic: string;
   channel_description: string;
   channel_public: boolean;
   zone_id: number;
@@ -68,6 +69,7 @@ export interface InvitationChannel {
   createdOn: Date;
   name: string;
   displayPhoto: string;
+  topic: string;
   description: string;
   public: boolean;
 }

@@ -105,6 +105,7 @@ const Settings: FC = () => {
   const [channelName, setChannelName] = useState<any>({
     name: userChannels.data[0].channel.name,
     description: userChannels.data[0].channel.description,
+    topic: userChannels.data[0].channel.topic,
     id: userChannels.data[0].channel.id,
     public: userChannels.data[0].channel.public,
   });
@@ -405,6 +406,35 @@ const Settings: FC = () => {
                       setChannelName({
                         ...channelName,
                         name: event.target.value,
+                      })
+                    }
+                  />
+                </Box>
+              ),
+            },
+            {
+              key: 'Topic',
+              title: 'Channel Topic',
+              description: 'Change channel topic',
+              value: 'value',
+              component: (
+                <Box
+                  direction="row"
+                  justify="between"
+                  align="center"
+                  gap="small"
+                  border={{ size: 'xsmall', color: 'brand' }}
+                  round="small"
+                  pad="xxsmall"
+                >
+                  <TextInput
+                    value={channelName.topic}
+                    plain
+                    focusIndicator={false}
+                    onChange={(event) =>
+                      setChannelName({
+                        ...channelName,
+                        topic: event.target.value,
                       })
                     }
                   />
@@ -1002,6 +1032,10 @@ const Settings: FC = () => {
                                         (channel) =>
                                           channel.channel.id === item.props.id
                                       )[0].channel.description,
+                                      topic: userChannels.data.filter(
+                                        (channel) =>
+                                          channel.channel.id === item.props.id
+                                      )[0].channel.topic,
                                       public: userChannels.data.filter(
                                         (channel) =>
                                           channel.channel.id === item.props.id
