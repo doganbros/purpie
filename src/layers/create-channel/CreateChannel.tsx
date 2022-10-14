@@ -15,6 +15,7 @@ import {
 } from 'grommet';
 import { Close } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { AppState } from '../../store/reducers/root.reducer';
 import { CreateChannelPayload } from '../../store/types/channel.types';
 import {
@@ -32,6 +33,7 @@ interface CreateChannelProps {
 
 const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     zone: {
       getZoneCategories: { categories },
@@ -57,7 +59,7 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
         >
           <Box direction="row" justify="between" align="start">
             <Box pad="xsmall">
-              <Text size="large">Create Channel</Text>
+              <Text size="large">{t('CreateChannel.title')}</Text>
             </Box>
             <Button plain onClick={onDismiss}>
               <Close color="brand-alt" />
@@ -77,9 +79,8 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
             <Box height="262px" flex={false} overflow="auto">
               <Box height={{ min: 'min-content' }}>
                 <FormField
-                  required
                   name="zoneId"
-                  validate={[validators.required('Zone')]}
+                  validate={[validators.required(t('common.zone'))]}
                 >
                   <Select
                     name="zoneId"
@@ -96,7 +97,7 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                     disabledKey="cannotCreateChannel"
                     labelKey="name"
                     valueKey={{ key: 'id', reduce: true }}
-                    placeholder="Zone"
+                    placeholder={t('common.zone')}
                     onChange={({ option }) => {
                       setUserZone(option.id);
                       setCategory(undefined);
@@ -106,17 +107,19 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                 </FormField>
                 <FormField
                   name="name"
-                  validate={[validators.required('Channel name')]}
+                  validate={[
+                    validators.required(t('CreateChannel.channelName')),
+                  ]}
                 >
-                  <TextInput placeholder="Channel Name" name="name" />
-                </FormField>
-                <FormField name="topic">
-                  <TextInput placeholder="Topics" name="topic" />
+                  <TextInput
+                    placeholder={t('CreateChannel.channelName')}
+                    name="name"
+                  />
                 </FormField>
                 <FormField name="description">
                   <TextArea
                     resize={false}
-                    placeholder="Channel Description"
+                    placeholder={t('CreateChannel.channelDescription')}
                     name="description"
                   />
                 </FormField>
@@ -131,7 +134,7 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                       options={categories || []}
                       disabled={!userZone}
                       name="categoryId"
-                      placeholder="Category"
+                      placeholder={t('common.category')}
                       labelKey="name"
                       valueKey={{ key: 'id', reduce: true }}
                       value={category}
@@ -139,7 +142,7 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                     />
                   </FormField>
                   <FormField name="public" width="100%">
-                    <Switch label="Public" name="public" />
+                    <Switch label={t('common.public')} name="public" />
                   </FormField>
                 </Box>
               </Box>
@@ -148,7 +151,7 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
             <Button
               type="submit"
               primary
-              label="Create"
+              label={t('common.create')}
               size="large"
               fill="horizontal"
               margin={{ top: 'medium' }}

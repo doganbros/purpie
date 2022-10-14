@@ -1,6 +1,7 @@
 import { Box, Heading, Image, Text } from 'grommet';
 import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import PublicPageLayout from '../../components/layouts/PublicPageLayout/PublicPageLayout';
 import { AppState } from '../../store/reducers/root.reducer';
@@ -10,6 +11,7 @@ import { useResponsive } from '../../hooks/useResponsive';
 const ComingSoon: FC = () => {
   const { isAuthenticated } = useSelector((state: AppState) => state.auth);
   const size = useResponsive();
+  const { t } = useTranslation();
 
   const render = (
     <Box
@@ -27,7 +29,7 @@ const ComingSoon: FC = () => {
         color="dark"
         margin={{ top: 'large', bottom: 'small' }}
       >
-        Coming Soon
+        {t('ComingSoon.title')}
       </Heading>
       <Box width={{ max: 'medium' }}>
         <Text
@@ -36,16 +38,23 @@ const ComingSoon: FC = () => {
           color="status-disabled"
           textAlign="center"
         >
-          Start registering new zones and following new channels. Please create
-          your first video content.
+          {t('ComingSoon.description')}
         </Text>
       </Box>
     </Box>
   );
 
   if (!isAuthenticated)
-    return <PublicPageLayout title="Coming Soon">{render}</PublicPageLayout>;
-  return <PrivatePageLayout title="Coming Soon">{render}</PrivatePageLayout>;
+    return (
+      <PublicPageLayout title={t('ComingSoon.title')}>
+        {render}
+      </PublicPageLayout>
+    );
+  return (
+    <PrivatePageLayout title={t('ComingSoon.title')}>
+      {render}
+    </PrivatePageLayout>
+  );
 };
 
 export default ComingSoon;

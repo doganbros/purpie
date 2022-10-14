@@ -1,6 +1,7 @@
 import { Box, InfiniteScroll, Text } from 'grommet';
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import {
   listContactsAction,
@@ -13,6 +14,7 @@ import ContactListItem from './ContactListItem';
 
 const Contacts: FC = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     user: { contacts },
   } = useSelector((state: AppState) => state);
@@ -36,7 +38,7 @@ const Contacts: FC = () => {
 
   return (
     <PrivatePageLayout
-      title="Contacts"
+      title={t('common.contacts')}
       rightComponent={
         contacts.selected.contactId && (
           <SelectedUser
@@ -47,7 +49,7 @@ const Contacts: FC = () => {
       }
     >
       <Box pad={{ vertical: 'medium' }} gap="medium">
-        <Text weight="bold">Contacts</Text>
+        <Text weight="bold">{t('common.contacts')}</Text>
         <InfiniteScroll
           items={contacts.data}
           step={6}

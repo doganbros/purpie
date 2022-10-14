@@ -1,6 +1,7 @@
 import { Box, Button } from 'grommet';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { ChatMessage } from '../../../store/types/chat.types';
 import { useThrottle } from '../../../hooks/useThrottle';
 import InitialsAvatar from '../../utils/InitialsAvatar';
@@ -45,6 +46,7 @@ const MessageBox: FC<Props> = ({
   canAddFile,
   user,
 }) => {
+  const { t } = useTranslation();
   const throttle = useThrottle();
   const dispatch = useDispatch();
   const componentRef = useRef<HTMLDivElement>(null);
@@ -181,7 +183,7 @@ const MessageBox: FC<Props> = ({
         />
         {messageErrorDraft ? (
           <Button
-            label="Send Message Again"
+            label={t('MessageBox.sendAgain')}
             onClick={() => {
               onSendAgain();
             }}
@@ -199,7 +201,7 @@ const MessageBox: FC<Props> = ({
                   <SendButton
                     size="small"
                     primary
-                    label="Send"
+                    label={t('common.send')}
                     onClick={() => {
                       onSend(text);
                     }}

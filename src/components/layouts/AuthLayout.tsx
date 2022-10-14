@@ -99,7 +99,7 @@ const AuthLayout: React.FC<Props> = ({
             align="center"
             overflow="auto"
           >
-            <CardBody width="80%" justify="center" pad={{ vertical: '10px' }}>
+            <CardBody width="80%" justify="center" pad={{ vertical: 'large' }}>
               <Box
                 margin={{ bottom: 'xsmall' }}
                 direction="row"

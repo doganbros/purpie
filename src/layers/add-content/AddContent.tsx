@@ -8,6 +8,7 @@ import {
   ShareOption,
 } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import AddContentButton from './AddContentButton';
 import {
   createMeetingAction,
@@ -22,6 +23,7 @@ interface AddContentProps {
 
 const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const size = useContext(ResponsiveContext);
 
   const {
@@ -40,9 +42,8 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
     {
       id: 0,
       icon: <Group {...iconProps} />,
-      title: 'Meet!',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
+      title: t('AddContent.meet'),
+      description: t('AddContent.meetDescription'),
       onClick: () => {
         if (!submitting) dispatch(createMeetingAction({ public: true }));
         onDismiss();
@@ -51,17 +52,15 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
     {
       id: 1,
       icon: <CirclePlay {...iconProps} />,
-      title: 'Stream!',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
+      title: t('AddContent.stream'),
+      description: t('AddContent.streamDescription'),
       onClick: () => {},
     },
     {
       id: 2,
       icon: <ShareOption {...iconProps} />,
-      title: 'Share a Video',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
+      title: t('AddContent.shareVideo'),
+      description: t('AddContent.shareVideoDescription'),
       onClick: () => {
         dispatch(openCreateVideoLayerAction());
         onDismiss();
@@ -70,21 +69,12 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
     {
       id: 3,
       icon: <Schedules {...iconProps} />,
-      title: 'Plan a Meeting',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
+      title: t('AddContent.planMeeting'),
+      description: t('AddContent.planMeetingDescription'),
       onClick: () => {
         dispatch(openPlanCreateMeetingLayerAction);
         onDismiss();
       },
-    },
-    {
-      id: 4,
-      icon: <Group {...iconProps} />,
-      title: 'Meet!',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.',
-      onClick: () => {},
     },
   ];
 
@@ -101,7 +91,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
         <Box direction="row" justify="between" align="start" pad="medium">
           <Box pad="xsmall">
             <Text size="large" weight="bold">
-              Take Your Pick
+              {t('AddContent.title')}
             </Text>
           </Box>
           <Button plain onClick={onDismiss}>
