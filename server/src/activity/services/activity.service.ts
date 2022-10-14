@@ -24,7 +24,6 @@ export class ActivityService {
         'channel.id',
         'channel.createdOn',
         'channel.name',
-        'channel.topic',
         'channel.description',
         'channel.public',
         'category.id',

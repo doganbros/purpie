@@ -9,7 +9,6 @@ import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { json } from 'express';
 import { AppModule } from './app.module';
-import { GlobalExceptionHandler } from './error/GlobalExceptionHandler';
 
 initApp();
 
@@ -47,7 +46,7 @@ async function bootstrap() {
   );
 
   // Global Exception Handler for non handled errors
-  app.useGlobalFilters(new GlobalExceptionHandler());
+  // app.useGlobalFilters(new GlobalExceptionHandler());
 
   const logger = new Logger('Main');
 

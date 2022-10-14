@@ -2,7 +2,6 @@ import React, { FC, useContext, useEffect, useState } from 'react';
 import {
   Box,
   Button,
-  CheckBox,
   Form,
   FormExtendedEvent,
   FormField,
@@ -12,6 +11,7 @@ import {
   Text,
   TextArea,
   TextInput,
+  ThemeContext,
 } from 'grommet';
 import { Close } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,9 +23,15 @@ import {
 import { AppState } from '../../store/reducers/root.reducer';
 import { CreateZonePayload } from '../../store/types/zone.types';
 import { nameToSubdomain } from '../../helpers/utils';
-import { hostname } from '../../helpers/app-subdomain';
+import { hostname, appSubdomain } from '../../helpers/app-subdomain';
 import { validators } from '../../helpers/validators';
+import Switch from '../../components/utils/Switch';
+import { CreateFormTheme } from './custom-theme';
 
+const baseHost = hostname
+  .split('.')
+  .filter((v) => v !== appSubdomain)
+  .join('.');
 interface CreateZoneProps {
   onDismiss: () => void;
 }
@@ -46,131 +52,125 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
     dispatch(getCategoriesAction());
   }, []);
 
-  const formFieldContentProps = {
-    round: 'small',
-    border: { color: 'brand-alt' },
-  };
   return (
     <Layer onClickOutside={onDismiss}>
-      <Box
-        width={size !== 'small' ? '710px' : undefined}
-        round={size !== 'small' ? '20px' : undefined}
-        fill={size === 'small'}
-        background="white"
-        pad="medium"
-        gap="medium"
-      >
-        <Box direction="row" justify="between" align="start">
-          <Box pad="xsmall">
-            <Text size="large">Create Zone</Text>
+      <ThemeContext.Extend value={CreateFormTheme}>
+        <Box
+          width={size !== 'small' ? '710px' : undefined}
+          round={size !== 'small' ? '20px' : undefined}
+          fill={size === 'small'}
+          background="white"
+          pad="medium"
+          gap="medium"
+        >
+          <Box direction="row" justify="between" align="start">
+            <Box pad="xsmall">
+              <Text size="large">Create Zone</Text>
+            </Box>
+            <Button plain onClick={onDismiss}>
+              <Close color="brand-alt" />
+            </Button>
           </Box>
-          <Button plain onClick={onDismiss}>
-            <Close color="brand-alt" />
-          </Button>
-        </Box>
-        <Box height="100%">
-          <Form
-            onSubmit={({ value }: FormExtendedEvent<CreateZonePayload>) => {
-              dispatch(createZoneAction({ ...value, subdomain }));
-              dispatch(closeCreateZoneLayerAction());
-            }}
-          >
-            <Box height="262px" flex={false} overflow="auto">
-              <Box height={{ min: 'min-content' }}>
-                <FormField
-                  name="name"
-                  contentProps={formFieldContentProps}
-                  validate={[validators.required('Zone name')]}
-                >
-                  <TextInput
-                    placeholder="Zone Name"
-                    name="name"
-                    onChange={({ target: { value } }) => {
-                      setSubdomain(nameToSubdomain(value));
-                    }}
-                  />
-                </FormField>
-                <FormField
-                  name="subdomain"
-                  contentProps={formFieldContentProps}
-                  validate={[validators.required('Zone address')]}
-                >
-                  <TextInput
-                    name="subdomain"
-                    placeholder="Zone Address"
-                    value={
-                      subdomainInputFocus || !subdomain
-                        ? subdomain
-                        : `${subdomain}.${hostname}`
-                    }
-                    onChange={(e) => {
-                      setSubdomain(e.target.value);
-                    }}
-                    onFocus={() => setSubdomainInputFocus(true)}
-                    onBlur={() => setSubdomainInputFocus(false)}
-                  />
-                </FormField>
-                <FormField
-                  name="description"
-                  contentProps={formFieldContentProps}
-                >
-                  <TextArea
-                    resize={false}
-                    placeholder="Zone Description"
-                    name="description"
-                  />
-                </FormField>
-                <Box
-                  direction="row"
-                  justify="between"
-                  align="start"
-                  gap="small"
-                >
+          <Box height="100%">
+            <Form
+              onSubmit={({ value }: FormExtendedEvent<CreateZonePayload>) => {
+                dispatch(createZoneAction({ ...value, subdomain }));
+                dispatch(closeCreateZoneLayerAction());
+              }}
+            >
+              <Box height="262px" flex={false} overflow="auto">
+                <Box height={{ min: 'min-content' }}>
                   <FormField
-                    width="100%"
-                    name="categoryId"
-                    contentProps={formFieldContentProps}
-                    validate={[validators.required('Category')]}
+                    name="name"
+                    validate={[validators.required('Zone name')]}
                   >
-                    <Select
-                      placeholder="Category"
-                      name="categoryId"
-                      options={categories || []}
-                      labelKey="name"
-                      valueKey={{ key: 'id', reduce: true }}
+                    <TextInput
+                      placeholder="Zone Name"
+                      name="name"
+                      onChange={({ target: { value } }) => {
+                        setSubdomain(nameToSubdomain(value));
+                      }}
                     />
                   </FormField>
                   <FormField
-                    width="100%"
-                    name="public"
-                    contentProps={formFieldContentProps}
+                    name="subdomain"
+                    // Validating subdomain state since component value can contain the full URL
+                    validate={(_, data) =>
+                      validators.required('Zone address')(subdomain, data) ||
+                      validators.minLength('Zone address', 7)(
+                        subdomain,
+                        data
+                      ) ||
+                      validators.maxLength(32, 'Zone adress is too long')(
+                        subdomain,
+                        data
+                      ) ||
+                      validators.matches(
+                        /^([a-z|\d][a-z|\d|-]+[a-z|\d])$/,
+                        'Not a valid zone address'
+                      )(subdomain, data) ||
+                      undefined
+                    }
                   >
-                    <Box
-                      pad="11px"
-                      as="label"
-                      flex={{ shrink: 0 }}
-                      direction="row"
-                      justify="between"
-                    >
-                      <Text size="small">Public</Text>
-                      <CheckBox name="public" defaultChecked toggle />
-                    </Box>
+                    <TextInput
+                      name="subdomain"
+                      placeholder="Zone Address"
+                      value={
+                        subdomainInputFocus || !subdomain
+                          ? subdomain
+                          : `${subdomain}.${baseHost}`
+                      }
+                      onChange={(e) => {
+                        setSubdomain(e.target.value);
+                      }}
+                      onFocus={() => setSubdomainInputFocus(true)}
+                      onBlur={() => setSubdomainInputFocus(false)}
+                    />
                   </FormField>
+                  <FormField name="description">
+                    <TextArea
+                      resize={false}
+                      placeholder="Zone Description"
+                      name="description"
+                    />
+                  </FormField>
+                  <Box
+                    direction="row"
+                    justify="between"
+                    align="start"
+                    gap="small"
+                  >
+                    <FormField
+                      width="100%"
+                      name="categoryId"
+                      validate={[validators.required('Category')]}
+                    >
+                      <Select
+                        placeholder="Category"
+                        name="categoryId"
+                        options={categories || []}
+                        labelKey="name"
+                        valueKey={{ key: 'id', reduce: true }}
+                      />
+                    </FormField>
+                    <FormField width="100%" name="public">
+                      <Switch label="Public" name="public" />
+                    </FormField>
+                  </Box>
                 </Box>
               </Box>
-            </Box>
-            <Button
-              style={{ borderRadius: '10px' }}
-              size="large"
-              fill="horizontal"
-              margin={{ top: 'medium' }}
-              type="submit"
-              primary
-              label="Create"
-            />
-          </Form>
+              <Button
+                size="large"
+                fill="horizontal"
+                margin={{ top: 'medium' }}
+                type="submit"
+                primary
+                label="Create"
+              />
+            </Form>
+          </Box>
         </Box>
-      </Box>
+      </ThemeContext.Extend>
     </Layer>
   );
 };

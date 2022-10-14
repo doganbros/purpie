@@ -117,13 +117,13 @@ export class AuthService {
     res.cookie('OCTOPUS_ACCESS_TOKEN', accessToken, {
       expires: dayjs().add(30, 'days').toDate(),
       domain: `.${new URL(REACT_APP_SERVER_HOST).hostname}`,
-      httpOnly: true,
+      httpOnly: false,
       secure: NODE_ENV === 'production',
     });
     res.cookie('OCTOPUS_REFRESH_ACCESS_TOKEN', refreshToken, {
       expires: dayjs().add(30, 'days').toDate(),
       domain: `.${new URL(REACT_APP_SERVER_HOST).hostname}`,
-      httpOnly: true,
+      httpOnly: false,
       secure: NODE_ENV === 'production',
     });
     return refreshTokenId;

@@ -2,7 +2,6 @@ import React, { FC, useContext, useState } from 'react';
 import {
   Box,
   Button,
-  CheckBox,
   FileInput,
   Form,
   FormExtendedEvent,
@@ -19,6 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../store/reducers/root.reducer';
 import { CreateVideoPayload } from '../../store/types/post.types';
 import { createVideoAction } from '../../store/actions/post.action';
+import Switch from '../../components/utils/Switch';
 
 interface CreateVideoProps {
   onDismiss: () => void;
@@ -128,28 +128,30 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
                 />
               </FormField>
               <FormField name="userContactExclusive">
-                <CheckBox
-                  toggle
+                <Switch
+                  width="fit-content"
+                  direction="row-reverse"
                   label="Exclusive to contacts"
                   name="userContactExclusive"
-                  checked={userContactExclusive}
-                  onChange={(e) => {
-                    if (e.target.checked) {
+                  value={userContactExclusive}
+                  onChange={(checked) => {
+                    if (checked) {
                       setPublicVideo(false);
                       setChannelId(undefined);
-                      setUserContactExclusive(e.target.checked);
+                      setUserContactExclusive(checked);
                     }
                   }}
                 />
               </FormField>
               <FormField name="public">
-                <CheckBox
-                  toggle
+                <Switch
+                  width="fit-content"
+                  direction="row-reverse"
                   label="Public"
                   name="public"
-                  checked={publicVideo}
-                  onChange={(e) => {
-                    setPublicVideo(e.target.checked);
+                  value={publicVideo}
+                  onChange={(checked) => {
+                    setPublicVideo(checked);
                     setUserContactExclusive(false);
                   }}
                 />
