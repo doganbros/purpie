@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Box, Button, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import ChannelListItem from '../../../components/utils/channel/ChannelListItem';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { getChannelSuggestionsAction } from '../../../store/actions/activity.action';
@@ -11,6 +12,7 @@ import {
 
 const ChannelsToFollow: FC = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     activity: { channelSuggestions },
   } = useSelector((state: AppState) => state);
@@ -23,7 +25,7 @@ const ChannelsToFollow: FC = () => {
     <Box gap="small">
       <Box direction="row" align="center" justify="between">
         <Text size="small" weight="bold">
-          Channels to follow
+          {t('ChannelsToFollow.title')}
         </Text>
         {channelSuggestions.data.length > SUGGESTION_AMOUNT_LESS && (
           <Button
@@ -37,8 +39,8 @@ const ChannelsToFollow: FC = () => {
           >
             <Text size="small" color="brand">
               {displayCount === SUGGESTION_AMOUNT_LESS
-                ? 'See more'
-                : 'See less'}
+                ? t('common.seeMore')
+                : t('common.seeLess')}
             </Text>
           </Button>
         )}
@@ -46,7 +48,7 @@ const ChannelsToFollow: FC = () => {
       {channelSuggestions.loading && <Text size="small">Loading</Text>}
       {!channelSuggestions.loading &&
         (channelSuggestions.data.length === 0 ? (
-          <Text size="small">No channels found</Text>
+          <Text size="small">{t('ChannelsToFollow.noChannelsFound')}</Text>
         ) : (
           channelSuggestions.data
             .slice(0, displayCount)
@@ -63,7 +65,7 @@ const ChannelsToFollow: FC = () => {
       {displayCount > SUGGESTION_AMOUNT_LESS && (
         <Button alignSelf="end">
           <Text size="small" color="brand">
-            See all
+            {t('common.seeAll')}
           </Text>
         </Button>
       )}

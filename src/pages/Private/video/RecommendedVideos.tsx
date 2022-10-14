@@ -2,6 +2,7 @@ import React, { FC, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Grid, Text } from 'grommet';
+import { useTranslation } from 'react-i18next';
 import PostGridItem from '../../../components/post/PostGridItem';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
@@ -14,6 +15,7 @@ import GradientScroll from '../../../components/utils/GradientScroll';
 const RecommendedVideos: FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     post: { feed, postDetail },
   } = useSelector((state: AppState) => state);
@@ -29,7 +31,7 @@ const RecommendedVideos: FC = () => {
   return (
     <Box gap="small">
       <Text size="large" weight="bold" color="brand">
-        Recommended Videos
+        {t('RecommendedVideos.title')}
       </Text>
       <GradientScroll>
         <Grid

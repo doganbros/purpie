@@ -4,6 +4,7 @@ import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import { Box, Button, DropButton, Text, TextInput } from 'grommet';
 import { Like, MoreVertical } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import InitialsAvatar from '../../../../components/utils/InitialsAvatar';
 import ListButton from '../../../../components/utils/ListButton';
 import { AppState } from '../../../../store/reducers/root.reducer';
@@ -30,6 +31,7 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
     auth: { user },
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -112,11 +114,11 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
               dropContent={
                 <>
                   <ListButton
-                    label="Edit Comment"
+                    label={t('CommentBase.editComment')}
                     onClick={() => setIsEditing(true)}
                   />
                   <ListButton
-                    label="Delete"
+                    label={t('common.delete')}
                     onClick={() => setShowDeleteDialog(true)}
                   />
                 </>
@@ -146,10 +148,10 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
                 }}
               >
                 <Text color="status-disabled" weight="bold">
-                  Cancel
+                  {t('common.cancel')}
                 </Text>
               </Button>
-              <Button primary onClick={handleEdit} label="Edit" />
+              <Button primary onClick={handleEdit} label={t('common.edit')} />
             </Box>
           </Box>
         ) : (
@@ -188,7 +190,7 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
 
         <Button onClick={handleShowReply}>
           <Text color="status-disabled" size="14px">
-            REPLY
+            {t('common.reply')}
           </Text>
         </Button>
       </Box>
@@ -203,7 +205,7 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
                 plain
                 autoFocus
                 focusIndicator={false}
-                placeholder="Write a public reply"
+                placeholder={t('CommentBase.writePublicReply')}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
               />
@@ -217,10 +219,10 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
               }}
             >
               <Text color="status-disabled" weight="bold">
-                Cancel
+                {t('common.cancel')}
               </Text>
             </Button>
-            <Button onClick={handleReply} label="Reply" primary />
+            <Button onClick={handleReply} label={t('common.reply')} primary />
           </Box>
         </Box>
       )}
@@ -228,8 +230,8 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
         <ConfirmDialog
           onConfirm={handleDelete}
           onDismiss={() => setShowDeleteDialog(false)}
-          message="Are you sure you want to delete the comment?"
-          confirmButtonText="Delete"
+          message={t('CommentBase.deleteCommentConfirmMsg')}
+          confirmButtonText={t('common.delete')}
         />
       )}
     </Box>

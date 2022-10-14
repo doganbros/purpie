@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Box, Text } from 'grommet';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import InitialsAvatar from '../../../components/utils/InitialsAvatar';
 import { theme } from '../../../config/app-config';
 import { ContactUser } from '../../../store/types/user.types';
@@ -17,6 +18,7 @@ const ContactListItem: FC<ContactListItemProps> = ({
   onClick,
 }) => {
   const history = useHistory();
+  const { t } = useTranslation();
   return (
     <Box
       onClick={() => onClick(contact)}
@@ -61,7 +63,7 @@ const ContactListItem: FC<ContactListItemProps> = ({
         }}
         color={selected ? 'accent-3' : 'blue'}
       >
-        View full profile
+        {t('ContactListItem.viewProfile')}
       </Text>
     </Box>
   );

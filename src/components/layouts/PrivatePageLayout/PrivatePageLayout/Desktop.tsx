@@ -41,13 +41,13 @@ const Desktop: FC<Props> = ({
       >
         <Box fill="horizontal">
           <Button
-            margin={{ vertical: 'medium' }}
+            margin={{ vertical: 'large' }}
             onClick={() => history.push('/')}
           >
             <Box align="center">
               <Avatar
                 alignSelf="center"
-                size="large"
+                size="medium"
                 round="0"
                 src={LogoWhite}
               />

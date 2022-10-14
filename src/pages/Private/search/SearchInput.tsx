@@ -1,6 +1,7 @@
 import { Box, Button, Text } from 'grommet';
 import React, { FC } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import SearchBar from '../../../components/utils/SearchBar';
 import { SearchParams, SearchScope } from '../../../models/utils';
 
@@ -14,6 +15,7 @@ const SearchFilter = [
 const SearchInput: FC = () => {
   const { value, scope: activeScope } = useParams<SearchParams>();
   const history = useHistory();
+  const { t } = useTranslation();
 
   return (
     <Box direction="column">
@@ -30,7 +32,7 @@ const SearchInput: FC = () => {
                 weight="bold"
                 color={scope === activeScope ? 'brand' : 'status-disabled'}
               >
-                {scope[0].toUpperCase() + scope.substring(1)}
+                {t(`common.${scope}`)}
               </Text>
             </Button>
           ))}

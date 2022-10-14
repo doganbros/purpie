@@ -14,6 +14,7 @@ import {
 } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import {
   createPostLikeAction,
@@ -50,6 +51,7 @@ const { REACT_APP_STREAMING_URL } = process.env;
 const Video: FC = () => {
   const DECISECOND = 10;
   const params = useParams<RouteParams>();
+  const { t } = useTranslation();
   const [liveStreamCount, setLiveStreamCount] = useState(0);
   const dispatch = useDispatch();
   const {
@@ -113,14 +115,20 @@ const Video: FC = () => {
   const actionMenu = useMemo(() => {
     if (data?.createdBy?.id === user?.id) {
       return [
-        { label: 'Edit', onClick: () => setShowSettings((state) => !state) },
-        { label: 'Delete', onClick: () => setShowDeleteConfirmation(true) },
+        {
+          label: t('common.edit'),
+          onClick: () => setShowSettings((state) => !state),
+        },
+        {
+          label: t('common.delete'),
+          onClick: () => setShowDeleteConfirmation(true),
+        },
       ];
     }
     return [
-      { label: 'Follow This Channel' },
-      { label: 'Join This Zone' },
-      { label: 'Report' },
+      { label: t('Video.followChannel') },
+      { label: t('Video.joinZone') },
+      { label: t('Video.report') },
     ];
   }, [data, user]);
 
@@ -169,7 +177,7 @@ const Video: FC = () => {
   return (
     <PrivatePageLayout
       rightComponentWithoutOverflow
-      title={data?.title || 'Loading'}
+      title={data?.title || t('common.loading')}
       rightComponent={
         showSettings ? (
           <VideoSettings
@@ -256,16 +264,27 @@ const Video: FC = () => {
               <Box direction="row" align="center" justify="between">
                 {data.streaming ? (
                   <Text>
-                    {liveStreamCount}{' '}
-                    {liveStreamCount === 1
-                      ? `user is watching`
-                      : 'users are watching'}
+                    {
+                      (t(
+                        `Video.${
+                          liveStreamCount === 1
+                            ? 'userWatching'
+                            : 'usersWatching'
+                        }`
+                      ),
+                      { count: liveStreamCount })
+                    }
                   </Text>
                 ) : (
                   <Text color="status-disabled">
-                    {data.postReaction.viewsCount === 1
-                      ? `${data.postReaction.viewsCount} view`
-                      : `${data.postReaction.viewsCount} views`}
+                    {t(
+                      `Video.${
+                        data.postReaction.viewsCount === 1
+                          ? 'viewCount'
+                          : 'viewsCount'
+                      }`,
+                      { count: data.postReaction.viewsCount }
+                    )}
                   </Text>
                 )}
                 <Box direction="row" gap="medium">
@@ -291,11 +310,11 @@ const Video: FC = () => {
                   </Box>
                   <Box direction="row" gap="xsmall" align="center">
                     <Dislike color="status-disabled" size="17px" />
-                    <Text color="status-disabled">Dislike</Text>
+                    <Text color="status-disabled">{t('Video.dislike')}</Text>
                   </Box>
                   <Box direction="row" gap="xsmall" align="center">
                     <ShareOption color="status-disabled" size="19px" />
-                    <Text color="status-disabled">Share</Text>
+                    <Text color="status-disabled">{t('common.share')}</Text>
                   </Box>
                   <Box
                     direction="row"
@@ -312,7 +331,7 @@ const Video: FC = () => {
                       size="21px"
                     />
                     <Text color={data.saved ? 'brand' : 'status-disabled'}>
-                      {data.saved ? 'Saved' : 'Save'}
+                      {data.saved ? t('common.saved') : t('common.save')}
                     </Text>
                   </Box>
                   <Box direction="row" gap="xsmall" align="center">
@@ -343,8 +362,8 @@ const Video: FC = () => {
                 history.replace('/');
               }}
               onDismiss={() => setShowDeleteConfirmation(false)}
-              message="Are you sure you want to remove this post?"
-              confirmButtonText="Remove"
+              message={t('Video.removePostConfirmMsg')}
+              confirmButtonText={t('common.remove')}
             />
           )}
         </Box>
