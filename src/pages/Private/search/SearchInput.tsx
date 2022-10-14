@@ -19,7 +19,7 @@ const SearchInput: FC = () => {
 
   return (
     <Box direction="column">
-      <Box>
+      <Box pad={{ top: 'medium' }}>
         <SearchBar initialValue={value} scope={activeScope} />
         <Box direction="row" justify="around" margin={{ top: 'medium' }}>
           {SearchFilter.map(({ id, scope }) => (

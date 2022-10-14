@@ -33,6 +33,7 @@ const baseHost = hostname
   .split('.')
   .filter((v) => v !== appSubdomain)
   .join('.');
+
 interface CreateZoneProps {
   onDismiss: () => void;
 }
@@ -145,11 +146,7 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                     align="start"
                     gap="small"
                   >
-                    <FormField
-                      width="100%"
-                      name="categoryId"
-                      validate={[validators.required(t('common.category'))]}
-                    >
+                    <FormField width="100%" name="categoryId">
                       <Select
                         placeholder={t('common.category')}
                         name="categoryId"
