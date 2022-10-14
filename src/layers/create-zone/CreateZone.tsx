@@ -140,11 +140,7 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                     align="start"
                     gap="small"
                   >
-                    <FormField
-                      width="100%"
-                      name="categoryId"
-                      validate={[validators.required('Category')]}
-                    >
+                    <FormField width="100%" name="categoryId">
                       <Select
                         placeholder="Category"
                         name="categoryId"
