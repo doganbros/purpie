@@ -14,8 +14,8 @@ import { AppState } from '../../store/reducers/root.reducer';
 import { LoginPayload } from '../../store/types/auth.types';
 import AuthLayout from '../../components/layouts/AuthLayout';
 import SignInRect from '../../assets/sign-in-rect.svg';
-import Figure from '../../assets/login-bg/figure.png';
-import Banner from '../../assets/login-bg/banner.png';
+import Figure from '../../assets/login-bg/figure.svg';
+import Banner from '../../assets/login-bg/banner.svg';
 import AuthFormButton from '../../components/auth/AuthFormButton';
 
 const Login: FC = () => {
@@ -48,7 +48,7 @@ const Login: FC = () => {
             }}
           />
           <Image
-            width="85%"
+            width="100%"
             alignSelf="center"
             style={{ zIndex: 1 }}
             src={Figure}

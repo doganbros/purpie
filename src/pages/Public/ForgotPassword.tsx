@@ -7,8 +7,8 @@ import { validators } from '../../helpers/validators';
 import { FormSubmitEvent } from '../../models/form-submit-event';
 import { resetPasswordRequestAction } from '../../store/actions/auth.action';
 import { AppState } from '../../store/reducers/root.reducer';
-import Figure from '../../assets/forgotten-password-bg/figure-1.png';
-import Banner from '../../assets/forgotten-password-bg/banner.png';
+import Figure from '../../assets/forgotten-password-bg/figure.svg';
+import Banner from '../../assets/forgotten-password-bg/banner.svg';
 import AuthFormButton from '../../components/auth/AuthFormButton';
 
 const ForgotPassword: FC = () => {
@@ -36,22 +36,16 @@ const ForgotPassword: FC = () => {
       background={
         <>
           <Image
-            width="60%"
+            width="35%"
             src={Banner}
             style={{
               position: 'absolute',
               pointerEvents: 'none',
               top: 0,
               left: 0,
-              height: '100vh',
             }}
           />
-          <Image
-            height="90%"
-            alignSelf="center"
-            style={{ zIndex: 2 }}
-            src={Figure}
-          />
+          <Image alignSelf="center" style={{ zIndex: 2 }} src={Figure} />
         </>
       }
     >
