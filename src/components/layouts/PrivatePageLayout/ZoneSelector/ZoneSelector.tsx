@@ -2,6 +2,7 @@ import React, { FC, useContext, useState } from 'react';
 import { Box, DropButton, ResponsiveContext, Text } from 'grommet';
 import { Add, SettingsOption } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
 import { AppState } from '../../../../store/reducers/root.reducer';
 import Divider from './Divider';
@@ -12,6 +13,7 @@ import InitialsAvatar from '../../../utils/InitialsAvatar';
 import ListButton from '../../../utils/ListButton';
 
 const ZoneSelector: FC = () => {
+  const { t } = useTranslation();
   const {
     zone: {
       getUserZones: { userZones },
@@ -91,7 +93,7 @@ const ZoneSelector: FC = () => {
                 }
               }}
               disabled={createChannelButtonDisabled}
-              label="Create Channel"
+              label={t('ZoneSelector.createChannel')}
               rightIcon={
                 <Add
                   size="small"
@@ -106,18 +108,18 @@ const ZoneSelector: FC = () => {
                 setOpen(false);
                 dispatch(openCreateZoneLayerAction());
               }}
-              label="Create Zone"
+              label={t('ZoneSelector.createZone')}
               rightIcon={<Add size="small" color="black" />}
             />
             <Divider />
             <ListButton
-              label="Settings"
+              label={t('ZoneSelector.settings')}
               rightIcon={<SettingsOption size="small" color="black" />}
             />
             <Divider />
             <ListButton
               onClick={() => dispatch(logoutAction())}
-              label="Sign Out"
+              label={t('ZoneSelector.signOut')}
             />
           </Box>
         }

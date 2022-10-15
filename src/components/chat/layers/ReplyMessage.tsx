@@ -1,6 +1,7 @@
 import { Box, Button, Layer, ResponsiveContext, Text, TextArea } from 'grommet';
 import { Close } from 'grommet-icons';
 import React, { FC, useContext, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { User } from '../../../store/types/auth.types';
 import { ChatMessage } from '../../../store/types/chat.types';
 import MessageItem from '../MessageItem';
@@ -22,6 +23,7 @@ const ReplyPost: FC<Props> = ({
   user,
   to,
 }) => {
+  const { t } = useTranslation();
   const size = useContext(ResponsiveContext);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -42,7 +44,7 @@ const ReplyPost: FC<Props> = ({
         <Box direction="row" justify="between" align="start">
           <Box pad="xsmall">
             <Text size="large" weight="bold">
-              Reply Message
+              {t('ReplyPost.reply')}
             </Text>
           </Box>
           <Button plain onClick={onDismiss}>
@@ -51,7 +53,9 @@ const ReplyPost: FC<Props> = ({
         </Box>
         <MessageItem message={message} />
         <TextArea
-          placeholder={`Reply${name ? ` to ${name}` : ''}...`}
+          placeholder={t('ReplyPost.replyTo', {
+            toName: name ? ` to ${name}` : '',
+          })}
           resize="vertical"
           autoFocus
           size="medium"

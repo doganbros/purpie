@@ -2,6 +2,7 @@ import { Form, FormField, Image, TextInput } from 'grommet';
 import React, { FC } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import AuthLayout from '../../components/layouts/AuthLayout';
 import { validators } from '../../helpers/validators';
 import { FormSubmitEvent } from '../../models/form-submit-event';
@@ -14,6 +15,7 @@ import AuthFormButton from '../../components/auth/AuthFormButton';
 const ForgotPassword: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { t } = useTranslation();
 
   const {
     forgotPassword: { loading },
@@ -25,12 +27,12 @@ const ForgotPassword: FC = () => {
 
   return (
     <AuthLayout
-      title="Forgot Password"
-      formTitle="Password Recovery"
-      formSubTitle="Enter email to receive your password."
+      title={t('ForgotPassword.title')}
+      formTitle={t('ForgotPassword.formTitle')}
+      formSubTitle={t('ForgotPassword.formSubTitle')}
       callToAction={{
-        title: 'Remember Password?',
-        body: 'SIGN IN',
+        title: t('ForgotPassword.rememberPassword'),
+        body: t('common.signIn'),
         onClick: () => history.push('/login'),
       }}
       background={
@@ -54,8 +56,11 @@ const ForgotPassword: FC = () => {
           <FormField
             name="email"
             htmlFor="emailInput"
-            label="EMAIL"
-            validate={[validators.required('Email'), validators.email()]}
+            label={t('common.email')}
+            validate={[
+              validators.required(t('common.email')),
+              validators.email(),
+            ]}
           >
             <TextInput id="emailInput" name="email" />
           </FormField>
@@ -64,7 +69,7 @@ const ForgotPassword: FC = () => {
             margin={{ top: '55%' }}
             disabled={loading}
             type="submit"
-            label="SEND"
+            label={t('ForgotPassword.send')}
           />
         </Form>
       </>

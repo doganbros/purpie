@@ -4,6 +4,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { Box, Grid, InfiniteScroll, ResponsiveContext, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
 import PostGridItem from '../../../components/post/PostGridItem';
@@ -29,6 +30,7 @@ interface ConfirmationState {
 const Saved: FC = () => {
   const size = useContext(ResponsiveContext);
   const history = useHistory();
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const {
     post: { saved },
@@ -57,7 +59,7 @@ const Saved: FC = () => {
 
   return (
     <PrivatePageLayout
-      title="Saved Posts"
+      title={t('Saved.title')}
       rightComponent={
         <Box pad="medium" gap="medium">
           <SearchBar />
@@ -71,7 +73,7 @@ const Saved: FC = () => {
     >
       <Box pad={{ vertical: 'medium' }} gap="medium">
         <Box direction="row" justify="between" align="center">
-          <Text weight="bold">Saved Posts</Text>
+          <Text weight="bold">{t('Saved.title')}</Text>
         </Box>
         <Grid
           columns={size !== 'small' ? 'medium' : '100%'}
@@ -79,7 +81,7 @@ const Saved: FC = () => {
         >
           {saved.data.length === 0 ? (
             <Text size="small" color="status-disabled">
-              Your saved posts will appear here
+              {t('Saved.emptyMsg')}
             </Text>
           ) : (
             <InfiniteScroll
@@ -110,8 +112,8 @@ const Saved: FC = () => {
               }
             }}
             onDismiss={closeConfirmation}
-            message="Are you sure you want to remove this post from your saved list?"
-            confirmButtonText="Remove"
+            message={t('Saved.removeConfirmMsg')}
+            confirmButtonText={t('common.remove')}
           />
         )}
       </Box>

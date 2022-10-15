@@ -9,7 +9,6 @@ import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { json } from 'express';
 import { AppModule } from './app.module';
-import { GlobalExceptionHandler } from './error/GlobalExceptionHandler';
 
 initApp();
 

@@ -2,6 +2,7 @@ import { Button, Image } from 'grommet';
 import React, { FC } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { Trans, useTranslation } from 'react-i18next';
 import AuthLayout from '../../components/layouts/AuthLayout';
 import { AppState } from '../../store/reducers/root.reducer';
 import Figure from '../../assets/verify-email-bg/figure-1.png';
@@ -15,6 +16,7 @@ interface Params {
 
 const VerifyUserEmailInfo: FC = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const {
     resendMailVerificationToken: { loading },
@@ -29,14 +31,14 @@ const VerifyUserEmailInfo: FC = () => {
 
   return (
     <AuthLayout
-      title="Email Confirmation"
-      formTitle="Email Confirmation"
+      title={t('VerifyUserEmailInfo.title')}
+      formTitle={t('VerifyUserEmailInfo.title')}
       formSubTitle={
-        <>
-          <span>Verify your email to finish signing up for Octopus.</span>
+        <Trans i18nKey="VerifyUserEmailInfo.formSubTitle">
+          <span />
           <br />
-          <span>Please check your email box.</span>
-        </>
+          <span />
+        </Trans>
       }
       background={
         <>
@@ -57,8 +59,8 @@ const VerifyUserEmailInfo: FC = () => {
         </>
       }
       callToAction={{
-        title: 'Resend mail verification link?',
-        body: 'RESEND',
+        title: t('VerifyUserEmailInfo.resendLink'),
+        body: t('VerifyUserEmailInfo.resend'),
         disabled: loading,
         onClick: submitResendMailVerificationToken,
       }}
@@ -70,7 +72,7 @@ const VerifyUserEmailInfo: FC = () => {
         size={size}
         margin={{ top: '55%' }}
         type="submit"
-        label="GO TO SIGN IN"
+        label={t('VerifyUserEmailInfo.goToSignIn')}
       />
     </AuthLayout>
   );
