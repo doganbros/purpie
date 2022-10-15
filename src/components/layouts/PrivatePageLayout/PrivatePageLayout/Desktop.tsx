@@ -1,5 +1,4 @@
 import { Avatar, Box, Button } from 'grommet';
-import { useHistory } from 'react-router-dom';
 import React, { FC } from 'react';
 import ExtendedBox from '../../../utils/ExtendedBox';
 import LogoWhite from '../../../../assets/octopus-logo/logo-white.svg';
@@ -20,8 +19,6 @@ const Desktop: FC<Props> = ({
   rightComponentWithoutOverflow = false,
   topComponent,
 }) => {
-  const history = useHistory();
-
   const leftComponentWidth = 135;
   const topComponentHeight = 140;
   const rightComponentWidth = 400;
@@ -42,7 +39,9 @@ const Desktop: FC<Props> = ({
         <Box fill="horizontal">
           <Button
             margin={{ vertical: 'large' }}
-            onClick={() => history.push('/')}
+            onClick={() =>
+              window.location.replace(process.env.REACT_APP_CLIENT_HOST || '/')
+            }
           >
             <Box align="center">
               <Avatar

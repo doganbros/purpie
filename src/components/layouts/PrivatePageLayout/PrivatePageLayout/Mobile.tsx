@@ -1,6 +1,5 @@
 import { Avatar, Box, Button, Header, Layer } from 'grommet';
-import { Menu, Previous, Close } from 'grommet-icons';
-import { useHistory } from 'react-router-dom';
+import { Close, Menu, Previous } from 'grommet-icons';
 import React, { FC, useState } from 'react';
 import Sidebar from '../Sidebar';
 import Logo from '../../../../assets/octopus-logo/logo-white.svg';
@@ -14,8 +13,6 @@ interface Props {
 }
 
 const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
-  const history = useHistory();
-
   const topComponentHeight = 120;
   const leftComponentWidth = 135;
 
@@ -35,7 +32,9 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
             icon={<Menu size="medium" color="white" />}
           />
           <Button
-            onClick={() => history.push('/')}
+            onClick={() =>
+              window.location.replace(process.env.REACT_APP_CLIENT_HOST || '/')
+            }
             icon={
               <Avatar
                 alignSelf="center"
