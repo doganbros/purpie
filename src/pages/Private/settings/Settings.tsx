@@ -1,42 +1,47 @@
 import React, { FC, useEffect, useState } from 'react';
 import {
-  Box,
-  Text,
   Accordion,
+  AccordionPanel,
+  Avatar,
+  Box,
   Button,
-  Layer,
+  DropButton,
   FileInput,
   Form,
   FormField,
   Image,
-  TextInput,
-  DropButton,
+  Layer,
+  Text,
 } from 'grommet';
-import { CaretRightFill, Search } from 'grommet-icons';
+import { CaretRightFill } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
-import { useDebouncer } from '../../../hooks/useDebouncer';
-import ModifiedAccordionPanel from '../../../components/utils/ModifiedAccordionPanel';
+import { useHistory } from 'react-router-dom';
+import LogoWhite from '../../../assets/octopus-logo/logo-white.svg';
 import Divider from '../../../components/layouts/PrivatePageLayout/ZoneSelector/Divider';
-import { AppState } from '../../../store/reducers/root.reducer';
-import { AvatarItem } from './AvatarItem';
+import { useDebouncer } from '../../../hooks/useDebouncer';
 import { changeProfilePicture } from '../../../store/actions/auth.action';
 import { changeChannelPhoto } from '../../../store/actions/channel.action';
 import { changeZonePhoto } from '../../../store/actions/zone.action';
+import { AppState } from '../../../store/reducers/root.reducer';
+import { UpdateChannelPayload } from '../../../store/types/channel.types';
+import { UpdateZonePayload } from '../../../store/types/zone.types';
+import { AvatarItem } from './AvatarItem';
+import ChannelSettings from './ChannelSettings';
+import PersonalSettings from './PersonalSettings';
 import {
   ChannelSettingsData,
   MediumType,
   PersonalSettingsData,
+  SettingFormItem,
   UserInfo,
   ZoneSettingsData,
 } from './types';
-import ChannelSettings from './ChannelSettings';
 import ZoneSettings from './ZoneSettings';
-import { UpdateChannelPayload } from '../../../store/types/channel.types';
-import PersonalSettings from './PersonalSettings';
-import { UpdateZonePayload } from '../../../store/types/zone.types';
+import SearchBar from './SearchBar';
 
 const Settings: FC = () => {
+  const history = useHistory();
+  const [activeAccordionIndex, setActiveAccordionIndex] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [searchText, setSearchText] = useState<string>('');
   const [searchTextValue, setSearchTextValue] = useState<string>('');
@@ -154,86 +159,59 @@ const Settings: FC = () => {
     return ['test'];
   };
 
-  const getSelectedItems = () => {
-    if (searchText?.length > 0) {
-      if (data.length > 0) {
-        const result: (
-          | ChannelSettingsData
-          | PersonalSettingsData
-          | ZoneSettingsData
-        )[] = [];
-        for (let i = 0; i < data.length; i++) {
-          const menuItem:
-            | ChannelSettingsData
-            | PersonalSettingsData
-            | ZoneSettingsData = data[i];
-          const menuItemKey = menuItem.key.replace(/ /g, '').toLowerCase();
-          const menuItemLabel = menuItem.label.replace(/ /g, '').toLowerCase();
-          const search = searchText.replace(/ /g, '').toLowerCase();
-          if (menuItemKey.includes(search) || menuItemLabel.includes(search)) {
-            result.push(menuItem);
-          } else {
-            const menuItemsResult = [];
-            for (let j = 0; j < menuItem.items.length; j++) {
-              const settingItem = menuItem.items[j];
-              const settingItemKey = settingItem.key
-                .replace(/ /g, '')
-                .toLowerCase();
-              const settingItemLabel = settingItem.title
-                .replace(/ /g, '')
-                .toLowerCase();
+  const getSearchResults = () => {
+    if (data.length > 0) {
+      const result: (
+        | ChannelSettingsData
+        | PersonalSettingsData
+        | ZoneSettingsData
+      )[] = [];
+      data.forEach((menuItem) => {
+        const menuItemKey = menuItem.key.replace(/ /g, '').toLowerCase();
+        const menuItemLabel = menuItem.label.replace(/ /g, '').toLowerCase();
+        const search = searchText.replace(/ /g, '').toLowerCase();
+        if (menuItemKey.includes(search) || menuItemLabel.includes(search)) {
+          result.push(menuItem);
+        } else {
+          const menuItemsResult: SettingFormItem[] = [];
+          menuItem.items.forEach((settingItem) => {
+            const settingItemKey = settingItem.key
+              .replace(/ /g, '')
+              .toLowerCase();
+            const settingItemLabel = settingItem.title
+              .replace(/ /g, '')
+              .toLowerCase();
+            const settingItemDescription = settingItem.description
+              .replace(/ /g, '')
+              .toLowerCase();
 
-              if (
-                settingItemKey.includes(search) ||
-                settingItemLabel.includes(search)
-              ) {
-                menuItemsResult.push(settingItem);
-              } else {
-                const formItemResult = [];
-                for (let k = 0; k < settingItem.items.length; k++) {
-                  const settingFormItem = settingItem.items[k];
-                  const formItemKey = settingFormItem.key
-                    .replace(/ /g, '')
-                    .toLowerCase();
-                  const formItemTitle = settingFormItem.title
-                    .replace(/ /g, '')
-                    .toLowerCase();
-                  const formItemDescription = settingFormItem.description
-                    .replace(/ /g, '')
-                    .toLowerCase();
-
-                  if (
-                    formItemKey.includes(search) ||
-                    formItemTitle.includes(search) ||
-                    formItemDescription.includes(search)
-                  ) {
-                    formItemResult.push(settingFormItem);
-                  }
-                }
-                if (formItemResult.length > 0) {
-                  settingItem.items = formItemResult;
-                  menuItemsResult.push(settingItem);
-                }
-              }
+            if (
+              settingItemKey.includes(search) ||
+              settingItemLabel.includes(search) ||
+              settingItemDescription.includes(search)
+            ) {
+              menuItemsResult.push(settingItem);
             }
-            if (menuItemsResult.length > 0) {
-              menuItem.items = menuItemsResult;
-              result.push(menuItem);
-            }
+          });
+          if (menuItemsResult.length > 0) {
+            result.push({ ...menuItem, items: menuItemsResult });
           }
         }
-        return result;
-      }
-      return [];
+      });
+
+      return result;
     }
-    return [data[selectedIndex]];
+    return [];
   };
 
   useEffect(() => {
     debouncer(() => setSearchText(searchTextValue), 300);
+    if (!searchTextValue) {
+      setActiveAccordionIndex(0);
+    }
   }, [searchTextValue]);
 
-  const renderSettings = (
+  const renderSettingCategory = (
     selectedItem: ChannelSettingsData | PersonalSettingsData | ZoneSettingsData
   ) => {
     return (
@@ -243,189 +221,185 @@ const Settings: FC = () => {
             <Text size="xlarge">{selectedItem.label}</Text>
           </Box>
         )}
-        <Accordion
-          flex="grow"
-          border={{ color: '#E4E9F2', size: 'small' }}
-          round={{ size: 'medium' }}
-          pad="small"
-        >
-          {selectedItem.items.map<React.ReactNode>((setting, index) => (
-            <Box key={setting.key} flex="grow" pad={{ vertical: 'small' }}>
-              <ModifiedAccordionPanel
-                label={setting.title}
-                key={setting.key}
-                transparent={index === selectedItem.items.length - 1}
-              >
-                {index === 0 && selectedItem.label !== 'Personal Settings' ? (
-                  <Box direction="row" gap="small">
-                    <DropButton
-                      dropProps={{
-                        responsive: false,
-                        stretch: false,
-                        overflow: { vertical: 'scroll' },
-                      }}
-                      label={
-                        selectedItem.label === 'Channel Settings'
-                          ? 'Select Channel'
-                          : 'Select Zone'
-                      }
-                      dropContent={
-                        <Box
-                          pad="xsmall"
-                          background="light-1"
-                          gap="small"
-                          round="medium"
-                        >
-                          {dropDownItems(selectedItem.label).map((item) => (
-                            <Box
-                              border={{ color: 'brand', size: 'medium' }}
-                              key={Math.random() * 1000}
-                              height={{ min: '120px' }}
-                            >
-                              <Button
-                                onClick={() => {
-                                  if ('whichZone' in selectedItem) {
-                                    setChannelPayload({
-                                      name: item.props.label,
-                                      id: item.props.id,
-                                      description: userChannels.data.filter(
-                                        (channel) =>
-                                          channel.channel.id === item.props.id
-                                      )[0].channel.description,
-                                      topic: userChannels.data.filter(
-                                        (channel) =>
-                                          channel.channel.id === item.props.id
-                                      )[0].channel.topic,
-                                      public: userChannels.data.filter(
-                                        (channel) =>
-                                          channel.channel.id === item.props.id
-                                      )[0].channel.public,
-                                    });
-                                  } else {
-                                    setZonePayload({
-                                      name: item.props.label,
-                                      id: item.props.id,
-                                      subdomain:
-                                        userZones?.filter(
-                                          (zone) => zone.id === item.props.id
-                                        )[0].zone.subdomain || '',
-                                      public: !!userZones?.filter(
-                                        (zone) => zone.id === item.props.id
-                                      )[0].zone.public,
-                                      description:
-                                        userZones?.filter(
-                                          (zone) => zone.id === item.props.id
-                                        )[0].zone.description || '',
-                                    });
-                                  }
-                                }}
-                              >
-                                {item}
-                              </Button>
-                            </Box>
-                          ))}
-                        </Box>
-                      }
-                    />
-                  </Box>
-                ) : (
-                  setting.title === 'Account' && (
-                    <AvatarItem
-                      label={userInfo.userName}
-                      menuItems={menuItems}
-                      selectedIndex={0}
-                      changeProfilePic={() => {
-                        setMedium({ ...medium, name: 'user' });
-                        setShow(true);
-                      }}
-                      isEditable
-                      medium="user"
-                      photoName={user?.displayPhoto}
-                    />
-                  )
-                )}
-                <Box>
-                  {setting.items.map<React.ReactNode | any>((formItems) => {
-                    const descriptionParts = formItems.description.split(
-                      new RegExp(`(${searchText})`, 'gi')
-                    );
-                    const titleParts = formItems.title.split(
-                      new RegExp(`(${searchText})`, 'gi')
-                    );
 
-                    return (
-                      <Box
-                        key={formItems.key}
-                        direction="column"
-                        flex="grow"
-                        justify="start"
-                        pad="small"
-                        gap="small"
+        {!('role' in selectedItem) ? (
+          <Box direction="row" gap="small">
+            <DropButton
+              dropProps={{
+                responsive: false,
+                stretch: false,
+                overflow: { vertical: 'scroll' },
+              }}
+              label={
+                selectedItem.label === 'Channel Settings'
+                  ? 'Select Channel'
+                  : 'Select Zone'
+              }
+              dropContent={
+                <Box
+                  pad="xsmall"
+                  background="light-1"
+                  gap="small"
+                  round="medium"
+                >
+                  {dropDownItems(selectedItem.label).map((item) => (
+                    <Box
+                      border={{ color: 'brand', size: 'medium' }}
+                      key={Math.random() * 1000}
+                      height={{ min: '120px' }}
+                    >
+                      <Button
+                        onClick={() => {
+                          if ('whichZone' in selectedItem) {
+                            setChannelPayload({
+                              name: item.props.label,
+                              id: item.props.id,
+                              description: userChannels.data.filter(
+                                (channel) =>
+                                  channel.channel.id === item.props.id
+                              )[0].channel.description,
+                              topic: userChannels.data.filter(
+                                (channel) =>
+                                  channel.channel.id === item.props.id
+                              )[0].channel.topic,
+                              public: userChannels.data.filter(
+                                (channel) =>
+                                  channel.channel.id === item.props.id
+                              )[0].channel.public,
+                            });
+                          } else {
+                            setZonePayload({
+                              name: item.props.label,
+                              id: item.props.id,
+                              subdomain:
+                                userZones?.filter(
+                                  (zone) => zone.id === item.props.id
+                                )[0].zone.subdomain || '',
+                              public: !!userZones?.filter(
+                                (zone) => zone.id === item.props.id
+                              )[0].zone.public,
+                              description:
+                                userZones?.filter(
+                                  (zone) => zone.id === item.props.id
+                                )[0].zone.description || '',
+                            });
+                          }
+                        }}
                       >
-                        <Box width="medium" direction="column">
-                          <Text key={formItems.key} size="medium" weight="bold">
-                            {/* {formItems.title} */}
-                            {titleParts.map((part) =>
-                              part.toLowerCase() !==
-                              searchText.toLowerCase() ? (
-                                `${part}`
-                              ) : (
-                                <Text weight="bold">{part}</Text>
-                              )
-                            )}
-                          </Text>
-                          <Text key={formItems.key}>
-                            {descriptionParts.map((part) =>
-                              part.toLowerCase() !==
-                              searchText.toLowerCase() ? (
-                                `${part}`
-                              ) : (
-                                <Text weight="bold">{part}</Text>
-                              )
-                            )}
-                          </Text>
-                        </Box>
-                        <Box>{formItems.component && formItems.component}</Box>
-                      </Box>
-                    );
-                  })}
+                        {item}
+                      </Button>
+                    </Box>
+                  ))}
                 </Box>
-                <Button
-                  onClick={selectedItem.onSave}
-                  primary
-                  label="Save"
-                  style={{ borderRadius: '10px' }}
-                  size="large"
-                  fill="horizontal"
-                  margin={{ top: 'medium' }}
-                />
-              </ModifiedAccordionPanel>
+              }
+            />
+          </Box>
+        ) : (
+          <AvatarItem
+            label={userInfo.userName}
+            menuItems={menuItems}
+            selectedIndex={0}
+            changeProfilePic={() => {
+              setMedium({ ...medium, name: 'user' });
+              setShow(true);
+            }}
+            isEditable
+            medium="user"
+            photoName={user?.displayPhoto}
+          />
+        )}
+        {selectedItem.items.map<React.ReactNode>((setting) => {
+          const descriptionParts = setting.description.split(
+            new RegExp(`(${searchText})`, 'gi')
+          );
+          const titleParts = setting.title.split(
+            new RegExp(`(${searchText})`, 'gi')
+          );
+
+          return (
+            <Box
+              key={setting.key}
+              direction="column"
+              flex="grow"
+              justify="start"
+              pad="small"
+              gap="small"
+            >
+              <Box width="medium" direction="column">
+                <Text key={setting.key} size="medium" weight="bold">
+                  {titleParts.map((part) =>
+                    part.toLowerCase() !== searchText.toLowerCase() ? (
+                      `${part}`
+                    ) : (
+                      <Text weight="bold">{part}</Text>
+                    )
+                  )}
+                </Text>
+                <Text key={setting.key}>
+                  {descriptionParts.map((part) =>
+                    part.toLowerCase() !== searchText.toLowerCase() ? (
+                      `${part}`
+                    ) : (
+                      <Text weight="bold">{part}</Text>
+                    )
+                  )}
+                </Text>
+              </Box>
+              <Box>{setting.component && setting.component}</Box>
             </Box>
-          ))}
-        </Accordion>
+          );
+        })}
+        <Button
+          onClick={selectedItem.onSave}
+          primary
+          label="Save"
+          style={{ borderRadius: '10px' }}
+          size="large"
+          fill="horizontal"
+          margin={{ top: 'medium' }}
+        />
       </Box>
     );
   };
 
+  const renderSettings = () => {
+    if (searchText?.length > 0) {
+      const selectedItems = getSearchResults();
+      return (
+        <Accordion
+          activeIndex={activeAccordionIndex}
+          onActive={(i) => setActiveAccordionIndex(i[0])}
+        >
+          {selectedItems.map((item) => (
+            <AccordionPanel label={item.label} key={item.key}>
+              <Box pad={{ vertical: 'small' }}>
+                {renderSettingCategory(item)}
+              </Box>
+            </AccordionPanel>
+          ))}
+        </Accordion>
+      );
+    }
+    return renderSettingCategory(data[selectedIndex]);
+  };
+
   return (
-    <PrivatePageLayout title="Settings">
-      <Box flex={{ grow: 1 }} pad={{ vertical: 'medium' }}>
-        <Box>
-          <TextInput
-            placeholder="Search"
-            value={searchText}
-            onChange={(event) => setSearchText(event.target.value)}
-            icon={<Search color="light-4" />}
-            reverse
-          />
+    <Box flex={{ grow: 1 }} background="brand" height={{ min: '100vh' }}>
+      <Box flex={{ grow: 1 }}>
+        <Box direction="row" gap="large" pad="medium" align="center">
+          <Box onClick={() => history.push('/')}>
+            <Avatar size="large" round="0" src={LogoWhite} />
+          </Box>
+          <Box flex={{ grow: 1 }}>
+            <SearchBar value={searchText} onChange={setSearchText} />
+          </Box>
         </Box>
-        <Box direction="row" margin={{ vertical: 'medium' }}>
+        <Box direction="row" pad={{ horizontal: 'medium', bottom: 'medium' }}>
           <Box>
             {data.map<React.ReactNode>((menuItem, index) => (
-              <>
+              <React.Fragment key={menuItem.key}>
                 <Box
                   focusIndicator={false}
-                  key={menuItem.key}
                   onClick={() => {
                     setSelectedIndex(index);
                     setSearchTextValue('');
@@ -433,21 +407,22 @@ const Settings: FC = () => {
                   pad="small"
                   justify="between"
                   direction="row"
-                  width="medium"
+                  width="300px"
                 >
-                  <Text>{menuItem.label}</Text>
-                  <CaretRightFill color="brand" />
+                  <Text
+                    weight={index === selectedIndex ? 'bold' : 'normal'}
+                    color="white"
+                  >
+                    {menuItem.label}
+                  </Text>
+                  <CaretRightFill color="white" />
                 </Box>
-                <Divider />
-              </>
+                <Divider color="white" />
+              </React.Fragment>
             ))}
           </Box>
-          <Box flex="grow">
-            {getSelectedItems().map((item) => (
-              <Box key={item.key} margin={{ vertical: 'xsmall' }}>
-                {renderSettings(item)}
-              </Box>
-            ))}
+          <Box flex="grow" background="white" round="medium" pad="medium">
+            {renderSettings()}
           </Box>
         </Box>
       </Box>
@@ -541,7 +516,7 @@ const Settings: FC = () => {
           </Box>
         </Layer>
       )}
-    </PrivatePageLayout>
+    </Box>
   );
 };
 

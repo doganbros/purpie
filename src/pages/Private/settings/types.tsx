@@ -8,18 +8,12 @@ export interface SettingFormItem {
   component?: ReactNode;
 }
 
-export interface SettingItem {
-  key: string;
-  title: string;
-  items: SettingFormItem[];
-}
-
 export interface SettingsData {
   id: number;
   key: string;
   label: string;
   url: string;
-  items: SettingItem[];
+  items: SettingFormItem[];
   onSave: () => void;
 }
 

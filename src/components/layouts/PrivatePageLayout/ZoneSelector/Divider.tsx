@@ -1,11 +1,15 @@
 import React, { FC } from 'react';
 import { Box } from 'grommet';
 
-const Divider: FC = () => (
+interface DividerProps {
+  color?: string;
+}
+
+const Divider: FC<DividerProps> = ({ color = 'light-6' }) => (
   <Box
     fill="horizontal"
     height="1px"
-    background="light-6"
+    background={color}
     margin={{ vertical: 'xsmall' }}
   />
 );

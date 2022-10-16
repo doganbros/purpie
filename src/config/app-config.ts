@@ -1,5 +1,6 @@
 import { base, grommet, ThemeType } from 'grommet';
 import { deepMerge } from 'grommet/utils';
+import { CaretDownFill, CaretRightFill } from 'grommet-icons';
 
 export const theme: typeof grommet = deepMerge(base, {
   global: {
@@ -12,7 +13,7 @@ export const theme: typeof grommet = deepMerge(base, {
       'status-disabled': '#8F9BB3',
       'status-unknown': '#8F9BB3',
       'status-disabled-light': '#E4E9F2',
-      'status-unkown-light': '#E4E9F2',
+      'status-unknown-light': '#E4E9F2',
       'status-info': '#16A8DE',
       blue: '#0091FF',
       dark: '#202631',
@@ -95,6 +96,16 @@ export const theme: typeof grommet = deepMerge(base, {
         opacity: 'weak',
       },
       size: 'small',
+    },
+  },
+  accordion: {
+    icons: {
+      collapse: CaretDownFill,
+      expand: CaretRightFill,
+      color: 'brand',
+    },
+    border: {
+      color: 'status-disabled-light',
     },
   },
 } as ThemeType);
