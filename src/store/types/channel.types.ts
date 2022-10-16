@@ -108,6 +108,14 @@ export interface CreateChannelPayload {
   public: boolean;
 }
 
+export interface UpdateChannelPayload {
+  name: string;
+  description: string;
+  topic: string;
+  id: number;
+  public: boolean;
+}
+
 export type ChannelActionParams =
   | {
       type: typeof GET_USER_CHANNELS_SUCCESS;

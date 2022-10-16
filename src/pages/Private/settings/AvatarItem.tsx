@@ -2,11 +2,11 @@
 import React, { FC } from 'react';
 import { Avatar, Box, Button, Text } from 'grommet';
 import { Edit } from 'grommet-icons';
-import ExtendedBox from '../../../../components/utils/ExtendedBox';
+import ExtendedBox from '../../../components/utils/ExtendedBox';
 import {
   REACT_APP_API_VERSION,
   REACT_APP_SERVER_HOST,
-} from '../../../../config/http';
+} from '../../../config/http';
 
 export const AvatarItem: FC<{
   label: string;

@@ -10,81 +10,41 @@ import {
   FormField,
   Image,
   TextInput,
-  Grid,
   DropButton,
-  CheckBox,
 } from 'grommet';
-import { CaretRightFill, Hide, Search, View } from 'grommet-icons';
+import { CaretRightFill, Search } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import { useDebouncer } from '../../../hooks/useDebouncer';
 import ModifiedAccordionPanel from '../../../components/utils/ModifiedAccordionPanel';
 import Divider from '../../../components/layouts/PrivatePageLayout/ZoneSelector/Divider';
 import { AppState } from '../../../store/reducers/root.reducer';
-import { AvatarItem } from './Components/AvatarItem';
+import { AvatarItem } from './AvatarItem';
+import { changeProfilePicture } from '../../../store/actions/auth.action';
+import { changeChannelPhoto } from '../../../store/actions/channel.action';
+import { changeZonePhoto } from '../../../store/actions/zone.action';
 import {
-  changeProfileInfo,
-  changeProfilePicture,
-} from '../../../store/actions/auth.action';
-import SectionContainer from '../../../components/utils/SectionContainer';
-import {
-  changeChannelInformationAction,
-  changeChannelPermissionsAction,
-  changeChannelPhoto,
-} from '../../../store/actions/channel.action';
-import {
-  changeZoneInformationAction,
-  changeZonePermissionsAction,
-  changeZonePhoto,
-} from '../../../store/actions/zone.action';
-
-type SettingFormItem = {
-  key: string;
-  title: string;
-  description: string;
-  value?: string;
-  component?: any;
-};
-
-type SettingItem = {
-  key: string;
-  title: string;
-  items: SettingFormItem[];
-};
-
-type DataItemInterface = {
-  id: number;
-  key: string;
-  label: string;
-  url: string;
-  name?: string;
-  role?: string;
-  members?: string;
-  whichZone?: string;
-  value?: any;
-  saveButton?: any;
-  items: SettingItem[];
-};
-
-interface UserInfo {
-  userName: string;
-  fullName: string;
-}
+  ChannelSettingsData,
+  MediumType,
+  PersonalSettingsData,
+  UserInfo,
+  ZoneSettingsData,
+} from './types';
+import ChannelSettings from './ChannelSettings';
+import ZoneSettings from './ZoneSettings';
+import { UpdateChannelPayload } from '../../../store/types/channel.types';
+import PersonalSettings from './PersonalSettings';
+import { UpdateZonePayload } from '../../../store/types/zone.types';
 
 const Settings: FC = () => {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [searchText, setSearchText] = useState<string>('');
   const [searchTextValue, setSearchTextValue] = useState<string>('');
-  const [channelValue, setChannelValue] = useState<any>();
-  const [zoneValue, setZoneValue] = useState<any>();
+
   const [show, setShow] = useState(false);
   const [imgSrc, setImgSrc] = useState<any>(null);
-  const [reveal, setReveal] = useState<any>({
-    current: false,
-    new: false,
-    confirm: false,
-  });
-  const [medium, setMedium] = useState<{ name: string; id: number }>({
+
+  const [medium, setMedium] = useState<MediumType>({
     name: 'user',
     id: 1,
   });
@@ -96,750 +56,45 @@ const Settings: FC = () => {
     },
     auth: { user },
   } = useSelector((state: AppState) => state);
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    userName: user?.userName || '',
-    fullName: user?.fullName || '',
-  });
-  const dispatch = useDispatch();
 
-  const [channelName, setChannelName] = useState<any>({
+  const [channelPayload, setChannelPayload] = useState<UpdateChannelPayload>({
     name: userChannels.data[0].channel.name,
     description: userChannels.data[0].channel.description,
     topic: userChannels.data[0].channel.topic,
     id: userChannels.data[0].channel.id,
     public: userChannels.data[0].channel.public,
   });
-  const [zoneName, setZoneName] = useState<any>({
-    name: userZones?.[0].zone.name,
-    description: userZones?.[0].zone.description,
-    subdomain: userZones?.[0].zone.subdomain,
-    id: userZones?.[0].zone.id,
-    public: userZones?.[0].zone.public,
+
+  const [zonePayload, setZonePayload] = useState<UpdateZonePayload>({
+    name: userZones?.[0].zone.name || '',
+    description: userZones?.[0].zone.description || '',
+    subdomain: userZones?.[0].zone.subdomain || '',
+    id: userZones?.[0].zone.id || 0,
+    public: userZones?.[0].zone.public || false,
   });
 
-  const [channelPermissions, setChannelPermissions] = useState<any>({
-    canInvite: userChannels.data[0].channelRole.canInvite,
-    canDelete: userChannels.data[0].channelRole.canDelete,
-    canEdit: userChannels.data[0].channelRole.canEdit,
-    canManageRole: userChannels.data[0].channelRole.canManageRole,
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    userName: user?.userName || '',
+    fullName: user?.fullName || '',
   });
-  const [zonePermissions, setZonePermissions] = useState<any>({
-    canInvite: userZones?.[0].zoneRole.canInvite,
-    canDelete: userZones?.[0].zoneRole.canDelete,
-    canEdit: userZones?.[0].zoneRole.canEdit,
-    canManageRole: userZones?.[0].zoneRole.canManageRole,
-    canCreateChannel: userZones?.[0].zoneRole.canDelete,
-  });
+  const dispatch = useDispatch();
 
-  const data: DataItemInterface[] = [
-    {
-      id: 0,
-      key: 'personalSettings',
-      label: 'Personal Settings',
-      url: 'personalSettings',
-      name: user?.fullName,
-      role: 'Developer',
-      saveButton: (
-        <Button
-          onClick={() => {
-            dispatch(changeProfileInfo(userInfo));
-          }}
-          primary
-          label="Save"
-          style={{ borderRadius: '10px' }}
-          size="large"
-          fill="horizontal"
-          margin={{ top: 'medium' }}
-        />
-      ),
-      items: [
-        {
-          key: 'account',
-          title: 'Account',
-          items: [
-            {
-              key: 'username',
-              title: 'Username',
-              description: 'Change username',
-              value: user?.userName,
-              component: (
-                <Box
-                  direction="row"
-                  justify="between"
-                  align="center"
-                  border={{ size: 'xsmall', color: 'brand' }}
-                  round="small"
-                  gap="small"
-                  pad="xxsmall"
-                >
-                  <TextInput
-                    value={userInfo.userName}
-                    plain
-                    focusIndicator={false}
-                    onChange={(event) =>
-                      setUserInfo({
-                        ...userInfo,
-                        userName: event.target.value,
-                      })
-                    }
-                  />
-                </Box>
-              ),
-            },
-            {
-              key: 'fullName',
-              title: 'Full Name',
-              description: 'Change your name',
-              value: user?.fullName,
-              component: (
-                <Box
-                  direction="row"
-                  justify="between"
-                  align="center"
-                  border={{ size: 'xsmall', color: 'brand' }}
-                  round="small"
-                  gap="small"
-                  pad="xxsmall"
-                >
-                  <TextInput
-                    value={userInfo.fullName}
-                    plain
-                    focusIndicator={false}
-                    onChange={(event) =>
-                      setUserInfo({
-                        ...userInfo,
-                        fullName: event.target.value,
-                      })
-                    }
-                  />
-                </Box>
-              ),
-            },
-
-            {
-              key: 'email',
-              title: 'Email',
-              description: 'Your main email address',
-              value: user?.email,
-              component: (
-                <Box
-                  direction="row"
-                  justify="between"
-                  align="center"
-                  border={{ size: 'xsmall', color: 'brand' }}
-                  round="small"
-                  gap="small"
-                  pad="xxsmall"
-                >
-                  <TextInput value={user?.email} plain focusIndicator={false} />
-                </Box>
-              ),
-            },
-            {
-              key: 'pasword',
-              title: 'Password Change',
-              description: 'Change your password',
-              component: (
-                <Box gap="small">
-                  <Box
-                    direction="row"
-                    justify="between"
-                    align="center"
-                    gap="small"
-                    border={{ size: 'xsmall', color: 'brand' }}
-                    round="small"
-                    pad="xxsmall"
-                  >
-                    <TextInput
-                      plain
-                      type={reveal.current ? 'text' : 'password'}
-                      placeholder="Current Password"
-                      focusIndicator={false}
-                      onChange={() => {}}
-                    />
-                    <Button
-                      icon={
-                        reveal.current ? (
-                          <View size="medium" />
-                        ) : (
-                          <Hide size="medium" />
-                        )
-                      }
-                      onClick={() =>
-                        setReveal({ ...reveal, current: !reveal.current })
-                      }
-                    />
-                  </Box>
-                  <Box
-                    direction="row"
-                    justify="between"
-                    align="center"
-                    gap="small"
-                    border={{ size: 'xsmall', color: 'brand' }}
-                    round="small"
-                    pad="xxsmall"
-                  >
-                    <TextInput
-                      plain
-                      type={reveal.new ? 'text' : 'password'}
-                      placeholder="New Password"
-                      focusIndicator={false}
-                      onChange={() => {}}
-                    />
-                    <Button
-                      icon={
-                        reveal.new ? (
-                          <View size="medium" />
-                        ) : (
-                          <Hide size="medium" />
-                        )
-                      }
-                      onClick={() => setReveal({ ...reveal, new: !reveal.new })}
-                    />
-                  </Box>
-                  <Box
-                    direction="row"
-                    justify="between"
-                    align="center"
-                    gap="small"
-                    border={{ size: 'xsmall', color: 'brand' }}
-                    round="small"
-                    pad="xxsmall"
-                  >
-                    <TextInput
-                      plain
-                      type={reveal.confirm ? 'text' : 'password'}
-                      placeholder="Confirm New Password"
-                      focusIndicator={false}
-                      onChange={() => {}}
-                    />
-                    <Button
-                      icon={
-                        reveal.confirm ? (
-                          <View size="medium" />
-                        ) : (
-                          <Hide size="medium" />
-                        )
-                      }
-                      onClick={() =>
-                        setReveal({ ...reveal, confirm: !reveal.confirm })
-                      }
-                    />
-                  </Box>
-                </Box>
-              ),
-            },
-          ],
-        },
-        {
-          key: 'theme',
-          title: 'Theme settings',
-          items: [
-            {
-              key: 'themeName',
-              title: 'Theme Name',
-              description: 'Change Theme',
-              value: 'value',
-            },
-            {
-              key: 'themeColor',
-              title: 'Theme Color',
-              description: 'Change Theme Colors',
-              value: 'value',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: 1,
-      key: 'channel',
-      label: 'Channel Settings',
-      url: 'channel',
-      name: '',
-      members: '203',
-      whichZone: 'in Car Zone',
-      value: channelValue,
-      saveButton: (
-        <Button
-          primary
-          label="Save"
-          style={{ borderRadius: '10px' }}
-          size="large"
-          fill="horizontal"
-          margin={{ top: 'medium' }}
-          onClick={() => {
-            dispatch(
-              changeChannelInformationAction(channelName.id, channelName)
-            );
-            dispatch(
-              changeChannelPermissionsAction(channelName.id, channelPermissions)
-            );
-          }}
-        />
-      ),
-      items: [
-        {
-          key: 'channel1',
-          title: 'Channel',
-          items: [
-            {
-              key: 'name1',
-              title: 'Channel Name',
-              description: 'Change channel name',
-              value: 'value',
-              component: (
-                <Box
-                  direction="row"
-                  justify="between"
-                  align="center"
-                  gap="small"
-                  border={{ size: 'xsmall', color: 'brand' }}
-                  round="small"
-                  pad="xxsmall"
-                >
-                  <TextInput
-                    value={channelName.name}
-                    plain
-                    focusIndicator={false}
-                    onChange={(event) =>
-                      setChannelName({
-                        ...channelName,
-                        name: event.target.value,
-                      })
-                    }
-                  />
-                </Box>
-              ),
-            },
-            {
-              key: 'Topic',
-              title: 'Channel Topic',
-              description: 'Change channel topic',
-              value: 'value',
-              component: (
-                <Box
-                  direction="row"
-                  justify="between"
-                  align="center"
-                  gap="small"
-                  border={{ size: 'xsmall', color: 'brand' }}
-                  round="small"
-                  pad="xxsmall"
-                >
-                  <TextInput
-                    value={channelName.topic}
-                    plain
-                    focusIndicator={false}
-                    onChange={(event) =>
-                      setChannelName({
-                        ...channelName,
-                        topic: event.target.value,
-                      })
-                    }
-                  />
-                </Box>
-              ),
-            },
-            {
-              key: 'channelTitle',
-              title: 'Channel Description',
-              description: 'Change channel description',
-              value: 'value',
-              component: (
-                <Box
-                  direction="row"
-                  justify="between"
-                  align="center"
-                  gap="small"
-                  border={{ size: 'xsmall', color: 'brand' }}
-                  round="small"
-                  pad="xxsmall"
-                >
-                  <TextInput
-                    value={channelName.description}
-                    plain
-                    focusIndicator={false}
-                    onChange={(event) =>
-                      setChannelName({
-                        ...channelName,
-                        description: event.target.value,
-                      })
-                    }
-                  />
-                </Box>
-              ),
-            },
-
-            {
-              key: 'usersPermissions',
-              title: 'Permissions',
-              description: '',
-              value: 'value',
-              component: (
-                <SectionContainer label="User Permissions">
-                  <Grid
-                    rows={['xxsmall', 'xxsmall']}
-                    columns={['medium', 'medium']}
-                    gap="small"
-                  >
-                    <Box
-                      align="center"
-                      justify="between"
-                      direction="row"
-                      gap="xsmall"
-                    >
-                      <Text>Can edit</Text>
-                      <CheckBox
-                        checked={channelPermissions.canEdit}
-                        onChange={() =>
-                          setChannelPermissions({
-                            ...channelPermissions,
-                            canEdit: !channelPermissions.canEdit,
-                          })
-                        }
-                      />
-                    </Box>
-                    <Box
-                      align="center"
-                      justify="between"
-                      direction="row"
-                      gap="xsmall"
-                    >
-                      <Text>Can delete</Text>
-                      <CheckBox
-                        checked={channelPermissions.canDelete}
-                        onChange={() =>
-                          setChannelPermissions({
-                            ...channelPermissions,
-                            canDelete: !channelPermissions.canDelete,
-                          })
-                        }
-                      />
-                    </Box>
-                    <Box
-                      align="center"
-                      justify="between"
-                      direction="row"
-                      gap="xsmall"
-                    >
-                      <Text>Can invite</Text>
-                      <CheckBox
-                        checked={channelPermissions.canInvite}
-                        onChange={() =>
-                          setChannelPermissions({
-                            ...channelPermissions,
-                            canInvite: !channelPermissions.canInvite,
-                          })
-                        }
-                      />
-                    </Box>
-                    <Box
-                      align="center"
-                      justify="between"
-                      direction="row"
-                      gap="xsmall"
-                    >
-                      <Text>Can manage role</Text>
-                      <CheckBox
-                        checked={channelPermissions.canManageRole}
-                        onChange={() =>
-                          setChannelPermissions({
-                            ...channelPermissions,
-                            canManageRole: !channelPermissions.canManageRole,
-                          })
-                        }
-                      />
-                    </Box>
-                  </Grid>
-                </SectionContainer>
-              ),
-            },
-
-            {
-              key: 'channelPublic',
-              title: '',
-              description: '',
-              value: 'value',
-              component: (
-                <SectionContainer label="Channel Visibility">
-                  <Grid
-                    rows={['xxsmall']}
-                    columns={['medium', 'medium']}
-                    gap="small"
-                  >
-                    <Box direction="row" justify="between" gap="xsmall">
-                      <Text>Public</Text>
-                      <CheckBox
-                        checked={channelName.public}
-                        onChange={() =>
-                          setChannelName({
-                            ...channelName,
-                            public: !channelName.public,
-                          })
-                        }
-                      />
-                    </Box>
-                  </Grid>
-                </SectionContainer>
-              ),
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: 2,
-      key: 'zone',
-      label: 'Zone Settings',
-      url: 'zone',
-      name: 'Car Zone',
-      members: '23 Zone',
-      value: zoneValue,
-      saveButton: (
-        <Button
-          primary
-          style={{ borderRadius: '10px' }}
-          size="large"
-          fill="horizontal"
-          margin={{ top: 'medium' }}
-          label="Save"
-          onClick={() => {
-            dispatch(changeZoneInformationAction(zoneName.id, zoneName));
-            dispatch(changeZonePermissionsAction(zoneName.id, zonePermissions));
-          }}
-        />
-      ),
-      items: [
-        {
-          key: 'zone1',
-          title: 'Zone',
-          items: [
-            {
-              key: 'zoneName',
-              title: 'Zone Name',
-              description: 'Change zone name',
-              value: 'value',
-              component: (
-                <Box
-                  direction="row"
-                  justify="between"
-                  align="center"
-                  gap="small"
-                  border={{ size: 'xsmall', color: 'brand' }}
-                  round="small"
-                  pad="xxsmall"
-                >
-                  <TextInput
-                    value={zoneName.name}
-                    plain
-                    focusIndicator={false}
-                    onChange={(event) =>
-                      setZoneName({
-                        ...zoneName,
-                        name: event.target.value,
-                      })
-                    }
-                  />
-                </Box>
-              ),
-            },
-            {
-              key: 'zoneTitle',
-              title: 'Zone Subdomain',
-              description: 'Change zone subdomain',
-              value: 'value',
-              component: (
-                <Box
-                  direction="row"
-                  justify="between"
-                  align="center"
-                  gap="small"
-                  border={{ size: 'xsmall', color: 'brand' }}
-                  round="small"
-                  pad="xxsmall"
-                >
-                  <TextInput
-                    value={zoneName.subdomain}
-                    plain
-                    focusIndicator={false}
-                    onChange={(event) =>
-                      setZoneName({
-                        ...zoneName,
-                        subdomain: event.target.value,
-                      })
-                    }
-                  />
-                </Box>
-              ),
-            },
-            {
-              key: 'zoneDescription',
-              title: 'Zone Description',
-              description: 'Change zone description',
-              value: 'value',
-              component: (
-                <Box
-                  direction="row"
-                  justify="between"
-                  align="center"
-                  gap="small"
-                  border={{ size: 'xsmall', color: 'brand' }}
-                  round="small"
-                  pad="xxsmall"
-                >
-                  <TextInput
-                    value={zoneName.description}
-                    plain
-                    focusIndicator={false}
-                    onChange={(event) =>
-                      setZoneName({
-                        ...zoneName,
-                        description: event.target.value,
-                      })
-                    }
-                  />
-                </Box>
-              ),
-            },
-
-            {
-              key: 'zoneManageRole',
-              title: 'Permissions',
-              description: '',
-              value: 'value',
-              component: (
-                <SectionContainer label="User Permissions">
-                  <Grid
-                    rows={['xxsmall', 'xxsmall', 'xxsmall']}
-                    columns={['medium', 'medium']}
-                    gap="small"
-                  >
-                    <Box
-                      align="center"
-                      direction="row"
-                      gap="xsmall"
-                      justify="between"
-                    >
-                      <Text>Can manage roles</Text>
-                      <CheckBox
-                        checked={zonePermissions.canManageRole}
-                        onChange={() =>
-                          setZonePermissions({
-                            ...zonePermissions,
-                            canManageRole: !zonePermissions.canManageRole,
-                          })
-                        }
-                      />
-                    </Box>
-                    <Box
-                      align="center"
-                      justify="between"
-                      direction="row"
-                      gap="xsmall"
-                    >
-                      <Text>Can edit</Text>
-                      <CheckBox
-                        checked={zonePermissions.canEdit}
-                        onChange={() =>
-                          setZonePermissions({
-                            ...zonePermissions,
-                            canEdit: !zonePermissions.canEdit,
-                          })
-                        }
-                      />
-                    </Box>
-                    <Box
-                      align="center"
-                      justify="between"
-                      direction="row"
-                      gap="xsmall"
-                    >
-                      <Text>Can delete</Text>
-                      <CheckBox
-                        checked={zonePermissions.canDelete}
-                        onChange={() =>
-                          setZonePermissions({
-                            ...zonePermissions,
-                            canDelete: !zonePermissions.canDelete,
-                          })
-                        }
-                      />
-                    </Box>
-
-                    <Box
-                      align="center"
-                      justify="between"
-                      direction="row"
-                      gap="xsmall"
-                    >
-                      <Text>Can invite</Text>
-                      <CheckBox
-                        checked={zonePermissions.canInvite}
-                        onChange={() =>
-                          setZonePermissions({
-                            ...zonePermissions,
-                            canInvite: !zonePermissions.canInvite,
-                          })
-                        }
-                      />
-                    </Box>
-                    <Box
-                      align="center"
-                      justify="between"
-                      direction="row"
-                      gap="xsmall"
-                    >
-                      <Text>Can create channels</Text>
-                      <CheckBox
-                        checked={zonePermissions.canCreateChannel}
-                        onChange={() =>
-                          setZonePermissions({
-                            ...zonePermissions,
-                            canCreateChannel: !zonePermissions.canCreateChannel,
-                          })
-                        }
-                      />
-                    </Box>
-                  </Grid>
-                </SectionContainer>
-              ),
-            },
-            {
-              key: 'zonePublic',
-              title: '',
-              description: '',
-              value: 'value',
-              component: (
-                <SectionContainer label="Zone Visibility">
-                  <Grid
-                    rows={['xxsmall']}
-                    columns={['medium', 'medium']}
-                    gap="small"
-                  >
-                    <Box
-                      align="center"
-                      justify="between"
-                      direction="row"
-                      gap="xsmall"
-                    >
-                      <Text>Public</Text>
-                      <CheckBox
-                        checked={zoneName.public}
-                        onChange={() =>
-                          setZoneName({ ...zoneName, public: !zoneName.public })
-                        }
-                      />
-                    </Box>
-                  </Grid>
-                </SectionContainer>
-              ),
-            },
-          ],
-        },
-      ],
-    },
-  ];
+  const data: (
+    | ChannelSettingsData
+    | PersonalSettingsData
+    | ZoneSettingsData
+  )[] = [
+    PersonalSettings({ onSave: () => {}, userInfo, setUserInfo }),
+    ChannelSettings({
+      onSave: () => {},
+      channelPayload,
+      onChange: setChannelPayload,
+    }),
+    ZoneSettings({ onSave: () => {}, zonePayload, onChange: setZonePayload }),
+  ].filter(
+    (v): v is ChannelSettingsData | PersonalSettingsData | ZoneSettingsData =>
+      v !== null
+  );
   const debouncer = useDebouncer();
 
   const menuItems = data;
@@ -902,9 +157,16 @@ const Settings: FC = () => {
   const getSelectedItems = () => {
     if (searchText?.length > 0) {
       if (data.length > 0) {
-        const result: DataItemInterface[] = [];
+        const result: (
+          | ChannelSettingsData
+          | PersonalSettingsData
+          | ZoneSettingsData
+        )[] = [];
         for (let i = 0; i < data.length; i++) {
-          const menuItem: DataItemInterface = data[i];
+          const menuItem:
+            | ChannelSettingsData
+            | PersonalSettingsData
+            | ZoneSettingsData = data[i];
           const menuItemKey = menuItem.key.replace(/ /g, '').toLowerCase();
           const menuItemLabel = menuItem.label.replace(/ /g, '').toLowerCase();
           const search = searchText.replace(/ /g, '').toLowerCase();
@@ -971,7 +233,9 @@ const Settings: FC = () => {
     debouncer(() => setSearchText(searchTextValue), 300);
   }, [searchTextValue]);
 
-  const renderSettings = (selectedItem: DataItemInterface) => {
+  const renderSettings = (
+    selectedItem: ChannelSettingsData | PersonalSettingsData | ZoneSettingsData
+  ) => {
     return (
       <Box flex="grow" pad={{ horizontal: 'small' }}>
         {searchText.length === 0 && (
@@ -1020,12 +284,8 @@ const Settings: FC = () => {
                             >
                               <Button
                                 onClick={() => {
-                                  if (
-                                    selectedItem.label === 'Channel Settings'
-                                  ) {
-                                    setChannelValue(item);
-                                    setChannelName({
-                                      ...channelName,
+                                  if ('whichZone' in selectedItem) {
+                                    setChannelPayload({
                                       name: item.props.label,
                                       id: item.props.id,
                                       description: userChannels.data.filter(
@@ -1042,20 +302,20 @@ const Settings: FC = () => {
                                       )[0].channel.public,
                                     });
                                   } else {
-                                    setZoneValue(item);
-                                    setZoneName({
-                                      ...zoneName,
+                                    setZonePayload({
                                       name: item.props.label,
                                       id: item.props.id,
-                                      subdomain: userZones?.filter(
-                                        (zone) => zone.id === item.props.id
-                                      )[0].zone.subdomain,
-                                      public: userZones?.filter(
+                                      subdomain:
+                                        userZones?.filter(
+                                          (zone) => zone.id === item.props.id
+                                        )[0].zone.subdomain || '',
+                                      public: !!userZones?.filter(
                                         (zone) => zone.id === item.props.id
                                       )[0].zone.public,
-                                      description: userZones?.filter(
-                                        (zone) => zone.id === item.props.id
-                                      )[0].zone.description,
+                                      description:
+                                        userZones?.filter(
+                                          (zone) => zone.id === item.props.id
+                                        )[0].zone.description || '',
                                     });
                                   }
                                 }}
@@ -1094,7 +354,6 @@ const Settings: FC = () => {
                     );
 
                     return (
-                      // eslint-disable-next-line react/jsx-key
                       <Box
                         key={formItems.key}
                         direction="column"
@@ -1131,7 +390,15 @@ const Settings: FC = () => {
                     );
                   })}
                 </Box>
-                {selectedItem.saveButton && selectedItem.saveButton}
+                <Button
+                  onClick={selectedItem.onSave}
+                  primary
+                  label="Save"
+                  style={{ borderRadius: '10px' }}
+                  size="large"
+                  fill="horizontal"
+                  margin={{ top: 'medium' }}
+                />
               </ModifiedAccordionPanel>
             </Box>
           ))}

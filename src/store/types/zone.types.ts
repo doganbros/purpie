@@ -97,7 +97,13 @@ export interface CreateZonePayload {
   categoryId: number;
 }
 
-export type UpdateZonePayload = Partial<CreateZonePayload>;
+export interface UpdateZonePayload {
+  name: string;
+  description: string;
+  subdomain: string;
+  id: number;
+  public: boolean;
+}
 
 export type ZoneDetail = Required<ZoneListItem>;
 
