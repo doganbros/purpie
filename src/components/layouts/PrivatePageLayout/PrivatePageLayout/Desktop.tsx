@@ -1,5 +1,4 @@
 import { Avatar, Box, Button } from 'grommet';
-import { useHistory } from 'react-router-dom';
 import React, { FC } from 'react';
 import ExtendedBox from '../../../utils/ExtendedBox';
 import LogoWhite from '../../../../assets/octopus-logo/logo-white.svg';
@@ -7,6 +6,7 @@ import Sidebar from '../Sidebar';
 import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import GradientScroll from '../../../utils/GradientScroll';
 import Divider from '../../../utils/Divider';
+import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
 
 interface Props {
   topComponent?: React.ReactNode;
@@ -20,8 +20,6 @@ const Desktop: FC<Props> = ({
   rightComponentWithoutOverflow = false,
   topComponent,
 }) => {
-  const history = useHistory();
-
   const leftComponentWidth = 135;
   const topComponentHeight = 140;
   const rightComponentWidth = 400;
@@ -42,7 +40,7 @@ const Desktop: FC<Props> = ({
         <Box fill="horizontal">
           <Button
             margin={{ vertical: 'large' }}
-            onClick={() => history.push('/')}
+            onClick={() => navigateToSubdomain()}
           >
             <Box align="center">
               <Avatar
