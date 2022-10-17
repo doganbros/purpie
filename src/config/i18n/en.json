@@ -132,7 +132,7 @@
   },
   "MessageTextArea": {
     "writeTo": "Write to {{name}}",
-    "writeComment": "Write a  comment…"
+    "writeComment": "Write a message…"
   },
   "EditMessage": {
     "edit": "Edit Post"

@@ -1,5 +1,5 @@
 import { Box } from 'grommet';
-import React, { Dispatch, FC, SetStateAction } from 'react';
+import React, { FC } from 'react';
 import { Attachment, Emoji } from 'grommet-icons';
 import ExtendedBox from '../../utils/ExtendedBox';
 
@@ -11,7 +11,6 @@ interface Props {
   toggleEmojiPicker: () => void;
   toggleMentionPicker: () => void;
   sendButton: JSX.Element;
-  setAttachmentToolFocused: Dispatch<SetStateAction<boolean>>;
 }
 
 const MessageAttachments: FC<Props> = ({
@@ -19,7 +18,6 @@ const MessageAttachments: FC<Props> = ({
   toggleEmojiPicker,
   toggleMentionPicker,
   sendButton,
-  setAttachmentToolFocused,
 }) => {
   const inputFileRef = React.useRef<HTMLInputElement>(null);
 
@@ -39,9 +37,6 @@ const MessageAttachments: FC<Props> = ({
         ref={inputFileRef}
         onChangeCapture={onFileChangeCapture}
         style={{ display: 'none' }}
-        onAbortCapture={() => setAttachmentToolFocused(false)}
-        onFocusCapture={() => setAttachmentToolFocused(true)}
-        onBlurCapture={() => setAttachmentToolFocused(false)}
       />
       <ExtendedBox
         gap="small"
@@ -61,7 +56,6 @@ const MessageAttachments: FC<Props> = ({
             size="large"
             margin="0px"
             onClick={() => {
-              setAttachmentToolFocused(true);
               inputFileRef?.current?.click();
             }}
             icon={<Attachment size="15px" />}

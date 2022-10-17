@@ -1,5 +1,5 @@
 import { Box, Button } from 'grommet';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { ChatMessage } from '../../../store/types/chat.types';
@@ -51,7 +51,6 @@ const MessageBox: FC<Props> = ({
   const dispatch = useDispatch();
   const componentRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const timer: { current: NodeJS.Timeout | null } = useRef(null);
   const [text, setText] = useState<string>('');
   const [emojiPickerVisibility, setEmojiPickerVisibility] = useState(false);
   const [suggestionPickerVisibility, setSuggestionPickerVisibility] = useState(
@@ -59,32 +58,6 @@ const MessageBox: FC<Props> = ({
   );
   const [mentionPickerVisibility, setMentionPickerVisibility] = useState(false);
   const [attachments, setAttachments] = useState<Array<File>>([]);
-  const [inputFocused, setInputFocused] = useState<boolean>(false);
-  const [attachmentToolVisibility, setAttachmentToolVisibility] = useState(
-    false
-  );
-  const [attachmentToolFocused, setAttachmentToolFocused] = useState(false);
-  useEffect(() => {
-    return () => {
-      if (timer.current) clearTimeout(timer.current);
-    };
-  }, []);
-  useEffect(() => {
-    if (document.activeElement === inputRef.current) {
-      setAttachmentToolVisibility(true);
-      clearInterval(timer.current as NodeJS.Timeout);
-    } else if (inputFocused) {
-      setAttachmentToolVisibility(true);
-      clearInterval(timer.current as NodeJS.Timeout);
-    } else if (attachmentToolFocused) {
-      setAttachmentToolVisibility(true);
-      clearInterval(timer.current as NodeJS.Timeout);
-    } else if (text.length > 0) {
-      setAttachmentToolVisibility(true);
-    } else {
-      timer.current = setTimeout(() => setAttachmentToolVisibility(false), 350);
-    }
-  }, [document.activeElement, inputRef]);
 
   const onSend = (message: string) => {
     onSubmit({ message }, attachments);
@@ -124,14 +97,12 @@ const MessageBox: FC<Props> = ({
     } else {
       dispatch(searchProfileAction({ name: '', userContacts: false }));
     }
-    setAttachmentToolFocused(newValue);
     setEmojiPickerVisibility(newValue);
   };
 
   const toggleMentionPicker = () => {
     const newValue = !mentionPickerVisibility;
     if (!newValue) inputRef.current?.focus();
-    setAttachmentToolFocused(newValue);
     setMentionPickerVisibility(newValue);
   };
 
@@ -179,7 +150,6 @@ const MessageBox: FC<Props> = ({
           textAreaRef={inputRef}
           componentRef={componentRef}
           mentionPickerVisibility={mentionPickerVisibility}
-          setInputFocused={setInputFocused}
         />
         {messageErrorDraft ? (
           <Button
@@ -189,28 +159,26 @@ const MessageBox: FC<Props> = ({
             }}
           />
         ) : null}
-        {attachmentToolVisibility && (
-          <MessageAttachments
-            onFilesSelected={onFileSelected}
-            toggleEmojiPicker={toggleEmojiPicker}
-            toggleMentionPicker={toggleMentionPicker}
-            setAttachmentToolFocused={setAttachmentToolFocused}
-            sendButton={
-              <SendButtonContainer margin="small">
-                {(text.length || !!attachments.length) && (
-                  <SendButton
-                    size="small"
-                    primary
-                    label={t('common.send')}
-                    onClick={() => {
-                      onSend(text);
-                    }}
-                  />
-                )}
-              </SendButtonContainer>
-            }
-          />
-        )}
+
+        <MessageAttachments
+          onFilesSelected={onFileSelected}
+          toggleEmojiPicker={toggleEmojiPicker}
+          toggleMentionPicker={toggleMentionPicker}
+          sendButton={
+            <SendButtonContainer margin="small">
+              {(text.length || !!attachments.length) && (
+                <SendButton
+                  size="small"
+                  primary
+                  label={t('common.send')}
+                  onClick={() => {
+                    onSend(text);
+                  }}
+                />
+              )}
+            </SendButtonContainer>
+          }
+        />
       </Box>
     </Box>
   );
