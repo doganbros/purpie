@@ -2,7 +2,7 @@ import { Avatar, Box, Button, Header, Layer } from 'grommet';
 import { Close, Menu, Previous } from 'grommet-icons';
 import React, { FC, useState } from 'react';
 import Sidebar from '../Sidebar';
-import Logo from '../../../../assets/octopus-logo/logo-white.svg';
+import Logo from '../../../../assets/purpie-logo/logo-white.svg';
 import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import ExtendedBox from '../../../utils/ExtendedBox';
 import Divider from '../../../utils/Divider';
