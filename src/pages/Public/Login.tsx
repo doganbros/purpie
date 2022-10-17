@@ -3,6 +3,7 @@ import { FacebookOption, Google } from 'grommet-icons';
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { AnchorLink } from '../../components/utils/AnchorLink';
 import { validators } from '../../helpers/validators';
 import { FormSubmitEvent } from '../../models/form-submit-event';
@@ -21,6 +22,7 @@ import AuthFormButton from '../../components/auth/AuthFormButton';
 const Login: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { t } = useTranslation();
 
   const {
     login: { loading },
@@ -34,9 +36,9 @@ const Login: FC = () => {
 
   return (
     <AuthLayout
-      title="Login"
-      formTitle="Welcome Back!"
-      formSubTitle="Sign In to continue."
+      title={t('Login.title')}
+      formTitle={t('Login.formTitle')}
+      formSubTitle={t('Login.formSubTitle')}
       background={
         <>
           <Image
@@ -56,8 +58,8 @@ const Login: FC = () => {
         </>
       }
       callToAction={{
-        title: 'Don’t have an account?',
-        body: 'CREATE AN ACCOUNT',
+        title: t('Login.dontHaveAccount'),
+        body: t('Login.createAccount'),
         onClick: () => history.push('/register'),
       }}
     >
@@ -66,18 +68,18 @@ const Login: FC = () => {
           <FormField
             name="emailOrUserName"
             htmlFor="emailOrUserNameInput"
-            label="EMAIL / USERNAME"
-            validate={[validators.required('Email / Username')]}
+            label={t('Login.emailOrUserName')}
+            validate={[validators.required(t('Login.emailOrUserName'))]}
           >
             <TextInput id="emailOrUserNameInput" name="emailOrUserName" />
           </FormField>
           <FormField
             name="password"
             htmlFor="passwordInput"
-            label="PASSWORD"
+            label={t('common.password')}
             validate={[
-              validators.required('Password'),
-              validators.minLength('Password', 6),
+              validators.required(t('common.password')),
+              validators.minLength(t('common.password'), 6),
             ]}
           >
             <TextInput id="passwordInput" name="password" type="password" />
@@ -91,7 +93,7 @@ const Login: FC = () => {
             <AnchorLink
               weight="normal"
               size="small"
-              label="Forgot Password?"
+              label={t('Login.forgotPassword')}
               to="/forgot-password"
             />
           </Box>
@@ -100,7 +102,7 @@ const Login: FC = () => {
             margin={{ top: 'medium' }}
             disabled={loading}
             type="submit"
-            label="SIGN IN"
+            label={t('common.signIn')}
           />
 
           <Box
@@ -115,7 +117,7 @@ const Login: FC = () => {
             </Box>
             <Box basis="100%" direction="row" justify="center">
               <Text margin={{ horizontal: 'small' }} size="small">
-                Or Sign in With
+                {t('Login.orSignInWith')}
               </Text>
             </Box>
             <Box basis="80%">

@@ -1,6 +1,7 @@
 import { Box, Button, Text } from 'grommet';
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { joinZoneAction } from '../../../store/actions/zone.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { ZoneListItem } from '../../../store/types/zone.types';
@@ -12,6 +13,7 @@ interface ZoneSearchItemProps {
 
 const ZoneSearchItem: FC<ZoneSearchItemProps> = ({ zone }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     zone: { getUserZones },
   } = useSelector((state: AppState) => state);
@@ -36,7 +38,7 @@ const ZoneSearchItem: FC<ZoneSearchItemProps> = ({ zone }) => {
         disabled={isJoined(zone.id)}
         onClick={() => dispatch(joinZoneAction(zone.id))}
         primary
-        label={isJoined(zone.id) ? 'Joined' : 'Join'}
+        label={t(isJoined(zone.id) ? 'common.joined' : 'common.join')}
       />
     </Box>
   );

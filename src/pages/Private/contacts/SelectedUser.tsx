@@ -1,6 +1,7 @@
 import { Box, Button, Spinner } from 'grommet';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 import { removeContactAction } from '../../../store/actions/user.action';
 import { User } from '../../../store/types/auth.types';
@@ -13,6 +14,7 @@ interface SelectedUserProps {
 
 const SelectedUser: FC<SelectedUserProps> = ({ user, contactId }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
 
   return !user ? (
@@ -36,7 +38,7 @@ const SelectedUser: FC<SelectedUserProps> = ({ user, contactId }) => {
               color="status-error"
               alignSelf="center"
               margin={{ vertical: 'medium' }}
-              label="Remove from Contacts"
+              label={t('SelectedUser.removeContact')}
             />
             {showRemoveDialog && (
               <ConfirmDialog
@@ -47,8 +49,10 @@ const SelectedUser: FC<SelectedUserProps> = ({ user, contactId }) => {
                   setShowRemoveDialog(false);
                   dispatch(removeContactAction(contactId));
                 }}
-                confirmButtonText="Remove"
-                message={`Are you sure you want to remove ${user.fullName} from you contacts?`}
+                confirmButtonText={t('common.remove')}
+                message={t('SelectedUser.removeConfirmMsg', {
+                  fullName: user.fullName,
+                })}
               />
             )}
           </>

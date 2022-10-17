@@ -1,0 +1,382 @@
+{
+  "common": {
+    "signIn": "SIGN IN",
+    "password": "PASSWORD",
+    "confirmPassword": "CONFIRM PASSWORD",
+    "passwords": "Passwords",
+    "email": "EMAIL",
+    "fullName": "FULL NAME",
+    "userName": "USERNAME",
+    "invalidUserName": "Invalid Username",
+    "go": "Go!",
+    "continue": "CONTINUE",
+    "loading": "Loading...",
+    "seeMore": "See more",
+    "seeLess": "See less",
+    "seeAll": "See all",
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "reply": "Reply",
+    "following": "Following",
+    "follow": "Follow",
+    "join": "Join",
+    "ignore": "Ignore",
+    "joined": "Joined",
+    "ignored": "Ignored",
+    "search": "Search",
+    "zone": "Zone",
+    "channel": "Channel",
+    "post": "Post",
+    "profile": "Profile",
+    "public": "Public",
+    "description": "Description",
+    "category": "Category",
+    "choose": "Choose",
+    "back": "Back",
+    "contacts": "Contacts",
+    "remove": "Remove",
+    "nothingFound": "Nothing Found",
+    "searchResult": "{{title}} Results",
+    "searchFilter": "Search Filter",
+    "streaming": "Streaming",
+    "share": "Share",
+    "saved": "Saved",
+    "save": "Save",
+    "exclusiveContacts": "Exclusive to contacts",
+    "close": "CLOSE",
+    "send": "Send"
+  },
+  "Login": {
+    "title": "Login",
+    "formTitle": "Welcome Back!",
+    "formSubTitle": "Sign In to continue.",
+    "dontHaveAccount": "Don’t have an account?",
+    "createAccount": "CREATE AN ACCOUNT",
+    "emailOrUserName": "EMAIL / USERNAME",
+    "forgotPassword": "Forgot Password?",
+    "orSignInWith": "Or Sign in With"
+  },
+  "Register": {
+    "title": "Register",
+    "formTitle": "Create an Account",
+    "formSubTitle": "Sign up to continue",
+    "alreadyHaveAccount": "Already have an account?",
+    "signUp": "SIGN UP"
+  },
+  "ForgotPassword": {
+    "title": "Forgot Password",
+    "formTitle": "Password Recovery",
+    "formSubTitle": "Enter email to receive your password.",
+    "rememberPassword": "Remember Password",
+    "send": "SEND"
+  },
+  "InitializeUser": {
+    "title": "Initialize User - Octopus",
+    "formTitle": "Welcome to Purpie!",
+    "formSubTitle": "Sign up with an account to continue",
+    "createAccount": "CREATE ACCOUNT"
+  },
+  "ResetPassword": {
+    "title": "Reset Password",
+    "formTitle": "Change Password",
+    "formSubTitle": "Enter a new password for your account."
+  },
+  "VerifyUserEmail": {
+    "title": "Email Verification",
+    "formSubTitle": "Please create a username to continue email verification process.",
+    "userNameNotAvailable": "Username \"{{userName}}\" is not available",
+    "userNameAvailable": "Username \"{{userName}}\" is available"
+  },
+  "VerifyUserEmailInfo": {
+    "title": "Email Confirmation",
+    "formSubTitle": "<0>Verify your email to finish signing up for Octopus.</0><1></1><2>Please check your email box.</2>",
+    "resendLink": "Resend mail verification link?",
+    "resend": "RESEND",
+    "goToSignIn": "GO TO SIGN IN"
+  },
+  "Timeline": {
+    "all": "All",
+    "live": "Live",
+    "newest": "Newest",
+    "popular": "Popular",
+    "title": "Timeline"
+  },
+  "ChannelList": {
+    "noFollowedChannel": "No channels are followed {{zone}}",
+    "onThisZone": "on this zone"
+  },
+  "ChannelsToFollow": {
+    "title": "Channels to follow",
+    "noChannelsFound": "No channels found"
+  },
+  "EmptyFeedContent": {
+    "noContent": "NO CONTENT AVAILABLE",
+    "noContentDescription": "Start registering new zones and following new channels. Please create your first video content.",
+    "addContent": "ADD CONTENT"
+  },
+  "Invitations": {
+    "noInvitations": "No invitations found",
+    "title": "Invitations",
+    "zoneInvitationMessage": "{{fullName}} invited you to {{zone}} zone.",
+    "channelInvitationMessage": "{{fullName}} invited you to {{channel}} channel.",
+    "contactInvitationMessage": "{{fullName}} wants to invite you to as a contact."
+  },
+  "ZonesToJoin": {
+    "title": "Zones to join",
+    "noZonesFound": "No zones found"
+  },
+  "MessageBox": {
+    "sendAgain": "Send Message Again"
+  },
+  "MessageTextArea": {
+    "writeTo": "Write to {{name}}",
+    "writeComment": "Write a  comment…"
+  },
+  "EditMessage": {
+    "edit": "Edit Post"
+  },
+  "ReplyPost": {
+    "reply": "Reply Message",
+    "replyTo": "Reply{{toName}}..."
+  },
+  "Chat": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "deleteConfirm": "Are you sure you want to delete this message?",
+    "typing": "{{name}} is typing..."
+  },
+  "MessageItem": {
+    "you": "You",
+    "repliedTo": "Replied to:",
+    "messageDeleted": "This message has been deleted"
+  },
+  "ZoneSelector": {
+    "createChannel": "Create Channel",
+    "createZone": "Create Zone",
+    "settings": "Settings",
+    "signOut": "Sign Out"
+  },
+  "Sidebar": {
+    "home": "Home",
+    "messages": "Messages",
+    "contacts": "Contacts",
+    "saved": "Saved Posts"
+  },
+  "ZoneListItem": {
+    "channelCount": "{{count}} channels",
+    "memberCount": "{{count}} members"
+  },
+  "AppToast": {
+    "error": "Error!",
+    "info": "Info!",
+    "warn": "Warning!",
+    "ok": "Successful!"
+  },
+  "TimeInput": {
+    "pickTime": "Pick Time"
+  },
+  "AddContent": {
+    "title": "Take Your Pick",
+    "meet": "Meet!",
+    "meetDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
+    "stream": "Stream!",
+    "streamDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
+    "shareVideo": "Share a Video",
+    "shareVideoDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
+    "planMeeting": "Plan a Meeting",
+    "planMeetingDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt."
+  },
+  "validators": {
+    "requiredMsg": "{{field}} is required",
+    "urlMsg": "Please enter a valid url",
+    "emailMsg": "Invalid email",
+    "notEmptyStringMsg": "This field can't be empty",
+    "numericMsg": "Please enter a numeric value",
+    "alphaMsg": "Please enter only alphabets",
+    "regexMsg": "Value is invalid",
+    "alphaNumericMsg": "Please enter only alphabets and numbers",
+    "intMsg": "Please enter only numbers",
+    "floatMsg": "Please enter only decimal numbers",
+    "wordsMsg": "Please enter a collection of words",
+    "lengthDefaultMsg": "must be {{length}} characters long",
+    "minLengthDefaultMsg": "{{field}} can be at least {{length}} characters long",
+    "maxLengthDefaultMsg": "Please enter up to {{length}} characters long",
+    "equalsDefaultMsg": "This field must be equal to {{value}}",
+    "equalsFieldDefaultMsg": "{{fieldLabel}} do not match",
+    "trueDefaultMsg": "This field must be True",
+    "falseDefaultMsg": "This field must be False",
+    "biggerDefaultMsg": "must be bigger than {{value}}",
+    "biggerOrEqualDefaultMsg": "This field must be bigger or equal to {{value}}",
+    "smallerDefaultMsg": "This field must be smaller than {{value}}",
+    "smallerOrEqualDefaultMsg": "This field must be smaller or equal to {{value}}",
+    "startsWithDefaultMsg": "This field must start with {{value}}"
+  },
+  "CreateChannel": {
+    "title": "Create Channel",
+    "channelName": "Channel name",
+    "channelDescription": "Channel Description"
+  },
+  "CreateVideo": {
+    "title": "Share a Video",
+    "videoTitle": "Video Title",
+    "selectChannel": "Select a channel",
+    "uploading": "Uploading {{progress}}%",
+    "uploadCompleted": "Upload completed! Close"
+  },
+  "CreateZone": {
+    "title": "Create Zone",
+    "zoneName": "Zone name",
+    "zoneAddress": "Zone address",
+    "zoneAddressTooLong": "Zone address is too long",
+    "notValidZoneAddress": "Not a valid zone address",
+    "zoneDescription": "Zone Description"
+  },
+  "MeetingConfiguration": {
+    "toolbarSettings": "Toolbar Settings",
+    "advanced": "Advanced"
+  },
+  "meetingConfig": {
+    "microphone": "Microphone",
+    "camera": "Camera",
+    "closedcaptions": "Closed captions",
+    "desktop": "Desktop",
+    "embedmeeting": "Embed meeting",
+    "fullscreen": "Fullscreen",
+    "fodeviceselection": "Device selection",
+    "hangup": "Hangup",
+    "profile": "Profile",
+    "chat": "Chat",
+    "recording": "Recording",
+    "livestreaming": "Live streaming",
+    "etherpad": "Etherpad",
+    "sharedvideo": "Shared video",
+    "shareaudio": "Share audio",
+    "settings": "Settings",
+    "raisehand": "Raise hand",
+    "videoquality": "Video quality",
+    "filmstrip": "Filmstrip",
+    "feedback": "Feedback",
+    "stats": "Stats",
+    "shortcuts": "Shotcuts",
+    "tileview": "Tileview",
+    "select-background": "Select background",
+    "download": "Download",
+    "help": "Help",
+    "mute-everyone": "Mute everyone",
+    "mute-video-everyone": "Mute video everyone",
+    "security": "Security"
+  },
+  "MeetingDetails": {
+    "meetingName": "Meeting Name",
+    "meetingDescription": "Meeting Description",
+    "planForLater": "Plan For Later",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "setDate": "Set Date",
+    "timeZone": "Time Zone"
+  },
+  "MeetingInvitation": {
+    "placeholder": "Type a name, username or email"
+  },
+  "MeetingPrivacy": {
+    "joining": "Joining",
+    "publicMeeting": "Public Meeting",
+    "openContacts": "Open To Contacts",
+    "selectChannel": "Select Channel",
+    "streamingRecording": "Streaming &amp; Recording",
+    "liveStreamOrMeeting": "Live stream the meeting?",
+    "enableRecording": "Enable Recording?"
+  },
+  "PlanMeeting": {
+    "details": "Meeting Details",
+    "invite": "Invite",
+    "privacy": "Privacy",
+    "more": "More",
+    "title": "Plan A Meeting",
+    "saveConfiguration": "Save meeting configuration?",
+    "createMeeting": "Creating Meeting..."
+  },
+  "ContactListItem": {
+    "viewProfile": "View full profile"
+  },
+  "SelectedUser": {
+    "removeContact": "Remove from Contacts",
+    "removeConfirmMsg": "Are you sure you want to remove {{fullName}} from you contacts?"
+  },
+  "Saved": {
+    "title": "Saved Posts",
+    "emptyMsg": "Your saved posts will appear here",
+    "removeConfirmMsg": "Are you sure you want to remove this post from your saved list?"
+  },
+  "ProfileSearch": {
+    "contactsOnly": "Contacts only"
+  },
+  "User": {
+    "noPinnedPost": "No pinned post found",
+    "sharedLists": "Shared Lists",
+    "post": "post",
+    "posts": "posts"
+  },
+  "UserFriends": {
+    "title": "Friends",
+    "noFriendsFound": "No friends found"
+  },
+  "UserPublicChannels": {
+    "title": "Channels Subscribed To",
+    "noChannelsFound": "No channels found"
+  },
+  "UserPublicZones": {
+    "title": "Zones Joined To",
+    "noZonesFound": "No zones found"
+  },
+  "CommentBase": {
+    "editComment": "Edit Comment",
+    "writePublicReply": "Write a public reply",
+    "deleteCommentConfirmMsg": "Are you sure you want to delete the comment?"
+  },
+  "CommentList": {
+    "comments": "Comments",
+    "noCommentMsg": "No comments yet. Be the first one to comment!",
+    "writeComment": "Write a comment"
+  },
+  "Replies": {
+    "hideReplies": "Hide replies",
+    "reply": "reply",
+    "replies": "replies",
+    "showReplies": "Show {{count}} {{reply}}",
+    "loadMore": "Load more"
+  },
+  "RecommendedVideos": {
+    "title": "Recommended Videos"
+  },
+  "Video": {
+    "followChannel": "Follow This Channel",
+    "joinZone": "Join This Zone",
+    "report": "Report",
+    "userWatching": "{{count}} user is watching",
+    "usersWatching": "{{count}} users are watching",
+    "viewCount": "{{count}} view",
+    "viewsCount": "{{count}} views",
+    "dislike": "Dislike",
+    "removePostConfirmMsg": "Are you sure you want to remove this post?"
+  },
+  "VideoSettings": {
+    "videoName": "Video Name",
+    "videoNamePlaceholder": "Write a video name",
+    "videoDescription": "Video Description",
+    "videoDescriptionPlaceholder": "Write a video description",
+    "deleteVideo": "Delete the Video"
+  },
+  "ComingSoon": {
+    "title": "Coming Soon",
+    "description": "Stay tuned. We are launching soon. We are working hard. We are almost ready to launch."
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "It looks like you may have taken a wrong turn. Do not worry... it happens to the best of us.",
+    "zones": "Zones",
+    "login": "Login"
+  }
+}

@@ -1,6 +1,7 @@
 import { Box, Button, Text, Image } from 'grommet';
 import React, { FC } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import EmptyTimeLineImage from '../../../assets/timeline/empty-timeline.svg';
 
 const EmptyTitle = styled(Text)`
@@ -19,8 +20,8 @@ const EmptyText = styled(Text)`
 
 const ButtonText = styled(Text)`
   font-weight: 700;
-  font-size: 14;
-  text-align: 'center';
+  font-size: 14px;
+  text-align: center;
 `;
 
 interface Props {
@@ -28,6 +29,8 @@ interface Props {
 }
 
 const EmptyFeedContent: FC<Props> = ({ onAddContent }) => {
+  const { t } = useTranslation();
+
   return (
     <Box>
       <Box margin={{ top: 'xlarge' }} alignSelf="center">
@@ -35,11 +38,10 @@ const EmptyFeedContent: FC<Props> = ({ onAddContent }) => {
       </Box>
       <Box margin={{ top: 'large' }}>
         <EmptyTitle textAlign="center" margin="xxsmall" color="#202631">
-          NO CONTENT AVAILABLE
+          {t('EmptyFeedContent.noContent')}
         </EmptyTitle>
         <EmptyText textAlign="center">
-          Start registering new zones and following new channels. Please create
-          your first video content.
+          {t('EmptyFeedContent.noContentDescription')}
         </EmptyText>
       </Box>
       <Box margin="medium" width="fit-content" alignSelf="center">
@@ -50,7 +52,9 @@ const EmptyFeedContent: FC<Props> = ({ onAddContent }) => {
           onClick={onAddContent}
         >
           <Box pad="small">
-            <ButtonText textAlign="center">ADD CONTENT</ButtonText>
+            <ButtonText textAlign="center">
+              {t('EmptyFeedContent.addContent')}
+            </ButtonText>
           </Box>
         </Button>
       </Box>
