@@ -6,6 +6,7 @@ import Logo from '../../../../assets/octopus-logo/logo-white.svg';
 import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import ExtendedBox from '../../../utils/ExtendedBox';
 import Divider from '../../../utils/Divider';
+import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
 
 interface Props {
   topComponent?: React.ReactNode;
@@ -32,9 +33,7 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
             icon={<Menu size="medium" color="white" />}
           />
           <Button
-            onClick={() =>
-              window.location.replace(process.env.REACT_APP_CLIENT_HOST || '/')
-            }
+            onClick={() => navigateToSubdomain()}
             icon={
               <Avatar
                 alignSelf="center"

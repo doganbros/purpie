@@ -6,6 +6,7 @@ import Sidebar from '../Sidebar';
 import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import GradientScroll from '../../../utils/GradientScroll';
 import Divider from '../../../utils/Divider';
+import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
 
 interface Props {
   topComponent?: React.ReactNode;
@@ -39,9 +40,7 @@ const Desktop: FC<Props> = ({
         <Box fill="horizontal">
           <Button
             margin={{ vertical: 'large' }}
-            onClick={() =>
-              window.location.replace(process.env.REACT_APP_CLIENT_HOST || '/')
-            }
+            onClick={() => navigateToSubdomain()}
           >
             <Box align="center">
               <Avatar
