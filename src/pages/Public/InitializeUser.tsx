@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Box, Form, FormField, Image, Main, Text, TextInput } from 'grommet';
 import { useTranslation } from 'react-i18next';
 import { AppState } from '../../store/reducers/root.reducer';
-import LogoHorizontalColor from '../../assets/octopus-logo/logo-horizontal-color.svg';
+import LogoHorizontalColor from '../../assets/purpie-logo/logo-horizontal-color.svg';
 import { validators } from '../../helpers/validators';
 import { useTitle } from '../../hooks/useTitle';
 import { useResponsive } from '../../hooks/useResponsive';
@@ -55,7 +55,7 @@ const InitializeUser: FC = () => {
         <Box gap="medium">
           <Box direction="row" align="center" gap="small">
             <Image
-              width={size === 'small' ? '140px' : '180px'}
+              width={size === 'small' ? '112px' : '132px'}
               src={LogoHorizontalColor}
             />
           </Box>

@@ -2,7 +2,7 @@ import { Avatar, Box, Button } from 'grommet';
 import { useHistory } from 'react-router-dom';
 import React, { FC } from 'react';
 import ExtendedBox from '../../../utils/ExtendedBox';
-import LogoWhite from '../../../../assets/octopus-logo/logo-white.svg';
+import LogoWhite from '../../../../assets/purpie-logo/logo-white.svg';
 import Sidebar from '../Sidebar';
 import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import GradientScroll from '../../../utils/GradientScroll';
