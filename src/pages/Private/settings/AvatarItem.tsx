@@ -1,48 +1,44 @@
-/* eslint-disable no-unused-vars */
 import React, { FC } from 'react';
 import { Avatar, Box, Button, Text } from 'grommet';
 import { Edit } from 'grommet-icons';
 import ExtendedBox from '../../../components/utils/ExtendedBox';
-import {
-  REACT_APP_API_VERSION,
-  REACT_APP_SERVER_HOST,
-} from '../../../config/http';
 
-export const AvatarItem: FC<{
-  label: string;
-  menuItems?: any;
-  selectedIndex: number;
-  changeProfilePic?: any;
-  isEditable?: boolean;
-  id?: number;
-  medium: string;
-  photoName?: string;
-}> = ({
-  label,
-  menuItems,
-  selectedIndex,
-  changeProfilePic,
-  isEditable,
-  medium,
-  photoName,
+interface AvatarItemProps {
+  title: string;
+  subtitle?: string;
+  src: string;
+  onClickEdit?: () => void;
+  disabled?: boolean;
+}
+
+export const AvatarItem: FC<AvatarItemProps> = ({
+  title,
+  subtitle,
+  src,
+  onClickEdit,
+  disabled,
 }) => {
   return (
-    <Box direction="row">
+    <Box direction="row" align="center" gap="small">
       <ExtendedBox align="end" justify="center" position="relative">
-        {isEditable && (
+        {!disabled && (
           <ExtendedBox
-            background="#6FFFB0"
-            width="20px"
-            height="20px"
+            background="accent-1"
+            width="25px"
+            height="25px"
             round="full"
             justify="center"
             align="center"
-            left="0"
-            position="relative"
-            top="30px"
+            right="0"
+            position="absolute"
+            top="0px"
           >
             <Button
-              onClick={changeProfilePic ? () => changeProfilePic() : () => {}}
+              onClick={() => {
+                if (onClickEdit) {
+                  onClickEdit();
+                }
+              }}
             >
               <Edit size="small" />
             </Button>
@@ -50,34 +46,17 @@ export const AvatarItem: FC<{
         )}
         <Box
           round="full"
-          width="80px"
-          height="80px"
           border={{ color: '#F2F2F2', size: 'medium' }}
           wrap
           justify="center"
           pad="5px"
         >
-          <Avatar
-            alignSelf="center"
-            size="large"
-            round="full"
-            src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/${medium}/display-photo/${photoName}`}
-          />
+          <Avatar alignSelf="center" size="60px" round="full" src={src} />
         </Box>
       </ExtendedBox>
-      <Box justify="center">
-        <Box>
-          <Text>{label}</Text>
-        </Box>
-
-        <Text color="#8F9BB3">
-          {menuItems &&
-            (menuItems[selectedIndex]?.role ||
-              `${menuItems[selectedIndex]?.members} Members`)}
-        </Text>
-        <Text color="#8F9BB3">
-          {(menuItems && menuItems[selectedIndex]?.whichZone) || ''}
-        </Text>
+      <Box>
+        <Text>{title}</Text>
+        {subtitle && <Text color="#8F9BB3">{subtitle}</Text>}
       </Box>
     </Box>
   );

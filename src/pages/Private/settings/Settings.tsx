@@ -5,7 +5,6 @@ import {
   Avatar,
   Box,
   Button,
-  DropButton,
   FileInput,
   Form,
   FormField,
@@ -14,7 +13,7 @@ import {
   Text,
 } from 'grommet';
 import { CaretRightFill } from 'grommet-icons';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import LogoWhite from '../../../assets/octopus-logo/logo-white.svg';
 import Divider from '../../../components/layouts/PrivatePageLayout/ZoneSelector/Divider';
@@ -22,22 +21,11 @@ import { useDebouncer } from '../../../hooks/useDebouncer';
 import { changeProfilePicture } from '../../../store/actions/auth.action';
 import { changeChannelPhoto } from '../../../store/actions/channel.action';
 import { changeZonePhoto } from '../../../store/actions/zone.action';
-import { AppState } from '../../../store/reducers/root.reducer';
-import { UpdateChannelPayload } from '../../../store/types/channel.types';
-import { UpdateZonePayload } from '../../../store/types/zone.types';
-import { AvatarItem } from './AvatarItem';
 import ChannelSettings from './ChannelSettings';
 import PersonalSettings from './PersonalSettings';
-import {
-  ChannelSettingsData,
-  MediumType,
-  PersonalSettingsData,
-  SettingFormItem,
-  UserInfo,
-  ZoneSettingsData,
-} from './types';
-import ZoneSettings from './ZoneSettings';
 import SearchBar from './SearchBar';
+import { MediumType, SettingFormItem, SettingsData } from './types';
+import ZoneSettings from './ZoneSettings';
 
 const Settings: FC = () => {
   const history = useHistory();
@@ -45,7 +33,6 @@ const Settings: FC = () => {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [searchText, setSearchText] = useState<string>('');
   const [searchTextValue, setSearchTextValue] = useState<string>('');
-
   const [show, setShow] = useState(false);
   const [imgSrc, setImgSrc] = useState<any>(null);
 
@@ -54,118 +41,36 @@ const Settings: FC = () => {
     id: 1,
   });
 
-  const {
-    channel: { userChannels },
-    zone: {
-      getUserZones: { userZones },
-    },
-    auth: { user },
-  } = useSelector((state: AppState) => state);
-
-  const [channelPayload, setChannelPayload] = useState<UpdateChannelPayload>({
-    name: userChannels.data[0].channel.name,
-    description: userChannels.data[0].channel.description,
-    topic: userChannels.data[0].channel.topic,
-    id: userChannels.data[0].channel.id,
-    public: userChannels.data[0].channel.public,
-  });
-
-  const [zonePayload, setZonePayload] = useState<UpdateZonePayload>({
-    name: userZones?.[0].zone.name || '',
-    description: userZones?.[0].zone.description || '',
-    subdomain: userZones?.[0].zone.subdomain || '',
-    id: userZones?.[0].zone.id || 0,
-    public: userZones?.[0].zone.public || false,
-  });
-
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    userName: user?.userName || '',
-    fullName: user?.fullName || '',
-  });
   const dispatch = useDispatch();
 
-  const data: (
-    | ChannelSettingsData
-    | PersonalSettingsData
-    | ZoneSettingsData
-  )[] = [
-    PersonalSettings({ onSave: () => {}, userInfo, setUserInfo }),
+  const data: SettingsData[] = [
+    PersonalSettings({
+      onSave: () => {},
+      onChangeProfilePicture: () => {
+        setMedium({ ...medium, name: 'user' });
+        setShow(true);
+      },
+    }),
     ChannelSettings({
       onSave: () => {},
-      channelPayload,
-      onChange: setChannelPayload,
+      onChangeProfilePicture: (item) => {
+        setMedium({ name: 'channel', id: item.channel.id });
+        setShow(true);
+      },
     }),
-    ZoneSettings({ onSave: () => {}, zonePayload, onChange: setZonePayload }),
-  ].filter(
-    (v): v is ChannelSettingsData | PersonalSettingsData | ZoneSettingsData =>
-      v !== null
-  );
+    ZoneSettings({
+      onSave: () => {},
+      onChangeProfilePicture: (item) => {
+        setMedium({ name: 'zone', id: item.zone.id });
+        setShow(true);
+      },
+    }),
+  ].filter((v): v is SettingsData => v !== null);
   const debouncer = useDebouncer();
-
-  const menuItems = data;
-
-  const userChannelsString = () => {
-    const tempArray: Array<any> = [];
-
-    userChannels.data.forEach((item) =>
-      tempArray.push(
-        <AvatarItem
-          id={item.channel.id}
-          label={item.channel.name}
-          menuItems={menuItems}
-          selectedIndex={selectedIndex}
-          isEditable
-          changeProfilePic={() => {
-            setMedium({ name: 'channel', id: item.channel.id });
-            setShow(true);
-          }}
-          medium="channel"
-          photoName={item.channel.displayPhoto}
-        />
-      )
-    );
-    return tempArray;
-  };
-
-  const userZonesString = () => {
-    const tempArray: Array<any> = [];
-    userZones?.forEach((item) => {
-      tempArray.push(
-        <AvatarItem
-          id={item.zone.id}
-          label={item.zone.name}
-          menuItems={menuItems}
-          selectedIndex={selectedIndex}
-          isEditable
-          medium="zone"
-          photoName={item.zone.displayPhoto}
-          changeProfilePic={() => {
-            setMedium({ name: 'zone', id: item.zone.id });
-            setShow(true);
-          }}
-        />
-      );
-    });
-    return tempArray;
-  };
-
-  const dropDownItems = (label: string) => {
-    if (label === 'Channel Settings') {
-      return userChannelsString();
-    }
-    if (label === 'Zone Settings') {
-      return userZonesString();
-    }
-    return ['test'];
-  };
 
   const getSearchResults = () => {
     if (data.length > 0) {
-      const result: (
-        | ChannelSettingsData
-        | PersonalSettingsData
-        | ZoneSettingsData
-      )[] = [];
+      const result: SettingsData[] = [];
       data.forEach((menuItem) => {
         const menuItemKey = menuItem.key.replace(/ /g, '').toLowerCase();
         const menuItemLabel = menuItem.label.replace(/ /g, '').toLowerCase();
@@ -211,103 +116,15 @@ const Settings: FC = () => {
     }
   }, [searchTextValue]);
 
-  const renderSettingCategory = (
-    selectedItem: ChannelSettingsData | PersonalSettingsData | ZoneSettingsData
-  ) => {
+  const renderSettingCategory = (selectedItem: SettingsData) => {
     return (
-      <Box flex="grow" pad={{ horizontal: 'small' }}>
+      <Box flex="grow" pad={{ horizontal: 'small' }} gap="medium">
         {searchText.length === 0 && (
           <Box>
             <Text size="xlarge">{selectedItem.label}</Text>
           </Box>
         )}
-
-        {!('role' in selectedItem) ? (
-          <Box direction="row" gap="small">
-            <DropButton
-              dropProps={{
-                responsive: false,
-                stretch: false,
-                overflow: { vertical: 'scroll' },
-              }}
-              label={
-                selectedItem.label === 'Channel Settings'
-                  ? 'Select Channel'
-                  : 'Select Zone'
-              }
-              dropContent={
-                <Box
-                  pad="xsmall"
-                  background="light-1"
-                  gap="small"
-                  round="medium"
-                >
-                  {dropDownItems(selectedItem.label).map((item) => (
-                    <Box
-                      border={{ color: 'brand', size: 'medium' }}
-                      key={Math.random() * 1000}
-                      height={{ min: '120px' }}
-                    >
-                      <Button
-                        onClick={() => {
-                          if ('whichZone' in selectedItem) {
-                            setChannelPayload({
-                              name: item.props.label,
-                              id: item.props.id,
-                              description: userChannels.data.filter(
-                                (channel) =>
-                                  channel.channel.id === item.props.id
-                              )[0].channel.description,
-                              topic: userChannels.data.filter(
-                                (channel) =>
-                                  channel.channel.id === item.props.id
-                              )[0].channel.topic,
-                              public: userChannels.data.filter(
-                                (channel) =>
-                                  channel.channel.id === item.props.id
-                              )[0].channel.public,
-                            });
-                          } else {
-                            setZonePayload({
-                              name: item.props.label,
-                              id: item.props.id,
-                              subdomain:
-                                userZones?.filter(
-                                  (zone) => zone.id === item.props.id
-                                )[0].zone.subdomain || '',
-                              public: !!userZones?.filter(
-                                (zone) => zone.id === item.props.id
-                              )[0].zone.public,
-                              description:
-                                userZones?.filter(
-                                  (zone) => zone.id === item.props.id
-                                )[0].zone.description || '',
-                            });
-                          }
-                        }}
-                      >
-                        {item}
-                      </Button>
-                    </Box>
-                  ))}
-                </Box>
-              }
-            />
-          </Box>
-        ) : (
-          <AvatarItem
-            label={userInfo.userName}
-            menuItems={menuItems}
-            selectedIndex={0}
-            changeProfilePic={() => {
-              setMedium({ ...medium, name: 'user' });
-              setShow(true);
-            }}
-            isEditable
-            medium="user"
-            photoName={user?.displayPhoto}
-          />
-        )}
+        {selectedItem.avatarWidget}
         {selectedItem.items.map<React.ReactNode>((setting) => {
           const descriptionParts = setting.description.split(
             new RegExp(`(${searchText})`, 'gi')
@@ -322,7 +139,6 @@ const Settings: FC = () => {
               direction="column"
               flex="grow"
               justify="start"
-              pad="small"
               gap="small"
             >
               <Box width="medium" direction="column">
@@ -396,7 +212,7 @@ const Settings: FC = () => {
         </Box>
         <Box direction="row" pad={{ horizontal: 'medium', bottom: 'medium' }}>
           <Box>
-            {data.map<React.ReactNode>((menuItem, index) => (
+            {data.map((menuItem, index) => (
               <React.Fragment key={menuItem.key}>
                 <Box
                   focusIndicator={false}

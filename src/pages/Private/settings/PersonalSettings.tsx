@@ -3,22 +3,25 @@ import { Box, Button, TextInput } from 'grommet';
 import { Hide, View } from 'grommet-icons';
 import { useSelector } from 'react-redux';
 import { AppState } from '../../../store/reducers/root.reducer';
-import { PersonalSettingsData, UserInfo } from './types';
+import { SettingsData } from './types';
+import { AvatarItem } from './AvatarItem';
+import {
+  REACT_APP_API_VERSION,
+  REACT_APP_SERVER_HOST,
+} from '../../../config/http';
 
 interface PersonalSettingsProps {
   onSave: () => void;
-  userInfo: UserInfo;
-  setUserInfo: (arg0: UserInfo) => void;
+  onChangeProfilePicture: () => void;
 }
-
 const PersonalSettings: (
   props: PersonalSettingsProps
-) => PersonalSettingsData | null = ({ onSave }) => {
+) => SettingsData | null = ({ onSave, onChangeProfilePicture }) => {
   const {
     auth: { user },
   } = useSelector((state: AppState) => state);
 
-  const [userInfo, setUserInfo] = useState<UserInfo>({
+  const [userInfo, setUserInfo] = useState({
     userName: user?.userName || '',
     fullName: user?.fullName || '',
   });
@@ -38,6 +41,14 @@ const PersonalSettings: (
     name: user?.fullName,
     role: 'Developer',
     onSave,
+    avatarWidget: (
+      <AvatarItem
+        title={user.fullName}
+        subtitle={user.userName}
+        onClickEdit={onChangeProfilePicture}
+        src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/user/display-photo/${user?.displayPhoto}`}
+      />
+    ),
     items: [
       {
         key: 'username',
@@ -136,6 +147,7 @@ const PersonalSettings: (
                 plain
                 type={reveal.current ? 'text' : 'password'}
                 placeholder="Current Password"
+                autoComplete="new-password"
                 focusIndicator={false}
                 onChange={() => {}}
               />

@@ -1,42 +1,94 @@
-import { Box, CheckBox, Grid, Text, TextInput } from 'grommet';
 import React, { useState } from 'react';
+import { Box, CheckBox, DropButton, Grid, Text, TextInput } from 'grommet';
 import { useSelector } from 'react-redux';
+import ListButton from '../../../components/utils/ListButton';
 import SectionContainer from '../../../components/utils/SectionContainer';
+import {
+  REACT_APP_API_VERSION,
+  REACT_APP_SERVER_HOST,
+} from '../../../config/http';
 import { AppState } from '../../../store/reducers/root.reducer';
-import { ZoneSettingsData } from './types';
+import {
+  UpdateZonePayload,
+  UserZoneListItem,
+} from '../../../store/types/zone.types';
+import { AvatarItem } from './AvatarItem';
+import { SettingsData } from './types';
 
 interface ZoneSettingsProps {
   onSave: () => void;
-  zonePayload: any;
-  onChange: any;
+  onChangeProfilePicture: (arg0: UserZoneListItem) => void;
 }
 
-const ZoneSettings: (props: ZoneSettingsProps) => ZoneSettingsData = ({
+const ZoneSettings: (props: ZoneSettingsProps) => SettingsData | null = ({
   onSave,
-  zonePayload,
-  onChange,
+  onChangeProfilePicture,
 }) => {
   const {
     zone: {
       getUserZones: { userZones },
     },
   } = useSelector((state: AppState) => state);
-
-  const [zonePermissions, setZonePermissions] = useState<any>({
+  const [selectedUserZoneIndex, setSelectedUserZoneIndex] = useState(0);
+  const [zonePayload, setZonePayload] = useState<UpdateZonePayload>({
+    name: userZones?.[0].zone.name || '',
+    description: userZones?.[0].zone.description || '',
+    subdomain: userZones?.[0].zone.subdomain || '',
+    id: userZones?.[0].zone.id || 0,
+    public: userZones?.[0].zone.public || false,
+  });
+  const [zonePermissions, setZonePermissions] = useState({
     canInvite: userZones?.[0].zoneRole.canInvite,
     canDelete: userZones?.[0].zoneRole.canDelete,
     canEdit: userZones?.[0].zoneRole.canEdit,
     canManageRole: userZones?.[0].zoneRole.canManageRole,
     canCreateChannel: userZones?.[0].zoneRole.canDelete,
   });
+  if (!userZones) return null;
   return {
     id: 2,
     key: 'zone',
     label: 'Zone Settings',
     url: 'zone',
-    name: 'Car Zone',
-    members: '23 Zone',
     onSave,
+    avatarWidget: (
+      <DropButton
+        dropProps={{
+          responsive: false,
+          stretch: false,
+          overflow: { vertical: 'scroll' },
+        }}
+        dropContent={
+          <Box>
+            {userZones.map((item, index) => (
+              <ListButton
+                label={item.zone.name}
+                key={item.zone.id}
+                onClick={() => {
+                  setZonePayload({
+                    name: item.zone.name,
+                    id: item.zone.id,
+                    subdomain: item.zone.subdomain,
+                    public: item.zone.public,
+                    description: item.zone.description,
+                  });
+                  setSelectedUserZoneIndex(index);
+                }}
+              />
+            ))}
+          </Box>
+        }
+      >
+        <AvatarItem
+          title={userZones[selectedUserZoneIndex].zone.name}
+          subtitle={userZones[selectedUserZoneIndex].zone.subdomain}
+          src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/zone/display-photo/${userZones[selectedUserZoneIndex].zone.displayPhoto}`}
+          onClickEdit={() =>
+            onChangeProfilePicture(userZones[selectedUserZoneIndex])
+          }
+        />
+      </DropButton>
+    ),
     items: [
       {
         key: 'zoneName',
@@ -58,7 +110,7 @@ const ZoneSettings: (props: ZoneSettingsProps) => ZoneSettingsData = ({
               plain
               focusIndicator={false}
               onChange={(event) =>
-                onChange({
+                setZonePayload({
                   ...zonePayload,
                   name: event.target.value,
                 })
@@ -87,7 +139,7 @@ const ZoneSettings: (props: ZoneSettingsProps) => ZoneSettingsData = ({
               plain
               focusIndicator={false}
               onChange={(event) =>
-                onChange({
+                setZonePayload({
                   ...zonePayload,
                   subdomain: event.target.value,
                 })
@@ -116,7 +168,7 @@ const ZoneSettings: (props: ZoneSettingsProps) => ZoneSettingsData = ({
               plain
               focusIndicator={false}
               onChange={(event) =>
-                onChange({
+                setZonePayload({
                   ...zonePayload,
                   description: event.target.value,
                 })
@@ -246,7 +298,7 @@ const ZoneSettings: (props: ZoneSettingsProps) => ZoneSettingsData = ({
                 <CheckBox
                   checked={zonePayload.public}
                   onChange={() =>
-                    onChange({
+                    setZonePayload({
                       ...zonePayload,
                       public: !zonePayload.public,
                     })

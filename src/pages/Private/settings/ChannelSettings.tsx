@@ -1,43 +1,100 @@
 import React, { useState } from 'react';
-import { Box, CheckBox, Grid, Text, TextInput } from 'grommet';
+import { Box, CheckBox, DropButton, Grid, Text, TextInput } from 'grommet';
 import { useSelector } from 'react-redux';
-import { AppState } from '../../../store/reducers/root.reducer';
+import ListButton from '../../../components/utils/ListButton';
 import SectionContainer from '../../../components/utils/SectionContainer';
-import { ChannelSettingsData } from './types';
+import {
+  REACT_APP_API_VERSION,
+  REACT_APP_SERVER_HOST,
+} from '../../../config/http';
+import { AppState } from '../../../store/reducers/root.reducer';
+import {
+  UpdateChannelPayload,
+  UserChannelListItem,
+} from '../../../store/types/channel.types';
+import { AvatarItem } from './AvatarItem';
+import { SettingsData } from './types';
 
 interface ChannelSettingsProps {
   onSave: () => void;
-  channelPayload: any;
-  onChange: any;
+  onChangeProfilePicture: (arg0: UserChannelListItem) => void;
 }
 
-const ChannelSettings: (props: ChannelSettingsProps) => ChannelSettingsData = ({
+const ChannelSettings: (props: ChannelSettingsProps) => SettingsData = ({
   onSave,
-  channelPayload,
-  onChange,
+  onChangeProfilePicture,
 }) => {
   const {
     channel: { userChannels },
+    zone: {
+      getUserZones: { userZones },
+    },
   } = useSelector((state: AppState) => state);
-
-  const [channelPermissions, setChannelPermissions] = useState<any>({
+  const [selectedUserChannelIndex, setSelectedUserChannelIndex] = useState(0);
+  const [channelPermissions, setChannelPermissions] = useState({
     canInvite: userChannels.data[0].channelRole.canInvite,
     canDelete: userChannels.data[0].channelRole.canDelete,
     canEdit: userChannels.data[0].channelRole.canEdit,
     canManageRole: userChannels.data[0].channelRole.canManageRole,
+  });
+  const [channelPayload, setChannelPayload] = useState<UpdateChannelPayload>({
+    name: userChannels.data[0].channel.name,
+    description: userChannels.data[0].channel.description,
+    id: userChannels.data[0].channel.id,
+    public: userChannels.data[0].channel.public,
   });
   return {
     id: 1,
     key: 'channel',
     label: 'Channel Settings',
     url: 'channel',
-    name: '',
-    members: '203',
-    whichZone: 'in Car Zone',
     onSave,
+    avatarWidget: (
+      <DropButton
+        dropProps={{
+          responsive: false,
+          stretch: false,
+          overflow: { vertical: 'scroll' },
+        }}
+        dropContent={
+          <Box>
+            {userChannels.data.map((item, index) => (
+              <ListButton
+                key={item.channel.id}
+                label={item.channel.name}
+                onClick={() => {
+                  setChannelPayload({
+                    name: item.channel.name,
+                    id: item.channel.id,
+                    description: item.channel.description,
+                    public: item.channel.public,
+                  });
+                  setSelectedUserChannelIndex(index);
+                }}
+              />
+            ))}
+          </Box>
+        }
+      >
+        <AvatarItem
+          title={userChannels.data[selectedUserChannelIndex].channel.name}
+          subtitle={
+            userZones?.find(
+              (userZone) =>
+                userZone.zone.id ===
+                userChannels.data[selectedUserChannelIndex].channel.zoneId
+            )?.zone.name
+          }
+          onClickEdit={() =>
+            onChangeProfilePicture(userChannels.data[selectedUserChannelIndex])
+          }
+          src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/channel/display-photo/${userChannels.data[selectedUserChannelIndex].channel.displayPhoto}`}
+        />
+      </DropButton>
+    ),
     items: [
       {
-        key: 'name1',
+        key: 'channelName',
         title: 'Channel Name',
         description: 'Change channel name',
         value: 'value',
@@ -56,38 +113,9 @@ const ChannelSettings: (props: ChannelSettingsProps) => ChannelSettingsData = ({
               plain
               focusIndicator={false}
               onChange={(event) =>
-                onChange({
+                setChannelPayload({
                   ...channelPayload,
                   name: event.target.value,
-                })
-              }
-            />
-          </Box>
-        ),
-      },
-      {
-        key: 'Topic',
-        title: 'Channel Topic',
-        description: 'Change channel topic',
-        value: 'value',
-        component: (
-          <Box
-            direction="row"
-            justify="between"
-            align="center"
-            gap="small"
-            border={{ size: 'xsmall', color: 'brand' }}
-            round="small"
-            pad="xxsmall"
-          >
-            <TextInput
-              value={channelPayload.topic}
-              plain
-              focusIndicator={false}
-              onChange={(event) =>
-                onChange({
-                  ...channelPayload,
-                  topic: event.target.value,
                 })
               }
             />
@@ -114,7 +142,7 @@ const ChannelSettings: (props: ChannelSettingsProps) => ChannelSettingsData = ({
               plain
               focusIndicator={false}
               onChange={(event) =>
-                onChange({
+                setChannelPayload({
                   ...channelPayload,
                   description: event.target.value,
                 })
@@ -208,7 +236,6 @@ const ChannelSettings: (props: ChannelSettingsProps) => ChannelSettingsData = ({
           </SectionContainer>
         ),
       },
-
       {
         key: 'channelPublic',
         title: '',
@@ -222,7 +249,7 @@ const ChannelSettings: (props: ChannelSettingsProps) => ChannelSettingsData = ({
                 <CheckBox
                   checked={channelPayload.public}
                   onChange={() =>
-                    onChange({
+                    setChannelPayload({
                       ...channelPayload,
                       public: !channelPayload.public,
                     })

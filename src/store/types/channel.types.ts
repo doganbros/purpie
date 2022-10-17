@@ -111,7 +111,6 @@ export interface CreateChannelPayload {
 export interface UpdateChannelPayload {
   name: string;
   description: string;
-  topic: string;
   id: number;
   public: boolean;
 }

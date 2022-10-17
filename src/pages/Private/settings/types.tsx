@@ -5,7 +5,7 @@ export interface SettingFormItem {
   title: string;
   description: string;
   value?: string;
-  component?: ReactNode;
+  component: ReactNode;
 }
 
 export interface SettingsData {
@@ -15,25 +15,7 @@ export interface SettingsData {
   url: string;
   items: SettingFormItem[];
   onSave: () => void;
-}
-
-export interface PersonalSettingsData extends SettingsData {
-  role: string;
-}
-
-export interface ChannelSettingsData extends SettingsData {
-  members: string;
-  whichZone: string;
-}
-
-export interface ZoneSettingsData extends SettingsData {
-  name: string;
-  members: string;
-}
-
-export interface UserInfo {
-  userName: string;
-  fullName: string;
+  avatarWidget: ReactNode;
 }
 
 export interface MediumType {
