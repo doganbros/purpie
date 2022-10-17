@@ -29,7 +29,7 @@ const ExtendedBoxCSS = css`
   bottom: ${(props: Props) => props.bottom};
   min-width: ${(props: Props) => props.minWidth};
   max-width: ${(props: Props) => props.maxWidth};
-  min-height: ${(props: Props) => props.minWidth};
+  min-height: ${(props: Props) => props.minHeight};
   opacity: ${(props: Props) => props.opacity};
   user-select: ${(props: Props) => props.userSelect};
 `;
