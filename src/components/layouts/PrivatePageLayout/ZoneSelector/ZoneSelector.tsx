@@ -1,5 +1,5 @@
 import React, { FC, useContext, useState } from 'react';
-import { Box, DropButton, ResponsiveContext, Text } from 'grommet';
+import { Box, DropButton, ResponsiveContext } from 'grommet';
 import { Add, SettingsOption } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +11,7 @@ import { openCreateChannelLayerAction } from '../../../../store/actions/channel.
 import { logoutAction } from '../../../../store/actions/auth.action';
 import InitialsAvatar from '../../../utils/InitialsAvatar';
 import ListButton from '../../../utils/ListButton';
+import EllipsesOverflowText from '../../../utils/EllipsesOverflowText';
 
 const ZoneSelector: FC = () => {
   const { t } = useTranslation();
@@ -127,6 +128,7 @@ const ZoneSelector: FC = () => {
           margin: { vertical: 'small' },
           elevation: 'medium',
           round: 'small',
+          overflow: 'auto',
         }}
       >
         <Box fill="horizontal">
@@ -152,14 +154,15 @@ const ZoneSelector: FC = () => {
               user && <InitialsAvatar id={user.id} value={user.fullName} />
             )}
             <Box align="center">
-              <Text
+              <EllipsesOverflowText
+                maxWidth="111px"
                 textAlign="center"
                 weight="bold"
                 size="xsmall"
                 color="white"
               >
                 {selectedUserZone ? selectedUserZone.zone.name : user?.fullName}
-              </Text>
+              </EllipsesOverflowText>
             </Box>
           </Box>
         </Box>
