@@ -87,7 +87,8 @@ const Timeline: FC = () => {
             getChannelFeedAction({
               skip,
               channelId: selectedChannel.channel.id,
-              streaming: activeFilterId === 2,
+              streaming:
+                activeFilterId === 0 ? undefined : activeFilterId === 2,
             })
           );
         else if (selectedUserZone) {
@@ -95,7 +96,8 @@ const Timeline: FC = () => {
             getZoneFeedAction({
               skip,
               zoneId: selectedUserZone.zone.id,
-              streaming: activeFilterId === 2,
+              streaming:
+                activeFilterId === 0 ? undefined : activeFilterId === 2,
             })
           );
         } else {
@@ -125,7 +127,7 @@ const Timeline: FC = () => {
     )
       return t('common.loading'); // We can return a loader component later
 
-    if (feed.data.length)
+    if (feed.data.length === 0)
       return <EmptyFeedContent onAddContent={() => setShowAddContent(true)} />;
 
     return (
