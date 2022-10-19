@@ -11,8 +11,8 @@ import {
 import { useHistory } from 'react-router-dom';
 import PublicPageLayout from './PublicPageLayout/PublicPageLayout';
 import { useResponsive } from '../../hooks/useResponsive';
-import LogoHorizontalColor from '../../assets/octopus-logo/logo-horizontal-color.svg';
-import LogoHorizontalWhite from '../../assets/octopus-logo/logo-horizontal-white.svg';
+import LogoHorizontalColor from '../../assets/purpie-logo/logo-horizontal-color.svg';
+import LogoHorizontalWhite from '../../assets/purpie-logo/logo-horizontal-white.svg';
 import AuthFormButton from '../auth/AuthFormButton';
 
 interface Props {
@@ -109,7 +109,7 @@ const AuthLayout: React.FC<Props> = ({
                 fill="horizontal"
               >
                 <Image
-                  width={size === 'small' ? '150px' : '172px'}
+                  width={size === 'small' ? '112px' : '132px'}
                   src={theme.dark ? LogoHorizontalWhite : LogoHorizontalColor}
                 />
               </Box>

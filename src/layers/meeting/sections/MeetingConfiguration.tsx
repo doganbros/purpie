@@ -7,7 +7,6 @@ import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action
 import { AppState } from '../../../store/reducers/root.reducer';
 import { baseMeetingConfig } from '../../../store/static/base-meeting-config';
 import Switch from '../../../components/utils/Switch';
-import { camelToSentence } from '../../../helpers/utils';
 
 const MeetingConfiguration: FC = () => {
   const {
@@ -69,28 +68,24 @@ const MeetingConfiguration: FC = () => {
         >
           {/* TODO this checkbox texts comes from backend so cannot translated */}
           {formPayload?.config &&
-            Object.keys(formPayload.config).map((setting) => {
-              if (typeof formPayload.config![setting] === 'boolean')
-                return (
-                  <Switch
-                    label={camelToSentence(setting)}
-                    margin={{ bottom: 'xsmall' }}
-                    key={setting}
-                    value={!!formPayload.config?.[setting]}
-                    onChange={(v) => {
-                      dispatch(
-                        setMeetingFormFieldAction({
-                          config: {
-                            ...formPayload.config,
-                            [setting]: v,
-                          },
-                        })
-                      );
-                    }}
-                  />
-                );
-              return null;
-            })}
+            baseMeetingConfig.advancedButtons.map(({ setting }) => (
+              <Switch
+                label={t(`meetingConfig.${setting}`)}
+                margin={{ bottom: 'xsmall' }}
+                key={setting}
+                value={!!formPayload.config?.[setting]}
+                onChange={(v) => {
+                  dispatch(
+                    setMeetingFormFieldAction({
+                      config: {
+                        ...formPayload.config,
+                        [setting]: v,
+                      },
+                    })
+                  );
+                }}
+              />
+            ))}
         </Grid>
       </SectionContainer>
     </Box>
