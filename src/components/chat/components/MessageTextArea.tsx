@@ -37,7 +37,6 @@ interface Props {
   setSuggestionPickerVisibility: Dispatch<SetStateAction<boolean>>;
   mentionPickerVisibility: boolean;
   setMentionPickerVisibility: Dispatch<SetStateAction<boolean>>;
-  setInputFocused: Dispatch<SetStateAction<boolean>>;
 }
 
 const MessageBox: FC<Props> = ({
@@ -54,7 +53,6 @@ const MessageBox: FC<Props> = ({
   setSuggestionPickerVisibility,
   mentionPickerVisibility,
   setMentionPickerVisibility,
-  setInputFocused,
 }) => {
   const dispatch = useDispatch();
   const debouncer = useDebouncer();
@@ -342,8 +340,6 @@ const MessageBox: FC<Props> = ({
           onKeyPress={handleKeyUp}
           onChange={handleChange}
           rows={1}
-          onFocusCapture={() => setInputFocused(true)}
-          onBlurCapture={() => setInputFocused(false)}
         />
       </Box>
     </Box>
