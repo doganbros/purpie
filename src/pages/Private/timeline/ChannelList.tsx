@@ -8,6 +8,7 @@ import {
   unsetSelectedChannelAction,
 } from '../../../store/actions/channel.action';
 import InitialsAvatar from '../../../components/utils/InitialsAvatar';
+import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
 
 const ChannelList: FC = () => {
   const dispatch = useDispatch();
@@ -57,7 +58,8 @@ const ChannelList: FC = () => {
               }
             >
               <InitialsAvatar id={c.channel.id} value={c.channel.name} />
-              <Text
+              <EllipsesOverflowText
+                textAlign="center"
                 size="small"
                 color={
                   c.channel.id === selectedChannel?.channel.id
@@ -66,17 +68,7 @@ const ChannelList: FC = () => {
                 }
               >
                 {c.channel.name}
-              </Text>
-              <Text
-                size="xsmall"
-                color={
-                  c.channel.id === selectedChannel?.channel.id
-                    ? 'light-2'
-                    : 'dark-1'
-                }
-              >
-                {c.channel.topic}
-              </Text>
+              </EllipsesOverflowText>
             </Box>
           ))
         ))}

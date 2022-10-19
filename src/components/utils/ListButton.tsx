@@ -1,5 +1,6 @@
 import React, { FC, ReactNode, useState } from 'react';
-import { Box, BoxExtendedProps, Text, TextExtendedProps } from 'grommet';
+import { Box, BoxExtendedProps, TextExtendedProps } from 'grommet';
+import EllipsesOverflowText from './EllipsesOverflowText';
 
 interface ListButtonProps extends BoxExtendedProps {
   label?: string;
@@ -42,21 +43,22 @@ const ListButton: FC<ListButtonProps> = ({
       onMouseLeave={() => {
         setHover(false);
       }}
+      height={{ min: '48px' }}
       pad="small"
       {...props}
     >
       <Box fill direction="row" align="center" gap="small">
         {leftIcon}
-        <Box flex={{ grow: 1 }}>
-          <Text
-            weight={selected ? 'bold' : 'normal'}
-            size="small"
-            color={setTextColor()}
-            {...textProps}
-          >
-            {label}
-          </Text>
-        </Box>
+
+        <EllipsesOverflowText
+          maxWidth="240px"
+          weight={selected ? 'bold' : 'normal'}
+          size="small"
+          color={setTextColor()}
+          {...textProps}
+        >
+          {label}
+        </EllipsesOverflowText>
         {rightIcon}
       </Box>
     </Box>
