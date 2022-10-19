@@ -22,10 +22,18 @@ const { REACT_APP_CLIENT_HOST = '' } = process.env;
 
 @WebSocketGateway({
   cors: {
-    origin: new RegExp(
-      `(\\b|\\.)${new URL(REACT_APP_CLIENT_HOST).host.replace(/\./g, '\\.')}$`,
-    ),
+    origin: [
+      new RegExp(
+        `(\\b|\\.)${new URL(REACT_APP_CLIENT_HOST).host.replace(
+          /\./g,
+          '\\.',
+        )}$`,
+      ),
+      'http://localhost:3000',
+      'http://octopus.localhost:3000',
+    ],
     credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   },
   namespace: '/',
 })
