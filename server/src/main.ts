@@ -28,11 +28,12 @@ async function bootstrap() {
       '\\.',
     )}$`,
   );
+  const origins = ['http://localhost:3000', 'http://octopus.localhost:3000'];
   const corsOptions = {
     origin:
       process.env.NODE_ENV === 'development'
-        ? ['http://localhost:3000', 'http://octopus.localhost:3000']
-        : originRegex,
+        ? origins
+        : [...origins, originRegex],
     optionsSuccessStatus: 200,
     credentials: true,
   };
