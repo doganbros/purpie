@@ -119,14 +119,14 @@ export class AuthService {
 
     res.cookie('OCTOPUS_ACCESS_TOKEN', accessToken, {
       expires: dayjs().add(30, 'days').toDate(),
-      domain: isDevelopment ? undefined : domain,
+      domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
       secure: true,
       sameSite: isDevelopment ? 'none' : 'lax',
     });
     res.cookie('OCTOPUS_REFRESH_ACCESS_TOKEN', refreshToken, {
       expires: dayjs().add(30, 'days').toDate(),
-      domain: isDevelopment ? undefined : domain,
+      domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
       secure: true,
       sameSite: isDevelopment ? 'none' : 'lax',
