@@ -28,6 +28,8 @@ async function bootstrap() {
       process.env.NODE_ENV === 'development'
         ? [...origins, REACT_APP_CLIENT_HOST]
         : REACT_APP_CLIENT_HOST,
+    optionsSuccessStatus: 200,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   };
 
