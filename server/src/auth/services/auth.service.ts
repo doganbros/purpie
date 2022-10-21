@@ -16,7 +16,7 @@ import { generateJWT } from 'helpers/jwt';
 import { compareHash, hash } from 'helpers/utils';
 import { nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
-import { Not, Repository, IsNull, Brackets } from 'typeorm';
+import { Brackets, IsNull, Not, Repository } from 'typeorm';
 import {
   MAIL_VERIFICATION_TYPE,
   PASSWORD_VERIFICATION_TYPE,
@@ -114,23 +114,24 @@ export class AuthService {
       })
       .save();
 
-    const domain =
-      process.env.NODE_ENV === 'development'
-        ? ''
-        : `.${new URL(REACT_APP_SERVER_HOST).hostname}`;
+    const domain = `.${new URL(REACT_APP_SERVER_HOST).hostname}`;
+    const isDevelopment = NODE_ENV === 'development';
 
     res.cookie('OCTOPUS_ACCESS_TOKEN', accessToken, {
       expires: dayjs().add(30, 'days').toDate(),
-      domain,
+      domain: isDevelopment ? undefined : domain,
       httpOnly: true,
-      secure: NODE_ENV === 'production',
+      secure: true,
+      sameSite: isDevelopment ? 'none' : 'lax',
     });
     res.cookie('OCTOPUS_REFRESH_ACCESS_TOKEN', refreshToken, {
       expires: dayjs().add(30, 'days').toDate(),
-      domain,
+      domain: isDevelopment ? undefined : domain,
       httpOnly: true,
-      secure: NODE_ENV === 'production',
+      secure: true,
+      sameSite: isDevelopment ? 'none' : 'lax',
     });
+
     return refreshTokenId;
   }
 
