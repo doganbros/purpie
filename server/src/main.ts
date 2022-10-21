@@ -13,7 +13,7 @@ import { AppModule } from './app.module';
 
 initApp();
 
-const { REACT_APP_CLIENT_HOST, HTTP_MAX_BODY_SIZE } = process.env;
+const { REACT_APP_CLIENT_HOST = '', HTTP_MAX_BODY_SIZE } = process.env;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,18 +22,12 @@ async function bootstrap() {
   app.enableVersioning();
   app.use(helmet());
   app.use(json({ limit: HTTP_MAX_BODY_SIZE || '500mb' }));
-  const originRegex = new RegExp(
-    `(\\b|\\.)${new URL(REACT_APP_CLIENT_HOST as string).host.replace(
-      /\./g,
-      '\\.',
-    )}$`,
-  );
   const origins = ['http://localhost:3000', 'http://octopus.localhost:3000'];
   const corsOptions = {
     origin:
       process.env.NODE_ENV === 'development'
-        ? [...origins, originRegex]
-        : originRegex,
+        ? [...origins, REACT_APP_CLIENT_HOST]
+        : REACT_APP_CLIENT_HOST,
     credentials: true,
   };
 
