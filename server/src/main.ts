@@ -8,6 +8,7 @@ import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { json } from 'express';
+import cors from 'cors';
 import { AppModule } from './app.module';
 
 initApp();
@@ -27,15 +28,17 @@ async function bootstrap() {
       '\\.',
     )}$`,
   );
-  app.enableCors({
-    origin: [
-      originRegex,
-      'http://localhost:3000',
-      'http://octopus.localhost:3000',
-    ],
+  const corsOptions = {
+    origin:
+      process.env.NODE_ENV === 'development'
+        ? ['http://localhost:3000', 'http://octopus.localhost:3000']
+        : originRegex,
+    optionsSuccessStatus: 200,
     credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  });
+  };
+
+  app.use(cors(corsOptions));
+  app.enableCors(corsOptions);
   app.use(cookieParser());
   app.use(compression());
 
