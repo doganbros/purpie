@@ -32,9 +32,8 @@ async function bootstrap() {
   const corsOptions = {
     origin:
       process.env.NODE_ENV === 'development'
-        ? origins
-        : [...origins, originRegex],
-    optionsSuccessStatus: 200,
+        ? [...origins, originRegex]
+        : originRegex,
     credentials: true,
   };
 
