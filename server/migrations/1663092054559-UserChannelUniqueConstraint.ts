@@ -1,6 +1,6 @@
 import {MigrationInterface, QueryRunner, TableUnique} from 'typeorm';
 
-export class UserChannelUniqueConstraint1663092054558 implements MigrationInterface {
+export class UserChannelUniqueConstraint1663092054559 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Remove duplicated rows
         await queryRunner.query(`
