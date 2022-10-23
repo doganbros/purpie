@@ -22,14 +22,13 @@ const ListButton: FC<ListButtonProps> = ({
 }) => {
   const [hover, setHover] = useState(false);
   const setBackgroundColor = () => {
-    if (hover) return 'status-disabled-light';
-    if (selected) return 'brand';
+    if (hover || selected) return 'status-disabled-light';
     return 'white';
   };
 
   const setTextColor = () => {
     if (disabled) return 'status-disabled';
-    if (selected && !hover) return 'white';
+    if (selected && !hover) return 'black';
     return 'black';
   };
 
@@ -43,22 +42,24 @@ const ListButton: FC<ListButtonProps> = ({
       onMouseLeave={() => {
         setHover(false);
       }}
-      height={{ min: '48px' }}
-      pad="small"
+      pad={{ vertical: 'xsmall', horizontal: 'small' }}
       {...props}
     >
-      <Box fill direction="row" align="center" gap="small">
-        {leftIcon}
+      <Box fill direction="row" align="center" justify="between">
+        <Box direction="row" align="center" gap="small">
+          {leftIcon}
 
-        <EllipsesOverflowText
-          maxWidth="240px"
-          weight={selected ? 'bold' : 'normal'}
-          size="small"
-          color={setTextColor()}
-          {...textProps}
-        >
-          {label}
-        </EllipsesOverflowText>
+          <EllipsesOverflowText
+            maxWidth="210px"
+            weight={selected ? 'bold' : 'normal'}
+            size="xsmall"
+            color={setTextColor()}
+            {...textProps}
+          >
+            {label}
+          </EllipsesOverflowText>
+        </Box>
+
         {rightIcon}
       </Box>
     </Box>

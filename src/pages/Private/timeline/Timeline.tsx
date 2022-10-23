@@ -125,7 +125,7 @@ const Timeline: FC = () => {
     )
       return t('common.loading'); // We can return a loader component later
 
-    if (feed.data.length)
+    if (!feed.data.length)
       return <EmptyFeedContent onAddContent={() => setShowAddContent(true)} />;
 
     return (

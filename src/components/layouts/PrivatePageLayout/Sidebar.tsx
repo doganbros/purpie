@@ -92,10 +92,10 @@ const Sidebar: FC = () => {
             width="min-content"
             background="accent-4"
             round="small"
-            pad={{ vertical: 'xxsmall', horizontal: 'xsmall' }}
+            pad={{ vertical: 'xsmall', horizontal: 'small' }}
             margin={{ vertical: 'small' }}
           >
-            <Add color="dark-1" />
+            <Add color="black" />
           </Box>
         </Button>
       ) : null}
