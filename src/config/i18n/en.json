@@ -320,6 +320,11 @@
   "ContactListItem": {
     "viewProfile": "View full profile"
   },
+  "EmptyContact": {
+    "title": "DONT HAVE ANY CONTACT",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "findContact": "Find Contact"
+  },
   "SelectedUser": {
     "removeContact": "Remove from Contacts",
     "removeConfirmMsg": "Are you sure you want to remove {{fullName}} from you contacts?"
