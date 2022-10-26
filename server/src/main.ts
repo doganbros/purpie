@@ -8,12 +8,11 @@ import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { json } from 'express';
-import cors from 'cors';
 import { AppModule } from './app.module';
 
 initApp();
 
-const { REACT_APP_CLIENT_HOST = '', HTTP_MAX_BODY_SIZE } = process.env;
+const { HTTP_MAX_BODY_SIZE } = process.env;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,19 +21,12 @@ async function bootstrap() {
   app.enableVersioning();
   app.use(helmet());
   app.use(json({ limit: HTTP_MAX_BODY_SIZE || '500mb' }));
-  const origins = ['http://localhost:3000', 'http://octopus.localhost:3000'];
-  const corsOptions = {
-    origin:
-      process.env.NODE_ENV === 'development'
-        ? [...origins, REACT_APP_CLIENT_HOST]
-        : REACT_APP_CLIENT_HOST,
-    optionsSuccessStatus: 200,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true,
-  };
 
-  app.use(cors(corsOptions));
-  app.enableCors(corsOptions);
+  app.enableCors({
+    origin: true,
+    credentials: true,
+    preflightContinue: false,
+  });
   app.use(cookieParser());
   app.use(compression());
 
