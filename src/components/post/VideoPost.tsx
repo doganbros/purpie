@@ -1,6 +1,6 @@
 import { Box } from 'grommet';
 import videojs from 'video.js';
-import { Bookmark, PlayFill } from 'grommet-icons';
+import { Bookmark } from 'grommet-icons';
 import React, { FC, useRef, useState } from 'react';
 import { http } from '../../config/http';
 import { BookmarkFill } from '../utils/CustomIcons';
@@ -75,9 +75,7 @@ export const VideoPost: FC<VideoPostProps> = ({
         margin="auto"
         justify="center"
         align="center"
-      >
-        {hover && <PlayFill size="xlarge" color="brand" />}
-      </ExtendedBox>
+      />
       <ExtendedBox
         position="absolute"
         top="0"
