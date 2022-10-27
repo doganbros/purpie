@@ -24,6 +24,7 @@ import {
 import PlanMeetingTheme from '../../layers/meeting/custom-theme';
 import { errorResponseMessage, getChatRoomName } from '../../helpers/utils';
 import { http } from '../../config/http';
+import Loader from '../utils/Loader';
 
 interface Props {
   medium: 'direct' | 'channel' | 'post';
@@ -306,7 +307,12 @@ const Chat: React.FC<Props> = ({
     return undefined;
   }, [medium, id]);
 
-  if (!messages) return <Box>Loading...</Box>;
+  if (!messages)
+    return (
+      <Box>
+        <Loader />
+      </Box>
+    );
 
   const renderDayItem = (message: ChatMessage) => {
     return (

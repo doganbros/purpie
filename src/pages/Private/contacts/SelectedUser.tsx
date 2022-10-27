@@ -1,4 +1,4 @@
-import { Box, Button, Spinner } from 'grommet';
+import { Box, Button } from 'grommet';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +6,7 @@ import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 import { removeContactAction } from '../../../store/actions/user.action';
 import { User } from '../../../store/types/auth.types';
 import { UserSummary } from '../user/UserSummary';
+import Loader from '../../../components/utils/Loader';
 
 interface SelectedUserProps {
   user: User | null;
@@ -19,7 +20,7 @@ const SelectedUser: FC<SelectedUserProps> = ({ user, contactId }) => {
 
   return !user ? (
     <Box pad="large" justify="center" align="center">
-      <Spinner />
+      <Loader />
     </Box>
   ) : (
     <>

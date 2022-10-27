@@ -1,11 +1,12 @@
 import React, { FC, useState } from 'react';
-import { Box, Button, Spinner, Text } from 'grommet';
+import { Box, Button, Text } from 'grommet';
 import { CaretDownFill, CaretUpFill } from 'grommet-icons';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { listPostCommentRepliesAction } from '../../../../store/actions/post.action';
 import { PostCommentState } from '../../../../store/types/post.types';
 import CommentBase from './CommentBase';
+import Loader from '../../../../components/utils/Loader';
 
 interface RepliesProps {
   postId: number;
@@ -56,7 +57,7 @@ const Replies: FC<RepliesProps> = ({ parentComment, postId }) => {
         <Box gap="small">
           {parentComment.replies.loading &&
           !parentComment.replies.data.length ? (
-            <Spinner />
+            <Loader />
           ) : (
             parentComment.replies.data.map((c) => (
               <CommentBase key={c.id} comment={c} postId={postId} />

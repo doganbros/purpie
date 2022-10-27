@@ -1,4 +1,4 @@
-import { Box, Grid, Layer, Spinner, Text } from 'grommet';
+import { Box, Grid, Layer, Text } from 'grommet';
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
@@ -20,6 +20,7 @@ import { UserSummary } from './UserSummary';
 import UserFriends from './UserFriends';
 import UserPublicChannels from './UserPublicChannels';
 import UserPublicZones from './UserPublicZones';
+import Loader from '../../../components/utils/Loader';
 
 interface UserParams {
   userName: string;
@@ -63,7 +64,7 @@ const User: FC = () => {
     >
       {detail.loading || !detail.user ? (
         <Layer responsive={false} plain>
-          <Spinner />
+          <Loader />
         </Layer>
       ) : (
         <Box gap="medium" pad={{ vertical: 'medium' }}>

@@ -2,7 +2,7 @@ import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import videojs from 'video.js';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Box, Button, Menu, Layer, Spinner, Text } from 'grommet';
+import { Box, Button, Menu, Layer, Text } from 'grommet';
 import {
   Chat as ChatIcon,
   SettingsOption,
@@ -39,6 +39,7 @@ import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
 import UserBadge from '../../../components/utils/UserBadge';
 import Highlight from '../../../components/utils/Highlight';
 import { matchDescriptionTags } from '../../../helpers/utils';
+import Loader from '../../../components/utils/Loader';
 
 dayjs.extend(relativeTime);
 
@@ -191,7 +192,7 @@ const Video: FC = () => {
     >
       {loading || !data ? (
         <Layer responsive={false} plain>
-          <Spinner />
+          <Loader />
         </Layer>
       ) : (
         <Box gap="large" pad={{ vertical: 'medium' }}>

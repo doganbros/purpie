@@ -33,6 +33,7 @@ import EmptyFeedContent from './EmptyFeedContent';
 import { LoadingState } from '../../../models/utils';
 import InvitationList from './InvitationList';
 import i18n from '../../../config/i18n/i18n-config';
+import Loader from '../../../components/utils/Loader';
 
 const initialFilters = [
   {
@@ -123,7 +124,7 @@ const Timeline: FC = () => {
     if (
       [LoadingState.loading, LoadingState.pending].includes(feed.loadingState)
     )
-      return t('common.loading'); // We can return a loader component later
+      return <Loader />; // We can return a loader component later
 
     if (!feed.data.length)
       return <EmptyFeedContent onAddContent={() => setShowAddContent(true)} />;
