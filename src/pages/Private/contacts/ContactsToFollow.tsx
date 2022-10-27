@@ -9,6 +9,7 @@ import {
 import InitialsAvatar from '../../../components/utils/InitialsAvatar';
 import { searchProfileAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
+import { createContactInvitation } from '../../../store/actions/activity.action';
 
 const ContactsToFollow: FC = () => {
   const { t } = useTranslation();
@@ -75,7 +76,7 @@ const ContactsToFollow: FC = () => {
               <Button
                 primary
                 onClick={() => {
-                  // dispatch(joinChannelAction(id));
+                  dispatch(createContactInvitation(''));
                 }}
                 label="Add"
                 size="small"
