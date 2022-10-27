@@ -4,15 +4,13 @@ import { deepMerge } from 'grommet/utils';
 export const theme: typeof grommet = deepMerge(base, {
   global: {
     font: {
-      family: 'HelveticaNeue, Poppins, sans-serif',
+      family: 'Poppins',
     },
     colors: {
       brand: '#9060EB',
       'brand-alt': '#7D4CDB',
       'status-disabled': '#8F9BB3',
-      'status-unknown': '#8F9BB3',
       'status-disabled-light': '#E4E9F2',
-      'status-unkown-light': '#E4E9F2',
       'status-info': '#16A8DE',
       blue: '#0091FF',
       dark: '#202631',

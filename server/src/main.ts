@@ -9,11 +9,10 @@ import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { json } from 'express';
 import { AppModule } from './app.module';
-import { GlobalExceptionHandler } from './error/GlobalExceptionHandler';
 
 initApp();
 
-const { REACT_APP_CLIENT_HOST, HTTP_MAX_BODY_SIZE } = process.env;
+const { HTTP_MAX_BODY_SIZE } = process.env;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,20 +21,11 @@ async function bootstrap() {
   app.enableVersioning();
   app.use(helmet());
   app.use(json({ limit: HTTP_MAX_BODY_SIZE || '500mb' }));
-  const originRegex = new RegExp(
-    `(\\b|\\.)${new URL(REACT_APP_CLIENT_HOST as string).host.replace(
-      /\./g,
-      '\\.',
-    )}$`,
-  );
+
   app.enableCors({
-    origin: [
-      originRegex,
-      'http://localhost:3000',
-      'http://octopus.localhost:3000',
-    ],
+    origin: true,
     credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    preflightContinue: false,
   });
   app.use(cookieParser());
   app.use(compression());

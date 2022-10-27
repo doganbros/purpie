@@ -1,7 +1,8 @@
 import React, { FC, useContext, useState } from 'react';
-import { Box, DropButton, ResponsiveContext, Text } from 'grommet';
+import { Box, DropButton, ResponsiveContext } from 'grommet';
 import { Add, SettingsOption } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
 import { AppState } from '../../../../store/reducers/root.reducer';
 import Divider from './Divider';
@@ -10,8 +11,11 @@ import { openCreateChannelLayerAction } from '../../../../store/actions/channel.
 import { logoutAction } from '../../../../store/actions/auth.action';
 import InitialsAvatar from '../../../utils/InitialsAvatar';
 import ListButton from '../../../utils/ListButton';
+import EllipsesOverflowText from '../../../utils/EllipsesOverflowText';
+import ExtendedBox from '../../../utils/ExtendedBox';
 
 const ZoneSelector: FC = () => {
+  const { t } = useTranslation();
   const {
     zone: {
       getUserZones: { userZones },
@@ -21,19 +25,12 @@ const ZoneSelector: FC = () => {
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
   const size = useContext(ResponsiveContext);
-  const [hover, setHover] = useState(false);
   const [open, setOpen] = useState(false);
 
   const createChannelButtonDisabled = userZones?.length === 0;
   return (
-    <Box fill="horizontal" pad={{ horizontal: 'small' }}>
+    <Box fill="horizontal" pad={{ horizontal: '16px' }}>
       <DropButton
-        onMouseEnter={() => {
-          setHover(true);
-        }}
-        onMouseLeave={() => {
-          setHover(false);
-        }}
         fill="horizontal"
         plain
         open={open}
@@ -45,7 +42,7 @@ const ZoneSelector: FC = () => {
         }}
         dropAlign={{ left: 'left', top: 'bottom' }}
         dropContent={
-          <Box width={{ min: '250px' }}>
+          <Box width={{ min: '210px' }}>
             <ListButton
               selected={!selectedUserZone}
               onClick={() => {
@@ -63,6 +60,7 @@ const ZoneSelector: FC = () => {
               }
               label={user?.fullName}
             />
+            <Divider margin="none" />
             {userZones &&
               userZones.map((z) => (
                 <ListButton
@@ -82,7 +80,7 @@ const ZoneSelector: FC = () => {
                   label={z.zone.name}
                 />
               ))}
-            <Divider />
+            <Divider margin={{ vertical: 'xxsmall' }} />
             <ListButton
               onClick={() => {
                 if (!createChannelButtonDisabled) {
@@ -91,12 +89,12 @@ const ZoneSelector: FC = () => {
                 }
               }}
               disabled={createChannelButtonDisabled}
-              label="Create Channel"
+              label={t('ZoneSelector.createChannel')}
               rightIcon={
                 <Add
                   size="small"
                   color={
-                    createChannelButtonDisabled ? 'status-disabled' : 'black'
+                    createChannelButtonDisabled ? 'status-disabled' : '#444444'
                   }
                 />
               }
@@ -106,18 +104,18 @@ const ZoneSelector: FC = () => {
                 setOpen(false);
                 dispatch(openCreateZoneLayerAction());
               }}
-              label="Create Zone"
-              rightIcon={<Add size="small" color="black" />}
+              label={t('ZoneSelector.createZone')}
+              rightIcon={<Add size="small" color="#444444" />}
             />
-            <Divider />
+            <Divider margin={{ vertical: 'xxsmall' }} />
             <ListButton
-              label="Settings"
-              rightIcon={<SettingsOption size="small" color="black" />}
+              label={t('ZoneSelector.settings')}
+              rightIcon={<SettingsOption size="small" color="#444444" />}
             />
-            <Divider />
+            <Divider margin={{ vertical: 'xxsmall' }} />
             <ListButton
               onClick={() => dispatch(logoutAction())}
-              label="Sign Out"
+              label={t('ZoneSelector.signOut')}
             />
           </Box>
         }
@@ -125,21 +123,23 @@ const ZoneSelector: FC = () => {
           margin: { vertical: 'small' },
           elevation: 'medium',
           round: 'small',
+          overflow: 'auto',
         }}
       >
         <Box fill="horizontal">
-          <Box
+          <ExtendedBox
             fill="horizontal"
             align="center"
             justify="around"
-            background="brand"
             gap="small"
+            background="linear-gradient(133.92deg, #9060eb 0%, #7d4cdb 98.18%)"
+            round="16px"
+            border={{ size: '1.2px', color: 'white' }}
             pad={{
               horizontal: 'small',
               vertical: size === 'small' ? 'medium' : 'small',
             }}
-            round="medium"
-            elevation={hover ? 'indigo' : 'none'}
+            boxShadow="inset 0px 0px 15px 0.6px rgba(255, 255, 255, 0.2)"
           >
             {selectedUserZone ? (
               <InitialsAvatar
@@ -150,16 +150,17 @@ const ZoneSelector: FC = () => {
               user && <InitialsAvatar id={user.id} value={user.fullName} />
             )}
             <Box align="center">
-              <Text
+              <EllipsesOverflowText
+                maxWidth="111px"
                 textAlign="center"
                 weight="bold"
                 size="xsmall"
                 color="white"
               >
                 {selectedUserZone ? selectedUserZone.zone.name : user?.fullName}
-              </Text>
+              </EllipsesOverflowText>
             </Box>
-          </Box>
+          </ExtendedBox>
         </Box>
       </DropButton>
     </Box>

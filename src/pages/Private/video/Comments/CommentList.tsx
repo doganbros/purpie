@@ -1,6 +1,7 @@
 import React, { FC, useEffect } from 'react';
 import { Box, InfiniteScroll, Stack, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import InitialsAvatar from '../../../../components/utils/InitialsAvatar';
 import { listPostCommentsAction } from '../../../../store/actions/post.action';
 import { AppState } from '../../../../store/reducers/root.reducer';
@@ -20,6 +21,7 @@ const CommentList: FC<CommentsProps> = ({ postId }) => {
     },
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const getComments = (skip?: number) => {
     dispatch(listPostCommentsAction({ postId, skip }));
@@ -32,14 +34,12 @@ const CommentList: FC<CommentsProps> = ({ postId }) => {
   return (
     <Box gap="medium">
       <Text size="large" color="brand" weight="bold">
-        Comments
+        {t('comments')}
       </Text>
       {user && <Input user={user} postId={postId} />}
       {comments.data.length === 0 ? (
         <Box margin={{ vertical: 'small' }}>
-          <Text color="status-disabled">
-            No comments yet. Be the first one to comment!
-          </Text>
+          <Text color="status-disabled">{t('CommentList.noCommentMsg')}</Text>
         </Box>
       ) : (
         <InfiniteScroll items={comments.data}>

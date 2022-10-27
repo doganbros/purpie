@@ -1,12 +1,12 @@
 import { Avatar, Box, Button, Header, Layer } from 'grommet';
-import { Menu, Previous, Close } from 'grommet-icons';
-import { useHistory } from 'react-router-dom';
+import { Close, Menu, Previous } from 'grommet-icons';
 import React, { FC, useState } from 'react';
 import Sidebar from '../Sidebar';
-import Logo from '../../../../assets/octopus-logo/logo-white.svg';
+import Logo from '../../../../assets/purpie-logo/logo-white.svg';
 import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import ExtendedBox from '../../../utils/ExtendedBox';
 import Divider from '../../../utils/Divider';
+import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
 
 interface Props {
   topComponent?: React.ReactNode;
@@ -14,8 +14,6 @@ interface Props {
 }
 
 const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
-  const history = useHistory();
-
   const topComponentHeight = 120;
   const leftComponentWidth = 135;
 
@@ -35,7 +33,7 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
             icon={<Menu size="medium" color="white" />}
           />
           <Button
-            onClick={() => history.push('/')}
+            onClick={() => navigateToSubdomain()}
             icon={
               <Avatar
                 alignSelf="center"

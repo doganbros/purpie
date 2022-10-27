@@ -2,6 +2,7 @@ import { Box, InfiniteScroll, Text } from 'grommet';
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import ZoneSearchItem from '../../../components/utils/zone/ZoneSearchItem';
 import Divider from '../../../components/utils/Divider';
@@ -17,6 +18,7 @@ import { SearchParams } from '../../../models/utils';
 const ZoneSearch: FC = () => {
   const { value } = useParams<SearchParams>();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const {
     zone: {
@@ -39,7 +41,7 @@ const ZoneSearch: FC = () => {
 
   const renderResults = () => {
     if (results.data.length === 0) {
-      return <Text>Nothing Found</Text>;
+      return <Text>{t('common.nothingFound')}</Text>;
     }
     return (
       <InfiniteScroll
@@ -60,7 +62,7 @@ const ZoneSearch: FC = () => {
 
   return (
     <PrivatePageLayout
-      title="Search"
+      title={t('common.search')}
       topComponent={<SearchInput />}
       rightComponent={
         <Box pad="medium" gap="medium">
@@ -72,7 +74,9 @@ const ZoneSearch: FC = () => {
       }
     >
       <Box pad={{ vertical: 'medium' }} gap="medium">
-        <Text weight="bold">Zone Results</Text>
+        <Text weight="bold">
+          {t('common.searchResult', { title: t('common.zone') })}
+        </Text>
         {renderResults()}
       </Box>
     </PrivatePageLayout>

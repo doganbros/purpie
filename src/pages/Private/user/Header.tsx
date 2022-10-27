@@ -20,7 +20,7 @@ const Header: FC<HeaderProps> = ({ user }) => (
     />
     <Box>
       <Text weight="bold">{user.fullName}</Text>
-      <Text size="small" color="status-disabiled">
+      <Text size="small" color="status-disabled">
         {user.userName}
       </Text>
     </Box>

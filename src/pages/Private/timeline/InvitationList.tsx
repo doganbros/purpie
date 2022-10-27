@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Box, Button, InfiniteScroll, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
   INVITATION_AMOUNT_LESS,
@@ -14,6 +15,7 @@ import { InvitationListItem as InvitationListItemType } from '../../../store/typ
 
 const InvitationList: FC = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     activity: { invitations },
   } = useSelector((state: AppState) => state);
@@ -49,17 +51,17 @@ const InvitationList: FC = () => {
           >
             <Text size="small" color="brand">
               {displayCount === INVITATION_AMOUNT_LESS
-                ? 'See more'
-                : 'See less'}
+                ? t('common.seeMore')
+                : t('common.seeLess')}
             </Text>
           </Button>
         )}
       </Box>
       {invitations.loading && data.length === 0 && (
-        <Text size="small">Loading</Text>
+        <Text size="small">{t('common.loading')}</Text>
       )}
       {!invitations.loading && data.length === 0 && (
-        <Text size="small">No invitations found</Text>
+        <Text size="small">{t('Invitations.noInvitations')}</Text>
       )}
 
       <Box overflow="auto" height={{ max: '472px' }}>

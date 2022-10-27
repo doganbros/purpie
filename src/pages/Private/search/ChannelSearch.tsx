@@ -2,6 +2,7 @@ import { Box, InfiniteScroll, Text } from 'grommet';
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import ChannelSearchItem from '../../../components/utils/channel/ChannelSearchItem';
 import Divider from '../../../components/utils/Divider';
@@ -17,6 +18,7 @@ import SearchInput from './SearchInput';
 const ChannelSearch: FC = () => {
   const { value } = useParams<SearchParams>();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const {
     channel: {
@@ -38,7 +40,7 @@ const ChannelSearch: FC = () => {
 
   const renderResults = () => {
     if (results.data.length === 0) {
-      return <Text>Nothing Found</Text>;
+      return <Text>{t('common.nothingFound')}</Text>;
     }
     return (
       <InfiniteScroll
@@ -59,7 +61,7 @@ const ChannelSearch: FC = () => {
 
   return (
     <PrivatePageLayout
-      title="Search"
+      title={t('common.search')}
       topComponent={<SearchInput />}
       rightComponent={
         <Box pad="medium" gap="medium">
@@ -71,7 +73,9 @@ const ChannelSearch: FC = () => {
       }
     >
       <Box pad={{ vertical: 'medium' }} gap="medium">
-        <Text weight="bold">Channel Results</Text>
+        <Text weight="bold">
+          {t('common.searchResult', { title: t('common.channel') })}
+        </Text>
         {renderResults()}
       </Box>
     </PrivatePageLayout>

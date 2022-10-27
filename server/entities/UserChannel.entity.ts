@@ -1,4 +1,11 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  Unique,
+} from 'typeorm';
 import { ChannelRoleCode } from 'types/RoleCodes';
 import { RecordEntity } from './base/RecordEntity';
 import { Channel } from './Channel.entity';
@@ -7,6 +14,7 @@ import { User } from './User.entity';
 import { UserZone } from './UserZone.entity';
 
 @Entity('user_channel')
+@Unique(['userId', 'channelId', 'channelRoleCode'])
 export class UserChannel extends RecordEntity {
   @Column()
   userId: number;

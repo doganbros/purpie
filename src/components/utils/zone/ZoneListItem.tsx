@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Box, Button, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { joinZoneAction } from '../../../store/actions/zone.action';
 import InitialsAvatar from '../InitialsAvatar';
@@ -11,6 +12,7 @@ interface ZoneListItemProps {
   channelCount: number;
   memberCount: number;
 }
+
 const ZoneListItem: FC<ZoneListItemProps> = ({
   id,
   name,
@@ -18,6 +20,7 @@ const ZoneListItem: FC<ZoneListItemProps> = ({
   memberCount,
 }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     zone: {
       getUserZones: { userZones },
@@ -36,10 +39,10 @@ const ZoneListItem: FC<ZoneListItemProps> = ({
             {name}
           </Text>
           <Text size="xsmall" color="status-disabled">
-            {channelCount} channels
+            {t('ZoneListItem.channelCount', { count: channelCount })}
           </Text>
           <Text size="xsmall" color="status-disabled">
-            {memberCount} members
+            {t('ZoneListItem.memberCount', { count: memberCount })}
           </Text>
         </Box>
       </Box>
@@ -49,7 +52,7 @@ const ZoneListItem: FC<ZoneListItemProps> = ({
           dispatch(joinZoneAction(id));
         }}
         disabled={isJoined}
-        label={isJoined ? 'Joined' : 'Join'}
+        label={t(isJoined ? 'common.joined' : 'common.join')}
         size="small"
       />
     </Box>

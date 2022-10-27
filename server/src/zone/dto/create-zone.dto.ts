@@ -36,7 +36,7 @@ export class CreateZoneDto {
       'Subdomain which will be used as zone address. See: https://datatracker.ietf.org/doc/html/rfc1035',
   })
   @IsNotEmpty()
-  @Matches(/^(?![0-9]+$)(?!.*-$)(?!-)[a-zA-Z0-9-]{6,32}$/g, {
+  @Matches(/^(?![0-9]+$)(?!.*-$)(?!-)[a-zA-Z0-9-]{6,32}$/, {
     message: 'Please enter a valid subdomain',
   })
   subdomain: string;

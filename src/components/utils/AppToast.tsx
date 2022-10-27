@@ -2,6 +2,7 @@ import { Box, Button, Image, Layer, Stack, Text } from 'grommet';
 import { FormClose } from 'grommet-icons';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import ErrorBadge from '../../assets/toast/error/badge.svg';
 import ErrorBubbles from '../../assets/toast/error/bubbles.svg';
 import InfoBadge from '../../assets/toast/info/badge.svg';
@@ -21,13 +22,8 @@ interface Props {
 
 const AppToast: FC<Props> = ({ status = 'ok', message, visible, id }) => {
   const dispatch = useDispatch();
-
-  const title = {
-    error: 'Error!',
-    info: 'Info!',
-    warn: 'Warning!',
-    ok: 'Successful!',
-  }[status];
+  const { t } = useTranslation();
+  const title = t(`AppToast.${status}`);
 
   const bubbles = {
     error: ErrorBubbles,

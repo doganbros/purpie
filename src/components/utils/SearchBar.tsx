@@ -2,6 +2,7 @@ import { TextInput } from 'grommet';
 import { Search } from 'grommet-icons';
 import React, { FC, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { SearchScope } from '../../models/utils';
 
 interface SearchBarProps {
@@ -15,6 +16,7 @@ const SearchBar: FC<SearchBarProps> = ({
 }) => {
   const [inputValue, setInputValue] = useState(initialValue);
   const history = useHistory();
+  const { t } = useTranslation();
 
   const handleSearch = (v: string, s: SearchScope) => {
     if (v && s) {
@@ -34,7 +36,7 @@ const SearchBar: FC<SearchBarProps> = ({
         if (e.key === 'Enter') handleSearch(inputValue, scope);
       }}
       reverse
-      placeholder="Search"
+      placeholder={t('common.search')}
       value={inputValue}
       onChange={(e) => setInputValue(e.target.value)}
     />
