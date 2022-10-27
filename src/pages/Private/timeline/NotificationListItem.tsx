@@ -1,6 +1,7 @@
 import React, { FC, useMemo } from 'react';
-import { Box, Text } from 'grommet';
+import { Anchor, Box, Text } from 'grommet';
 import { Chat, Favorite, TextWrap, User, UserAdd } from 'grommet-icons';
+import { Trans } from 'react-i18next';
 import { NotificationType } from '../../../models/utils';
 import { NotificationListItem as NotificationListItemType } from '../../../store/types/activity.types';
 
@@ -18,48 +19,133 @@ const NotificationListItem: FC<NotificationListItemProps> = ({
       case NotificationType.POST:
         return {
           icon: <TextWrap size="16" color={iconColor} />,
-          title: `${notification.createdBy.fullName} has started new post.`,
+          title: (
+            <Trans
+              i18nKey="NotificationListItem.POST"
+              components={{
+                user: (
+                  <Anchor href={`/user/${notification.createdBy.userName}`} />
+                ),
+                post: <Anchor href={`/video/${notification.post.id}`} />,
+              }}
+              values={{ userName: notification.createdBy.fullName }}
+            />
+          ),
         };
       case NotificationType.POST_LIKE:
         return {
           icon: <Favorite size="16" color={iconColor} />,
-          title: `${notification.createdBy.fullName} has liked your post.`,
+          title: (
+            <Trans
+              i18nKey="NotificationListItem.POST_LIKE"
+              components={{
+                user: (
+                  <Anchor href={`/user/${notification.createdBy.userName}`} />
+                ),
+                post: <Anchor href={`/video/${notification.post.id}`} />,
+              }}
+              values={{ userName: notification.createdBy.fullName }}
+            />
+          ),
         };
       case NotificationType.POST_COMMENT:
         return {
           icon: <Chat size="16" color={iconColor} />,
-          title: `${notification.createdBy.fullName} has commented on your post.`,
+          title: (
+            <Trans
+              i18nKey="NotificationListItem.POST_COMMENT"
+              components={{
+                user: (
+                  <Anchor href={`/user/${notification.createdBy.userName}`} />
+                ),
+                post: <Anchor href={`/video/${notification.post.id}`} />,
+              }}
+              values={{ userName: notification.createdBy.fullName }}
+            />
+          ),
         };
       case NotificationType.POST_COMMENT_LIKE:
         return {
           icon: <Favorite size="16" color={iconColor} />,
-          title: `${notification.createdBy.fullName} has liked your post comment.`,
+          title: (
+            <Trans
+              i18nKey="NotificationListItem.POST_COMMENT_LIKE"
+              components={{
+                user: (
+                  <Anchor href={`/user/${notification.createdBy.userName}`} />
+                ),
+                post: <Anchor href={`/video/${notification.post.id}`} />,
+              }}
+              values={{ userName: notification.createdBy.fullName }}
+            />
+          ),
         };
       case NotificationType.POST_COMMENT_REPLY:
         return {
           icon: <Chat size="16" color={iconColor} />,
-          title: `${notification.createdBy.fullName} has replied your post comment.`,
+          title: (
+            <Trans
+              i18nKey="NotificationListItem.POST_COMMENT_REPLY"
+              components={{
+                user: (
+                  <Anchor href={`/user/${notification.createdBy.userName}`} />
+                ),
+                post: <Anchor href={`/video/${notification.post.id}`} />,
+              }}
+              values={{ userName: notification.createdBy.fullName }}
+            />
+          ),
         };
       case NotificationType.POST_COMMENT_MENTION:
         return {
           icon: <UserAdd size="16" color={iconColor} />,
-          title: `${notification.createdBy.fullName} has mentioned your post comment.`,
+          title: (
+            <Trans
+              i18nKey="NotificationListItem.POST_COMMENT_MENTION"
+              components={{
+                user: (
+                  <Anchor href={`/user/${notification.createdBy.userName}`} />
+                ),
+                post: <Anchor href={`/video/${notification.post.id}`} />,
+              }}
+              values={{ userName: notification.createdBy.fullName }}
+            />
+          ),
         };
       case NotificationType.CONTACT_REQUEST_ACCEPTED:
         return {
           icon: <User size="16" color={iconColor} />,
-          title: `${notification.createdBy.fullName} has accepted your contact request.`,
+          title: (
+            <Trans
+              i18nKey="NotificationListItem.CONTACT_REQUEST_ACCEPTED"
+              components={{
+                user: (
+                  <Anchor href={`/user/${notification.createdBy.userName}`} />
+                ),
+              }}
+              values={{ userName: notification.createdBy.fullName }}
+            />
+          ),
         };
       case NotificationType.CONTACT_REQUEST_RECEIVED:
         return {
           icon: <UserAdd color={iconColor} size="16" />,
-          title: `${notification.createdBy.fullName} has want to add you as a contact.`,
+          title: (
+            <Trans
+              i18nKey="NotificationListItem.CONTACT_REQUEST_ACCEPTED"
+              components={{
+                user: (
+                  <Anchor href={`/user/${notification.createdBy.userName}`} />
+                ),
+              }}
+              values={{ userName: notification.createdBy.fullName }}
+            />
+          ),
         };
       default:
         return {};
     }
   };
-
   const { icon, title } = useMemo(() => getNotificationPayload(), [
     notification,
   ]);

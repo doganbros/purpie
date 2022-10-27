@@ -397,5 +397,15 @@
     "description": "It looks like you may have taken a wrong turn. Do not worry... it happens to the best of us.",
     "zones": "Zones",
     "login": "Login"
+  },
+  "NotificationListItem": {
+    "POST": "<user>{{userName}}</user> has started new <post>post</post>.",
+    "POST_LIKE": "<user>{{userName}}</user> has liked your <post>post</post>.",
+    "POST_COMMENT": "<user>{{userName}}</user> has commented on your <post>post</post>.",
+    "POST_COMMENT_LIKE": "<user>{{userName}}</user> has liked your <post>post</post> comment.",
+    "POST_COMMENT_REPLY": "<user>{{userName}}</user> has replied your <post>post</post> comment.",
+    "POST_COMMENT_MENTION": "<user>{{userName}}</user> has mentioned your <post>post</post> comment.",
+    "CONTACT_REQUEST_ACCEPTED": "<user>{{userName}}</user> has accepted your contact request.",
+    "CONTACT_REQUEST_RECEIVED": "<user>{{userName}}</user> has want to add you as a contact."
   }
 }
