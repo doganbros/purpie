@@ -15,6 +15,7 @@ import ThirdPartyAuth from './pages/Public/ThirdPartyAuth';
 import VerifyUserEmail from './pages/Public/VerifyUserEmail';
 import VerifyUserEmailInfo from './pages/Public/VerifyUserEmailInfo';
 import ComingSoon from './pages/Private/ComingSoon';
+import JoinPage from './pages/Public/JoinPage';
 
 interface AppRoute {
   id: string;
@@ -27,6 +28,12 @@ interface AppRoute {
 }
 
 export const publicRoutes: Array<AppRoute> = [
+  {
+    id: nanoid(),
+    path: '/join',
+    component: JoinPage,
+    description: 'Welcomes user into the app',
+  },
   {
     id: nanoid(),
     path: '/login',

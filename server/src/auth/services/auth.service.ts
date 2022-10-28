@@ -136,15 +136,21 @@ export class AuthService {
   }
 
   removeAccessTokens(res: Response) {
-    res.cookie('OCTOPUS_ACCESS_TOKEN', '', {
-      expires: new Date(),
-      domain: `.${new URL(REACT_APP_SERVER_HOST).hostname}`,
+    const domain = `.${new URL(REACT_APP_SERVER_HOST).hostname}`;
+    const isDevelopment = NODE_ENV === 'development';
+    res.clearCookie('OCTOPUS_ACCESS_TOKEN', {
+      expires: dayjs().add(30, 'days').toDate(),
+      domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
+      secure: true,
+      sameSite: isDevelopment ? 'none' : 'lax',
     });
-    res.cookie('OCTOPUS_REFRESH_ACCESS_TOKEN', '', {
-      expires: new Date(),
-      domain: `.${new URL(REACT_APP_SERVER_HOST).hostname}`,
+    res.clearCookie('OCTOPUS_REFRESH_ACCESS_TOKEN', {
+      expires: dayjs().add(30, 'days').toDate(),
+      domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
+      secure: true,
+      sameSite: isDevelopment ? 'none' : 'lax',
     });
   }
 

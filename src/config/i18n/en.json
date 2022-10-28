@@ -1,6 +1,7 @@
 {
   "common": {
     "signIn": "SIGN IN",
+    "signUp": "SIGN UP",
     "password": "PASSWORD",
     "confirmPassword": "CONFIRM PASSWORD",
     "passwords": "Passwords",
@@ -57,6 +58,17 @@
     "emailOrUserName": "EMAIL / USERNAME",
     "forgotPassword": "Forgot Password?",
     "orSignInWith": "Or Sign in With"
+  },
+   "Join": {
+    "title": "Join",
+    "formTitle": "Join Purpie",
+    "formSubTitle": "Sign In to continue.",
+    "dontHaveAccount": "Don’t have an account?",
+    "createAccount": "CREATE AN ACCOUNT",
+    "emailOrUserName": "EMAIL / USERNAME",
+    "forgotPassword": "Forgot Password?",
+    "orSignInWith": "Or Sign in With",
+     "alreadyHaveAccount": "Already have an account?"
   },
   "Register": {
     "title": "Register",
