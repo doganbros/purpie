@@ -61,16 +61,6 @@ const ChannelList: FC = () => {
               >
                 {c.channel.name}
               </Text>
-              <Text
-                size="xsmall"
-                color={
-                  c.channel.id === selectedChannel?.channel.id
-                    ? 'light-2'
-                    : 'dark-1'
-                }
-              >
-                {c.channel.topic}
-              </Text>
             </Box>
           ))
         ))}

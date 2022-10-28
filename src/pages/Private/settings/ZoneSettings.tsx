@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, CheckBox, DropButton, Grid, Text, TextInput } from 'grommet';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ListButton from '../../../components/utils/ListButton';
 import SectionContainer from '../../../components/utils/SectionContainer';
 import {
@@ -8,28 +8,26 @@ import {
   REACT_APP_SERVER_HOST,
 } from '../../../config/http';
 import { AppState } from '../../../store/reducers/root.reducer';
-import {
-  UpdateZonePayload,
-  UserZoneListItem,
-} from '../../../store/types/zone.types';
+import { UpdateZonePayload } from '../../../store/types/zone.types';
 import { AvatarItem } from './AvatarItem';
 import { SettingsData } from './types';
+import {
+  changeZoneInformationAction,
+  changeZonePhoto,
+} from '../../../store/actions/zone.action';
+import AvatarUpload from './AvatarUpload';
 
-interface ZoneSettingsProps {
-  onSave: () => void;
-  onChangeProfilePicture: (arg0: UserZoneListItem) => void;
-}
-
-const ZoneSettings: (props: ZoneSettingsProps) => SettingsData | null = ({
-  onSave,
-  onChangeProfilePicture,
-}) => {
+const ZoneSettings: () => SettingsData | null = () => {
   const {
     zone: {
       getUserZones: { userZones },
     },
   } = useSelector((state: AppState) => state);
+  const dispatch = useDispatch();
+
   const [selectedUserZoneIndex, setSelectedUserZoneIndex] = useState(0);
+  const [showAvatarUpload, setShowAvatarUpload] = useState(false);
+
   const [zonePayload, setZonePayload] = useState<UpdateZonePayload>({
     name: userZones?.[0].zone.name || '',
     description: userZones?.[0].zone.description || '',
@@ -45,49 +43,65 @@ const ZoneSettings: (props: ZoneSettingsProps) => SettingsData | null = ({
     canCreateChannel: userZones?.[0].zoneRole.canDelete,
   });
   if (!userZones) return null;
+  const zoneId = userZones[selectedUserZoneIndex].zone.id;
   return {
     id: 2,
     key: 'zone',
     label: 'Zone Settings',
     url: 'zone',
-    onSave,
+    onSave: () => {
+      if (!(zoneId === null || zoneId === undefined)) {
+        dispatch(changeZoneInformationAction(zoneId, zonePayload));
+      }
+    },
     avatarWidget: (
-      <DropButton
-        dropProps={{
-          responsive: false,
-          stretch: false,
-          overflow: { vertical: 'scroll' },
-        }}
-        dropContent={
-          <Box>
-            {userZones.map((item, index) => (
-              <ListButton
-                label={item.zone.name}
-                key={item.zone.id}
-                onClick={() => {
-                  setZonePayload({
-                    name: item.zone.name,
-                    id: item.zone.id,
-                    subdomain: item.zone.subdomain,
-                    public: item.zone.public,
-                    description: item.zone.description,
-                  });
-                  setSelectedUserZoneIndex(index);
-                }}
-              />
-            ))}
-          </Box>
-        }
-      >
-        <AvatarItem
-          title={userZones[selectedUserZoneIndex].zone.name}
-          subtitle={userZones[selectedUserZoneIndex].zone.subdomain}
-          src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/zone/display-photo/${userZones[selectedUserZoneIndex].zone.displayPhoto}`}
-          onClickEdit={() =>
-            onChangeProfilePicture(userZones[selectedUserZoneIndex])
+      <>
+        <DropButton
+          dropProps={{
+            responsive: false,
+            stretch: false,
+            overflow: { vertical: 'scroll' },
+          }}
+          dropContent={
+            <Box>
+              {userZones.map((item, index) => (
+                <ListButton
+                  label={item.zone.name}
+                  key={item.zone.id}
+                  onClick={() => {
+                    setZonePayload({
+                      name: item.zone.name,
+                      id: item.zone.id,
+                      subdomain: item.zone.subdomain,
+                      public: item.zone.public,
+                      description: item.zone.description,
+                    });
+                    setSelectedUserZoneIndex(index);
+                  }}
+                />
+              ))}
+            </Box>
           }
-        />
-      </DropButton>
+        >
+          <AvatarItem
+            title={userZones[selectedUserZoneIndex].zone.name}
+            subtitle={userZones[selectedUserZoneIndex].zone.subdomain}
+            src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/zone/display-photo/${userZones[selectedUserZoneIndex].zone.displayPhoto}`}
+            onClickEdit={() => setShowAvatarUpload(true)}
+          />
+        </DropButton>
+        {showAvatarUpload && !(zoneId === null) && (
+          <AvatarUpload
+            onSubmit={(file) => {
+              dispatch(changeZonePhoto(file, zoneId));
+              setShowAvatarUpload(false);
+            }}
+            onDismiss={() => {
+              setShowAvatarUpload(false);
+            }}
+          />
+        )}
+      </>
     ),
     items: [
       {

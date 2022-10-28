@@ -1,36 +1,30 @@
 import React, { useState } from 'react';
 import { Box, CheckBox, DropButton, Grid, Text, TextInput } from 'grommet';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ListButton from '../../../components/utils/ListButton';
 import SectionContainer from '../../../components/utils/SectionContainer';
+import { apiURL } from '../../../config/http';
 import {
-  REACT_APP_API_VERSION,
-  REACT_APP_SERVER_HOST,
-} from '../../../config/http';
+  changeChannelInformationAction,
+  changeChannelPhoto,
+} from '../../../store/actions/channel.action';
 import { AppState } from '../../../store/reducers/root.reducer';
-import {
-  UpdateChannelPayload,
-  UserChannelListItem,
-} from '../../../store/types/channel.types';
+import { UpdateChannelPayload } from '../../../store/types/channel.types';
 import { AvatarItem } from './AvatarItem';
+import AvatarUpload from './AvatarUpload';
 import { SettingsData } from './types';
 
-interface ChannelSettingsProps {
-  onSave: () => void;
-  onChangeProfilePicture: (arg0: UserChannelListItem) => void;
-}
-
-const ChannelSettings: (props: ChannelSettingsProps) => SettingsData = ({
-  onSave,
-  onChangeProfilePicture,
-}) => {
+const ChannelSettings: () => SettingsData = () => {
   const {
     channel: { userChannels },
     zone: {
       getUserZones: { userZones },
     },
   } = useSelector((state: AppState) => state);
+  const dispatch = useDispatch();
+
   const [selectedUserChannelIndex, setSelectedUserChannelIndex] = useState(0);
+  const [showAvatarUpload, setShowAvatarUpload] = useState(false);
   const [channelPermissions, setChannelPermissions] = useState({
     canInvite: userChannels.data[0].channelRole.canInvite,
     canDelete: userChannels.data[0].channelRole.canDelete,
@@ -43,54 +37,71 @@ const ChannelSettings: (props: ChannelSettingsProps) => SettingsData = ({
     id: userChannels.data[0].channel.id,
     public: userChannels.data[0].channel.public,
   });
+  const channelId = userChannels.data[selectedUserChannelIndex]?.channel?.id;
+
   return {
     id: 1,
     key: 'channel',
     label: 'Channel Settings',
     url: 'channel',
-    onSave,
+    onSave: () => {
+      if (!(channelId === null || channelId === undefined)) {
+        dispatch(changeChannelInformationAction(channelId, channelPayload));
+      }
+    },
     avatarWidget: (
-      <DropButton
-        dropProps={{
-          responsive: false,
-          stretch: false,
-          overflow: { vertical: 'scroll' },
-        }}
-        dropContent={
-          <Box>
-            {userChannels.data.map((item, index) => (
-              <ListButton
-                key={item.channel.id}
-                label={item.channel.name}
-                onClick={() => {
-                  setChannelPayload({
-                    name: item.channel.name,
-                    id: item.channel.id,
-                    description: item.channel.description,
-                    public: item.channel.public,
-                  });
-                  setSelectedUserChannelIndex(index);
-                }}
-              />
-            ))}
-          </Box>
-        }
-      >
-        <AvatarItem
-          title={userChannels.data[selectedUserChannelIndex].channel.name}
-          subtitle={
-            userZones?.find(
-              (userZone) =>
-                userZone.zone.id ===
-                userChannels.data[selectedUserChannelIndex].channel.zoneId
-            )?.zone.name
+      <>
+        <DropButton
+          dropProps={{
+            responsive: false,
+            stretch: false,
+            overflow: { vertical: 'scroll' },
+          }}
+          dropContent={
+            <Box>
+              {userChannels.data.map((item, index) => (
+                <ListButton
+                  key={item.channel.id}
+                  label={item.channel.name}
+                  onClick={() => {
+                    setChannelPayload({
+                      name: item.channel.name,
+                      id: item.channel.id,
+                      description: item.channel.description,
+                      public: item.channel.public,
+                    });
+                    setSelectedUserChannelIndex(index);
+                  }}
+                />
+              ))}
+            </Box>
           }
-          onClickEdit={() =>
-            onChangeProfilePicture(userChannels.data[selectedUserChannelIndex])
-          }
-          src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/channel/display-photo/${userChannels.data[selectedUserChannelIndex].channel.displayPhoto}`}
-        />
-      </DropButton>
+        >
+          <AvatarItem
+            title={userChannels.data[selectedUserChannelIndex].channel.name}
+            subtitle={
+              userZones?.find(
+                (userZone) =>
+                  userZone.zone.id ===
+                  userChannels.data[selectedUserChannelIndex].channel.zoneId
+              )?.zone.name
+            }
+            onClickEdit={() => setShowAvatarUpload(true)}
+            src={`${apiURL}/channel/display-photo/${userChannels.data[selectedUserChannelIndex].channel.displayPhoto}`}
+          />
+        </DropButton>
+        {showAvatarUpload && !(channelId === null || channelId === undefined) && (
+          <AvatarUpload
+            onSubmit={(file) => {
+              dispatch(changeChannelPhoto(file, channelId));
+              setShowAvatarUpload(false);
+            }}
+            onDismiss={() => {
+              setShowAvatarUpload(false);
+            }}
+          />
+        )}
+      </>
     ),
     items: [
       {

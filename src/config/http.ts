@@ -10,7 +10,9 @@ export const {
   REACT_APP_SERVER_HOST = 'http://localhost:8000',
 } = process.env;
 
-axios.defaults.baseURL = `${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}`;
+export const apiURL = `${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}`;
+
+axios.defaults.baseURL = apiURL;
 
 axios.defaults.withCredentials = true;
 

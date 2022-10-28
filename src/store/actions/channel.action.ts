@@ -168,8 +168,7 @@ export const searchChannelAction = (
 };
 
 export const changeChannelPhoto = (
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  profilePhoto: any,
+  profilePhoto: File,
   channelId: number
 ): ChannelAction => {
   return async (dispatch) => {

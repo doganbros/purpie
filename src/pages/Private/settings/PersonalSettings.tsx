@@ -1,31 +1,27 @@
 import React, { useState } from 'react';
 import { Box, Button, TextInput } from 'grommet';
 import { Hide, View } from 'grommet-icons';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { SettingsData } from './types';
 import { AvatarItem } from './AvatarItem';
+import { apiURL } from '../../../config/http';
 import {
-  REACT_APP_API_VERSION,
-  REACT_APP_SERVER_HOST,
-} from '../../../config/http';
+  changeProfileInfo,
+  changeProfilePicture,
+} from '../../../store/actions/auth.action';
+import AvatarUpload from './AvatarUpload';
 
-interface PersonalSettingsProps {
-  onSave: () => void;
-  onChangeProfilePicture: () => void;
-}
-const PersonalSettings: (
-  props: PersonalSettingsProps
-) => SettingsData | null = ({ onSave, onChangeProfilePicture }) => {
+const PersonalSettings: () => SettingsData | null = () => {
   const {
     auth: { user },
   } = useSelector((state: AppState) => state);
-
-  const [userInfo, setUserInfo] = useState({
+  const dispatch = useDispatch();
+  const [userPayload, setUserPayload] = useState({
     userName: user?.userName || '',
     fullName: user?.fullName || '',
   });
-
+  const [showAvatarUpload, setShowAvatarUpload] = useState(false);
   const [reveal, setReveal] = useState({
     current: false,
     new: false,
@@ -39,15 +35,29 @@ const PersonalSettings: (
     label: 'Personal Settings',
     url: 'personalSettings',
     name: user?.fullName,
-    role: 'Developer',
-    onSave,
+    onSave: () => {
+      dispatch(changeProfileInfo(userPayload));
+    },
     avatarWidget: (
-      <AvatarItem
-        title={user.fullName}
-        subtitle={user.userName}
-        onClickEdit={onChangeProfilePicture}
-        src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/user/display-photo/${user?.displayPhoto}`}
-      />
+      <>
+        <AvatarItem
+          title={user.fullName}
+          subtitle={user.userName}
+          onClickEdit={() => setShowAvatarUpload(true)}
+          src={`${apiURL}/user/display-photo/${user?.displayPhoto}`}
+        />
+        {showAvatarUpload && (
+          <AvatarUpload
+            onSubmit={(file) => {
+              dispatch(changeProfilePicture(file));
+              setShowAvatarUpload(false);
+            }}
+            onDismiss={() => {
+              setShowAvatarUpload(false);
+            }}
+          />
+        )}
+      </>
     ),
     items: [
       {
@@ -66,12 +76,12 @@ const PersonalSettings: (
             pad="xxsmall"
           >
             <TextInput
-              value={userInfo.userName}
+              value={userPayload.userName}
               plain
               focusIndicator={false}
               onChange={(event) =>
-                setUserInfo({
-                  ...userInfo,
+                setUserPayload({
+                  ...userPayload,
                   userName: event.target.value,
                 })
               }
@@ -95,12 +105,12 @@ const PersonalSettings: (
             pad="xxsmall"
           >
             <TextInput
-              value={userInfo.fullName}
+              value={userPayload.fullName}
               plain
               focusIndicator={false}
               onChange={(event) =>
-                setUserInfo({
-                  ...userInfo,
+                setUserPayload({
+                  ...userPayload,
                   fullName: event.target.value,
                 })
               }

@@ -51,8 +51,7 @@ export const searchZone = (
 ): Promise<PaginatedResponse<ZoneListItem>> =>
   http.get(`/zone/search`, { params }).then((res) => res.data);
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const changeZonePic = (photoFile: any, zoneId: number): Promise<any> =>
+export const changeZonePic = (photoFile: File, zoneId: number): Promise<any> =>
   http
     .put(`zone/${zoneId}/display-photo`, serialize(photoFile))
     .then((res) => res.data);
