@@ -10,7 +10,8 @@ import { AppState } from '../../store/reducers/root.reducer';
 import AuthLayout from '../../components/layouts/AuthLayout';
 import { FormSubmitEvent } from '../../models/form-submit-event';
 import { validators } from '../../helpers/validators';
-import Figure from '../../assets/register-bg/figure.png';
+import Figure from '../../assets/register-bg/figure.svg';
+import Banner from '../../assets/register-bg/banner.svg';
 import AuthFormButton from '../../components/auth/AuthFormButton';
 
 const Register: FC = () => {
@@ -39,10 +40,19 @@ const Register: FC = () => {
       background={
         <>
           <Image
-            width="90%"
+            width="60%"
+            src={Banner}
+            style={{
+              position: 'absolute',
+              pointerEvents: 'none',
+              top: 0,
+              left: 250,
+            }}
+          />
+          <Image
+            width="60%"
             alignSelf="center"
-            margin={{ bottom: 'large' }}
-            style={{ maxHeight: '80%', zIndex: 1 }}
+            style={{ zIndex: 1 }}
             src={Figure}
           />
         </>
