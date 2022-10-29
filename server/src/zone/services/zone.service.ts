@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { pick } from 'lodash';
 import { URL } from 'url';
-import { Brackets, IsNull, Not, Repository } from 'typeorm';
+import { Brackets, Not, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Zone } from 'entities/Zone.entity';
 import { defaultZoneRoles } from 'entities/data/default-roles';
@@ -13,7 +13,6 @@ import { tsqueryParam } from 'helpers/utils';
 import { SearchQuery } from 'types/SearchQuery';
 import { ZoneRole } from 'entities/ZoneRole.entity';
 import { UserProfile } from 'src/auth/interfaces/user.interface';
-import { Category } from 'entities/Category.entity';
 import { MailService } from 'src/mail/mail.service';
 import { SystemUserListQuery } from 'src/user/dto/system-user-list.query';
 import { UserZone } from 'entities/UserZone.entity';
@@ -36,8 +35,6 @@ export class ZoneService {
     private userZoneRepository: Repository<UserZone>,
     @InjectRepository(Invitation)
     private invitationRepository: Repository<Invitation>,
-    @InjectRepository(Category)
-    private categoryRepository: Repository<Category>,
     private mailService: MailService,
   ) {}
 
@@ -53,7 +50,6 @@ export class ZoneService {
             description: createZoneInfo.description,
             public: createZoneInfo.public,
             createdById: userId,
-            categoryId: createZoneInfo.categoryId,
           })
           .save(),
       })
@@ -175,12 +171,6 @@ export class ZoneService {
       'new-zone-created',
       context,
     );
-  }
-
-  async getCategories(parentCategoryId?: number) {
-    return this.categoryRepository.find({
-      where: { parentCategoryId: parentCategoryId ?? IsNull() },
-    });
   }
 
   async sendZoneInvitationMail(zone: Zone, email: string) {

@@ -35,7 +35,6 @@ import {
 } from 'src/auth/decorators/current-user.decorator';
 import { User } from 'entities/User.entity';
 import { SearchQuery } from 'types/SearchQuery';
-import { Category } from 'entities/Category.entity';
 import { ZoneRole } from 'entities/ZoneRole.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { s3, s3HeadObject, s3Storage } from 'config/s3-storage';
@@ -130,33 +129,6 @@ export class ZoneController {
 
     this.zoneService.removeInvitation(user.email, zone.id);
     return userZone.id;
-  }
-
-  @Get('/categories/list')
-  @ApiOkResponse({
-    type: Category,
-    isArray: true,
-    description:
-      'Current authenticated lists categories eligible for zones. These are the categories presented while creating a zone',
-  })
-  async getParentCategories() {
-    return this.zoneService.getCategories();
-  }
-
-  @Get('/categories/list/:zoneId')
-  @ApiParam({
-    name: 'zoneId',
-    description: 'The zone id',
-  })
-  @ApiOkResponse({
-    type: Category,
-    isArray: true,
-    description:
-      'Current authenticated lists categories eligible for a channel under the passed zoneId. These are the categories presented while creating a channel',
-  })
-  @UserZoneRole()
-  async getZoneCategories(@CurrentUserZone() currentUserZone: UserZone) {
-    return this.zoneService.getCategories(currentUserZone.zone.categoryId);
   }
 
   @Post('/invite/:zoneId')

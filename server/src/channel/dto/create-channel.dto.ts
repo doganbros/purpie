@@ -14,15 +14,6 @@ export class CreateChannelDto {
   name: string;
 
   @ApiProperty({
-    type: Number,
-    required: false,
-    description: 'can be a number or null',
-  })
-  @IsOptional()
-  @IsInt()
-  categoryId?: number | null;
-
-  @ApiProperty({
     required: false,
   })
   @IsString()

@@ -1,6 +1,5 @@
 import {
   IsBoolean,
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -13,13 +12,6 @@ export class CreateZoneDto {
   @IsString()
   @IsNotEmpty()
   name: string;
-
-  @ApiProperty({
-    required: false,
-  })
-  @IsInt()
-  @IsOptional()
-  categoryId?: number;
 
   @ApiProperty({
     required: false,
