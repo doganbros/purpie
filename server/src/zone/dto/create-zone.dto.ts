@@ -31,7 +31,7 @@ export class CreateZoneDto {
   @ApiProperty({
     minimum: 3,
     maximum: 32,
-    pattern: '/^(?![0-9]+$)(?!.*-$)(?!-)[a-zA-Z0-9-]{6,32}$/g',
+    pattern: '/^(?![0-9]+$)(?!.*-$)(?!-)[a-zA-Z0-9-]{3,32}$/g',
     description:
       'Subdomain which will be used as zone address. See: https://datatracker.ietf.org/doc/html/rfc1035',
   })
