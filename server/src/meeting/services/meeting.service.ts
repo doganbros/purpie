@@ -33,6 +33,7 @@ import timezone from 'dayjs/plugin/timezone';
 import { ClientMeetingEventDto } from '../dto/client-meeting-event.dto';
 import { CreateMeetingDto } from '../dto/create-meeting.dto';
 import { ConferenceInfoResponse } from '../responses/conference-info.response';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -67,7 +68,11 @@ export class MeetingService {
       channelId,
       userId,
     });
-    if (!userChannel) throw new NotFoundException('User channel not found');
+    if (!userChannel)
+      throw new NotFoundException(
+        ErrorTypes.CHANNEL_NOT_FOUND,
+        'User channel not found',
+      );
   }
 
   async getMeetingConfig(userId: number, createMeetingInfo: CreateMeetingDto) {
@@ -122,8 +127,8 @@ export class MeetingService {
     }
 
     throw new InternalServerErrorException(
+      ErrorTypes.COULD_NOT_CREATE_MEETING,
       'Could not create meeting',
-      'COULD_NOT_CREATE_MEETING',
     );
   }
 
@@ -202,12 +207,15 @@ export class MeetingService {
     ).getOne();
 
     if (!result)
-      throw new NotFoundException('Meeting not found', 'MEETING_NOT_FOUND');
+      throw new NotFoundException(
+        ErrorTypes.MEETING_NOT_FOUND,
+        'Meeting not found',
+      );
 
     if (!result.record)
       throw new BadRequestException(
+        ErrorTypes.MEETING_RECORDING_NOT_ENABLED,
         'Recording was not enabled for meeting',
-        'MEETING_RECORDING_NOT_ENABLED',
       );
 
     return result;

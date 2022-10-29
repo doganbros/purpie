@@ -4,6 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { verifyJWT } from 'helpers/jwt';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 @Injectable()
 export class ParseTokenPipe implements PipeTransform {
@@ -15,20 +16,26 @@ export class ParseTokenPipe implements PipeTransform {
 
   async transform(token: string) {
     if (!token)
-      throw new UnauthorizedException(this.invalidTokenMessage, 'INVALID_JWT');
+      throw new UnauthorizedException(
+        ErrorTypes.INVALID_JWT,
+        this.invalidTokenMessage,
+      );
 
     try {
       const payload = await verifyJWT(token, this.secret);
 
       if (this.validateToken && !this.validateToken(payload))
         throw new UnauthorizedException(
+          ErrorTypes.INVALID_JWT,
           this.invalidTokenMessage,
-          'INVALID_JWT',
         );
 
       return payload;
     } catch (err: any) {
-      throw new UnauthorizedException(this.invalidTokenMessage, 'INVALID_JWT');
+      throw new UnauthorizedException(
+        ErrorTypes.INVALID_JWT,
+        this.invalidTokenMessage,
+      );
     }
   }
 }

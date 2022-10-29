@@ -17,6 +17,7 @@ import { ChatMessage } from 'entities/ChatMessage.entity';
 import { PostService } from 'src/post/services/post.service';
 import { ChatMessageDto } from '../dto/chat-message.dto';
 import { ChatMessageListQuery } from '../dto/chat-message-list.dto';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const {
   AUTH_TOKEN_SECRET = '',
@@ -71,7 +72,7 @@ export class ChatService {
     const refreshToken = cookies.OCTOPUS_REFRESH_ACCESS_TOKEN;
 
     if (!token) {
-      throw new WsException('You not authorized to use this websocket');
+      throw new WsException(ErrorTypes.NOT_AUTHORIZED);
     }
 
     return verifyJWT(token, AUTH_TOKEN_SECRET).catch(async () => {
@@ -89,7 +90,7 @@ export class ChatService {
 
         return { id: userPayload.id };
       } catch (err: any) {
-        throw new WsException('You not authorized to use this websocket');
+        throw new WsException(ErrorTypes.NOT_AUTHORIZED);
       }
     });
   }
@@ -128,7 +129,10 @@ export class ChatService {
     if (medium === 'post') {
       const post = await this.postService.getOnePost(userId, id, false);
       if (!post)
-        throw new ForbiddenException('You are not authorized', 'UNAUTHORIZED');
+        throw new ForbiddenException(
+          ErrorTypes.NOT_AUTHORIZED,
+          'You are not authorized',
+        );
     } else if (medium === 'channel') {
       const channel = await this.userChannelRepository.findOne({
         where: { userId, channelId: id },
@@ -136,14 +140,20 @@ export class ChatService {
       });
 
       if (!channel)
-        throw new ForbiddenException('You are not authorized', 'UNAUTHORIZED');
+        throw new ForbiddenException(
+          ErrorTypes.NOT_AUTHORIZED,
+          'You are not authorized',
+        );
     } else {
       const contactUser = await this.contactRepository.findOne({
         userId,
         contactUserId: id,
       });
       if (!contactUser)
-        throw new ForbiddenException('You are not authorized', 'UNAUTHORIZED');
+        throw new ForbiddenException(
+          ErrorTypes.NOT_AUTHORIZED,
+          'You are not authorized',
+        );
     }
 
     const baseQuery = this.chatMessageRepository

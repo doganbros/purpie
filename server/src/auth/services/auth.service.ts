@@ -29,6 +29,7 @@ import {
   UserProfile,
   UserTokenPayload,
 } from '../interfaces/user.interface';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const {
   AUTH_TOKEN_SECRET = '',
@@ -163,15 +164,15 @@ export class AuthService {
 
     if (!userRefreshToken)
       throw new UnauthorizedException(
+        ErrorTypes.NOT_SIGNED_IN,
         'You not authorized to use this route',
-        'NOT_SIGNED_IN',
       );
 
     const isValid = await compareHash(refreshToken, userRefreshToken.token);
     if (!isValid)
       throw new UnauthorizedException(
+        ErrorTypes.NOT_SIGNED_IN,
         'You not authorized to use this route',
-        'NOT_SIGNED_IN',
       );
 
     return true;
@@ -272,8 +273,8 @@ export class AuthService {
 
     if (!user)
       throw new NotFoundException(
+        ErrorTypes.UNAUTHORIZED_SUBDOMAIN,
         `Couldn't find zone with this subdomain`,
-        'UNAUTHORIZED_SUBDOMAIN',
       );
     return user;
   }
@@ -307,7 +308,8 @@ export class AuthService {
       },
     });
 
-    if (!user) throw new NotFoundException('User not found', 'USER_NOT_FOUND');
+    if (!user)
+      throw new NotFoundException(ErrorTypes.USER_NOT_FOUND, 'User not found');
 
     return this.setMailVerificationToken(user);
   }
@@ -322,16 +324,16 @@ export class AuthService {
 
     if (!user)
       throw new NotFoundException(
+        ErrorTypes.INVALID_PASSWORD_RESET_TOKEN,
         `Invalid password reset token`,
-        'INVALID_PASSWORD_RESET_TOKEN',
       );
 
     const isValid = await compareHash(token, user.forgotPasswordToken);
 
     if (!isValid)
       throw new NotFoundException(
+        ErrorTypes.INVALID_PASSWORD_RESET_TOKEN,
         `Invalid password reset token`,
-        'INVALID_PASSWORD_RESET_TOKEN',
       );
 
     return user;
@@ -350,12 +352,13 @@ export class AuthService {
       },
     });
 
-    if (!user) throw new NotFoundException('User not found', 'USER_NOT_FOUND');
+    if (!user)
+      throw new NotFoundException(ErrorTypes.USER_NOT_FOUND, 'User not found');
 
     const isValid = await compareHash(token, user.mailVerificationToken);
 
     if (!isValid)
-      throw new NotFoundException('User not found', 'USER_NOT_FOUND');
+      throw new NotFoundException(ErrorTypes.USER_NOT_FOUND, 'User not found');
 
     user.emailConfirmed = true;
     user.mailVerificationToken = null!;

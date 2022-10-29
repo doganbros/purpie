@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { UserZoneService } from '../services/user-zone.service';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 @Injectable()
 export class UserZoneGuard implements CanActivate {
@@ -25,8 +26,8 @@ export class UserZoneGuard implements CanActivate {
 
     if (!req.user)
       throw new InternalServerErrorException(
+        ErrorTypes.USER_PAYLOAD_REQUIRED,
         'User payload must be retrieved before using this guard',
-        'USER_PAYLOAD_REQUIRED',
       );
 
     const { userZoneId, zoneId } = req.params;
@@ -48,13 +49,16 @@ export class UserZoneGuard implements CanActivate {
     }
 
     if (!req.userZone)
-      throw new NotFoundException('User Zone not found', 'USER_ZONE_NOT_FOUND');
+      throw new NotFoundException(
+        ErrorTypes.ZONE_NOT_FOUND,
+        'User Zone not found',
+      );
 
     for (const permission of userZonePermissions) {
       if (!req.userZone.zoneRole[permission])
         throw new UnauthorizedException(
+          ErrorTypes.NOT_AUTHORIZED,
           'You are not authorized',
-          'NOT_AUTHORIZED',
         );
     }
 

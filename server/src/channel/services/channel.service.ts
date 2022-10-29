@@ -27,6 +27,7 @@ import { CreateChannelDto } from '../dto/create-channel.dto';
 import { SearchChannelQuery } from '../dto/search-channel.query';
 import { UpdateChannelPermission } from '../dto/update-channel-permission.dto';
 import { UpdateChannelUserRoleDto } from '../dto/update-channel-user-role.dto';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
 
@@ -239,8 +240,8 @@ export class ChannelService {
 
     if (invitation)
       throw new BadRequestException(
+        ErrorTypes.USER_ALREADY_INVITED_TO_CHANNEL,
         `The user with the email ${email} has already been invited to this channel`,
-        'USER_ALREADY_INVITED_TO_CHANNEL',
       );
 
     const channel = await this.channelRepository
@@ -257,6 +258,7 @@ export class ChannelService {
 
     if (channel)
       throw new BadRequestException(
+        ErrorTypes.USER_ALREADY_MEMBER_OF_CHANNEL,
         `The user with the email ${email} is already a member of this channel`,
       );
   }
@@ -373,7 +375,10 @@ export class ChannelService {
       });
 
       if (remainingSuperAdminCount === 0)
-        throw new ForbiddenException('There must be at least one super admin');
+        throw new ForbiddenException(
+          ErrorTypes.SUPER_ADMIN_NOT_EXIST,
+          'There must be at least one super admin',
+        );
     }
 
     return this.userChannelRepository.update(
@@ -391,8 +396,8 @@ export class ChannelService {
 
     if (existingRoleCodes)
       throw new BadRequestException(
+        ErrorTypes.ROLE_CODE_ALREADY_EXISTS,
         `The role code ${info.roleCode} already exists`,
-        'ROLE_CODE_ALREADY_EXISTS',
       );
 
     return this.channelRoleRepository.create({ ...info, channelId }).save();
@@ -405,8 +410,8 @@ export class ChannelService {
 
     if (existing)
       throw new ForbiddenException(
+        ErrorTypes.USERS_USING_ROLE,
         'Users using this role already exists',
-        'USERS_USING_ROLE',
       );
 
     return this.channelRoleRepository
@@ -420,7 +425,10 @@ export class ChannelService {
     info: Partial<UpdateChannelPermission>,
   ) {
     if (roleCode === 'SUPER_ADMIN')
-      throw new ForbiddenException("Super Admin Permissions can't be changed");
+      throw new ForbiddenException(
+        ErrorTypes.CHANGE_SUPER_ADMIN_PERMISSION,
+        "Super Admin Permissions can't be changed",
+      );
 
     const updates: Partial<UpdateChannelPermission> = {};
 
@@ -437,8 +445,8 @@ export class ChannelService {
 
     if (!Object.keys(updates).length)
       throw new BadRequestException(
+        ErrorTypes.FIELDS_FOR_UPDATES_NOT_SPECIFIED,
         'Fields for updates not specified',
-        'FIELDS_FOR_UPDATES_NOT_SPECIFIED',
       );
 
     return this.channelRoleRepository.update({ roleCode, channelId }, updates);
@@ -461,7 +469,10 @@ export class ChannelService {
     });
 
     if (!channel)
-      throw new NotFoundException('Channel not found', 'CHANNEL_NOT_FOUND');
+      throw new NotFoundException(
+        'Channel not found',
+        ErrorTypes.CHANNEL_NOT_FOUND,
+      );
 
     updates.allowComment =
       settings.allowComment ?? channel.postSettings.allowComment;
