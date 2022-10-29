@@ -1,6 +1,5 @@
 import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
-import { Category } from '../../models/utils';
 import {
   CreateZonePayload,
   UpdateZonePayload,
@@ -18,9 +17,6 @@ export const joinZone = (id: number): Promise<any> =>
 
 export const getCategories = (): Promise<any> =>
   http.get('/zone/categories/list').then((res) => res.data);
-
-export const getZoneCategories = (zoneId: number): Promise<Category[]> =>
-  http.get(`/zone/categories/list/${zoneId}`).then((res) => res.data);
 
 export const getUserZones = (): Promise<Array<UserZoneListItem>> =>
   http.get('/user-zone/list').then((res) => res.data);

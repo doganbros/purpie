@@ -27,7 +27,7 @@ export const theme: typeof grommet = deepMerge(base, {
     },
     input: {
       extend: 'color: grey;',
-      padding: { vertical: '15px' },
+      padding: { vertical: '12px' },
       font: {
         weight: 'normal',
         size: 'small',
