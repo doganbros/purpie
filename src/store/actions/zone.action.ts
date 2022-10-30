@@ -143,7 +143,7 @@ export const createZoneAction = (payload: CreateZonePayload): ZoneAction => {
       dispatch({
         type: CREATE_ZONE_SUCCESS,
       });
-      setToastAction('ok', `Zone created successfully`)(dispatch);
+      setToastAction('ok', `Zone Created!`)(dispatch);
       getUserZonesAction()(dispatch);
     } catch (err: any) {
       dispatch({
