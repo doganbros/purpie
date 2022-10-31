@@ -126,7 +126,7 @@ const Timeline: FC = () => {
     )
       return (
         <Box justify="center" align="center" alignSelf="center" height="100%">
-          <PurpieLogoAnimated width={100} height={100} color="#956aea" />
+          <PurpieLogoAnimated width={50} height={50} color="#956aea" />
         </Box>
       ); // We can return a loader component later
 
