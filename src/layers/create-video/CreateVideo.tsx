@@ -19,7 +19,7 @@ import { AppState } from '../../store/reducers/root.reducer';
 import { CreateVideoPayload } from '../../store/types/post.types';
 import { createVideoAction } from '../../store/actions/post.action';
 import Switch from '../../components/utils/Switch';
-import Loader from '../../components/utils/Loader';
+import PurpieLogoAnimated from '../../assets/purpie-logo/purpie-logo-animated';
 
 interface CreateVideoProps {
   onDismiss: () => void;
@@ -182,7 +182,15 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
               type="submit"
               disabled={notValid || uploading}
               primary
-              icon={uploading ? <Loader /> : undefined}
+              icon={
+                uploading ? (
+                  <PurpieLogoAnimated
+                    width={100}
+                    height={100}
+                    color="#956aea"
+                  />
+                ) : undefined
+              }
               label={(() => {
                 if (uploading) {
                   return t('CreateVideo.uploading', {

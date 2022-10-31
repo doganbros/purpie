@@ -11,7 +11,7 @@ const Loader: FC = () => {
       className="background-gradient"
     >
       <Heading color="white">
-        <PurpieLogoAnimated width={100} height={100} />
+        <PurpieLogoAnimated width={100} height={100} color="#FFFFFF" />
       </Heading>
     </Box>
   );

@@ -39,7 +39,7 @@ import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
 import UserBadge from '../../../components/utils/UserBadge';
 import Highlight from '../../../components/utils/Highlight';
 import { matchDescriptionTags } from '../../../helpers/utils';
-import Loader from '../../../components/utils/Loader';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 dayjs.extend(relativeTime);
 
@@ -192,7 +192,7 @@ const Video: FC = () => {
     >
       {loading || !data ? (
         <Layer responsive={false} plain>
-          <Loader />
+          <PurpieLogoAnimated width={50} height={50} color="#956aea" />
         </Layer>
       ) : (
         <Box gap="large" pad={{ vertical: 'medium' }}>

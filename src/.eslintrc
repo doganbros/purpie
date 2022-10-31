@@ -37,6 +37,7 @@
     "react-hooks/exhaustive-deps": "off",
     "import/prefer-default-export": "off",
     "react/prop-types": "off",
+    "react/require-default-props": "off",
     "react/jsx-key": "error",
     "react/no-array-index-key": "warn",
     "no-unused-vars": "error",

@@ -20,7 +20,7 @@ import { UserSummary } from './UserSummary';
 import UserFriends from './UserFriends';
 import UserPublicChannels from './UserPublicChannels';
 import UserPublicZones from './UserPublicZones';
-import Loader from '../../../components/utils/Loader';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 interface UserParams {
   userName: string;
@@ -64,12 +64,12 @@ const User: FC = () => {
     >
       {detail.loading || !detail.user ? (
         <Layer responsive={false} plain>
-          <Loader />
+          <PurpieLogoAnimated width={50} height={50} color="#956aea" />
         </Layer>
       ) : (
         <Box gap="medium" pad={{ vertical: 'medium' }}>
           {featuredPost.loading && (
-            <Text size="small">{t('common.loading')}</Text>
+            <PurpieLogoAnimated width={50} height={50} color="#956aea" />
           )}
           {!featuredPost.loading && featuredPost.data && (
             <Text size="small">{t('User.noPinnedPost')}</Text>

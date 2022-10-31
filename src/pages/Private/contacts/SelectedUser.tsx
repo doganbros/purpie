@@ -6,7 +6,7 @@ import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 import { removeContactAction } from '../../../store/actions/user.action';
 import { User } from '../../../store/types/auth.types';
 import { UserSummary } from '../user/UserSummary';
-import Loader from '../../../components/utils/Loader';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 interface SelectedUserProps {
   user: User | null;
@@ -20,7 +20,7 @@ const SelectedUser: FC<SelectedUserProps> = ({ user, contactId }) => {
 
   return !user ? (
     <Box pad="large" justify="center" align="center">
-      <Loader />
+      <PurpieLogoAnimated width={50} height={50} color="#956aea" />
     </Box>
   ) : (
     <>

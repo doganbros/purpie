@@ -9,6 +9,7 @@ import {
   SUGGESTION_AMOUNT_LESS,
   SUGGESTION_AMOUNT_MORE,
 } from '../../../helpers/constants';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 const ZonesToJoin: FC = () => {
   const dispatch = useDispatch();
@@ -48,7 +49,7 @@ const ZonesToJoin: FC = () => {
       </Box>
 
       {zoneSuggestions.loading && (
-        <Text size="small">{t('common.loading')}</Text>
+        <PurpieLogoAnimated width={50} height={50} color="#956aea" />
       )}
 
       {!zoneSuggestions.loading &&

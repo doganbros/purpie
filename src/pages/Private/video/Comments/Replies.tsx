@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { listPostCommentRepliesAction } from '../../../../store/actions/post.action';
 import { PostCommentState } from '../../../../store/types/post.types';
 import CommentBase from './CommentBase';
-import Loader from '../../../../components/utils/Loader';
+import PurpieLogoAnimated from '../../../../assets/purpie-logo/purpie-logo-animated';
 
 interface RepliesProps {
   postId: number;
@@ -57,7 +57,7 @@ const Replies: FC<RepliesProps> = ({ parentComment, postId }) => {
         <Box gap="small">
           {parentComment.replies.loading &&
           !parentComment.replies.data.length ? (
-            <Loader />
+            <PurpieLogoAnimated width={50} height={50} color="#956aea" />
           ) : (
             parentComment.replies.data.map((c) => (
               <CommentBase key={c.id} comment={c} postId={postId} />
