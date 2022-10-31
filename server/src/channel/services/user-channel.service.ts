@@ -72,7 +72,6 @@ export class UserChannelService {
         'user_channel.channelId = channel.id and user_channel.userId = :userId',
         { userId },
       )
-      .leftJoinAndSelect('channel.category', 'category')
       .leftJoinAndSelect(
         'user_channel.channelRole',
         'channel_role',
@@ -149,7 +148,6 @@ export class UserChannelService {
       ])
       .leftJoin('user_channel.channel', 'channel')
       .leftJoin('channel.createdBy', 'createdBy')
-      .leftJoinAndSelect('channel.category', 'category')
       .leftJoinAndSelect(
         'user_channel.channelRole',
         'channel_role',

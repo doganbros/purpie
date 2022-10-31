@@ -48,7 +48,6 @@ export class ChannelService {
     userZoneId: number,
     zoneId: number,
     createChannelInfo: CreateChannelDto,
-    defaultChannel = false,
   ) {
     const userChannel = await this.userChannelRepository
       .create({
@@ -61,7 +60,6 @@ export class ChannelService {
             zoneId,
             public: createChannelInfo.public,
             description: createChannelInfo.description,
-            categoryId: defaultChannel ? null : createChannelInfo.categoryId,
             createdById: userId,
           })
           .save(),

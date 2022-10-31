@@ -533,15 +533,12 @@ export class UserService {
         'zone.id',
         'zone.subdomain',
         'zone.name',
-        'category.id',
-        'category.name',
         'zone.createdOn',
         'zone.displayPhoto',
         'zone.description',
         'zone.public',
       ])
       .innerJoin('user_zone.zone', 'zone')
-      .innerJoin('zone.category', 'category')
       .innerJoin('user_zone.user', 'user')
       .where('user.userName = :userName', { userName })
       .andWhere(

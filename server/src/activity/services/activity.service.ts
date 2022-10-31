@@ -26,8 +26,6 @@ export class ActivityService {
         'channel.name',
         'channel.description',
         'channel.public',
-        'category.id',
-        'category.name',
         'zone.id',
         'zone.name',
         'zone.subdomain',
@@ -39,7 +37,6 @@ export class ActivityService {
           .from(UserChannel, 'user_channel');
       }, 'channel_membersCount')
       .leftJoin('channel.zone', 'zone')
-      .leftJoin('channel.category', 'category')
       .leftJoin(
         UserChannel,
         'user_channel',
@@ -73,8 +70,6 @@ export class ActivityService {
         'zone.description',
         'zone.createdOn',
         'zone.public',
-        'category.id',
-        'category.name',
       ])
       .addSelect((subQuery) => {
         return subQuery
@@ -88,7 +83,6 @@ export class ActivityService {
           .where('user_zone.zoneId = zone.id')
           .from(UserZone, 'user_zone');
       }, 'zone_membersCount')
-      .leftJoin('zone.category', 'category')
       .leftJoin(
         UserZone,
         'user_zone',
