@@ -20,6 +20,7 @@ import { ThirdPartyLoginParams } from '../dto/third-party-login.params';
 import { UserProfile } from '../interfaces/user.interface';
 import { AuthThirdPartyService } from '../services/auth-third-party.service';
 import { AuthService } from '../services/auth.service';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const {
   GOOGLE_OAUTH_CLIENT_ID = '',
@@ -79,7 +80,10 @@ export class AuthThirdPartyController {
       );
     }
 
-    throw new BadRequestException('Not implemented', 'NOT_IMPLEMENTED');
+    throw new BadRequestException(
+      ErrorTypes.NOT_IMPLEMENTED,
+      'Not implemented',
+    );
   }
 
   @Post('/:name')
@@ -167,8 +171,8 @@ export class AuthThirdPartyController {
     }
 
     throw new InternalServerErrorException(
+      ErrorTypes.THIRD_PARTY_AUTH_ERROR,
       `Something went wrong while authenticating using ${name}`,
-      'THIRD_PARTH_AUTH_ERROR',
     );
   }
 }

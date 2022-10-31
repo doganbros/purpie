@@ -56,6 +56,7 @@ import { CreateZoneDto } from '../dto/create-zone.dto';
 import { UpdateUserZoneRoleDto } from '../dto/update-user-zone-role.dto';
 import { UpdateZonePermission } from '../dto/update-zone-permission.dto';
 import { UserZoneService } from '../services/user-zone.service';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 @Controller({ version: '1', path: 'zone' })
@@ -123,7 +124,8 @@ export class ZoneController {
   ) {
     const zone = await this.zoneService.validateJoinPublicZone(user.id, zoneId);
 
-    if (!zone) throw new NotFoundException('Zone not found', 'ZONE_NOT_FOUND');
+    if (!zone)
+      throw new NotFoundException(ErrorTypes.ZONE_NOT_FOUND, 'Zone not found');
 
     const userZone = await this.userZoneService.addUserToZone(user.id, zoneId);
 
@@ -160,7 +162,8 @@ export class ZoneController {
   ) {
     const zone = await this.zoneService.validateInviteUser(email, zoneId);
 
-    if (!zone) throw new NotFoundException('Zone not found', 'ZONE_NOT_FOUND');
+    if (!zone)
+      throw new NotFoundException(ErrorTypes.ZONE_NOT_FOUND, 'Zone not found');
 
     const invitation = await this.zoneService.addUserToZoneInvitation(
       email,
@@ -189,7 +192,11 @@ export class ZoneController {
       userProfile.email,
     );
 
-    if (!invitation) throw new NotFoundException('Invitation not found');
+    if (!invitation)
+      throw new NotFoundException(
+        ErrorTypes.INVITATION_NOT_FOUND,
+        'Invitation not found',
+      );
 
     if (invitationResponse.status === 'reject') {
       invitation.remove();
