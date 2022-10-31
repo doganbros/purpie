@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useContext, useState } from 'react';
 import {
   Box,
   Button,
@@ -7,24 +7,21 @@ import {
   FormField,
   Layer,
   ResponsiveContext,
-  Select,
   Text,
   TextArea,
   TextInput,
   ThemeContext,
 } from 'grommet';
 import { Close } from 'grommet-icons';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
   closeCreateZoneLayerAction,
   createZoneAction,
-  getCategoriesAction,
 } from '../../store/actions/zone.action';
-import { AppState } from '../../store/reducers/root.reducer';
 import { CreateZonePayload } from '../../store/types/zone.types';
 import { nameToSubdomain } from '../../helpers/utils';
-import { hostname, appSubdomain } from '../../helpers/app-subdomain';
+import { appSubdomain, hostname } from '../../helpers/app-subdomain';
 import { validators } from '../../helpers/validators';
 import Switch from '../../components/utils/Switch';
 import { CreateFormTheme } from './custom-theme';
@@ -41,19 +38,11 @@ interface CreateZoneProps {
 const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const {
-    zone: {
-      getCategories: { categories },
-    },
-  } = useSelector((state: AppState) => state);
+
   const size = useContext(ResponsiveContext);
 
   const [subdomain, setSubdomain] = useState('');
   const [subdomainInputFocus, setSubdomainInputFocus] = useState(false);
-
-  useEffect(() => {
-    dispatch(getCategoriesAction());
-  }, []);
 
   return (
     <Layer onClickOutside={onDismiss}>
@@ -68,7 +57,12 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
         >
           <Box direction="row" justify="between" align="start">
             <Box pad="xsmall">
-              <Text size="large">{t('CreateZone.title')}</Text>
+              <Text size="large" weight="bold">
+                {t('CreateZone.title')}
+              </Text>
+              <Text size="small" color="status-disabled">
+                {t('CreateZone.description')}
+              </Text>
             </Box>
             <Button plain onClick={onDismiss}>
               <Close color="brand-alt" />
@@ -81,85 +75,80 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                 dispatch(closeCreateZoneLayerAction());
               }}
             >
-              <Box height="262px" flex={false} overflow="auto">
-                <Box height={{ min: 'min-content' }}>
+              <Box height={{ min: 'min-content' }}>
+                <Box
+                  direction="row"
+                  justify="between"
+                  align="start"
+                  gap="small"
+                >
                   <FormField
+                    width="60%"
                     name="name"
                     validate={[validators.required(t('CreateZone.zoneName'))]}
                   >
                     <TextInput
-                      placeholder={t('CreateZone.zoneName')}
+                      placeholder={`${t('CreateZone.zoneName')}*`}
                       name="name"
                       onChange={({ target: { value } }) => {
                         setSubdomain(nameToSubdomain(value));
                       }}
                     />
                   </FormField>
-                  <FormField
-                    name="subdomain"
-                    // Validating subdomain state since component value can contain the full URL
-                    validate={(_, data) =>
-                      validators.required(t('CreateZone.zoneAddress'))(
-                        subdomain,
-                        data
-                      ) ||
-                      validators.minLength(t('CreateZone.zoneAddress'), 7)(
-                        subdomain,
-                        data
-                      ) ||
-                      validators.maxLength(
-                        32,
-                        t('CreateZone.zoneAddressTooLong')
-                      )(subdomain, data) ||
-                      validators.matches(
-                        /^([a-z|\d][a-z|\d|-]+[a-z|\d])$/,
-                        t('CreateZone.notValidZoneAddress')
-                      )(subdomain, data) ||
-                      undefined
-                    }
-                  >
-                    <TextInput
-                      name="subdomain"
-                      placeholder={t('CreateZone.zoneAddress')}
-                      value={
-                        subdomainInputFocus || !subdomain
-                          ? subdomain
-                          : `${subdomain}.${baseHost}`
-                      }
-                      onChange={(e) => {
-                        setSubdomain(e.target.value);
-                      }}
-                      onFocus={() => setSubdomainInputFocus(true)}
-                      onBlur={() => setSubdomainInputFocus(false)}
+                  <FormField width="40%" name="public">
+                    <Switch
+                      label={t('common.public')}
+                      name="public"
+                      defaultValue
                     />
                   </FormField>
-                  <FormField name="description">
-                    <TextArea
-                      resize={false}
-                      placeholder={t('CreateZone.zoneDescription')}
-                      name="description"
-                    />
-                  </FormField>
-                  <Box
-                    direction="row"
-                    justify="between"
-                    align="start"
-                    gap="small"
-                  >
-                    <FormField width="100%" name="categoryId">
-                      <Select
-                        placeholder={t('common.category')}
-                        name="categoryId"
-                        options={categories || []}
-                        labelKey="name"
-                        valueKey={{ key: 'id', reduce: true }}
-                      />
-                    </FormField>
-                    <FormField width="100%" name="public">
-                      <Switch label={t('common.public')} name="public" />
-                    </FormField>
-                  </Box>
                 </Box>
+
+                <FormField
+                  name="subdomain"
+                  // Validating subdomain state since component value can contain the full URL
+                  validate={(_, data) =>
+                    validators.required(t('CreateZone.zoneAddress'))(
+                      subdomain,
+                      data
+                    ) ||
+                    validators.minLength(t('CreateZone.zoneAddress'), 3)(
+                      subdomain,
+                      data
+                    ) ||
+                    validators.maxLength(
+                      32,
+                      t('CreateZone.zoneAddressTooLong')
+                    )(subdomain, data) ||
+                    validators.matches(
+                      /^([a-z|\d][a-z|\d|-]+[a-z|\d])$/,
+                      t('CreateZone.notValidZoneAddress')
+                    )(subdomain, data) ||
+                    undefined
+                  }
+                >
+                  <TextInput
+                    name="subdomain"
+                    placeholder={`${t('CreateZone.zoneAddress')}*`}
+                    value={
+                      subdomainInputFocus || !subdomain
+                        ? subdomain
+                        : `${subdomain}.${baseHost}`
+                    }
+                    onChange={(e) => {
+                      setSubdomain(e.target.value);
+                    }}
+                    onFocus={() => setSubdomainInputFocus(true)}
+                    onBlur={() => setSubdomainInputFocus(false)}
+                  />
+                </FormField>
+                <FormField name="description">
+                  <TextArea
+                    resize={false}
+                    placeholder={t('CreateZone.zoneDescription')}
+                    name="description"
+                  />
+                </FormField>
               </Box>
               <Button
                 size="large"

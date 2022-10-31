@@ -239,6 +239,7 @@
   },
   "CreateZone": {
     "title": "Create Zone",
+    "description": "It is mandatory to fill in the fields marked *",
     "zoneName": "Zone name",
     "zoneAddress": "Zone address",
     "zoneAddressTooLong": "Zone address is too long",

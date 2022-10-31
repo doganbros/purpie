@@ -19,7 +19,7 @@ const GradientScroll: FC<BoxExtendedProps> = (props) => {
     setShowLeftGradient(scrollLeft > 0);
     setShowRightGradient(scrollLeft + offsetWidth < scrollWidth);
   };
-  const { children } = props;
+  const { children, justify } = props;
   return (
     <Stack fill interactiveChild="first" anchor="right">
       <Stack fill interactiveChild="first" anchor="left">
@@ -29,7 +29,7 @@ const GradientScroll: FC<BoxExtendedProps> = (props) => {
           ref={scrollRef}
           {...props}
         >
-          <Box fill width={{ min: 'min-content' }}>
+          <Box fill justify={justify} width={{ min: 'min-content' }}>
             {children}
           </Box>
         </Box>
