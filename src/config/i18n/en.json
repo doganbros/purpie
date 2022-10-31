@@ -184,7 +184,7 @@
     "error": "Error!",
     "info": "Info!",
     "warn": "Warning!",
-    "ok": "Successful!"
+    "ok": "Done!"
   },
   "TimeInput": {
     "pickTime": "Pick Time"
