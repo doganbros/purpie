@@ -1,4 +1,5 @@
 import { nanoid } from 'nanoid';
+import i18n from 'i18next';
 import { ResponseError } from '../models/response-error';
 import colorPair from '../styles/color-pairs.json';
 
@@ -7,7 +8,7 @@ export const errorResponseMessage = (error?: ResponseError): string => {
 
   if (Array.isArray(error.message)) return error.message.join(', ');
 
-  return error.message;
+  return i18n.t(`ErrorTypes.${error.message}`);
 };
 
 export const camelToSentence = (str: string): string => {
