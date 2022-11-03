@@ -85,7 +85,10 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                   <FormField
                     width="60%"
                     name="name"
-                    validate={[validators.required(t('CreateZone.zoneName'))]}
+                    validate={[
+                      validators.required(t('CreateZone.zoneName')),
+                      validators.maxLength(32),
+                    ]}
                   >
                     <TextInput
                       placeholder={`${t('CreateZone.zoneName')}*`}
@@ -142,7 +145,10 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                     onBlur={() => setSubdomainInputFocus(false)}
                   />
                 </FormField>
-                <FormField name="description">
+                <FormField
+                  name="description"
+                  validate={validators.maxLength(256)}
+                >
                   <TextArea
                     resize={false}
                     placeholder={t('CreateZone.zoneDescription')}

@@ -104,6 +104,7 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                   name="name"
                   validate={[
                     validators.required(t('CreateChannel.channelName')),
+                    validators.maxLength(32),
                   ]}
                 >
                   <TextInput
@@ -119,7 +120,10 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                   />
                 </FormField>
               </Box>
-              <FormField name="description">
+              <FormField
+                name="description"
+                validate={[validators.maxLength(256)]}
+              >
                 <TextArea
                   resize={false}
                   placeholder={t('CreateChannel.channelDescription')}

@@ -1,10 +1,17 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateChannelDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @MaxLength(32)
   name: string;
 
   @ApiProperty({
@@ -12,6 +19,7 @@ export class CreateChannelDto {
   })
   @IsString()
   @IsOptional()
+  @MaxLength(256)
   description?: string;
 
   @ApiProperty()
