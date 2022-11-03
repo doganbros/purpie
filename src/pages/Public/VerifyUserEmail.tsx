@@ -104,6 +104,8 @@ const VerifyUserEmail: FC = () => {
             }
             validate={[
               validators.required(t('common.userName')),
+              validators.minLength(t('common.userName'), 4),
+              validators.maxLength(16),
               validators.matches(
                 USER_NAME_CONSTRAINT,
                 t('common.invalidUserName')
