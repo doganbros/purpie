@@ -174,14 +174,14 @@ export class PlaylistService {
 
       if (!userChannel)
         throw new NotFoundException(
-          'Playlist not found',
           ErrorTypes.PLAYLIST_NOT_FOUND,
+          'Playlist not found',
         );
 
       if (!userChannel.channelRole.canEdit)
         throw new UnauthorizedException(
-          'NOT_AUTHROIZED',
           ErrorTypes.NOT_AUTHORIZED,
+          'NOT_AUTHROIZED',
         );
     }
 
@@ -203,8 +203,8 @@ export class PlaylistService {
 
     if (!playlist)
       throw new NotFoundException(
-        'Playlist not found',
         ErrorTypes.PLAYLIST_NOT_FOUND,
+        'Playlist not found',
       );
 
     if (
@@ -213,8 +213,8 @@ export class PlaylistService {
       playlist.createdById !== userId
     )
       throw new NotFoundException(
-        'Playlist not found',
         ErrorTypes.PLAYLIST_NOT_FOUND,
+        'Playlist not found',
       );
 
     if (playlist.channelId) {
@@ -225,14 +225,14 @@ export class PlaylistService {
 
       if (!userChannel)
         throw new NotFoundException(
-          'Playlist not found',
           ErrorTypes.PLAYLIST_NOT_FOUND,
+          'Playlist not found',
         );
 
       if (!userChannel.channelRole.canEdit)
         throw new UnauthorizedException(
-          'NOT_AUTHROIZED',
           ErrorTypes.NOT_AUTHORIZED,
+          'NOT_AUTHROIZED',
         );
     }
 
