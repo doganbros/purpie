@@ -33,6 +33,7 @@ import EmptyFeedContent from './EmptyFeedContent';
 import { LoadingState } from '../../../models/utils';
 import InvitationList from './InvitationList';
 import i18n from '../../../config/i18n/i18n-config';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 const initialFilters = [
   {
@@ -123,7 +124,11 @@ const Timeline: FC = () => {
     if (
       [LoadingState.loading, LoadingState.pending].includes(feed.loadingState)
     )
-      return t('common.loading'); // We can return a loader component later
+      return (
+        <Box justify="center" align="center" alignSelf="center" height="100%">
+          <PurpieLogoAnimated width={50} height={50} color="#956aea" />
+        </Box>
+      ); // We can return a loader component later
 
     if (!feed.data.length)
       return <EmptyFeedContent onAddContent={() => setShowAddContent(true)} />;

@@ -1,9 +1,8 @@
 import { Box, Heading } from 'grommet';
 import React, { FC } from 'react';
-import { useTranslation } from 'react-i18next';
+import PurpieLogoAnimated from '../../assets/purpie-logo/purpie-logo-animated';
 
 const Loader: FC = () => {
-  const { t } = useTranslation();
   return (
     <Box
       height="100vh"
@@ -11,7 +10,9 @@ const Loader: FC = () => {
       justify="center"
       className="background-gradient"
     >
-      <Heading color="white">{t('common.loading')}</Heading>
+      <Heading color="white">
+        <PurpieLogoAnimated width={100} height={100} color="#FFFFFF" />
+      </Heading>
     </Box>
   );
 };
