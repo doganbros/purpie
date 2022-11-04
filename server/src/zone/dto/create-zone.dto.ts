@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsString,
   Matches,
+  MaxLength,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -11,6 +12,7 @@ export class CreateZoneDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @MaxLength(32)
   name: string;
 
   @ApiProperty({
@@ -18,6 +20,7 @@ export class CreateZoneDto {
   })
   @IsString()
   @IsOptional()
+  @MaxLength(256)
   description?: string;
 
   @ApiProperty({
