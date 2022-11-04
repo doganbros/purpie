@@ -55,6 +55,7 @@ import { InitializeUserDto } from '../dto/initialize-user.dto';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const { VERIFICATION_TOKEN_SECRET = '' } = process.env;
+
 @Controller({ path: 'auth', version: '1' })
 @ApiTags('auth')
 export class AuthController {
@@ -159,7 +160,7 @@ export class AuthController {
 
     if (!user.emailConfirmed)
       throw new UnauthorizedException(
-        ErrorTypes.MUST_VERIFY_EMAIL,
+        { message: ErrorTypes.MUST_VERIFY_EMAIL, user: userPayload },
         'Email must be verified',
       );
 

@@ -31,8 +31,7 @@ axios.interceptors.response.use(
   (response) => response,
   (error) => {
     const showErrorToast = error?.response.config?.showErrorToast;
-
-    if (error?.response?.data?.error === 'NOT_SIGNED_IN') {
+    if (error?.response?.data?.message === 'NOT_SIGNED_IN') {
       store.dispatch({ type: 'LOGOUT' });
     } else if (showErrorToast ? showErrorToast(error) : true) {
       const toastId = nanoid();
@@ -42,6 +41,8 @@ axios.interceptors.response.use(
         error?.response.status === 401 &&
         !getCookie('OCTOPUS_REFRESH_ACCESS_TOKEN')
       ) {
+        if (error?.response?.data?.message === 'MUST_VERIFY_EMAIL')
+          return Promise.reject(error);
         return Promise.reject();
       }
       store.dispatch({

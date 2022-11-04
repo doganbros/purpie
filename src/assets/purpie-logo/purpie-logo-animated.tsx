@@ -13,16 +13,15 @@ interface PurpieLogoAnimatedProps {
 const PurpieLogoAnimated: React.FC<PurpieLogoAnimatedProps> = (
   props: PurpieLogoAnimatedProps
 ) => {
-  const { color } = props;
+  const { color, width, height, viewBox, fill, xmlns, role } = props;
   return (
     <svg
-      width={217}
-      height={256}
-      viewBox="0 0 217 256"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      role="img"
-      {...props}
+      width={width || 217}
+      height={height || 256}
+      viewBox={viewBox || '0 0 217 256'}
+      fill={fill || 'none'}
+      xmlns={xmlns || 'http://www.w3.org/2000/svg'}
+      role={role || 'img'}
     >
       <path
         fillRule="evenodd"
