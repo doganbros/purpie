@@ -105,7 +105,7 @@ export class VideoController {
   @IsClientAuthenticated(['manageStream'])
   @ApiOkResponse({
     description:
-      "Client sends a feedback about any video processing, it could be a notification to octopus that a meeting's video has been stored. Created is sent to client when the record is created, OK otherwise",
+      "Client sends a feedback about any video processing, it could be a notification to purpie that a meeting's video has been stored. Created is sent to client when the record is created, OK otherwise",
     schema: { type: 'string', example: 'Created' },
   })
   @HttpCode(HttpStatus.OK)

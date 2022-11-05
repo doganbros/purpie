@@ -12,7 +12,7 @@ import { customAlphabet } from 'nanoid';
 import { IsNull, Not, Repository } from 'typeorm';
 import { CreateClientDto } from '../dto/create-client.dto';
 import { LoginClientDto } from '../dto/login-client.dto';
-import { OCTOPUS_CLIENT_AUTH_TYPE } from '../constants/auth.constants';
+import { PURPIE_CLIENT_AUTH_TYPE } from '../constants/auth.constants';
 import { AuthService } from './auth.service';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 
@@ -70,7 +70,7 @@ export class ClientAuthService {
       id: client.id,
       name: client.name,
       clientRole: client.clientRole,
-      authType: OCTOPUS_CLIENT_AUTH_TYPE,
+      authType: PURPIE_CLIENT_AUTH_TYPE,
     });
 
     client.refreshToken = await hash(tokens.refreshToken);
@@ -96,7 +96,7 @@ export class ClientAuthService {
         id: client.id,
         name: client.name,
         clientRole: client.clientRole,
-        authType: OCTOPUS_CLIENT_AUTH_TYPE,
+        authType: PURPIE_CLIENT_AUTH_TYPE,
       });
       client.refreshToken = await hash(tokens.refreshToken);
       await client.save();

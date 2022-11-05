@@ -118,14 +118,14 @@ export class AuthService {
     const domain = `.${new URL(REACT_APP_SERVER_HOST).hostname}`;
     const isDevelopment = NODE_ENV === 'development';
 
-    res.cookie('OCTOPUS_ACCESS_TOKEN', accessToken, {
+    res.cookie('PURPIE_ACCESS_TOKEN', accessToken, {
       expires: dayjs().add(30, 'days').toDate(),
       domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
       secure: true,
       sameSite: isDevelopment ? 'none' : 'lax',
     });
-    res.cookie('OCTOPUS_REFRESH_ACCESS_TOKEN', refreshToken, {
+    res.cookie('PURPIE_REFRESH_ACCESS_TOKEN', refreshToken, {
       expires: dayjs().add(30, 'days').toDate(),
       domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
@@ -139,14 +139,14 @@ export class AuthService {
   removeAccessTokens(res: Response) {
     const domain = `.${new URL(REACT_APP_SERVER_HOST).hostname}`;
     const isDevelopment = NODE_ENV === 'development';
-    res.clearCookie('OCTOPUS_ACCESS_TOKEN', {
+    res.clearCookie('PURPIE_ACCESS_TOKEN', {
       expires: dayjs().add(30, 'days').toDate(),
       domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
       secure: true,
       sameSite: isDevelopment ? 'none' : 'lax',
     });
-    res.clearCookie('OCTOPUS_REFRESH_ACCESS_TOKEN', {
+    res.clearCookie('PURPIE_REFRESH_ACCESS_TOKEN', {
       expires: dayjs().add(30, 'days').toDate(),
       domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
@@ -423,7 +423,7 @@ export class AuthService {
     };
     return this.mailService.sendMailByView(
       email,
-      'Verify Octopus Account',
+      'Verify Purpie Account',
       'account-verification',
       context,
     );

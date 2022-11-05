@@ -29,8 +29,8 @@ export class AuthGuard implements CanActivate {
       context.getHandler(),
     );
 
-    const token = req.cookies.OCTOPUS_ACCESS_TOKEN;
-    const refreshToken = req.cookies.OCTOPUS_REFRESH_ACCESS_TOKEN;
+    const token = req.cookies.PURPIE_ACCESS_TOKEN;
+    const refreshToken = req.cookies.PURPIE_REFRESH_ACCESS_TOKEN;
 
     if (!token) {
       const systemUserCount = await this.authService.systemUserCount();

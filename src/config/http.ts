@@ -40,7 +40,7 @@ axios.interceptors.response.use(
       if (
         error &&
         error?.response.status === 401 &&
-        !getCookie('OCTOPUS_REFRESH_ACCESS_TOKEN')
+        !getCookie('PURPIE_REFRESH_ACCESS_TOKEN')
       ) {
         return Promise.reject();
       }

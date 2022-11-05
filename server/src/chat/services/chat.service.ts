@@ -68,8 +68,8 @@ export class ChatService {
 
     const cookies = cookie.parse(socketCookie!);
 
-    const token = cookies.OCTOPUS_ACCESS_TOKEN;
-    const refreshToken = cookies.OCTOPUS_REFRESH_ACCESS_TOKEN;
+    const token = cookies.PURPIE_ACCESS_TOKEN;
+    const refreshToken = cookies.PURPIE_REFRESH_ACCESS_TOKEN;
 
     if (!token) {
       throw new WsException(ErrorTypes.NOT_AUTHORIZED);
