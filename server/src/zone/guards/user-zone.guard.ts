@@ -40,7 +40,7 @@ export class UserZoneGuard implements CanActivate {
       });
     } else if (userZoneId) {
       req.userZone = await this.userZoneService.getUserZone(req.user.id, {
-        id: Number.parseInt(userZoneId, 10),
+        userZoneId: Number.parseInt(userZoneId, 10),
       });
     } else if (subdomain) {
       req.userZone = await this.userZoneService.getUserZone(req.user.id, {
