@@ -130,6 +130,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
                   onChange={({ option }) => {
                     setChannelId(option.id);
                     setUserContactExclusive(false);
+                    setPublicVideo(true);
                   }}
                 />
               </FormField>
