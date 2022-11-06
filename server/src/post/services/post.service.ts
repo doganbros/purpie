@@ -630,7 +630,12 @@ export class PostService {
                   new Brackets((qbii) => {
                     qbii
                       .where('post.conferenceEndDate is null')
-                      .orWhere('post.videoName is not null');
+                      .orWhere('post.conferenceEndDate is not null')
+                      .andWhere(
+                        new Brackets((qbii) => {
+                          qbii.where('post.liveStream').orWhere('post.record');
+                        }),
+                      );
                   }),
                 );
             }),
