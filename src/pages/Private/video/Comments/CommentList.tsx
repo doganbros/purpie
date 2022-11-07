@@ -34,7 +34,7 @@ const CommentList: FC<CommentsProps> = ({ postId }) => {
   return (
     <Box gap="medium">
       <Text size="large" color="brand" weight="bold">
-        {t('comments')}
+        {t('CommentList.comments')}
       </Text>
       {user && <Input user={user} postId={postId} />}
       {comments.data.length === 0 ? (
