@@ -92,7 +92,7 @@ const Desktop: FC<Props> = ({
             pad={{ horizontal: 'large' }}
             direction="column"
           >
-            <GradientScroll justify="center" height="100%">
+            <GradientScroll justify="center" height="100%" pad="xsmall">
               {topComponent}
             </GradientScroll>
             <Box fill="horizontal">
