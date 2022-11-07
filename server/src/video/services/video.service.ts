@@ -77,7 +77,7 @@ export class VideoService {
     };
     return this.mailService.sendMailByView(
       user.email,
-      'Octopus Video',
+      'Purpie Video',
       'video-info',
       context,
     );

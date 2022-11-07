@@ -39,7 +39,7 @@ axios.interceptors.response.use(
       if (
         error &&
         error?.response.status === 401 &&
-        !getCookie('OCTOPUS_REFRESH_ACCESS_TOKEN')
+        !getCookie('PURPIE_REFRESH_ACCESS_TOKEN')
       ) {
         if (error?.response?.data?.message === 'MUST_VERIFY_EMAIL')
           return Promise.reject(error);

@@ -36,7 +36,7 @@ const VideoJs: FC<Props> = ({
   return (
     <video
       ref={videoNode}
-      className={`video-js vjs-big-play-centered octopus-player ${classNames}`}
+      className={`video-js vjs-big-play-centered purpie-player ${classNames}`}
     />
   );
 };

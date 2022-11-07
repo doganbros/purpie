@@ -166,7 +166,7 @@ export class MeetingService {
     };
     return this.mailService.sendMailByView(
       user.email,
-      'Octopus Meeting',
+      'Purpie Meeting',
       'meeting-info',
       context,
     );

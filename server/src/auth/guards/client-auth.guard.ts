@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { verifyJWT } from 'helpers/jwt';
-import { OCTOPUS_CLIENT_AUTH_TYPE } from '../constants/auth.constants';
+import { PURPIE_CLIENT_AUTH_TYPE } from '../constants/auth.constants';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const { AUTH_TOKEN_SECRET = '' } = process.env;
@@ -33,7 +33,7 @@ export class ClientAuthGuard implements CanActivate {
     try {
       req.client = await verifyJWT(token, AUTH_TOKEN_SECRET);
 
-      if (req.client.authType !== OCTOPUS_CLIENT_AUTH_TYPE)
+      if (req.client.authType !== PURPIE_CLIENT_AUTH_TYPE)
         throw new Error(ErrorTypes.INVALID_AUTH_TYPE);
     } catch (err: any) {
       throw new UnauthorizedException(
