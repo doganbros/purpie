@@ -63,7 +63,7 @@ export class UserChannelService {
       .leftJoin(
         UserZone,
         'user_zone',
-        'user_zone.zoneId = channel.id and user_zone.userId = :userId',
+        'user_zone.zoneId = zone.id and user_zone.userId = :userId',
         { userId },
       )
       .leftJoin(
