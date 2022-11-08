@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { FC, useContext, useEffect, useState } from 'react';
 import {
   Box,
@@ -70,6 +71,10 @@ const Timeline: FC = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [waiting, setWaiting] = useState(true);
+
+  const handleWaiting = () => {
+    setWaiting(true);
+  };
   const {
     post: { feed },
     zone: { selectedUserZone },
@@ -193,7 +198,7 @@ const Timeline: FC = () => {
           <LastActivities />
         </Box>
       }
-      topComponent={<ChannelList />}
+      topComponent={<ChannelList handleWaiting={handleWaiting} />}
     >
       {showAddContent && (
         <AddContent onDismiss={() => setShowAddContent(false)} />
