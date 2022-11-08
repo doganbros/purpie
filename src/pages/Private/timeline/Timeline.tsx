@@ -34,6 +34,7 @@ import { LoadingState } from '../../../models/utils';
 import InvitationList from './InvitationList';
 import i18n from '../../../config/i18n/i18n-config';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
+import { waitTime } from '../../../helpers/constants';
 
 const initialFilters = [
   {
@@ -68,11 +69,19 @@ const Timeline: FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const [waiting, setWaiting] = useState(true);
   const {
     post: { feed },
     zone: { selectedUserZone },
     channel: { selectedChannel },
   } = useSelector((state: AppState) => state);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setWaiting(false);
+    }, waitTime);
+    return () => clearTimeout(timer);
+  }, [waiting]);
 
   const [showAddContent, setShowAddContent] = useState(false);
   const [filters, setFilters] = useState(initialFilters);
@@ -122,13 +131,22 @@ const Timeline: FC = () => {
 
   const getTimelineContent = () => {
     if (
-      [LoadingState.loading, LoadingState.pending].includes(feed.loadingState)
+      [LoadingState.loading, LoadingState.pending].includes(
+        feed.loadingState
+      ) ||
+      waiting
     )
       return (
-        <Box justify="center" align="center" alignSelf="center" height="100%">
-          <PurpieLogoAnimated width={50} height={50} color="#956aea" />
+        <Box
+          justify="center"
+          align="center"
+          alignSelf="center"
+          height="medium"
+          pad={{ top: 'large' }}
+        >
+          <PurpieLogoAnimated width={100} height={100} color="#956aea" />
         </Box>
-      ); // We can return a loader component later
+      );
 
     if (!feed.data.length)
       return <EmptyFeedContent onAddContent={() => setShowAddContent(true)} />;
@@ -188,6 +206,7 @@ const Timeline: FC = () => {
               <Button
                 key={f.id}
                 onClick={() => {
+                  setWaiting(true);
                   setFilters(
                     filters.map((v) => ({ ...v, active: v.id === f.id }))
                   );
