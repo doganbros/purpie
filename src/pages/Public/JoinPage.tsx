@@ -27,6 +27,7 @@ const JoinPage: FC = () => {
     <AuthLayout
       title={t('Join.title')}
       formTitle={t('Join.formTitle')}
+      formSubTitle={t('Join.formSubTitle')}
       background={
         <>
           <Image

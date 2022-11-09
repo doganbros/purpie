@@ -50,7 +50,7 @@ const AuthLayout: React.FC<Props> = ({
   const headingSize = {
     small: '30px',
     medium: '38px',
-    large: '45px',
+    large: '38px',
   };
 
   return (
