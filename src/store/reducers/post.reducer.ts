@@ -1,4 +1,5 @@
 import {
+  ADD_POST_SUCCESS,
   CHANNEL_FEED_FAILED,
   CHANNEL_FEED_REQUESTED,
   CHANNEL_FEED_SUCCESS,
@@ -94,6 +95,14 @@ const postReducer = (
   action: PostActionParams
 ): PostState => {
   switch (action.type) {
+    case ADD_POST_SUCCESS:
+      return {
+        ...state,
+        feed: {
+          ...state.feed,
+          data: [action.payload, ...state.feed.data],
+        },
+      };
     case UPDATE_POST_DETAIL_SUCCESS:
       return {
         ...state,
@@ -284,6 +293,10 @@ const postReducer = (
     case CREATE_VIDEO_SUCCESS:
       return {
         ...state,
+        feed: {
+          ...state.feed,
+          data: [action.payload, ...state.feed.data],
+        },
         createVideo: {
           ...state.createVideo,
           uploading: false,

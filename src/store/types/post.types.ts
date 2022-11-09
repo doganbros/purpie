@@ -1,4 +1,5 @@
 import {
+  ADD_POST_SUCCESS,
   CHANNEL_FEED_FAILED,
   CHANNEL_FEED_REQUESTED,
   CHANNEL_FEED_SUCCESS,
@@ -104,6 +105,7 @@ export interface Post {
     liveStreamViewersCount: number;
     viewsCount: number;
   };
+  newlyCreated?: boolean;
 }
 
 export interface PostComment {
@@ -248,6 +250,10 @@ export type PostActionParams =
       payload: CreateVideoPayload;
     }
   | {
+      type: typeof ADD_POST_SUCCESS;
+      payload: Post;
+    }
+  | {
       type: typeof SAVED_POSTS_REQUESTED;
       payload: {
         limit?: number;
@@ -341,8 +347,11 @@ export type PostActionParams =
       payload: Post;
     }
   | {
+      type: typeof CREATE_VIDEO_SUCCESS;
+      payload: Post;
+    }
+  | {
       type:
-        | typeof CREATE_VIDEO_SUCCESS
         | typeof OPEN_CREATE_VIDEO_LAYER
         | typeof CLOSE_CREATE_VIDEO_LAYER
         | typeof CREATE_POST_LIKE_SUCCESS

@@ -66,7 +66,7 @@ export const updatePostDetail = (
 export const createVideo = (
   data: CreateVideoPayload,
   onUploadProgress: (progressEvent: ProgressEvent<XMLHttpRequestUpload>) => void
-): Promise<any> =>
+): Promise<Post> =>
   http
     .post('video/create/', serialize(data), { onUploadProgress })
     .then((res) => res.data);

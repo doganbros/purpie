@@ -29,6 +29,7 @@ import { User } from './auth.types';
 import { ChannelListItem } from './channel.types';
 
 import { UtilActionParams } from './util.types';
+import { PostActionParams } from './post.types';
 
 export interface Meeting {
   id: number;
@@ -149,7 +150,7 @@ export type MeetingActionParams =
     };
 
 export interface MeetingDispatch {
-  (dispatch: MeetingActionParams | UtilActionParams): void;
+  (dispatch: MeetingActionParams | UtilActionParams | PostActionParams): void;
 }
 
 export interface MeetingAction {
