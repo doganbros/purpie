@@ -23,6 +23,7 @@ import { SetUserRoleDto } from '../dto/set-user-role.dto';
 import { UpdateProfileDto } from '../dto/update-profile.dto';
 import { UpdateUserPermission } from '../dto/update-permissions.dto';
 import { SystemUserListQuery } from '../dto/system-user-list.query';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 @Injectable()
 export class UserService {
@@ -49,8 +50,8 @@ export class UserService {
   async createNewContact(userId: number, contactUserId: number) {
     if (userId === contactUserId)
       throw new BadRequestException(
+        ErrorTypes.CONTACT_ELIGIBILITY_ERROR,
         'You cannot add yourself to your contacts',
-        'CONTACT_ELIGEBILITY_ERR',
       );
 
     await this.contactRepository.insert({ userId, contactUserId }).catch(() => {
@@ -146,13 +147,13 @@ export class UserService {
 
     if (existing?.email === email)
       throw new BadRequestException(
+        ErrorTypes.INVITATION_ALREADY_SENT_FOR_USER,
         'Invitation to this user has already been sent',
-        'INVITATION_FOR_USER_ALREADY_SENT',
       );
     else if (existing)
       throw new BadRequestException(
+        ErrorTypes.INVITATION_ALREADY_RECEIVED_FROM_USER,
         'You have already been invited by this user already',
-        'INVITATION_RECEIVED_FROM_USER_ALREADY',
       );
 
     return this.invitationRepository
@@ -313,10 +314,13 @@ export class UserService {
       .getRawOne();
 
     if (!result)
-      throw new NotFoundException('User not found', 'USER_NOT_FOUND');
+      throw new NotFoundException(ErrorTypes.USER_NOT_FOUND, 'User not found');
 
     if (result.isBlocked)
-      throw new ForbiddenException('User has blocked you', 'USER_BLOCKED_YOU');
+      throw new ForbiddenException(
+        ErrorTypes.USER_BLOCKED_YOU,
+        'User has blocked you',
+      );
 
     return {
       id: result.user_id,
@@ -365,7 +369,10 @@ export class UserService {
       });
 
       if (remainingSuperAdminCount === 0)
-        throw new ForbiddenException('There must be at least one super admin');
+        throw new ForbiddenException(
+          ErrorTypes.SUPER_ADMIN_NOT_EXIST,
+          'There must be at least one super admin',
+        );
     }
 
     return this.userRepository.update(info.userId, {
@@ -380,8 +387,8 @@ export class UserService {
 
     if (existingRoleCodes)
       throw new BadRequestException(
+        ErrorTypes.ROLE_ALREADY_EXISTS,
         `The role code ${info.roleCode} already exists`,
-        'ROLE_CODE_ALREADY_EXISTS',
       );
 
     return this.userRoleRepository.create(info).save();
@@ -394,8 +401,8 @@ export class UserService {
 
     if (existing)
       throw new ForbiddenException(
+        ErrorTypes.USER_ROLE_EXIST,
         'Users using this role already exists',
-        'USERS_USING_ROLE',
       );
 
     return this.userRoleRepository
@@ -408,7 +415,10 @@ export class UserService {
     info: Partial<UpdateUserPermission>,
   ) {
     if (roleCode === 'SUPER_ADMIN')
-      throw new ForbiddenException("Super Admin Permissions can't be changed");
+      throw new ForbiddenException(
+        ErrorTypes.CHANGE_SUPER_ADMIN_PERMISSION,
+        "Super Admin Permissions can't be changed",
+      );
 
     const updates: Partial<UpdateUserPermission> = {};
 
@@ -425,7 +435,7 @@ export class UserService {
     if (!Object.keys(updates).length)
       throw new BadRequestException(
         'Fields for updates not specified',
-        'FIELDS_FOR_UPDATES_NOT_SPECIFIED',
+        ErrorTypes.UPDATE_USER_PERMISSION_BAD_REQUEST,
       );
 
     return this.userRoleRepository.update({ roleCode }, updates);
@@ -448,7 +458,7 @@ export class UserService {
     if (!userProfile)
       throw new NotFoundException(
         'User profile not found',
-        'USER_PROFILE_NOT_FOUND',
+        ErrorTypes.USER_NOT_FOUND,
       );
 
     const updates: Record<string, any> = {};
@@ -463,7 +473,7 @@ export class UserService {
     if (!Object.keys(updates).length)
       throw new BadRequestException(
         'No Changes detected',
-        'NO_CHANGES_DETECTED',
+        ErrorTypes.NO_CHANGES_DETECTED,
       );
 
     await this.userRepository.update({ id: userId }, updates);
@@ -533,15 +543,12 @@ export class UserService {
         'zone.id',
         'zone.subdomain',
         'zone.name',
-        'category.id',
-        'category.name',
         'zone.createdOn',
         'zone.displayPhoto',
         'zone.description',
         'zone.public',
       ])
       .innerJoin('user_zone.zone', 'zone')
-      .innerJoin('zone.category', 'category')
       .innerJoin('user_zone.user', 'user')
       .where('user.userName = :userName', { userName })
       .andWhere(
@@ -581,7 +588,7 @@ export class UserService {
     if (createdById === userId)
       throw new BadRequestException(
         'You cannot block yourself',
-        'YOU_CANT_BLOCK_YOURSELF',
+        ErrorTypes.CANT_BLOCK_YOURSELF,
       );
 
     const [createdBy, user] = await Promise.all([
@@ -596,7 +603,7 @@ export class UserService {
     ]);
 
     if (!(user && createdBy))
-      throw new NotFoundException('User not found', 'USER_NOT_FOUND');
+      throw new NotFoundException('User not found', ErrorTypes.USER_NOT_FOUND);
 
     await this.blockedUserRepository.create({ createdById, userId }).save();
 
@@ -630,7 +637,7 @@ export class UserService {
     if (createdById === userId)
       throw new BadRequestException(
         'You cannot unblock yourself',
-        'YOU_CANT_UNBLOCK_YOURSELF',
+        ErrorTypes.CANT_UNBLOCK_YOURSELF,
       );
     await this.blockedUserRepository.delete({ createdById, userId });
   }
@@ -652,7 +659,10 @@ export class UserService {
     });
 
     if (!user)
-      throw new NotFoundException('Channel not found', 'CHANNEL_NOT_FOUND');
+      throw new NotFoundException(
+        'Channel not found',
+        ErrorTypes.CHANNEL_NOT_FOUND,
+      );
 
     updates.allowComment =
       settings.allowComment ?? user.postSettings.allowComment;

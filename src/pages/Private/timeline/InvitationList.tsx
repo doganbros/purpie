@@ -12,6 +12,7 @@ import InvitationListItem from '../../../components/utils/invitation/InvitationL
 import InvitationListHeader from '../../../components/utils/invitation/InvitationListHeader';
 import Divider from '../../../components/utils/Divider';
 import { InvitationListItem as InvitationListItemType } from '../../../store/types/activity.types';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 const InvitationList: FC = () => {
   const dispatch = useDispatch();
@@ -58,7 +59,7 @@ const InvitationList: FC = () => {
         )}
       </Box>
       {invitations.loading && data.length === 0 && (
-        <Text size="small">{t('common.loading')}</Text>
+        <PurpieLogoAnimated width={50} height={50} color="#956aea" />
       )}
       {!invitations.loading && data.length === 0 && (
         <Text size="small">{t('Invitations.noInvitations')}</Text>

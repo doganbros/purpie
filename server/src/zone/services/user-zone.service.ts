@@ -40,7 +40,6 @@ export class UserZoneService {
         'createdBy.email',
       ])
       .leftJoin('zone.createdBy', 'createdBy')
-      .leftJoinAndSelect('zone.category', 'category')
       .leftJoin(
         UserZone,
         'user_zone',
@@ -69,11 +68,6 @@ export class UserZoneService {
         displayPhoto: record.zone_displayPhoto,
         description: record.zone_description,
         public: record.zone_public,
-        category: {
-          id: record.category_id,
-          name: record.category_name,
-          parentCategoryId: record.category_parentCategoryId,
-        },
         createdBy: {
           id: record.createdBy_id,
           fullName: record.createdBy_fullName,
@@ -98,7 +92,6 @@ export class UserZoneService {
       .createQueryBuilder('user_zone')
       .select(['user_zone.id', 'user_zone.createdOn'])
       .innerJoinAndSelect('user_zone.zone', 'zone')
-      .innerJoinAndSelect('zone.category', 'category')
       .innerJoinAndSelect(
         'user_zone.zoneRole',
         'zoneRole',

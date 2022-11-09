@@ -9,6 +9,7 @@ import {
 } from '../../../store/actions/channel.action';
 import InitialsAvatar from '../../../components/utils/InitialsAvatar';
 import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 const ChannelList: FC = () => {
   const dispatch = useDispatch();
@@ -28,9 +29,9 @@ const ChannelList: FC = () => {
     : userChannels;
 
   return (
-    <Box fill direction="row" align="center">
+    <Box direction="row">
       {userChannelsFiltered.loading && (
-        <Text size="small">{t('common.loading')}</Text>
+        <PurpieLogoAnimated width={50} height={50} color="#956aea" />
       )}
       {!userChannelsFiltered.loading &&
         (userChannelsFiltered.data.length === 0 ? (
@@ -53,6 +54,7 @@ const ChannelList: FC = () => {
               flex={{ shrink: 0 }}
               round="small"
               pad="small"
+              width="110px"
               background={
                 selectedChannel?.channel.id === c.channel.id ? 'brand' : ''
               }

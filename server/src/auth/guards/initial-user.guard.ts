@@ -1,5 +1,6 @@
 import { Injectable, CanActivate, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 @Injectable()
 export class InitialUserGuard implements CanActivate {
@@ -10,8 +11,8 @@ export class InitialUserGuard implements CanActivate {
 
     if (systemUserCount)
       throw new UnauthorizedException(
+        ErrorTypes.INITIAL_USER_SPECIFIED,
         'Initial user has been specified already',
-        'INITIAL_USER_SPECIFIED',
       );
 
     return true;

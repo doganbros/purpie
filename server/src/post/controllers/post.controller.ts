@@ -51,6 +51,7 @@ import { PlaylistService } from '../services/playlist.service';
 import { CreatePlaylistDto } from '../dto/create-playlist.dto';
 import { AddPlaylistItemDto } from '../dto/add-playlist-item.dto';
 import { UpdatePlaylistDto } from '../dto/update-playlist.dto';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const {
   S3_VIDEO_POST_DIR = '',
@@ -71,8 +72,8 @@ export class PostController {
 
     if (!post)
       throw new NotFoundException(
+        ErrorTypes.POST_NOT_FOUND,
         'Post not found or unauthorized',
-        'POST_NOT_FOUND',
       );
 
     return post;
@@ -101,8 +102,8 @@ export class PostController {
 
     if (!post.allowComment)
       throw new ForbiddenException(
+        ErrorTypes.POST_COMMENTS_NOT_ALLOWED,
         `This post doesn't allow comments`,
-        'POST_COMMENTS_NOT_ALLOWED',
       );
 
     return this.postService.createPostComment(user.id, info);
@@ -319,12 +320,15 @@ export class PostController {
 
     if (!post.allowReaction)
       throw new ForbiddenException(
+        ErrorTypes.POST_REACTION_NOT_ALLOWED,
         `This post doesn't allow reactions`,
-        'POST_REACTION_NOT_ALLOWED',
       );
 
     if (info.type === 'dislike' && !post.allowDislike)
-      throw new ForbiddenException(`This post doesn't allow dislikes`);
+      throw new ForbiddenException(
+        ErrorTypes.POST_DISLIKE_NOT_ALLOWED,
+        `This post doesn't allow dislikes`,
+      );
 
     const like = await this.postService.createPostLike(user.id, info);
 
@@ -468,7 +472,10 @@ export class PostController {
       );
 
       if (!postVideo)
-        throw new NotFoundException('Video not found', 'VIDEO_NOT_FOUND');
+        throw new NotFoundException(
+          ErrorTypes.VIDEO_NOT_FOUND,
+          'Video not found',
+        );
 
       const creds = {
         Bucket: S3_VIDEO_BUCKET_NAME,
@@ -602,8 +609,8 @@ export class PostController {
 
     if (!result)
       throw new NotFoundException(
+        ErrorTypes.POST_NOT_FOUND,
         'Post not found or unauthorized',
-        'POST_NOT_FOUND',
       );
 
     return result;
@@ -639,8 +646,8 @@ export class PostController {
     const result = await this.postService.removePost(user.id, postId);
     if (!result.affected)
       throw new NotFoundException(
+        ErrorTypes.POST_NOT_FOUND,
         'Post not found or unauthorized',
-        'POST_NOT_FOUND',
       );
     return 'OK';
   }

@@ -8,7 +8,7 @@ interface Props extends TextProps {
 
 const EllipsesOverflowTextStyled = styled(Text)`
   display: -webkit-box;
-  max-width: ${(props: Props) => props.maxWidth || '120px'};
+  max-width: ${(props: Props) => props.maxWidth || '102px'};
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;

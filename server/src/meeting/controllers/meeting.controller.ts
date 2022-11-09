@@ -295,7 +295,7 @@ export class MeetingController {
   @Post('/client/verify')
   @ApiCreatedResponse({
     description:
-      'Client athenticates an octopus user for a meeting. Client must have manageMeeting permission.',
+      'Client athenticates an purpie user for a meeting. Client must have manageMeeting permission.',
     schema: { type: 'string', example: 'OK' },
   })
   @ApiNotFoundResponse({

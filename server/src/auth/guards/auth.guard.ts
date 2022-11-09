@@ -9,6 +9,7 @@ import { verifyJWT } from 'helpers/jwt';
 import { pick } from 'lodash';
 import { AuthService } from '../services/auth.service';
 import { UserPermissionOptions } from '../interfaces/user.interface';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const { AUTH_TOKEN_SECRET = '', AUTH_TOKEN_SECRET_REFRESH = '' } = process.env;
 
@@ -28,21 +29,21 @@ export class AuthGuard implements CanActivate {
       context.getHandler(),
     );
 
-    const token = req.cookies.OCTOPUS_ACCESS_TOKEN;
-    const refreshToken = req.cookies.OCTOPUS_REFRESH_ACCESS_TOKEN;
+    const token = req.cookies.PURPIE_ACCESS_TOKEN;
+    const refreshToken = req.cookies.PURPIE_REFRESH_ACCESS_TOKEN;
 
     if (!token) {
       const systemUserCount = await this.authService.systemUserCount();
 
       if (!systemUserCount)
         throw new UnauthorizedException(
+          ErrorTypes.INITIAL_USER_SPECIFIED,
           'You need to set the initial super admin user',
-          'INITIAL_USER_REQUIRED',
         );
 
       throw new UnauthorizedException(
+        ErrorTypes.NOT_SIGNED_IN,
         'You not authorized to use this route',
-        'NOT_SIGNED_IN',
       );
     }
 
@@ -79,13 +80,13 @@ export class AuthGuard implements CanActivate {
 
           if (!systemUserCount)
             throw new UnauthorizedException(
+              ErrorTypes.INITIAL_USER_REQUIRED,
               'You need to set the initial super admin user',
-              'INITIAL_USER_REQUIRED',
             );
 
           throw new UnauthorizedException(
+            ErrorTypes.NOT_SIGNED_IN,
             'You not authorized to use this route',
-            'NOT_SIGNED_IN',
           );
         }
       });
@@ -96,8 +97,8 @@ export class AuthGuard implements CanActivate {
       for (const permission of userPermissions) {
         if (!req.userProfile?.userRole?.[permission])
           throw new UnauthorizedException(
+            ErrorTypes.NOT_AUTHORIZED,
             'You are not authorized',
-            'NOT_AUTHORIZED',
           );
       }
     }

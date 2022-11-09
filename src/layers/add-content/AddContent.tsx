@@ -16,6 +16,7 @@ import {
 } from '../../store/actions/meeting.action';
 import { AppState } from '../../store/reducers/root.reducer';
 import { openCreateVideoLayerAction } from '../../store/actions/post.action';
+import { CreateMeetingPayload } from '../../store/types/meeting.types';
 
 interface AddContentProps {
   onDismiss: () => void;
@@ -32,6 +33,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
         form: { submitting },
       },
     },
+    channel: { selectedChannel },
   } = useSelector((state: AppState) => state);
 
   const iconProps = {
@@ -45,7 +47,9 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
       title: t('AddContent.meet'),
       description: t('AddContent.meetDescription'),
       onClick: () => {
-        if (!submitting) dispatch(createMeetingAction({ public: true }));
+        const meeting: CreateMeetingPayload = { public: true };
+        if (selectedChannel) meeting.channelId = selectedChannel.id;
+        if (!submitting) dispatch(createMeetingAction(meeting));
         onDismiss();
       },
     },

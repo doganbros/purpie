@@ -1,4 +1,4 @@
-import { Button, Image } from 'grommet';
+import { Image } from 'grommet';
 import React, { FC } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,8 +7,8 @@ import AuthLayout from '../../components/layouts/AuthLayout';
 import { AppState } from '../../store/reducers/root.reducer';
 import Figure from '../../assets/verify-email-bg/figure-1.png';
 import Banner from '../../assets/verify-email-bg/banner.png';
-import { useResponsive } from '../../hooks/useResponsive';
 import { resendMailVerificationTokenAction } from '../../store/actions/auth.action';
+import AuthFormButton from '../../components/auth/AuthFormButton';
 
 interface Params {
   userId: string;
@@ -22,7 +22,6 @@ const VerifyUserEmailInfo: FC = () => {
     resendMailVerificationToken: { loading },
   } = useSelector((state: AppState) => state.auth);
 
-  const size = useResponsive();
   const history = useHistory();
   const { userId } = useParams<Params>();
 
@@ -65,12 +64,11 @@ const VerifyUserEmailInfo: FC = () => {
         onClick: submitResendMailVerificationToken,
       }}
     >
-      <Button
-        fill="horizontal"
+      <AuthFormButton
         primary
+        margin={{ top: '60%' }}
         onClick={() => history.push('/login')}
-        size={size}
-        margin={{ top: '55%' }}
+        disabled={loading}
         type="submit"
         label={t('VerifyUserEmailInfo.goToSignIn')}
       />

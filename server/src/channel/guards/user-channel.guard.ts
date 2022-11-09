@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { UserChannelService } from '../services/user-channel.service';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 @Injectable()
 export class UserChannelGuard implements CanActivate {
@@ -25,8 +26,8 @@ export class UserChannelGuard implements CanActivate {
 
     if (!req.user)
       throw new InternalServerErrorException(
+        ErrorTypes.USER_PAYLOAD_REQUIRED,
         'User payload must be retrieved before using this guard',
-        'USER_PAYLOAD_REQUIRED',
       );
 
     const { userChannelId, channelId } = req.params;
@@ -49,15 +50,15 @@ export class UserChannelGuard implements CanActivate {
 
     if (!req.userChannel)
       throw new NotFoundException(
+        ErrorTypes.CHANNEL_NOT_FOUND,
         'User Channel not found',
-        'USER_CHANNEL_NOT_FOUND',
       );
 
     for (const permission of userChannelPermissions) {
       if (!req.userChannel.channelRole[permission])
         throw new UnauthorizedException(
+          ErrorTypes.NOT_AUTHORIZED,
           'You are not authorized',
-          'NOT_AUTHORIZED',
         );
     }
 

@@ -6,6 +6,7 @@ import GradientScroll from '../../../components/utils/GradientScroll';
 import InitialsAvatar from '../../../components/utils/InitialsAvatar';
 import { listUserPublicChannelsAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 const UserPublicChannels: FC<{ userName: string }> = ({ userName }) => {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ const UserPublicChannels: FC<{ userName: string }> = ({ userName }) => {
         {t('UserFriends.title')}
       </Text>
       {publicChannels.loading && (
-        <Text size="small">{t('common.loading')}</Text>
+        <PurpieLogoAnimated width={50} height={50} color="#956aea" />
       )}
       {!publicChannels.loading && publicChannels.data.length === 0 ? (
         <Text size="small">{t('UserPublicChannels.noChannelsFound')}</Text>

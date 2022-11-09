@@ -44,8 +44,8 @@ async function bootstrap() {
   const { SERVER_PORT = 8000 } = process.env;
 
   const config = new DocumentBuilder()
-    .setTitle('Octopus')
-    .setDescription('Octopus API Documentation')
+    .setTitle('Purpie')
+    .setDescription('Purpie API Documentation')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

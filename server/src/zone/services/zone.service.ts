@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { pick } from 'lodash';
 import { URL } from 'url';
-import { Brackets, IsNull, Not, Repository } from 'typeorm';
+import { Brackets, Not, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Zone } from 'entities/Zone.entity';
 import { defaultZoneRoles } from 'entities/data/default-roles';
@@ -13,7 +13,6 @@ import { tsqueryParam } from 'helpers/utils';
 import { SearchQuery } from 'types/SearchQuery';
 import { ZoneRole } from 'entities/ZoneRole.entity';
 import { UserProfile } from 'src/auth/interfaces/user.interface';
-import { Category } from 'entities/Category.entity';
 import { MailService } from 'src/mail/mail.service';
 import { SystemUserListQuery } from 'src/user/dto/system-user-list.query';
 import { UserZone } from 'entities/UserZone.entity';
@@ -23,6 +22,7 @@ import { CreateZoneDto } from '../dto/create-zone.dto';
 import { EditZoneDto } from '../dto/edit-zone.dto';
 import { UpdateUserZoneRoleDto } from '../dto/update-user-zone-role.dto';
 import { UpdateZonePermission } from '../dto/update-zone-permission.dto';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
 
@@ -36,8 +36,6 @@ export class ZoneService {
     private userZoneRepository: Repository<UserZone>,
     @InjectRepository(Invitation)
     private invitationRepository: Repository<Invitation>,
-    @InjectRepository(Category)
-    private categoryRepository: Repository<Category>,
     private mailService: MailService,
   ) {}
 
@@ -53,7 +51,6 @@ export class ZoneService {
             description: createZoneInfo.description,
             public: createZoneInfo.public,
             createdById: userId,
-            categoryId: createZoneInfo.categoryId,
           })
           .save(),
       })
@@ -87,8 +84,8 @@ export class ZoneService {
 
     if (invitation)
       throw new BadRequestException(
+        ErrorTypes.USER_ALREADY_INVITED_TO_ZONE,
         `The user with the email ${email} has already been invited to this zone`,
-        'USER_ALREADY_INVITED_TO_ZONE',
       );
 
     const zone = await this.zoneRepository
@@ -177,12 +174,6 @@ export class ZoneService {
     );
   }
 
-  async getCategories(parentCategoryId?: number) {
-    return this.categoryRepository.find({
-      where: { parentCategoryId: parentCategoryId ?? IsNull() },
-    });
-  }
-
   async sendZoneInvitationMail(zone: Zone, email: string) {
     const clientUrl = new URL(REACT_APP_CLIENT_HOST);
 
@@ -269,7 +260,10 @@ export class ZoneService {
       });
 
       if (remainingSuperAdminCount === 0)
-        throw new ForbiddenException('There must be at least one super admin');
+        throw new ForbiddenException(
+          ErrorTypes.SUPER_ADMIN_NOT_EXIST,
+          'There must be at least one super admin',
+        );
     }
 
     return this.userZoneRepository.update(
@@ -287,8 +281,8 @@ export class ZoneService {
 
     if (existingRoleCodes)
       throw new BadRequestException(
+        ErrorTypes.ROLE_ALREADY_EXISTS,
         `The role code ${info.roleCode} already exists`,
-        'ROLE_CODE_ALREADY_EXISTS',
       );
 
     return this.zoneRoleRepository.create({ ...info, zoneId }).save();
@@ -301,8 +295,8 @@ export class ZoneService {
 
     if (existing)
       throw new ForbiddenException(
+        ErrorTypes.USER_ROLE_EXIST,
         'Users using this role already exists',
-        'USERS_USING_ROLE',
       );
 
     return this.zoneRoleRepository
@@ -316,7 +310,10 @@ export class ZoneService {
     info: Partial<UpdateZonePermission>,
   ) {
     if (roleCode === 'SUPER_ADMIN')
-      throw new ForbiddenException("Super Admin Permissions can't be changed");
+      throw new ForbiddenException(
+        ErrorTypes.CHANGE_SUPER_ADMIN_PERMISSION,
+        "Super Admin Permissions can't be changed",
+      );
 
     const updates: Partial<UpdateZonePermission> = {};
 
@@ -334,8 +331,8 @@ export class ZoneService {
 
     if (!Object.keys(updates).length)
       throw new BadRequestException(
+        ErrorTypes.FIELDS_FOR_UPDATES_NOT_SPECIFIED,
         'Fields for updates not specified',
-        'FIELDS_FOR_UPDATES_NOT_SPECIFIED',
       );
 
     return this.zoneRoleRepository.update({ roleCode, zoneId }, updates);

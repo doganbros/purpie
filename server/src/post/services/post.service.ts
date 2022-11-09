@@ -32,6 +32,7 @@ import { ListPostFeedQuery } from '../dto/list-post-feed.query';
 import { PostLikeQuery } from '../dto/post-like.query';
 import { VideoViewStats } from '../dto/video-view-stats.dto';
 import { PostEvent } from '../listeners/post-events';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const {
   S3_VIDEO_BUCKET_NAME = '',
@@ -349,7 +350,8 @@ export class PostService {
 
     const post = await this.postRepository.findOne({ where: filter });
 
-    if (!post) throw new NotFoundException('Post not found', 'POST_NOT_FOUND');
+    if (!post)
+      throw new NotFoundException(ErrorTypes.POST_NOT_FOUND, 'Post not found');
 
     const postVideos = await this.postVideoRepository.find({
       where: { slug: post.slug },
@@ -545,7 +547,10 @@ export class PostService {
     const post = await this.getOnePost(userId, slug, true);
 
     if (!post)
-      throw new NotFoundException('Video not found', 'VIDEO_NOT_FOUND');
+      throw new NotFoundException(
+        ErrorTypes.VIDEO_NOT_FOUND,
+        'Video not found',
+      );
 
     return this.postVideoRepository
       .createQueryBuilder('postVideo')
@@ -625,7 +630,12 @@ export class PostService {
                   new Brackets((qbii) => {
                     qbii
                       .where('post.conferenceEndDate is null')
-                      .orWhere('post.videoName is not null');
+                      .orWhere('post.conferenceEndDate is not null')
+                      .andWhere(
+                        new Brackets((qbiii) => {
+                          qbiii.where('post.liveStream').orWhere('post.record');
+                        }),
+                      );
                   }),
                 );
             }),
@@ -911,7 +921,10 @@ export class PostService {
     if (payload.description) editPayload.description = payload.description;
 
     if (!Object.keys(editPayload).length)
-      throw new BadRequestException('Edit Payload empty', 'EDIT_PAYLOAD_EMPTY');
+      throw new BadRequestException(
+        ErrorTypes.EDIT_POST_PAYLOAD_EMPTY,
+        'Edit Payload empty',
+      );
 
     return this.postRepository.update(
       { id: postId, createdById: userId },

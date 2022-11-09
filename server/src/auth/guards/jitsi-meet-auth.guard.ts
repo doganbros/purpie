@@ -5,6 +5,7 @@ import {
   ExecutionContext,
 } from '@nestjs/common';
 import { verifyJWT } from 'helpers/jwt';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const { JITSI_SECRET = '' } = process.env;
 
@@ -17,8 +18,8 @@ export class JitsiMeetAuthGuard implements CanActivate {
 
     if (!token)
       throw new UnauthorizedException(
+        ErrorTypes.NOT_SIGNED_IN,
         'You not authorized to use this route',
-        'NOT_SIGNED_IN',
       );
 
     try {
@@ -29,13 +30,13 @@ export class JitsiMeetAuthGuard implements CanActivate {
 
       if (!req.conferenceUser)
         throw new UnauthorizedException(
+          ErrorTypes.NOT_SIGNED_IN,
           'You not authorized to use this route, Invalid payload',
-          'NOT_SIGNED_IN',
         );
     } catch (err: any) {
       throw new UnauthorizedException(
+        ErrorTypes.NOT_SIGNED_IN,
         'You not authorized to use this route',
-        'NOT_SIGNED_IN',
       );
     }
 

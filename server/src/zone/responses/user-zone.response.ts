@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Category } from 'entities/Category.entity';
 import { ZoneRole } from 'entities/ZoneRole.entity';
 
 class ZoneForUserZoneList {
@@ -17,9 +16,6 @@ class ZoneForUserZoneList {
 
   @ApiProperty()
   public: boolean;
-
-  @ApiProperty()
-  category: Category;
 }
 
 export class UserZoneListResponse {

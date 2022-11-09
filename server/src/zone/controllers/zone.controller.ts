@@ -35,7 +35,6 @@ import {
 } from 'src/auth/decorators/current-user.decorator';
 import { User } from 'entities/User.entity';
 import { SearchQuery } from 'types/SearchQuery';
-import { Category } from 'entities/Category.entity';
 import { ZoneRole } from 'entities/ZoneRole.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { s3, s3HeadObject, s3Storage } from 'config/s3-storage';
@@ -57,6 +56,7 @@ import { CreateZoneDto } from '../dto/create-zone.dto';
 import { UpdateUserZoneRoleDto } from '../dto/update-user-zone-role.dto';
 import { UpdateZonePermission } from '../dto/update-zone-permission.dto';
 import { UserZoneService } from '../services/user-zone.service';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 @Controller({ version: '1', path: 'zone' })
@@ -124,39 +124,13 @@ export class ZoneController {
   ) {
     const zone = await this.zoneService.validateJoinPublicZone(user.id, zoneId);
 
-    if (!zone) throw new NotFoundException('Zone not found', 'ZONE_NOT_FOUND');
+    if (!zone)
+      throw new NotFoundException(ErrorTypes.ZONE_NOT_FOUND, 'Zone not found');
 
     const userZone = await this.userZoneService.addUserToZone(user.id, zoneId);
 
     this.zoneService.removeInvitation(user.email, zone.id);
     return userZone.id;
-  }
-
-  @Get('/categories/list')
-  @ApiOkResponse({
-    type: Category,
-    isArray: true,
-    description:
-      'Current authenticated lists categories eligible for zones. These are the categories presented while creating a zone',
-  })
-  async getParentCategories() {
-    return this.zoneService.getCategories();
-  }
-
-  @Get('/categories/list/:zoneId')
-  @ApiParam({
-    name: 'zoneId',
-    description: 'The zone id',
-  })
-  @ApiOkResponse({
-    type: Category,
-    isArray: true,
-    description:
-      'Current authenticated lists categories eligible for a channel under the passed zoneId. These are the categories presented while creating a channel',
-  })
-  @UserZoneRole()
-  async getZoneCategories(@CurrentUserZone() currentUserZone: UserZone) {
-    return this.zoneService.getCategories(currentUserZone.zone.categoryId);
   }
 
   @Post('/invite/:zoneId')
@@ -188,7 +162,8 @@ export class ZoneController {
   ) {
     const zone = await this.zoneService.validateInviteUser(email, zoneId);
 
-    if (!zone) throw new NotFoundException('Zone not found', 'ZONE_NOT_FOUND');
+    if (!zone)
+      throw new NotFoundException(ErrorTypes.ZONE_NOT_FOUND, 'Zone not found');
 
     const invitation = await this.zoneService.addUserToZoneInvitation(
       email,
@@ -217,7 +192,11 @@ export class ZoneController {
       userProfile.email,
     );
 
-    if (!invitation) throw new NotFoundException('Invitation not found');
+    if (!invitation)
+      throw new NotFoundException(
+        ErrorTypes.INVITATION_NOT_FOUND,
+        'Invitation not found',
+      );
 
     if (invitationResponse.status === 'reject') {
       invitation.remove();

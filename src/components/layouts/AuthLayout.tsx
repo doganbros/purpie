@@ -25,7 +25,7 @@ interface Props {
   };
   background?: JSX.Element;
   formTitle: string;
-  formSubTitle: string | JSX.Element;
+  formSubTitle?: string | JSX.Element;
 }
 
 const AuthLayout: React.FC<Props> = ({

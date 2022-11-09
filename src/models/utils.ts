@@ -1,9 +1,3 @@
-export interface Category {
-  id: number;
-  name: string;
-  parentCategoryId: number;
-}
-
 export enum SearchScope {
   post = 'post',
   channel = 'channel',
