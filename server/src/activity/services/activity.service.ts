@@ -89,10 +89,9 @@ export class ActivityService {
         'user_zone.zoneId = zone.id and user_zone.userId = :userId',
         { userId },
       )
-      .where('zone.public = true')
-      .where('user_zone.id is null')
+      .where('zone.public')
+      .andWhere('user_zone.id is null')
       .orderBy('zone.createdOn', 'DESC')
-
       .paginateRaw(query);
   }
 
