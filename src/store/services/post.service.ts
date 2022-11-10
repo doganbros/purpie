@@ -57,7 +57,7 @@ export const getPostDetail = (postId: number): Promise<Post> =>
 export const updatePostDetail = (
   postId: number,
   title: string,
-  description: string
+  description?: string
 ): Promise<Post> =>
   http
     .put(`/post/update/${postId}`, { title, description })

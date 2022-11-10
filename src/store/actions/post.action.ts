@@ -419,7 +419,7 @@ export const createPostCommentAction = (
 export const updatePostAction = (
   postId: number,
   title: string,
-  description: string
+  description?: string
 ): PostAction => {
   return async (dispatch) => {
     dispatch({

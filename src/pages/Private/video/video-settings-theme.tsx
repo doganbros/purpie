@@ -16,11 +16,13 @@ const VideoSettingsTheme: FC = ({ children }) => {
         label {
             margin: 0;
             font-weight: 500;
+            font-size: 16px;
             & + div {
               border: none;
             }
           }
           input {
+            color: ${globalTheme.global?.colors?.dark};
             height: 38px;
             border-radius: 0;
             &:focus {
@@ -28,6 +30,7 @@ const VideoSettingsTheme: FC = ({ children }) => {
             }
           }
           textarea {
+            color: ${globalTheme.global?.colors?.dark};
             padding: 0;
             border-radius: 0;
             margin-top: 10px;

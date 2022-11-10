@@ -177,7 +177,7 @@ const Video: FC = () => {
 
   return (
     <PrivatePageLayout
-      rightComponentWithoutOverflow
+      rightComponentWithoutOverflow={!showSettings}
       title={data?.title || t('common.loading')}
       rightComponent={
         showSettings ? (
