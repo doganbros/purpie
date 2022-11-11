@@ -125,7 +125,7 @@ const Contacts: FC = () => {
             )}
           </InfiniteScroll>
         ) : (
-          <EmptyContact onFindContact={() => console.log('sdf')} />
+          <EmptyContact onFindContact={() => {}} />
         )}
       </Box>
     </PrivatePageLayout>

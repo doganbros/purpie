@@ -1,5 +1,6 @@
 import { Box, Text } from 'grommet';
 import { Instagram, Snapchat } from 'grommet-icons';
+import { nanoid } from 'nanoid';
 import React, { FC, ReactElement } from 'react';
 import {
   FacebookIcon,
@@ -86,9 +87,9 @@ const SocialArray: FC = () => {
   };
   return (
     <>
-      {socialArray.map((social, index) => (
+      {socialArray.map((social) => (
         <Box
-          key={index}
+          key={nanoid()}
           gap="small"
           margin="small"
           justify="center"

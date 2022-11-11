@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
   Box,
   Button,
@@ -10,6 +9,7 @@ import {
   TextInput,
 } from 'grommet';
 import { AddCircle, FormPrevious, ShareOption } from 'grommet-icons';
+import { nanoid } from 'nanoid';
 import React, { FC, useState } from 'react';
 import Divider from '../../../components/utils/Divider';
 import ExtendedBox from '../../../components/utils/ExtendedBox';
@@ -101,7 +101,7 @@ const InviteToPurpie: FC = () => {
                     }
                     return (
                       <Box
-                        key={id}
+                        key={nanoid()}
                         direction="row"
                         justify="between"
                         pad={{ top: 'small' }}
