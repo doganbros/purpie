@@ -111,15 +111,15 @@ export class MeetingService {
     const maxCreateAttempts = 5;
     let createAttempts = 0;
 
+    const request = payload;
     while (createAttempts < maxCreateAttempts) {
       try {
-        payload.slug = separateString(generateLowerAlphaNumId(9), 3);
+        request.slug = separateString(generateLowerAlphaNumId(9), 3);
         if (MEETING_HOST) {
-          payload.slug += `_${MEETING_HOST}`;
+          request.slug += `_${MEETING_HOST}`;
         }
 
-        const meeting = await this.postRepository.create(payload).save();
-        return meeting;
+        return this.postRepository.create(payload).save();
       } catch (err: any) {
         if (createAttempts === maxCreateAttempts) throw err;
         createAttempts++;
