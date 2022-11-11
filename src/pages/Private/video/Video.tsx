@@ -177,7 +177,7 @@ const Video: FC = () => {
 
   return (
     <PrivatePageLayout
-      rightComponentWithoutOverflow
+      rightComponentWithoutOverflow={!showSettings}
       title={data?.title || t('common.loading')}
       rightComponent={
         showSettings ? (
@@ -208,14 +208,14 @@ const Video: FC = () => {
             <Box justify="between" align="center" direction="row">
               {(data?.type === 'video' && (
                 <Box direction="row" align="center" gap="medium">
-                  {data?.channel?.name && (
-                    <ChannelBadge name={data.channel.name} url="/" />
-                  )}
                   {data?.channel?.zone && (
                     <ZoneBadge
                       name={data.channel.zone.name}
                       subdomain={data.channel.zone.subdomain}
                     />
+                  )}
+                  {data?.channel?.name && (
+                    <ChannelBadge name={data.channel.name} url="/" />
                   )}
                   <UserBadge url="/" fullName={data?.createdBy?.fullName} />
                 </Box>

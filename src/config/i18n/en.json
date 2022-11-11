@@ -399,7 +399,8 @@
     "videoNamePlaceholder": "Write a video name",
     "videoDescription": "Video Description",
     "videoDescriptionPlaceholder": "Write a video description",
-    "deleteVideo": "Delete the Video"
+    "deleteVideo": "Delete the Video",
+    "save": "SAVE"
   },
   "ComingSoon": {
     "title": "Coming Soon",

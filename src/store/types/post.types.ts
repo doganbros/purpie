@@ -289,7 +289,7 @@ export type PostActionParams =
       payload: {
         postId: number;
         title: string;
-        description: string;
+        description?: string;
       };
     }
   | {
