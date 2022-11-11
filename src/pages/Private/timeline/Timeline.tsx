@@ -35,7 +35,8 @@ import { LoadingState } from '../../../models/utils';
 import InvitationList from './InvitationList';
 import i18n from '../../../config/i18n/i18n-config';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
-import { WAIT_TIME } from '../../../helpers/constants';
+import { DELAY_TIME } from '../../../helpers/constants';
+import useWaitTime from '../../../hooks/useDelayTime';
 
 const initialFilters = [
   {
@@ -70,23 +71,17 @@ const Timeline: FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const [waiting, setWaiting] = useState(true);
+
+  const { delay, setDelay } = useWaitTime(DELAY_TIME);
 
   const handleWaiting = () => {
-    setWaiting(true);
+    setDelay(true);
   };
   const {
     post: { feed },
     zone: { selectedUserZone },
     channel: { selectedChannel },
   } = useSelector((state: AppState) => state);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setWaiting(false);
-    }, WAIT_TIME);
-    return () => clearTimeout(timer);
-  }, [waiting]);
 
   const [showAddContent, setShowAddContent] = useState(false);
   const [filters, setFilters] = useState(initialFilters);
@@ -139,7 +134,7 @@ const Timeline: FC = () => {
       [LoadingState.loading, LoadingState.pending].includes(
         feed.loadingState
       ) ||
-      waiting
+      delay
     )
       return (
         <Box
@@ -211,7 +206,7 @@ const Timeline: FC = () => {
               <Button
                 key={f.id}
                 onClick={() => {
-                  setWaiting(true);
+                  setDelay(true);
                   setFilters(
                     filters.map((v) => ({ ...v, active: v.id === f.id }))
                   );

@@ -40,8 +40,8 @@ import UserBadge from '../../../components/utils/UserBadge';
 import Highlight from '../../../components/utils/Highlight';
 import { matchDescriptionTags } from '../../../helpers/utils';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
-import useWaitTime from '../../../hooks/useWaitTime';
-import { WAIT_TIME } from '../../../helpers/constants';
+import { DELAY_TIME } from '../../../helpers/constants';
+import useDelayTime from '../../../hooks/useDelayTime';
 
 dayjs.extend(relativeTime);
 
@@ -72,7 +72,7 @@ const Video: FC = () => {
 
   const player = useRef<videojs.Player | null>(null);
 
-  const waiting = useWaitTime(WAIT_TIME);
+  const { delay } = useDelayTime(DELAY_TIME);
 
   const maybeSendViewStat = () => {
     if (previousTime.current > startedFrom.current) {
@@ -194,7 +194,7 @@ const Video: FC = () => {
         )
       }
     >
-      {waiting || loading || !data ? (
+      {delay || loading || !data ? (
         <Box height="100vh" justify="center" align="center">
           <PurpieLogoAnimated width={100} height={100} color="#956aea" />
         </Box>
