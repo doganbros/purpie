@@ -52,7 +52,7 @@ export const nameToSubdomain = (name: string): string =>
     .replaceAll('ö', 'o')
     .replaceAll('ç', 'c')
     .replaceAll(' ', '-')
-    .replaceAll(/[^\w^\d^-]/g, '')
+    .replaceAll(/[^\w\s]/gi, '')
     .toLowerCase();
 
 export const fetchOrProduceNull = async <T>(
