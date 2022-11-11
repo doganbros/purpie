@@ -1,5 +1,4 @@
 import { Box, Text } from 'grommet';
-import { Instagram, Snapchat } from 'grommet-icons';
 import { nanoid } from 'nanoid';
 import React, { FC, ReactElement } from 'react';
 import {
@@ -12,41 +11,41 @@ import {
 } from 'react-share';
 
 const SocialArray: FC = () => {
-  interface SocialBoxProps {
-    color?: string | any;
-    children?: ReactElement | any;
-  }
+  // interface SocialBoxProps {
+  //   color?: string | any;
+  //   children?: ReactElement | any;
+  // }
 
   interface SocialArrayProps {
     WhatsApp: ReactElement;
     Facebook: ReactElement;
     Twitter?: ReactElement;
-    Snapchat: ReactElement;
-    Instagram: ReactElement;
+    // Snapchat: ReactElement;
+    // Instagram: ReactElement;
   }
 
-  const SocialBox: FC<SocialBoxProps> = ({ color, children }) => {
-    return (
-      <Box
-        background={color}
-        round
-        width="xxsmall"
-        height="xxsmall"
-        justify="center"
-        align="center"
-        margin={{ bottom: 'xsmall' }}
-      >
-        {children}
-      </Box>
-    );
-  };
+  // const SocialBox: FC<SocialBoxProps> = ({ color, children }) => {
+  //   return (
+  //     <Box
+  //       background={color}
+  //       round
+  //       width="xxsmall"
+  //       height="xxsmall"
+  //       justify="center"
+  //       align="center"
+  //       margin={{ bottom: 'xsmall' }}
+  //     >
+  //       {children}
+  //     </Box>
+  //   );
+  // };
 
   const socialArray = [
     'WhatsApp',
     'Facebook',
     'Twitter',
-    'Snapchat',
-    'Instagram',
+    // 'Snapchat',
+    // 'Instagram',
   ];
 
   const socialComponents: SocialArrayProps = {
@@ -74,16 +73,19 @@ const SocialArray: FC = () => {
         <TwitterIcon size={48} round />
       </TwitterShareButton>
     ),
-    Snapchat: (
-      <SocialBox color="#FFFC00">
-        <Snapchat color="white" />
-      </SocialBox>
-    ),
-    Instagram: (
-      <SocialBox color="radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%)">
-        <Instagram color="white" />
-      </SocialBox>
-    ),
+
+    // removed for just now, we will decide later
+
+    // Snapchat: (
+    //   <SocialBox color="#FFFC00">
+    //     <Snapchat color="white" />
+    //   </SocialBox>
+    // ),
+    // Instagram: (
+    //   <SocialBox color="radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%)">
+    //     <Instagram color="white" />
+    //   </SocialBox>
+    // ),
   };
   return (
     <>
