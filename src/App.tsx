@@ -1,5 +1,5 @@
 import { Grommet } from 'grommet';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Router, Switch } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
@@ -18,11 +18,13 @@ import { AppState } from './store/reducers/root.reducer';
 import InitializeUser from './pages/Public/InitializeUser';
 import { initializeSocket } from './helpers/socket';
 import { getUserChannelsAction } from './store/actions/channel.action';
-import { waitTime } from './helpers/constants';
+import useWaitTime from './hooks/useWaitTime';
+import { WAIT_TIME } from './helpers/constants';
 
 const App: FC = () => {
   const dispatch = useDispatch();
-  const [waiting, setWaiting] = useState(true);
+
+  const waiting = useWaitTime(WAIT_TIME);
 
   const {
     auth: {
@@ -44,13 +46,6 @@ const App: FC = () => {
       dispatch(getUserZonesAction());
     }
   }, [isAuthenticated]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setWaiting(false);
-    }, waitTime);
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <Grommet theme={theme}>

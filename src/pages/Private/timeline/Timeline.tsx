@@ -35,7 +35,7 @@ import { LoadingState } from '../../../models/utils';
 import InvitationList from './InvitationList';
 import i18n from '../../../config/i18n/i18n-config';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
-import { waitTime } from '../../../helpers/constants';
+import { WAIT_TIME } from '../../../helpers/constants';
 
 const initialFilters = [
   {
@@ -84,7 +84,7 @@ const Timeline: FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setWaiting(false);
-    }, waitTime);
+    }, WAIT_TIME);
     return () => clearTimeout(timer);
   }, [waiting]);
 

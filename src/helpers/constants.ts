@@ -11,4 +11,4 @@ export const paginationInitialState = {
 };
 export const USER_NAME_CONSTRAINT = /^[a-zA-Z0-9_]{4,16}$/;
 
-export const waitTime = 1000;
+export const WAIT_TIME = 1000;

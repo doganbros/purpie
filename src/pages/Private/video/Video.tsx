@@ -2,7 +2,7 @@ import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import videojs from 'video.js';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Box, Button, Menu, Layer, Text } from 'grommet';
+import { Box, Button, Menu, Text } from 'grommet';
 import {
   Chat as ChatIcon,
   SettingsOption,
@@ -40,6 +40,8 @@ import UserBadge from '../../../components/utils/UserBadge';
 import Highlight from '../../../components/utils/Highlight';
 import { matchDescriptionTags } from '../../../helpers/utils';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
+import useWaitTime from '../../../hooks/useWaitTime';
+import { WAIT_TIME } from '../../../helpers/constants';
 
 dayjs.extend(relativeTime);
 
@@ -69,6 +71,8 @@ const Video: FC = () => {
   const startedFrom = useRef(0);
 
   const player = useRef<videojs.Player | null>(null);
+
+  const waiting = useWaitTime(WAIT_TIME);
 
   const maybeSendViewStat = () => {
     if (previousTime.current > startedFrom.current) {
@@ -190,10 +194,10 @@ const Video: FC = () => {
         )
       }
     >
-      {loading || !data ? (
-        <Layer responsive={false} plain>
-          <PurpieLogoAnimated width={50} height={50} color="#956aea" />
-        </Layer>
+      {waiting || loading || !data ? (
+        <Box height="100vh" justify="center" align="center">
+          <PurpieLogoAnimated width={100} height={100} color="#956aea" />
+        </Box>
       ) : (
         <Box gap="large" pad={{ vertical: 'medium' }}>
           <Box>
