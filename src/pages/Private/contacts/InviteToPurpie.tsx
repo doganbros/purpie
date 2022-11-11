@@ -43,6 +43,12 @@ const InviteToPurpie: FC = () => {
           label="Type email"
           open={open}
           onClick={() => setOpen(true)}
+          onOpen={() => {
+            setOpen(true);
+          }}
+          onClose={() => {
+            setOpen(false);
+          }}
           plain
           color="status-disabled"
           dropContent={
