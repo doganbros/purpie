@@ -1,16 +1,13 @@
 import React, { FC, useState } from 'react';
 import { Box, Stack, Text } from 'grommet';
 import { Chat, Favorite } from 'grommet-icons';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import ExtendedBox from '../utils/ExtendedBox';
 import InitialsAvatar from '../utils/InitialsAvatar';
 import { VideoPost } from './VideoPost';
 import { ImagePost } from './ImagePost';
 import { Post } from '../../store/types/post.types';
 import { FavoriteFill } from '../utils/CustomIcons';
-
-dayjs.extend(relativeTime);
+import { getTimezoneTimeFromUTC } from '../../helpers/utils';
 
 interface PostGridItemProps {
   post: Post;
@@ -77,7 +74,7 @@ const PostGridItem: FC<PostGridItemProps> = ({
               <Text color="status-disabled">{post.createdBy?.fullName}</Text>
             </Box>
             <Text color="status-disabled">
-              {dayjs(post.createdOn).fromNow()}
+              {getTimezoneTimeFromUTC(post.createdOn).fromNow()}
             </Text>
           </ExtendedBox>
           <Box direction="row" justify="between" align="start">

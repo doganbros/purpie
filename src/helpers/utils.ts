@@ -1,7 +1,10 @@
 import { nanoid } from 'nanoid';
 import i18n from 'i18next';
-import { ResponseError } from '../models/response-error';
+import dayjs, { Dayjs } from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import colorPair from '../styles/color-pairs.json';
+import { ResponseError } from '../models/response-error';
 
 export const errorResponseMessage = (error?: ResponseError): string => {
   if (!error) return '';
@@ -85,3 +88,11 @@ export const getChatRoomName = (
 
 export const getFileKey = (file: File): string =>
   `${file.name}_${file.size}_${file.type}`;
+
+export const getTimezoneTimeFromUTC = (date: string | Date): Dayjs => {
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
+
+  const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return dayjs.tz(date, currentTimezone);
+};
