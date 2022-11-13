@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { joinZoneAction } from '../../../store/actions/zone.action';
 import InitialsAvatar from '../InitialsAvatar';
+import EllipsesOverflowText from '../EllipsesOverflowText';
 
 interface ZoneListItemProps {
   id: number;
@@ -35,9 +36,14 @@ const ZoneListItem: FC<ZoneListItemProps> = ({
       <Box direction="row" align="center" gap="small">
         <InitialsAvatar id={id} value={name} />
         <Box>
-          <Text size="small" weight="bold">
+          <EllipsesOverflowText
+            maxWidth="212px"
+            lineClamp={1}
+            size="small"
+            weight="bold"
+          >
             {name}
-          </Text>
+          </EllipsesOverflowText>
           <Text size="xsmall" color="status-disabled">
             {t('ZoneListItem.channelCount', { count: channelCount })}
           </Text>

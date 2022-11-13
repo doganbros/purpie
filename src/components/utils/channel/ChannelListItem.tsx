@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { joinChannelAction } from '../../../store/actions/channel.action';
 import InitialsAvatar from '../InitialsAvatar';
+import EllipsesOverflowText from '../EllipsesOverflowText';
 
 interface ChannelListItemProps {
   id: number;
@@ -31,9 +32,14 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
       <Box direction="row" align="center" gap="small">
         <InitialsAvatar id={id} value={name} />
         <Box>
-          <Text size="small" weight="bold">
+          <EllipsesOverflowText
+            maxWidth="212px"
+            lineClamp={1}
+            size="small"
+            weight="bold"
+          >
             {name}
-          </Text>
+          </EllipsesOverflowText>
           <Text size="xsmall" color="status-disabled">
             {zoneSubdomain}
           </Text>
