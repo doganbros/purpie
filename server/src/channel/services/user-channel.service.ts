@@ -148,13 +148,18 @@ export class UserChannelService {
       ])
       .leftJoin('user_channel.channel', 'channel')
       .leftJoin('channel.createdBy', 'createdBy')
+      .leftJoin('post', 'post', 'post.channelId = channel.id')
+      .leftJoin('post_reaction', 'ps', 'ps.postId = post.id')
       .leftJoinAndSelect(
         'user_channel.channelRole',
         'channel_role',
         'channel_role.roleCode = user_channel.channelRoleCode AND channel_role.channelId = channel.id',
       )
       .where('user_channel.userId = :userId', { userId })
-      .orderBy('user_channel.createdOn', 'DESC')
+      .orderBy(
+        '-(ps.commentsCount + ps.dislikesCount + ps.likesCount + ps.liveStreamViewersCount + ps.viewsCount)',
+        'ASC',
+      )
       .getMany();
   }
 }
