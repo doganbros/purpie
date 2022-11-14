@@ -919,6 +919,8 @@ export class PostService {
 
     if (payload.title) editPayload.title = payload.title;
     if (payload.description) editPayload.description = payload.description;
+    editPayload.public = payload.public;
+    editPayload.userContactExclusive = payload.userContactExclusive;
 
     if (!Object.keys(editPayload).length)
       throw new BadRequestException(

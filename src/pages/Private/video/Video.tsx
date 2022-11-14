@@ -1,16 +1,14 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
-import dayjs from 'dayjs';
 import videojs from 'video.js';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import { Box, Button, Menu, Text } from 'grommet';
+import { Box, Button, Layer, Menu, Text } from 'grommet';
 import {
-  Chat as ChatIcon,
-  SettingsOption,
-  Like,
-  Dislike,
-  ShareOption,
-  More,
   AddCircle,
+  Chat as ChatIcon,
+  Dislike,
+  Like,
+  More,
+  SettingsOption,
+  ShareOption,
 } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
@@ -18,11 +16,11 @@ import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import {
   createPostLikeAction,
-  getPostDetailAction,
-  removePostLikeAction,
-  removePostAction,
-  removePostSaveAction,
   createPostSaveAction,
+  getPostDetailAction,
+  removePostAction,
+  removePostLikeAction,
+  removePostSaveAction,
 } from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import RecommendedVideos from './RecommendedVideos';
@@ -38,12 +36,13 @@ import ChannelBadge from '../../../components/utils/channel/ChannelBadge';
 import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
 import UserBadge from '../../../components/utils/UserBadge';
 import Highlight from '../../../components/utils/Highlight';
-import { matchDescriptionTags } from '../../../helpers/utils';
+import {
+  getTimezoneTimeFromUTC,
+  matchDescriptionTags,
+} from '../../../helpers/utils';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 import { DELAY_TIME } from '../../../helpers/constants';
 import useDelayTime from '../../../hooks/useDelayTime';
-
-dayjs.extend(relativeTime);
 
 interface RouteParams {
   id: string;
@@ -207,7 +206,9 @@ const Video: FC = () => {
                   {data.title}
                 </Text>
               </Box>
-              <Text weight="bold">{dayjs(data.createdOn).fromNow()}</Text>
+              <Text weight="bold">
+                {getTimezoneTimeFromUTC(data.createdOn).fromNow()}
+              </Text>
             </Box>
             <Box justify="between" align="center" direction="row">
               {(data?.type === 'video' && (
