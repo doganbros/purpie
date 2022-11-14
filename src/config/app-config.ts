@@ -15,16 +15,6 @@ export const theme: typeof grommet = deepMerge(base, {
       blue: '#0091FF',
       dark: '#202631',
     },
-    drop: {
-      background: 'white',
-      extend: () => `
-        font-size: ${base.text?.small?.size};
-        & > * > * > *:hover {
-          font-weight: bold;
-          background: #E4E9F2;
-        };
-      `,
-    },
     input: {
       extend: 'color: grey;',
       padding: { vertical: '12px' },

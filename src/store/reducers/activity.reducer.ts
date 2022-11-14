@@ -11,6 +11,9 @@ import {
   ZONE_SUGGESTIONS_FAILED,
   ZONE_SUGGESTIONS_REQUESTED,
   ZONE_SUGGESTIONS_SUCCESS,
+  CREATE_CONTACT_INVITATION_REQUESTED,
+  CREATE_CONTACT_INVITATION_SUCCESS,
+  CREATE_CONTACT_INVITATION_FAILED,
 } from '../constants/activity.constants';
 import { ActivityActionParams, ActivityState } from '../types/activity.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -34,6 +37,11 @@ const initialState: ActivityState = {
   responseInvitation: {
     loading: false,
     error: null,
+  },
+  invitedContacts: {
+    loading: false,
+    error: null,
+    userIds: [],
   },
 };
 
@@ -159,6 +167,32 @@ const activityReducer = (
       return {
         ...state,
         responseInvitation: {
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case CREATE_CONTACT_INVITATION_REQUESTED:
+      return {
+        ...state,
+        invitedContacts: {
+          ...state.invitedContacts,
+          loading: true,
+        },
+      };
+    case CREATE_CONTACT_INVITATION_SUCCESS:
+      return {
+        ...state,
+        invitedContacts: {
+          userIds: [...state.invitedContacts.userIds, action.payload],
+          loading: false,
+          error: null,
+        },
+      };
+    case CREATE_CONTACT_INVITATION_FAILED:
+      return {
+        ...state,
+        invitedContacts: {
+          ...state.invitedContacts,
           loading: false,
           error: action.payload,
         },

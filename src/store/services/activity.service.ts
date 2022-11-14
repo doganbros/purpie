@@ -45,3 +45,8 @@ export const responseInvitation = async (
 
   return http.post(endpoint, request).then((res) => res.data);
 };
+
+export const createInvitation = (email: string): Promise<string> =>
+  http
+    .post('/user/contact/invitation/create', { email })
+    .then((res) => res.data);
