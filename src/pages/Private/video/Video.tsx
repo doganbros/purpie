@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import videojs from 'video.js';
-import { Box, Button, Layer, Menu, Text } from 'grommet';
+import { Box, Button, Menu, Text } from 'grommet';
 import {
   AddCircle,
   Chat as ChatIcon,
