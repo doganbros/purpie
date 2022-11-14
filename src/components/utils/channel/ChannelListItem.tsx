@@ -30,11 +30,11 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
     <Box direction="row" justify="between" align="center">
       <Box direction="row" align="center" gap="small">
         <InitialsAvatar id={id} value={name} />
-        <Box width="small">
-          <Text size="small" weight="bold" truncate="tip">
+        <Box>
+          <Text size="small" weight="bold">
             {name}
           </Text>
-          <Text size="xsmall" color="status-disabled" truncate="tip">
+          <Text size="xsmall" color="status-disabled">
             {zoneSubdomain}
           </Text>
         </Box>
