@@ -50,8 +50,8 @@ const ListButton: FC<ListButtonProps> = ({
           {leftIcon}
 
           <EllipsesOverflowText
-            maxWidth="210px"
-            weight={selected ? 'bold' : 'normal'}
+            maxWidth="195px"
+            weight={selected ? 'bold' : 0}
             size="xsmall"
             color={setTextColor()}
             {...textProps}
