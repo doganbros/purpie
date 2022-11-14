@@ -3,6 +3,7 @@ import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
 import {
   CreateVideoPayload,
+  EditVideoPayload,
   FeedPayload,
   ListPostCommentsParams,
   Post,
@@ -54,14 +55,8 @@ export const getChannelFeed = (
 export const getPostDetail = (postId: number): Promise<Post> =>
   http.get(`/post/detail/feed/${postId}`).then((res) => res.data);
 
-export const updatePostDetail = (
-  postId: number,
-  title: string,
-  description?: string
-): Promise<Post> =>
-  http
-    .put(`/post/update/${postId}`, { title, description })
-    .then((res) => res.data);
+export const updatePostDetail = (payload: EditVideoPayload): Promise<Post> =>
+  http.put(`/post/update/${payload.postId}`, payload).then((res) => res.data);
 
 export const createVideo = (
   data: CreateVideoPayload,

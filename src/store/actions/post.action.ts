@@ -73,6 +73,7 @@ import * as PostService from '../services/post.service';
 import { store } from '../store';
 import {
   CreateVideoPayload,
+  EditVideoPayload,
   FeedPayload,
   ListPostCommentRepliesParams,
   ListPostCommentsParams,
@@ -428,29 +429,17 @@ export const createPostCommentAction = (
   };
 };
 
-export const updatePostAction = (
-  postId: number,
-  title: string,
-  description?: string
-): PostAction => {
+export const updatePostAction = (payload: EditVideoPayload): PostAction => {
   return async (dispatch) => {
     dispatch({
       type: UPDATE_POST_DETAIL_REQUESTED,
-      payload: {
-        postId,
-        title,
-        description,
-      },
+      payload,
     });
     try {
-      await PostService.updatePostDetail(postId, title, description);
+      await PostService.updatePostDetail(payload);
       dispatch({
         type: UPDATE_POST_DETAIL_SUCCESS,
-        payload: {
-          postId,
-          title,
-          description,
-        },
+        payload,
       });
     } catch (err) {
       dispatch({

@@ -137,6 +137,14 @@ export interface CreateVideoPayload {
   videoFile: File;
 }
 
+export interface EditVideoPayload {
+  postId: number;
+  title: string;
+  description?: string;
+  public?: boolean;
+  userContactExclusive?: boolean;
+}
+
 export interface FeedPayload {
   limit?: number;
   skip?: number;
@@ -286,11 +294,7 @@ export type PostActionParams =
       type:
         | typeof UPDATE_POST_DETAIL_REQUESTED
         | typeof UPDATE_POST_DETAIL_SUCCESS;
-      payload: {
-        postId: number;
-        title: string;
-        description?: string;
-      };
+      payload: EditVideoPayload;
     }
   | {
       type:

@@ -7,6 +7,7 @@ import { updatePostAction } from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import VideoSettingsTheme from './video-settings-theme';
 import Switch from '../../../components/utils/Switch';
+import { EditVideoPayload } from '../../../store/types/post.types';
 
 interface VideoSettingsProps {
   setShowSettings: (settings: boolean) => void;
@@ -32,7 +33,15 @@ const VideoSettings: FC<VideoSettingsProps> = ({
 
   const onSubmit = () => {
     if (data && title) {
-      dispatch(updatePostAction(data.id, title, description));
+      const request: EditVideoPayload = {
+        postId: data.id,
+        title,
+        description,
+        public: publicVisibility,
+        userContactExclusive: exclusive,
+      };
+
+      dispatch(updatePostAction(request));
       setShowSettings(false);
     }
   };
