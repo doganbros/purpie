@@ -28,6 +28,8 @@ import {
   MeetingActionParams,
 } from '../types/meeting.types';
 import { setToastAction } from './util.action';
+import { Post } from '../types/post.types';
+import { addPostAction } from './post.action';
 
 export const createMeetingAction = (
   meeting: CreateMeetingPayload
@@ -37,7 +39,10 @@ export const createMeetingAction = (
       type: MEETING_CREATE_REQUESTED,
     });
     try {
-      const response = await MeetingService.createMeeting(meeting);
+      const response: {
+        meetingUrl?: string;
+        meeting: Post;
+      } = await MeetingService.createMeeting(meeting);
       dispatch({
         type: MEETING_CREATE_SUCCESS,
       });
@@ -55,14 +60,17 @@ export const createMeetingAction = (
           },
         });
       }
-      if (typeof response === 'string') {
-        window.open(response, '_blank');
+
+      addPostAction(response.meeting)(dispatch);
+
+      if (response.meetingUrl) {
+        window.open(response.meetingUrl, '_blank');
         return;
       }
 
       setToastAction(
         'ok',
-        `New meeting with the id ${response} has been created successfully`
+        `New meeting with the id ${response.meeting.id} has been created successfully`
       )(dispatch);
     } catch (err: any) {
       dispatch({

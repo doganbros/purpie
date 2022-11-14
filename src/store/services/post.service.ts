@@ -57,7 +57,7 @@ export const getPostDetail = (postId: number): Promise<Post> =>
 export const updatePostDetail = (
   postId: number,
   title: string,
-  description: string
+  description?: string
 ): Promise<Post> =>
   http
     .put(`/post/update/${postId}`, { title, description })
@@ -66,7 +66,7 @@ export const updatePostDetail = (
 export const createVideo = (
   data: CreateVideoPayload,
   onUploadProgress: (progressEvent: ProgressEvent<XMLHttpRequestUpload>) => void
-): Promise<any> =>
+): Promise<Post> =>
   http
     .post('video/create/', serialize(data), { onUploadProgress })
     .then((res) => res.data);

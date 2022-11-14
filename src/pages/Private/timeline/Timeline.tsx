@@ -38,31 +38,26 @@ import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated
 import { DELAY_TIME } from '../../../helpers/constants';
 import useWaitTime from '../../../hooks/useDelayTime';
 
-const initialFilters = [
+const tabs = [
   {
     id: 0,
-    filterName: i18n.t('Timeline.all'),
-    active: true,
+    name: i18n.t('Timeline.all'),
   },
   {
     id: 1,
-    filterName: i18n.t('common.following'),
-    active: false,
+    name: i18n.t('common.following'),
   },
   {
     id: 2,
-    filterName: i18n.t('Timeline.live'),
-    active: false,
+    name: i18n.t('Timeline.live'),
   },
   {
     id: 3,
-    filterName: i18n.t('Timeline.newest'),
-    active: false,
+    name: i18n.t('Timeline.newest'),
   },
   {
     id: 4,
-    filterName: i18n.t('Timeline.popular'),
-    active: false,
+    name: i18n.t('Timeline.popular'),
   },
 ];
 
@@ -84,11 +79,11 @@ const Timeline: FC = () => {
   } = useSelector((state: AppState) => state);
 
   const [showAddContent, setShowAddContent] = useState(false);
-  const [filters, setFilters] = useState(initialFilters);
+  const [activeTab, setActiveTab] = useState(0);
+  const [hasNewlyCreatedFeed, setHasNewlyCreatedFeed] = useState(false);
 
   const getFeed = (skip?: number) => {
-    const activeFilterId = filters.find((f) => f.active)?.id;
-    switch (activeFilterId) {
+    switch (activeTab) {
       case 0:
       case 1:
       case 2:
@@ -97,7 +92,7 @@ const Timeline: FC = () => {
             getChannelFeedAction({
               skip,
               channelId: selectedChannel.channel.id,
-              streaming: activeFilterId === 2,
+              streaming: activeTab === 2,
             })
           );
         else if (selectedUserZone) {
@@ -105,13 +100,11 @@ const Timeline: FC = () => {
             getZoneFeedAction({
               skip,
               zoneId: selectedUserZone.zone.id,
-              streaming: activeFilterId === 2,
+              streaming: activeTab === 2,
             })
           );
         } else {
-          dispatch(
-            getUserFeedAction({ skip, streaming: activeFilterId === 2 })
-          );
+          dispatch(getUserFeedAction({ skip, streaming: activeTab === 2 }));
         }
         break;
       case 3:
@@ -126,8 +119,17 @@ const Timeline: FC = () => {
   };
 
   useEffect(() => {
-    getFeed();
-  }, [filters, selectedChannel]);
+    const newlyCreatedFeeds = feed.data.filter((f) => f.newlyCreated);
+    if (newlyCreatedFeeds.length > 0 && activeTab !== 0) {
+      setHasNewlyCreatedFeed(true);
+      setActiveTab(0);
+    }
+  }, [feed]);
+
+  useEffect(() => {
+    if (!hasNewlyCreatedFeed) getFeed();
+    setHasNewlyCreatedFeed(false);
+  }, [activeTab, selectedChannel]);
 
   const getTimelineContent = () => {
     if (
@@ -202,22 +204,20 @@ const Timeline: FC = () => {
         <Box direction="row" justify="between" align="center">
           <Text weight="bold">Timeline</Text>
           <Box direction="row" gap="small">
-            {filters.map((f) => (
+            {tabs.map((tab) => (
               <Button
-                key={f.id}
+                key={`timelineTab${tab.id}`}
                 onClick={() => {
                   setDelay(true);
-                  setFilters(
-                    filters.map((v) => ({ ...v, active: v.id === f.id }))
-                  );
+                  setActiveTab(tab.id);
                 }}
               >
                 <Text
                   size="small"
-                  weight={f.active ? 'bold' : 'normal'}
-                  color={f.active ? 'brand' : 'status-disabled'}
+                  weight={activeTab === tab.id ? 'bold' : 'normal'}
+                  color={activeTab === tab.id ? 'brand' : 'status-disabled'}
                 >
-                  {f.filterName}
+                  {tab.name}
                 </Text>
               </Button>
             ))}
