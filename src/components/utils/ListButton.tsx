@@ -44,6 +44,7 @@ const ListButton: FC<ListButtonProps> = ({
       }}
       pad="small"
       {...props}
+      flex={{ grow: 1 }}
     >
       <Box fill direction="row" align="center" gap="small">
         {leftIcon}

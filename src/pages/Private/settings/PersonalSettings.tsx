@@ -1,16 +1,17 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { Box, Button, TextInput } from 'grommet';
 import { Hide, View } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { SettingsData } from './types';
-import { AvatarItem } from './AvatarItem';
 import { apiURL } from '../../../config/http';
 import {
   changeProfileInfo,
   changeProfilePicture,
 } from '../../../store/actions/auth.action';
 import AvatarUpload from './AvatarUpload';
+import { UserAvatar } from '../../../components/Avatars/UserAvatar';
 
 const PersonalSettings: () => SettingsData | null = () => {
   const {
@@ -40,11 +41,17 @@ const PersonalSettings: () => SettingsData | null = () => {
     },
     avatarWidget: (
       <>
-        <AvatarItem
+        <UserAvatar
+          src={
+            user?.displayPhoto
+              ? `${apiURL}/user/display-photo/${user?.displayPhoto}`
+              : undefined
+          }
           title={user.fullName}
-          subtitle={user.userName}
           onClickEdit={() => setShowAvatarUpload(true)}
-          src={`${apiURL}/user/display-photo/${user?.displayPhoto}`}
+          subtitle={user.userName}
+          id={Math.floor(Math.random() * 100)}
+          outerCircle
         />
         {showAvatarUpload && (
           <AvatarUpload

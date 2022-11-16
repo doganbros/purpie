@@ -144,7 +144,11 @@ const Settings: FC = () => {
           onActive={(i) => setActiveAccordionIndex(i[0])}
         >
           {selectedItems.map((item) => (
-            <AccordionPanel label={item.label} key={item.key}>
+            <AccordionPanel
+              label={item.label}
+              key={item.key}
+              style={{ backgroundColor: 'white' }}
+            >
               <Box pad={{ vertical: 'small' }}>
                 {renderSettingCategory(item)}
               </Box>
@@ -157,7 +161,11 @@ const Settings: FC = () => {
   };
 
   return (
-    <Box flex={{ grow: 1 }} background="brand" height={{ min: '100vh' }}>
+    <Box
+      background="brand"
+      height={{ min: '95vh', max: '100vh' }}
+      overflow="hidden"
+    >
       <Box flex={{ grow: 1 }}>
         <Box direction="row" gap="large" pad="medium" align="center">
           <Box onClick={() => history.push('/')}>
@@ -183,7 +191,11 @@ const Settings: FC = () => {
                   width="300px"
                 >
                   <Text
-                    weight={index === selectedIndex ? 'bold' : 'normal'}
+                    weight={
+                      index === selectedIndex && searchText === ''
+                        ? 'bold'
+                        : 'normal'
+                    }
                     color="white"
                   >
                     {menuItem.label}
@@ -194,7 +206,14 @@ const Settings: FC = () => {
               </React.Fragment>
             ))}
           </Box>
-          <Box flex="grow" background="white" round="medium" pad="medium">
+          <Box
+            flex="grow"
+            background="white"
+            round="medium"
+            pad="medium"
+            height="80vh"
+            overflow="auto"
+          >
             {renderSettings()}
           </Box>
         </Box>

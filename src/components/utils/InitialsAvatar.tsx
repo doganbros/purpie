@@ -4,7 +4,7 @@ import { getColorPairFromId } from '../../helpers/utils';
 
 interface InitialsAvatarProps extends Omit<AvatarExtendedProps, 'id'> {
   id: number;
-  value: string;
+  value?: string;
   textProps?: TextExtendedProps;
 }
 

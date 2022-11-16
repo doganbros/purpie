@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Box, CheckBox, DropButton, Grid, Text, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
+import { CaretDownFill } from 'grommet-icons';
 import ListButton from '../../../components/utils/ListButton';
 import SectionContainer from '../../../components/utils/SectionContainer';
 import {
@@ -9,13 +10,13 @@ import {
 } from '../../../config/http';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { UpdateZonePayload } from '../../../store/types/zone.types';
-import { AvatarItem } from './AvatarItem';
 import { SettingsData } from './types';
 import {
   changeZoneInformationAction,
   changeZonePhoto,
 } from '../../../store/actions/zone.action';
 import AvatarUpload from './AvatarUpload';
+import { ZoneAvatar } from '../../../components/Avatars/ZoneAvatar';
 
 const ZoneSettings: () => SettingsData | null = () => {
   const {
@@ -55,13 +56,22 @@ const ZoneSettings: () => SettingsData | null = () => {
       }
     },
     avatarWidget: (
-      <>
+      <Box direction="row" gap="small">
+        <ZoneAvatar
+          id={Math.floor(Math.random() * 100)}
+          title={userZones[selectedUserZoneIndex].zone.name}
+          subtitle={userZones[selectedUserZoneIndex].zone.subdomain}
+          src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/zone/display-photo/${userZones[selectedUserZoneIndex].zone.displayPhoto}`}
+          onClickEdit={() => setShowAvatarUpload(true)}
+          outerCircle
+        />
         <DropButton
           dropProps={{
             responsive: false,
             stretch: false,
             overflow: { vertical: 'scroll' },
           }}
+          dropAlign={{ left: 'right', top: 'top' }}
           dropContent={
             <Box>
               {userZones.map((item, index) => (
@@ -78,17 +88,31 @@ const ZoneSettings: () => SettingsData | null = () => {
                     });
                     setSelectedUserZoneIndex(index);
                   }}
+                  leftIcon={
+                    <ZoneAvatar
+                      id={Math.floor(Math.random() * 100)}
+                      title={item.zone.name}
+                      subtitle={item.zone.subdomain}
+                      src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/zone/display-photo/${item.zone.displayPhoto}`}
+                      onClickEdit={() => setShowAvatarUpload(true)}
+                      outerCircle
+                      disabled
+                    />
+                  }
                 />
               ))}
             </Box>
           }
         >
-          <AvatarItem
-            title={userZones[selectedUserZoneIndex].zone.name}
-            subtitle={userZones[selectedUserZoneIndex].zone.subdomain}
-            src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/zone/display-photo/${userZones[selectedUserZoneIndex].zone.displayPhoto}`}
-            onClickEdit={() => setShowAvatarUpload(true)}
-          />
+          <Box direction="row" gap="small">
+            <Box>
+              <Text>{userZones[selectedUserZoneIndex].zone.name}</Text>
+              <Text color="#8F9BB3">
+                {userZones[selectedUserZoneIndex].zone.subdomain}
+              </Text>
+            </Box>
+            <CaretDownFill />
+          </Box>
         </DropButton>
         {showAvatarUpload && !(zoneId === null) && (
           <AvatarUpload
@@ -101,7 +125,7 @@ const ZoneSettings: () => SettingsData | null = () => {
             }}
           />
         )}
-      </>
+      </Box>
     ),
     items: [
       {

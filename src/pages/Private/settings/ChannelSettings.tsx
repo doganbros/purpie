@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Box, CheckBox, DropButton, Grid, Text, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
+import { CaretDownFill } from 'grommet-icons';
 import ListButton from '../../../components/utils/ListButton';
 import SectionContainer from '../../../components/utils/SectionContainer';
 import { apiURL } from '../../../config/http';
@@ -10,9 +11,9 @@ import {
 } from '../../../store/actions/channel.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { UpdateChannelPayload } from '../../../store/types/channel.types';
-import { AvatarItem } from './AvatarItem';
 import AvatarUpload from './AvatarUpload';
 import { SettingsData } from './types';
+import { ChannelAvatar } from '../../../components/Avatars/ChannelAvatar';
 
 const ChannelSettings: () => SettingsData = () => {
   const {
@@ -37,6 +38,9 @@ const ChannelSettings: () => SettingsData = () => {
     id: userChannels.data[0].channel.id,
     public: userChannels.data[0].channel.public,
   });
+
+  const [open, setOpen] = useState(false);
+
   const channelId = userChannels.data[selectedUserChannelIndex]?.channel?.id;
 
   return {
@@ -51,33 +55,9 @@ const ChannelSettings: () => SettingsData = () => {
     },
     avatarWidget: (
       <>
-        <DropButton
-          dropProps={{
-            responsive: false,
-            stretch: false,
-            overflow: { vertical: 'scroll' },
-          }}
-          dropContent={
-            <Box>
-              {userChannels.data.map((item, index) => (
-                <ListButton
-                  key={item.channel.id}
-                  label={item.channel.name}
-                  onClick={() => {
-                    setChannelPayload({
-                      name: item.channel.name,
-                      id: item.channel.id,
-                      description: item.channel.description,
-                      public: item.channel.public,
-                    });
-                    setSelectedUserChannelIndex(index);
-                  }}
-                />
-              ))}
-            </Box>
-          }
-        >
-          <AvatarItem
+        <Box width="medium" direction="row" gap="small">
+          <ChannelAvatar
+            id={Math.floor(Math.random() * 100)}
             title={userChannels.data[selectedUserChannelIndex].channel.name}
             subtitle={
               userZones?.find(
@@ -87,9 +67,92 @@ const ChannelSettings: () => SettingsData = () => {
               )?.zone.name
             }
             onClickEdit={() => setShowAvatarUpload(true)}
-            src={`${apiURL}/channel/display-photo/${userChannels.data[selectedUserChannelIndex].channel.displayPhoto}`}
+            src={
+              userChannels.data[selectedUserChannelIndex].channel.displayPhoto
+                ? `${apiURL}/channel/display-photo/${userChannels.data[selectedUserChannelIndex].channel.displayPhoto}`
+                : undefined
+            }
+            outerCircle
           />
-        </DropButton>
+          <DropButton
+            open={open}
+            onOpen={() => setOpen(true)}
+            onClose={() => setOpen(false)}
+            dropAlign={{ left: 'right', top: 'top' }}
+            dropProps={{
+              responsive: false,
+              stretch: false,
+              overflow: { vertical: 'scroll' },
+            }}
+            dropContent={
+              <Box>
+                {userChannels.data.map((item, index) => (
+                  <ListButton
+                    key={item.channel.id}
+                    label={item.channel.name}
+                    onClick={() => {
+                      setChannelPayload({
+                        name: item.channel.name,
+                        id: item.channel.id,
+                        description: item.channel.description,
+                        public: item.channel.public,
+                      });
+                      setSelectedUserChannelIndex(index);
+                    }}
+                    leftIcon={
+                      <ChannelAvatar
+                        id={Math.floor(Math.random() * 100)}
+                        title={
+                          userChannels.data[selectedUserChannelIndex].channel
+                            .name
+                        }
+                        subtitle={
+                          userZones?.find(
+                            (userZone) =>
+                              userZone.zone.id ===
+                              userChannels.data[selectedUserChannelIndex]
+                                .channel.zoneId
+                          )?.zone.name
+                        }
+                        onClickEdit={() => setShowAvatarUpload(true)}
+                        src={
+                          item.channel.displayPhoto
+                            ? `${apiURL}/channel/display-photo/${item.channel.displayPhoto}`
+                            : undefined
+                        }
+                        outerCircle
+                        disabled
+                      />
+                    }
+                    selected={
+                      userChannels.data[selectedUserChannelIndex].channel
+                        .name === item.channel.name
+                    }
+                  />
+                ))}
+              </Box>
+            }
+          >
+            <Box onClick={() => setOpen(true)} direction="row" gap="small">
+              <Box>
+                <Text>
+                  {userChannels.data[selectedUserChannelIndex].channel.name}
+                </Text>
+                <Text color="#8F9BB3">
+                  {
+                    userZones?.find(
+                      (userZone) =>
+                        userZone.zone.id ===
+                        userChannels.data[selectedUserChannelIndex].channel
+                          .zoneId
+                    )?.zone.name
+                  }
+                </Text>
+              </Box>
+              <CaretDownFill />
+            </Box>
+          </DropButton>
+        </Box>
         {showAvatarUpload && !(channelId === null || channelId === undefined) && (
           <AvatarUpload
             onSubmit={(file) => {
