@@ -281,6 +281,7 @@ const ChannelSettings: () => SettingsData = () => {
               rows={['xxsmall', 'xxsmall']}
               columns={['medium', 'medium']}
               gap="small"
+              justifyContent="between"
             >
               <Box
                 align="center"
