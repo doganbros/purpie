@@ -44,6 +44,8 @@ import { CreateMeetingDto } from '../dto/create-meeting.dto';
 import { MeetingService } from '../services/meeting.service';
 import { ClientVerifyMeetingAuthDto } from '../dto/client-verify-meeting-auth.dto';
 import { ConferenceInfoResponse } from '../responses/conference-info.response';
+import { User } from '../../../entities/User.entity';
+import { PostReaction } from '../../../entities/PostReaction.entity';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -162,10 +164,23 @@ export class MeetingController {
         privacyConfig,
       });
 
-    if (!createMeetingInfo.startDate)
-      return this.meetingService.generateMeetingUrl(meeting, user, true);
+    meeting.createdBy = {
+      id: user.id,
+      email: user.email,
+      fullName: user.email,
+    } as User;
+    meeting.postReaction = new PostReaction();
 
-    return meeting.id;
+    if (!createMeetingInfo.startDate) {
+      const meetingUrl = await this.meetingService.generateMeetingUrl(
+        meeting,
+        user,
+        true,
+      );
+      return { meetingUrl, meeting };
+    }
+
+    return { meeting };
   }
 
   @Get('join/:slug')
@@ -295,7 +310,7 @@ export class MeetingController {
   @Post('/client/verify')
   @ApiCreatedResponse({
     description:
-      'Client athenticates an octopus user for a meeting. Client must have manageMeeting permission.',
+      'Client athenticates an purpie user for a meeting. Client must have manageMeeting permission.',
     schema: { type: 'string', example: 'OK' },
   })
   @ApiNotFoundResponse({

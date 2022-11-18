@@ -11,7 +11,6 @@ import {
 } from '../types/zone.types';
 import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
-import { Category } from '../../models/utils';
 
 export const createZone = (zone: CreateZonePayload): Promise<any> =>
   http.post('/zone/create', zone).then((res) => res.data);
@@ -21,9 +20,6 @@ export const joinZone = (id: number): Promise<any> =>
 
 export const getCategories = (): Promise<any> =>
   http.get('/zone/categories/list').then((res) => res.data);
-
-export const getZoneCategories = (zoneId: number): Promise<Category[]> =>
-  http.get(`/zone/categories/list/${zoneId}`).then((res) => res.data);
 
 export const getUserZones = (): Promise<Array<UserZoneListItem>> =>
   http.get('/user-zone/list').then((res) => res.data);

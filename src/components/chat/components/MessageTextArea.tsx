@@ -13,6 +13,7 @@ import React, {
 import { EmojiData, emojiIndex } from 'emoji-mart';
 import _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import EmojiPicker from './EmojiPicker';
 import SuggestionPicker from './SuggestionPicker';
 import MentionPicker from './MentionPicker';
@@ -36,7 +37,6 @@ interface Props {
   setSuggestionPickerVisibility: Dispatch<SetStateAction<boolean>>;
   mentionPickerVisibility: boolean;
   setMentionPickerVisibility: Dispatch<SetStateAction<boolean>>;
-  setInputFocused: Dispatch<SetStateAction<boolean>>;
 }
 
 const MessageBox: FC<Props> = ({
@@ -53,10 +53,10 @@ const MessageBox: FC<Props> = ({
   setSuggestionPickerVisibility,
   mentionPickerVisibility,
   setMentionPickerVisibility,
-  setInputFocused,
 }) => {
   const dispatch = useDispatch();
   const debouncer = useDebouncer();
+  const { t } = useTranslation();
 
   const [editingEmoji, setEditingEmoji] = useState<string>('');
   const [suggestions, setSuggestions] = useState<EmojiData[]>([]);
@@ -331,13 +331,15 @@ const MessageBox: FC<Props> = ({
           ref={textAreaRef}
           resize={false}
           focusIndicator={false}
-          placeholder={name ? `Write to ${name}` : 'Write a  comment…'}
+          placeholder={
+            name
+              ? t('MessageTextArea.writeTo', { name })
+              : t('MessageTextArea.writeComment')
+          }
           onKeyDown={handleKeyDown}
           onKeyPress={handleKeyUp}
           onChange={handleChange}
           rows={1}
-          onFocusCapture={() => setInputFocused(true)}
-          onBlurCapture={() => setInputFocused(false)}
         />
       </Box>
     </Box>

@@ -11,8 +11,8 @@ import {
 import { useHistory } from 'react-router-dom';
 import PublicPageLayout from './PublicPageLayout/PublicPageLayout';
 import { useResponsive } from '../../hooks/useResponsive';
-import LogoHorizontalColor from '../../assets/octopus-logo/logo-horizontal-color.svg';
-import LogoHorizontalWhite from '../../assets/octopus-logo/logo-horizontal-white.svg';
+import LogoHorizontalColor from '../../assets/purpie-logo/logo-horizontal-color.svg';
+import LogoHorizontalWhite from '../../assets/purpie-logo/logo-horizontal-white.svg';
 import AuthFormButton from '../auth/AuthFormButton';
 
 interface Props {
@@ -25,7 +25,7 @@ interface Props {
   };
   background?: JSX.Element;
   formTitle: string;
-  formSubTitle: string | JSX.Element;
+  formSubTitle?: string | JSX.Element;
 }
 
 const AuthLayout: React.FC<Props> = ({
@@ -50,7 +50,7 @@ const AuthLayout: React.FC<Props> = ({
   const headingSize = {
     small: '30px',
     medium: '38px',
-    large: '45px',
+    large: '38px',
   };
 
   return (
@@ -99,7 +99,7 @@ const AuthLayout: React.FC<Props> = ({
             align="center"
             overflow="auto"
           >
-            <CardBody width="80%" justify="center" pad={{ vertical: '10px' }}>
+            <CardBody width="80%" justify="center" pad={{ vertical: 'large' }}>
               <Box
                 margin={{ bottom: 'xsmall' }}
                 direction="row"
@@ -109,7 +109,7 @@ const AuthLayout: React.FC<Props> = ({
                 fill="horizontal"
               >
                 <Image
-                  width={size === 'small' ? '150px' : '172px'}
+                  width={size === 'small' ? '112px' : '132px'}
                   src={theme.dark ? LogoHorizontalWhite : LogoHorizontalColor}
                 />
               </Box>

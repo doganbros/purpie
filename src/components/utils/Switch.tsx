@@ -38,7 +38,7 @@ const Switch: FC<Props> = ({
       justify="between"
       align="center"
       direction="row"
-      pad="small"
+      pad="10px"
       gap={otherProps.width ? 'small' : '0'}
       {...otherProps}
     >

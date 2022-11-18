@@ -13,6 +13,7 @@ import { AddPlaylistItemDto } from '../dto/add-playlist-item.dto';
 import { CreatePlaylistDto } from '../dto/create-playlist.dto';
 import { UpdatePlaylistDto } from '../dto/update-playlist.dto';
 import { PostService } from './post.service';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 @Injectable()
 export class PlaylistService {
@@ -90,8 +91,8 @@ export class PlaylistService {
 
       if (!isUserInChannel)
         throw new UnauthorizedException(
+          ErrorTypes.USER_NOT_CHANNEL_MEMBER,
           `User is not a member of the channel with the id ${info.channelId}`,
-          'USER_NOT_CHANNEL_MEMBER',
         );
 
       payload.channelId = info.channelId;
@@ -139,22 +140,32 @@ export class PlaylistService {
     });
 
     if (!playlist)
-      throw new NotFoundException('Playlist not found', 'PLAYLIST_NOT_FOUND');
+      throw new NotFoundException(
+        ErrorTypes.PLAYLIST_NOT_FOUND,
+        'Playlist not found',
+      );
 
     if (
       playlist.createdById &&
       !playlist.channelId &&
       playlist.createdById !== userId
     )
-      throw new NotFoundException('Playlist not found', 'PLAYLIST_NOT_FOUND');
+      throw new NotFoundException(
+        ErrorTypes.PLAYLIST_NOT_FOUND,
+        'Playlist not found',
+      );
 
     const post = await this.postService.getPostById(userId, info.postId);
 
-    if (!post) throw new NotFoundException('Post not found', 'POST_NOT_FOUND');
+    if (!post)
+      throw new NotFoundException(ErrorTypes.POST_NOT_FOUND, 'Post not found');
 
     if (playlist.channelId) {
       if (post.channelId !== playlist.channelId)
-        throw new UnauthorizedException('NOT_AUTHROIZED');
+        throw new UnauthorizedException(
+          ErrorTypes.NOT_AUTHORIZED,
+          'NOT AUTHORIZED',
+        );
 
       const userChannel = await this.userChannelRepository.findOne({
         where: { channelId: playlist.channelId, userId },
@@ -162,10 +173,16 @@ export class PlaylistService {
       });
 
       if (!userChannel)
-        throw new NotFoundException('Playlist not found', 'PLAYLIST_NOT_FOUND');
+        throw new NotFoundException(
+          ErrorTypes.PLAYLIST_NOT_FOUND,
+          'Playlist not found',
+        );
 
       if (!userChannel.channelRole.canEdit)
-        throw new UnauthorizedException('NOT_AUTHROIZED');
+        throw new UnauthorizedException(
+          ErrorTypes.NOT_AUTHORIZED,
+          'NOT_AUTHROIZED',
+        );
     }
 
     const playlistItem = await this.playlistItemRepository
@@ -185,14 +202,20 @@ export class PlaylistService {
     });
 
     if (!playlist)
-      throw new NotFoundException('Playlist not found', 'PLAYLIST_NOT_FOUND');
+      throw new NotFoundException(
+        ErrorTypes.PLAYLIST_NOT_FOUND,
+        'Playlist not found',
+      );
 
     if (
       playlist.createdById &&
       !playlist.channelId &&
       playlist.createdById !== userId
     )
-      throw new NotFoundException('Playlist not found', 'PLAYLIST_NOT_FOUND');
+      throw new NotFoundException(
+        ErrorTypes.PLAYLIST_NOT_FOUND,
+        'Playlist not found',
+      );
 
     if (playlist.channelId) {
       const userChannel = await this.userChannelRepository.findOne({
@@ -201,10 +224,16 @@ export class PlaylistService {
       });
 
       if (!userChannel)
-        throw new NotFoundException('Playlist not found', 'PLAYLIST_NOT_FOUND');
+        throw new NotFoundException(
+          ErrorTypes.PLAYLIST_NOT_FOUND,
+          'Playlist not found',
+        );
 
       if (!userChannel.channelRole.canEdit)
-        throw new UnauthorizedException('NOT_AUTHROIZED');
+        throw new UnauthorizedException(
+          ErrorTypes.NOT_AUTHORIZED,
+          'NOT_AUTHROIZED',
+        );
     }
 
     return this.playlistRepository.delete({ id: playlistId });
@@ -219,7 +248,7 @@ export class PlaylistService {
     if (!playlistItem)
       throw new NotFoundException(
         'Playlist item not found',
-        'PLAYLIST_ITEM_NOT_FOUND',
+        ErrorTypes.PLAYLIST_ITEM_NOT_FOUND,
       );
 
     const { playlist } = playlistItem;
@@ -231,7 +260,7 @@ export class PlaylistService {
     )
       throw new NotFoundException(
         'Playlist item not found',
-        'PLAYLIST_ITEM_NOT_FOUND',
+        ErrorTypes.PLAYLIST_ITEM_NOT_FOUND,
       );
 
     if (playlist.channelId) {
@@ -243,11 +272,14 @@ export class PlaylistService {
       if (!userChannel)
         throw new NotFoundException(
           'Playlist item not found',
-          'PLAYLIST_ITEM_NOT_FOUND',
+          ErrorTypes.PLAYLIST_ITEM_NOT_FOUND,
         );
 
       if (!userChannel.channelRole.canEdit)
-        throw new UnauthorizedException('NOT_AUTHROIZED');
+        throw new UnauthorizedException(
+          'NOT_AUTHROIZED',
+          ErrorTypes.NOT_AUTHORIZED,
+        );
     }
 
     return this.playlistItemRepository.delete({ id: playlistItemId });

@@ -1,20 +1,13 @@
 import React, { FC, useState } from 'react';
-import {
-  Anchor,
-  Box,
-  Button,
-  FormField,
-  RadioButtonGroup,
-  TextArea,
-  TextInput,
-} from 'grommet';
+import { Anchor, Box, Button, FormField, TextArea, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { validators } from '../../../helpers/validators';
 import { updatePostAction } from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
-import Divider from '../../../components/utils/Divider';
 import VideoSettingsTheme from './video-settings-theme';
 import Switch from '../../../components/utils/Switch';
+import { EditVideoPayload } from '../../../store/types/post.types';
 
 interface VideoSettingsProps {
   setShowSettings: (settings: boolean) => void;
@@ -26,6 +19,7 @@ const VideoSettings: FC<VideoSettingsProps> = ({
   setShowDeleteConfirmation,
 }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     post: {
       postDetail: { data },
@@ -36,16 +30,23 @@ const VideoSettings: FC<VideoSettingsProps> = ({
   const [description, setDescription] = useState(data?.description);
   const [exclusive, setExclusive] = useState(data?.userContactExclusive);
   const [publicVisibility, setPublicVisibility] = useState(data?.public);
-  const [value, setValue] = useState('Lorem Ipsum');
 
   const onSubmit = () => {
-    if (data && title && description) {
-      dispatch(updatePostAction(data.id, title, description));
+    if (data && title) {
+      const request: EditVideoPayload = {
+        postId: data.id,
+        title,
+        description,
+        public: publicVisibility,
+        userContactExclusive: exclusive,
+      };
+
+      dispatch(updatePostAction(request));
       setShowSettings(false);
     }
   };
 
-  const notValid = !title || !description;
+  const notValid = !title;
 
   return (
     <Box pad="medium" height={{ min: '100vh' }}>
@@ -53,8 +54,8 @@ const VideoSettings: FC<VideoSettingsProps> = ({
         <FormField
           name="title"
           htmlFor="videoName"
-          label="Video Name"
-          validate={[validators.required('Video name')]}
+          label={t('VideoSettings.videoName')}
+          validate={[validators.required(t('VideoSettings.videoName'))]}
         >
           <TextInput
             id="videoName"
@@ -63,7 +64,7 @@ const VideoSettings: FC<VideoSettingsProps> = ({
             autoFocus
             plain="full"
             type="text"
-            placeholder="Write a video name"
+            placeholder={t('VideoSettings.videoNamePlaceholder')}
             onChange={(e) => setTitle(e.target.value)}
           />
         </FormField>
@@ -71,12 +72,11 @@ const VideoSettings: FC<VideoSettingsProps> = ({
           name="description"
           htmlFor="videoDescription"
           flex={{ shrink: 0 }}
-          label="Video Description"
-          validate={[validators.required('Video description')]}
+          label={t('VideoSettings.videoDescription')}
         >
           <TextArea
             id="videoDescription"
-            placeholder="Write a video description"
+            placeholder={t('VideoSettings.videoDescriptionPlaceholder')}
             defaultValue={description}
             name="description"
             onChange={(e) => setDescription(e.target.value)}
@@ -90,42 +90,44 @@ const VideoSettings: FC<VideoSettingsProps> = ({
         >
           <Box gap="small">
             <Switch
-              label="Exclusive to contacts"
+              label={t('common.exclusiveContacts')}
               value={exclusive}
-              onChange={(checked) => setExclusive(checked)}
+              onChange={(checked) => {
+                setExclusive(checked);
+                setPublicVisibility(!checked);
+              }}
             />
             <Switch
-              label="Public"
+              label={t('common.public')}
               value={publicVisibility}
-              onChange={(checked) => setPublicVisibility(checked)}
+              onChange={(checked) => {
+                setPublicVisibility(checked);
+                setExclusive(!checked);
+              }}
             />
           </Box>
-          <Divider size="1px" />
-          <RadioButtonGroup
-            name="doc"
-            options={['Lorem Ipsum', 'Lorem Ipsum 2']}
-            value={value}
-            onChange={(event) => setValue(event.target.value)}
-          />
         </Box>
         <Box margin={{ vertical: 'auto' }} />
-        <Box gap="xsmall" margin={{ top: '20px' }}>
+        <Box gap="small" margin={{ top: '20px' }}>
           <Button
+            size="large"
             type="submit"
             disabled={notValid}
             onClick={onSubmit}
             primary
-            label="SAVE"
+            label={t('VideoSettings.save')}
           />
           <Button
+            size="large"
             type="button"
-            label="CLOSE"
+            label={t('common.close')}
             onClick={() => setShowSettings(false)}
           />
           <Box align="center" flex={{ shrink: 0 }} margin={{ top: 'medium' }}>
             <Anchor
+              weight="400"
               onClick={() => setShowDeleteConfirmation(true)}
-              label="Delete the Video"
+              label={t('VideoSettings.deleteVideo')}
               size="16px"
             />
           </Box>

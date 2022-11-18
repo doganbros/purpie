@@ -1,10 +1,12 @@
 import React, { FC, useState } from 'react';
-import { Box, Button, Spinner, Text } from 'grommet';
+import { Box, Button, Text } from 'grommet';
 import { CaretDownFill, CaretUpFill } from 'grommet-icons';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { listPostCommentRepliesAction } from '../../../../store/actions/post.action';
 import { PostCommentState } from '../../../../store/types/post.types';
 import CommentBase from './CommentBase';
+import PurpieLogoAnimated from '../../../../assets/purpie-logo/purpie-logo-animated';
 
 interface RepliesProps {
   postId: number;
@@ -14,6 +16,7 @@ interface RepliesProps {
 const Replies: FC<RepliesProps> = ({ parentComment, postId }) => {
   const [showReplies, setShowReplies] = useState(false);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const getReplies = (skip?: number) => {
     dispatch(
       listPostCommentRepliesAction({ postId, parentId: parentComment.id, skip })
@@ -38,10 +41,15 @@ const Replies: FC<RepliesProps> = ({ parentComment, postId }) => {
           )}
           <Text size="small" weight="bold" color="brand">
             {showReplies
-              ? 'Hide replies'
-              : `Show ${parentComment.replyCount} ${
-                  parentComment.replyCount === 1 ? 'reply' : 'replies'
-                }`}
+              ? t('Replies.hideReplies')
+              : t('Replies.showReplies', {
+                  count: parentComment.replyCount,
+                  reply: t(
+                    `Replies.${
+                      parentComment.replyCount === 1 ? 'reply' : 'replies'
+                    }`
+                  ),
+                })}
           </Text>
         </Box>
       </Button>
@@ -49,7 +57,7 @@ const Replies: FC<RepliesProps> = ({ parentComment, postId }) => {
         <Box gap="small">
           {parentComment.replies.loading &&
           !parentComment.replies.data.length ? (
-            <Spinner />
+            <PurpieLogoAnimated width={50} height={50} color="#956aea" />
           ) : (
             parentComment.replies.data.map((c) => (
               <CommentBase key={c.id} comment={c} postId={postId} />
@@ -59,7 +67,7 @@ const Replies: FC<RepliesProps> = ({ parentComment, postId }) => {
             <Button
               onClick={() => getReplies(parentComment.replies?.data.length)}
             >
-              <Text color="brand">Load more</Text>
+              <Text color="brand">{t('Replies.loadMore')}</Text>
             </Button>
           )}
         </Box>

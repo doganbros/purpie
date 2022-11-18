@@ -10,6 +10,7 @@ import { parsePostTags } from 'helpers/utils';
 import { UserProfile } from 'src/auth/interfaces/user.interface';
 import { MailService } from 'src/mail/mail.service';
 import { Brackets, Repository } from 'typeorm';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const { REACT_APP_CLIENT_HOST } = process.env;
 
@@ -32,7 +33,11 @@ export class VideoService {
       channelId,
       userId,
     });
-    if (!userChannel) throw new NotFoundException('User channel not found');
+    if (!userChannel)
+      throw new NotFoundException(
+        ErrorTypes.CHANNEL_NOT_FOUND,
+        'User channel not found',
+      );
   }
 
   async createNewVideoPost(payload: Partial<Post>) {
@@ -72,7 +77,7 @@ export class VideoService {
     };
     return this.mailService.sendMailByView(
       user.email,
-      'Octopus Video',
+      'Purpie Video',
       'video-info',
       context,
     );

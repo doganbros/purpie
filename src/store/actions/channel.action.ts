@@ -114,7 +114,7 @@ export const createChannelAction = (
       dispatch({
         type: CREATE_CHANNEL_SUCCESS,
       });
-      setToastAction('ok', `Channel created successfully`)(dispatch);
+      setToastAction('ok', `Channel Created!`)(dispatch);
       getUserChannelsAction()(dispatch);
     } catch (err: any) {
       dispatch({

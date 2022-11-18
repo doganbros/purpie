@@ -23,7 +23,9 @@ export class EditZoneDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsOptional()
-  @Matches(/([a-z.])+([a-z])$/, { message: 'Please enter a valid subdomain' })
+  @Matches(/^(?![0-9]+$)(?!.*-$)(?!-)[a-zA-Z0-9-]{6,32}$/, {
+    message: 'Please enter a valid subdomain',
+  })
   subdomain?: string;
 
   @ApiProperty()

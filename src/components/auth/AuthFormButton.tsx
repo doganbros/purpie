@@ -15,6 +15,7 @@ const ExtendedButtonCSS = css`
   background-color: ${(props: Props) => props.backgroundColor};
   min-width: ${(props: Props) => props.minWidth};
   max-width: ${(props: Props) => props.maxWidth};
+  padding: 7px 32px;
 `;
 
 const AuthFormButton: FC<Props> = (props) => {

@@ -12,7 +12,7 @@ import { AppModule } from './app.module';
 
 initApp();
 
-const { REACT_APP_CLIENT_HOST, HTTP_MAX_BODY_SIZE } = process.env;
+const { HTTP_MAX_BODY_SIZE } = process.env;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,20 +21,11 @@ async function bootstrap() {
   app.enableVersioning();
   app.use(helmet());
   app.use(json({ limit: HTTP_MAX_BODY_SIZE || '500mb' }));
-  const originRegex = new RegExp(
-    `(\\b|\\.)${new URL(REACT_APP_CLIENT_HOST as string).host.replace(
-      /\./g,
-      '\\.',
-    )}$`,
-  );
+
   app.enableCors({
-    origin: [
-      originRegex,
-      'http://localhost:3000',
-      'http://octopus.localhost:3000',
-    ],
+    origin: true,
     credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    preflightContinue: false,
   });
   app.use(cookieParser());
   app.use(compression());
@@ -53,8 +44,8 @@ async function bootstrap() {
   const { SERVER_PORT = 8000 } = process.env;
 
   const config = new DocumentBuilder()
-    .setTitle('Octopus')
-    .setDescription('Octopus API Documentation')
+    .setTitle('Purpie')
+    .setDescription('Purpie API Documentation')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

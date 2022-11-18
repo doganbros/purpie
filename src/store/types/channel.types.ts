@@ -27,8 +27,6 @@ import {
 } from '../constants/channel.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
-import { Category } from '../../models/utils';
-
 import { User } from './auth.types';
 import { UtilActionParams } from './util.types';
 import { ZoneActionParams } from './zone.types';
@@ -49,7 +47,6 @@ export interface ChannelBasic {
 export interface ChannelListItem extends ChannelBasic {
   displayPhoto: string | undefined;
   createdBy?: User;
-  category?: Category;
   zoneId: number;
 }
 
@@ -80,6 +77,7 @@ export interface ChannelSearchParams extends ChannelSearchOptions {
   limit?: number;
   skip?: number;
 }
+
 export interface ChannelState {
   selectedChannel: UserChannelListItem | null;
   showCreateChannelLayer: boolean;
@@ -102,7 +100,6 @@ export interface ChannelState {
 export interface CreateChannelPayload {
   name: string;
   topic: string;
-  categoryId: number;
   description: string;
   public: boolean;
 }

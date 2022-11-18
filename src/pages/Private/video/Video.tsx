@@ -1,27 +1,26 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
-import dayjs from 'dayjs';
 import videojs from 'video.js';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import { Box, Button, Menu, Layer, Spinner, Text } from 'grommet';
+import { Box, Button, Layer, Menu, Text } from 'grommet';
 import {
-  Chat as ChatIcon,
-  SettingsOption,
-  Like,
-  Dislike,
-  ShareOption,
-  More,
   AddCircle,
+  Chat as ChatIcon,
+  Dislike,
+  Like,
+  More,
+  SettingsOption,
+  ShareOption,
 } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import {
   createPostLikeAction,
-  getPostDetailAction,
-  removePostLikeAction,
-  removePostAction,
-  removePostSaveAction,
   createPostSaveAction,
+  getPostDetailAction,
+  removePostAction,
+  removePostLikeAction,
+  removePostSaveAction,
 } from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import RecommendedVideos from './RecommendedVideos';
@@ -37,9 +36,11 @@ import ChannelBadge from '../../../components/utils/channel/ChannelBadge';
 import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
 import UserBadge from '../../../components/utils/UserBadge';
 import Highlight from '../../../components/utils/Highlight';
-import { matchDescriptionTags } from '../../../helpers/utils';
-
-dayjs.extend(relativeTime);
+import {
+  getTimezoneTimeFromUTC,
+  matchDescriptionTags,
+} from '../../../helpers/utils';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 interface RouteParams {
   id: string;
@@ -50,6 +51,7 @@ const { REACT_APP_STREAMING_URL } = process.env;
 const Video: FC = () => {
   const DECISECOND = 10;
   const params = useParams<RouteParams>();
+  const { t } = useTranslation();
   const [liveStreamCount, setLiveStreamCount] = useState(0);
   const dispatch = useDispatch();
   const {
@@ -113,14 +115,20 @@ const Video: FC = () => {
   const actionMenu = useMemo(() => {
     if (data?.createdBy?.id === user?.id) {
       return [
-        { label: 'Edit', onClick: () => setShowSettings((state) => !state) },
-        { label: 'Delete', onClick: () => setShowDeleteConfirmation(true) },
+        {
+          label: t('common.edit'),
+          onClick: () => setShowSettings((state) => !state),
+        },
+        {
+          label: t('common.delete'),
+          onClick: () => setShowDeleteConfirmation(true),
+        },
       ];
     }
     return [
-      { label: 'Follow This Channel' },
-      { label: 'Join This Zone' },
-      { label: 'Report' },
+      { label: t('Video.followChannel') },
+      { label: t('Video.joinZone') },
+      { label: t('Video.report') },
     ];
   }, [data, user]);
 
@@ -168,8 +176,8 @@ const Video: FC = () => {
 
   return (
     <PrivatePageLayout
-      rightComponentWithoutOverflow
-      title={data?.title || 'Loading'}
+      rightComponentWithoutOverflow={!showSettings}
+      title={data?.title || t('common.loading')}
       rightComponent={
         showSettings ? (
           <VideoSettings
@@ -183,7 +191,7 @@ const Video: FC = () => {
     >
       {loading || !data ? (
         <Layer responsive={false} plain>
-          <Spinner />
+          <PurpieLogoAnimated width={50} height={50} color="#956aea" />
         </Layer>
       ) : (
         <Box gap="large" pad={{ vertical: 'medium' }}>
@@ -194,19 +202,21 @@ const Video: FC = () => {
                   {data.title}
                 </Text>
               </Box>
-              <Text weight="bold">{dayjs(data.createdOn).fromNow()}</Text>
+              <Text weight="bold">
+                {getTimezoneTimeFromUTC(data.createdOn).fromNow()}
+              </Text>
             </Box>
             <Box justify="between" align="center" direction="row">
               {(data?.type === 'video' && (
                 <Box direction="row" align="center" gap="medium">
-                  {data?.channel?.name && (
-                    <ChannelBadge name={data.channel.name} url="/" />
-                  )}
                   {data?.channel?.zone && (
                     <ZoneBadge
                       name={data.channel.zone.name}
                       subdomain={data.channel.zone.subdomain}
                     />
+                  )}
+                  {data?.channel?.name && (
+                    <ChannelBadge name={data.channel.name} url="/" />
                   )}
                   <UserBadge url="/" fullName={data?.createdBy?.fullName} />
                 </Box>
@@ -256,16 +266,27 @@ const Video: FC = () => {
               <Box direction="row" align="center" justify="between">
                 {data.streaming ? (
                   <Text>
-                    {liveStreamCount}{' '}
-                    {liveStreamCount === 1
-                      ? `user is watching`
-                      : 'users are watching'}
+                    {
+                      (t(
+                        `Video.${
+                          liveStreamCount === 1
+                            ? 'userWatching'
+                            : 'usersWatching'
+                        }`
+                      ),
+                      { count: liveStreamCount })
+                    }
                   </Text>
                 ) : (
                   <Text color="status-disabled">
-                    {data.postReaction.viewsCount === 1
-                      ? `${data.postReaction.viewsCount} view`
-                      : `${data.postReaction.viewsCount} views`}
+                    {t(
+                      `Video.${
+                        data.postReaction.viewsCount === 1
+                          ? 'viewCount'
+                          : 'viewsCount'
+                      }`,
+                      { count: data.postReaction.viewsCount }
+                    )}
                   </Text>
                 )}
                 <Box direction="row" gap="medium">
@@ -291,11 +312,11 @@ const Video: FC = () => {
                   </Box>
                   <Box direction="row" gap="xsmall" align="center">
                     <Dislike color="status-disabled" size="17px" />
-                    <Text color="status-disabled">Dislike</Text>
+                    <Text color="status-disabled">{t('Video.dislike')}</Text>
                   </Box>
                   <Box direction="row" gap="xsmall" align="center">
                     <ShareOption color="status-disabled" size="19px" />
-                    <Text color="status-disabled">Share</Text>
+                    <Text color="status-disabled">{t('common.share')}</Text>
                   </Box>
                   <Box
                     direction="row"
@@ -312,7 +333,7 @@ const Video: FC = () => {
                       size="21px"
                     />
                     <Text color={data.saved ? 'brand' : 'status-disabled'}>
-                      {data.saved ? 'Saved' : 'Save'}
+                      {data.saved ? t('common.saved') : t('common.save')}
                     </Text>
                   </Box>
                   <Box direction="row" gap="xsmall" align="center">
@@ -343,8 +364,8 @@ const Video: FC = () => {
                 history.replace('/');
               }}
               onDismiss={() => setShowDeleteConfirmation(false)}
-              message="Are you sure you want to remove this post?"
-              confirmButtonText="Remove"
+              message={t('Video.removePostConfirmMsg')}
+              confirmButtonText={t('common.remove')}
             />
           )}
         </Box>

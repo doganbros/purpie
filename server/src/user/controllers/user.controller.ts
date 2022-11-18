@@ -62,6 +62,7 @@ import { UpdateUserPermission } from '../dto/update-permissions.dto';
 import { SystemUserListQuery } from '../dto/system-user-list.query';
 import { CreateBlockedUserDto } from '../dto/create-blocked-user.dto';
 import { UserEvent } from '../listeners/user.event';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 
@@ -89,7 +90,10 @@ export class UserController {
     );
 
     if (!invitation)
-      throw new NotFoundException('Contact Invitation not found');
+      throw new NotFoundException(
+        ErrorTypes.CONTACT_INVITATION_NOT_FOUND,
+        'Contact Invitation not found',
+      );
 
     if (status === 'reject') {
       await this.userService.removeContactInvitation(contactInvitationId);

@@ -1,5 +1,6 @@
 import { Box, Heading } from 'grommet';
 import React, { FC } from 'react';
+import PurpieLogoAnimated from '../../assets/purpie-logo/purpie-logo-animated';
 
 const Loader: FC = () => {
   return (
@@ -9,7 +10,9 @@ const Loader: FC = () => {
       justify="center"
       className="background-gradient"
     >
-      <Heading color="white">Loading...</Heading>
+      <Heading color="white">
+        <PurpieLogoAnimated width={100} height={100} color="#FFFFFF" />
+      </Heading>
     </Box>
   );
 };

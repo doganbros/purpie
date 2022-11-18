@@ -2,6 +2,9 @@ import {
   CHANNEL_SUGGESTIONS_FAILED,
   CHANNEL_SUGGESTIONS_REQUESTED,
   CHANNEL_SUGGESTIONS_SUCCESS,
+  CREATE_CONTACT_INVITATION_FAILED,
+  CREATE_CONTACT_INVITATION_REQUESTED,
+  CREATE_CONTACT_INVITATION_SUCCESS,
   GET_INVITATION_RESPONSE_FAILED,
   GET_INVITATION_RESPONSE_REQUESTED,
   GET_INVITATION_RESPONSE_SUCCESS,
@@ -97,6 +100,11 @@ export interface ActivityState {
     loading: boolean;
     error: ResponseError | null;
   };
+  invitedContacts: {
+    loading: boolean;
+    error: ResponseError | null;
+    userIds: Array<string>;
+  };
 }
 
 export type ActivityActionParams =
@@ -105,7 +113,8 @@ export type ActivityActionParams =
         | typeof ZONE_SUGGESTIONS_REQUESTED
         | typeof CHANNEL_SUGGESTIONS_REQUESTED
         | typeof LIST_INVITATION_REQUESTED
-        | typeof GET_INVITATION_RESPONSE_REQUESTED;
+        | typeof GET_INVITATION_RESPONSE_REQUESTED
+        | typeof CREATE_CONTACT_INVITATION_REQUESTED;
     }
   | {
       type: typeof ZONE_SUGGESTIONS_SUCCESS;
@@ -114,6 +123,10 @@ export type ActivityActionParams =
   | {
       type: typeof CHANNEL_SUGGESTIONS_SUCCESS;
       payload: PaginatedResponse<ChannelSuggestionListItem>;
+    }
+  | {
+      type: typeof CREATE_CONTACT_INVITATION_SUCCESS;
+      payload: string;
     }
   | {
       type: typeof LIST_INVITATION_SUCCESS;
@@ -128,7 +141,8 @@ export type ActivityActionParams =
         | typeof CHANNEL_SUGGESTIONS_FAILED
         | typeof ZONE_SUGGESTIONS_FAILED
         | typeof LIST_INVITATION_FAILED
-        | typeof GET_INVITATION_RESPONSE_FAILED;
+        | typeof GET_INVITATION_RESPONSE_FAILED
+        | typeof CREATE_CONTACT_INVITATION_FAILED;
       payload: ResponseError;
     };
 

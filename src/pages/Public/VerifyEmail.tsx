@@ -21,7 +21,7 @@ const VerifyEmail: FC = () => {
       formTitle="Email Confirmation"
       formSubTitle={
         <>
-          <span>Verify your email to finish signing up for Octopus.</span>
+          <span>Verify your email to finish signing up for Purpie.</span>
           <br />
           <span>Please check your email box.</span>
         </>

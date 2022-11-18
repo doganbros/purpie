@@ -6,7 +6,8 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { verifyJWT } from 'helpers/jwt';
-import { OCTOPUS_CLIENT_AUTH_TYPE } from '../constants/auth.constants';
+import { PURPIE_CLIENT_AUTH_TYPE } from '../constants/auth.constants';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const { AUTH_TOKEN_SECRET = '' } = process.env;
 
@@ -25,27 +26,27 @@ export class ClientAuthGuard implements CanActivate {
 
     if (!token)
       throw new UnauthorizedException(
+        ErrorTypes.NOT_SIGNED_IN,
         'You not authorized to use this route',
-        'NOT_SIGNED_IN',
       );
 
     try {
       req.client = await verifyJWT(token, AUTH_TOKEN_SECRET);
 
-      if (req.client.authType !== OCTOPUS_CLIENT_AUTH_TYPE)
-        throw new Error('Invalid auth type');
+      if (req.client.authType !== PURPIE_CLIENT_AUTH_TYPE)
+        throw new Error(ErrorTypes.INVALID_AUTH_TYPE);
     } catch (err: any) {
       throw new UnauthorizedException(
+        ErrorTypes.NOT_SIGNED_IN,
         'You not authorized to use this route',
-        'NOT_SIGNED_IN',
       );
     }
 
     for (const permission of clientPermissions) {
       if (!req.client.clientRole?.[permission])
         throw new UnauthorizedException(
+          ErrorTypes.NOT_AUTHORIZED,
           'You are not authorized',
-          'NOT_AUTHORIZED',
         );
     }
 

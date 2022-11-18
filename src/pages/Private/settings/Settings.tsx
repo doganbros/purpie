@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { Accordion, AccordionPanel, Avatar, Box, Button, Text } from 'grommet';
 import { CaretRightFill } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
-import LogoWhite from '../../../assets/octopus-logo/logo-white.svg';
+import LogoWhite from '../../../assets/purpie-logo/logo-white.svg';
 import Divider from '../../../components/layouts/PrivatePageLayout/ZoneSelector/Divider';
 import { useDebouncer } from '../../../hooks/useDebouncer';
 import ChannelSettings from './ChannelSettings';

@@ -1,4 +1,5 @@
 import {
+  ADD_POST_SUCCESS,
   CHANNEL_FEED_FAILED,
   CHANNEL_FEED_REQUESTED,
   CHANNEL_FEED_SUCCESS,
@@ -72,9 +73,11 @@ import * as PostService from '../services/post.service';
 import { store } from '../store';
 import {
   CreateVideoPayload,
+  EditVideoPayload,
   FeedPayload,
   ListPostCommentRepliesParams,
   ListPostCommentsParams,
+  Post,
   PostAction,
   PostSearchParams,
 } from '../types/post.types';
@@ -93,6 +96,15 @@ export const removePostAction = (payload: { postId: number }): PostAction => {
         payload: err?.response?.data,
       });
     }
+  };
+};
+
+export const addPostAction = (payload: Post): PostAction => {
+  return (dispatch) => {
+    dispatch({
+      type: ADD_POST_SUCCESS,
+      payload: { ...payload, newlyCreated: true },
+    });
   };
 };
 
@@ -215,9 +227,10 @@ export const createVideoAction = (
       payload,
     });
     try {
-      await PostService.createVideo(payload, onUploadProgress);
+      const response = await PostService.createVideo(payload, onUploadProgress);
       dispatch({
         type: CREATE_VIDEO_SUCCESS,
+        payload: { ...response, newlyCreated: true },
       });
     } catch (err: any) {
       dispatch({
@@ -416,29 +429,17 @@ export const createPostCommentAction = (
   };
 };
 
-export const updatePostAction = (
-  postId: number,
-  title: string,
-  description: string
-): PostAction => {
+export const updatePostAction = (payload: EditVideoPayload): PostAction => {
   return async (dispatch) => {
     dispatch({
       type: UPDATE_POST_DETAIL_REQUESTED,
-      payload: {
-        postId,
-        title,
-        description,
-      },
+      payload,
     });
     try {
-      await PostService.updatePostDetail(postId, title, description);
+      await PostService.updatePostDetail(payload);
       dispatch({
         type: UPDATE_POST_DETAIL_SUCCESS,
-        payload: {
-          postId,
-          title,
-          description,
-        },
+        payload,
       });
     } catch (err) {
       dispatch({

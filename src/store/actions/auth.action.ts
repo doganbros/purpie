@@ -65,7 +65,7 @@ export const loginAction = (user: LoginPayload): AuthAction => {
         type: LOGIN_FAILED,
         payload: err?.response?.data,
       });
-      if (err?.response?.data?.error === 'MUST_VERIFY_EMAIL') {
+      if (err?.response?.data?.message === 'MUST_VERIFY_EMAIL') {
         appHistory.push(`/verify-email-info/${err?.response?.data.user.id}`);
       }
     }
@@ -81,7 +81,7 @@ export const retrieveUserAction = (): AuthAction => {
         payload,
       });
     } catch (err: any) {
-      if (err?.response?.data?.error === 'INITIAL_USER_REQUIRED') {
+      if (err?.response?.data?.message === 'INITIAL_USER_REQUIRED') {
         return dispatch({ type: MUST_SET_INITIAL_USER });
       }
       dispatch({

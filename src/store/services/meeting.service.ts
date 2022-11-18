@@ -5,10 +5,11 @@ import {
   CreateMeetingPayload,
   UserMeetingConfig,
 } from '../types/meeting.types';
+import { Post } from '../types/post.types';
 
 export const createMeeting = (
   meeting: CreateMeetingPayload
-): Promise<string | number> =>
+): Promise<{ meetingUrl?: string; meeting: Post }> =>
   http.post('/meeting/create', meeting).then((res) => res.data);
 
 export const getUserMeetingConfig = (): Promise<UserMeetingConfig> => {

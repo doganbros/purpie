@@ -52,8 +52,10 @@ import {
 } from '../constants/auth.constants';
 import { InitialUserGuard } from '../guards/initial-user.guard';
 import { InitializeUserDto } from '../dto/initialize-user.dto';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const { VERIFICATION_TOKEN_SECRET = '' } = process.env;
+
 @Controller({ path: 'auth', version: '1' })
 @ApiTags('auth')
 export class AuthController {
@@ -125,14 +127,14 @@ export class AuthController {
 
     if (!user)
       throw new NotFoundException(
+        ErrorTypes.ERROR_USERNAME_OR_PASSWORD,
         'Invalid username or password.',
-        'ERROR_USERNAME_OR_PASSWORD',
       );
 
     if (!user.password)
       throw new ForbiddenException(
+        ErrorTypes.USER_DIDNT_REGISTER_WITH_PASSWORD,
         'User did not register with password',
-        'USER_DIDNT_REGISTER_WITH_PASSWORD',
       );
 
     const validPassword = await bcrypt.compare(
@@ -142,8 +144,8 @@ export class AuthController {
 
     if (!validPassword)
       throw new NotFoundException(
+        ErrorTypes.ERROR_USERNAME_OR_PASSWORD,
         'Invalid username or password.',
-        'ERROR_USERNAME_OR_PASSWORD',
       );
 
     const userPayload: UserProfile = {
@@ -157,11 +159,10 @@ export class AuthController {
     };
 
     if (!user.emailConfirmed)
-      throw new UnauthorizedException({
-        message: 'Email must be verified',
-        error: 'MUST_VERIFY_EMAIL',
-        user: userPayload,
-      });
+      throw new UnauthorizedException(
+        { message: ErrorTypes.MUST_VERIFY_EMAIL, user: userPayload },
+        'Email must be verified',
+      );
 
     await this.authService.setAccessTokens(
       {
@@ -279,11 +280,11 @@ export class AuthController {
   async resetPasswordRequest(@Body() payload: ResetPasswordRequestDto) {
     const user = await this.authService.getUserByEmail(payload.email);
 
-    if (!user)
-      throw new NotFoundException(
-        `User with the email '${payload.email}' doesn't exist`,
-        'USER_NOT_FOUND',
-      );
+    if (!user) return payload.email;
+    // throw new NotFoundException(
+    //   `User with the email '${payload.email}' doesn't exist`,
+    //   'USER_NOT_FOUND',
+    // );
 
     const token = await this.authService.generateResetPasswordToken(
       payload.email,

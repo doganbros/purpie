@@ -9,6 +9,7 @@ import {
 } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
 import PostGridItem from '../../../components/post/PostGridItem';
@@ -31,32 +32,29 @@ import { Post } from '../../../store/types/post.types';
 import EmptyFeedContent from './EmptyFeedContent';
 import { LoadingState } from '../../../models/utils';
 import InvitationList from './InvitationList';
+import i18n from '../../../config/i18n/i18n-config';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
-const initialFilters = [
+const tabs = [
   {
     id: 0,
-    filterName: 'All',
-    active: true,
+    name: i18n.t('Timeline.all'),
   },
   {
     id: 1,
-    filterName: 'Following',
-    active: false,
+    name: i18n.t('common.following'),
   },
   {
     id: 2,
-    filterName: 'Live',
-    active: false,
+    name: i18n.t('Timeline.live'),
   },
   {
     id: 3,
-    filterName: 'Newest',
-    active: false,
+    name: i18n.t('Timeline.newest'),
   },
   {
     id: 4,
-    filterName: 'Popular',
-    active: false,
+    name: i18n.t('Timeline.popular'),
   },
 ];
 
@@ -64,6 +62,7 @@ const Timeline: FC = () => {
   const size = useContext(ResponsiveContext);
   const history = useHistory();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     post: { feed },
     zone: { selectedUserZone },
@@ -71,11 +70,11 @@ const Timeline: FC = () => {
   } = useSelector((state: AppState) => state);
 
   const [showAddContent, setShowAddContent] = useState(false);
-  const [filters, setFilters] = useState(initialFilters);
+  const [activeTab, setActiveTab] = useState(0);
+  const [hasNewlyCreatedFeed, setHasNewlyCreatedFeed] = useState(false);
 
   const getFeed = (skip?: number) => {
-    const activeFilterId = filters.find((f) => f.active)?.id;
-    switch (activeFilterId) {
+    switch (activeTab) {
       case 0:
       case 1:
       case 2:
@@ -84,7 +83,7 @@ const Timeline: FC = () => {
             getChannelFeedAction({
               skip,
               channelId: selectedChannel.channel.id,
-              streaming: activeFilterId === 2,
+              streaming: activeTab === 2,
             })
           );
         else if (selectedUserZone) {
@@ -92,13 +91,11 @@ const Timeline: FC = () => {
             getZoneFeedAction({
               skip,
               zoneId: selectedUserZone.zone.id,
-              streaming: activeFilterId === 2,
+              streaming: activeTab === 2,
             })
           );
         } else {
-          dispatch(
-            getUserFeedAction({ skip, streaming: activeFilterId === 2 })
-          );
+          dispatch(getUserFeedAction({ skip, streaming: activeTab === 2 }));
         }
         break;
       case 3:
@@ -113,14 +110,27 @@ const Timeline: FC = () => {
   };
 
   useEffect(() => {
-    getFeed();
-  }, [filters, selectedChannel]);
+    const newlyCreatedFeeds = feed.data.filter((f) => f.newlyCreated);
+    if (newlyCreatedFeeds.length > 0 && activeTab !== 0) {
+      setHasNewlyCreatedFeed(true);
+      setActiveTab(0);
+    }
+  }, [feed]);
+
+  useEffect(() => {
+    if (!hasNewlyCreatedFeed) getFeed();
+    setHasNewlyCreatedFeed(false);
+  }, [activeTab, selectedChannel]);
 
   const getTimelineContent = () => {
     if (
       [LoadingState.loading, LoadingState.pending].includes(feed.loadingState)
     )
-      return 'Loading...'; // We can return a loader component later
+      return (
+        <Box justify="center" align="center" alignSelf="center" height="100%">
+          <PurpieLogoAnimated width={50} height={50} color="#956aea" />
+        </Box>
+      ); // We can return a loader component later
 
     if (!feed.data.length)
       return <EmptyFeedContent onAddContent={() => setShowAddContent(true)} />;
@@ -155,7 +165,7 @@ const Timeline: FC = () => {
 
   return (
     <PrivatePageLayout
-      title="Timeline"
+      title={t('Timeline.title')}
       rightComponent={
         <Box pad="medium" gap="medium">
           <SearchBar />
@@ -176,21 +186,19 @@ const Timeline: FC = () => {
         <Box direction="row" justify="between" align="center">
           <Text weight="bold">Timeline</Text>
           <Box direction="row" gap="small">
-            {filters.map((f) => (
+            {tabs.map((tab) => (
               <Button
-                key={f.id}
+                key={`timelineTab${tab.id}`}
                 onClick={() => {
-                  setFilters(
-                    filters.map((v) => ({ ...v, active: v.id === f.id }))
-                  );
+                  setActiveTab(tab.id);
                 }}
               >
                 <Text
                   size="small"
-                  weight={f.active ? 'bold' : 'normal'}
-                  color={f.active ? 'brand' : 'status-disabled'}
+                  weight={activeTab === tab.id ? 'bold' : 'normal'}
+                  color={activeTab === tab.id ? 'brand' : 'status-disabled'}
                 >
-                  {f.filterName}
+                  {tab.name}
                 </Text>
               </Button>
             ))}

@@ -1,13 +1,14 @@
-import { Button, Image } from 'grommet';
+import { Image } from 'grommet';
 import React, { FC } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { Trans, useTranslation } from 'react-i18next';
 import AuthLayout from '../../components/layouts/AuthLayout';
 import { AppState } from '../../store/reducers/root.reducer';
 import Figure from '../../assets/verify-email-bg/figure-1.png';
 import Banner from '../../assets/verify-email-bg/banner.png';
-import { useResponsive } from '../../hooks/useResponsive';
 import { resendMailVerificationTokenAction } from '../../store/actions/auth.action';
+import AuthFormButton from '../../components/auth/AuthFormButton';
 
 interface Params {
   userId: string;
@@ -15,12 +16,12 @@ interface Params {
 
 const VerifyUserEmailInfo: FC = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const {
     resendMailVerificationToken: { loading },
   } = useSelector((state: AppState) => state.auth);
 
-  const size = useResponsive();
   const history = useHistory();
   const { userId } = useParams<Params>();
 
@@ -29,14 +30,14 @@ const VerifyUserEmailInfo: FC = () => {
 
   return (
     <AuthLayout
-      title="Email Confirmation"
-      formTitle="Email Confirmation"
+      title={t('VerifyUserEmailInfo.title')}
+      formTitle={t('VerifyUserEmailInfo.title')}
       formSubTitle={
-        <>
-          <span>Verify your email to finish signing up for Octopus.</span>
+        <Trans i18nKey="VerifyUserEmailInfo.formSubTitle">
+          <span />
           <br />
-          <span>Please check your email box.</span>
-        </>
+          <span />
+        </Trans>
       }
       background={
         <>
@@ -57,20 +58,19 @@ const VerifyUserEmailInfo: FC = () => {
         </>
       }
       callToAction={{
-        title: 'Resend mail verification link?',
-        body: 'RESEND',
+        title: t('VerifyUserEmailInfo.resendLink'),
+        body: t('VerifyUserEmailInfo.resend'),
         disabled: loading,
         onClick: submitResendMailVerificationToken,
       }}
     >
-      <Button
-        fill="horizontal"
+      <AuthFormButton
         primary
+        margin={{ top: '60%' }}
         onClick={() => history.push('/login')}
-        size={size}
-        margin={{ top: '55%' }}
+        disabled={loading}
         type="submit"
-        label="GO TO SIGN IN"
+        label={t('VerifyUserEmailInfo.goToSignIn')}
       />
     </AuthLayout>
   );

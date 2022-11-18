@@ -20,7 +20,7 @@ export const retrieveUser = async (): Promise<User> =>
       {},
       {
         showErrorToast: (err) =>
-          err?.response?.data?.error !== 'INITIAL_USER_REQUIRED',
+          err?.response?.data?.message !== 'INITIAL_USER_REQUIRED',
       }
     )
     .then((res) => res.data);

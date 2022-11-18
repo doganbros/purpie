@@ -11,6 +11,7 @@ import { Socket, Server } from 'socket.io';
 import { PostService } from 'src/post/services/post.service';
 import { ChatMessageDto } from '../dto/chat-message.dto';
 import { ChatService } from '../services/chat.service';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 interface SocketWithTokenPayload extends Socket {
   user: {
@@ -22,10 +23,18 @@ const { REACT_APP_CLIENT_HOST = '' } = process.env;
 
 @WebSocketGateway({
   cors: {
-    origin: new RegExp(
-      `(\\b|\\.)${new URL(REACT_APP_CLIENT_HOST).host.replace(/\./g, '\\.')}$`,
-    ),
+    origin: [
+      new RegExp(
+        `(\\b|\\.)${new URL(REACT_APP_CLIENT_HOST).host.replace(
+          /\./g,
+          '\\.',
+        )}$`,
+      ),
+      'http://localhost:3000',
+      'http://octopus.localhost:3000',
+    ],
     credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   },
   namespace: '/',
 })
@@ -52,7 +61,7 @@ export class ChatGateway {
       payload.identifier,
       socket.user.id,
     );
-    if (!result) throw new WsException('Could not delete message');
+    if (!result) throw new WsException(ErrorTypes.MESSAGE_NOT_DELETED);
 
     socket.to(roomName).emit('message_deleted', { ...payload, roomName });
 
@@ -66,7 +75,8 @@ export class ChatGateway {
     payload: ChatMessageDto,
   ) {
     const roomName = this.chatService.getRoomName(payload.to, payload.medium);
-    if (!socket.rooms.has(roomName)) throw new WsException('Not Authorized');
+    if (!socket.rooms.has(roomName))
+      throw new WsException(ErrorTypes.NOT_AUTHORIZED);
 
     const isEdit = !!payload.identifier;
 
@@ -91,7 +101,7 @@ export class ChatGateway {
     const roomName = this.chatService.getRoomName(postId, 'post');
     const post = await this.postService.getOnePost(socket.user.id, postId);
 
-    if (!post) throw new WsException('Post not found');
+    if (!post) throw new WsException(ErrorTypes.POST_NOT_FOUND);
 
     await socket.join(roomName);
 
@@ -145,7 +155,8 @@ export class ChatGateway {
     },
   ) {
     const roomName = this.chatService.getRoomName(payload.to, payload.medium);
-    if (!socket.rooms.has(roomName)) throw new WsException('Not Authorized');
+    if (!socket.rooms.has(roomName))
+      throw new WsException(ErrorTypes.NOT_AUTHORIZED);
 
     socket.to(roomName).emit('typing', {
       socketId: socket.id,
@@ -165,7 +176,8 @@ export class ChatGateway {
     @MessageBody() to: number,
   ) {
     const roomName = this.chatService.getRoomName(to);
-    if (!socket.rooms.has(roomName)) throw new WsException('Not Authorized');
+    if (!socket.rooms.has(roomName))
+      throw new WsException(ErrorTypes.NOT_AUTHORIZED);
 
     socket.to(roomName).emit('presence', socket.user.id);
   }

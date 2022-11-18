@@ -1,6 +1,7 @@
 import React, { FC, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, Text } from 'grommet';
+import { useTranslation } from 'react-i18next';
 import InitialsAvatar from '../InitialsAvatar';
 import { InvitationListItem as InvitationListItemType } from '../../../store/types/activity.types';
 import { InvitationResponseType, InvitationType } from '../../../models/utils';
@@ -13,6 +14,7 @@ interface InvitationListItemProps {
 
 const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const {
     activity: { responseInvitation },
@@ -23,13 +25,21 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
     let invitationMessage;
     if (invitation.zone) {
       invitationType = InvitationType.ZONE;
-      invitationMessage = `${invitation.createdBy.fullName} invited you to ${invitation.zone.name} zone.`;
+      invitationMessage = t('Invitations.zoneInvitationMessage', {
+        fullName: invitation.createdBy.fullName,
+        zone: invitation.zone.name,
+      });
     } else if (invitation.channel) {
       invitationType = InvitationType.CHANNEL;
-      invitationMessage = `${invitation.createdBy.fullName} invited you to ${invitation.channel.name} channel.`;
+      invitationMessage = t('Invitations.channelInvitationMessage', {
+        fullName: invitation.createdBy.fullName,
+        channel: invitation.channel.name,
+      });
     } else {
       invitationType = InvitationType.CONTACT;
-      invitationMessage = `${invitation.createdBy.fullName} wants to invite you to as a contact.`;
+      invitationMessage = t('Invitations.contactInvitationMessage', {
+        fullName: invitation.createdBy.fullName,
+      });
     }
     return { type: invitationType, message: invitationMessage };
   };
@@ -75,8 +85,8 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
             >
               <Text size="xsmall" weight={500}>
                 {invitation.response === InvitationResponseType.ACCEPT
-                  ? 'Joined'
-                  : 'Ignored'}
+                  ? t('common.joined')
+                  : t('common.ignored')}
               </Text>
             </Box>
           </Button>
@@ -95,7 +105,7 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
                 align="center"
               >
                 <Text size="xsmall" weight={500}>
-                  Join
+                  {t('common.join')}
                 </Text>
               </Box>
             </Button>
@@ -108,7 +118,7 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
             >
               <Box pad={{ vertical: 'xsmall' }} direction="row" align="center">
                 <Text size="xsmall" color="brand" weight={500}>
-                  Ignore
+                  {t('common.ignore')}
                 </Text>
               </Box>
             </Button>

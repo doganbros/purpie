@@ -5,32 +5,21 @@ import { CaretDownFill, CaretRightFill } from 'grommet-icons';
 export const theme: typeof grommet = deepMerge(base, {
   global: {
     font: {
-      family: 'HelveticaNeue, Poppins, sans-serif',
+      family: 'Poppins',
     },
     colors: {
       brand: '#9060EB',
       'brand-alt': '#7D4CDB',
       'status-disabled': '#8F9BB3',
-      'status-unknown': '#8F9BB3',
       'status-disabled-light': '#E4E9F2',
       'status-unknown-light': '#E4E9F2',
       'status-info': '#16A8DE',
       blue: '#0091FF',
       dark: '#202631',
     },
-    drop: {
-      background: 'white',
-      extend: () => `
-        font-size: ${base.text?.small?.size};
-        & > * > * > *:hover {
-          font-weight: bold;
-          background: #E4E9F2;
-        };
-      `,
-    },
     input: {
       extend: 'color: grey;',
-      padding: { vertical: '15px' },
+      padding: { vertical: '12px' },
       font: {
         weight: 'normal',
         size: 'small',

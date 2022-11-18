@@ -1,13 +1,17 @@
 import { nanoid } from 'nanoid';
-import { ResponseError } from '../models/response-error';
+import i18n from 'i18next';
+import dayjs, { Dayjs } from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import colorPair from '../styles/color-pairs.json';
+import { ResponseError } from '../models/response-error';
 
 export const errorResponseMessage = (error?: ResponseError): string => {
   if (!error) return '';
 
   if (Array.isArray(error.message)) return error.message.join(', ');
 
-  return error.message;
+  return i18n.t(`ErrorTypes.${error.message}`);
 };
 
 export const camelToSentence = (str: string): string => {
@@ -51,7 +55,7 @@ export const nameToSubdomain = (name: string): string =>
     .replaceAll('ö', 'o')
     .replaceAll('ç', 'c')
     .replaceAll(' ', '-')
-    .replaceAll(/[^\w^\d^-]/g, '')
+    .replaceAll(/[^\w\s]/gi, '')
     .toLowerCase();
 
 export const fetchOrProduceNull = async <T>(
@@ -84,3 +88,11 @@ export const getChatRoomName = (
 
 export const getFileKey = (file: File): string =>
   `${file.name}_${file.size}_${file.type}`;
+
+export const getTimezoneTimeFromUTC = (date: string | Date): Dayjs => {
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
+
+  const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return dayjs.tz(date, currentTimezone);
+};

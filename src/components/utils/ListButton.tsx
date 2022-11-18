@@ -1,5 +1,6 @@
 import React, { FC, ReactNode, useState } from 'react';
-import { Box, BoxExtendedProps, Text, TextExtendedProps } from 'grommet';
+import { Box, BoxExtendedProps, TextExtendedProps } from 'grommet';
+import EllipsesOverflowText from './EllipsesOverflowText';
 
 interface ListButtonProps extends BoxExtendedProps {
   label?: string;
@@ -21,14 +22,13 @@ const ListButton: FC<ListButtonProps> = ({
 }) => {
   const [hover, setHover] = useState(false);
   const setBackgroundColor = () => {
-    if (hover) return 'status-disabled-light';
-    if (selected) return 'brand';
+    if (hover || selected) return 'status-disabled-light';
     return 'white';
   };
 
   const setTextColor = () => {
     if (disabled) return 'status-disabled';
-    if (selected && !hover) return 'white';
+    if (selected && !hover) return 'black';
     return 'black';
   };
 
@@ -42,22 +42,25 @@ const ListButton: FC<ListButtonProps> = ({
       onMouseLeave={() => {
         setHover(false);
       }}
-      pad="small"
+      pad={{ vertical: 'xsmall', horizontal: 'small' }}
       {...props}
       flex={{ grow: 1 }}
     >
-      <Box fill direction="row" align="center" gap="small">
-        {leftIcon}
-        <Box flex={{ grow: 1 }}>
-          <Text
-            weight={selected ? 'bold' : 'normal'}
-            size="small"
+      <Box fill direction="row" align="center" justify="between">
+        <Box direction="row" align="center" gap="small">
+          {leftIcon}
+
+          <EllipsesOverflowText
+            maxWidth="195px"
+            weight={selected ? 'bold' : 0}
+            size="xsmall"
             color={setTextColor()}
             {...textProps}
           >
             {label}
-          </Text>
+          </EllipsesOverflowText>
         </Box>
+
         {rightIcon}
       </Box>
     </Box>

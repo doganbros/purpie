@@ -1,6 +1,7 @@
 import { Select } from 'grommet';
 import React, { FC } from 'react';
 import lodash from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   onChange: (hourMinute: [number, number], display?: string) => void;
@@ -31,6 +32,7 @@ const times = lodash.flatten(
 );
 
 const TimeInput: FC<Props> = ({ onChange, defaultValue }) => {
+  const { t } = useTranslation();
   return (
     <Select
       options={times}
@@ -41,7 +43,7 @@ const TimeInput: FC<Props> = ({ onChange, defaultValue }) => {
           : undefined
       }
       labelKey="label"
-      placeholder="Pick Time"
+      placeholder={t('TimeInput.pickTime')}
       valueKey="value"
       onChange={({ option }) =>
         onChange(option.value.split(':').map(Number), option.label)

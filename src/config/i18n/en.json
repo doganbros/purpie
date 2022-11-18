@@ -1,0 +1,476 @@
+{
+  "common": {
+    "signIn": "SIGN IN",
+    "signUp": "SIGN UP",
+    "password": "PASSWORD",
+    "confirmPassword": "CONFIRM PASSWORD",
+    "passwords": "Passwords",
+    "email": "EMAIL",
+    "fullName": "FULL NAME",
+    "userName": "USERNAME",
+    "invalidUserName": "Username contains only alphanumeric characters and '_'.",
+    "go": "Go!",
+    "continue": "CONTINUE",
+    "loading": "Loading...",
+    "seeMore": "See more",
+    "seeLess": "See less",
+    "seeAll": "See all",
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "reply": "Reply",
+    "following": "Following",
+    "follow": "Follow",
+    "join": "Join",
+    "ignore": "Ignore",
+    "joined": "Joined",
+    "ignored": "Ignored",
+    "search": "Search",
+    "zone": "Zone",
+    "channel": "Channel",
+    "post": "Post",
+    "profile": "Profile",
+    "public": "Public",
+    "description": "Description",
+    "category": "Category",
+    "choose": "Choose",
+    "back": "Back",
+    "contacts": "Contacts",
+    "remove": "Remove",
+    "nothingFound": "Nothing Found",
+    "searchResult": "{{title}} Results",
+    "searchFilter": "Search Filter",
+    "streaming": "Streaming",
+    "share": "Share",
+    "saved": "Saved",
+    "save": "Save",
+    "exclusiveContacts": "Exclusive to contacts",
+    "close": "CLOSE",
+    "send": "Send"
+  },
+  "Login": {
+    "title": "Login",
+    "formTitle": "Welcome Back!",
+    "formSubTitle": "Sign In to continue.",
+    "dontHaveAccount": "Don’t have an account?",
+    "createAccount": "CREATE AN ACCOUNT",
+    "emailOrUserName": "EMAIL / USERNAME",
+    "forgotPassword": "Forgot Password?",
+    "orSignInWith": "Or Sign in With"
+  },
+  "Join": {
+    "title": "Join",
+    "formTitle": "Join Purpie",
+    "formSubTitle": "Start sharing now",
+    "dontHaveAccount": "Don’t have an account?",
+    "createAccount": "CREATE AN ACCOUNT",
+    "emailOrUserName": "EMAIL / USERNAME",
+    "forgotPassword": "Forgot Password?",
+    "orSignInWith": "Or Sign in With",
+    "alreadyHaveAccount": "Already have an account?"
+  },
+  "Register": {
+    "title": "Register",
+    "formTitle": "Create an Account",
+    "formSubTitle": "Sign up to continue",
+    "alreadyHaveAccount": "Already have an account?",
+    "signUp": "SIGN UP"
+  },
+  "ForgotPassword": {
+    "title": "Forgot Password",
+    "formTitle": "Password Recovery",
+    "formSubTitle": "Enter email to receive your password.",
+    "rememberPassword": "Remember Password",
+    "send": "SEND"
+  },
+  "InitializeUser": {
+    "title": "Initialize User - Octopus",
+    "formTitle": "Welcome to Purpie!",
+    "formSubTitle": "Sign up with an account to continue",
+    "createAccount": "CREATE ACCOUNT"
+  },
+  "ResetPassword": {
+    "title": "Reset Password",
+    "formTitle": "Change Password",
+    "formSubTitle": "Enter a new password for your account."
+  },
+  "VerifyUserEmail": {
+    "title": "Email Verification",
+    "formSubTitle": "Please create a username to continue email verification process.",
+    "userNameNotAvailable": "Username \"{{userName}}\" is not available",
+    "userNameAvailable": "Username \"{{userName}}\" is available"
+  },
+  "VerifyUserEmailInfo": {
+    "title": "Email Confirmation",
+    "formSubTitle": "<0>Verify your email to finish signing up for Octopus.</0><1></1><2>Please check your email box.</2>",
+    "resendLink": "Resend mail verification link?",
+    "resend": "RESEND",
+    "goToSignIn": "GO TO SIGN IN"
+  },
+  "Timeline": {
+    "all": "All",
+    "live": "Live",
+    "newest": "Newest",
+    "popular": "Popular",
+    "title": "Timeline"
+  },
+  "ChannelList": {
+    "noFollowedChannel": "No channels are followed {{zone}}",
+    "onThisZone": "on this zone"
+  },
+  "ChannelsToFollow": {
+    "title": "Channels to follow",
+    "noChannelsFound": "No channels found"
+  },
+  "EmptyFeedContent": {
+    "noContent": "NO CONTENT AVAILABLE",
+    "noContentDescription": "Start registering new zones and following new channels. Please create your first video content.",
+    "addContent": "ADD CONTENT"
+  },
+  "Invitations": {
+    "noInvitations": "No invitations found",
+    "title": "Invitations",
+    "zoneInvitationMessage": "{{fullName}} invited you to {{zone}} zone.",
+    "channelInvitationMessage": "{{fullName}} invited you to {{channel}} channel.",
+    "contactInvitationMessage": "{{fullName}} wants to invite you to as a contact."
+  },
+  "ZonesToJoin": {
+    "title": "Zones to join",
+    "noZonesFound": "No zones found"
+  },
+  "MessageBox": {
+    "sendAgain": "Send Message Again"
+  },
+  "MessageTextArea": {
+    "writeTo": "Write to {{name}}",
+    "writeComment": "Write a message…"
+  },
+  "EditMessage": {
+    "edit": "Edit Post"
+  },
+  "ReplyPost": {
+    "reply": "Reply Message",
+    "replyTo": "Reply{{toName}}..."
+  },
+  "Chat": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "deleteConfirm": "Are you sure you want to delete this message?",
+    "typing": "{{name}} is typing..."
+  },
+  "MessageItem": {
+    "you": "You",
+    "repliedTo": "Replied to:",
+    "messageDeleted": "This message has been deleted"
+  },
+  "ZoneSelector": {
+    "createChannel": "Create Channel",
+    "createZone": "Create Zone",
+    "settings": "Settings",
+    "signOut": "Sign Out"
+  },
+  "Sidebar": {
+    "home": "Home",
+    "messages": "Messages",
+    "contacts": "Contacts",
+    "saved": "Saved Posts"
+  },
+  "ZoneListItem": {
+    "channelCount": "{{count}} channels",
+    "memberCount": "{{count}} members"
+  },
+  "AppToast": {
+    "error": "Error!",
+    "info": "Info!",
+    "warn": "Warning!",
+    "ok": "Done!"
+  },
+  "TimeInput": {
+    "pickTime": "Pick Time"
+  },
+  "AddContent": {
+    "title": "Take Your Pick",
+    "meet": "Meet!",
+    "meetDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
+    "stream": "Stream!",
+    "streamDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
+    "shareVideo": "Share a Video",
+    "shareVideoDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
+    "planMeeting": "Plan a Meeting",
+    "planMeetingDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt."
+  },
+  "validators": {
+    "requiredMsg": "{{field}} is required",
+    "urlMsg": "Please enter a valid url",
+    "emailMsg": "Invalid email",
+    "notEmptyStringMsg": "This field can't be empty",
+    "numericMsg": "Please enter a numeric value",
+    "alphaMsg": "Please enter only alphabets",
+    "regexMsg": "Value is invalid",
+    "alphaNumericMsg": "Please enter only alphabets and numbers",
+    "intMsg": "Please enter only numbers",
+    "floatMsg": "Please enter only decimal numbers",
+    "wordsMsg": "Please enter a collection of words",
+    "lengthDefaultMsg": "must be {{length}} characters long",
+    "minLengthDefaultMsg": "{{field}} can be at least {{length}} characters long",
+    "maxLengthDefaultMsg": "Please enter up to {{length}} characters long",
+    "equalsDefaultMsg": "This field must be equal to {{value}}",
+    "equalsFieldDefaultMsg": "{{fieldLabel}} do not match",
+    "trueDefaultMsg": "This field must be True",
+    "falseDefaultMsg": "This field must be False",
+    "biggerDefaultMsg": "must be bigger than {{value}}",
+    "biggerOrEqualDefaultMsg": "This field must be bigger or equal to {{value}}",
+    "smallerDefaultMsg": "This field must be smaller than {{value}}",
+    "smallerOrEqualDefaultMsg": "This field must be smaller or equal to {{value}}",
+    "startsWithDefaultMsg": "This field must start with {{value}}"
+  },
+  "CreateChannel": {
+    "title": "Create Channel",
+    "channelName": "Channel name",
+    "channelDescription": "Channel Description"
+  },
+  "CreateVideo": {
+    "title": "Share a Video",
+    "videoTitle": "Video Title",
+    "selectChannel": "Select a channel",
+    "uploading": "Uploading {{progress}}%",
+    "uploadCompleted": "Upload completed! Close"
+  },
+  "CreateZone": {
+    "title": "Create Zone",
+    "description": "It is mandatory to fill in the fields marked *",
+    "zoneName": "Zone name",
+    "zoneAddress": "Zone address",
+    "zoneAddressTooLong": "Zone address is too long",
+    "notValidZoneAddress": "Not a valid zone address",
+    "zoneDescription": "Zone Description"
+  },
+  "MeetingConfiguration": {
+    "toolbarSettings": "Toolbar Settings",
+    "advanced": "Advanced"
+  },
+  "meetingConfig": {
+    "microphone": "Microphone",
+    "camera": "Camera",
+    "closedcaptions": "Closed captions",
+    "desktop": "Desktop",
+    "embedmeeting": "Embed meeting",
+    "fullscreen": "Fullscreen",
+    "fodeviceselection": "Device selection",
+    "hangup": "Hangup",
+    "profile": "Profile",
+    "chat": "Chat",
+    "recording": "Recording",
+    "livestreaming": "Live streaming",
+    "etherpad": "Etherpad",
+    "sharedvideo": "Shared video",
+    "shareaudio": "Share audio",
+    "settings": "Settings",
+    "raisehand": "Raise hand",
+    "videoquality": "Video quality",
+    "filmstrip": "Filmstrip",
+    "feedback": "Feedback",
+    "stats": "Stats",
+    "shortcuts": "Shotcuts",
+    "tileview": "Tileview",
+    "select-background": "Select background",
+    "download": "Download",
+    "help": "Help",
+    "mute-everyone": "Mute everyone",
+    "mute-video-everyone": "Mute video everyone",
+    "security": "Security",
+    "disableAudioLevels": "Disable Audio Levels",
+    "enableNoAudioDetection": "Enable No Audio Detection",
+    "enableNoisyMicDetection": "Enable Noisy Mic Detection",
+    "startAudioOnly": "Start Audio Only",
+    "startWithAudioMuted": "Start with Audio Muted",
+    "startWithVideoMuted": "Start with Video Muted",
+    "startScreenSharing": "Start Screen Sharing",
+    "disableResponsiveTiles": "Disable Responsive Tiles",
+    "hideLobbyButton": "Hide Lobby Button",
+    "requireDisplayName": "Require Display Name",
+    "disableProfile": "Disable Profile",
+    "transcribingEnabled": "Transcribing Enabled",
+    "autoCaptionOnRecord": "AutoCaption on Record",
+    "disableShortcuts": "Disable Shortcuts",
+    "disableRecordAudioNotification": "Disable Record Audio Notification",
+    "disableRemoteMute": "Disable Remote Mute",
+    "hideConferenceSubject": "Hide Conference Subject",
+    "hideConferenceTimer": "Hide Conference Timer",
+    "hideParticipantsStats": "Hide Participants Stats"
+  },
+  "MeetingDetails": {
+    "meetingName": "Meeting Name",
+    "meetingDescription": "Meeting Description",
+    "planForLater": "Plan For Later",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "setDate": "Set Date",
+    "timeZone": "Time Zone"
+  },
+  "MeetingInvitation": {
+    "placeholder": "Type a name, username or email"
+  },
+  "MeetingPrivacy": {
+    "joining": "Joining",
+    "publicMeeting": "Public Meeting",
+    "openContacts": "Open To Contacts",
+    "selectChannel": "Select Channel",
+    "streamingRecording": "Streaming &amp; Recording",
+    "liveStreamOrMeeting": "Live stream the meeting?",
+    "enableRecording": "Enable Recording?"
+  },
+  "PlanMeeting": {
+    "details": "Meeting Details",
+    "invite": "Invite",
+    "privacy": "Privacy",
+    "more": "More",
+    "title": "Plan A Meeting",
+    "saveConfiguration": "Save meeting configuration?",
+    "createMeeting": "Creating Meeting..."
+  },
+  "ContactListItem": {
+    "viewProfile": "View full profile"
+  },
+  "EmptyContact": {
+    "title": "DONT HAVE ANY CONTACT",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "findContact": "Find Contact"
+  },
+  "SelectedUser": {
+    "removeContact": "Remove from Contacts",
+    "removeConfirmMsg": "Are you sure you want to remove {{fullName}} from you contacts?"
+  },
+  "Saved": {
+    "title": "Saved Posts",
+    "emptyMsg": "Your saved posts will appear here",
+    "removeConfirmMsg": "Are you sure you want to remove this post from your saved list?"
+  },
+  "ProfileSearch": {
+    "contactsOnly": "Contacts only"
+  },
+  "User": {
+    "noPinnedPost": "No pinned post found",
+    "sharedLists": "Shared Lists",
+    "post": "post",
+    "posts": "posts"
+  },
+  "UserFriends": {
+    "title": "Friends",
+    "noFriendsFound": "No friends found"
+  },
+  "UserPublicChannels": {
+    "title": "Channels Subscribed To",
+    "noChannelsFound": "No channels found"
+  },
+  "UserPublicZones": {
+    "title": "Zones Joined To",
+    "noZonesFound": "No zones found"
+  },
+  "CommentBase": {
+    "editComment": "Edit Comment",
+    "writePublicReply": "Write a public reply",
+    "deleteCommentConfirmMsg": "Are you sure you want to delete the comment?"
+  },
+  "CommentList": {
+    "comments": "Comments",
+    "noCommentMsg": "No comments yet. Be the first one to comment!",
+    "writeComment": "Write a comment"
+  },
+  "Replies": {
+    "hideReplies": "Hide replies",
+    "reply": "reply",
+    "replies": "replies",
+    "showReplies": "Show {{count}} {{reply}}",
+    "loadMore": "Load more"
+  },
+  "RecommendedVideos": {
+    "title": "Recommended Videos"
+  },
+  "Video": {
+    "followChannel": "Follow This Channel",
+    "joinZone": "Join This Zone",
+    "report": "Report",
+    "userWatching": "{{count}} user is watching",
+    "usersWatching": "{{count}} users are watching",
+    "viewCount": "{{count}} view",
+    "viewsCount": "{{count}} views",
+    "dislike": "Dislike",
+    "removePostConfirmMsg": "Are you sure you want to remove this post?"
+  },
+  "VideoSettings": {
+    "videoName": "Video Name",
+    "videoNamePlaceholder": "Write a video name",
+    "videoDescription": "Video Description",
+    "videoDescriptionPlaceholder": "Write a video description",
+    "deleteVideo": "Delete the Video",
+    "save": "SAVE"
+  },
+  "ComingSoon": {
+    "title": "Coming Soon",
+    "description": "Stay tuned. We are launching soon. We are working hard. We are almost ready to launch."
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "It looks like you may have taken a wrong turn. Do not worry... it happens to the best of us.",
+    "zones": "Zones",
+    "login": "Login"
+  },
+  "ErrorTypes": {
+    "NOT_VALID": "Not Valid",
+    "NOT_IMPLEMENTED": "Not Implemented",
+    "INITIAL_USER_SPECIFIED": "Initial user has been specified already.",
+    "INITIAL_USER_REQUIRED": "You need to set the initial super admin user.",
+    "THIRD_PARTY_AUTH_ERROR": "Something went wrong while authenticating third party auth option",
+    "NOT_SIGNED_IN": "You not authorized to use this route",
+    "NOT_AUTHORIZED": "You are not authorized.",
+    "INVALID_JWT": "Invalid Token!",
+    "INVALID_AUTH_TYPE": "Invalid Auth Type!",
+    "ERROR_USERNAME_OR_PASSWORD": "Invalid username or password.",
+    "USER_DIDNT_REGISTER_WITH_PASSWORD": "User did not register with password.",
+    "MUST_VERIFY_EMAIL": "Email must be verified.",
+    "UNAUTHORIZED_SUBDOMAIN": "Couldn't find zone with this subdomain.",
+    "USER_NOT_FOUND": "User not found!",
+    "INVALID_PASSWORD_RESET_TOKEN": "Invalid password reset token.",
+    "INVALID_AUTH_CLIENT_CREDENTIALS": "Wrong client apiKey or apiSecret",
+    "INVALID_REFRESH_TOKEN": "Invalid Refresh Token!",
+    "MESSAGE_NOT_DELETED": "Message Not Deleted!",
+    "POST_NOT_FOUND": "Post not found or unauthorized.",
+    "TEST_MAIL_FOR_ONLY_DEV": "Test mails are allowed in only development.",
+    "POST_COMMENTS_NOT_ALLOWED": "This post doesn't allow comments.",
+    "POST_REACTION_NOT_ALLOWED": "This post doesn't allow reactions.",
+    "POST_DISLIKE_NOT_ALLOWED": "This post doesn't allow dislikes.",
+    "VIDEO_NOT_FOUND": "Video not found!",
+    "USER_NOT_CHANNEL_MEMBER": "User is not a member of selected channel.",
+    "PLAYLIST_NOT_FOUND": "Playlist not found!",
+    "PLAYLIST_ITEM_NOT_FOUND": "Playlist item not found!",
+    "CONTACT_INVITATION_NOT_FOUND": "Contact Invitation not found!",
+    "CONTACT_ELIGIBILITY_ERROR": "You cannot add yourself to your contacts.",
+    "INVITATION_ALREADY_SENT_FOR_USER": "Invitation to this user has already been sent.",
+    "INVITATION_ALREADY_RECEIVED_FROM_USER": "You have already been invited by this user already.",
+    "USER_BLOCKED_YOU": "User has blocked you!",
+    "SUPER_ADMIN_NOT_EXIST": "There must be at least one super admin.",
+    "ROLE_ALREADY_EXISTS": "The role code already exists.",
+    "USER_ROLE_EXIST": "Users using this role already exists.",
+    "CHANGE_SUPER_ADMIN_PERMISSION": "Super Admin Permissions can't be changed.",
+    "UPDATE_USER_PERMISSION_BAD_REQUEST": "Fields for updates not specified",
+    "NO_CHANGES_DETECTED": "No changes detected!",
+    "CANT_BLOCK_YOURSELF": "You cannot block yourself.",
+    "CANT_UNBLOCK_YOURSELF": "You cannot unblock yourself",
+    "CHANNEL_NOT_FOUND": "Channel Not Found!",
+    "ZONE_NOT_FOUND": "Zone Not Found!",
+    "INVITATION_NOT_FOUND": "Invitation Not Found!",
+    "USER_PAYLOAD_REQUIRED": "User payload must be retrieved before using this guard.",
+    "USER_ALREADY_INVITED_TO_CHANNEL": "The specified user has already been invited to this channel.",
+    "USER_ALREADY_MEMBER_OF_CHANNEL": "The specified user is already a member of this channel.",
+    "USER_ALREADY_INVITED_TO_ZONE": "The specified user has already been invited to this zone.",
+    "COULD_NOT_CREATE_MEETING": "Could not create meeting.",
+    "EDIT_POST_PAYLOAD_EMPTY": "Edit Payload empty.",
+    "ROLE_CODE_ALREADY_EXISTS": "The specified role code already exists.",
+    "USERS_USING_ROLE": "Users using this role already exists.",
+    "FIELDS_FOR_UPDATES_NOT_SPECIFIED": "Fields for updates not specified.",
+    "MEETING_RECORDING_NOT_ENABLED": "Recording was not enabled for meeting.",
+    "MEETING_NOT_FOUND": "Meeting Not Found!"
+  }
+}

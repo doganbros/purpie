@@ -1,15 +1,19 @@
 import React, { FC } from 'react';
 import { Box, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
   setSelectedChannelAction,
   unsetSelectedChannelAction,
 } from '../../../store/actions/channel.action';
 import InitialsAvatar from '../../../components/utils/InitialsAvatar';
+import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 const ChannelList: FC = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     channel: { selectedChannel, userChannels },
     zone: { selectedUserZone },
@@ -25,12 +29,16 @@ const ChannelList: FC = () => {
     : userChannels;
 
   return (
-    <Box fill direction="row" align="center">
-      {userChannelsFiltered.loading && <Text size="small">Loading</Text>}
+    <Box direction="row">
+      {userChannelsFiltered.loading && (
+        <PurpieLogoAnimated width={50} height={50} color="#956aea" />
+      )}
       {!userChannelsFiltered.loading &&
         (userChannelsFiltered.data.length === 0 ? (
           <Text size="small">
-            No channels are followed{selectedUserZone ? ' on this zone' : ''}
+            {t('ChannelList.noFollowedChannel', {
+              zone: selectedUserZone ? t('ChannelList.onThisZone') : '',
+            })}
           </Text>
         ) : (
           userChannelsFiltered.data.map((c) => (
@@ -46,12 +54,14 @@ const ChannelList: FC = () => {
               flex={{ shrink: 0 }}
               round="small"
               pad="small"
+              width="110px"
               background={
                 selectedChannel?.channel.id === c.channel.id ? 'brand' : ''
               }
             >
               <InitialsAvatar id={c.channel.id} value={c.channel.name} />
-              <Text
+              <EllipsesOverflowText
+                textAlign="center"
                 size="small"
                 color={
                   c.channel.id === selectedChannel?.channel.id
@@ -60,7 +70,7 @@ const ChannelList: FC = () => {
                 }
               >
                 {c.channel.name}
-              </Text>
+              </EllipsesOverflowText>
             </Box>
           ))
         ))}
