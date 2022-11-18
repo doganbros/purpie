@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { Box, Button, TextInput } from 'grommet';
 import { Hide, View } from 'grommet-icons';

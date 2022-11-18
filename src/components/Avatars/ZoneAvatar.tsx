@@ -1,7 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { FC } from 'react';
-import { Avatar, Box, Button, Image, Text, TextExtendedProps } from 'grommet';
+import { Avatar, Box, TextExtendedProps } from 'grommet';
 import { Edit } from 'grommet-icons';
 import ExtendedBox from '../utils/ExtendedBox';
 import InitialsAvatar from '../utils/InitialsAvatar';

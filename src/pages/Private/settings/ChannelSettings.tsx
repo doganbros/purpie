@@ -287,6 +287,7 @@ const ChannelSettings: () => SettingsData = () => {
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                focusIndicator={false}
                 onClick={() =>
                   setChannelPermissions({
                     ...channelPermissions,
@@ -302,6 +303,7 @@ const ChannelSettings: () => SettingsData = () => {
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                focusIndicator={false}
                 onClick={() =>
                   setChannelPermissions({
                     ...channelPermissions,
@@ -317,6 +319,7 @@ const ChannelSettings: () => SettingsData = () => {
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                focusIndicator={false}
                 onClick={() =>
                   setChannelPermissions({
                     ...channelPermissions,
@@ -332,6 +335,7 @@ const ChannelSettings: () => SettingsData = () => {
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                focusIndicator={false}
                 onClick={() =>
                   setChannelPermissions({
                     ...channelPermissions,

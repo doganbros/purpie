@@ -288,6 +288,7 @@ const ZoneSettings: () => SettingsData | null = () => {
                 align="center"
                 direction="row"
                 gap="xsmall"
+                focusIndicator={false}
                 justify="between"
                 onClick={() =>
                   setZonePermissions({
@@ -304,6 +305,7 @@ const ZoneSettings: () => SettingsData | null = () => {
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                focusIndicator={false}
                 onClick={() =>
                   setZonePermissions({
                     ...zonePermissions,
@@ -319,6 +321,7 @@ const ZoneSettings: () => SettingsData | null = () => {
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                focusIndicator={false}
                 onClick={() =>
                   setZonePermissions({
                     ...zonePermissions,
@@ -335,6 +338,7 @@ const ZoneSettings: () => SettingsData | null = () => {
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                focusIndicator={false}
                 onClick={() =>
                   setZonePermissions({
                     ...zonePermissions,
@@ -350,6 +354,7 @@ const ZoneSettings: () => SettingsData | null = () => {
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                focusIndicator={false}
                 onClick={() =>
                   setZonePermissions({
                     ...zonePermissions,
@@ -377,6 +382,7 @@ const ZoneSettings: () => SettingsData | null = () => {
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                focusIndicator={false}
                 onClick={() =>
                   setZonePayload({
                     ...zonePayload,

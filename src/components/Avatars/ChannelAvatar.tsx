@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { FC } from 'react';
 import { Avatar, Box, TextExtendedProps } from 'grommet';
 import { Edit } from 'grommet-icons';

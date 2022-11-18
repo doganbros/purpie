@@ -12,7 +12,6 @@ import {
 import { useTranslation } from 'react-i18next';
 
 interface AvatarUploadProps {
-  // onSubmit: (arg0: File) => void;
   onSubmit: any | ((arg0: File) => void);
   onDismiss: () => void;
 }
