@@ -42,6 +42,13 @@ export class ActivityController {
     return this.activityService.getPublicZoneSuggestions(user.id, query);
   }
 
+  // TODO api ok response revision
+  @Get('/list/suggestions/contact')
+  @IsAuthenticated()
+  getContactSuggestions(@CurrentUser() user: UserTokenPayload) {
+    return this.activityService.getContactSuggestions(user.id);
+  }
+
   @Get('/list/notifications')
   @IsAuthenticated()
   getUserNotifications(
