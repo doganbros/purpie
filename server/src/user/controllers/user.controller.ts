@@ -123,7 +123,7 @@ export class UserController {
   ) {
     const contactInvitation = await this.userService.createNewContactInvitation(
       email,
-      user.id,
+      user,
     );
 
     this.eventEmitter.emit(UserEvent.sendContactRequestNotification, {
