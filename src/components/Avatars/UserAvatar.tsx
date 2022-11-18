@@ -9,7 +9,7 @@ interface AvatarItemProps {
   subtitle?: string;
   src: string | undefined;
   onClickEdit?: () => void;
-  disabled?: boolean;
+  editAvatar?: boolean;
   outerCircle?: boolean;
   id: number;
   textProps?: TextExtendedProps;
@@ -20,7 +20,7 @@ export const UserAvatar: FC<AvatarItemProps> = ({
   subtitle,
   src,
   onClickEdit,
-  disabled,
+  editAvatar,
   outerCircle,
   id,
   ...textProps
@@ -44,7 +44,7 @@ export const UserAvatar: FC<AvatarItemProps> = ({
           }
         }}
       >
-        {!disabled && (
+        {editAvatar && (
           <ExtendedBox
             background="accent-1"
             width="25px"

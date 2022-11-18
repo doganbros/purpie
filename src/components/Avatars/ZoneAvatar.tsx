@@ -8,10 +8,9 @@ import InitialsAvatar from '../utils/InitialsAvatar';
 
 interface AvatarItemProps {
   title?: string;
-  subtitle?: string;
   src: string | undefined;
   onClickEdit?: () => void;
-  disabled?: boolean;
+  editAvatar?: boolean;
   outerCircle?: boolean;
   id: number;
   textProps?: TextExtendedProps;
@@ -19,10 +18,9 @@ interface AvatarItemProps {
 
 export const ZoneAvatar: FC<AvatarItemProps> = ({
   title,
-  subtitle,
   src,
   onClickEdit,
-  disabled,
+  editAvatar,
   outerCircle,
   id,
   ...textProps
@@ -31,13 +29,18 @@ export const ZoneAvatar: FC<AvatarItemProps> = ({
     return src ? (
       <Avatar alignSelf="center" round="small" src={src} background="red" />
     ) : (
-      <InitialsAvatar id={id} value={title} textProps={textProps} />
+      <InitialsAvatar
+        id={id}
+        value={title}
+        textProps={textProps}
+        roundSize="small"
+      />
     );
   };
   return (
     <Box direction="row" align="center" gap="small">
       <ExtendedBox align="end" justify="center" position="relative">
-        {!disabled && (
+        {editAvatar && (
           <ExtendedBox
             background="accent-1"
             width="25px"

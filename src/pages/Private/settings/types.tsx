@@ -13,9 +13,10 @@ export interface SettingsData {
   key: string;
   label: string;
   url: string;
-  items: SettingFormItem[];
-  onSave: () => void;
-  avatarWidget: ReactNode;
+  items?: SettingFormItem[];
+  onSave?: () => void;
+  avatarWidget?: ReactNode;
+  isEmpty?: boolean;
 }
 
 export interface MediumType {

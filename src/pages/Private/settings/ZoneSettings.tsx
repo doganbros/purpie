@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Box, CheckBox, DropButton, Grid, Text, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
-import { CaretDownFill } from 'grommet-icons';
+import { CaretDownFill, CaretRightFill } from 'grommet-icons';
+import { useTranslation } from 'react-i18next';
 import ListButton from '../../../components/utils/ListButton';
 import SectionContainer from '../../../components/utils/SectionContainer';
 import {
@@ -29,26 +30,59 @@ const ZoneSettings: () => SettingsData | null = () => {
   const [selectedUserZoneIndex, setSelectedUserZoneIndex] = useState(0);
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
 
+  const { t } = useTranslation();
+
+  const [showZoneSelector, setShowZoneSelector] = useState(true);
+
   const [zonePayload, setZonePayload] = useState<UpdateZonePayload>({
-    name: userZones?.[0].zone.name || '',
-    description: userZones?.[0].zone.description || '',
-    subdomain: userZones?.[0].zone.subdomain || '',
-    id: userZones?.[0].zone.id || 0,
-    public: userZones?.[0].zone.public || false,
+    name: '',
+    description: '',
+    subdomain: '',
+    id: userZones?.[0]?.zone?.id || 0,
+    public: userZones?.[0]?.zone?.public || false,
   });
   const [zonePermissions, setZonePermissions] = useState({
-    canInvite: userZones?.[0].zoneRole.canInvite,
-    canDelete: userZones?.[0].zoneRole.canDelete,
-    canEdit: userZones?.[0].zoneRole.canEdit,
-    canManageRole: userZones?.[0].zoneRole.canManageRole,
-    canCreateChannel: userZones?.[0].zoneRole.canDelete,
+    canInvite: userZones?.[0]?.zoneRole?.canInvite,
+    canDelete: userZones?.[0]?.zoneRole?.canDelete,
+    canEdit: userZones?.[0]?.zoneRole?.canEdit,
+    canManageRole: userZones?.[0]?.zoneRole?.canManageRole,
+    canCreateChannel: userZones?.[0]?.zoneRole?.canDelete,
   });
-  if (!userZones) return null;
-  const zoneId = userZones[selectedUserZoneIndex].zone.id;
+  if (userZones?.length === 0) {
+    return {
+      id: 2,
+      key: 'zone',
+      label: t('settings.zoneSettings'),
+      url: 'zone',
+      items: [
+        {
+          key: 'zoneName',
+          title: '',
+          description: '',
+          value: 'value',
+          component: (
+            <Box
+              direction="row"
+              justify="between"
+              align="center"
+              gap="small"
+              round="small"
+              pad="xxsmall"
+            >
+              <Text>{t('settings.noZone')}</Text>
+            </Box>
+          ),
+        },
+      ],
+      isEmpty: true,
+    };
+  }
+
+  const zoneId = userZones?.[selectedUserZoneIndex]?.zone?.id;
   return {
     id: 2,
     key: 'zone',
-    label: 'Zone Settings',
+    label: t('settings.zoneSettings'),
     url: 'zone',
     onSave: () => {
       if (!(zoneId === null || zoneId === undefined)) {
@@ -57,14 +91,20 @@ const ZoneSettings: () => SettingsData | null = () => {
     },
     avatarWidget: (
       <Box direction="row" gap="small">
-        <ZoneAvatar
-          id={Math.floor(Math.random() * 100)}
-          title={userZones[selectedUserZoneIndex].zone.name}
-          subtitle={userZones[selectedUserZoneIndex].zone.subdomain}
-          src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/zone/display-photo/${userZones[selectedUserZoneIndex].zone.displayPhoto}`}
-          onClickEdit={() => setShowAvatarUpload(true)}
-          outerCircle
-        />
+        {!showZoneSelector && (
+          <ZoneAvatar
+            id={1}
+            title={userZones?.[selectedUserZoneIndex]?.zone?.name}
+            src={
+              userZones?.[selectedUserZoneIndex]?.zone?.displayPhoto
+                ? `${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/zone/display-photo/${userZones?.[selectedUserZoneIndex].zone.displayPhoto}`
+                : undefined
+            }
+            onClickEdit={() => setShowAvatarUpload(true)}
+            outerCircle
+            editAvatar
+          />
+        )}
         <DropButton
           dropProps={{
             responsive: false,
@@ -74,7 +114,7 @@ const ZoneSettings: () => SettingsData | null = () => {
           dropAlign={{ left: 'right', top: 'top' }}
           dropContent={
             <Box>
-              {userZones.map((item, index) => (
+              {userZones?.map((item, index) => (
                 <ListButton
                   label={item.zone.name}
                   key={item.zone.id}
@@ -87,16 +127,19 @@ const ZoneSettings: () => SettingsData | null = () => {
                       description: item.zone.description,
                     });
                     setSelectedUserZoneIndex(index);
+                    setShowZoneSelector(false);
                   }}
                   leftIcon={
                     <ZoneAvatar
                       id={Math.floor(Math.random() * 100)}
                       title={item.zone.name}
-                      subtitle={item.zone.subdomain}
-                      src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/zone/display-photo/${item.zone.displayPhoto}`}
+                      src={
+                        item.zone.displayPhoto
+                          ? `${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/zone/display-photo/${item.zone.displayPhoto}`
+                          : undefined
+                      }
                       onClickEdit={() => setShowAvatarUpload(true)}
                       outerCircle
-                      disabled
                     />
                   }
                 />
@@ -104,20 +147,33 @@ const ZoneSettings: () => SettingsData | null = () => {
             </Box>
           }
         >
-          <Box direction="row" gap="small">
-            <Box>
-              <Text>{userZones[selectedUserZoneIndex].zone.name}</Text>
-              <Text color="#8F9BB3">
-                {userZones[selectedUserZoneIndex].zone.subdomain}
-              </Text>
+          {!showZoneSelector ? (
+            <Box direction="row">
+              <Box>
+                <Text>{userZones?.[selectedUserZoneIndex]?.zone?.name}</Text>
+                <Text color="#8F9BB3">
+                  {userZones?.[selectedUserZoneIndex]?.zone?.subdomain}
+                </Text>
+              </Box>
+              <CaretDownFill />
             </Box>
-            <CaretDownFill />
-          </Box>
+          ) : (
+            <Box
+              background="status-disabled-light"
+              pad="medium"
+              round="small"
+              direction="row"
+              align="center"
+            >
+              <Text>{t('settings.selectZone')}</Text>
+              <CaretRightFill color="brand" />{' '}
+            </Box>
+          )}
         </DropButton>
         {showAvatarUpload && !(zoneId === null) && (
           <AvatarUpload
-            onSubmit={(file) => {
-              dispatch(changeZonePhoto(file, zoneId));
+            onSubmit={(file: any) => {
+              dispatch(changeZonePhoto(file, zoneId || 1));
               setShowAvatarUpload(false);
             }}
             onDismiss={() => {
@@ -130,8 +186,8 @@ const ZoneSettings: () => SettingsData | null = () => {
     items: [
       {
         key: 'zoneName',
-        title: 'Zone Name',
-        description: 'Change zone name',
+        title: t('settings.zoneName'),
+        description: t('settings.changeZoneName'),
         value: 'value',
         component: (
           <Box
@@ -159,8 +215,8 @@ const ZoneSettings: () => SettingsData | null = () => {
       },
       {
         key: 'zoneTitle',
-        title: 'Zone Subdomain',
-        description: 'Change zone subdomain',
+        title: t('settings.zoneSubdomain'),
+        description: t('settings.changeZoneSubdomain'),
         value: 'value',
         component: (
           <Box
@@ -188,8 +244,8 @@ const ZoneSettings: () => SettingsData | null = () => {
       },
       {
         key: 'zoneDescription',
-        title: 'Zone Description',
-        description: 'Change zone description',
+        title: t('settings.zoneDescription'),
+        description: t('settings.changeZoneDescription'),
         value: 'value',
         component: (
           <Box
@@ -218,7 +274,7 @@ const ZoneSettings: () => SettingsData | null = () => {
 
       {
         key: 'zoneManageRole',
-        title: 'Permissions',
+        title: t('settings.permissions'),
         description: '',
         value: 'value',
         component: (
@@ -233,51 +289,45 @@ const ZoneSettings: () => SettingsData | null = () => {
                 direction="row"
                 gap="xsmall"
                 justify="between"
+                onClick={() =>
+                  setZonePermissions({
+                    ...zonePermissions,
+                    canManageRole: !zonePermissions.canManageRole,
+                  })
+                }
               >
-                <Text>Can manage roles</Text>
-                <CheckBox
-                  checked={zonePermissions.canManageRole}
-                  onChange={() =>
-                    setZonePermissions({
-                      ...zonePermissions,
-                      canManageRole: !zonePermissions.canManageRole,
-                    })
-                  }
-                />
+                <Text>{t('settings.canManageRole')}</Text>
+                <CheckBox checked={zonePermissions.canManageRole} />
               </Box>
               <Box
                 align="center"
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                onClick={() =>
+                  setZonePermissions({
+                    ...zonePermissions,
+                    canEdit: !zonePermissions.canEdit,
+                  })
+                }
               >
-                <Text>Can edit</Text>
-                <CheckBox
-                  checked={zonePermissions.canEdit}
-                  onChange={() =>
-                    setZonePermissions({
-                      ...zonePermissions,
-                      canEdit: !zonePermissions.canEdit,
-                    })
-                  }
-                />
+                <Text>{t('settings.canEdit')}</Text>
+                <CheckBox checked={zonePermissions.canEdit} />
               </Box>
               <Box
                 align="center"
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                onClick={() =>
+                  setZonePermissions({
+                    ...zonePermissions,
+                    canDelete: !zonePermissions.canDelete,
+                  })
+                }
               >
-                <Text>Can delete</Text>
-                <CheckBox
-                  checked={zonePermissions.canDelete}
-                  onChange={() =>
-                    setZonePermissions({
-                      ...zonePermissions,
-                      canDelete: !zonePermissions.canDelete,
-                    })
-                  }
-                />
+                <Text>{t('settings.canDelete')}</Text>
+                <CheckBox checked={zonePermissions.canDelete} />
               </Box>
 
               <Box
@@ -285,34 +335,30 @@ const ZoneSettings: () => SettingsData | null = () => {
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                onClick={() =>
+                  setZonePermissions({
+                    ...zonePermissions,
+                    canInvite: !zonePermissions.canInvite,
+                  })
+                }
               >
-                <Text>Can invite</Text>
-                <CheckBox
-                  checked={zonePermissions.canInvite}
-                  onChange={() =>
-                    setZonePermissions({
-                      ...zonePermissions,
-                      canInvite: !zonePermissions.canInvite,
-                    })
-                  }
-                />
+                <Text>{t('settings.canInvite')}</Text>
+                <CheckBox checked={zonePermissions.canInvite} />
               </Box>
               <Box
                 align="center"
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                onClick={() =>
+                  setZonePermissions({
+                    ...zonePermissions,
+                    canCreateChannel: !zonePermissions.canCreateChannel,
+                  })
+                }
               >
-                <Text>Can create channels</Text>
-                <CheckBox
-                  checked={zonePermissions.canCreateChannel}
-                  onChange={() =>
-                    setZonePermissions({
-                      ...zonePermissions,
-                      canCreateChannel: !zonePermissions.canCreateChannel,
-                    })
-                  }
-                />
+                <Text>{t('settings.canCreateChannel')}</Text>
+                <CheckBox checked={zonePermissions.canCreateChannel} />
               </Box>
             </Grid>
           </SectionContainer>
@@ -324,30 +370,29 @@ const ZoneSettings: () => SettingsData | null = () => {
         description: '',
         value: 'value',
         component: (
-          <SectionContainer label="Zone Visibility">
+          <SectionContainer label={t('settings.zoneVisibility')}>
             <Grid rows={['xxsmall']} columns={['medium', 'medium']} gap="small">
               <Box
                 align="center"
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                onClick={() =>
+                  setZonePayload({
+                    ...zonePayload,
+                    public: !zonePayload.public,
+                  })
+                }
               >
-                <Text>Public</Text>
-                <CheckBox
-                  checked={zonePayload.public}
-                  onChange={() =>
-                    setZonePayload({
-                      ...zonePayload,
-                      public: !zonePayload.public,
-                    })
-                  }
-                />
+                <Text>{t('settings.public')}</Text>
+                <CheckBox checked={zonePayload.public} />
               </Box>
             </Grid>
           </SectionContainer>
         ),
       },
     ],
+    isEmpty: showZoneSelector,
   };
 };
 

@@ -1,7 +1,8 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Accordion, AccordionPanel, Avatar, Box, Button, Text } from 'grommet';
-import { CaretRightFill } from 'grommet-icons';
+import { CaretRightFill, Home } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import LogoWhite from '../../../assets/purpie-logo/logo-white.svg';
 import Divider from '../../../components/layouts/PrivatePageLayout/ZoneSelector/Divider';
 import { useDebouncer } from '../../../hooks/useDebouncer';
@@ -17,6 +18,8 @@ const Settings: FC = () => {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [searchText, setSearchText] = useState<string>('');
   const [searchTextValue, setSearchTextValue] = useState<string>('');
+
+  const { t } = useTranslation();
 
   const data: SettingsData[] = [
     PersonalSettings(),
@@ -36,7 +39,7 @@ const Settings: FC = () => {
           result.push(menuItem);
         } else {
           const menuItemsResult: SettingFormItem[] = [];
-          menuItem.items.forEach((settingItem) => {
+          menuItem?.items?.forEach((settingItem) => {
             const settingItemKey = settingItem.key
               .replace(/ /g, '')
               .toLowerCase();
@@ -81,8 +84,17 @@ const Settings: FC = () => {
             <Text size="xlarge">{selectedItem.label}</Text>
           </Box>
         )}
-        {selectedItem.avatarWidget}
-        {selectedItem.items.map<React.ReactNode>((setting) => {
+        <Box direction="row" justify="between">
+          {selectedItem.avatarWidget}
+          <Button
+            onClick={selectedItem.onSave}
+            primary
+            label={t('settings.save')}
+            disabled={selectedItem.isEmpty}
+            margin={{ vertical: 'medium' }}
+          />
+        </Box>
+        {selectedItem?.items?.map<React.ReactNode>((setting) => {
           const descriptionParts = setting.description.split(
             new RegExp(`(${searchText})`, 'gi')
           );
@@ -122,15 +134,6 @@ const Settings: FC = () => {
             </Box>
           );
         })}
-        <Button
-          onClick={selectedItem.onSave}
-          primary
-          label="Save"
-          style={{ borderRadius: '10px' }}
-          size="large"
-          fill="horizontal"
-          margin={{ top: 'medium' }}
-        />
       </Box>
     );
   };
@@ -138,17 +141,16 @@ const Settings: FC = () => {
   const renderSettings = () => {
     if (searchText?.length > 0) {
       const selectedItems = getSearchResults();
+      if (selectedItems.length === 0) {
+        return <Text>{t('settings.noSettings')}</Text>;
+      }
       return (
         <Accordion
           activeIndex={activeAccordionIndex}
           onActive={(i) => setActiveAccordionIndex(i[0])}
         >
           {selectedItems.map((item) => (
-            <AccordionPanel
-              label={item.label}
-              key={item.key}
-              style={{ backgroundColor: 'white' }}
-            >
+            <AccordionPanel label={item.label} key={item.key}>
               <Box pad={{ vertical: 'small' }}>
                 {renderSettingCategory(item)}
               </Box>
@@ -161,54 +163,81 @@ const Settings: FC = () => {
   };
 
   return (
-    <Box
-      background="brand"
-      height={{ min: '95vh', max: '100vh' }}
-      overflow="hidden"
-    >
+    <Box height={{ min: '95vh', max: '100vh' }} overflow="hidden">
       <Box flex={{ grow: 1 }}>
-        <Box direction="row" gap="large" pad="medium" align="center">
-          <Box onClick={() => history.push('/')}>
-            <Avatar size="large" round="0" src={LogoWhite} />
+        <Box
+          direction="row"
+          gap="large"
+          pad="medium"
+          align="center"
+          background="brand"
+        >
+          <Box onClick={() => history.push('/')} pad={{ right: 'large' }}>
+            <Avatar
+              alignSelf="center"
+              size="medium"
+              round="0"
+              src={LogoWhite}
+            />
           </Box>
-          <Box flex={{ grow: 1 }}>
+          <Box pad={{ right: 'medium' }} />
+          <Box flex={{ grow: 1 }} pad={{ left: 'xlarge' }}>
             <SearchBar value={searchText} onChange={setSearchText} />
           </Box>
         </Box>
         <Box direction="row" pad={{ horizontal: 'medium', bottom: 'medium' }}>
-          <Box>
-            {data.map((menuItem, index) => (
-              <React.Fragment key={menuItem.key}>
-                <Box
-                  focusIndicator={false}
-                  onClick={() => {
-                    setSelectedIndex(index);
-                    setSearchTextValue('');
-                  }}
-                  pad="small"
-                  justify="between"
-                  direction="row"
-                  width="300px"
-                >
-                  <Text
-                    weight={
-                      index === selectedIndex && searchText === ''
-                        ? 'bold'
-                        : 'normal'
-                    }
-                    color="white"
+          <Box justify="between">
+            <Box>
+              <Box
+                pad={{ horizontal: 'small', top: 'medium', bottom: 'small' }}
+              >
+                <Text weight="bold" color="brand">
+                  {t('settings.settings')}
+                </Text>
+              </Box>
+              {data.map((menuItem, index) => (
+                <React.Fragment key={menuItem.key}>
+                  <Box
+                    focusIndicator={false}
+                    onClick={() => {
+                      setSelectedIndex(index);
+                      setSearchTextValue('');
+                    }}
+                    pad="small"
+                    justify="between"
+                    direction="row"
+                    width="300px"
                   >
-                    {menuItem.label}
-                  </Text>
-                  <CaretRightFill color="white" />
-                </Box>
-                <Divider color="white" />
-              </React.Fragment>
-            ))}
+                    <Text
+                      weight={
+                        index === selectedIndex && searchText === ''
+                          ? 'bold'
+                          : 'normal'
+                      }
+                    >
+                      {menuItem.label}
+                    </Text>
+                    <CaretRightFill color="brand" />
+                  </Box>
+                  <Divider color="status-disabled-light" />
+                </React.Fragment>
+              ))}
+            </Box>
+            <Box
+              direction="row"
+              align="center"
+              gap="small"
+              onClick={() => history.push('/')}
+            >
+              <Home color="brand" size="large" fontWeight="bold" />
+
+              <Text color="brand" weight="bold">
+                Home Page
+              </Text>
+            </Box>
           </Box>
           <Box
             flex="grow"
-            background="white"
             round="medium"
             pad="medium"
             height="80vh"

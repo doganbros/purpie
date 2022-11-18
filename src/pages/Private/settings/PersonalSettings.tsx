@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Box, Button, TextInput } from 'grommet';
 import { Hide, View } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { SettingsData } from './types';
 import { apiURL } from '../../../config/http';
@@ -28,12 +29,12 @@ const PersonalSettings: () => SettingsData | null = () => {
     new: false,
     confirm: false,
   });
-
+  const { t } = useTranslation();
   if (!user) return null;
   return {
     id: 0,
     key: 'personalSettings',
-    label: 'Personal Settings',
+    label: t('settings.personalSettings'),
     url: 'personalSettings',
     name: user?.fullName,
     onSave: () => {
@@ -50,12 +51,13 @@ const PersonalSettings: () => SettingsData | null = () => {
           title={user.fullName}
           onClickEdit={() => setShowAvatarUpload(true)}
           subtitle={user.userName}
-          id={Math.floor(Math.random() * 100)}
+          id={1}
           outerCircle
+          editAvatar
         />
         {showAvatarUpload && (
           <AvatarUpload
-            onSubmit={(file) => {
+            onSubmit={(file: any) => {
               dispatch(changeProfilePicture(file));
               setShowAvatarUpload(false);
             }}
@@ -69,8 +71,8 @@ const PersonalSettings: () => SettingsData | null = () => {
     items: [
       {
         key: 'username',
-        title: 'Username',
-        description: 'Change username',
+        title: t('settings.username'),
+        description: t('settings.changeUsername'),
         value: user?.userName,
         component: (
           <Box
@@ -98,8 +100,8 @@ const PersonalSettings: () => SettingsData | null = () => {
       },
       {
         key: 'fullName',
-        title: 'Full Name',
-        description: 'Change your name',
+        title: t('settings.fullName'),
+        description: t('settings.changeName'),
         value: user?.fullName,
         component: (
           <Box
@@ -128,8 +130,8 @@ const PersonalSettings: () => SettingsData | null = () => {
 
       {
         key: 'email',
-        title: 'Email',
-        description: 'Your main email address',
+        title: t('settings.email'),
+        description: t('settings.mainEmail'),
         value: user?.email,
         component: (
           <Box
@@ -147,8 +149,8 @@ const PersonalSettings: () => SettingsData | null = () => {
       },
       {
         key: 'pasword',
-        title: 'Password Change',
-        description: 'Change your password',
+        title: t('settings.passwordChange'),
+        description: t('settings.changePassword'),
         component: (
           <Box gap="small">
             <Box
@@ -163,7 +165,7 @@ const PersonalSettings: () => SettingsData | null = () => {
               <TextInput
                 plain
                 type={reveal.current ? 'text' : 'password'}
-                placeholder="Current Password"
+                placeholder={t('settings.currentPassword')}
                 autoComplete="new-password"
                 focusIndicator={false}
                 onChange={() => {}}
@@ -193,7 +195,7 @@ const PersonalSettings: () => SettingsData | null = () => {
               <TextInput
                 plain
                 type={reveal.new ? 'text' : 'password'}
-                placeholder="New Password"
+                placeholder={t('settings.newPassword')}
                 focusIndicator={false}
                 onChange={() => {}}
               />
@@ -216,7 +218,7 @@ const PersonalSettings: () => SettingsData | null = () => {
               <TextInput
                 plain
                 type={reveal.confirm ? 'text' : 'password'}
-                placeholder="Confirm New Password"
+                placeholder={t('settings.confirmPassword')}
                 focusIndicator={false}
                 onChange={() => {}}
               />

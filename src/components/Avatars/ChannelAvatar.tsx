@@ -7,12 +7,11 @@ import InitialsAvatar from '../utils/InitialsAvatar';
 
 interface ChannelAvatarProps {
   title?: string;
-  subtitle?: string;
   src: string | undefined;
   onClickEdit?: () => void;
   showMenu?: () => void;
   closeMenu?: () => void;
-  disabled?: boolean;
+  editAvatar?: boolean;
   outerCircle?: boolean;
   id: number;
   textProps?: TextExtendedProps;
@@ -20,10 +19,9 @@ interface ChannelAvatarProps {
 
 export const ChannelAvatar: FC<ChannelAvatarProps> = ({
   title,
-  subtitle,
   src,
   onClickEdit,
-  disabled,
+  editAvatar,
   outerCircle,
   id,
   showMenu,
@@ -49,7 +47,7 @@ export const ChannelAvatar: FC<ChannelAvatarProps> = ({
           }
         }}
       >
-        {!disabled && (
+        {editAvatar && (
           <ExtendedBox
             background="accent-1"
             width="25px"

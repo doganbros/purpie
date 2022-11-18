@@ -9,14 +9,17 @@ import {
   Layer,
   Text,
 } from 'grommet';
+import { useTranslation } from 'react-i18next';
 
 interface AvatarUploadProps {
-  onSubmit: (arg0: File) => void;
+  // onSubmit: (arg0: File) => void;
+  onSubmit: any | ((arg0: File) => void);
   onDismiss: () => void;
 }
 
 const AvatarUpload: FC<AvatarUploadProps> = ({ onSubmit, onDismiss }) => {
   const [imgSrc, setImgSrc] = useState<string>();
+  const { t } = useTranslation();
 
   return (
     <Layer>
@@ -31,7 +34,7 @@ const AvatarUpload: FC<AvatarUploadProps> = ({ onSubmit, onDismiss }) => {
       >
         <Form
           onSubmit={({ value }: any) => {
-            onSubmit(value.photoFile[0]);
+            onSubmit({ photoFile: value.photoFile[0] });
           }}
         >
           <Box
@@ -65,7 +68,7 @@ const AvatarUpload: FC<AvatarUploadProps> = ({ onSubmit, onDismiss }) => {
           </FormField>
           <Box justify="center" direction="row" gap="small">
             <Button
-              label="Cancel"
+              label={t('settings.cancel')}
               style={{ borderRadius: '10px' }}
               size="large"
               fill="horizontal"
@@ -73,7 +76,7 @@ const AvatarUpload: FC<AvatarUploadProps> = ({ onSubmit, onDismiss }) => {
               onClick={onDismiss}
             />
             <Button
-              label="Submit"
+              label={t('settings.submit')}
               type="submit"
               primary
               style={{ borderRadius: '10px' }}

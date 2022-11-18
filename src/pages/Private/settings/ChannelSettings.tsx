@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Box, CheckBox, DropButton, Grid, Text, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
-import { CaretDownFill } from 'grommet-icons';
+import { CaretDownFill, CaretRightFill } from 'grommet-icons';
+import { useTranslation } from 'react-i18next';
 import ListButton from '../../../components/utils/ListButton';
 import SectionContainer from '../../../components/utils/SectionContainer';
 import { apiURL } from '../../../config/http';
@@ -27,26 +28,59 @@ const ChannelSettings: () => SettingsData = () => {
   const [selectedUserChannelIndex, setSelectedUserChannelIndex] = useState(0);
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
   const [channelPermissions, setChannelPermissions] = useState({
-    canInvite: userChannels.data[0].channelRole.canInvite,
-    canDelete: userChannels.data[0].channelRole.canDelete,
-    canEdit: userChannels.data[0].channelRole.canEdit,
-    canManageRole: userChannels.data[0].channelRole.canManageRole,
+    canInvite: userChannels?.data[0]?.channelRole?.canInvite,
+    canDelete: userChannels?.data[0]?.channelRole?.canDelete,
+    canEdit: userChannels?.data[0]?.channelRole?.canEdit,
+    canManageRole: userChannels?.data[0]?.channelRole?.canManageRole,
   });
   const [channelPayload, setChannelPayload] = useState<UpdateChannelPayload>({
-    name: userChannels.data[0].channel.name,
-    description: userChannels.data[0].channel.description,
-    id: userChannels.data[0].channel.id,
-    public: userChannels.data[0].channel.public,
+    name: '',
+    description: '',
+    id: 1,
+    public: userChannels?.data[0]?.channel?.public,
   });
 
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
+
+  const [showChannelSelector, setShowChannelSelector] = useState(true);
 
   const channelId = userChannels.data[selectedUserChannelIndex]?.channel?.id;
+
+  if (userChannels.data.length === 0) {
+    return {
+      id: 1,
+      key: 'channel',
+      label: t('settings.channelSettings'),
+      url: 'channel',
+      items: [
+        {
+          key: 'channelName',
+          title: '',
+          description: '',
+          value: 'value',
+          component: (
+            <Box
+              direction="row"
+              justify="between"
+              align="center"
+              gap="small"
+              round="small"
+              pad="xxsmall"
+            >
+              <Text />
+            </Box>
+          ),
+        },
+      ],
+      isEmpty: true,
+    };
+  }
 
   return {
     id: 1,
     key: 'channel',
-    label: 'Channel Settings',
+    label: t('settings.channelSettings'),
     url: 'channel',
     onSave: () => {
       if (!(channelId === null || channelId === undefined)) {
@@ -55,25 +89,24 @@ const ChannelSettings: () => SettingsData = () => {
     },
     avatarWidget: (
       <>
-        <Box width="medium" direction="row" gap="small">
-          <ChannelAvatar
-            id={Math.floor(Math.random() * 100)}
-            title={userChannels.data[selectedUserChannelIndex].channel.name}
-            subtitle={
-              userZones?.find(
-                (userZone) =>
-                  userZone.zone.id ===
-                  userChannels.data[selectedUserChannelIndex].channel.zoneId
-              )?.zone.name
-            }
-            onClickEdit={() => setShowAvatarUpload(true)}
-            src={
-              userChannels.data[selectedUserChannelIndex].channel.displayPhoto
-                ? `${apiURL}/channel/display-photo/${userChannels.data[selectedUserChannelIndex].channel.displayPhoto}`
-                : undefined
-            }
-            outerCircle
-          />
+        <Box width="medium" direction="row" gap="small" align="center">
+          {!showChannelSelector && (
+            <ChannelAvatar
+              id={1}
+              title={
+                userChannels?.data[selectedUserChannelIndex]?.channel?.name
+              }
+              onClickEdit={() => setShowAvatarUpload(true)}
+              src={
+                userChannels?.data[selectedUserChannelIndex]?.channel
+                  ?.displayPhoto
+                  ? `${apiURL}/channel/display-photo/${userChannels?.data[selectedUserChannelIndex]?.channel?.displayPhoto}`
+                  : undefined
+              }
+              outerCircle
+              editAvatar
+            />
+          )}
           <DropButton
             open={open}
             onOpen={() => setOpen(true)}
@@ -98,6 +131,7 @@ const ChannelSettings: () => SettingsData = () => {
                         public: item.channel.public,
                       });
                       setSelectedUserChannelIndex(index);
+                      setShowChannelSelector(false);
                     }}
                     leftIcon={
                       <ChannelAvatar
@@ -106,14 +140,6 @@ const ChannelSettings: () => SettingsData = () => {
                           userChannels.data[selectedUserChannelIndex].channel
                             .name
                         }
-                        subtitle={
-                          userZones?.find(
-                            (userZone) =>
-                              userZone.zone.id ===
-                              userChannels.data[selectedUserChannelIndex]
-                                .channel.zoneId
-                          )?.zone.name
-                        }
                         onClickEdit={() => setShowAvatarUpload(true)}
                         src={
                           item.channel.displayPhoto
@@ -121,7 +147,6 @@ const ChannelSettings: () => SettingsData = () => {
                             : undefined
                         }
                         outerCircle
-                        disabled
                       />
                     }
                     selected={
@@ -133,29 +158,48 @@ const ChannelSettings: () => SettingsData = () => {
               </Box>
             }
           >
-            <Box onClick={() => setOpen(true)} direction="row" gap="small">
-              <Box>
-                <Text>
-                  {userChannels.data[selectedUserChannelIndex].channel.name}
-                </Text>
-                <Text color="#8F9BB3">
-                  {
-                    userZones?.find(
-                      (userZone) =>
-                        userZone.zone.id ===
-                        userChannels.data[selectedUserChannelIndex].channel
-                          .zoneId
-                    )?.zone.name
-                  }
-                </Text>
+            {!showChannelSelector ? (
+              <Box onClick={() => setOpen(true)} direction="row" gap="small">
+                <Box>
+                  <Text>
+                    {
+                      userChannels?.data[selectedUserChannelIndex]?.channel
+                        ?.name
+                    }
+                  </Text>
+                  <Text color="#8F9BB3">224 members</Text>
+                  <Text color="#8F9BB3">
+                    {t('settings.in')}{' '}
+                    {
+                      userZones?.find(
+                        (userZone) =>
+                          userZone.zone.id ===
+                          userChannels.data[selectedUserChannelIndex].channel
+                            .zoneId
+                      )?.zone.name
+                    }{' '}
+                    {t('settings.zone')}
+                  </Text>
+                </Box>
+                <CaretDownFill />
               </Box>
-              <CaretDownFill />
-            </Box>
+            ) : (
+              <Box
+                background="status-disabled-light"
+                pad="medium"
+                round="small"
+                direction="row"
+                align="center"
+              >
+                <Text>{t('settings.selectChannel')}</Text>
+                <CaretRightFill color="brand" />{' '}
+              </Box>
+            )}
           </DropButton>
         </Box>
         {showAvatarUpload && !(channelId === null || channelId === undefined) && (
           <AvatarUpload
-            onSubmit={(file) => {
+            onSubmit={(file: any) => {
               dispatch(changeChannelPhoto(file, channelId));
               setShowAvatarUpload(false);
             }}
@@ -169,8 +213,8 @@ const ChannelSettings: () => SettingsData = () => {
     items: [
       {
         key: 'channelName',
-        title: 'Channel Name',
-        description: 'Change channel name',
+        title: t('settings.channelName'),
+        description: t('settings.changeChannelName'),
         value: 'value',
         component: (
           <Box
@@ -198,8 +242,8 @@ const ChannelSettings: () => SettingsData = () => {
       },
       {
         key: 'channelTitle',
-        title: 'Channel Description',
-        description: 'Change channel description',
+        title: t('settings.channelDescription'),
+        description: t('settings.changeChannelDescription'),
         value: 'value',
         component: (
           <Box
@@ -228,11 +272,11 @@ const ChannelSettings: () => SettingsData = () => {
 
       {
         key: 'usersPermissions',
-        title: 'Permissions',
+        title: t('settings.permissions'),
         description: '',
         value: 'value',
         component: (
-          <SectionContainer label="User Permissions">
+          <SectionContainer label={t('settings.userPermissions')}>
             <Grid
               rows={['xxsmall', 'xxsmall']}
               columns={['medium', 'medium']}
@@ -243,68 +287,60 @@ const ChannelSettings: () => SettingsData = () => {
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                onClick={() =>
+                  setChannelPermissions({
+                    ...channelPermissions,
+                    canEdit: !channelPermissions.canEdit,
+                  })
+                }
               >
-                <Text>Can edit</Text>
-                <CheckBox
-                  checked={channelPermissions.canEdit}
-                  onChange={() =>
-                    setChannelPermissions({
-                      ...channelPermissions,
-                      canEdit: !channelPermissions.canEdit,
-                    })
-                  }
-                />
+                <Text>{t('settings.canEdit')}</Text>
+                <CheckBox checked={channelPermissions.canEdit} />
               </Box>
               <Box
                 align="center"
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                onClick={() =>
+                  setChannelPermissions({
+                    ...channelPermissions,
+                    canDelete: !channelPermissions.canDelete,
+                  })
+                }
               >
-                <Text>Can delete</Text>
-                <CheckBox
-                  checked={channelPermissions.canDelete}
-                  onChange={() =>
-                    setChannelPermissions({
-                      ...channelPermissions,
-                      canDelete: !channelPermissions.canDelete,
-                    })
-                  }
-                />
+                <Text>{t('settings.canDelete')}</Text>
+                <CheckBox checked={channelPermissions.canDelete} />
               </Box>
               <Box
                 align="center"
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                onClick={() =>
+                  setChannelPermissions({
+                    ...channelPermissions,
+                    canInvite: !channelPermissions.canInvite,
+                  })
+                }
               >
-                <Text>Can invite</Text>
-                <CheckBox
-                  checked={channelPermissions.canInvite}
-                  onChange={() =>
-                    setChannelPermissions({
-                      ...channelPermissions,
-                      canInvite: !channelPermissions.canInvite,
-                    })
-                  }
-                />
+                <Text>{t('settings.canInvite')}</Text>
+                <CheckBox checked={channelPermissions.canInvite} />
               </Box>
               <Box
                 align="center"
                 justify="between"
                 direction="row"
                 gap="xsmall"
+                onClick={() =>
+                  setChannelPermissions({
+                    ...channelPermissions,
+                    canManageRole: !channelPermissions.canManageRole,
+                  })
+                }
               >
-                <Text>Can manage role</Text>
-                <CheckBox
-                  checked={channelPermissions.canManageRole}
-                  onChange={() =>
-                    setChannelPermissions({
-                      ...channelPermissions,
-                      canManageRole: !channelPermissions.canManageRole,
-                    })
-                  }
-                />
+                <Text>{t('settings.canManageRole')}</Text>
+                <CheckBox checked={channelPermissions.canManageRole} />
               </Box>
             </Grid>
           </SectionContainer>
@@ -316,25 +352,28 @@ const ChannelSettings: () => SettingsData = () => {
         description: '',
         value: 'value',
         component: (
-          <SectionContainer label="Channel Visibility">
+          <SectionContainer label={t('settings.channelVisibility')}>
             <Grid rows={['xxsmall']} columns={['medium', 'medium']} gap="small">
-              <Box direction="row" justify="between" gap="xsmall">
-                <Text>Public</Text>
-                <CheckBox
-                  checked={channelPayload.public}
-                  onChange={() =>
-                    setChannelPayload({
-                      ...channelPayload,
-                      public: !channelPayload.public,
-                    })
-                  }
-                />
+              <Box
+                direction="row"
+                justify="between"
+                gap="xsmall"
+                onClick={() =>
+                  setChannelPayload({
+                    ...channelPayload,
+                    public: !channelPayload.public,
+                  })
+                }
+              >
+                <Text>{t('settings.public')}</Text>
+                <CheckBox checked={channelPayload.public} />
               </Box>
             </Grid>
           </SectionContainer>
         ),
       },
     ],
+    isEmpty: showChannelSelector,
   };
 };
 

@@ -6,17 +6,23 @@ interface InitialsAvatarProps extends Omit<AvatarExtendedProps, 'id'> {
   id: number;
   value?: string;
   textProps?: TextExtendedProps;
+  roundSize?: string;
 }
 
 const InitialsAvatar: FC<InitialsAvatarProps> = ({
   id,
   value,
   textProps,
+  roundSize,
   ...avatarProps
 }) => {
   const { background, foreground } = getColorPairFromId(id);
   return value ? (
-    <Avatar round background={{ color: background }} {...avatarProps}>
+    <Avatar
+      round={roundSize || true}
+      background={{ color: background }}
+      {...avatarProps}
+    >
       <Text color={foreground} {...textProps}>
         {value
           .replace(/[^a-zA-Z ]/g, '')
