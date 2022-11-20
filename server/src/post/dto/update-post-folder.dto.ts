@@ -1,10 +1,10 @@
-import { IsBoolean, IsInt, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdatePlaylistDto {
+export class UpdatePostFolderDto {
   @ApiProperty()
   @IsInt()
-  playlistId: number;
+  folderId: number;
 
   @ApiProperty({ required: false })
   @IsString()
@@ -15,9 +15,4 @@ export class UpdatePlaylistDto {
   @IsOptional()
   @IsString()
   description?: string;
-
-  @ApiProperty({ required: false })
-  @IsBoolean()
-  @IsOptional()
-  public?: boolean;
 }

@@ -72,5 +72,5 @@ export class ListPostFeedQuery extends PaginationQuery {
   @IsOptional()
   @IsInt()
   @Type(() => Number)
-  playlistId: number;
+  folderId: number;
 }
