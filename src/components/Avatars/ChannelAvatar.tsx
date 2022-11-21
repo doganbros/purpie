@@ -1,13 +1,15 @@
 import React, { FC } from 'react';
 import { Avatar, Box, TextExtendedProps } from 'grommet';
 import { Edit } from 'grommet-icons';
+import { useSelector } from 'react-redux';
 import ExtendedBox from '../utils/ExtendedBox';
 import InitialsAvatar from '../utils/InitialsAvatar';
 import { apiURL } from '../../config/http';
+import { AppState } from '../../store/reducers/root.reducer';
 
 interface ChannelAvatarProps {
   title?: string;
-  src: string | undefined;
+  src?: string;
   onClickEdit?: () => void;
   showMenu?: () => void;
   closeMenu?: () => void;
@@ -27,12 +29,19 @@ export const ChannelAvatar: FC<ChannelAvatarProps> = ({
   showMenu,
   ...textProps
 }) => {
+  const {
+    channel: { userChannels },
+  } = useSelector((state: AppState) => state);
+
+  const channelAvatarUrl = userChannels.data.filter(
+    (userChannel) => userChannel.channel.name === title
+  )[0]?.channel?.displayPhoto;
   const AvatarComponent = () => {
-    return src ? (
+    return channelAvatarUrl || src ? (
       <Avatar
         alignSelf="center"
         round="full"
-        src={`${apiURL}/channel/display-photo/${src}`}
+        src={`${apiURL}/channel/display-photo/${src || channelAvatarUrl}`}
       />
     ) : (
       <InitialsAvatar id={id} value={title} textProps={textProps} />

@@ -1,16 +1,18 @@
 import React, { FC } from 'react';
 import { Avatar, Box, TextExtendedProps } from 'grommet';
 import { Edit } from 'grommet-icons';
+import { useSelector } from 'react-redux';
 import ExtendedBox from '../utils/ExtendedBox';
 import InitialsAvatar from '../utils/InitialsAvatar';
 import {
   REACT_APP_API_VERSION,
   REACT_APP_SERVER_HOST,
 } from '../../config/http';
+import { AppState } from '../../store/reducers/root.reducer';
 
 interface AvatarItemProps {
   title?: string;
-  src: string | undefined;
+  src?: string;
   onClickEdit?: () => void;
   editAvatar?: boolean;
   outerCircle?: boolean;
@@ -29,12 +31,22 @@ export const ZoneAvatar: FC<AvatarItemProps> = ({
   size,
   ...textProps
 }) => {
+  const {
+    zone: {
+      getUserZones: { userZones },
+    },
+  } = useSelector((state: AppState) => state);
+  const zoneAvatarUrl = userZones?.filter(
+    (userZone) => userZone.zone.name === title
+  )[0].zone.displayPhoto;
   const AvatarComponent = () => {
-    return src ? (
+    return zoneAvatarUrl || src ? (
       <Avatar
         alignSelf="center"
         round="small"
-        src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/zone/display-photo/${src}`}
+        src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/zone/display-photo/${
+          zoneAvatarUrl || src
+        }`}
         background="red"
         size={size || 'medium'}
       />

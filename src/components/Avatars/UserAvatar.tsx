@@ -1,14 +1,16 @@
 import React, { FC } from 'react';
 import { Avatar, Box, TextExtendedProps } from 'grommet';
 import { Edit } from 'grommet-icons';
+import { useSelector } from 'react-redux';
 import ExtendedBox from '../utils/ExtendedBox';
 import InitialsAvatar from '../utils/InitialsAvatar';
 import { apiURL } from '../../config/http';
+import { AppState } from '../../store/reducers/root.reducer';
 
 interface AvatarItemProps {
   title?: string;
   subtitle?: string;
-  src: string | undefined;
+  src?: string;
   onClickEdit?: () => void;
   editAvatar?: boolean;
   outerCircle?: boolean;
@@ -28,12 +30,16 @@ export const UserAvatar: FC<AvatarItemProps> = ({
   size,
   ...textProps
 }) => {
+  const {
+    auth: { user },
+  } = useSelector((state: AppState) => state);
+  const avatarUrl = user?.displayPhoto ? user?.displayPhoto : null;
   const AvatarComponent = () => {
-    return src ? (
+    return avatarUrl || src ? (
       <Avatar
         alignSelf="center"
         round="full"
-        src={`${apiURL}/user/display-photo/${src}`}
+        src={`${apiURL}/user/display-photo/${src || avatarUrl}`}
         size={size || 'medium'}
       />
     ) : (
