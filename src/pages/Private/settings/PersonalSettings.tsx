@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, TextInput } from 'grommet';
+import { Box, Button, Text, TextInput } from 'grommet';
 import { Hide, View } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -40,15 +40,22 @@ const PersonalSettings: () => SettingsData | null = () => {
     },
     avatarWidget: (
       <>
-        <UserAvatar
-          src={user?.displayPhoto}
-          title={user.fullName}
-          onClickEdit={() => setShowAvatarUpload(true)}
-          subtitle={user.userName}
-          id={1}
-          outerCircle
-          editAvatar
-        />
+        <Box direction="row" gap="small" align="center">
+          <UserAvatar
+            src={user?.displayPhoto}
+            title={user.fullName}
+            onClickEdit={() => setShowAvatarUpload(true)}
+            subtitle={user.userName}
+            id={1}
+            outerCircle
+            editAvatar
+          />
+          <Box>
+            <Text>{user.fullName}</Text>
+            <Text color="#8F9BB3">{user.userName}</Text>
+          </Box>
+        </Box>
+
         {showAvatarUpload && (
           <AvatarUpload
             onSubmit={(file: any) => {

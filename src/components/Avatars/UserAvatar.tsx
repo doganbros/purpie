@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Avatar, Box, Text, TextExtendedProps } from 'grommet';
+import { Avatar, Box, TextExtendedProps } from 'grommet';
 import { Edit } from 'grommet-icons';
 import ExtendedBox from '../utils/ExtendedBox';
 import InitialsAvatar from '../utils/InitialsAvatar';
@@ -87,12 +87,6 @@ export const UserAvatar: FC<AvatarItemProps> = ({
           <AvatarComponent />
         )}
       </ExtendedBox>
-      {title && (
-        <Box>
-          <Text>{title}</Text>
-          {subtitle && <Text color="#8F9BB3">{subtitle}</Text>}
-        </Box>
-      )}
     </Box>
   );
 };
