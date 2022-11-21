@@ -5,7 +5,6 @@ import { CaretDownFill, CaretRightFill } from 'grommet-icons';
 import { useTranslation } from 'react-i18next';
 import ListButton from '../../../components/utils/ListButton';
 import SectionContainer from '../../../components/utils/SectionContainer';
-import { apiURL } from '../../../config/http';
 import {
   changeChannelInformationAction,
   changeChannelPhoto,
@@ -68,7 +67,7 @@ const ChannelSettings: () => SettingsData = () => {
               round="small"
               pad="xxsmall"
             >
-              <Text />
+              <Text> {t('settings.noChannel')}</Text>
             </Box>
           ),
         },
@@ -100,8 +99,6 @@ const ChannelSettings: () => SettingsData = () => {
               src={
                 userChannels?.data[selectedUserChannelIndex]?.channel
                   ?.displayPhoto
-                  ? `${apiURL}/channel/display-photo/${userChannels?.data[selectedUserChannelIndex]?.channel?.displayPhoto}`
-                  : undefined
               }
               outerCircle
               editAvatar
@@ -140,10 +137,9 @@ const ChannelSettings: () => SettingsData = () => {
                           userChannels.data[selectedUserChannelIndex].channel
                             .name
                         }
-                        onClickEdit={() => setShowAvatarUpload(true)}
                         src={
                           item.channel.displayPhoto
-                            ? `${apiURL}/channel/display-photo/${item.channel.displayPhoto}`
+                            ? item.channel.displayPhoto
                             : undefined
                         }
                         outerCircle
@@ -281,7 +277,6 @@ const ChannelSettings: () => SettingsData = () => {
               rows={['xxsmall', 'xxsmall']}
               columns={['medium', 'medium']}
               gap="small"
-              justifyContent="between"
             >
               <Box
                 align="center"

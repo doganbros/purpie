@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { SettingsData } from './types';
-import { apiURL } from '../../../config/http';
 import {
   changeProfileInfo,
   changeProfilePicture,
@@ -42,11 +41,7 @@ const PersonalSettings: () => SettingsData | null = () => {
     avatarWidget: (
       <>
         <UserAvatar
-          src={
-            user?.displayPhoto
-              ? `${apiURL}/user/display-photo/${user?.displayPhoto}`
-              : undefined
-          }
+          src={user?.displayPhoto}
           title={user.fullName}
           onClickEdit={() => setShowAvatarUpload(true)}
           subtitle={user.userName}

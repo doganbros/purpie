@@ -3,6 +3,7 @@ import { Avatar, Box, TextExtendedProps } from 'grommet';
 import { Edit } from 'grommet-icons';
 import ExtendedBox from '../utils/ExtendedBox';
 import InitialsAvatar from '../utils/InitialsAvatar';
+import { apiURL } from '../../config/http';
 
 interface ChannelAvatarProps {
   title?: string;
@@ -28,7 +29,11 @@ export const ChannelAvatar: FC<ChannelAvatarProps> = ({
 }) => {
   const AvatarComponent = () => {
     return src ? (
-      <Avatar alignSelf="center" round="full" src={src} />
+      <Avatar
+        alignSelf="center"
+        round="full"
+        src={`${apiURL}/channel/display-photo/${src}`}
+      />
     ) : (
       <InitialsAvatar id={id} value={title} textProps={textProps} />
     );
