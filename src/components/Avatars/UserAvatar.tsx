@@ -35,18 +35,31 @@ export const UserAvatar: FC<AvatarItemProps> = ({
   } = useSelector((state: AppState) => state);
   const avatarUrl = user?.displayPhoto ? user?.displayPhoto : null;
   const AvatarComponent = () => {
-    return avatarUrl || src ? (
+    if (src === null) {
+      return (
+        <InitialsAvatar
+          id={id}
+          value={title}
+          textProps={textProps}
+          size={size || 'medium'}
+        />
+      );
+    }
+    if (src) {
+      return (
+        <Avatar
+          alignSelf="center"
+          round="full"
+          src={`${apiURL}/user/display-photo/${src}`}
+          size={size || 'medium'}
+        />
+      );
+    }
+    return (
       <Avatar
         alignSelf="center"
         round="full"
-        src={`${apiURL}/user/display-photo/${src || avatarUrl}`}
-        size={size || 'medium'}
-      />
-    ) : (
-      <InitialsAvatar
-        id={id}
-        value={title}
-        textProps={textProps}
+        src={`${apiURL}/user/display-photo/${avatarUrl}`}
         size={size || 'medium'}
       />
     );
