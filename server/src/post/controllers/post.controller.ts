@@ -13,7 +13,7 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { Response, Request } from 'express';
+import { Request, Response } from 'express';
 import {
   ApiCreatedResponse,
   ApiNotFoundResponse,
@@ -47,11 +47,11 @@ import { EditPostDto } from '../dto/edit-post.dto';
 import { VideoViewStats } from '../dto/video-view-stats.dto';
 import { CreatePostCommentLikeDto } from '../dto/create-post-comment-like.dto';
 import { PostLikeQuery } from '../dto/post-like.query';
-import { PlaylistService } from '../services/playlist.service';
-import { CreatePlaylistDto } from '../dto/create-playlist.dto';
-import { AddPlaylistItemDto } from '../dto/add-playlist-item.dto';
-import { UpdatePlaylistDto } from '../dto/update-playlist.dto';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { FolderService } from '../services/folder.service';
+import { CreatePostFolderDto } from '../dto/create-post-folder.dto';
+import { UpdatePostFolderDto } from '../dto/update-post-folder.dto';
+import { AddPostFolderItemDto } from '../dto/add-post-folder-item.dto';
 
 const {
   S3_VIDEO_POST_DIR = '',
@@ -64,7 +64,7 @@ const {
 export class PostController {
   constructor(
     private readonly postService: PostService,
-    private readonly playlistService: PlaylistService,
+    private readonly folderService: FolderService,
   ) {}
 
   async validatePost(userId: number, postId: number) {
@@ -673,78 +673,60 @@ export class PostController {
     return 'OK';
   }
 
-  @Get('playlist/list/user')
+  @Get('folder/list')
   @IsAuthenticated()
-  getUserPlaylists(
+  getUserFolderList(
     @CurrentUser() user: UserTokenPayload,
     @Query() query: PaginationQuery,
   ) {
-    return this.playlistService.getUserPlaylists(user.id, query);
+    return this.folderService.getUserPostFolders(user.id, query);
   }
 
-  @Get('playlist/list/user/:userId')
+  @Post('folder/create')
   @IsAuthenticated()
-  getPublicUserPlaylists(
-    @Param('userId', ParseIntPipe) userId: number,
-    @Query() query: PaginationQuery,
-  ) {
-    return this.playlistService.getPublicUserPlaylists(userId, query);
-  }
-
-  @Get('playlist/list/channel/:channelId')
-  @IsAuthenticated()
-  getChannelPlaylists(
-    @Query() query: PaginationQuery,
-    @Param('channelId', ParseIntPipe) channelId: number,
-  ) {
-    return this.playlistService.getChannelPlaylists(channelId, query);
-  }
-
-  @Post('playlist/create')
-  @IsAuthenticated()
-  createUserPlaylist(
+  createPostFolder(
     @CurrentUser() user: UserTokenPayload,
-    @Body() info: CreatePlaylistDto,
+    @Body() info: CreatePostFolderDto,
   ) {
-    return this.playlistService.createPlaylist(user.id, info);
+    return this.folderService.createFolder(user.id, info);
   }
 
-  @Put('playlist/update')
+  @Put('folder/update')
   @IsAuthenticated()
-  updateUserPlaylist(
+  updatePostFolder(
     @CurrentUser() user: UserTokenPayload,
-    @Body() info: UpdatePlaylistDto,
+    @Body() info: UpdatePostFolderDto,
   ) {
-    return this.playlistService.updatePlaylist(user.id, info);
+    return this.folderService.updateFolder(user.id, info);
   }
 
-  @Delete('playlist/remove/:playlistId')
+  @Delete('folder/remove/:folderId')
   @IsAuthenticated()
-  async removePlaylist(
+  async removePostFolder(
     @CurrentUser() user: UserTokenPayload,
-    @Param('playlistId', ParseIntPipe) playlistId: number,
+    @Param('folderId', ParseIntPipe) folderId: number,
   ) {
-    await this.playlistService.removePlaylist(user.id, playlistId);
+    await this.folderService.removeFolder(user.id, folderId);
 
     return 'OK';
   }
 
-  @Post('playlist-item/add')
+  @Post('folder/item/create')
   @IsAuthenticated()
-  addPlaylistItem(
+  addFolderItem(
     @CurrentUser() user: UserTokenPayload,
-    @Body() info: AddPlaylistItemDto,
+    @Body() info: AddPostFolderItemDto,
   ) {
-    return this.playlistService.addPlaylistItem(user.id, info);
+    return this.folderService.addFolderItem(user.id, info);
   }
 
-  @Delete('playlist-item/remove/:playlistItemId')
+  @Delete('folder/item/remove/:folderItemId')
   @IsAuthenticated()
-  async removePlaylistItem(
+  async removeFolderItem(
     @CurrentUser() user: UserTokenPayload,
-    @Param('playlistItemId', ParseIntPipe) playlistItemId: number,
+    @Param('folderItemId', ParseIntPipe) folderItemId: number,
   ) {
-    await this.playlistService.removePlaylistItem(user.id, playlistItemId);
+    await this.folderService.removeFolderItem(user.id, folderItemId);
 
     return 'OK';
   }

@@ -13,6 +13,7 @@ import { BlockedUser } from '../../entities/BlockedUser.entity';
 import { UserController } from './controllers/user.controller';
 import { UserService } from './services/user.service';
 import { UserListener } from './listeners/user.listener';
+import { MailService } from '../mail/mail.service';
 
 @Module({
   controllers: [UserController],
@@ -30,6 +31,6 @@ import { UserListener } from './listeners/user.listener';
     ]),
     AuthModule,
   ],
-  providers: [UserService, UserListener],
+  providers: [UserService, UserListener, MailService],
 })
 export class UserModule {}

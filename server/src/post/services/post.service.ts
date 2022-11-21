@@ -9,7 +9,6 @@ import { deleteObject } from 'config/s3-storage';
 import dayjs from 'dayjs';
 import { Contact } from 'entities/Contact.entity';
 import { FeaturedPost } from 'entities/FeaturedPost.entity';
-import { Playlist } from 'entities/Playlist.entity';
 import { Post } from 'entities/Post.entity';
 import { PostComment } from 'entities/PostComment.entity';
 import { PostCommentLike } from 'entities/PostCommentLike.entity';
@@ -33,6 +32,7 @@ import { PostLikeQuery } from '../dto/post-like.query';
 import { VideoViewStats } from '../dto/video-view-stats.dto';
 import { PostEvent } from '../listeners/post-events';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { PostFolder } from '../../../entities/PostFolder.entity';
 
 const {
   S3_VIDEO_BUCKET_NAME = '',
@@ -45,8 +45,8 @@ export class PostService {
   constructor(
     @InjectRepository(PostView)
     private postViewRepository: Repository<PostView>,
-    @InjectRepository(Playlist)
-    private playlistRepository: Repository<Playlist>,
+    @InjectRepository(PostFolder)
+    private folderRepository: Repository<PostFolder>,
     @InjectRepository(FeaturedPost)
     private featuredPostRepository: Repository<FeaturedPost>,
     @InjectRepository(Post) private postRepository: Repository<Post>,
@@ -698,20 +698,20 @@ export class PostService {
       builder.addOrderBy('search_rank', 'DESC');
     }
 
-    if (query.playlistId) {
+    if (query.folderId) {
       builder.andWhere(
         new Brackets((qb) => {
-          const playlistQb = this.playlistRepository
-            .createQueryBuilder('playlist')
-            .select('playlist.id')
-            .innerJoin('playlist.playlistItems', 'playlistItems')
-            .where('playlist.id = :playlistId')
-            .andWhere('playlistItems.postId = post.id')
+          const postFolderQb = this.folderRepository
+            .createQueryBuilder('folder')
+            .select('folder.id')
+            .innerJoin('folder.folderItems', 'folderItems')
+            .where('folder.id = :folderId')
+            .andWhere('folderItems.postId = post.id')
             .limit(1)
             .getQuery();
 
-          qb.where(`EXISTS (${playlistQb})`, {
-            playlistId: Number(query.playlistId),
+          qb.where(`EXISTS (${postFolderQb})`, {
+            folderId: Number(query.folderId),
           });
         }),
       );

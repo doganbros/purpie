@@ -1,11 +1,11 @@
 import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
 import { RecordEntity } from './base/RecordEntity';
-import { Playlist } from './Playlist.entity';
+import { PostFolder } from './PostFolder.entity';
 import { Post } from './Post.entity';
 
 @Entity()
-@Unique(['postId', 'playlistId'])
-export class PlaylistItem extends RecordEntity {
+@Unique(['postId', 'folderId'])
+export class PostFolderItem extends RecordEntity {
   @ManyToOne(() => Post, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'postId', referencedColumnName: 'id' })
   post: Post;
@@ -13,10 +13,10 @@ export class PlaylistItem extends RecordEntity {
   @Column()
   postId: number;
 
-  @ManyToOne(() => Playlist, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'playlistId', referencedColumnName: 'id' })
-  playlist: Playlist;
+  @ManyToOne(() => PostFolder, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'folderId', referencedColumnName: 'id' })
+  folder: PostFolder;
 
   @Column()
-  playlistId: number;
+  folderId: number;
 }

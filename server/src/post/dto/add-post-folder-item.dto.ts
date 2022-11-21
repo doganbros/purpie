@@ -1,10 +1,10 @@
 import { IsInt } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class AddPlaylistItemDto {
+export class AddPostFolderItemDto {
   @ApiProperty()
   @IsInt()
-  playlistId: number;
+  folderId: number;
 
   @ApiProperty()
   @IsInt()
