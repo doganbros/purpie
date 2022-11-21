@@ -5,10 +5,6 @@ import { CaretDownFill, CaretRightFill } from 'grommet-icons';
 import { useTranslation } from 'react-i18next';
 import ListButton from '../../../components/utils/ListButton';
 import SectionContainer from '../../../components/utils/SectionContainer';
-import {
-  REACT_APP_API_VERSION,
-  REACT_APP_SERVER_HOST,
-} from '../../../config/http';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { UpdateZonePayload } from '../../../store/types/zone.types';
 import { SettingsData } from './types';
@@ -95,11 +91,7 @@ const ZoneSettings: () => SettingsData | null = () => {
           <ZoneAvatar
             id={1}
             title={userZones?.[selectedUserZoneIndex]?.zone?.name}
-            src={
-              userZones?.[selectedUserZoneIndex]?.zone?.displayPhoto
-                ? `${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/zone/display-photo/${userZones?.[selectedUserZoneIndex].zone.displayPhoto}`
-                : undefined
-            }
+            src={userZones?.[selectedUserZoneIndex]?.zone?.displayPhoto}
             onClickEdit={() => setShowAvatarUpload(true)}
             outerCircle
             editAvatar
@@ -133,12 +125,7 @@ const ZoneSettings: () => SettingsData | null = () => {
                     <ZoneAvatar
                       id={Math.floor(Math.random() * 100)}
                       title={item.zone.name}
-                      src={
-                        item.zone.displayPhoto
-                          ? `${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/zone/display-photo/${item.zone.displayPhoto}`
-                          : undefined
-                      }
-                      onClickEdit={() => setShowAvatarUpload(true)}
+                      src={item.zone.displayPhoto}
                       outerCircle
                     />
                   }

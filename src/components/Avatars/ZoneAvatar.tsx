@@ -3,6 +3,10 @@ import { Avatar, Box, TextExtendedProps } from 'grommet';
 import { Edit } from 'grommet-icons';
 import ExtendedBox from '../utils/ExtendedBox';
 import InitialsAvatar from '../utils/InitialsAvatar';
+import {
+  REACT_APP_API_VERSION,
+  REACT_APP_SERVER_HOST,
+} from '../../config/http';
 
 interface AvatarItemProps {
   title?: string;
@@ -25,7 +29,12 @@ export const ZoneAvatar: FC<AvatarItemProps> = ({
 }) => {
   const AvatarComponent = () => {
     return src ? (
-      <Avatar alignSelf="center" round="small" src={src} background="red" />
+      <Avatar
+        alignSelf="center"
+        round="small"
+        src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/zone/display-photo/${src}`}
+        background="red"
+      />
     ) : (
       <InitialsAvatar
         id={id}
