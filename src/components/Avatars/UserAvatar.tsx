@@ -14,6 +14,7 @@ interface AvatarItemProps {
   outerCircle?: boolean;
   id: number;
   textProps?: TextExtendedProps;
+  size?: string;
 }
 
 export const UserAvatar: FC<AvatarItemProps> = ({
@@ -24,6 +25,7 @@ export const UserAvatar: FC<AvatarItemProps> = ({
   editAvatar,
   outerCircle,
   id,
+  size,
   ...textProps
 }) => {
   const AvatarComponent = () => {
@@ -32,9 +34,15 @@ export const UserAvatar: FC<AvatarItemProps> = ({
         alignSelf="center"
         round="full"
         src={`${apiURL}/user/display-photo/${src}`}
+        size={size || 'medium'}
       />
     ) : (
-      <InitialsAvatar id={id} value={title} textProps={textProps} />
+      <InitialsAvatar
+        id={id}
+        value={title}
+        textProps={textProps}
+        size={size || 'medium'}
+      />
     );
   };
   return (

@@ -16,6 +16,7 @@ interface AvatarItemProps {
   outerCircle?: boolean;
   id: number;
   textProps?: TextExtendedProps;
+  size?: string;
 }
 
 export const ZoneAvatar: FC<AvatarItemProps> = ({
@@ -25,6 +26,7 @@ export const ZoneAvatar: FC<AvatarItemProps> = ({
   editAvatar,
   outerCircle,
   id,
+  size,
   ...textProps
 }) => {
   const AvatarComponent = () => {
@@ -34,6 +36,7 @@ export const ZoneAvatar: FC<AvatarItemProps> = ({
         round="small"
         src={`${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}/zone/display-photo/${src}`}
         background="red"
+        size={size || 'medium'}
       />
     ) : (
       <InitialsAvatar
@@ -41,6 +44,7 @@ export const ZoneAvatar: FC<AvatarItemProps> = ({
         value={title}
         textProps={textProps}
         roundSize="small"
+        size={size || 'medium'}
       />
     );
   };
