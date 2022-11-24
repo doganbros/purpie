@@ -83,15 +83,17 @@ export class VideoController {
       allowReaction: videoInfo.allowReaction || true,
     };
 
-    const { public: publicVideo, userContactExclusive, channelId } = videoInfo;
+    const { public: publicVideo, channelId } = videoInfo;
 
     if (channelId) {
-      await this.staticVideoService.validateUserChannel(user.id, channelId);
+      const userChannel = await this.staticVideoService.validateUserChannel(
+        user.id,
+        channelId,
+      );
       videoPostPayload.channelId = channelId;
+      videoPostPayload.public = userChannel.channel.public;
     } else {
       videoPostPayload.public = publicVideo;
-      videoPostPayload.userContactExclusive =
-        userContactExclusive === true && !publicVideo;
     }
 
     videoPostPayload.createdBy = {

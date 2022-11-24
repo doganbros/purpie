@@ -46,9 +46,11 @@ import { ClientVerifyMeetingAuthDto } from '../dto/client-verify-meeting-auth.dt
 import { ConferenceInfoResponse } from '../responses/conference-info.response';
 import { User } from '../../../entities/User.entity';
 import { PostReaction } from '../../../entities/PostReaction.entity';
+import { UserChannel } from '../../../entities/UserChannel.entity';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
 @Controller({ path: 'meeting', version: '1' })
 @ApiTags('meeting')
 export class MeetingController {
@@ -78,15 +80,6 @@ export class MeetingController {
       privacyConfig,
     } = await this.meetingService.getMeetingConfig(user.id, createMeetingInfo);
 
-    if (
-      createMeetingInfo.public === true &&
-      createMeetingInfo.userContactExclusive === true
-    )
-      createMeetingInfo.userContactExclusive = false;
-
-    const userContactExclusive =
-      createMeetingInfo.userContactExclusive ??
-      privacyConfig.userContactExclusive;
     const publicMeeting = createMeetingInfo.public ?? privacyConfig.public;
     const liveStream = createMeetingInfo.liveStream ?? privacyConfig.liveStream;
     const record = createMeetingInfo.record ?? privacyConfig.record;
@@ -114,12 +107,14 @@ export class MeetingController {
     };
 
     if (channelId) {
-      await this.meetingService.validateUserChannel(user.id, channelId);
+      const userChannel: UserChannel = await this.meetingService.validateUserChannel(
+        user.id,
+        channelId,
+      );
       meetingPayload.channelId = channelId;
+      meetingPayload.public = userChannel.channel.public;
     } else {
-      meetingPayload.public = publicMeeting === true;
-      meetingPayload.userContactExclusive =
-        userContactExclusive === true && !meetingPayload.public;
+      meetingPayload.public = publicMeeting;
     }
 
     meetingPayload.config = jitsiConfig;

@@ -609,7 +609,6 @@ export class PostService {
         'createdBy.email',
         'createdBy.fullName',
       ])
-
       .setParameter('currentUserId', userId)
       .innerJoin('post.createdBy', 'createdBy')
       .leftJoin('post.postReaction', 'postReaction')
@@ -887,6 +886,23 @@ export class PostService {
       .paginate(query);
   }
 
+  async getFeedList(query: ListPostFeedQuery, userId: number) {
+    const result = this.basePost(query, userId);
+
+    if (query.public) result.andWhere('post.public = true');
+    else if (query.userId)
+      result.andWhere('post.public = true').andWhere('post.');
+    if (query.zoneId)
+      result.andWhere('channel.zoneId = :zoneId', { zoneId: query.zoneId });
+    if (query.channelId)
+      result.andWhere('channel.id = :channelId', {
+        channelId: query.channelId,
+      });
+    else await this.getUserFeed(userId, query);
+
+    return result.paginate(query);
+  }
+
   getPublicFeed(query: PaginationQuery, userId: number) {
     return this.basePost(query, userId)
       .andWhere('post.public = true')
@@ -959,5 +975,17 @@ export class PostService {
         shouldCount: !lastIntervalExists,
       })
       .save();
+  }
+
+  async validatePost(userId: number, postId: number) {
+    const post = await this.getOnePost(userId, postId, true);
+
+    if (!post)
+      throw new NotFoundException(
+        ErrorTypes.POST_NOT_FOUND,
+        'Post not found or unauthorized',
+      );
+
+    return post;
   }
 }

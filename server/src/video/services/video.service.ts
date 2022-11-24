@@ -28,7 +28,10 @@ export class VideoService {
     private mailService: MailService,
   ) {}
 
-  async validateUserChannel(userId: number, channelId: number) {
+  async validateUserChannel(
+    userId: number,
+    channelId: number,
+  ): Promise<UserChannel> {
     const userChannel = await this.userChannelRepository.findOne({
       channelId,
       userId,
@@ -38,6 +41,7 @@ export class VideoService {
         ErrorTypes.CHANNEL_NOT_FOUND,
         'User channel not found',
       );
+    return userChannel;
   }
 
   async createNewVideoPost(payload: Partial<Post>) {

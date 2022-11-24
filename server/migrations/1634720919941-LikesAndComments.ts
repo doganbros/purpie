@@ -191,7 +191,6 @@ export class LikesAndComments1634720919941 implements MigrationInterface {
               jitsiConfig: oldConfig,
               privacyConfig: {
                 public: true,
-                userContactExclusive: false,
                 record: false,
                 liveStream: false,
               },
