@@ -27,7 +27,7 @@ import { PostSavedService } from '../services/post-saved.service';
 
 @Controller({ version: '1', path: 'post/saved' })
 @ApiTags('post/saved')
-export class PostCommentController {
+export class PostSavedController {
   constructor(
     private readonly postService: PostService,
     private readonly postSavedService: PostSavedService,

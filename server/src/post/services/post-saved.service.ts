@@ -45,11 +45,9 @@ export class PostSavedService {
         'post.type',
         'post.createdOn',
         'post.public',
-        'post.private',
         'post.allowReaction',
         'post.allowComment',
         'post.videoName',
-        'post.userContactExclusive',
         'post.channelId',
         'post.liveStream',
         'post.streaming',
@@ -98,14 +96,14 @@ export class PostSavedService {
       .leftJoin(
         Contact,
         'contact',
-        'post.userContactExclusive = true AND contact.userId = post.createdById AND contact.contactUserId = :userId',
+        'contact.userId = post.createdById AND contact.contactUserId = :userId',
         { userId },
       )
       .where('savedPost.userId = :userId', { userId })
       .andWhere(
         new Brackets((qb) => {
-          qb.where('post.private = false').orWhere(
-            'post.private = true and post."createdById" = :userId',
+          qb.where('post.public = true').orWhere(
+            'post.public = false and post."createdById" = :userId',
           );
         }),
       )

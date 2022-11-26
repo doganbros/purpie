@@ -18,7 +18,7 @@ import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { booleanValue, tsqueryParam } from 'helpers/utils';
 import { Brackets, MoreThanOrEqual, Repository } from 'typeorm';
-import { PaginationQuery } from 'types/PaginationQuery';
+import { PaginationQuery, PaginationResponse } from 'types/PaginationQuery';
 import { EditPostDto } from '../dto/edit-post.dto';
 import { ListPostFeedQuery } from '../dto/list-post-feed.query';
 import { VideoViewStats } from '../dto/video-view-stats.dto';
@@ -56,7 +56,6 @@ export class PostService {
         'post.startDate',
         'post.type',
         'post.public',
-        'post.private',
         'post.allowReaction',
         'post.allowComment',
       ])
@@ -77,7 +76,7 @@ export class PostService {
       .leftJoin(
         Contact,
         'contact',
-        'post.userContactExclusive = true AND contact.userId = post.createdById AND contact.contactUserId = :userId',
+        'contact.userId = post.createdById AND contact.contactUserId = :userId',
         { userId },
       )
       .where(
@@ -88,8 +87,8 @@ export class PostService {
       )
       .andWhere(
         new Brackets((qb) => {
-          qb.where('post.private = false').orWhere(
-            'post.private = true and post.createdById = :userId',
+          qb.where('post.public = true').orWhere(
+            'post.public = false and post.createdById = :userId',
             {
               userId,
             },
@@ -276,8 +275,8 @@ export class PostService {
       .leftJoin('post.postReaction', 'postReaction')
       .where(
         new Brackets((qb) => {
-          qb.where('post.private = false').orWhere(
-            'post.private = true and post.createdById = :currentUserId',
+          qb.where('post.public = true').orWhere(
+            'post.public = false and post.createdById = :currentUserId',
           );
         }),
       )
@@ -416,7 +415,7 @@ export class PostService {
       .leftJoin(
         Contact,
         'contact',
-        'post.userContactExclusive = true AND contact.userId = post.createdById AND contact.contactUserId = :userId',
+        'contact.userId = post.createdById AND contact.contactUserId = :userId',
         { userId },
       )
       .andWhere(
@@ -467,108 +466,40 @@ export class PostService {
     return baseSelection;
   }
 
-  getPublicUserFeed(
-    currentUserId: number,
-    createdByUserId: number,
-    query: ListPostFeedQuery,
-  ) {
-    return this.getUserFeedSelection(
-      currentUserId,
-      query,
-      true,
-      true,
-      createdByUserId,
-    ).paginate(query);
-  }
-
-  getUserFeed(userId: number, query: ListPostFeedQuery) {
-    return this.getUserFeedSelection(userId, query).paginate(query);
-  }
-
   getPostById(userId: number, postId: number) {
     return this.getUserFeedSelection(userId, {}, true, true)
       .andWhere('post.id = :postId', { postId })
       .getOne();
   }
 
-  baseChannelPosts(query: PaginationQuery, userId: number) {
-    return this.basePost(query, userId)
-      .addSelect([
-        'zone.id',
-        'zone.name',
-        'zone.subdomain',
-        'zone.public',
-        'channel.id',
-        'channel.name',
-        'channel.description',
-        'channel.public',
-      ])
-      .innerJoin('post.channel', 'channel')
-      .innerJoin('channel.zone', 'zone')
-      .leftJoin(
-        UserZone,
-        'user_zone',
-        'user_zone.zoneId = zone.id and user_zone.userId = :userId',
-        { userId },
-      )
-      .leftJoin(
-        UserChannel,
-        'user_channel',
-        'user_channel.channelId = channel.id and user_channel.userId = :userId',
-        { userId },
-      )
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where(
-            new Brackets((qbi) => {
-              qbi
-                .where('zone.public = true')
-                .orWhere('user_zone.id is not null');
-            }),
-          ).andWhere(
-            new Brackets((qbi) => {
-              qbi
-                .where('channel.public = true')
-                .orWhere('user_channel.id is not null');
-            }),
-          );
-        }),
-      );
-  }
+  async getFeedList(
+    query: ListPostFeedQuery,
+    userId: number,
+  ): Promise<PaginationResponse<Post>> {
+    if (query.userId)
+      return this.getUserFeedSelection(
+        query.userId,
+        query,
+        true,
+        true,
+        userId,
+      ).paginate(query);
 
-  getZoneFeed(zoneId: number, userId: number, query: ListPostFeedQuery) {
-    return this.baseChannelPosts(query, userId)
-      .andWhere('channel.zoneId = :zoneId', { zoneId })
-      .paginate(query);
-  }
-
-  getChannelFeed(channelId: number, userId: number, query: PaginationQuery) {
-    return this.baseChannelPosts(query, userId)
-      .andWhere('channel.id = :channelId', { channelId })
-      .paginate(query);
-  }
-
-  async getFeedList(query: ListPostFeedQuery, userId: number) {
-    const result = this.basePost(query, userId);
-
-    if (query.public) result.andWhere('post.public = true');
-    else if (query.userId)
-      result.andWhere('post.public = true').andWhere('post.');
+    if (query.public)
+      return this.basePost(query, userId)
+        .andWhere('post.public = true')
+        .paginate(query);
     if (query.zoneId)
-      result.andWhere('channel.zoneId = :zoneId', { zoneId: query.zoneId });
+      return this.basePost(query, userId)
+        .andWhere('channel.zoneId = :zoneId', { zoneId: query.zoneId })
+        .paginate(query);
     if (query.channelId)
-      result.andWhere('channel.id = :channelId', {
-        channelId: query.channelId,
-      });
-    else await this.getUserFeed(userId, query);
-
-    return result.paginate(query);
-  }
-
-  getPublicFeed(query: PaginationQuery, userId: number) {
-    return this.basePost(query, userId)
-      .andWhere('post.public = true')
-      .paginate(query);
+      return this.basePost(query, userId)
+        .andWhere('channel.id = :channelId', {
+          channelId: query.channelId,
+        })
+        .paginate(query);
+    return this.getUserFeedSelection(userId, query).paginate(query);
   }
 
   async getFeaturedPost(userId: number, currentUserId: number) {
@@ -598,7 +529,6 @@ export class PostService {
     if (payload.title) editPayload.title = payload.title;
     if (payload.description) editPayload.description = payload.description;
     editPayload.public = payload.public;
-    editPayload.userContactExclusive = payload.userContactExclusive;
 
     if (!Object.keys(editPayload).length)
       throw new BadRequestException(

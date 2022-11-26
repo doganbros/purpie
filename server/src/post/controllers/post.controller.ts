@@ -22,7 +22,6 @@ import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
 import { PostService } from '../services/post.service';
 import {
   MixedPostFeedDetail,
-  MixedPostFeedListResponse,
   PublicPostFeedListResponse,
 } from '../response/post-list-feed.response';
 import { ListPostFeedQuery } from '../dto/list-post-feed.query';
@@ -115,74 +114,6 @@ export class PostController {
     @CurrentUser() user: UserTokenPayload,
   ) {
     return this.postService.getFeedList(query, user.id);
-  }
-
-  @Get('/list/feed/public')
-  @ApiOkResponse({
-    description: 'User gets public feed',
-    type: PublicPostFeedListResponse,
-  })
-  @IsAuthenticated()
-  getPublicFeed(
-    @Query() query: ListPostFeedQuery,
-    @CurrentUser() user: UserTokenPayload,
-  ) {
-    return this.postService.getPublicFeed(query, user.id);
-  }
-
-  @Get('/list/feed/public-user/:userId')
-  @ApiOkResponse({
-    description: 'User gets main feed of another user',
-    type: MixedPostFeedListResponse,
-  })
-  @IsAuthenticated()
-  getPublicUserFeed(
-    @Query() query: ListPostFeedQuery,
-    @CurrentUser() user: UserTokenPayload,
-    @Param('userId', ParseIntPipe) userId: number,
-  ) {
-    return this.postService.getPublicUserFeed(user.id, userId, query);
-  }
-
-  @Get('/list/feed/user')
-  @ApiOkResponse({
-    description: 'User gets main feed from channels and from contacts',
-    type: MixedPostFeedListResponse,
-  })
-  @IsAuthenticated()
-  getUserFeed(
-    @Query() query: ListPostFeedQuery,
-    @CurrentUser() user: UserTokenPayload,
-  ) {
-    return this.postService.getUserFeed(user.id, query);
-  }
-
-  @Get('/list/feed/zone/:zoneId')
-  @ApiOkResponse({
-    description: 'User gets feed for a zone from channels of this zone',
-    type: MixedPostFeedListResponse,
-  })
-  @IsAuthenticated()
-  getZoneFeed(
-    @Query() query: ListPostFeedQuery,
-    @CurrentUser() user: UserTokenPayload,
-    @Param('zoneId', ParseIntPipe) zoneId: number,
-  ) {
-    return this.postService.getZoneFeed(zoneId, user.id, query);
-  }
-
-  @Get('/list/feed/channel/:channelId')
-  @ApiOkResponse({
-    description: 'User gets feed for this channel',
-    type: MixedPostFeedListResponse,
-  })
-  @IsAuthenticated()
-  getChannelFeed(
-    @Query() query: ListPostFeedQuery,
-    @CurrentUser() user: UserTokenPayload,
-    @Param('channelId', ParseIntPipe) channelId: number,
-  ) {
-    return this.postService.getChannelFeed(channelId, user.id, query);
   }
 
   @Get('/detail/feed/:postId')

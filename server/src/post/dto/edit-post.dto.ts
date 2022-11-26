@@ -15,8 +15,4 @@ export class EditPostDto {
   @ApiProperty()
   @IsBoolean()
   public?: boolean;
-
-  @ApiProperty()
-  @IsBoolean()
-  userContactExclusive?: boolean;
 }
