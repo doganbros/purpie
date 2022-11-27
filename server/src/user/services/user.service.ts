@@ -24,6 +24,13 @@ import { UpdateProfileDto } from '../dto/update-profile.dto';
 import { UpdateUserPermission } from '../dto/update-permissions.dto';
 import { SystemUserListQuery } from '../dto/system-user-list.query';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import {
+  UserBasicWithToken,
+  UserTokenPayload,
+} from '../../auth/interfaces/user.interface';
+import { MailService } from '../../mail/mail.service';
+
+const { REACT_APP_CLIENT_HOST = '' } = process.env;
 
 @Injectable()
 export class UserService {
@@ -45,6 +52,7 @@ export class UserService {
     @InjectRepository(BlockedUser)
     private blockedUserRepository: Repository<BlockedUser>,
     private authService: AuthService,
+    private mailService: MailService,
   ) {}
 
   async createNewContact(userId: number, contactUserId: number) {
@@ -119,7 +127,7 @@ export class UserService {
       .paginate(query);
   }
 
-  async createNewContactInvitation(email: string, createdById: number) {
+  async createNewContactInvitation(email: string, user: UserTokenPayload) {
     const existing = await this.invitationRepository
       .createQueryBuilder('invitation')
       .innerJoin('invitation.createdBy', 'createdBy')
@@ -130,7 +138,7 @@ export class UserService {
           qb.where('createdBy.email = :email', {
             email,
           }).andWhere('invitee.id = :createdById', {
-            createdById,
+            createdById: user.id,
           });
         }),
       )
@@ -139,7 +147,7 @@ export class UserService {
           qb.where('invitee.email = :email', {
             email,
           }).andWhere('createdBy.id = :createdById', {
-            createdById,
+            createdById: user.id,
           });
         }),
       )
@@ -156,12 +164,34 @@ export class UserService {
         'You have already been invited by this user already',
       );
 
-    return this.invitationRepository
+    const result = this.invitationRepository
       .create({
-        createdById,
+        createdById: user.id,
         email,
       })
       .save();
+    const userInfo = await this.authService.verifyResendMailVerificationToken(
+      user.id,
+    );
+
+    await this.sendContactInvitationMail(userInfo);
+    return result;
+  }
+
+  sendContactInvitationMail({
+    user: { fullName, email },
+    token,
+  }: UserBasicWithToken) {
+    const context = {
+      fullName,
+      link: `${REACT_APP_CLIENT_HOST}/invitation-response/${token}`,
+    };
+    return this.mailService.sendMailByView(
+      email,
+      'Purpie Invitation',
+      'purpie-invite',
+      context,
+    );
   }
 
   listContactInvitations(userId: number, query: PaginationQuery) {

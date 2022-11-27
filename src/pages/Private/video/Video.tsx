@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import videojs from 'video.js';
-import { Box, Button, Layer, Menu, Text } from 'grommet';
+import { Box, Button, Menu, Text } from 'grommet';
 import {
   AddCircle,
   Chat as ChatIcon,
@@ -41,6 +41,8 @@ import {
   matchDescriptionTags,
 } from '../../../helpers/utils';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
+import { DELAY_TIME } from '../../../helpers/constants';
+import useDelayTime from '../../../hooks/useDelayTime';
 
 interface RouteParams {
   id: string;
@@ -68,6 +70,8 @@ const Video: FC = () => {
   const startedFrom = useRef(0);
 
   const player = useRef<videojs.Player | null>(null);
+
+  const { delay } = useDelayTime(DELAY_TIME);
 
   const maybeSendViewStat = () => {
     if (previousTime.current > startedFrom.current) {
@@ -189,10 +193,10 @@ const Video: FC = () => {
         )
       }
     >
-      {loading || !data ? (
-        <Layer responsive={false} plain>
-          <PurpieLogoAnimated width={50} height={50} color="#956aea" />
-        </Layer>
+      {delay || loading || !data ? (
+        <Box height="100vh" justify="center" align="center">
+          <PurpieLogoAnimated width={100} height={100} color="#956aea" />
+        </Box>
       ) : (
         <Box gap="large" pad={{ vertical: 'medium' }}>
           <Box>

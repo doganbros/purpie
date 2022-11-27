@@ -309,8 +309,8 @@ const Chat: React.FC<Props> = ({
 
   if (!messages)
     return (
-      <Box>
-        <PurpieLogoAnimated width={50} height={50} color="#956aea" />
+      <Box justify="center" align="center" height="large">
+        <PurpieLogoAnimated width={70} height={70} color="#956aea" />
       </Box>
     );
 

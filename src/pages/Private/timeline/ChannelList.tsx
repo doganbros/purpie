@@ -11,7 +11,12 @@ import InitialsAvatar from '../../../components/utils/InitialsAvatar';
 import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
-const ChannelList: FC = () => {
+interface ChannelListProps {
+  handleWaiting?: () => void;
+}
+const ChannelList: FC<ChannelListProps> = ({
+  handleWaiting,
+}: ChannelListProps) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const {
@@ -44,6 +49,7 @@ const ChannelList: FC = () => {
           userChannelsFiltered.data.map((c) => (
             <Box
               onClick={() => {
+                handleWaiting?.();
                 if (c.channel.id === selectedChannel?.channel.id)
                   dispatch(unsetSelectedChannelAction());
                 else dispatch(setSelectedChannelAction(c));

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { FC, useContext, useEffect, useState } from 'react';
 import {
   Box,
@@ -34,6 +35,8 @@ import { LoadingState } from '../../../models/utils';
 import InvitationList from './InvitationList';
 import i18n from '../../../config/i18n/i18n-config';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
+import { DELAY_TIME } from '../../../helpers/constants';
+import useWaitTime from '../../../hooks/useDelayTime';
 
 const tabs = [
   {
@@ -63,6 +66,12 @@ const Timeline: FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+
+  const { delay, setDelay } = useWaitTime(DELAY_TIME);
+
+  const handleWaiting = () => {
+    setDelay(true);
+  };
   const {
     post: { feed },
     zone: { selectedUserZone },
@@ -124,13 +133,22 @@ const Timeline: FC = () => {
 
   const getTimelineContent = () => {
     if (
-      [LoadingState.loading, LoadingState.pending].includes(feed.loadingState)
+      [LoadingState.loading, LoadingState.pending].includes(
+        feed.loadingState
+      ) ||
+      delay
     )
       return (
-        <Box justify="center" align="center" alignSelf="center" height="100%">
-          <PurpieLogoAnimated width={50} height={50} color="#956aea" />
+        <Box
+          justify="center"
+          align="center"
+          alignSelf="center"
+          height="medium"
+          pad={{ top: 'large' }}
+        >
+          <PurpieLogoAnimated width={100} height={100} color="#956aea" />
         </Box>
-      ); // We can return a loader component later
+      );
 
     if (!feed.data.length)
       return <EmptyFeedContent onAddContent={() => setShowAddContent(true)} />;
@@ -177,7 +195,7 @@ const Timeline: FC = () => {
           <LastActivities />
         </Box>
       }
-      topComponent={<ChannelList />}
+      topComponent={<ChannelList handleWaiting={handleWaiting} />}
     >
       {showAddContent && (
         <AddContent onDismiss={() => setShowAddContent(false)} />
@@ -190,6 +208,7 @@ const Timeline: FC = () => {
               <Button
                 key={`timelineTab${tab.id}`}
                 onClick={() => {
+                  setDelay(true);
                   setActiveTab(tab.id);
                 }}
               >
