@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Box, Text } from 'grommet';
 import { UserBasic } from '../../../store/types/auth.types';
-import InitialsAvatar from '../../utils/InitialsAvatar';
+import { UserAvatar } from '../../utils/Avatars/UserAvatar';
 
 interface Props {
   user: UserBasic;
@@ -22,7 +22,7 @@ const UserItem: FC<Props> = ({ user, onClick }) => {
       pad={{ vertical: 'xsmall', horizontal: 'small' }}
     >
       <Box flex={{ shrink: 0 }}>
-        <InitialsAvatar size="small" id={user.id} value={user.fullName} />
+        <UserAvatar size="small" id={user.id} name={user.fullName} />
       </Box>
       <Box>
         <Text

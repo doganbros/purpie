@@ -42,12 +42,12 @@ export interface ProfileSearchParams extends ProfileSearchOptions {
 export interface ContactUser {
   id: number;
   createdOn: Date;
-  contactUser: UserBasic;
+  contactUser: User;
 }
 
 export interface UserState {
   search: {
-    results: PaginatedResponse<UserBasic>;
+    results: PaginatedResponse<User>;
     loading: boolean;
     error: ResponseError | null;
   };

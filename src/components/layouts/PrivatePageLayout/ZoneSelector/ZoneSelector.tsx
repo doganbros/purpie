@@ -10,11 +10,12 @@ import Divider from './Divider';
 import { openCreateZoneLayerAction } from '../../../../store/actions/zone.action';
 import { openCreateChannelLayerAction } from '../../../../store/actions/channel.action';
 import { logoutAction } from '../../../../store/actions/auth.action';
-import InitialsAvatar from '../../../utils/InitialsAvatar';
 import ListButton from '../../../utils/ListButton';
 import EllipsesOverflowText from '../../../utils/EllipsesOverflowText';
 import ExtendedBox from '../../../utils/ExtendedBox';
 import ZoneDropTheme from './ZoneDropTheme';
+import { UserAvatar } from '../../../utils/Avatars/UserAvatar';
+import { ZoneAvatar } from '../../../utils/Avatars/ZoneAvatar';
 
 const ZoneSelector: FC = () => {
   const { t } = useTranslation();
@@ -54,9 +55,9 @@ const ZoneSelector: FC = () => {
                 }}
                 leftIcon={
                   user && (
-                    <InitialsAvatar
+                    <UserAvatar
                       id={user.id}
-                      value={user.fullName}
+                      name={user.fullName}
                       size="small"
                       textProps={{ size: 'xsmall', weight: 'normal' }}
                     />
@@ -73,9 +74,9 @@ const ZoneSelector: FC = () => {
                       navigateToSubdomain(z.zone.subdomain);
                     }}
                     leftIcon={
-                      <InitialsAvatar
+                      <ZoneAvatar
                         id={z.zone.id}
-                        value={z.zone.name}
+                        name={z.zone.name}
                         size="small"
                         textProps={{ size: 'xsmall', weight: 'normal' }}
                       />
@@ -149,12 +150,12 @@ const ZoneSelector: FC = () => {
               boxShadow="inset 0px 0px 15px 0.6px rgba(255, 255, 255, 0.2)"
             >
               {selectedUserZone ? (
-                <InitialsAvatar
+                <ZoneAvatar
                   id={selectedUserZone.zone.id}
-                  value={selectedUserZone.zone.name}
+                  name={selectedUserZone.zone.name}
                 />
               ) : (
-                user && <InitialsAvatar id={user.id} value={user.fullName} />
+                user && <UserAvatar id={user.id} name={user.fullName} />
               )}
               <Box align="center">
                 <EllipsesOverflowText

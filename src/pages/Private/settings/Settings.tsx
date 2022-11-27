@@ -163,7 +163,7 @@ const Settings: FC = () => {
   };
 
   return (
-    <Box height={{ min: '95vh', max: '100vh' }} overflow="hidden">
+    <Box>
       <Box flex={{ grow: 1 }}>
         <Box
           direction="row"
@@ -236,14 +236,18 @@ const Settings: FC = () => {
               </Text>
             </Box>
           </Box>
-          <Box
-            flex="grow"
-            round="medium"
-            pad="medium"
-            height="80vh"
-            overflow="auto"
-          >
-            {renderSettings()}
+          <Box justify="center" fill="horizontal" align="center">
+            <Box
+              flex="grow"
+              round="medium"
+              pad="medium"
+              height="80vh"
+              overflow="auto"
+              fill="horizontal"
+              width={{ max: '1440px' }}
+            >
+              {renderSettings()}
+            </Box>
           </Box>
         </Box>
       </Box>

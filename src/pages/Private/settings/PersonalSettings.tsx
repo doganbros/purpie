@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Button, Text, TextInput } from 'grommet';
-import { Hide, View } from 'grommet-icons';
+import { Box, Button, Stack, Text, TextInput } from 'grommet';
+import { Edit, Hide, View } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
@@ -10,7 +10,7 @@ import {
   changeProfilePicture,
 } from '../../../store/actions/auth.action';
 import AvatarUpload from './AvatarUpload';
-import { UserAvatar } from '../../../components/Avatars/UserAvatar';
+import { UserAvatar } from '../../../components/utils/Avatars/UserAvatar';
 
 const PersonalSettings: () => SettingsData | null = () => {
   const {
@@ -41,15 +41,24 @@ const PersonalSettings: () => SettingsData | null = () => {
     avatarWidget: (
       <>
         <Box direction="row" gap="small" align="center">
-          <UserAvatar
-            src={user?.displayPhoto}
-            title={user.fullName}
-            onClickEdit={() => setShowAvatarUpload(true)}
-            subtitle={user.userName}
-            id={1}
-            outerCircle
-            editAvatar
-          />
+          <Stack anchor="top-right" onClick={() => setShowAvatarUpload(true)}>
+            <Box
+              round="full"
+              border={{ color: '#F2F2F2', size: 'medium' }}
+              wrap
+              justify="center"
+              pad="5px"
+            >
+              <UserAvatar
+                src={user?.displayPhoto}
+                name={user.fullName}
+                id={1}
+              />
+            </Box>
+            <Box background="#6FFFB0" round pad="xsmall">
+              <Edit size="small" />
+            </Box>
+          </Stack>
           <Box>
             <Text>{user.fullName}</Text>
             <Text color="#8F9BB3">{user.userName}</Text>

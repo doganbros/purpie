@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Avatar, AvatarExtendedProps, Text, TextExtendedProps } from 'grommet';
-import { getColorPairFromId } from '../../helpers/utils';
+import { getColorPairFromId } from '../../../helpers/utils';
 
 interface InitialsAvatarProps extends Omit<AvatarExtendedProps, 'id'> {
   id: number;

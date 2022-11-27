@@ -6,10 +6,10 @@ import {
   SUGGESTION_AMOUNT_LESS,
   SUGGESTION_AMOUNT_MORE,
 } from '../../../helpers/constants';
-import InitialsAvatar from '../../../components/utils/InitialsAvatar';
 import { searchProfileAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { createContactInvitation } from '../../../store/actions/activity.action';
+import { UserAvatar } from '../../../components/utils/Avatars/UserAvatar';
 
 const ContactsToFollow: FC = () => {
   const { t } = useTranslation();
@@ -63,7 +63,11 @@ const ContactsToFollow: FC = () => {
           results.data.slice(0, displayCount).map((user) => (
             <Box direction="row" justify="between" align="center" key={user.id}>
               <Box direction="row" align="center" gap="small">
-                <InitialsAvatar id={user.id} value={user.fullName} />
+                <UserAvatar
+                  id={user.id}
+                  name={user.fullName}
+                  src={user.displayPhoto}
+                />
                 <Box>
                   <Text size="small" weight={500} color="dark">
                     {user.fullName}

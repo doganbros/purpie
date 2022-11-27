@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Box, CheckBox, DropButton, Grid, Text, TextInput } from 'grommet';
+import { Box, DropButton, Stack, Text, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
-import { CaretDownFill, CaretRightFill } from 'grommet-icons';
+import { CaretDownFill, CaretRightFill, Edit } from 'grommet-icons';
 import { useTranslation } from 'react-i18next';
 import ListButton from '../../../components/utils/ListButton';
-import SectionContainer from '../../../components/utils/SectionContainer';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { UpdateZonePayload } from '../../../store/types/zone.types';
 import { SettingsData } from './types';
@@ -13,7 +12,7 @@ import {
   changeZonePhoto,
 } from '../../../store/actions/zone.action';
 import AvatarUpload from './AvatarUpload';
-import { ZoneAvatar } from '../../../components/Avatars/ZoneAvatar';
+import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
 
 const ZoneSettings: () => SettingsData | null = () => {
   const {
@@ -37,13 +36,7 @@ const ZoneSettings: () => SettingsData | null = () => {
     id: userZones?.[0]?.zone?.id || 0,
     public: userZones?.[0]?.zone?.public || false,
   });
-  const [zonePermissions, setZonePermissions] = useState({
-    canInvite: userZones?.[0]?.zoneRole?.canInvite,
-    canDelete: userZones?.[0]?.zoneRole?.canDelete,
-    canEdit: userZones?.[0]?.zoneRole?.canEdit,
-    canManageRole: userZones?.[0]?.zoneRole?.canManageRole,
-    canCreateChannel: userZones?.[0]?.zoneRole?.canDelete,
-  });
+
   if (userZones?.length === 0) {
     return {
       id: 2,
@@ -88,14 +81,24 @@ const ZoneSettings: () => SettingsData | null = () => {
     avatarWidget: (
       <Box direction="row" gap="small">
         {!showZoneSelector && (
-          <ZoneAvatar
-            id={1}
-            title={userZones?.[selectedUserZoneIndex]?.zone?.name}
-            src={userZones?.[selectedUserZoneIndex]?.zone?.displayPhoto}
-            onClickEdit={() => setShowAvatarUpload(true)}
-            outerCircle
-            editAvatar
-          />
+          <Stack anchor="top-right" onClick={() => setShowAvatarUpload(true)}>
+            <Box
+              round={{ size: 'medium' }}
+              border={{ color: '#F2F2F2', size: 'medium' }}
+              wrap
+              justify="center"
+              pad="5px"
+            >
+              <ZoneAvatar
+                id={userZones?.[selectedUserZoneIndex]?.zone?.id || 1}
+                name={userZones?.[selectedUserZoneIndex]?.zone?.name}
+                src={userZones?.[selectedUserZoneIndex]?.zone?.displayPhoto}
+              />
+            </Box>
+            <Box background="#6FFFB0" round pad="xsmall">
+              <Edit size="small" />
+            </Box>
+          </Stack>
         )}
         <DropButton
           dropProps={{
@@ -123,8 +126,8 @@ const ZoneSettings: () => SettingsData | null = () => {
                   }}
                   leftIcon={
                     <ZoneAvatar
-                      id={Math.floor(Math.random() * 100)}
-                      title={item.zone.name}
+                      id={item.zone.id}
+                      name={item.zone.name}
                       src={item.zone.displayPhoto}
                       outerCircle
                     />
@@ -256,133 +259,6 @@ const ZoneSettings: () => SettingsData | null = () => {
               }
             />
           </Box>
-        ),
-      },
-
-      {
-        key: 'zoneManageRole',
-        title: t('settings.permissions'),
-        description: '',
-        value: 'value',
-        component: (
-          <SectionContainer label="User Permissions">
-            <Grid
-              rows={['xxsmall', 'xxsmall', 'xxsmall']}
-              columns={['medium', 'medium']}
-              gap="small"
-              justifyContent="between"
-            >
-              <Box
-                align="center"
-                direction="row"
-                gap="xsmall"
-                focusIndicator={false}
-                justify="between"
-                onClick={() =>
-                  setZonePermissions({
-                    ...zonePermissions,
-                    canManageRole: !zonePermissions.canManageRole,
-                  })
-                }
-              >
-                <Text>{t('settings.canManageRole')}</Text>
-                <CheckBox checked={zonePermissions.canManageRole} />
-              </Box>
-              <Box
-                align="center"
-                justify="between"
-                direction="row"
-                gap="xsmall"
-                focusIndicator={false}
-                onClick={() =>
-                  setZonePermissions({
-                    ...zonePermissions,
-                    canEdit: !zonePermissions.canEdit,
-                  })
-                }
-              >
-                <Text>{t('settings.canEdit')}</Text>
-                <CheckBox checked={zonePermissions.canEdit} />
-              </Box>
-              <Box
-                align="center"
-                justify="between"
-                direction="row"
-                gap="xsmall"
-                focusIndicator={false}
-                onClick={() =>
-                  setZonePermissions({
-                    ...zonePermissions,
-                    canDelete: !zonePermissions.canDelete,
-                  })
-                }
-              >
-                <Text>{t('settings.canDelete')}</Text>
-                <CheckBox checked={zonePermissions.canDelete} />
-              </Box>
-
-              <Box
-                align="center"
-                justify="between"
-                direction="row"
-                gap="xsmall"
-                focusIndicator={false}
-                onClick={() =>
-                  setZonePermissions({
-                    ...zonePermissions,
-                    canInvite: !zonePermissions.canInvite,
-                  })
-                }
-              >
-                <Text>{t('settings.canInvite')}</Text>
-                <CheckBox checked={zonePermissions.canInvite} />
-              </Box>
-              <Box
-                align="center"
-                justify="between"
-                direction="row"
-                gap="xsmall"
-                focusIndicator={false}
-                onClick={() =>
-                  setZonePermissions({
-                    ...zonePermissions,
-                    canCreateChannel: !zonePermissions.canCreateChannel,
-                  })
-                }
-              >
-                <Text>{t('settings.canCreateChannel')}</Text>
-                <CheckBox checked={zonePermissions.canCreateChannel} />
-              </Box>
-            </Grid>
-          </SectionContainer>
-        ),
-      },
-      {
-        key: 'zonePublic',
-        title: '',
-        description: '',
-        value: 'value',
-        component: (
-          <SectionContainer label={t('settings.zoneVisibility')}>
-            <Grid rows={['xxsmall']} columns={['medium', 'medium']} gap="small">
-              <Box
-                align="center"
-                justify="between"
-                direction="row"
-                gap="xsmall"
-                focusIndicator={false}
-                onClick={() =>
-                  setZonePayload({
-                    ...zonePayload,
-                    public: !zonePayload.public,
-                  })
-                }
-              >
-                <Text>{t('settings.public')}</Text>
-                <CheckBox checked={zonePayload.public} />
-              </Box>
-            </Grid>
-          </SectionContainer>
         ),
       },
     ],

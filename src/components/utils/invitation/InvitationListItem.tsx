@@ -2,11 +2,11 @@ import React, { FC, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, Text } from 'grommet';
 import { useTranslation } from 'react-i18next';
-import InitialsAvatar from '../InitialsAvatar';
 import { InvitationListItem as InvitationListItemType } from '../../../store/types/activity.types';
 import { InvitationResponseType, InvitationType } from '../../../models/utils';
 import { responseInvitationActions } from '../../../store/actions/activity.action';
 import { AppState } from '../../../store/reducers/root.reducer';
+import { UserAvatar } from '../Avatars/UserAvatar';
 
 interface InvitationListItemProps {
   invitation: InvitationListItemType;
@@ -63,9 +63,10 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
       </Text>
       <Box direction="row" justify="between" align="center">
         <Box direction="row" align="center" gap="small">
-          <InitialsAvatar
+          <UserAvatar
             id={invitation.createdBy.id}
-            value={invitation.createdBy.fullName}
+            name={invitation.createdBy.fullName}
+            src={invitation.createdBy.displayPhoto}
           />
           <Box>
             <Text size="small" weight={500} color="#202631">
