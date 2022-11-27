@@ -33,8 +33,8 @@ export class VideoService {
     channelId: number,
   ): Promise<UserChannel> {
     const userChannel = await this.userChannelRepository.findOne({
-      channelId,
-      userId,
+      where: { channelId, userId },
+      relations: ['channel'],
     });
     if (!userChannel)
       throw new NotFoundException(

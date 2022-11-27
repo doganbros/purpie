@@ -1,8 +1,5 @@
 import {
   ADD_POST_SUCCESS,
-  CHANNEL_FEED_FAILED,
-  CHANNEL_FEED_REQUESTED,
-  CHANNEL_FEED_SUCCESS,
   CLOSE_CREATE_VIDEO_LAYER,
   CREATE_POST_COMMENT_FAILED,
   CREATE_POST_COMMENT_LIKE_FAILED,
@@ -19,6 +16,9 @@ import {
   CREATE_VIDEO_FAILED,
   CREATE_VIDEO_REQUESTED,
   CREATE_VIDEO_SUCCESS,
+  FEED_FAILED,
+  FEED_REQUESTED,
+  FEED_SUCCESS,
   GET_FEATURED_POST_FAILED,
   GET_FEATURED_POST_REQUESTED,
   GET_FEATURED_POST_SUCCESS,
@@ -32,9 +32,6 @@ import {
   POST_DETAIL_FAILED,
   POST_DETAIL_REQUESTED,
   POST_DETAIL_SUCCESS,
-  PUBLIC_FEED_FAILED,
-  PUBLIC_FEED_REQUESTED,
-  PUBLIC_FEED_SUCCESS,
   REMOVE_POST_COMMENT_FAILED,
   REMOVE_POST_COMMENT_LIKE_FAILED,
   REMOVE_POST_COMMENT_LIKE_REQUESTED,
@@ -62,12 +59,6 @@ import {
   UPDATE_POST_DETAIL_FAILED,
   UPDATE_POST_DETAIL_REQUESTED,
   UPDATE_POST_DETAIL_SUCCESS,
-  USER_FEED_FAILED,
-  USER_FEED_REQUESTED,
-  USER_FEED_SUCCESS,
-  ZONE_FEED_FAILED,
-  ZONE_FEED_REQUESTED,
-  ZONE_FEED_SUCCESS,
 } from '../constants/post.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
@@ -150,9 +141,14 @@ export interface FeedPayload {
   skip?: number;
   postType?: PostType;
   streaming?: boolean;
+  following?: boolean;
   sortBy?: 'time' | 'popularity';
   sortDirection?: 'ASC' | 'DESC';
   tags?: string;
+  public?: boolean;
+  userId?: number;
+  zoneId?: number;
+  channelId?: number;
 }
 
 export interface PostSearchOptions {
@@ -220,20 +216,8 @@ export interface PostState {
 
 export type PostActionParams =
   | {
-      type: typeof PUBLIC_FEED_REQUESTED | typeof USER_FEED_REQUESTED;
+      type: typeof FEED_REQUESTED;
       payload: FeedPayload;
-    }
-  | {
-      type: typeof CHANNEL_FEED_REQUESTED;
-      payload: FeedPayload & {
-        channelId: number;
-      };
-    }
-  | {
-      type: typeof ZONE_FEED_REQUESTED;
-      payload: FeedPayload & {
-        zoneId: number;
-      };
     }
   | {
       type: typeof GET_FEATURED_POST_REQUESTED;
@@ -326,11 +310,7 @@ export type PostActionParams =
       payload: PaginatedResponse<PostComment> & { parentId: number };
     }
   | {
-      type:
-        | typeof PUBLIC_FEED_SUCCESS
-        | typeof USER_FEED_SUCCESS
-        | typeof CHANNEL_FEED_SUCCESS
-        | typeof ZONE_FEED_SUCCESS;
+      type: typeof FEED_SUCCESS;
       payload: PaginatedResponse<Post>;
     }
   | { type: typeof SAVED_POSTS_SUCCESS; payload: PaginatedResponse<SavedPost> }
@@ -363,10 +343,7 @@ export type PostActionParams =
     }
   | {
       type:
-        | typeof PUBLIC_FEED_FAILED
-        | typeof USER_FEED_FAILED
-        | typeof ZONE_FEED_FAILED
-        | typeof CHANNEL_FEED_FAILED
+        | typeof FEED_FAILED
         | typeof POST_DETAIL_FAILED
         | typeof CREATE_VIDEO_FAILED
         | typeof CREATE_POST_LIKE_FAILED

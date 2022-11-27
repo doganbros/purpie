@@ -7,7 +7,7 @@ import PostGridItem from '../../../components/post/PostGridItem';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
   createPostSaveAction,
-  getUserFeedAction,
+  getFeedListAction,
   removePostSaveAction,
 } from '../../../store/actions/post.action';
 import GradientScroll from '../../../components/utils/GradientScroll';
@@ -21,7 +21,7 @@ const RecommendedVideos: FC = () => {
   } = useSelector((state: AppState) => state);
 
   const getFeed = (skip?: number) => {
-    dispatch(getUserFeedAction({ skip }));
+    dispatch(getFeedListAction({ skip }));
   };
 
   useEffect(() => {

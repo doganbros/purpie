@@ -380,6 +380,51 @@ export class PostService {
     return builder;
   }
 
+  baseChannelPosts(query: PaginationQuery, userId: number) {
+    return this.basePost(query, userId)
+      .addSelect([
+        'zone.id',
+        'zone.name',
+        'zone.subdomain',
+        'zone.public',
+        'channel.id',
+        'channel.name',
+        'channel.description',
+        'channel.public',
+      ])
+      .innerJoin('post.channel', 'channel')
+      .innerJoin('channel.zone', 'zone')
+      .leftJoin(
+        UserZone,
+        'user_zone',
+        'user_zone.zoneId = zone.id and user_zone.userId = :userId',
+        { userId },
+      )
+      .leftJoin(
+        UserChannel,
+        'user_channel',
+        'user_channel.channelId = channel.id and user_channel.userId = :userId',
+        { userId },
+      )
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            new Brackets((qbi) => {
+              qbi
+                .where('zone.public = true')
+                .orWhere('user_zone.id is not null');
+            }),
+          ).andWhere(
+            new Brackets((qbi) => {
+              qbi
+                .where('channel.public = true')
+                .orWhere('user_channel.id is not null');
+            }),
+          );
+        }),
+      );
+  }
+
   getUserFeedSelection(
     userId: number,
     query: Partial<ListPostFeedQuery>,
@@ -490,15 +535,16 @@ export class PostService {
         .andWhere('post.public = true')
         .paginate(query);
     if (query.zoneId)
-      return this.basePost(query, userId)
+      return this.baseChannelPosts(query, userId)
         .andWhere('channel.zoneId = :zoneId', { zoneId: query.zoneId })
         .paginate(query);
     if (query.channelId)
-      return this.basePost(query, userId)
+      return this.baseChannelPosts(query, userId)
         .andWhere('channel.id = :channelId', {
           channelId: query.channelId,
         })
         .paginate(query);
+
     return this.getUserFeedSelection(userId, query).paginate(query);
   }
 
