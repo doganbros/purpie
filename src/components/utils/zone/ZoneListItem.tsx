@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { joinZoneAction } from '../../../store/actions/zone.action';
-import InitialsAvatar from '../InitialsAvatar';
 import EllipsesOverflowText from '../EllipsesOverflowText';
+import { ZoneAvatar } from '../Avatars/ZoneAvatar';
 
 interface ZoneListItemProps {
   id: number;
@@ -34,7 +34,7 @@ const ZoneListItem: FC<ZoneListItemProps> = ({
   return (
     <Box direction="row" justify="between" align="center">
       <Box direction="row" align="center" gap="small">
-        <InitialsAvatar id={id} value={name} />
+        <ZoneAvatar id={id} name={name} />
         <Box>
           <EllipsesOverflowText
             maxWidth="212px"

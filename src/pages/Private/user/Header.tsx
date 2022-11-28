@@ -1,6 +1,6 @@
 import { Box, Text } from 'grommet';
 import React, { FC } from 'react';
-import InitialsAvatar from '../../../components/utils/InitialsAvatar';
+import { UserAvatar } from '../../../components/utils/Avatars/UserAvatar';
 import { User } from '../../../store/types/auth.types';
 
 interface HeaderProps {
@@ -9,11 +9,10 @@ interface HeaderProps {
 
 const Header: FC<HeaderProps> = ({ user }) => (
   <Box flex="grow" direction="row" align="center" gap="small">
-    <InitialsAvatar
+    <UserAvatar
       id={user.id}
-      value={user.fullName}
+      name={user.fullName}
       size="70px"
-      round="full"
       textProps={{
         size: '25px',
       }}

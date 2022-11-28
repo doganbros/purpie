@@ -5,7 +5,6 @@ import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { ChatAttachment, ChatMessage } from '../../store/types/chat.types';
-import InitialsAvatar from '../utils/InitialsAvatar';
 import { AppState } from '../../store/reducers/root.reducer';
 import {
   LeftShadowBox,
@@ -17,6 +16,7 @@ import {
   UploadedImage,
   UploadedImageContainer,
 } from './components/ChatComponentsStyle';
+import { UserAvatar } from '../utils/Avatars/UserAvatar';
 
 interface Props {
   message: ChatMessage;
@@ -110,13 +110,14 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
               round="xlarge"
               border={{ color: '#E4E9F2', size: 'small' }}
             >
-              <InitialsAvatar
+              <UserAvatar
                 size="medium"
                 textProps={{
                   size: 'small',
                 }}
                 id={message.createdBy.id}
-                value={message.createdBy.fullName}
+                name={message.createdBy.fullName}
+                src={message.createdBy.displayPhoto}
               />
             </Box>
             <Box

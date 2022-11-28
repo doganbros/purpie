@@ -3,9 +3,9 @@ import React, { FC } from 'react';
 import ExtendedBox from '../../../utils/ExtendedBox';
 import LogoWhite from '../../../../assets/purpie-logo/logo-white.svg';
 import Sidebar from '../Sidebar';
-import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import GradientScroll from '../../../utils/GradientScroll';
 import Divider from '../../../utils/Divider';
+import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
 
 interface Props {

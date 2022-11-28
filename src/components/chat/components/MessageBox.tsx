@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { ChatMessage } from '../../../store/types/chat.types';
 import { useThrottle } from '../../../hooks/useThrottle';
-import InitialsAvatar from '../../utils/InitialsAvatar';
 import { User } from '../../../store/types/auth.types';
 import MessageFiles from './MessageFiles';
 import MessageAttachments from './MessageAttachments';
@@ -12,6 +11,7 @@ import MessageTextArea from './MessageTextArea';
 import { getFileKey } from '../../../helpers/utils';
 import { SendButton, SendButtonContainer } from './ChatComponentsStyle';
 import { searchProfileAction } from '../../../store/actions/user.action';
+import { UserAvatar } from '../../utils/Avatars/UserAvatar';
 
 interface Props {
   name?: string;
@@ -114,7 +114,7 @@ const MessageBox: FC<Props> = ({
     >
       {user && (
         <Box flex={{ shrink: 0 }}>
-          <InitialsAvatar size="medium" id={user.id} value={user.fullName} />
+          <UserAvatar size="medium" id={user.id} name={user.fullName} />
         </Box>
       )}
       <Box

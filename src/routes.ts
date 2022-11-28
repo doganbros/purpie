@@ -4,6 +4,7 @@ import Channels from './pages/Private/channels/Channels';
 import Contacts from './pages/Private/contacts/Contacts';
 import Saved from './pages/Private/saved/Saved';
 import Search from './pages/Private/search/Search';
+import Settings from './pages/Private/settings/Settings';
 import Timeline from './pages/Private/timeline/Timeline';
 import User from './pages/Private/user/User';
 import Video from './pages/Private/video/Video';
@@ -57,12 +58,6 @@ export const publicRoutes: Array<AppRoute> = [
     path: '/auth/:name',
     component: ThirdPartyAuth,
     description: 'User Authenticates with third party',
-  },
-  {
-    id: nanoid(),
-    path: '/reset-password/:token',
-    component: ResetPassword,
-    description: 'User resets after redirected from email',
   },
   {
     id: nanoid(),
@@ -120,6 +115,18 @@ export const privateRoutes: Array<AppRoute> = [
     path: '/user/:userName',
     component: User,
     description: 'User view a profile',
+  },
+  {
+    id: nanoid(),
+    path: '/settings',
+    component: Settings,
+    description: 'Settings',
+  },
+  {
+    id: nanoid(),
+    path: '/reset-password/:token',
+    component: ResetPassword,
+    description: 'User resets after redirected from email',
   },
   {
     id: nanoid(),

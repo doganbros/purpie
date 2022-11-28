@@ -1,6 +1,7 @@
-import { http } from '../../config/http';
-import { PaginatedResponse } from '../../models/paginated-response';
+import { serialize } from 'object-to-formdata';
 import {
+  ZoneBasic,
+  ZoneRole,
   CreateZonePayload,
   UpdateZonePayload,
   UserZoneDetail,
@@ -8,6 +9,8 @@ import {
   ZoneListItem,
   ZoneSearchParams,
 } from '../types/zone.types';
+import { http } from '../../config/http';
+import { PaginatedResponse } from '../../models/paginated-response';
 
 export const createZone = (zone: CreateZonePayload): Promise<any> =>
   http.post('/zone/create', zone).then((res) => res.data);
@@ -43,3 +46,20 @@ export const searchZone = (
   params: ZoneSearchParams
 ): Promise<PaginatedResponse<ZoneListItem>> =>
   http.get(`/zone/search`, { params }).then((res) => res.data);
+
+export const changeZonePic = (photoFile: File, zoneId: number): Promise<any> =>
+  http
+    .put(`zone/${zoneId}/display-photo`, serialize(photoFile))
+    .then((res) => res.data);
+
+export const changeZoneInfo = (
+  zoneId: number,
+  params: ZoneBasic
+): Promise<any> =>
+  http.put(`zone/update/${zoneId}`, params).then((res) => res.data);
+
+export const changeZonePermissions = (
+  zoneId: number,
+  params: ZoneRole
+): Promise<any> =>
+  http.put(`zone/permissions/update/${zoneId}`, params).then((res) => res.data);

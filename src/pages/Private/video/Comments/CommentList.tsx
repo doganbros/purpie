@@ -2,12 +2,12 @@ import React, { FC, useEffect } from 'react';
 import { Box, InfiniteScroll, Stack, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import InitialsAvatar from '../../../../components/utils/InitialsAvatar';
 import { listPostCommentsAction } from '../../../../store/actions/post.action';
 import { AppState } from '../../../../store/reducers/root.reducer';
 import CommentBase from './CommentBase';
 import Input from './Input';
 import Replies from './Replies';
+import { UserAvatar } from '../../../../components/utils/Avatars/UserAvatar';
 
 interface CommentsProps {
   postId: number;
@@ -58,7 +58,7 @@ const CommentList: FC<CommentsProps> = ({ postId }) => {
                   )}
                 </Box>
               </Box>
-              <InitialsAvatar id={item.user.id} value={item.user.fullName} />
+              <UserAvatar id={item.user.id} name={item.user.fullName} />
             </Stack>
           )}
         </InfiniteScroll>

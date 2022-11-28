@@ -2,6 +2,7 @@ import React, { FC, useContext, useState } from 'react';
 import { Box, DropButton, ResponsiveContext } from 'grommet';
 import { Add, SettingsOption } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
 import { AppState } from '../../../../store/reducers/root.reducer';
@@ -9,11 +10,12 @@ import Divider from './Divider';
 import { openCreateZoneLayerAction } from '../../../../store/actions/zone.action';
 import { openCreateChannelLayerAction } from '../../../../store/actions/channel.action';
 import { logoutAction } from '../../../../store/actions/auth.action';
-import InitialsAvatar from '../../../utils/InitialsAvatar';
 import ListButton from '../../../utils/ListButton';
 import EllipsesOverflowText from '../../../utils/EllipsesOverflowText';
 import ExtendedBox from '../../../utils/ExtendedBox';
 import ZoneDropTheme from './ZoneDropTheme';
+import { UserAvatar } from '../../../utils/Avatars/UserAvatar';
+import { ZoneAvatar } from '../../../utils/Avatars/ZoneAvatar';
 
 const ZoneSelector: FC = () => {
   const { t } = useTranslation();
@@ -25,6 +27,7 @@ const ZoneSelector: FC = () => {
     auth: { user },
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
+  const history = useHistory();
   const size = useContext(ResponsiveContext);
   const [open, setOpen] = useState(false);
 
@@ -52,9 +55,9 @@ const ZoneSelector: FC = () => {
                 }}
                 leftIcon={
                   user && (
-                    <InitialsAvatar
+                    <UserAvatar
                       id={user.id}
-                      value={user.fullName}
+                      name={user.fullName}
                       size="small"
                       textProps={{ size: 'xsmall', weight: 'normal' }}
                     />
@@ -71,9 +74,9 @@ const ZoneSelector: FC = () => {
                       navigateToSubdomain(z.zone.subdomain);
                     }}
                     leftIcon={
-                      <InitialsAvatar
+                      <ZoneAvatar
                         id={z.zone.id}
-                        value={z.zone.name}
+                        name={z.zone.name}
                         size="small"
                         textProps={{ size: 'xsmall', weight: 'normal' }}
                       />
@@ -114,6 +117,7 @@ const ZoneSelector: FC = () => {
               <Divider margin={{ vertical: 'xxsmall' }} />
               <ListButton
                 label={t('ZoneSelector.settings')}
+                onClick={() => history.push('/settings')}
                 rightIcon={<SettingsOption size="small" color="#444444" />}
               />
               <Divider margin={{ vertical: 'xxsmall' }} />
@@ -146,12 +150,12 @@ const ZoneSelector: FC = () => {
               boxShadow="inset 0px 0px 15px 0.6px rgba(255, 255, 255, 0.2)"
             >
               {selectedUserZone ? (
-                <InitialsAvatar
+                <ZoneAvatar
                   id={selectedUserZone.zone.id}
-                  value={selectedUserZone.zone.name}
+                  name={selectedUserZone.zone.name}
                 />
               ) : (
-                user && <InitialsAvatar id={user.id} value={user.fullName} />
+                user && <UserAvatar id={user.id} name={user.fullName} />
               )}
               <Box align="center">
                 <EllipsesOverflowText

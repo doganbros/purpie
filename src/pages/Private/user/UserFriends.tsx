@@ -3,10 +3,10 @@ import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import GradientScroll from '../../../components/utils/GradientScroll';
-import InitialsAvatar from '../../../components/utils/InitialsAvatar';
 import { listContactsAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
+import { UserAvatar } from '../../../components/utils/Avatars/UserAvatar';
 
 const UserFriends: FC<{ userName: string }> = ({ userName }) => {
   const dispatch = useDispatch();
@@ -34,9 +34,9 @@ const UserFriends: FC<{ userName: string }> = ({ userName }) => {
           ) : (
             contacts.data.map((contact) => (
               <Box key={contact.id} gap="small" align="center">
-                <InitialsAvatar
+                <UserAvatar
                   id={contact.id}
-                  value={contact.contactUser.fullName}
+                  name={contact.contactUser.fullName}
                 />
                 <Box align="center">
                   <Text size="small" weight="bold">
