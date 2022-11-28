@@ -6,6 +6,33 @@ import { Type } from 'class-transformer';
 export class ListPostFeedQuery extends PaginationQuery {
   @ApiProperty({
     required: false,
+    type: Boolean,
+    description: 'Filter by posts that are public.',
+  })
+  @IsOptional()
+  @IsIn(['false', 'true'])
+  public: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  userId: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  zoneId: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  channelId: number;
+
+  @ApiProperty({
+    required: false,
     enum: ['meeting', 'video'],
     description: 'The post type to return. By default it returns all posts. ',
   })

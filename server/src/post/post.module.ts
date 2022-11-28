@@ -17,6 +17,13 @@ import { PostService } from './services/post.service';
 import { PostFolder } from '../../entities/PostFolder.entity';
 import { PostFolderItem } from '../../entities/PostFolderItem.entity';
 import { FolderService } from './services/folder.service';
+import { PostCommentService } from './services/post-comment.service';
+import { PostCommentController } from './controllers/post-comment.controller';
+import { PostLikeService } from './services/post-like.service';
+import { PostSavedService } from './services/post-saved.service';
+import { PostFolderController } from './controllers/post-folder.controller';
+import { PostLikeController } from './controllers/post-like.controller';
+import { PostSavedController } from './controllers/post-saved.controller';
 
 @Module({
   imports: [
@@ -36,8 +43,21 @@ import { FolderService } from './services/folder.service';
       PostFolderItem,
     ]),
   ],
-  controllers: [PostController],
-  providers: [PostService, PostListener, FolderService],
+  controllers: [
+    PostController,
+    PostCommentController,
+    PostFolderController,
+    PostLikeController,
+    PostSavedController,
+  ],
+  providers: [
+    PostService,
+    PostListener,
+    FolderService,
+    PostCommentService,
+    PostLikeService,
+    PostSavedService,
+  ],
   exports: [PostService],
 })
 export class PostModule {}

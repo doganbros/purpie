@@ -1,8 +1,5 @@
 import {
   ADD_POST_SUCCESS,
-  CHANNEL_FEED_FAILED,
-  CHANNEL_FEED_REQUESTED,
-  CHANNEL_FEED_SUCCESS,
   CLOSE_CREATE_VIDEO_LAYER,
   CREATE_POST_COMMENT_FAILED,
   CREATE_POST_COMMENT_LIKE_FAILED,
@@ -19,6 +16,9 @@ import {
   CREATE_VIDEO_FAILED,
   CREATE_VIDEO_REQUESTED,
   CREATE_VIDEO_SUCCESS,
+  FEED_FAILED,
+  FEED_REQUESTED,
+  FEED_SUCCESS,
   GET_FEATURED_POST_FAILED,
   GET_FEATURED_POST_REQUESTED,
   GET_FEATURED_POST_SUCCESS,
@@ -32,9 +32,6 @@ import {
   POST_DETAIL_FAILED,
   POST_DETAIL_REQUESTED,
   POST_DETAIL_SUCCESS,
-  PUBLIC_FEED_FAILED,
-  PUBLIC_FEED_REQUESTED,
-  PUBLIC_FEED_SUCCESS,
   REMOVE_POST_COMMENT_FAILED,
   REMOVE_POST_COMMENT_LIKE_FAILED,
   REMOVE_POST_COMMENT_LIKE_REQUESTED,
@@ -61,12 +58,6 @@ import {
   UPDATE_POST_DETAIL_FAILED,
   UPDATE_POST_DETAIL_REQUESTED,
   UPDATE_POST_DETAIL_SUCCESS,
-  USER_FEED_FAILED,
-  USER_FEED_REQUESTED,
-  USER_FEED_SUCCESS,
-  ZONE_FEED_FAILED,
-  ZONE_FEED_REQUESTED,
-  ZONE_FEED_SUCCESS,
 } from '../constants/post.constants';
 
 import * as PostService from '../services/post.service';
@@ -108,88 +99,21 @@ export const addPostAction = (payload: Post): PostAction => {
   };
 };
 
-export const getPublicFeedAction = (payload: FeedPayload): PostAction => {
+export const getFeedListAction = (payload: FeedPayload): PostAction => {
   return async (dispatch) => {
     dispatch({
-      type: PUBLIC_FEED_REQUESTED,
+      type: FEED_REQUESTED,
       payload,
     });
     try {
-      const response = await PostService.getPublicFeed(payload);
+      const response = await PostService.getPostFeeds(payload);
       dispatch({
-        type: PUBLIC_FEED_SUCCESS,
+        type: FEED_SUCCESS,
         payload: response,
       });
     } catch (err: any) {
       dispatch({
-        type: PUBLIC_FEED_FAILED,
-        payload: err?.response?.data,
-      });
-    }
-  };
-};
-
-export const getUserFeedAction = (payload: FeedPayload): PostAction => {
-  return async (dispatch) => {
-    dispatch({
-      type: USER_FEED_REQUESTED,
-      payload,
-    });
-    try {
-      const response = await PostService.getUserFeed(payload);
-      dispatch({
-        type: USER_FEED_SUCCESS,
-        payload: response,
-      });
-    } catch (err: any) {
-      dispatch({
-        type: USER_FEED_FAILED,
-        payload: err?.response?.data,
-      });
-    }
-  };
-};
-
-export const getZoneFeedAction = (
-  payload: FeedPayload & { zoneId: number }
-): PostAction => {
-  return async (dispatch) => {
-    dispatch({
-      type: ZONE_FEED_REQUESTED,
-      payload,
-    });
-    try {
-      const response = await PostService.getZoneFeed(payload);
-      dispatch({
-        type: ZONE_FEED_SUCCESS,
-        payload: response,
-      });
-    } catch (err: any) {
-      dispatch({
-        type: ZONE_FEED_FAILED,
-        payload: err?.response?.data,
-      });
-    }
-  };
-};
-
-export const getChannelFeedAction = (
-  payload: FeedPayload & { channelId: number }
-): PostAction => {
-  return async (dispatch) => {
-    dispatch({
-      type: CHANNEL_FEED_REQUESTED,
-      payload,
-    });
-    try {
-      const response = await PostService.getChannelFeed(payload);
-      dispatch({
-        type: CHANNEL_FEED_SUCCESS,
-        payload: response,
-      });
-    } catch (err: any) {
-      dispatch({
-        type: CHANNEL_FEED_FAILED,
+        type: FEED_FAILED,
         payload: err?.response?.data,
       });
     }

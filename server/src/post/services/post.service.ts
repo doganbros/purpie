@@ -3,15 +3,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { deleteObject } from 'config/s3-storage';
 import dayjs from 'dayjs';
 import { Contact } from 'entities/Contact.entity';
 import { FeaturedPost } from 'entities/FeaturedPost.entity';
 import { Post } from 'entities/Post.entity';
-import { PostComment } from 'entities/PostComment.entity';
-import { PostCommentLike } from 'entities/PostCommentLike.entity';
 import { PostLike } from 'entities/PostLike.entity';
 import { PostTag } from 'entities/PostTag.entity';
 import { PostVideo } from 'entities/PostVideo.entity';
@@ -20,17 +17,11 @@ import { SavedPost } from 'entities/SavedPost.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { booleanValue, tsqueryParam } from 'helpers/utils';
-import { Brackets, IsNull, MoreThanOrEqual, Repository } from 'typeorm';
-import { PaginationQuery } from 'types/PaginationQuery';
-import { CreatePostCommentLikeDto } from '../dto/create-post-comment-like.dto';
-import { CreatePostCommentDto } from '../dto/create-post-comment.dto';
-import { CreatePostLikeDto } from '../dto/create-post-like.dto';
-import { CreateSavedPostDto } from '../dto/create-saved-post.dto';
+import { Brackets, MoreThanOrEqual, Repository } from 'typeorm';
+import { PaginationQuery, PaginationResponse } from 'types/PaginationQuery';
 import { EditPostDto } from '../dto/edit-post.dto';
 import { ListPostFeedQuery } from '../dto/list-post-feed.query';
-import { PostLikeQuery } from '../dto/post-like.query';
 import { VideoViewStats } from '../dto/video-view-stats.dto';
-import { PostEvent } from '../listeners/post-events';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { PostFolder } from '../../../entities/PostFolder.entity';
 
@@ -50,17 +41,8 @@ export class PostService {
     @InjectRepository(FeaturedPost)
     private featuredPostRepository: Repository<FeaturedPost>,
     @InjectRepository(Post) private postRepository: Repository<Post>,
-    @InjectRepository(PostLike)
-    private postLikeRepository: Repository<PostLike>,
-    @InjectRepository(PostComment)
-    private postCommentRepository: Repository<PostComment>,
-    @InjectRepository(PostCommentLike)
-    private postCommentLikeRepository: Repository<PostCommentLike>,
-    @InjectRepository(SavedPost)
-    private savedPostRepository: Repository<SavedPost>,
     @InjectRepository(PostVideo)
     private postVideoRepository: Repository<PostVideo>,
-    private eventEmitter: EventEmitter2,
   ) {}
 
   getOnePost(userId: number, identity: number | string, preview = false) {
@@ -74,7 +56,6 @@ export class PostService {
         'post.startDate',
         'post.type',
         'post.public',
-        'post.private',
         'post.allowReaction',
         'post.allowComment',
       ])
@@ -95,7 +76,7 @@ export class PostService {
       .leftJoin(
         Contact,
         'contact',
-        'post.userContactExclusive = true AND contact.userId = post.createdById AND contact.contactUserId = :userId',
+        'contact.userId = post.createdById AND contact.contactUserId = :userId',
         { userId },
       )
       .where(
@@ -106,8 +87,8 @@ export class PostService {
       )
       .andWhere(
         new Brackets((qb) => {
-          qb.where('post.private = false').orWhere(
-            'post.private = true and post.createdById = :userId',
+          qb.where('post.public = true').orWhere(
+            'post.public = false and post.createdById = :userId',
             {
               userId,
             },
@@ -148,199 +129,6 @@ export class PostService {
         }),
       )
       .getOne();
-  }
-
-  async createPostComment(userId: number, info: CreatePostCommentDto) {
-    const postComment = await this.postCommentRepository
-      .create({
-        comment: info.comment,
-        userId,
-        parentId: info.parentId || null,
-        postId: info.postId,
-      })
-      .save();
-
-    const mentions = info.comment
-      .match(/@[a-z0-9_]{2,25}/g)
-      ?.map((v) => v.slice(1));
-
-    if (mentions?.length) {
-      for (const mentionUserName of mentions) {
-        this.eventEmitter.emit(PostEvent.postCommentMentionNotification, {
-          postComment,
-          mentionUserName,
-        });
-      }
-    }
-
-    if (info.parentId) {
-      this.eventEmitter.emit(PostEvent.postCommentReplyNotification, {
-        postComment,
-        parentId: info.parentId,
-      });
-    } else {
-      this.eventEmitter.emit(PostEvent.postCommentNotification, {
-        postComment,
-      });
-    }
-
-    return postComment;
-  }
-
-  async createPostLike(userId: number, info: CreatePostLikeDto) {
-    const positive = info.type !== 'dislike';
-    const postLike = await this.postLikeRepository
-      .create({
-        userId,
-        positive,
-        postId: info.postId,
-      })
-      .save();
-
-    this.eventEmitter.emit(PostEvent.postLikeNotification, { postLike });
-
-    return postLike;
-  }
-
-  async createPostCommentLike(userId: number, info: CreatePostCommentLikeDto) {
-    const postCommentLike = await this.postCommentLikeRepository
-      .create({
-        userId,
-        postId: info.postId,
-        commentId: info.postCommentId,
-      })
-      .save();
-
-    this.eventEmitter.emit(PostEvent.postCommentLikeNotification, {
-      postCommentLike,
-    });
-
-    return postCommentLike;
-  }
-
-  getPostCommentLikeCount(postId: number, commentId: number) {
-    return this.postCommentLikeRepository.count({
-      where: { postId, commentId },
-    });
-  }
-
-  getPostLikeCount(postId: number) {
-    return this.postLikeRepository.count({ where: { postId } });
-  }
-
-  getPostCommentCount(postId: number, parentId?: number | null) {
-    return this.postCommentRepository.count({
-      where: {
-        postId,
-        parentId: parentId || IsNull(),
-      },
-    });
-  }
-
-  getPostCommentLikes(
-    postId: number,
-    commentId: number,
-    query: PaginationQuery,
-  ) {
-    return this.postCommentLikeRepository
-      .createQueryBuilder('postCommentLike')
-      .select([
-        'postCommentLike.id',
-        'postCommentLike.createdOn',
-        'user.id',
-        'user.fullName',
-        'user.userName',
-        'user.email',
-      ])
-      .innerJoin('postCommentLike.user', 'user')
-      .where('postCommentLike.postId = :postId', { postId })
-      .andWhere('postCommentLike.commentId = :commentId', { commentId })
-      .paginate(query);
-  }
-
-  getPostLikes(postId: number, query: PostLikeQuery) {
-    const baseQuery = this.postLikeRepository
-      .createQueryBuilder('postLike')
-      .select([
-        'postLike.id',
-        'postLike.createdOn',
-        'postLike.positive',
-        'user.id',
-        'user.fullName',
-        'user.userName',
-        'user.email',
-      ])
-      .innerJoin('postLike.user', 'user')
-      .where('postLike.postId = :postId', { postId });
-
-    baseQuery.andWhere('postLike.positive = :positive', {
-      postive: query.type !== 'dislikes',
-    });
-
-    return baseQuery.paginate(query);
-  }
-
-  getPostComments(
-    userId: number,
-    postId: number,
-    query: PaginationQuery,
-    params: Record<string, any>,
-  ) {
-    return this.postCommentRepository
-      .createQueryBuilder('postComment')
-      .addSelect([
-        'postComment.id',
-        'postComment.comment',
-        'postComment.parentId',
-        'postComment.createdOn',
-        'postComment.updatedOn',
-        'postComment.edited',
-        'postComment.publishedInLiveStream',
-        'user.id',
-        'user.fullName',
-        'user.userName',
-        'user.email',
-      ])
-      .addSelect(
-        (sq) =>
-          sq
-            .select('cast(count(*) as int)')
-            .from(PostComment, 'postReply')
-            .where('postReply.postId = postComment.postId')
-            .andWhere('postReply.parentId = postComment.id'),
-        'postComment_replyCount',
-      )
-      .addSelect(
-        (sq) =>
-          sq
-            .select('cast(count(*) as int)')
-            .from(PostCommentLike, 'postCommentLike')
-            .where('postCommentLike.commentId = postComment.id'),
-        'postComment_likesCount',
-      )
-      .addSelect(
-        (sq) =>
-          sq
-            .select('count(*) > 0')
-            .from(PostCommentLike, 'user_post_comment_like')
-            .where('user_post_comment_like.postId = postComment.postId')
-            .andWhere('user_post_comment_like.commentId = postComment.id')
-            .andWhere('user_post_comment_like.userId = :currentUserId', {
-              currentUserId: userId,
-            }),
-        'postComment_liked',
-      )
-      .innerJoin('postComment.user', 'user')
-      .where('postComment.postId = :postId', { postId })
-      .andWhere(
-        params.parentId
-          ? 'postComment.parentId = :parentId'
-          : 'postComment.parentId is null',
-        {
-          parentId: Number.parseInt(params.parentId, 10),
-        },
-      )
-      .paginate(query);
   }
 
   async dropPostVideosByUser(userId: number, identity: string | number) {
@@ -410,133 +198,6 @@ export class PostService {
     }
 
     return true;
-  }
-
-  removePostCommentLike(userId: number, commentId: number) {
-    return this.postCommentLikeRepository.delete({ userId, commentId });
-  }
-
-  removePostLike(userId: number, postId: number) {
-    return this.postLikeRepository.delete({ userId, postId });
-  }
-
-  removePostComment(userId: number, commentId: number) {
-    return this.postCommentRepository.delete({ userId, id: commentId });
-  }
-
-  editPostComment(userId: number, commentId: number, comment: string) {
-    return this.postCommentRepository.update(
-      { userId, id: commentId },
-      { comment, edited: true, updatedOn: new Date() },
-    );
-  }
-
-  createSavedPost(userId: number, info: CreateSavedPostDto) {
-    return this.savedPostRepository
-      .create({
-        userId,
-        postId: info.postId,
-      })
-      .save();
-  }
-
-  removeSavedPost(userId: number, postId: number) {
-    return this.savedPostRepository.delete({ userId, postId });
-  }
-
-  getSavedPosts(userId: number, query: PaginationQuery) {
-    return this.savedPostRepository
-      .createQueryBuilder('savedPost')
-      .addSelect([
-        'savedPost.id',
-        'savedPost.createdOn',
-        'post.id',
-        'post.title',
-        'post.slug',
-        'post.description',
-        'post.startDate',
-        'post.type',
-        'post.createdOn',
-        'post.public',
-        'post.private',
-        'post.allowReaction',
-        'post.allowComment',
-        'post.videoName',
-        'post.userContactExclusive',
-        'post.channelId',
-        'post.liveStream',
-        'post.streaming',
-        'post.record',
-        'postReaction.dislikesCount',
-        'postReaction.likesCount',
-        'postReaction.commentsCount',
-        'postReaction.viewsCount',
-        'postReaction.liveStreamViewersCount',
-        'createdBy.id',
-        'createdBy.email',
-        'createdBy.fullName',
-      ])
-      .addSelect(
-        (sq) =>
-          sq
-            .select('count(*) > 0')
-            .from(PostLike, 'user_post_like')
-            .where('user_post_like.postId = post.id')
-            .andWhere('user_post_like.positive = true')
-            .andWhere('user_post_like.userId = :currentUserId'),
-        'post_liked',
-      )
-      .addSelect(
-        (sq) =>
-          sq
-            .select('count(*) > 0')
-            .from(PostLike, 'user_post_like')
-            .where('user_post_like.postId = post.id')
-            .andWhere('user_post_like.positive = false')
-            .andWhere('user_post_like.userId = :currentUserId'),
-        'post_disliked',
-      )
-      .setParameter('currentUserId', userId)
-      .innerJoin('savedPost.post', 'post')
-      .innerJoin('post.createdBy', 'createdBy')
-      .leftJoin('post.postReaction', 'postReaction')
-      .leftJoin('post.channel', 'channel')
-      .leftJoin(
-        UserChannel,
-        'user_channel',
-        'user_channel.channelId = channel.id and user_channel.userId = :userId',
-        { userId },
-      )
-      .leftJoin('channel.zone', 'zone')
-      .leftJoin(
-        Contact,
-        'contact',
-        'post.userContactExclusive = true AND contact.userId = post.createdById AND contact.contactUserId = :userId',
-        { userId },
-      )
-      .where('savedPost.userId = :userId', { userId })
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where('post.private = false').orWhere(
-            'post.private = true and post."createdById" = :userId',
-          );
-        }),
-      )
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where(
-            new Brackets((qbi) => {
-              qbi
-                .orWhere('post.public = true')
-                .orWhere('user_channel.id is not null')
-                .orWhere('contact.contactUserId is not null');
-            }),
-          );
-        }),
-      )
-
-      .orderBy('savedPost.id', 'DESC')
-      .paginate(query);
   }
 
   async getPostVideoForUserBySlugAndFileName(
@@ -609,14 +270,13 @@ export class PostService {
         'createdBy.email',
         'createdBy.fullName',
       ])
-
       .setParameter('currentUserId', userId)
       .innerJoin('post.createdBy', 'createdBy')
       .leftJoin('post.postReaction', 'postReaction')
       .where(
         new Brackets((qb) => {
-          qb.where('post.private = false').orWhere(
-            'post.private = true and post.createdById = :currentUserId',
+          qb.where('post.public = true').orWhere(
+            'post.public = false and post.createdById = :currentUserId',
           );
         }),
       )
@@ -720,6 +380,51 @@ export class PostService {
     return builder;
   }
 
+  baseChannelPosts(query: PaginationQuery, userId: number) {
+    return this.basePost(query, userId)
+      .addSelect([
+        'zone.id',
+        'zone.name',
+        'zone.subdomain',
+        'zone.public',
+        'channel.id',
+        'channel.name',
+        'channel.description',
+        'channel.public',
+      ])
+      .innerJoin('post.channel', 'channel')
+      .innerJoin('channel.zone', 'zone')
+      .leftJoin(
+        UserZone,
+        'user_zone',
+        'user_zone.zoneId = zone.id and user_zone.userId = :userId',
+        { userId },
+      )
+      .leftJoin(
+        UserChannel,
+        'user_channel',
+        'user_channel.channelId = channel.id and user_channel.userId = :userId',
+        { userId },
+      )
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            new Brackets((qbi) => {
+              qbi
+                .where('zone.public = true')
+                .orWhere('user_zone.id is not null');
+            }),
+          ).andWhere(
+            new Brackets((qbi) => {
+              qbi
+                .where('channel.public = true')
+                .orWhere('user_channel.id is not null');
+            }),
+          );
+        }),
+      );
+  }
+
   getUserFeedSelection(
     userId: number,
     query: Partial<ListPostFeedQuery>,
@@ -755,7 +460,7 @@ export class PostService {
       .leftJoin(
         Contact,
         'contact',
-        'post.userContactExclusive = true AND contact.userId = post.createdById AND contact.contactUserId = :userId',
+        'contact.userId = post.createdById AND contact.contactUserId = :userId',
         { userId },
       )
       .andWhere(
@@ -806,91 +511,41 @@ export class PostService {
     return baseSelection;
   }
 
-  getPublicUserFeed(
-    currentUserId: number,
-    createdByUserId: number,
-    query: ListPostFeedQuery,
-  ) {
-    return this.getUserFeedSelection(
-      currentUserId,
-      query,
-      true,
-      true,
-      createdByUserId,
-    ).paginate(query);
-  }
-
-  getUserFeed(userId: number, query: ListPostFeedQuery) {
-    return this.getUserFeedSelection(userId, query).paginate(query);
-  }
-
   getPostById(userId: number, postId: number) {
     return this.getUserFeedSelection(userId, {}, true, true)
       .andWhere('post.id = :postId', { postId })
       .getOne();
   }
 
-  baseChannelPosts(query: PaginationQuery, userId: number) {
-    return this.basePost(query, userId)
-      .addSelect([
-        'zone.id',
-        'zone.name',
-        'zone.subdomain',
-        'zone.public',
-        'channel.id',
-        'channel.name',
-        'channel.description',
-        'channel.public',
-      ])
-      .innerJoin('post.channel', 'channel')
-      .innerJoin('channel.zone', 'zone')
-      .leftJoin(
-        UserZone,
-        'user_zone',
-        'user_zone.zoneId = zone.id and user_zone.userId = :userId',
-        { userId },
-      )
-      .leftJoin(
-        UserChannel,
-        'user_channel',
-        'user_channel.channelId = channel.id and user_channel.userId = :userId',
-        { userId },
-      )
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where(
-            new Brackets((qbi) => {
-              qbi
-                .where('zone.public = true')
-                .orWhere('user_zone.id is not null');
-            }),
-          ).andWhere(
-            new Brackets((qbi) => {
-              qbi
-                .where('channel.public = true')
-                .orWhere('user_channel.id is not null');
-            }),
-          );
-        }),
-      );
-  }
+  async getFeedList(
+    query: ListPostFeedQuery,
+    userId: number,
+  ): Promise<PaginationResponse<Post>> {
+    if (query.userId)
+      return this.getUserFeedSelection(
+        query.userId,
+        query,
+        true,
+        true,
+        userId,
+      ).paginate(query);
 
-  getZoneFeed(zoneId: number, userId: number, query: ListPostFeedQuery) {
-    return this.baseChannelPosts(query, userId)
-      .andWhere('channel.zoneId = :zoneId', { zoneId })
-      .paginate(query);
-  }
+    if (query.public)
+      return this.basePost(query, userId)
+        .andWhere('post.public = true')
+        .paginate(query);
+    if (query.zoneId)
+      return this.baseChannelPosts(query, userId)
+        .andWhere('channel.zoneId = :zoneId', { zoneId: query.zoneId })
+        .paginate(query);
+    if (query.channelId)
+      return this.baseChannelPosts(query, userId)
+        .andWhere('channel.id = :channelId', {
+          channelId: query.channelId,
+        })
+        .paginate(query);
 
-  getChannelFeed(channelId: number, userId: number, query: PaginationQuery) {
-    return this.baseChannelPosts(query, userId)
-      .andWhere('channel.id = :channelId', { channelId })
-      .paginate(query);
-  }
-
-  getPublicFeed(query: PaginationQuery, userId: number) {
-    return this.basePost(query, userId)
-      .andWhere('post.public = true')
-      .paginate(query);
+    return this.getUserFeedSelection(userId, query).paginate(query);
   }
 
   async getFeaturedPost(userId: number, currentUserId: number) {
@@ -920,7 +575,6 @@ export class PostService {
     if (payload.title) editPayload.title = payload.title;
     if (payload.description) editPayload.description = payload.description;
     editPayload.public = payload.public;
-    editPayload.userContactExclusive = payload.userContactExclusive;
 
     if (!Object.keys(editPayload).length)
       throw new BadRequestException(
@@ -959,5 +613,17 @@ export class PostService {
         shouldCount: !lastIntervalExists,
       })
       .save();
+  }
+
+  async validatePost(userId: number, postId: number) {
+    const post = await this.getOnePost(userId, postId, true);
+
+    if (!post)
+      throw new NotFoundException(
+        ErrorTypes.POST_NOT_FOUND,
+        'Post not found or unauthorized',
+      );
+
+    return post;
   }
 }

@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
   NotFoundException,
   Param,
@@ -14,44 +13,21 @@ import {
   Res,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import {
-  ApiCreatedResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiParam,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { s3, s3HeadObject } from 'config/s3-storage';
 import { errorResponseDoc } from 'helpers/error-response-doc';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
-import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
-import { PaginationQuery } from 'types/PaginationQuery';
-import { CreatePostCommentDto } from '../dto/create-post-comment.dto';
-import { CreatePostLikeDto } from '../dto/create-post-like.dto';
-import { CreateSavedPostDto } from '../dto/create-saved-post.dto';
-import { UpdatePostCommentDto } from '../dto/update-comment.dto';
 import { PostService } from '../services/post.service';
 import {
-  PostCommentListResponse,
-  PostLikeListResponse,
-} from '../response/post.response';
-import {
   MixedPostFeedDetail,
-  MixedPostFeedListResponse,
   PublicPostFeedListResponse,
 } from '../response/post-list-feed.response';
 import { ListPostFeedQuery } from '../dto/list-post-feed.query';
 import { EditPostDto } from '../dto/edit-post.dto';
 import { VideoViewStats } from '../dto/video-view-stats.dto';
-import { CreatePostCommentLikeDto } from '../dto/create-post-comment-like.dto';
-import { PostLikeQuery } from '../dto/post-like.query';
 import { ErrorTypes } from '../../../types/ErrorTypes';
-import { FolderService } from '../services/folder.service';
-import { CreatePostFolderDto } from '../dto/create-post-folder.dto';
-import { UpdatePostFolderDto } from '../dto/update-post-folder.dto';
-import { AddPostFolderItemDto } from '../dto/add-post-folder-item.dto';
 
 const {
   S3_VIDEO_POST_DIR = '',
@@ -62,398 +38,7 @@ const {
 @Controller({ version: '1', path: 'post' })
 @ApiTags('post')
 export class PostController {
-  constructor(
-    private readonly postService: PostService,
-    private readonly folderService: FolderService,
-  ) {}
-
-  async validatePost(userId: number, postId: number) {
-    const post = await this.postService.getOnePost(userId, postId, true);
-
-    if (!post)
-      throw new NotFoundException(
-        ErrorTypes.POST_NOT_FOUND,
-        'Post not found or unauthorized',
-      );
-
-    return post;
-  }
-
-  @Post('comment/create')
-  @ValidationBadRequest()
-  @ApiCreatedResponse({
-    description: 'User creates a new comment. Returns the comment',
-  })
-  @ApiNotFoundResponse({
-    description:
-      'Error thrown when the post is not found or user does not have the right to access',
-    schema: errorResponseDoc(
-      404,
-      'Post not found or unauthorized',
-      'POST_NOT_FOUND',
-    ),
-  })
-  @IsAuthenticated()
-  async createPostComment(
-    @Body() info: CreatePostCommentDto,
-    @CurrentUser() user: UserTokenPayload,
-  ) {
-    const post = await this.validatePost(user.id, info.postId);
-
-    if (!post.allowComment)
-      throw new ForbiddenException(
-        ErrorTypes.POST_COMMENTS_NOT_ALLOWED,
-        `This post doesn't allow comments`,
-      );
-
-    return this.postService.createPostComment(user.id, info);
-  }
-
-  @Get('comment/list/:postId/:parentId?')
-  @ApiParam({
-    type: Number,
-    name: 'parentId',
-    required: false,
-    allowEmptyValue: true,
-  })
-  @ApiOkResponse({
-    type: PostCommentListResponse,
-    description:
-      'User gets the comments belonging to the postId. If parentId param is specificied, retrieves the replies for that comment',
-  })
-  @ApiNotFoundResponse({
-    description:
-      'Error thrown when the post is not found or user does not have the right to access',
-    schema: errorResponseDoc(
-      404,
-      'Post not found or unauthorized',
-      'POST_NOT_FOUND',
-    ),
-  })
-  @IsAuthenticated()
-  async getPostComments(
-    @Query() query: PaginationQuery,
-    @Param('postId', ParseIntPipe) postId: number,
-    @Param() params: Record<string, any>,
-    @CurrentUser() user: UserTokenPayload,
-  ) {
-    await this.validatePost(user.id, postId);
-
-    return this.postService.getPostComments(user.id, postId, query, params);
-  }
-
-  @Put('comment/update')
-  @ValidationBadRequest()
-  @ApiCreatedResponse({
-    description: 'User updates a comment',
-    schema: { type: 'string', example: 'OK' },
-  })
-  @IsAuthenticated()
-  async updatePostComment(
-    @Body() info: UpdatePostCommentDto,
-    @CurrentUser() user: UserTokenPayload,
-  ) {
-    await this.postService.editPostComment(
-      user.id,
-      info.commentId,
-      info.comment,
-    );
-
-    return 'OK';
-  }
-
-  @Get('comment/count/:postId/:parentId?')
-  @ApiOkResponse({
-    description:
-      'Get the number of comments belonging to the postId. If parentId is specified, it returns the number of replies for that comment',
-    schema: { type: 'int', example: 15 },
-  })
-  @IsAuthenticated()
-  @ApiParam({
-    type: Number,
-    name: 'postId',
-  })
-  @ApiParam({
-    type: Number,
-    name: 'parentId',
-    required: false,
-    allowEmptyValue: true,
-  })
-  @ApiNotFoundResponse({
-    description:
-      'Error thrown when the post is not found or user does not have the right to access',
-    schema: errorResponseDoc(
-      404,
-      'Post not found or unauthorized',
-      'POST_NOT_FOUND',
-    ),
-  })
-  async getPostCommentCount(
-    @Param('postId') postId: string,
-    @Param('parentId') parentId: string,
-    @CurrentUser() user: UserTokenPayload,
-  ) {
-    await this.validatePost(user.id, Number(postId));
-
-    return this.postService.getPostCommentCount(
-      Number(postId),
-      Number(parentId),
-    );
-  }
-
-  @Delete('comment/remove/:commentId')
-  @ApiCreatedResponse({
-    description:
-      'User deletes a comment. Returns Created when some rows are affected and OK otherwise',
-    schema: { type: 'string', example: 'OK' },
-  })
-  @IsAuthenticated()
-  @ApiParam({
-    type: Number,
-    name: 'commentId',
-  })
-  async removePostComment(
-    @CurrentUser() user: UserTokenPayload,
-    @Param('commentId') commentId: string,
-  ) {
-    const result = await this.postService.removePostComment(
-      user.id,
-      Number(commentId),
-    );
-
-    return result.affected === 0 ? 'OK' : 'Created';
-  }
-
-  @Post('comment/like/create')
-  @ValidationBadRequest()
-  @ApiCreatedResponse({
-    description: 'User likes a post comment. Returns the like id',
-    schema: { type: 'int', example: 1 },
-  })
-  @IsAuthenticated()
-  @ApiNotFoundResponse({
-    description:
-      'Error thrown when the post is not found or user does not have the right to access',
-    schema: errorResponseDoc(
-      404,
-      'Post not found or unauthorized',
-      'POST_NOT_FOUND',
-    ),
-  })
-  async createPostCommentLike(
-    @Body() info: CreatePostCommentLikeDto,
-    @CurrentUser() user: UserTokenPayload,
-  ) {
-    await this.validatePost(user.id, info.postId);
-
-    const like = await this.postService.createPostCommentLike(user.id, info);
-
-    return like.id;
-  }
-
-  @Get('comment/like/list/:postId/:commentId')
-  @ApiOkResponse({
-    type: PostLikeListResponse,
-    description: 'User gets the likes belonging to the postId',
-  })
-  @ApiNotFoundResponse({
-    description:
-      'Error thrown when the post is not found or user does not have the right to access',
-    schema: errorResponseDoc(
-      404,
-      'Post not found or unauthorized',
-      'POST_NOT_FOUND',
-    ),
-  })
-  @IsAuthenticated()
-  async getPostCommentLikes(
-    @Query() query: PaginationQuery,
-    @Param('postId', ParseIntPipe) postId: number,
-    @Param('commentId', ParseIntPipe) commentId: number,
-    @CurrentUser() user: UserTokenPayload,
-  ) {
-    await this.validatePost(user.id, postId);
-
-    return this.postService.getPostCommentLikes(postId, commentId, query);
-  }
-
-  @Delete('comment/like/remove/:commentId')
-  @ApiCreatedResponse({
-    description:
-      'User unlikes a post comment. Returns Created when some rows are affected and OK otherwise',
-    schema: { type: 'string', example: 'OK' },
-  })
-  @IsAuthenticated()
-  async removePostCommentLike(
-    @CurrentUser() user: UserTokenPayload,
-    @Param('commentId', ParseIntPipe) commentId: number,
-  ) {
-    const result = await this.postService.removePostCommentLike(
-      user.id,
-      commentId,
-    );
-
-    return result.affected === 0 ? 'OK' : 'Created';
-  }
-
-  @Post('like/create')
-  @ValidationBadRequest()
-  @ApiCreatedResponse({
-    description: 'User likes a post. Returns the like id',
-    schema: { type: 'int', example: 1 },
-  })
-  @IsAuthenticated()
-  @ApiNotFoundResponse({
-    description:
-      'Error thrown when the post is not found or user does not have the right to access',
-    schema: errorResponseDoc(
-      404,
-      'Post not found or unauthorized',
-      'POST_NOT_FOUND',
-    ),
-  })
-  async createPostLike(
-    @Body() info: CreatePostLikeDto,
-    @CurrentUser() user: UserTokenPayload,
-  ) {
-    const post = await this.validatePost(user.id, info.postId);
-
-    if (!post.allowReaction)
-      throw new ForbiddenException(
-        ErrorTypes.POST_REACTION_NOT_ALLOWED,
-        `This post doesn't allow reactions`,
-      );
-
-    if (info.type === 'dislike' && !post.allowDislike)
-      throw new ForbiddenException(
-        ErrorTypes.POST_DISLIKE_NOT_ALLOWED,
-        `This post doesn't allow dislikes`,
-      );
-
-    const like = await this.postService.createPostLike(user.id, info);
-
-    return like.id;
-  }
-
-  @Get('like/list/:postId')
-  @ApiOkResponse({
-    type: PostLikeListResponse,
-    description: 'User gets the likes belonging to the postId',
-  })
-  @ApiNotFoundResponse({
-    description:
-      'Error thrown when the post is not found or user does not have the right to access',
-    schema: errorResponseDoc(
-      404,
-      'Post not found or unauthorized',
-      'POST_NOT_FOUND',
-    ),
-  })
-  @IsAuthenticated()
-  async getPostLikes(
-    @Query() query: PostLikeQuery,
-    @Param('postId', ParseIntPipe) postId: number,
-    @CurrentUser() user: UserTokenPayload,
-  ) {
-    await this.validatePost(user.id, postId);
-
-    return this.postService.getPostLikes(postId, query);
-  }
-
-  @Get('like/count/:postId')
-  @ApiNotFoundResponse({
-    description:
-      'Error thrown when the post is not found or user does not have the right to access',
-    schema: errorResponseDoc(
-      404,
-      'Post not found or unauthorized',
-      'POST_NOT_FOUND',
-    ),
-  })
-  @ApiOkResponse({
-    description: 'Get the number of likes belonging to the postId.',
-    schema: { type: 'int', example: 15 },
-  })
-  @IsAuthenticated()
-  async getPostLikeCount(
-    @Param('postId', ParseIntPipe) postId: number,
-    @CurrentUser() user: UserTokenPayload,
-  ) {
-    await this.validatePost(user.id, postId);
-
-    return this.postService.getPostLikeCount(postId);
-  }
-
-  @Delete('like/remove/:postId')
-  @ApiCreatedResponse({
-    description:
-      'User unlikes a post. Returns Created when some rows are affected and OK otherwise',
-    schema: { type: 'string', example: 'OK' },
-  })
-  @IsAuthenticated()
-  async removePostLike(
-    @CurrentUser() user: UserTokenPayload,
-    @Param('postId', ParseIntPipe) postId: number,
-  ) {
-    const result = await this.postService.removePostLike(user.id, postId);
-
-    return result.affected === 0 ? 'OK' : 'Created';
-  }
-
-  @Get('saved/list')
-  @IsAuthenticated()
-  @ApiOkResponse({
-    description: 'User gets posts saved',
-    type: MixedPostFeedListResponse,
-  })
-  async getSavedPostList(
-    @CurrentUser() user: UserTokenPayload,
-    @Query() query: PaginationQuery,
-  ) {
-    return this.postService.getSavedPosts(user.id, query);
-  }
-
-  @Delete('saved/remove/:postId')
-  @ApiCreatedResponse({
-    description:
-      'User unlikes a post. Returns Created when some rows are affected and OK otherwise',
-    schema: { type: 'string', example: 'OK' },
-  })
-  @IsAuthenticated()
-  async removeSavedPost(
-    @CurrentUser() user: UserTokenPayload,
-    @Param('postId', ParseIntPipe) postId: number,
-  ) {
-    const result = await this.postService.removeSavedPost(user.id, postId);
-    return result.affected === 0 ? 'OK' : 'Created';
-  }
-
-  @Post('saved/create')
-  @ValidationBadRequest()
-  @ApiNotFoundResponse({
-    description:
-      'Error thrown when the post is not found or user does not have the right to access',
-    schema: errorResponseDoc(
-      404,
-      'Post not found or unauthorized',
-      'POST_NOT_FOUND',
-    ),
-  })
-  @IsAuthenticated()
-  @ApiCreatedResponse({
-    description: 'User saves a post. Returns the saved post id',
-    schema: { type: 'int', example: 1 },
-  })
-  async createSavedPost(
-    @Body() info: CreateSavedPostDto,
-    @CurrentUser() user: UserTokenPayload,
-  ) {
-    await this.validatePost(user.id, info.postId);
-
-    const savedPost = await this.postService.createSavedPost(user.id, info);
-
-    return savedPost.id;
-  }
+  constructor(private readonly postService: PostService) {}
 
   @Get('video/view/:slug/:fileName')
   @IsAuthenticated()
@@ -513,77 +98,22 @@ export class PostController {
     @Body() payload: VideoViewStats,
     @CurrentUser() user: UserTokenPayload,
   ) {
-    await this.validatePost(user.id, payload.postId);
+    await this.postService.validatePost(user.id, payload.postId);
     await this.postService.videoViewStats(user.id, payload);
     return 'Created';
   }
 
-  @Get('/list/feed/public')
+  @Get('/list/feed')
   @ApiOkResponse({
-    description: 'User gets public feed',
+    description: 'Gets post feed list',
     type: PublicPostFeedListResponse,
   })
   @IsAuthenticated()
-  getPublicFeed(
+  getPostFeed(
     @Query() query: ListPostFeedQuery,
     @CurrentUser() user: UserTokenPayload,
   ) {
-    return this.postService.getPublicFeed(query, user.id);
-  }
-
-  @Get('/list/feed/public-user/:userId')
-  @ApiOkResponse({
-    description: 'User gets main feed of another user',
-    type: MixedPostFeedListResponse,
-  })
-  @IsAuthenticated()
-  getPublicUserFeed(
-    @Query() query: ListPostFeedQuery,
-    @CurrentUser() user: UserTokenPayload,
-    @Param('userId', ParseIntPipe) userId: number,
-  ) {
-    return this.postService.getPublicUserFeed(user.id, userId, query);
-  }
-
-  @Get('/list/feed/user')
-  @ApiOkResponse({
-    description: 'User gets main feed from channels and from contacts',
-    type: MixedPostFeedListResponse,
-  })
-  @IsAuthenticated()
-  getUserFeed(
-    @Query() query: ListPostFeedQuery,
-    @CurrentUser() user: UserTokenPayload,
-  ) {
-    return this.postService.getUserFeed(user.id, query);
-  }
-
-  @Get('/list/feed/zone/:zoneId')
-  @ApiOkResponse({
-    description: 'User gets feed for a zone from channels of this zone',
-    type: MixedPostFeedListResponse,
-  })
-  @IsAuthenticated()
-  getZoneFeed(
-    @Query() query: ListPostFeedQuery,
-    @CurrentUser() user: UserTokenPayload,
-    @Param('zoneId', ParseIntPipe) zoneId: number,
-  ) {
-    return this.postService.getZoneFeed(zoneId, user.id, query);
-  }
-
-  @Get('/list/feed/channel/:channelId')
-  @ApiOkResponse({
-    description: 'User gets feed for this channel',
-    type: MixedPostFeedListResponse,
-  })
-  @IsAuthenticated()
-  getChannelFeed(
-    @Query() query: ListPostFeedQuery,
-    @CurrentUser() user: UserTokenPayload,
-    @Param('channelId', ParseIntPipe) channelId: number,
-  ) {
-    return this.postService.getChannelFeed(channelId, user.id, query);
+    return this.postService.getFeedList(query, user.id);
   }
 
   @Get('/detail/feed/:postId')
@@ -669,64 +199,6 @@ export class PostController {
     @CurrentUser() user: UserTokenPayload,
   ) {
     await this.postService.removePostVideo(postId, user.id, videoName);
-
-    return 'OK';
-  }
-
-  @Get('folder/list')
-  @IsAuthenticated()
-  getUserFolderList(
-    @CurrentUser() user: UserTokenPayload,
-    @Query() query: PaginationQuery,
-  ) {
-    return this.folderService.getUserPostFolders(user.id, query);
-  }
-
-  @Post('folder/create')
-  @IsAuthenticated()
-  createPostFolder(
-    @CurrentUser() user: UserTokenPayload,
-    @Body() info: CreatePostFolderDto,
-  ) {
-    return this.folderService.createFolder(user.id, info);
-  }
-
-  @Put('folder/update')
-  @IsAuthenticated()
-  updatePostFolder(
-    @CurrentUser() user: UserTokenPayload,
-    @Body() info: UpdatePostFolderDto,
-  ) {
-    return this.folderService.updateFolder(user.id, info);
-  }
-
-  @Delete('folder/remove/:folderId')
-  @IsAuthenticated()
-  async removePostFolder(
-    @CurrentUser() user: UserTokenPayload,
-    @Param('folderId', ParseIntPipe) folderId: number,
-  ) {
-    await this.folderService.removeFolder(user.id, folderId);
-
-    return 'OK';
-  }
-
-  @Post('folder/item/create')
-  @IsAuthenticated()
-  addFolderItem(
-    @CurrentUser() user: UserTokenPayload,
-    @Body() info: AddPostFolderItemDto,
-  ) {
-    return this.folderService.addFolderItem(user.id, info);
-  }
-
-  @Delete('folder/item/remove/:folderItemId')
-  @IsAuthenticated()
-  async removeFolderItem(
-    @CurrentUser() user: UserTokenPayload,
-    @Param('folderItemId', ParseIntPipe) folderItemId: number,
-  ) {
-    await this.folderService.removeFolderItem(user.id, folderItemId);
 
     return 'OK';
   }

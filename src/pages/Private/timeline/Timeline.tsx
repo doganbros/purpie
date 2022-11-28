@@ -17,10 +17,7 @@ import PostGridItem from '../../../components/post/PostGridItem';
 import SearchBar from '../../../components/utils/SearchBar';
 import {
   createPostSaveAction,
-  getChannelFeedAction,
-  getPublicFeedAction,
-  getUserFeedAction,
-  getZoneFeedAction,
+  getFeedListAction,
   removePostSaveAction,
 } from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
@@ -29,7 +26,7 @@ import ChannelsToFollow from './ChannelsToFollow';
 import LastActivities from './LastActivities';
 import ZonesToJoin from './ZonesToJoin';
 import AddContent from '../../../layers/add-content/AddContent';
-import { Post } from '../../../store/types/post.types';
+import { FeedPayload, Post } from '../../../store/types/post.types';
 import EmptyFeedContent from './EmptyFeedContent';
 import { LoadingState } from '../../../models/utils';
 import InvitationList from './InvitationList';
@@ -83,35 +80,24 @@ const Timeline: FC = () => {
   const [hasNewlyCreatedFeed, setHasNewlyCreatedFeed] = useState(false);
 
   const getFeed = (skip?: number) => {
+    const request: FeedPayload = { skip };
     switch (activeTab) {
       case 0:
       case 1:
       case 2:
-        if (selectedChannel)
-          dispatch(
-            getChannelFeedAction({
-              skip,
-              channelId: selectedChannel.channel.id,
-              streaming: activeTab === 2,
-            })
-          );
-        else if (selectedUserZone) {
-          dispatch(
-            getZoneFeedAction({
-              skip,
-              zoneId: selectedUserZone.zone.id,
-              streaming: activeTab === 2,
-            })
-          );
-        } else {
-          dispatch(getUserFeedAction({ skip, streaming: activeTab === 2 }));
-        }
+        if (selectedChannel) request.channelId = selectedChannel.channel.id;
+        else if (selectedUserZone) request.zoneId = selectedUserZone.zone.id;
+        request.streaming = activeTab === 2;
+
+        dispatch(getFeedListAction(request));
         break;
       case 3:
-        dispatch(getPublicFeedAction({ skip, sortBy: 'time' }));
+        dispatch(getFeedListAction({ skip, public: true, sortBy: 'time' }));
         break;
       case 4:
-        dispatch(getPublicFeedAction({ skip, sortBy: 'popularity' }));
+        dispatch(
+          getFeedListAction({ skip, public: true, sortBy: 'popularity' })
+        );
         break;
       default:
         break;

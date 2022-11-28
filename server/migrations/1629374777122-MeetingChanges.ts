@@ -42,7 +42,6 @@ export class MeetingChanges1629374777122 implements MigrationInterface {
             liveStream: false,
             record: false,
             public: true,
-            userContactExclusive: false,
           },
         },
       },

@@ -63,16 +63,20 @@ export class MeetingService {
     private mailService: MailService,
   ) {}
 
-  async validateUserChannel(userId: number, channelId: number) {
+  async validateUserChannel(
+    userId: number,
+    channelId: number,
+  ): Promise<UserChannel> {
     const userChannel = await this.userChannelRepository.findOne({
-      channelId,
-      userId,
+      where: { channelId, userId },
+      relations: ['channel'],
     });
     if (!userChannel)
       throw new NotFoundException(
         ErrorTypes.CHANNEL_NOT_FOUND,
         'User channel not found',
       );
+    return userChannel;
   }
 
   async getMeetingConfig(userId: number, createMeetingInfo: CreateMeetingDto) {
@@ -92,10 +96,6 @@ export class MeetingService {
     meetingConfig.privacyConfig = {
       public:
         createMeetingInfo.public ?? meetingConfig.privacyConfig.public ?? true,
-      userContactExclusive:
-        createMeetingInfo.userContactExclusive ??
-        meetingConfig.privacyConfig.userContactExclusive ??
-        false,
       liveStream:
         createMeetingInfo.liveStream ??
         meetingConfig.privacyConfig.liveStream ??
