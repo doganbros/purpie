@@ -7,9 +7,9 @@ import {
   setSelectedChannelAction,
   unsetSelectedChannelAction,
 } from '../../../store/actions/channel.action';
-import InitialsAvatar from '../../../components/utils/InitialsAvatar';
 import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
+import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
 
 interface ChannelListProps {
   handleWaiting?: () => void;
@@ -50,6 +50,7 @@ const ChannelList: FC<ChannelListProps> = ({
             <Box
               onClick={() => {
                 handleWaiting?.();
+                //   event.stopPropagation();
                 if (c.channel.id === selectedChannel?.channel.id)
                   dispatch(unsetSelectedChannelAction());
                 else dispatch(setSelectedChannelAction(c));
@@ -65,7 +66,11 @@ const ChannelList: FC<ChannelListProps> = ({
                 selectedChannel?.channel.id === c.channel.id ? 'brand' : ''
               }
             >
-              <InitialsAvatar id={c.channel.id} value={c.channel.name} />
+              <ChannelAvatar
+                id={c.channel.id}
+                name={c.channel.name}
+                src={c.channel.displayPhoto}
+              />
               <EllipsesOverflowText
                 textAlign="center"
                 size="small"

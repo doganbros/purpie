@@ -2,9 +2,9 @@ import { Box, Button, TextArea } from 'grommet';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import InitialsAvatar from '../../../../components/utils/InitialsAvatar';
 import { createPostCommentAction } from '../../../../store/actions/post.action';
 import { User } from '../../../../store/types/auth.types';
+import { UserAvatar } from '../../../../components/utils/Avatars/UserAvatar';
 
 interface InputProps {
   user: User;
@@ -26,7 +26,11 @@ const Input: FC<InputProps> = ({ user, postId }) => {
     <Box direction="row" align="center" gap="small">
       {user && (
         <Box flex={{ shrink: 0 }}>
-          <InitialsAvatar id={user.id} value={user?.fullName} />
+          <UserAvatar
+            id={user.id}
+            name={user?.fullName}
+            src={user?.displayPhoto}
+          />
         </Box>
       )}
       <Box

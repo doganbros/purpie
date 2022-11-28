@@ -1,6 +1,8 @@
-import { PaginatedResponse } from '../../models/paginated-response';
-import { ResponseError } from '../../models/response-error';
 import {
+  CHANGE_ZONE_PERMISSIONS_FAILED,
+  CHANGE_ZONE_PERMISSIONS_REQUESTED,
+  CHANGE_ZONE_INFO_REQUESTED,
+  CHANGE_ZONE_INFO_FAILED,
   CLOSE_CREATE_ZONE_LAYER,
   CREATE_ZONE_FAILED,
   CREATE_ZONE_REQUESTED,
@@ -30,7 +32,15 @@ import {
   SET_CURRENT_USER_ZONE,
   UPDATE_ZONE_FAILED,
   UPDATE_ZONE_REQUESTED,
+  CHANGE_ZONE_PICTURE_SUCCESS,
+  CHANGE_ZONE_PICTURE_REQUESTED,
+  CHANGE_ZONE_PICTURE_FAILED,
+  CHANGE_ZONE_PERMISSIONS_SUCCESS,
+  CHANGE_ZONE_INFO_SUCCESS,
 } from '../constants/zone.constants';
+
+import { PaginatedResponse } from '../../models/paginated-response';
+import { ResponseError } from '../../models/response-error';
 import { User } from './auth.types';
 import { UtilActionParams } from './util.types';
 
@@ -42,6 +52,7 @@ export interface ZoneBasic {
 }
 
 export interface ZoneListItem extends ZoneBasic {
+  displayPhoto: string | undefined;
   description: string;
   createdBy?: User;
 }
@@ -55,6 +66,7 @@ export interface ZoneRole {
   canInvite: boolean;
   canDelete: boolean;
   canEdit: boolean;
+  canManageRole: boolean;
 }
 
 export interface UserZoneListItem {
@@ -76,7 +88,13 @@ export interface CreateZonePayload {
   categoryId: number;
 }
 
-export type UpdateZonePayload = Partial<CreateZonePayload>;
+export interface UpdateZonePayload {
+  name: string;
+  description: string;
+  subdomain: string;
+  id: number;
+  public: boolean;
+}
 
 export type ZoneDetail = Required<ZoneListItem>;
 
@@ -92,7 +110,7 @@ export interface ZoneState {
   showCreateZoneLayer: boolean;
   getUserZones: {
     loading: boolean;
-    userZones: Array<UserZoneListItem> | null;
+    userZones: Array<UserZoneListItem> | null | undefined;
     error: ResponseError | null;
   };
   joinZone: {
@@ -131,7 +149,12 @@ export type ZoneActionParams =
         | typeof JOIN_ZONE_SUCCESS
         | typeof OPEN_CREATE_ZONE_LAYER
         | typeof CLOSE_CREATE_ZONE_LAYER
-        | typeof CREATE_ZONE_SUCCESS;
+        | typeof CREATE_ZONE_SUCCESS
+        | typeof CHANGE_ZONE_PICTURE_REQUESTED
+        | typeof CHANGE_ZONE_INFO_REQUESTED
+        | typeof CHANGE_ZONE_INFO_SUCCESS
+        | typeof CHANGE_ZONE_PERMISSIONS_REQUESTED
+        | typeof CHANGE_ZONE_PERMISSIONS_SUCCESS;
     }
   | {
       type:
@@ -144,7 +167,10 @@ export type ZoneActionParams =
         | typeof DELETE_ZONE_FAILED
         | typeof SEARCH_ZONE_FAILED
         | typeof UPDATE_ZONE_FAILED
-        | typeof JOIN_ZONE_FAILED;
+        | typeof JOIN_ZONE_FAILED
+        | typeof CHANGE_ZONE_PICTURE_FAILED
+        | typeof CHANGE_ZONE_INFO_FAILED
+        | typeof CHANGE_ZONE_PERMISSIONS_FAILED;
       payload: ResponseError;
     }
   | {
@@ -172,6 +198,11 @@ export type ZoneActionParams =
   | {
       type: typeof SET_CURRENT_USER_ZONE;
       payload: UserZoneListItem;
+    }
+  | {
+      type: typeof CHANGE_ZONE_PICTURE_SUCCESS;
+      payload: string;
+      zoneId: number;
     };
 
 export interface ZoneDispatch {

@@ -2,9 +2,9 @@ import React, { FC } from 'react';
 import { Box, Text } from 'grommet';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import InitialsAvatar from '../../../components/utils/InitialsAvatar';
 import { theme } from '../../../config/app-config';
 import { ContactUser } from '../../../store/types/user.types';
+import { UserAvatar } from '../../../components/utils/Avatars/UserAvatar';
 
 interface ContactListItemProps {
   contact: ContactUser;
@@ -45,9 +45,10 @@ const ContactListItem: FC<ContactListItemProps> = ({
       }}
     >
       <Box direction="row" align="center" gap="small">
-        <InitialsAvatar
+        <UserAvatar
           id={contact.contactUser.id}
-          value={contact.contactUser.fullName}
+          name={contact.contactUser.fullName}
+          src={contact.contactUser.displayPhoto}
         />
         <Text weight="bold" color={selected ? 'white' : 'brand'}>
           {contact.contactUser.fullName}

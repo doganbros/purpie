@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import GradientScroll from '../../../components/utils/GradientScroll';
 import { listUserPublicZonesAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
-import InitialsAvatar from '../../../components/utils/InitialsAvatar';
+import InitialsAvatar from '../../../components/utils/Avatars/InitialsAvatar';
 
 const UserPublicZones: FC<{ userName: string }> = ({ userName }) => {
   const dispatch = useDispatch();

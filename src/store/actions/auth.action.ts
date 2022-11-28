@@ -29,10 +29,17 @@ import {
   INITIALIZE_USER_REQUESTED,
   INITIALIZE_USER_SUCCESS,
   INITIALIZE_USER_FAILED,
+  CHANGE_PROFILE_INFO_FAILED,
+  CHANGE_PROFILE_INFO_SUCCESS,
+  CHANGE_PROFILE_INFO_REQUESTED,
+  CHANGE_PROFILE_PICTURE_REQUESTED,
+  CHANGE_PROFILE_PICTURE_FAILED,
+  CHANGE_PROFILE_PICTURE_SUCCESS,
 } from '../constants/auth.constants';
 import * as AuthService from '../services/auth.service';
 import {
   AuthAction,
+  ChangeProfileInfo,
   LoginPayload,
   RegisterPayload,
   ResetPasswordPayload,
@@ -263,6 +270,47 @@ export const initializeUserAction = (user: RegisterPayload): AuthAction => {
     } catch (err: any) {
       dispatch({
         type: INITIALIZE_USER_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const changeProfileInfo = (user: ChangeProfileInfo): AuthAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: CHANGE_PROFILE_INFO_REQUESTED,
+    });
+    try {
+      await AuthService.changeProfileService(user);
+      dispatch({
+        type: CHANGE_PROFILE_INFO_SUCCESS,
+        payload: user,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: CHANGE_PROFILE_INFO_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const changeProfilePicture = (profilePhoto: any): AuthAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: CHANGE_PROFILE_PICTURE_REQUESTED,
+    });
+    try {
+      const payload = await AuthService.changeProfilePic(profilePhoto);
+      dispatch({
+        type: CHANGE_PROFILE_PICTURE_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: CHANGE_PROFILE_PICTURE_FAILED,
         payload: err?.response?.data,
       });
     }

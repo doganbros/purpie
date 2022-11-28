@@ -2,12 +2,12 @@ import React, { FC, useState } from 'react';
 import { Box, Stack, Text } from 'grommet';
 import { Chat, Favorite } from 'grommet-icons';
 import ExtendedBox from '../utils/ExtendedBox';
-import InitialsAvatar from '../utils/InitialsAvatar';
 import { VideoPost } from './VideoPost';
 import { ImagePost } from './ImagePost';
 import { Post } from '../../store/types/post.types';
 import { FavoriteFill } from '../utils/CustomIcons';
 import { getTimezoneTimeFromUTC } from '../../helpers/utils';
+import { UserAvatar } from '../utils/Avatars/UserAvatar';
 
 interface PostGridItemProps {
   post: Post;
@@ -66,9 +66,9 @@ const PostGridItem: FC<PostGridItemProps> = ({
                 round="large"
                 border={{ size: 'large', color: 'white' }}
               >
-                <InitialsAvatar
+                <UserAvatar
                   id={post.createdBy.id}
-                  value={post.createdBy.fullName}
+                  name={post.createdBy.fullName}
                 />
               </Box>
               <Text color="status-disabled">{post.createdBy?.fullName}</Text>

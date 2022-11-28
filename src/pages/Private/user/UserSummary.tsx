@@ -2,7 +2,7 @@ import { Box, Text } from 'grommet';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import Divider from '../../../components/utils/Divider';
-import InitialsAvatar from '../../../components/utils/InitialsAvatar';
+import InitialsAvatar from '../../../components/utils/Avatars/InitialsAvatar';
 import { UserBasic } from '../../../store/types/auth.types';
 
 export const UserSummary: FC<UserBasic> = ({
