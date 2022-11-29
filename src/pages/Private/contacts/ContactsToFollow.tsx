@@ -1,70 +1,47 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Box, Button, Text } from 'grommet';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  SUGGESTION_AMOUNT_LESS,
-  SUGGESTION_AMOUNT_MORE,
-} from '../../../helpers/constants';
-import { searchProfileAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
-import { createContactInvitation } from '../../../store/actions/activity.action';
+import {
+  createContactInvitation,
+  getContactSuggestionsAction,
+} from '../../../store/actions/activity.action';
 import { UserAvatar } from '../../../components/utils/Avatars/UserAvatar';
 
 const ContactsToFollow: FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const {
-    user: {
-      search: { results, loading },
+    activity: {
+      contactSuggestions: { data, loading },
     },
   } = useSelector((state: AppState) => state);
 
-  const [displayCount, setDisplayCount] = useState(SUGGESTION_AMOUNT_LESS);
-
   useEffect(() => {
-    dispatch(
-      searchProfileAction({
-        name: 'test',
-        userContacts: false,
-      })
-    );
+    dispatch(getContactSuggestionsAction());
   }, []);
 
   return (
     <Box gap="small">
-      <Box direction="row" align="center" justify="between">
-        <Text size="small" weight={500} color="dark">
-          People to add
-        </Text>
-        {results.data.length > SUGGESTION_AMOUNT_LESS && (
-          <Button
-            onClick={() => {
-              setDisplayCount((ps) =>
-                ps === SUGGESTION_AMOUNT_LESS
-                  ? SUGGESTION_AMOUNT_MORE
-                  : SUGGESTION_AMOUNT_LESS
-              );
-            }}
-          >
-            <Text size="small" color="neutral-2" weight={500}>
-              {displayCount === SUGGESTION_AMOUNT_LESS
-                ? t('common.seeMore')
-                : t('common.seeLess')}
-            </Text>
-          </Button>
-        )}
-      </Box>
-      {loading && <Text size="small">Loading</Text>}
+      <Text size="small" weight={500} color="dark">
+        {t('ContactsToFollow.title')}
+      </Text>
+      {loading && <Text size="small">{t('common.loading')}</Text>}
       {!loading &&
-        (results.data.length === 0 ? (
-          <Text size="small">{t('ChannelsToFollow.noChannelsFound')}</Text>
+        (data.length === 0 ? (
+          <Text size="small">{t('ContactsToFollow.noContactsFound')}</Text>
         ) : (
-          results.data.slice(0, displayCount).map((user) => (
-            <Box direction="row" justify="between" align="center" key={user.id}>
+          data.map((user) => (
+            <Box
+              direction="row"
+              justify="between"
+              align="center"
+              key={`contactsToFollow-${user.userId}`}
+            >
               <Box direction="row" align="center" gap="small">
                 <UserAvatar
-                  id={user.id}
+                  id={user.userId}
                   name={user.fullName}
                   src={user.displayPhoto}
                 />
@@ -82,7 +59,7 @@ const ContactsToFollow: FC = () => {
                 onClick={() => {
                   dispatch(createContactInvitation(''));
                 }}
-                label="Add"
+                label={t('ContactsToFollow.add')}
                 size="small"
               />
             </Box>
