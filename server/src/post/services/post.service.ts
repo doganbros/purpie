@@ -269,6 +269,7 @@ export class PostService {
         'createdBy.id',
         'createdBy.email',
         'createdBy.fullName',
+        'createdBy.displayPhoto',
       ])
       .setParameter('currentUserId', userId)
       .innerJoin('post.createdBy', 'createdBy')
