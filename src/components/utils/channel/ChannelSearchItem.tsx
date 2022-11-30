@@ -25,7 +25,11 @@ const ChannelSearchItem: FC<ChannelSearchItemProps> = ({ channel }) => {
   return (
     <Box direction="row" align="center" gap="small" key={channel.id}>
       <Box flex={{ shrink: 0 }}>
-        <ChannelAvatar name={channel.name} id={channel.id} />
+        <ChannelAvatar
+          name={channel.name}
+          id={channel.id}
+          src={channel.displayPhoto}
+        />
       </Box>
       <Box fill align="end" direction="row" gap="small">
         <Text color="brand" weight="bold">

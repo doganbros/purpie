@@ -12,6 +12,7 @@ const Header: FC<HeaderProps> = ({ user }) => (
     <UserAvatar
       id={user.id}
       name={user.fullName}
+      src={user.displayPhoto}
       size="70px"
       textProps={{
         size: '25px',

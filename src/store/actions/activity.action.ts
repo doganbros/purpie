@@ -2,6 +2,9 @@ import {
   CHANNEL_SUGGESTIONS_FAILED,
   CHANNEL_SUGGESTIONS_REQUESTED,
   CHANNEL_SUGGESTIONS_SUCCESS,
+  CONTACT_SUGGESTIONS_FAILED,
+  CONTACT_SUGGESTIONS_REQUESTED,
+  CONTACT_SUGGESTIONS_SUCCESS,
   CREATE_CONTACT_INVITATION_FAILED,
   CREATE_CONTACT_INVITATION_REQUESTED,
   CREATE_CONTACT_INVITATION_SUCCESS,
@@ -60,6 +63,26 @@ export const getChannelSuggestionsAction = (
     } catch (err: any) {
       dispatch({
         type: CHANNEL_SUGGESTIONS_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const getContactSuggestionsAction = (): ActivityAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: CONTACT_SUGGESTIONS_REQUESTED,
+    });
+    try {
+      const payload = await ActivityService.getContactSuggestions();
+      dispatch({
+        type: CONTACT_SUGGESTIONS_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: CONTACT_SUGGESTIONS_FAILED,
         payload: err?.response?.data,
       });
     }

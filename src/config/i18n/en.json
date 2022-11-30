@@ -520,5 +520,10 @@
     "submit":"Submit",
     "selectZone":"Select Zone",
     "selectChannel":"Select Channel"
+  },
+  "ContactsToFollow": {
+    "title": "People to add",
+    "add": "Add",
+    "noContactsFound": "No contacts found!"
   }
 }

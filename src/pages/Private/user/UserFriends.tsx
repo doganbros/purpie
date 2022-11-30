@@ -37,6 +37,7 @@ const UserFriends: FC<{ userName: string }> = ({ userName }) => {
                 <UserAvatar
                   id={contact.id}
                   name={contact.contactUser.fullName}
+                  src={contact.contactUser.displayPhoto}
                 />
                 <Box align="center">
                   <Text size="small" weight="bold">

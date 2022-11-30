@@ -24,7 +24,7 @@ const ZoneSearchItem: FC<ZoneSearchItemProps> = ({ zone }) => {
   return (
     <Box direction="row" align="center" gap="small" key={zone.id}>
       <Box flex={{ shrink: 0 }}>
-        <ZoneAvatar name={zone.name} id={zone.id} />
+        <ZoneAvatar name={zone.name} id={zone.id} src={zone.displayPhoto} />
       </Box>
       <Box fill align="end" direction="row" gap="small">
         <Text color="brand" weight="bold">

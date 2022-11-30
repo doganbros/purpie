@@ -58,7 +58,11 @@ const CommentList: FC<CommentsProps> = ({ postId }) => {
                   )}
                 </Box>
               </Box>
-              <UserAvatar id={item.user.id} name={item.user.fullName} />
+              <UserAvatar
+                id={item.user.id}
+                name={item.user.fullName}
+                src={item.user.displayPhoto}
+              />
             </Stack>
           )}
         </InfiniteScroll>

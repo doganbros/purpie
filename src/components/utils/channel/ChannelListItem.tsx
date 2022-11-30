@@ -11,12 +11,14 @@ interface ChannelListItemProps {
   id: number;
   zoneSubdomain: string;
   name: string;
+  displayPhoto: string;
 }
 
 const ChannelListItem: FC<ChannelListItemProps> = ({
   id,
   name,
   zoneSubdomain,
+  displayPhoto,
 }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -30,7 +32,7 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
   return (
     <Box direction="row" justify="between" align="center">
       <Box direction="row" align="center" gap="small">
-        <ChannelAvatar id={id} name={name} />
+        <ChannelAvatar id={id} name={name} src={displayPhoto} />
         <Box>
           <EllipsesOverflowText
             maxWidth="212px"

@@ -2,18 +2,21 @@ import {
   CHANNEL_SUGGESTIONS_FAILED,
   CHANNEL_SUGGESTIONS_REQUESTED,
   CHANNEL_SUGGESTIONS_SUCCESS,
-  LIST_INVITATION_FAILED,
-  LIST_INVITATION_REQUESTED,
-  LIST_INVITATION_SUCCESS,
+  CONTACT_SUGGESTIONS_FAILED,
+  CONTACT_SUGGESTIONS_REQUESTED,
+  CONTACT_SUGGESTIONS_SUCCESS,
+  CREATE_CONTACT_INVITATION_FAILED,
+  CREATE_CONTACT_INVITATION_REQUESTED,
+  CREATE_CONTACT_INVITATION_SUCCESS,
   GET_INVITATION_RESPONSE_FAILED,
   GET_INVITATION_RESPONSE_REQUESTED,
   GET_INVITATION_RESPONSE_SUCCESS,
+  LIST_INVITATION_FAILED,
+  LIST_INVITATION_REQUESTED,
+  LIST_INVITATION_SUCCESS,
   ZONE_SUGGESTIONS_FAILED,
   ZONE_SUGGESTIONS_REQUESTED,
   ZONE_SUGGESTIONS_SUCCESS,
-  CREATE_CONTACT_INVITATION_REQUESTED,
-  CREATE_CONTACT_INVITATION_SUCCESS,
-  CREATE_CONTACT_INVITATION_FAILED,
 } from '../constants/activity.constants';
 import { ActivityActionParams, ActivityState } from '../types/activity.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -26,6 +29,11 @@ const initialState: ActivityState = {
   },
   channelSuggestions: {
     ...paginationInitialState,
+    loading: false,
+    error: null,
+  },
+  contactSuggestions: {
+    data: [],
     loading: false,
     error: null,
   },
@@ -73,6 +81,33 @@ const activityReducer = (
         ...state,
         zoneSuggestions: {
           ...state.zoneSuggestions,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case CONTACT_SUGGESTIONS_REQUESTED:
+      return {
+        ...state,
+        contactSuggestions: {
+          ...state.contactSuggestions,
+          loading: true,
+          error: null,
+        },
+      };
+    case CONTACT_SUGGESTIONS_SUCCESS:
+      return {
+        ...state,
+        contactSuggestions: {
+          data: action.payload,
+          loading: false,
+          error: null,
+        },
+      };
+    case CONTACT_SUGGESTIONS_FAILED:
+      return {
+        ...state,
+        contactSuggestions: {
+          ...state.contactSuggestions,
           loading: false,
           error: action.payload,
         },

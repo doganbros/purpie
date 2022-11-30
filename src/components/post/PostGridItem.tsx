@@ -69,6 +69,7 @@ const PostGridItem: FC<PostGridItemProps> = ({
                 <UserAvatar
                   id={post.createdBy.id}
                   name={post.createdBy.fullName}
+                  src={post.createdBy.displayPhoto}
                 />
               </Box>
               <Text color="status-disabled">{post.createdBy?.fullName}</Text>
