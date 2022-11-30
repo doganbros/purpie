@@ -58,6 +58,7 @@ const ChannelsToFollow: FC = () => {
                 id={c.channel_id}
                 zoneSubdomain={c.zone_subdomain}
                 name={c.channel_name}
+                displayPhoto={c.channel_displayPhoto}
               />
             ))
         ))}

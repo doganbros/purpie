@@ -2,6 +2,7 @@ import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
 import {
   ChannelSuggestionListItem,
+  ContactSuggestionListItem,
   InvitationResponse,
   ZoneSuggestionListItem,
 } from '../types/activity.types';
@@ -23,6 +24,9 @@ export const getChannelSuggestions = (
   http
     .get('/activity/list/suggestions/channels', { params: { limit, skip } })
     .then((res) => res.data);
+
+export const getContactSuggestions = (): Promise<ContactSuggestionListItem[]> =>
+  http.get('/activity/list/suggestions/contact').then((res) => res.data);
 
 export const responseInvitation = async (
   payload: InvitationResponse

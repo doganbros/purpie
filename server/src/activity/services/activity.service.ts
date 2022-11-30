@@ -29,6 +29,7 @@ export class ActivityService {
         'channel.name',
         'channel.description',
         'channel.public',
+        'channel.displayPhoto',
         'zone.id',
         'zone.name',
         'zone.subdomain',
@@ -69,6 +70,7 @@ export class ActivityService {
       .select([
         'zone.id',
         'zone.name',
+        'zone.displayPhoto',
         'zone.subdomain',
         'zone.description',
         'zone.createdOn',

@@ -12,6 +12,7 @@ interface ZoneListItemProps {
   name: string;
   channelCount: number;
   memberCount: number;
+  displayPhoto: string;
 }
 
 const ZoneListItem: FC<ZoneListItemProps> = ({
@@ -19,6 +20,7 @@ const ZoneListItem: FC<ZoneListItemProps> = ({
   name,
   channelCount,
   memberCount,
+  displayPhoto,
 }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -34,7 +36,7 @@ const ZoneListItem: FC<ZoneListItemProps> = ({
   return (
     <Box direction="row" justify="between" align="center">
       <Box direction="row" align="center" gap="small">
-        <ZoneAvatar id={id} name={name} />
+        <ZoneAvatar id={id} name={name} src={displayPhoto} />
         <Box>
           <EllipsesOverflowText
             maxWidth="212px"

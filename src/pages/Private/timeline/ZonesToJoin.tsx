@@ -65,6 +65,7 @@ const ZonesToJoin: FC = () => {
                 name={z.zone_name}
                 channelCount={+z.zone_channelCount}
                 memberCount={+z.zone_membersCount}
+                displayPhoto={z.zone_displayPhoto}
               />
             ))
         ))}

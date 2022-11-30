@@ -62,11 +62,11 @@ export interface UserBasic {
   fullName: string;
   userName: string;
   email: string;
+  displayPhoto?: string;
 }
 
 export interface User extends UserBasic {
   userRole?: UserRole;
-  displayPhoto?: string;
   fullName: string;
 }
 

@@ -34,7 +34,11 @@ const UserPublicChannels: FC<{ userName: string }> = ({ userName }) => {
           <Box direction="row" gap="medium">
             {publicChannels.data.map(({ channel }) => (
               <Box key={channel.id} gap="small" align="center">
-                <ChannelAvatar id={channel.id} name={channel.name} />
+                <ChannelAvatar
+                  id={channel.id}
+                  name={channel.name}
+                  src={channel.displayPhoto}
+                />
                 <Box align="center">
                   <Text size="small">{channel.name}</Text>
                 </Box>

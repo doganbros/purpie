@@ -58,6 +58,7 @@ const ZoneSelector: FC = () => {
                     <UserAvatar
                       id={user.id}
                       name={user.fullName}
+                      src={user.displayPhoto}
                       size="small"
                       textProps={{ size: 'xsmall', weight: 'normal' }}
                     />
@@ -77,6 +78,7 @@ const ZoneSelector: FC = () => {
                       <ZoneAvatar
                         id={z.zone.id}
                         name={z.zone.name}
+                        src={z.zone.displayPhoto}
                         size="small"
                         textProps={{ size: 'xsmall', weight: 'normal' }}
                       />
@@ -153,9 +155,16 @@ const ZoneSelector: FC = () => {
                 <ZoneAvatar
                   id={selectedUserZone.zone.id}
                   name={selectedUserZone.zone.name}
+                  src={selectedUserZone.zone.displayPhoto}
                 />
               ) : (
-                user && <UserAvatar id={user.id} name={user.fullName} />
+                user && (
+                  <UserAvatar
+                    id={user.id}
+                    name={user.fullName}
+                    src={user.displayPhoto}
+                  />
+                )
               )}
               <Box align="center">
                 <EllipsesOverflowText
