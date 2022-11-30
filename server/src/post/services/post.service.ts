@@ -545,7 +545,7 @@ export class PostService {
         })
         .paginate(query);
 
-    return this.getUserFeedSelection(userId, query).paginate(query);
+    return this.getUserFeedSelection(userId, query, true, true).paginate(query);
   }
 
   async getFeaturedPost(userId: number, currentUserId: number) {
