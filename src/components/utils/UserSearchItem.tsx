@@ -1,7 +1,7 @@
 import { Box, Text } from 'grommet';
 import React, { FC } from 'react';
 import { UserBasic } from '../../store/types/auth.types';
-import InitialsAvatar from './InitialsAvatar';
+import { UserAvatar } from './Avatars/UserAvatar';
 
 interface UserSearchItemProps {
   user: UserBasic;
@@ -10,14 +10,11 @@ interface UserSearchItemProps {
 const UserSearchItem: FC<UserSearchItemProps> = ({ user }) => (
   <Box direction="row" align="center" gap="small" key={user.id}>
     <Box flex={{ shrink: 0 }}>
-      <InitialsAvatar
-        value={`${user.firstName} ${user.lastName}`}
-        id={user.id}
-      />
+      <UserAvatar name={user.fullName} id={user.id} src={user.displayPhoto} />
     </Box>
     <Box fill align="end" direction="row" gap="small">
       <Text color="brand" weight="bold">
-        {user.firstName} {user.lastName}
+        {user.fullName}
       </Text>
       <Text color="status-disabled" size="small">
         {user.userName}

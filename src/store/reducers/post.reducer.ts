@@ -1,47 +1,43 @@
 import {
-  PUBLIC_FEED_REQUESTED,
-  PUBLIC_FEED_SUCCESS,
-  PUBLIC_FEED_FAILED,
-  USER_FEED_REQUESTED,
-  USER_FEED_SUCCESS,
-  USER_FEED_FAILED,
-  ZONE_FEED_REQUESTED,
-  ZONE_FEED_SUCCESS,
-  ZONE_FEED_FAILED,
-  CHANNEL_FEED_REQUESTED,
-  CHANNEL_FEED_SUCCESS,
-  CHANNEL_FEED_FAILED,
-  POST_DETAIL_REQUESTED,
-  POST_DETAIL_SUCCESS,
-  POST_DETAIL_FAILED,
+  ADD_POST_SUCCESS,
+  CLOSE_CREATE_VIDEO_LAYER,
+  CREATE_POST_COMMENT_LIKE_SUCCESS,
+  CREATE_POST_COMMENT_SUCCESS,
+  CREATE_POST_LIKE_SUCCESS,
+  CREATE_POST_SAVE_FAILED,
+  CREATE_POST_SAVE_SUCCESS,
+  CREATE_VIDEO_FAILED,
   CREATE_VIDEO_REQUESTED,
   CREATE_VIDEO_SUCCESS,
-  CREATE_VIDEO_FAILED,
-  OPEN_CREATE_VIDEO_LAYER,
-  CLOSE_CREATE_VIDEO_LAYER,
-  CREATE_POST_LIKE_SUCCESS,
-  REMOVE_POST_LIKE_SUCCESS,
-  CREATE_POST_SAVE_SUCCESS,
-  CREATE_POST_SAVE_FAILED,
-  REMOVE_POST_SAVE_SUCCESS,
-  REMOVE_POST_SAVE_FAILED,
-  SAVED_POSTS_REQUESTED,
-  SAVED_POSTS_SUCCESS,
-  SAVED_POSTS_FAILED,
-  SEARCH_POST_REQUESTED,
-  SEARCH_POST_SUCCESS,
-  SEARCH_POST_FAILED,
-  UPDATE_POST_COMMENT_SUCCESS,
-  REMOVE_POST_COMMENT_SUCCESS,
-  LIST_POST_COMMENTS_REQUESTED,
-  LIST_POST_COMMENTS_SUCCESS,
-  LIST_POST_COMMENTS_FAILED,
+  FEED_FAILED,
+  FEED_REQUESTED,
+  FEED_SUCCESS,
+  GET_FEATURED_POST_FAILED,
+  GET_FEATURED_POST_REQUESTED,
+  GET_FEATURED_POST_SUCCESS,
+  LIST_POST_COMMENT_REPLIES_FAILED,
   LIST_POST_COMMENT_REPLIES_REQUESTED,
   LIST_POST_COMMENT_REPLIES_SUCCESS,
-  LIST_POST_COMMENT_REPLIES_FAILED,
-  CREATE_POST_COMMENT_SUCCESS,
-  CREATE_POST_COMMENT_LIKE_SUCCESS,
+  LIST_POST_COMMENTS_FAILED,
+  LIST_POST_COMMENTS_REQUESTED,
+  LIST_POST_COMMENTS_SUCCESS,
+  OPEN_CREATE_VIDEO_LAYER,
+  POST_DETAIL_FAILED,
+  POST_DETAIL_REQUESTED,
+  POST_DETAIL_SUCCESS,
   REMOVE_POST_COMMENT_LIKE_SUCCESS,
+  REMOVE_POST_COMMENT_SUCCESS,
+  REMOVE_POST_LIKE_SUCCESS,
+  REMOVE_POST_SAVE_FAILED,
+  REMOVE_POST_SAVE_SUCCESS,
+  SAVED_POSTS_FAILED,
+  SAVED_POSTS_REQUESTED,
+  SAVED_POSTS_SUCCESS,
+  SEARCH_POST_FAILED,
+  SEARCH_POST_REQUESTED,
+  SEARCH_POST_SUCCESS,
+  UPDATE_POST_COMMENT_SUCCESS,
+  UPDATE_POST_DETAIL_SUCCESS,
 } from '../constants/post.constants';
 import { PostActionParams, PostState } from '../types/post.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -78,6 +74,11 @@ const initialState: PostState = {
     loading: false,
     error: null,
   },
+  featuredPost: {
+    data: null,
+    loading: false,
+    error: null,
+  },
 };
 
 const postReducer = (
@@ -85,7 +86,29 @@ const postReducer = (
   action: PostActionParams
 ): PostState => {
   switch (action.type) {
-    case PUBLIC_FEED_REQUESTED:
+    case ADD_POST_SUCCESS:
+      return {
+        ...state,
+        feed: {
+          ...state.feed,
+          data: [action.payload, ...state.feed.data],
+        },
+      };
+    case UPDATE_POST_DETAIL_SUCCESS:
+      return {
+        ...state,
+        postDetail: {
+          ...state.postDetail,
+          data: state.postDetail.data
+            ? {
+                ...state.postDetail.data,
+                ...action.payload,
+              }
+            : state.postDetail.data,
+        },
+      };
+      break;
+    case FEED_REQUESTED:
       return {
         ...state,
         feed: {
@@ -97,7 +120,7 @@ const postReducer = (
           error: null,
         },
       };
-    case PUBLIC_FEED_SUCCESS:
+    case FEED_SUCCESS:
       return {
         ...state,
         feed: {
@@ -110,109 +133,7 @@ const postReducer = (
           error: null,
         },
       };
-    case PUBLIC_FEED_FAILED:
-      return {
-        ...state,
-        feed: {
-          ...state.feed,
-          loadingState: LoadingState.done,
-          error: action.payload,
-        },
-      };
-    case USER_FEED_REQUESTED:
-      return {
-        ...state,
-        feed: {
-          ...state.feed,
-          loadingState:
-            (action.payload.skip || 0) > 0
-              ? LoadingState.more
-              : LoadingState.loading,
-          error: null,
-        },
-      };
-    case USER_FEED_SUCCESS:
-      return {
-        ...state,
-        feed: {
-          ...action.payload,
-          data:
-            action.payload.skip > 0
-              ? [...state.feed.data, ...action.payload.data]
-              : action.payload.data,
-          loadingState: LoadingState.done,
-          error: null,
-        },
-      };
-    case USER_FEED_FAILED:
-      return {
-        ...state,
-        feed: {
-          ...state.feed,
-          loadingState: LoadingState.done,
-          error: action.payload,
-        },
-      };
-    case ZONE_FEED_REQUESTED:
-      return {
-        ...state,
-        feed: {
-          ...state.feed,
-          loadingState:
-            (action.payload.skip || 0) > 0
-              ? LoadingState.more
-              : LoadingState.loading,
-          error: null,
-        },
-      };
-    case ZONE_FEED_SUCCESS:
-      return {
-        ...state,
-        feed: {
-          ...action.payload,
-          data:
-            action.payload.skip > 0
-              ? [...state.feed.data, ...action.payload.data]
-              : action.payload.data,
-          loadingState: LoadingState.done,
-          error: null,
-        },
-      };
-    case ZONE_FEED_FAILED:
-      return {
-        ...state,
-        feed: {
-          ...state.feed,
-          loadingState: LoadingState.done,
-          error: action.payload,
-        },
-      };
-    case CHANNEL_FEED_REQUESTED:
-      return {
-        ...state,
-        feed: {
-          ...state.feed,
-          loadingState:
-            (action.payload.skip || 0) > 0
-              ? LoadingState.more
-              : LoadingState.loading,
-          error: null,
-        },
-      };
-    case CHANNEL_FEED_SUCCESS:
-      return {
-        ...state,
-        feed: {
-          ...action.payload,
-          data:
-            action.payload.skip > 0
-              ? [...state.feed.data, ...action.payload.data]
-              : action.payload.data,
-          loadingState: LoadingState.done,
-          error: null,
-        },
-      };
-    case CHANNEL_FEED_FAILED:
+    case FEED_FAILED:
       return {
         ...state,
         feed: {
@@ -261,6 +182,10 @@ const postReducer = (
     case CREATE_VIDEO_SUCCESS:
       return {
         ...state,
+        feed: {
+          ...state.feed,
+          data: [action.payload, ...state.feed.data],
+        },
         createVideo: {
           ...state.createVideo,
           uploading: false,
@@ -750,6 +675,34 @@ const postReducer = (
         },
       };
     }
+    case GET_FEATURED_POST_REQUESTED:
+      return {
+        ...state,
+        featuredPost: {
+          ...state.featuredPost,
+          loading: true,
+          error: null,
+        },
+      };
+    case GET_FEATURED_POST_SUCCESS:
+      return {
+        ...state,
+        featuredPost: {
+          ...state.featuredPost,
+          data: action.payload,
+          loading: false,
+          error: null,
+        },
+      };
+    case GET_FEATURED_POST_FAILED:
+      return {
+        ...state,
+        featuredPost: {
+          ...state.featuredPost,
+          loading: false,
+          error: action.payload,
+        },
+      };
     default:
       return state;
   }

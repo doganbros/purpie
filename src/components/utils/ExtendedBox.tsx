@@ -10,11 +10,13 @@ interface Props extends BoxExtendedProps {
   right?: string;
   bottom?: string;
   minWidth?: string;
+  maxWidth?: string;
   minHeight?: string;
   opacity?: string;
   transition?: string;
   transform?: string;
   userSelect?: string;
+  boxShadow?: string;
   innerRef?: React.LegacyRef<HTMLDivElement>;
 }
 
@@ -27,8 +29,10 @@ const ExtendedBoxCSS = css`
   right: ${(props: Props) => props.right};
   bottom: ${(props: Props) => props.bottom};
   min-width: ${(props: Props) => props.minWidth};
-  min-height: ${(props: Props) => props.minWidth};
+  max-width: ${(props: Props) => props.maxWidth};
+  min-height: ${(props: Props) => props.minHeight};
   opacity: ${(props: Props) => props.opacity};
+  box-shadow: ${(props: Props) => props.boxShadow};
   user-select: ${(props: Props) => props.userSelect};
 `;
 

@@ -1,9 +1,10 @@
 import { Box, Button, TextArea } from 'grommet';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import InitialsAvatar from '../../../../components/utils/InitialsAvatar';
+import { useTranslation } from 'react-i18next';
 import { createPostCommentAction } from '../../../../store/actions/post.action';
 import { User } from '../../../../store/types/auth.types';
+import { UserAvatar } from '../../../../components/utils/Avatars/UserAvatar';
 
 interface InputProps {
   user: User;
@@ -11,6 +12,7 @@ interface InputProps {
 }
 const Input: FC<InputProps> = ({ user, postId }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
 
   const handleSend = () => {
@@ -24,9 +26,10 @@ const Input: FC<InputProps> = ({ user, postId }) => {
     <Box direction="row" align="center" gap="small">
       {user && (
         <Box flex={{ shrink: 0 }}>
-          <InitialsAvatar
+          <UserAvatar
             id={user.id}
-            value={`${user?.firstName} ${user?.lastName}`}
+            name={user?.fullName}
+            src={user?.displayPhoto}
           />
         </Box>
       )}
@@ -43,11 +46,16 @@ const Input: FC<InputProps> = ({ user, postId }) => {
           resize={false}
           plain
           focusIndicator={false}
-          placeholder="Write a comment"
+          placeholder={t('CommentList.writeComment')}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         />
-        <Button onClick={handleSend} label="Send" size="small" primary />
+        <Button
+          onClick={handleSend}
+          label={t('common.send')}
+          size="small"
+          primary
+        />
       </Box>
     </Box>
   );

@@ -1,5 +1,7 @@
-import { ResponseError } from '../../models/response-error';
 import {
+  CHANGE_PROFILE_PICTURE_FAILED,
+  CHANGE_PROFILE_PICTURE_REQUESTED,
+  CHANGE_PROFILE_PICTURE_SUCCESS,
   LOGIN_REQUESTED,
   RESET_PASSWORD_REQUESTED,
   FORGOT_PASSWORD_REQUESTED,
@@ -30,7 +32,12 @@ import {
   INITIALIZE_USER_REQUESTED,
   INITIALIZE_USER_SUCCESS,
   INITIALIZE_USER_FAILED,
+  CHANGE_PROFILE_INFO_FAILED,
+  CHANGE_PROFILE_INFO_SUCCESS,
+  CHANGE_PROFILE_INFO_REQUESTED,
 } from '../constants/auth.constants';
+import { ResponseError } from '../../models/response-error';
+
 import { UtilActionParams } from './util.types';
 
 export type UserRoleCode = 'SUPER_ADMIN' | 'ADMIN' | 'NORMAL';
@@ -44,20 +51,23 @@ export interface ExistenceResult {
 export interface UserRole {
   roleCode: UserRoleCode;
   roleName: string;
+  isSystemRole: boolean;
   canCreateZone: boolean;
   canCreateClient: boolean;
+  canManageRole: boolean;
 }
 
 export interface UserBasic {
   id: number;
-  firstName: string;
-  userName?: string;
-  lastName: string;
+  fullName: string;
+  userName: string;
   email: string;
+  displayPhoto?: string;
 }
 
 export interface User extends UserBasic {
   userRole?: UserRole;
+  fullName: string;
 }
 
 export interface AuthState {
@@ -106,6 +116,10 @@ export interface AuthState {
     loading: boolean;
     error: ResponseError | null;
   };
+  changeProfileInfo: {
+    loading: boolean;
+    error: ResponseError | null;
+  };
 }
 
 export interface LoginPayload {
@@ -116,8 +130,7 @@ export interface LoginPayload {
 export interface RegisterPayload {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
 }
 
 export interface ResetPasswordPayload {
@@ -128,6 +141,11 @@ export interface ResetPasswordPayload {
 export interface VerifyEmailPayload {
   token: string;
   userName: string;
+}
+
+export interface ChangeProfileInfo {
+  userName: string;
+  fullName: string;
 }
 
 export type AuthActionParams =
@@ -145,10 +163,14 @@ export type AuthActionParams =
         | typeof RESEND_MAIL_VERIFICATION_TOKEN_SUCCESS
         | typeof LOGOUT
         | typeof RESET_PASSWORD_SUCCESS
-        | typeof INITIALIZE_USER_REQUESTED;
+        | typeof INITIALIZE_USER_REQUESTED
+        | typeof CHANGE_PROFILE_INFO_REQUESTED
+        | typeof CHANGE_PROFILE_PICTURE_REQUESTED;
     }
   | {
-      type: typeof THIRD_PARTY_URL_REQUESTED;
+      type:
+        | typeof THIRD_PARTY_URL_REQUESTED
+        | typeof CHANGE_PROFILE_PICTURE_SUCCESS;
       payload: string;
     }
   | {
@@ -160,6 +182,10 @@ export type AuthActionParams =
         | typeof USER_RETRIEVED_SUCCESS
         | typeof INITIALIZE_USER_SUCCESS;
       payload: User;
+    }
+  | {
+      type: typeof CHANGE_PROFILE_INFO_SUCCESS;
+      payload: { userName: string; fullName: string };
     }
   | {
       type: typeof LOGIN_SUCCESS | typeof REGISTER_SUCCESS;
@@ -176,7 +202,9 @@ export type AuthActionParams =
         | typeof RESEND_MAIL_VERIFICATION_TOKEN_FAILED
         | typeof USER_RETRIEVED_FAILED
         | typeof FORGOT_PASSWORD_FAILED
-        | typeof INITIALIZE_USER_FAILED;
+        | typeof INITIALIZE_USER_FAILED
+        | typeof CHANGE_PROFILE_INFO_FAILED
+        | typeof CHANGE_PROFILE_PICTURE_FAILED;
       payload: ResponseError;
     };
 

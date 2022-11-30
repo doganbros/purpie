@@ -1,18 +1,11 @@
 import React, { FC, useEffect, useState } from 'react';
-import {
-  Box,
-  CheckBox,
-  Form,
-  FormField,
-  Grid,
-  InfiniteScroll,
-  Text,
-} from 'grommet';
+import { Box, Form, FormField, Grid, InfiniteScroll, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
-import PostGridItem from '../../../components/utils/PostGridItem/PostGridItem';
+import PostGridItem from '../../../components/post/PostGridItem';
 import { useResponsive } from '../../../hooks/useResponsive';
 
 import { AppState } from '../../../store/reducers/root.reducer';
@@ -27,12 +20,14 @@ import {
   searchPostAction,
 } from '../../../store/actions/post.action';
 import { SearchParams } from '../../../models/utils';
+import Switch from '../../../components/utils/Switch';
 
 const PostSearch: FC = () => {
   const { value } = useParams<SearchParams>();
   const dispatch = useDispatch();
   const history = useHistory();
   const size = useResponsive();
+  const { t } = useTranslation();
 
   const [options, setOptions] = useState<PostSearchOptions>({
     following: false,
@@ -63,7 +58,7 @@ const PostSearch: FC = () => {
 
   const renderResults = () => {
     if (results.data.length === 0) {
-      return <Text>Nothing Found</Text>;
+      return <Text>{t('common.nothingFound')}</Text>;
     }
     return (
       <Grid columns={size !== 'small' ? 'medium' : '100%'}>
@@ -91,17 +86,17 @@ const PostSearch: FC = () => {
 
   return (
     <PrivatePageLayout
-      title="Search"
+      title={t('common.search')}
       topComponent={<SearchInput />}
       rightComponent={
         <Box pad="medium" gap="medium">
           <FilterWrapper>
             <Form value={options} onChange={setOptions}>
               <FormField name="following">
-                <CheckBox toggle name="following" label="Following" />
+                <Switch label={t('common.following')} name="following" />
               </FormField>
               <FormField name="streaming">
-                <CheckBox toggle name="streaming" label="Streaming" />
+                <Switch label={t('common.streaming')} name="streaming" />
               </FormField>
             </Form>
           </FilterWrapper>
@@ -114,7 +109,9 @@ const PostSearch: FC = () => {
       }
     >
       <Box pad={{ vertical: 'medium' }} gap="medium">
-        <Text weight="bold">Post Results</Text>
+        <Text weight="bold">
+          {t('common.searchResult', { title: t('common.post') })}
+        </Text>
         {renderResults()}
       </Box>
     </PrivatePageLayout>

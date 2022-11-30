@@ -10,6 +10,7 @@ import { parsePostTags } from 'helpers/utils';
 import { UserProfile } from 'src/auth/interfaces/user.interface';
 import { MailService } from 'src/mail/mail.service';
 import { Brackets, Repository } from 'typeorm';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const { REACT_APP_CLIENT_HOST } = process.env;
 
@@ -27,12 +28,20 @@ export class VideoService {
     private mailService: MailService,
   ) {}
 
-  async validateUserChannel(userId: number, channelId: number) {
+  async validateUserChannel(
+    userId: number,
+    channelId: number,
+  ): Promise<UserChannel> {
     const userChannel = await this.userChannelRepository.findOne({
-      channelId,
-      userId,
+      where: { channelId, userId },
+      relations: ['channel'],
     });
-    if (!userChannel) throw new NotFoundException('User channel not found');
+    if (!userChannel)
+      throw new NotFoundException(
+        ErrorTypes.CHANNEL_NOT_FOUND,
+        'User channel not found',
+      );
+    return userChannel;
   }
 
   async createNewVideoPost(payload: Partial<Post>) {
@@ -61,8 +70,7 @@ export class VideoService {
 
   async sendVideoInfoMail(user: UserProfile, videoPost: Post) {
     const context = {
-      firstName: user.firstName,
-      lastName: user.lastName,
+      fullName: user.fullName,
       videoPost: {
         ...videoPost,
         createdOn: dayjs(videoPost.createdOn).format(
@@ -73,7 +81,7 @@ export class VideoService {
     };
     return this.mailService.sendMailByView(
       user.email,
-      'Octopus Video',
+      'Purpie Video',
       'video-info',
       context,
     );
@@ -91,8 +99,7 @@ export class VideoService {
         'videoPost.userContactExclusive',
         'tags.value',
         'createdBy.id',
-        'createdBy.firstName',
-        'createdBy.lastName',
+        'createdBy.fullName',
         'createdBy.userName',
       ])
       .innerJoin('videoPost.createdBy', 'createdBy')
@@ -102,12 +109,7 @@ export class VideoService {
 
   getVideoPostQuery(userId: number) {
     return this.videoPostSelection
-      .addSelect([
-        'channel.id',
-        'channel.name',
-        'channel.topic',
-        'channel.description',
-      ])
+      .addSelect(['channel.id', 'channel.name', 'channel.description'])
       .leftJoin(
         UserChannel,
         'user_channel',

@@ -22,6 +22,8 @@ import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-reques
 import { CreateVideoDto } from '../dto/create-video.dto';
 import { VideoService } from '../services/video.service';
 import { VideoUploadClientFeedbackDto } from '../dto/video-upload-client-feedback.dto';
+import { User } from '../../../entities/User.entity';
+import { PostReaction } from '../../../entities/PostReaction.entity';
 
 const { S3_VIDEO_POST_DIR = '' } = process.env;
 
@@ -81,31 +83,40 @@ export class VideoController {
       allowReaction: videoInfo.allowReaction || true,
     };
 
-    const { public: publicVideo, userContactExclusive, channelId } = videoInfo;
+    const { public: publicVideo, channelId } = videoInfo;
 
     if (channelId) {
-      await this.staticVideoService.validateUserChannel(user.id, channelId);
+      const userChannel = await this.staticVideoService.validateUserChannel(
+        user.id,
+        channelId,
+      );
       videoPostPayload.channelId = channelId;
+      videoPostPayload.public = userChannel.channel.public;
     } else {
       videoPostPayload.public = publicVideo;
-      videoPostPayload.userContactExclusive =
-        userContactExclusive === true && !publicVideo;
     }
+
+    videoPostPayload.createdBy = {
+      id: user.id,
+      email: user.email,
+      fullName: user.email,
+    } as User;
+    videoPostPayload.postReaction = new PostReaction();
 
     const videoPost = await this.staticVideoService.createNewVideoPost(
       videoPostPayload,
     );
 
-    this.staticVideoService.sendVideoInfoMail(user, videoPost);
+    await this.staticVideoService.sendVideoInfoMail(user, videoPost);
 
-    return videoPost.id;
+    return videoPostPayload;
   }
 
   @Post('client/feedback')
   @IsClientAuthenticated(['manageStream'])
   @ApiOkResponse({
     description:
-      "Client sends a feedback about any video processing, it could be a notification to octopus that a meeting's video has been stored. Created is sent to client when the record is created, OK otherwise",
+      "Client sends a feedback about any video processing, it could be a notification to purpie that a meeting's video has been stored. Created is sent to client when the record is created, OK otherwise",
     schema: { type: 'string', example: 'Created' },
   })
   @HttpCode(HttpStatus.OK)

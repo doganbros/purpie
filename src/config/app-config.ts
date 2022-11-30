@@ -1,33 +1,25 @@
 import { base, grommet, ThemeType } from 'grommet';
 import { deepMerge } from 'grommet/utils';
+import { CaretDownFill, CaretRightFill } from 'grommet-icons';
 
 export const theme: typeof grommet = deepMerge(base, {
   global: {
     font: {
-      family: 'HelveticaNeue, Poppins, sans-serif',
+      family: 'Poppins',
     },
     colors: {
       brand: '#9060EB',
-      'brand-2': '#7D4CDB',
+      'brand-alt': '#7D4CDB',
       'status-disabled': '#8F9BB3',
-      'status-unknown': '#8F9BB3',
       'status-disabled-light': '#E4E9F2',
-      'status-unkown-light': '#E4E9F2',
+      'status-unknown-light': '#E4E9F2',
       'status-info': '#16A8DE',
-    },
-    drop: {
-      background: 'white',
-      extend: () => `
-        font-size: ${base.text?.small?.size};
-        & > * > * > *:hover {
-          font-weight: bold;
-          background: #E4E9F2;
-        };
-      `,
+      blue: '#0091FF',
+      dark: '#202631',
     },
     input: {
       extend: 'color: grey;',
-      padding: { vertical: '15px' },
+      padding: { vertical: '12px' },
       font: {
         weight: 'normal',
         size: 'small',
@@ -50,6 +42,13 @@ export const theme: typeof grommet = deepMerge(base, {
       border: {
         color: 'light-4',
         radius: '50px',
+      },
+    },
+  },
+  checkBox: {
+    hover: {
+      border: {
+        color: 'accent-1',
       },
     },
   },
@@ -86,6 +85,16 @@ export const theme: typeof grommet = deepMerge(base, {
         opacity: 'weak',
       },
       size: 'small',
+    },
+  },
+  accordion: {
+    icons: {
+      collapse: CaretDownFill,
+      expand: CaretRightFill,
+      color: 'brand',
+    },
+    border: {
+      color: 'status-disabled-light',
     },
   },
 } as ThemeType);

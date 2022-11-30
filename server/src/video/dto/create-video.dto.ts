@@ -20,7 +20,7 @@ export class CreateVideoDto {
 
   @ApiProperty({ required: false })
   @ValidateIf((o) => {
-    return !o.userContactExclusive && !o.public;
+    return !o.public;
   })
   @IsInt()
   @Transform(({ value }) => Number.parseInt(value, 10))
@@ -28,19 +28,11 @@ export class CreateVideoDto {
 
   @ApiProperty({ required: false })
   @ValidateIf((o) => {
-    return !o.userContactExclusive && !o.channelId;
+    return !o.channelId;
   })
   @Transform(({ value }) => ['true', true, 1, '1'].includes(value))
   @IsBoolean()
   public?: boolean;
-
-  @ApiProperty({ required: false })
-  @Transform(({ value }) => ['true', true, 1, '1'].includes(value))
-  @ValidateIf((o) => {
-    return !o.channelId && !o.public;
-  })
-  @IsBoolean()
-  userContactExclusive?: boolean;
 
   @ApiProperty({ type: String, format: 'binary' })
   videoFile: string;

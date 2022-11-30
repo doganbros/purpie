@@ -50,14 +50,12 @@ export class UserChannelService {
         'channel.id',
         'channel.createdOn',
         'channel.name',
-        'channel.topic',
         'channel.displayPhoto',
         'channel.description',
         'channel.public',
         'channel.zoneId',
         'createdBy.id',
-        'createdBy.firstName',
-        'createdBy.lastName',
+        'createdBy.fullName',
         'createdBy.email',
       ])
       .innerJoin('channel.zone', 'zone')
@@ -65,7 +63,7 @@ export class UserChannelService {
       .leftJoin(
         UserZone,
         'user_zone',
-        'user_zone.zoneId = channel.id and user_zone.userId = :userId',
+        'user_zone.zoneId = zone.id and user_zone.userId = :userId',
         { userId },
       )
       .leftJoin(
@@ -74,7 +72,6 @@ export class UserChannelService {
         'user_channel.channelId = channel.id and user_channel.userId = :userId',
         { userId },
       )
-      .leftJoinAndSelect('channel.category', 'category')
       .leftJoinAndSelect(
         'user_channel.channelRole',
         'channel_role',
@@ -107,14 +104,12 @@ export class UserChannelService {
         id: record.channel_id,
         createdOn: record.channel_createdOn,
         name: record.channel_name,
-        topic: record.channel_topic,
         description: record.channel_description,
         public: record.channel_public,
         zoneId: record.channel_zoneId,
         createdBy: {
           id: record.createdBy_id,
-          firstName: record.createdBy_firstName,
-          lastName: record.createdBy_lastName,
+          fullName: record.createdBy_fullName,
           email: record.createdBy_email,
         },
       },
@@ -143,26 +138,28 @@ export class UserChannelService {
         'channel.id',
         'channel.createdOn',
         'channel.name',
-        'channel.topic',
         'channel.description',
         'channel.displayPhoto',
         'channel.public',
         'channel.zoneId',
         'createdBy.id',
-        'createdBy.firstName',
-        'createdBy.lastName',
+        'createdBy.fullName',
         'createdBy.email',
       ])
       .leftJoin('user_channel.channel', 'channel')
       .leftJoin('channel.createdBy', 'createdBy')
-      .leftJoinAndSelect('channel.category', 'category')
+      .leftJoin('post', 'post', 'post.channelId = channel.id')
+      .leftJoin('post_reaction', 'ps', 'ps.postId = post.id')
       .leftJoinAndSelect(
         'user_channel.channelRole',
         'channel_role',
         'channel_role.roleCode = user_channel.channelRoleCode AND channel_role.channelId = channel.id',
       )
       .where('user_channel.userId = :userId', { userId })
-      .orderBy('user_channel.createdOn', 'DESC')
+      .orderBy(
+        '-(ps.commentsCount + ps.dislikesCount + ps.likesCount + ps.liveStreamViewersCount + ps.viewsCount)',
+        'ASC',
+      )
       .getMany();
   }
 }

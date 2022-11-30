@@ -1,6 +1,7 @@
 import React, { FC, useContext } from 'react';
 import { Box, FormField, Grid, ResponsiveContext, Select } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import SectionContainer from '../../../components/utils/SectionContainer';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action';
@@ -17,6 +18,7 @@ const MeetingPrivacy: FC = () => {
     zone: { selectedUserZone },
   } = useSelector((state: AppState) => state);
 
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const size = useContext(ResponsiveContext);
   const options = [
@@ -27,14 +29,14 @@ const MeetingPrivacy: FC = () => {
 
   return (
     <>
-      <SectionContainer label="Joining">
+      <SectionContainer label={t('MeetingPrivacy.joining')}>
         {!selectedUserZone ? (
           <Grid
             columns={size === 'small' ? 'full' : { count: 2, size: 'small' }}
             gap={{ column: 'xlarge', row: 'small' }}
           >
             <Switch
-              label="Public Meeting"
+              label={t('MeetingPrivacy.publicMeeting')}
               fill="vertical"
               value={!!formPayload?.public}
               onChange={(v) => {
@@ -48,7 +50,7 @@ const MeetingPrivacy: FC = () => {
               }}
             />
             <Switch
-              label="Open To Contacts"
+              label={t('MeetingPrivacy.openContacts')}
               fill="vertical"
               value={!!formPayload?.userContactExclusive}
               onChange={(v) => {
@@ -65,13 +67,13 @@ const MeetingPrivacy: FC = () => {
         ) : (
           <Box justify="between" align="center" direction="row">
             <FormField
-              label="Select Channel"
+              label={t('MeetingPrivacy.selectChannel')}
               name="select"
-              validate={validators.required()}
+              validate={validators.required(t('MeetingPrivacy.selectChannel'))}
             >
               <Select
                 name="select"
-                placeholder="Choose"
+                placeholder={t('common.choose')}
                 options={options}
                 labelKey="label"
                 valueKey="value"
@@ -81,13 +83,13 @@ const MeetingPrivacy: FC = () => {
         )}
       </SectionContainer>
       <Box height="20px" />
-      <SectionContainer label="Streaming &amp; Recording">
+      <SectionContainer label={t('MeetingPrivacy.streamingRecording')}>
         <Grid
           columns={size === 'small' ? 'full' : { count: 2, size: 'small' }}
           gap={{ column: 'xlarge', row: 'small' }}
         >
           <Switch
-            label="Live stream the meeting?"
+            label={t('MeetingPrivacy.liveStreamOrMeeting')}
             fill="vertical"
             value={!!formPayload?.liveStream}
             onChange={(v) => {
@@ -99,7 +101,7 @@ const MeetingPrivacy: FC = () => {
             }}
           />
           <Switch
-            label="Enable Recording?"
+            label={t('MeetingPrivacy.enableRecording')}
             fill="vertical"
             value={!!formPayload?.record}
             onChange={(v) => {

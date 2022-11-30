@@ -1,23 +1,29 @@
 import React, { FC } from 'react';
 import { Box, Button, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { joinZoneAction } from '../../../store/actions/zone.action';
-import InitialsAvatar from '../InitialsAvatar';
+import EllipsesOverflowText from '../EllipsesOverflowText';
+import { ZoneAvatar } from '../Avatars/ZoneAvatar';
 
 interface ZoneListItemProps {
   id: number;
   name: string;
   channelCount: number;
   memberCount: number;
+  displayPhoto: string;
 }
+
 const ZoneListItem: FC<ZoneListItemProps> = ({
   id,
   name,
   channelCount,
   memberCount,
+  displayPhoto,
 }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     zone: {
       getUserZones: { userZones },
@@ -30,16 +36,21 @@ const ZoneListItem: FC<ZoneListItemProps> = ({
   return (
     <Box direction="row" justify="between" align="center">
       <Box direction="row" align="center" gap="small">
-        <InitialsAvatar id={id} value={name} />
+        <ZoneAvatar id={id} name={name} src={displayPhoto} />
         <Box>
-          <Text size="small" weight="bold">
+          <EllipsesOverflowText
+            maxWidth="212px"
+            lineClamp={1}
+            size="small"
+            weight="bold"
+          >
             {name}
+          </EllipsesOverflowText>
+          <Text size="xsmall" color="status-disabled">
+            {t('ZoneListItem.channelCount', { count: channelCount })}
           </Text>
           <Text size="xsmall" color="status-disabled">
-            {channelCount} channels
-          </Text>
-          <Text size="xsmall" color="status-disabled">
-            {memberCount} members
+            {t('ZoneListItem.memberCount', { count: memberCount })}
           </Text>
         </Box>
       </Box>
@@ -49,7 +60,7 @@ const ZoneListItem: FC<ZoneListItemProps> = ({
           dispatch(joinZoneAction(id));
         }}
         disabled={isJoined}
-        label={isJoined ? 'Joined' : 'Join'}
+        label={t(isJoined ? 'common.joined' : 'common.join')}
         size="small"
       />
     </Box>

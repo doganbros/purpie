@@ -1,8 +1,9 @@
-import { Box, Form, FormField, Button, Image, Text, TextInput } from 'grommet';
-import { Google, FacebookOption } from 'grommet-icons';
+import { Box, Form, FormField, Image, Text, TextInput } from 'grommet';
+import { FacebookOption, Google } from 'grommet-icons';
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { AnchorLink } from '../../components/utils/AnchorLink';
 import { validators } from '../../helpers/validators';
 import { FormSubmitEvent } from '../../models/form-submit-event';
@@ -14,13 +15,14 @@ import { AppState } from '../../store/reducers/root.reducer';
 import { LoginPayload } from '../../store/types/auth.types';
 import AuthLayout from '../../components/layouts/AuthLayout';
 import SignInRect from '../../assets/sign-in-rect.svg';
-import Figure from '../../assets/login-bg/figure.png';
-import Banner from '../../assets/login-bg/banner.png';
-import { useResponsive } from '../../hooks/useResponsive';
+import Figure from '../../assets/login-bg/figure.svg';
+import Banner from '../../assets/login-bg/banner.svg';
+import AuthFormButton from '../../components/auth/AuthFormButton';
 
 const Login: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { t } = useTranslation();
 
   const {
     login: { loading },
@@ -32,13 +34,11 @@ const Login: FC = () => {
     dispatch(loginAction(value));
   };
 
-  const size = useResponsive();
-
   return (
     <AuthLayout
-      title="Login"
-      formTitle="Welcome Back!"
-      formSubTitle="Sign In to continue."
+      title={t('Login.title')}
+      formTitle={t('Login.formTitle')}
+      formSubTitle={t('Login.formSubTitle')}
       background={
         <>
           <Image
@@ -50,7 +50,7 @@ const Login: FC = () => {
             }}
           />
           <Image
-            width="85%"
+            width="100%"
             alignSelf="center"
             style={{ zIndex: 1 }}
             src={Figure}
@@ -58,8 +58,8 @@ const Login: FC = () => {
         </>
       }
       callToAction={{
-        title: 'Don’t have an account?',
-        body: 'CREATE AN ACCOUNT',
+        title: t('Login.dontHaveAccount'),
+        body: t('Login.createAccount'),
         onClick: () => history.push('/register'),
       }}
     >
@@ -68,16 +68,19 @@ const Login: FC = () => {
           <FormField
             name="emailOrUserName"
             htmlFor="emailOrUserNameInput"
-            label="EMAIL / USERNAME"
-            validate={[validators.required()]}
+            label={t('Login.emailOrUserName')}
+            validate={[validators.required(t('Login.emailOrUserName'))]}
           >
             <TextInput id="emailOrUserNameInput" name="emailOrUserName" />
           </FormField>
           <FormField
             name="password"
             htmlFor="passwordInput"
-            label="PASSWORD"
-            validate={[validators.required(), validators.minLength(6)]}
+            label={t('common.password')}
+            validate={[
+              validators.required(t('common.password')),
+              validators.minLength(t('common.password'), 6),
+            ]}
           >
             <TextInput id="passwordInput" name="password" type="password" />
           </FormField>
@@ -90,18 +93,16 @@ const Login: FC = () => {
             <AnchorLink
               weight="normal"
               size="small"
-              label="Forgot Password?"
+              label={t('Login.forgotPassword')}
               to="/forgot-password"
             />
           </Box>
-          <Button
-            fill="horizontal"
+          <AuthFormButton
             primary
             margin={{ top: 'medium' }}
-            size={size}
             disabled={loading}
             type="submit"
-            label="SIGN IN"
+            label={t('common.signIn')}
           />
 
           <Box
@@ -116,7 +117,7 @@ const Login: FC = () => {
             </Box>
             <Box basis="100%" direction="row" justify="center">
               <Text margin={{ horizontal: 'small' }} size="small">
-                Or Sign in With
+                {t('Login.orSignInWith')}
               </Text>
             </Box>
             <Box basis="80%">
@@ -124,42 +125,24 @@ const Login: FC = () => {
             </Box>
           </Box>
 
-          <Box
-            margin={{ vertical: 'small' }}
-            align="center"
-            style={{ textAlign: 'center' }}
-          >
-            <Button
+          <Box margin={{ vertical: 'small' }} style={{ textAlign: 'center' }}>
+            <AuthFormButton
               label={<span />}
-              size={size}
               color="#F3F3F3"
-              style={{ backgroundColor: '#F3F3F3' }}
+              backgroundColor="#F3F3F3"
               disabled={googleAuthBtnLoading}
-              fill="horizontal"
               onClick={() => dispatch(getThirdPartyUrlAction('google'))}
-              icon={
-                <Google
-                  color="plain"
-                  size={size === 'large' ? '30px' : 'medium'}
-                />
-              }
+              icon={<Google color="plain" size="28px" />}
               margin={{ bottom: 'small' }}
             />
 
-            <Button
-              size={size}
+            <AuthFormButton
               label={<span />}
               color="#3B5998"
-              style={{ backgroundColor: '#3B5998' }}
-              fill="horizontal"
+              backgroundColor="#3B5998"
               disabled={facebookAuthBtnLoading}
               onClick={() => dispatch(getThirdPartyUrlAction('facebook'))}
-              icon={
-                <FacebookOption
-                  color="white"
-                  size={size === 'large' ? '33px' : 'medium'}
-                />
-              }
+              icon={<FacebookOption color="white" size="28px" />}
             />
           </Box>
         </Form>

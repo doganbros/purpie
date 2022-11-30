@@ -28,9 +28,6 @@ class BasePostFeedList {
   public: boolean;
 
   @ApiProperty()
-  private: boolean;
-
-  @ApiProperty()
   liveStream: boolean;
 
   @ApiProperty()
@@ -45,9 +42,6 @@ class BasePostFeedList {
   @ApiProperty()
   record: boolean;
 
-  @ApiProperty()
-  userContactExclusive: boolean;
-
   @ApiProperty({ type: User })
   createdBy: User;
 }
@@ -58,9 +52,6 @@ class PostFeedChannel {
 
   @ApiProperty()
   name: string;
-
-  @ApiProperty()
-  topic: string;
 
   @ApiProperty()
   description: string;

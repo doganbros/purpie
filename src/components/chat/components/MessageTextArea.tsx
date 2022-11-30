@@ -1,5 +1,5 @@
 import 'emoji-mart/css/emoji-mart.css';
-import { Box, TextArea } from 'grommet';
+import { Box } from 'grommet';
 import React, {
   Dispatch,
   FC,
@@ -7,13 +7,13 @@ import React, {
   RefObject,
   SetStateAction,
   useEffect,
-  useRef,
   useState,
 } from 'react';
 
 import { EmojiData, emojiIndex } from 'emoji-mart';
 import _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import EmojiPicker from './EmojiPicker';
 import SuggestionPicker from './SuggestionPicker';
 import MentionPicker from './MentionPicker';
@@ -21,8 +21,10 @@ import { UserBasic } from '../../../store/types/auth.types';
 import { searchProfileAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { useDebouncer } from '../../../hooks/useDebouncer';
+import { MessageTextAreaComponent } from './ChatComponentsStyle';
 
 interface Props {
+  textAreaRef: React.RefObject<HTMLTextAreaElement>;
   text: string;
   name?: string;
   onSuggesting?: (value: boolean) => void;
@@ -38,6 +40,7 @@ interface Props {
 }
 
 const MessageBox: FC<Props> = ({
+  textAreaRef,
   text,
   name,
   onKeyDown,
@@ -53,10 +56,11 @@ const MessageBox: FC<Props> = ({
 }) => {
   const dispatch = useDispatch();
   const debouncer = useDebouncer();
+  const { t } = useTranslation();
 
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [editingEmoji, setEditingEmoji] = useState<string>('');
   const [suggestions, setSuggestions] = useState<EmojiData[]>([]);
+  const [search, setSearch] = useState<string>('');
 
   const {
     user: {
@@ -79,6 +83,10 @@ const MessageBox: FC<Props> = ({
 
   const getMentionUserList = (searchText: string) =>
     dispatch(searchProfileAction({ name: searchText, userContacts: false }));
+
+  useEffect(() => {
+    debouncer(() => getMentionUserList(search), 300);
+  }, [search, mentionPickerVisibility]);
 
   const handleTextAreaCursor = (cursor: number) => {
     const element = textAreaRef.current;
@@ -158,7 +166,7 @@ const MessageBox: FC<Props> = ({
     return resultText;
   };
 
-  const getMentionInSentence = (
+  const getMentionInSentence = async (
     textMessage: string,
     selectionIndex: number
   ) => {
@@ -178,7 +186,7 @@ const MessageBox: FC<Props> = ({
         mentionStartIndex,
         selectionIndex
       );
-      debouncer(() => getMentionUserList(searchText), 300);
+      await setSearch(searchText);
       setMentionPickerVisibility(true);
     } else if (mentionPickerVisibility) {
       setMentionPickerVisibility(false);
@@ -187,11 +195,11 @@ const MessageBox: FC<Props> = ({
     return resultText;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.persist();
     const { value, selectionStart } = e.target;
     let currentText = getEmojiTextInSentence(value, selectionStart);
-    currentText = getMentionInSentence(currentText, selectionStart);
+    currentText = await getMentionInSentence(currentText, selectionStart);
     setText(currentText);
   };
 
@@ -294,7 +302,7 @@ const MessageBox: FC<Props> = ({
     : '100%';
 
   return (
-    <>
+    <Box>
       <EmojiPicker
         visibility={emojiPickerVisibility}
         setVisibility={setEmojiPickerVisibility}
@@ -317,21 +325,24 @@ const MessageBox: FC<Props> = ({
         onSelect={onSelectMention}
       />
       <Box round="small" fill gap="small" width="100%" ref={componentRef}>
-        <TextArea
+        <MessageTextAreaComponent
           plain
           value={text}
           ref={textAreaRef}
           resize={false}
           focusIndicator={false}
-          placeholder={`Write ${name ? `to ${name}` : 'your message...'} `}
+          placeholder={
+            name
+              ? t('MessageTextArea.writeTo', { name })
+              : t('MessageTextArea.writeComment')
+          }
           onKeyDown={handleKeyDown}
           onKeyPress={handleKeyUp}
           onChange={handleChange}
-          style={{ overflow: 'none' }}
           rows={1}
         />
       </Box>
-    </>
+    </Box>
   );
 };
 

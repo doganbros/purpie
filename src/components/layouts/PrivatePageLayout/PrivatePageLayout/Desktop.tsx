@@ -1,12 +1,12 @@
 import { Avatar, Box, Button } from 'grommet';
-import { useHistory } from 'react-router-dom';
 import React, { FC } from 'react';
 import ExtendedBox from '../../../utils/ExtendedBox';
-import Logo from '../../../../assets/octopus-logo/logo-white.svg';
+import LogoWhite from '../../../../assets/purpie-logo/logo-white.svg';
 import Sidebar from '../Sidebar';
-import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import GradientScroll from '../../../utils/GradientScroll';
 import Divider from '../../../utils/Divider';
+import ZoneSelector from '../ZoneSelector/ZoneSelector';
+import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
 
 interface Props {
   topComponent?: React.ReactNode;
@@ -20,8 +20,6 @@ const Desktop: FC<Props> = ({
   rightComponentWithoutOverflow = false,
   topComponent,
 }) => {
-  const history = useHistory();
-
   const leftComponentWidth = 135;
   const topComponentHeight = 140;
   const rightComponentWidth = 400;
@@ -29,7 +27,7 @@ const Desktop: FC<Props> = ({
   return (
     <Box width="100vw" height="100vh" elevation="xlarge" round="large">
       <ExtendedBox
-        background="brand-2"
+        background="brand-alt"
         position="fixed"
         top="0"
         bottom="0"
@@ -41,15 +39,15 @@ const Desktop: FC<Props> = ({
       >
         <Box fill="horizontal">
           <Button
-            margin={{ vertical: 'medium' }}
-            onClick={() => history.push('/')}
+            margin={{ vertical: 'large' }}
+            onClick={() => navigateToSubdomain()}
           >
             <Box align="center">
               <Avatar
                 alignSelf="center"
-                size="large"
-                round="medium"
-                src={Logo}
+                size="medium"
+                round="0"
+                src={LogoWhite}
               />
             </Box>
           </Button>
@@ -94,7 +92,9 @@ const Desktop: FC<Props> = ({
             pad={{ horizontal: 'large' }}
             direction="column"
           >
-            <GradientScroll height="100%">{topComponent}</GradientScroll>
+            <GradientScroll justify="center" height="100%" pad="xsmall">
+              {topComponent}
+            </GradientScroll>
             <Box fill="horizontal">
               <Divider />
             </Box>
@@ -112,7 +112,13 @@ const Desktop: FC<Props> = ({
             elevation="indigo"
             overflow={rightComponentWithoutOverflow ? 'hidden' : 'auto'}
           >
-            <ExtendedBox fill minWidth="min-content">
+            <ExtendedBox
+              fill
+              minWidth={rightComponentWithoutOverflow ? '' : 'min-content'}
+              maxWidth={
+                rightComponentWithoutOverflow ? `${rightComponentWidth}px` : ''
+              }
+            >
               {rightComponent}
             </ExtendedBox>
           </ExtendedBox>

@@ -6,10 +6,8 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
-  OneToOne,
 } from 'typeorm';
 import { RecordEntity } from './base/RecordEntity';
-import { Category } from './Category.entity';
 import { Channel } from './Channel.entity';
 import { User } from './User.entity';
 import { UserZone } from './UserZone.entity';
@@ -41,15 +39,8 @@ export class Zone extends RecordEntity {
   @JoinColumn({ name: 'createdById' })
   createdBy: User;
 
-  @Column('int')
+  @Column({ type: 'int' })
   createdById: number;
-
-  @OneToOne(() => Category, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'categoryId' })
-  category: Category;
-
-  @Column('int')
-  categoryId: number;
 
   @OneToMany(() => UserZone, (userZone) => userZone.zone)
   userZone: Array<UserZone>;

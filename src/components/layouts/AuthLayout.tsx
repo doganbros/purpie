@@ -1,20 +1,19 @@
 import React, { useContext } from 'react';
 import {
-  ThemeContext,
   Box,
   Card,
   CardBody,
-  Text,
-  Button,
-  Image,
   Heading,
+  Image,
+  Text,
+  ThemeContext,
 } from 'grommet';
 import { useHistory } from 'react-router-dom';
 import PublicPageLayout from './PublicPageLayout/PublicPageLayout';
 import { useResponsive } from '../../hooks/useResponsive';
-import Logo from '../../assets/octopus-logo/logo-color.png';
-import LogoWhite from '../../assets/octopus-logo/logo-white.png';
-import OctopusText from '../../assets/octopus-logo/octopus-text.png';
+import LogoHorizontalColor from '../../assets/purpie-logo/logo-horizontal-color.svg';
+import LogoHorizontalWhite from '../../assets/purpie-logo/logo-horizontal-white.svg';
+import AuthFormButton from '../auth/AuthFormButton';
 
 interface Props {
   title: string;
@@ -26,7 +25,7 @@ interface Props {
   };
   background?: JSX.Element;
   formTitle: string;
-  formSubTitle: string | JSX.Element;
+  formSubTitle?: string | JSX.Element;
 }
 
 const AuthLayout: React.FC<Props> = ({
@@ -51,7 +50,7 @@ const AuthLayout: React.FC<Props> = ({
   const headingSize = {
     small: '30px',
     medium: '38px',
-    large: '45px',
+    large: '38px',
   };
 
   return (
@@ -59,7 +58,6 @@ const AuthLayout: React.FC<Props> = ({
       <Box
         direction="row"
         justify="between"
-        round="large"
         height={{ min: '100vh' }}
         background={{ color: '#FFE7E3' }}
       >
@@ -74,18 +72,14 @@ const AuthLayout: React.FC<Props> = ({
             <Box basis="25%" align="center">
               {callToAction && (
                 <>
-                  <Text size="16px" margin={{ bottom: '19px', top: '20px' }}>
+                  <Text size="16px" margin={{ bottom: '14px', top: '20px' }}>
                     {callToAction.title}
                   </Text>
-                  <Button
+                  <AuthFormButton
+                    fontSize="16px"
                     disabled={callToAction.disabled || false}
-                    style={{
-                      paddingRight: size === 'large' ? '150px' : '80px',
-                      paddingLeft: size === 'large' ? '150px' : '80px',
-                      maxWidth: '600px',
-                    }}
-                    fill={false}
-                    size={size}
+                    minWidth={size === 'large' ? '430px' : '320px'}
+                    maxWidth={size === 'large' ? '600px' : '320px'}
                     onClick={callToAction.onClick}
                     primary
                     label={callToAction.body}
@@ -99,13 +93,13 @@ const AuthLayout: React.FC<Props> = ({
           <Card
             elevation="indigo"
             background={theme.dark ? 'dark-2' : 'white'}
-            round="large"
+            round={{ corner: 'left', size: 'large' }}
             width="100%"
             height="100%"
             align="center"
             overflow="auto"
           >
-            <CardBody width="80%" justify="center" pad={{ vertical: '10px' }}>
+            <CardBody width="80%" justify="center" pad={{ vertical: 'large' }}>
               <Box
                 margin={{ bottom: 'xsmall' }}
                 direction="row"
@@ -115,32 +109,35 @@ const AuthLayout: React.FC<Props> = ({
                 fill="horizontal"
               >
                 <Image
-                  margin={{ right: '8px' }}
-                  width="50px"
-                  height="50px"
-                  src={theme.dark ? LogoWhite : Logo}
+                  width={size === 'small' ? '112px' : '132px'}
+                  src={theme.dark ? LogoHorizontalWhite : LogoHorizontalColor}
                 />
-                {theme.dark ? (
-                  <Text>octopus</Text>
-                ) : (
-                  <Image src={OctopusText} height="24px" />
-                )}
               </Box>
-              <Heading size={headingSize[size]} margin={{ bottom: 'xxsmall' }}>
+              <Heading
+                color="dark"
+                size={headingSize[size]}
+                margin={{ bottom: 'xxsmall' }}
+              >
                 {formTitle}
               </Heading>
-              <Text size="14px" margin={{ left: 'xsmall', bottom: size }}>
+              <Text
+                size="14px"
+                weight={300}
+                margin={{ left: 'xsmall', bottom: size }}
+              >
                 {formSubTitle}
               </Text>
               {children}
               {size === 'small' && callToAction && (
-                <Box align="center">
-                  <Text margin={{ bottom: '20px', top: '20px' }}>
+                <Box>
+                  <Text
+                    textAlign="center"
+                    margin={{ bottom: '20px', top: '20px' }}
+                  >
                     {callToAction.title}
                   </Text>
-                  <Button
-                    fill="horizontal"
-                    size={size}
+                  <AuthFormButton
+                    fontSize="16px"
                     onClick={callToAction.onClick}
                     primary
                     label={callToAction.body}

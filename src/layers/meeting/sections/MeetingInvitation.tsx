@@ -2,6 +2,7 @@ import React, { FC, useRef } from 'react';
 import { TextInput, FormField, Box, Text, Avatar, Button } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { Close, User } from 'grommet-icons';
+import { useTranslation } from 'react-i18next';
 import { useDebouncer } from '../../../hooks/useDebouncer';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
@@ -13,6 +14,7 @@ import Divider from '../../../components/utils/Divider';
 
 const MeetingInvitation: FC = () => {
   const debouncer = useDebouncer();
+  const { t } = useTranslation();
   const textInput = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
@@ -50,10 +52,10 @@ const MeetingInvitation: FC = () => {
           id="userInput"
           ref={textInput}
           name="user"
-          placeholder="Type a name, username or email"
+          placeholder={t('MeetingInvitation.placeholder')}
           suggestions={userSuggestions.map((user) => ({
             value: user,
-            label: `${user.firstName} ${user.lastName}${
+            label: `${user.fullName}${
               user.userName ? ` @${user.userName}` : ''
             }`,
           }))}
@@ -84,7 +86,7 @@ const MeetingInvitation: FC = () => {
               </Avatar>
               <Box>
                 <Text size="small" weight="bold">
-                  {item.firstName} {item.lastName}
+                  {item.fullName}
                 </Text>
                 <Text size="xsmall">
                   {item.userName && `@${item.userName}`}

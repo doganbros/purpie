@@ -1,13 +1,17 @@
 import { nanoid } from 'nanoid';
-import { ResponseError } from '../models/response-error';
+import i18n from 'i18next';
+import dayjs, { Dayjs } from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import colorPair from '../styles/color-pairs.json';
+import { ResponseError } from '../models/response-error';
 
 export const errorResponseMessage = (error?: ResponseError): string => {
   if (!error) return '';
 
   if (Array.isArray(error.message)) return error.message.join(', ');
 
-  return error.message;
+  return i18n.t(`ErrorTypes.${error.message}`);
 };
 
 export const camelToSentence = (str: string): string => {
@@ -37,7 +41,22 @@ export const ceilTime = (time: Date | string | number, minutes = 30): Date => {
 };
 
 export const nameToSubdomain = (name: string): string =>
-  name.toLowerCase().replaceAll(' ', '-');
+  name
+    .replaceAll('Ğ', 'G')
+    .replaceAll('Ü', 'U')
+    .replaceAll('Ş', 'S')
+    .replaceAll('İ', 'I')
+    .replaceAll('Ö', 'O')
+    .replaceAll('Ç', 'C')
+    .replaceAll('ğ', 'g')
+    .replaceAll('ü', 'u')
+    .replaceAll('ş', 's')
+    .replaceAll('ı', 'i')
+    .replaceAll('ö', 'o')
+    .replaceAll('ç', 'c')
+    .replaceAll(' ', '-')
+    .replaceAll(/[^\w\s]/gi, '')
+    .toLowerCase();
 
 export const fetchOrProduceNull = async <T>(
   request: () => Promise<T>
@@ -60,6 +79,8 @@ export function getCookie(name: string): string | null {
 export const getColorPairFromId = (id: number): typeof colorPair[0] =>
   colorPair[id % colorPair.length];
 
+export const matchDescriptionTags = /(#\w+)/gi;
+
 export const getChatRoomName = (
   id: number,
   medium: 'post' | 'direct' | 'channel' = 'direct'
@@ -67,3 +88,11 @@ export const getChatRoomName = (
 
 export const getFileKey = (file: File): string =>
   `${file.name}_${file.size}_${file.type}`;
+
+export const getTimezoneTimeFromUTC = (date: string | Date): Dayjs => {
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
+
+  const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return dayjs.tz(date, currentTimezone);
+};

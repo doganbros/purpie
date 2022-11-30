@@ -2,11 +2,12 @@ import React, { FC, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Grid, Text } from 'grommet';
-import PostGridItem from '../../../components/utils/PostGridItem/PostGridItem';
+import { useTranslation } from 'react-i18next';
+import PostGridItem from '../../../components/post/PostGridItem';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
   createPostSaveAction,
-  getUserFeedAction,
+  getFeedListAction,
   removePostSaveAction,
 } from '../../../store/actions/post.action';
 import GradientScroll from '../../../components/utils/GradientScroll';
@@ -14,12 +15,13 @@ import GradientScroll from '../../../components/utils/GradientScroll';
 const RecommendedVideos: FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     post: { feed, postDetail },
   } = useSelector((state: AppState) => state);
 
   const getFeed = (skip?: number) => {
-    dispatch(getUserFeedAction({ skip }));
+    dispatch(getFeedListAction({ skip }));
   };
 
   useEffect(() => {
@@ -29,7 +31,7 @@ const RecommendedVideos: FC = () => {
   return (
     <Box gap="small">
       <Text size="large" weight="bold" color="brand">
-        Recommended Videos
+        {t('RecommendedVideos.title')}
       </Text>
       <GradientScroll>
         <Grid
@@ -40,7 +42,7 @@ const RecommendedVideos: FC = () => {
             <PostGridItem
               key={post.id}
               post={post}
-              onClickPlay={() => history.push(`video/${post.id}`)}
+              onClickPlay={() => history.push(`${post.id}`)}
               onClickSave={() => {
                 if (post.saved)
                   dispatch(removePostSaveAction({ postId: post.id }));

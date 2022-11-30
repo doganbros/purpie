@@ -20,6 +20,7 @@ import { ThirdPartyLoginParams } from '../dto/third-party-login.params';
 import { UserProfile } from '../interfaces/user.interface';
 import { AuthThirdPartyService } from '../services/auth-third-party.service';
 import { AuthService } from '../services/auth.service';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const {
   GOOGLE_OAUTH_CLIENT_ID = '',
@@ -79,7 +80,10 @@ export class AuthThirdPartyController {
       );
     }
 
-    throw new BadRequestException('Not implemented', 'NOT_IMPLEMENTED');
+    throw new BadRequestException(
+      ErrorTypes.NOT_IMPLEMENTED,
+      'Not implemented',
+    );
   }
 
   @Post('/:name')
@@ -115,8 +119,7 @@ export class AuthThirdPartyController {
         }
       } else {
         user = await this.authThirdPartyService.registerUserByThirdParty({
-          firstName: userInfo.given_name,
-          lastName: userInfo.family_name,
+          fullName: `${userInfo.given_name} ${userInfo.family_name}`,
           email: userInfo.email,
           googleId: userInfo.id,
         });
@@ -138,10 +141,9 @@ export class AuthThirdPartyController {
         }
       } else {
         user = await this.authThirdPartyService.registerUserByThirdParty({
-          firstName:
-            userInfo.first_name +
-            (userInfo.middle_name ? ` ${userInfo.middle_name}` : ''),
-          lastName: userInfo.last_name,
+          fullName: `${userInfo.first_name}${
+            userInfo.middle_name ? ` ${userInfo.middle_name} ` : ''
+          }${userInfo.last_name}`,
           email: userInfo.email,
           facebookId: userInfo.id,
         });
@@ -150,8 +152,7 @@ export class AuthThirdPartyController {
     if (user) {
       const userPayload: UserProfile = {
         id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        fullName: user.fullName,
         email: user.email,
         userName: user.userName,
         userRole: {
@@ -170,8 +171,8 @@ export class AuthThirdPartyController {
     }
 
     throw new InternalServerErrorException(
+      ErrorTypes.THIRD_PARTY_AUTH_ERROR,
       `Something went wrong while authenticating using ${name}`,
-      'THIRD_PARTH_AUTH_ERROR',
     );
   }
 }

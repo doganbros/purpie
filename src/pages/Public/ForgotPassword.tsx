@@ -1,19 +1,21 @@
-import { Button, Form, FormField, TextInput, Image } from 'grommet';
+import { Form, FormField, Image, TextInput } from 'grommet';
 import React, { FC } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import AuthLayout from '../../components/layouts/AuthLayout';
 import { validators } from '../../helpers/validators';
 import { FormSubmitEvent } from '../../models/form-submit-event';
 import { resetPasswordRequestAction } from '../../store/actions/auth.action';
 import { AppState } from '../../store/reducers/root.reducer';
-import Figure from '../../assets/forgotten-password-bg/figure-1.png';
-import Banner from '../../assets/forgotten-password-bg/banner.png';
-import { useResponsive } from '../../hooks/useResponsive';
+import Figure from '../../assets/forgotten-password-bg/figure.svg';
+import Banner from '../../assets/forgotten-password-bg/banner.svg';
+import AuthFormButton from '../../components/auth/AuthFormButton';
 
 const ForgotPassword: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { t } = useTranslation();
 
   const {
     forgotPassword: { loading },
@@ -23,37 +25,29 @@ const ForgotPassword: FC = () => {
     dispatch(resetPasswordRequestAction(value.email));
   };
 
-  const size = useResponsive();
-
   return (
     <AuthLayout
-      title="Forgot Password"
-      formTitle="Password Recovery"
-      formSubTitle="Enter email to receive your password."
+      title={t('ForgotPassword.title')}
+      formTitle={t('ForgotPassword.formTitle')}
+      formSubTitle={t('ForgotPassword.formSubTitle')}
       callToAction={{
-        title: 'Remember Password?',
-        body: 'SIGN IN',
+        title: t('ForgotPassword.rememberPassword'),
+        body: t('common.signIn'),
         onClick: () => history.push('/login'),
       }}
       background={
         <>
           <Image
-            width="60%"
+            width="35%"
             src={Banner}
             style={{
               position: 'absolute',
               pointerEvents: 'none',
               top: 0,
               left: 0,
-              height: '100vh',
             }}
           />
-          <Image
-            height="90%"
-            alignSelf="center"
-            style={{ zIndex: 2 }}
-            src={Figure}
-          />
+          <Image alignSelf="center" style={{ zIndex: 2 }} src={Figure} />
         </>
       }
     >
@@ -62,19 +56,20 @@ const ForgotPassword: FC = () => {
           <FormField
             name="email"
             htmlFor="emailInput"
-            label="EMAIL"
-            validate={[validators.required(), validators.email()]}
+            label={t('common.email')}
+            validate={[
+              validators.required(t('common.email')),
+              validators.email(),
+            ]}
           >
-            <TextInput id="emailInput" name="email" type="email" />
+            <TextInput id="emailInput" name="email" />
           </FormField>
-          <Button
-            fill="horizontal"
+          <AuthFormButton
             primary
-            size={size}
             margin={{ top: '55%' }}
             disabled={loading}
             type="submit"
-            label="SEND"
+            label={t('ForgotPassword.send')}
           />
         </Form>
       </>

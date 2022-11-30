@@ -11,6 +11,7 @@ import { Socket, Server } from 'socket.io';
 import { PostService } from 'src/post/services/post.service';
 import { ChatMessageDto } from '../dto/chat-message.dto';
 import { ChatService } from '../services/chat.service';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 interface SocketWithTokenPayload extends Socket {
   user: {
@@ -22,10 +23,18 @@ const { REACT_APP_CLIENT_HOST = '' } = process.env;
 
 @WebSocketGateway({
   cors: {
-    origin: new RegExp(
-      `(\\b|\\.)${new URL(REACT_APP_CLIENT_HOST).host.replace(/\./g, '\\.')}$`,
-    ),
+    origin: [
+      new RegExp(
+        `(\\b|\\.)${new URL(REACT_APP_CLIENT_HOST).host.replace(
+          /\./g,
+          '\\.',
+        )}$`,
+      ),
+      'http://localhost:3000',
+      'http://octopus.localhost:3000',
+    ],
     credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   },
   namespace: '/',
 })
@@ -52,7 +61,7 @@ export class ChatGateway {
       payload.identifier,
       socket.user.id,
     );
-    if (!result) throw new WsException('Could not delete message');
+    if (!result) throw new WsException(ErrorTypes.MESSAGE_NOT_DELETED);
 
     socket.to(roomName).emit('message_deleted', { ...payload, roomName });
 
@@ -66,7 +75,8 @@ export class ChatGateway {
     payload: ChatMessageDto,
   ) {
     const roomName = this.chatService.getRoomName(payload.to, payload.medium);
-    if (!socket.rooms.has(roomName)) throw new WsException('Not Authorized');
+    if (!socket.rooms.has(roomName))
+      throw new WsException(ErrorTypes.NOT_AUTHORIZED);
 
     const isEdit = !!payload.identifier;
 
@@ -91,7 +101,7 @@ export class ChatGateway {
     const roomName = this.chatService.getRoomName(postId, 'post');
     const post = await this.postService.getOnePost(socket.user.id, postId);
 
-    if (!post) throw new WsException('Post not found');
+    if (!post) throw new WsException(ErrorTypes.POST_NOT_FOUND);
 
     await socket.join(roomName);
 
@@ -145,7 +155,8 @@ export class ChatGateway {
     },
   ) {
     const roomName = this.chatService.getRoomName(payload.to, payload.medium);
-    if (!socket.rooms.has(roomName)) throw new WsException('Not Authorized');
+    if (!socket.rooms.has(roomName))
+      throw new WsException(ErrorTypes.NOT_AUTHORIZED);
 
     socket.to(roomName).emit('typing', {
       socketId: socket.id,
@@ -165,52 +176,64 @@ export class ChatGateway {
     @MessageBody() to: number,
   ) {
     const roomName = this.chatService.getRoomName(to);
-    if (!socket.rooms.has(roomName)) throw new WsException('Not Authorized');
+    if (!socket.rooms.has(roomName))
+      throw new WsException(ErrorTypes.NOT_AUTHORIZED);
 
     socket.to(roomName).emit('presence', socket.user.id);
   }
 
   async handleConnection(socket: SocketWithTokenPayload) {
-    const currentUser = await this.chatService.getCurrentUser(socket);
-    socket.user = currentUser;
+    try {
+      const currentUser = await this.chatService.getCurrentUser(socket);
 
-    socket.join(this.chatService.getRoomName(socket.user.id));
+      if (!currentUser) return null;
+      socket.user = currentUser;
 
-    const contactIds = await this.chatService.fetchUserContactUserIds(
-      socket.user.id,
-    );
+      socket.join(this.chatService.getRoomName(socket.user.id));
 
-    contactIds.forEach((contactId) => {
-      socket.join(this.chatService.getRoomName(contactId));
-      socket
-        .to(this.chatService.getRoomName(contactId))
-        .emit('contact_user_connected', socket.user.id);
-    });
+      const contactIds = await this.chatService.fetchUserContactUserIds(
+        socket.user.id,
+      );
 
-    // Will be implmented when channel chat is needed.
-    // const channelIds = await this.chatService.fetchUserChannelIds(
-    //   socket.user.id,
-    // );
+      contactIds.forEach((contactId) => {
+        socket.join(this.chatService.getRoomName(contactId));
+        socket
+          .to(this.chatService.getRoomName(contactId))
+          .emit('contact_user_connected', socket.user.id);
+      });
 
-    // channelIds.forEach((channelId) => {
-    // socket.join(this.chatService.getRoomName(channelId, 'channel'));
-    // });
+      // Will be implmented when channel chat is needed.
+      // const channelIds = await this.chatService.fetchUserChannelIds(
+      //   socket.user.id,
+      // );
 
-    socket.on('disconnecting', () => this.handleDisconnecting(socket));
+      // channelIds.forEach((channelId) => {
+      // socket.join(this.chatService.getRoomName(channelId, 'channel'));
+      // });
+
+      socket.on('disconnecting', () => this.handleDisconnecting(socket));
+      return null;
+    } catch (err) {
+      return null;
+    }
   }
 
   async handleDisconnecting(socket: SocketWithTokenPayload) {
-    const contactIds = await this.chatService.fetchUserContactUserIds(
-      socket.user.id,
-    );
+    try {
+      const contactIds = await this.chatService.fetchUserContactUserIds(
+        socket.user.id,
+      );
 
-    contactIds.forEach((contactId) => {
-      socket
-        .to(this.chatService.getRoomName(contactId))
-        .emit('socket_disconnected', {
-          socketId: socket.id,
-          userId: socket.user.id,
-        });
-    });
+      contactIds.forEach((contactId) => {
+        socket
+          .to(this.chatService.getRoomName(contactId))
+          .emit('socket_disconnected', {
+            socketId: socket.id,
+            userId: socket.user.id,
+          });
+      });
+    } catch (error) {
+      //
+    }
   }
 }

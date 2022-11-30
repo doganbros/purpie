@@ -1,7 +1,8 @@
 import { Box, Button, ResponsiveContext } from 'grommet';
-import { Add, Bookmark, Channel, Chat, Group, Home } from 'grommet-icons';
-import React, { FC, useState, useContext } from 'react';
+import { Add, Bookmark, Chat, Group, Home } from 'grommet-icons';
+import React, { FC, useContext, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { SidebarButton } from './SidebarButton';
 import PlanMeeting from '../../../layers/meeting/PlanMeeting';
 import { closePlanCreateMeetingLayerAction } from '../../../store/actions/meeting.action';
@@ -16,27 +17,27 @@ import { closeCreateVideoLayerAction } from '../../../store/actions/post.action'
 
 const sidebarBtns = [
   {
-    title: 'Home',
+    titleKey: 'home',
     icon: Home,
     path: '/',
   },
+  // {
+  //   title: 'Channels',
+  //   icon: Channel,
+  //   path: '/channels',
+  // },
   {
-    title: 'Channels',
-    icon: Channel,
-    path: '/channels',
-  },
-  {
-    title: 'Messages',
+    titleKey: 'messages',
     icon: Chat,
     path: '/messages',
   },
   {
-    title: 'Contacts',
+    titleKey: 'contacts',
     icon: Group,
     path: '/contacts',
   },
   {
-    title: 'Saved Posts',
+    titleKey: 'saved',
     icon: Bookmark,
     path: '/saved-posts',
   },
@@ -45,6 +46,7 @@ const sidebarBtns = [
 const Sidebar: FC = () => {
   const dispatch = useDispatch();
   const size = useContext(ResponsiveContext);
+  const { t } = useTranslation();
 
   const [showAddContent, setShowAddContent] = useState(false);
   const {
@@ -90,16 +92,16 @@ const Sidebar: FC = () => {
             width="min-content"
             background="accent-4"
             round="small"
-            pad={{ vertical: 'xxsmall', horizontal: 'xsmall' }}
+            pad={{ vertical: 'xsmall', horizontal: 'small' }}
             margin={{ vertical: 'small' }}
           >
-            <Add color="dark-1" />
+            <Add color="black" />
           </Box>
         </Button>
       ) : null}
 
-      {sidebarBtns.map((v) => (
-        <SidebarButton key={v.title} {...v} />
+      {sidebarBtns.map(({ titleKey, ...v }) => (
+        <SidebarButton key={titleKey} title={t(`Sidebar.${titleKey}`)} {...v} />
       ))}
     </Box>
   );

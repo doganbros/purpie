@@ -2,6 +2,8 @@ import { Grommet } from 'grommet';
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Router, Switch } from 'react-router-dom';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './config/i18n/i18n-config';
 import AppToast from './components/utils/AppToast';
 import Loader from './components/utils/Loader';
 import PrivateRoute from './components/utils/PrivateRoute';
@@ -15,9 +17,14 @@ import { getUserZonesAction } from './store/actions/zone.action';
 import { AppState } from './store/reducers/root.reducer';
 import InitializeUser from './pages/Public/InitializeUser';
 import { initializeSocket } from './helpers/socket';
+import { getUserChannelsAction } from './store/actions/channel.action';
+import { DELAY_TIME } from './helpers/constants';
+import useDelayTime from './hooks/useDelayTime';
 
 const App: FC = () => {
   const dispatch = useDispatch();
+
+  const { delay } = useDelayTime(DELAY_TIME);
 
   const {
     auth: {
@@ -35,44 +42,47 @@ const App: FC = () => {
   useEffect(() => {
     if (isAuthenticated) {
       initializeSocket();
+      dispatch(getUserChannelsAction());
       dispatch(getUserZonesAction());
     }
   }, [isAuthenticated]);
 
   return (
     <Grommet theme={theme}>
-      <AppToast
-        visible={toast.visible}
-        status={toast.status}
-        message={toast.message}
-        id={toast.toastId}
-      />
-      {loading || (isAuthenticated && !userZoneInitialized) ? (
-        <Loader />
-      ) : (
-        <Router history={appHistory}>
-          <Switch>
-            {privateRoutes.map(({ id, path, component, exact = true }) => (
-              <PrivateRoute
-                key={id}
-                exact={exact}
-                path={path}
-                component={component}
-              />
-            ))}
-            {publicRoutes.map(({ id, path, component, exact = true }) => (
-              <PublicRoute
-                key={id}
-                exact={exact}
-                path={path}
-                component={component}
-              />
-            ))}
-            <Route exact path="/initialize-user" component={InitializeUser} />
-            <Route exact path="*" component={NotFound} />
-          </Switch>
-        </Router>
-      )}
+      <I18nextProvider i18n={i18n}>
+        <AppToast
+          visible={toast.visible}
+          status={toast.status}
+          message={toast.message}
+          id={toast.toastId}
+        />
+        {delay || loading || (isAuthenticated && !userZoneInitialized) ? (
+          <Loader />
+        ) : (
+          <Router history={appHistory}>
+            <Switch>
+              {privateRoutes.map(({ id, path, component, exact = true }) => (
+                <PrivateRoute
+                  key={id}
+                  exact={exact}
+                  path={path}
+                  component={component}
+                />
+              ))}
+              {publicRoutes.map(({ id, path, component, exact = true }) => (
+                <PublicRoute
+                  key={id}
+                  exact={exact}
+                  path={path}
+                  component={component}
+                />
+              ))}
+              <Route exact path="/initialize-user" component={InitializeUser} />
+              <Route exact path="*" component={NotFound} />
+            </Switch>
+          </Router>
+        )}
+      </I18nextProvider>
     </Grommet>
   );
 };

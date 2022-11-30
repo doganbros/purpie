@@ -52,8 +52,10 @@ import {
 } from '../constants/auth.constants';
 import { InitialUserGuard } from '../guards/initial-user.guard';
 import { InitializeUserDto } from '../dto/initialize-user.dto';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const { VERIFICATION_TOKEN_SECRET = '' } = process.env;
+
 @Controller({ path: 'auth', version: '1' })
 @ApiTags('auth')
 export class AuthController {
@@ -84,7 +86,7 @@ export class AuthController {
     description: "Error thrown when user's email or password is invalid ",
     schema: errorResponseDoc(
       404,
-      'Error user name or password',
+      'Invalid username or password.',
       'ERROR_USERNAME_OR_PASSWORD',
     ),
   })
@@ -92,7 +94,7 @@ export class AuthController {
     description: 'Error thrown when email is not yet verified',
     schema: errorResponseDoc(
       401,
-      'Error user name or password',
+      'Invalid username or password.',
       'ERROR_USERNAME_OR_PASSWORD',
       {
         user: {
@@ -125,14 +127,14 @@ export class AuthController {
 
     if (!user)
       throw new NotFoundException(
-        'Error user name or password',
-        'ERROR_USERNAME_OR_PASSWORD',
+        ErrorTypes.ERROR_USERNAME_OR_PASSWORD,
+        'Invalid username or password.',
       );
 
     if (!user.password)
       throw new ForbiddenException(
+        ErrorTypes.USER_DIDNT_REGISTER_WITH_PASSWORD,
         'User did not register with password',
-        'USER_DIDNT_REGISTER_WITH_PASSWORD',
       );
 
     const validPassword = await bcrypt.compare(
@@ -142,14 +144,13 @@ export class AuthController {
 
     if (!validPassword)
       throw new NotFoundException(
-        'Error user name or password',
-        'ERROR_USERNAME_OR_PASSWORD',
+        ErrorTypes.ERROR_USERNAME_OR_PASSWORD,
+        'Invalid username or password.',
       );
 
     const userPayload: UserProfile = {
       id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      fullName: user.fullName,
       email: user.email,
       userName: user.userName,
       userRole: {
@@ -158,11 +159,10 @@ export class AuthController {
     };
 
     if (!user.emailConfirmed)
-      throw new UnauthorizedException({
-        message: 'Email must be verified',
-        error: 'MUST_VERIFY_EMAIL',
-        user: userPayload,
-      });
+      throw new UnauthorizedException(
+        { message: ErrorTypes.MUST_VERIFY_EMAIL, user: userPayload },
+        'Email must be verified',
+      );
 
     await this.authService.setAccessTokens(
       {
@@ -280,11 +280,11 @@ export class AuthController {
   async resetPasswordRequest(@Body() payload: ResetPasswordRequestDto) {
     const user = await this.authService.getUserByEmail(payload.email);
 
-    if (!user)
-      throw new NotFoundException(
-        `User with the email '${payload.email}' doesn't exist`,
-        'USER_NOT_FOUND',
-      );
+    if (!user) return payload.email;
+    // throw new NotFoundException(
+    //   `User with the email '${payload.email}' doesn't exist`,
+    //   'USER_NOT_FOUND',
+    // );
 
     const token = await this.authService.generateResetPasswordToken(
       payload.email,
@@ -294,8 +294,7 @@ export class AuthController {
 
     const userBasicWithToken = {
       user: {
-        firstName: user.firstName,
-        lastName: user.lastName,
+        fullName: user.fullName,
         email: user.email,
       },
       token,

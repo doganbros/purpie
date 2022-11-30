@@ -6,23 +6,18 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
-  OneToOne,
 } from 'typeorm';
 import { PostSettings } from 'types/PostSettings';
 import { RecordEntity } from './base/RecordEntity';
 import { UserChannel } from './UserChannel.entity';
 import { User } from './User.entity';
 import { Zone } from './Zone.entity';
-import { Category } from './Category.entity';
 import { defaultPostSettings } from './data/default-post-settings';
 
 @Entity()
 export class Channel extends RecordEntity {
   @Column()
   name: string;
-
-  @Column({ nullable: true })
-  topic: string;
 
   @Column({ nullable: true })
   description: string;
@@ -42,13 +37,6 @@ export class Channel extends RecordEntity {
 
   @Column({ nullable: true })
   displayPhoto: string;
-
-  @OneToOne(() => Category, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'categoryId' })
-  category: Category;
-
-  @Column('int', { nullable: true })
-  categoryId: number | null;
 
   @ManyToOne(() => Zone, (zone) => zone.channels, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'zoneId' })

@@ -31,8 +31,9 @@ export const SidebarButton: FC<Props> = ({
           corner: 'right',
           size: 'medium',
         },
+        margin: { horizontal: '40px' },
         background: {
-          color: 'brand-2',
+          color: 'brand-alt',
         },
         align: { left: 'right' },
       }}
@@ -45,7 +46,7 @@ export const SidebarButton: FC<Props> = ({
             pad={{ vertical: 'small' }}
             align="center"
           >
-            <IconComponent size="medium" color={hover ? 'accent-1' : 'white'} />
+            <IconComponent size="28px" color={hover ? 'accent-1' : 'white'} />
           </ExtendedBox>
         )}
       </Button>

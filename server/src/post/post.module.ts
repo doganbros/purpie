@@ -6,17 +6,24 @@ import { PostComment } from 'entities/PostComment.entity';
 import { PostCommentLike } from 'entities/PostCommentLike.entity';
 import { PostLike } from 'entities/PostLike.entity';
 import { PostVideo } from 'entities/PostVideo.entity';
-import { PlaylistItem } from 'entities/PlaylistItem.entity';
 import { PostView } from 'entities/PostView.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { FeaturedPost } from 'entities/FeaturedPost.entity';
-import { Playlist } from 'entities/Playlist.entity';
 import { SavedPost } from 'entities/SavedPost.entity';
 import { User } from 'entities/User.entity';
 import { PostController } from './controllers/post.controller';
 import { PostListener } from './listeners/post.listener';
 import { PostService } from './services/post.service';
-import { PlaylistService } from './services/playlist.service';
+import { PostFolder } from '../../entities/PostFolder.entity';
+import { PostFolderItem } from '../../entities/PostFolderItem.entity';
+import { FolderService } from './services/folder.service';
+import { PostCommentService } from './services/post-comment.service';
+import { PostCommentController } from './controllers/post-comment.controller';
+import { PostLikeService } from './services/post-like.service';
+import { PostSavedService } from './services/post-saved.service';
+import { PostFolderController } from './controllers/post-folder.controller';
+import { PostLikeController } from './controllers/post-like.controller';
+import { PostSavedController } from './controllers/post-saved.controller';
 
 @Module({
   imports: [
@@ -24,8 +31,6 @@ import { PlaylistService } from './services/playlist.service';
       User,
       Post,
       FeaturedPost,
-      Playlist,
-      PlaylistItem,
       PostView,
       PostLike,
       PostComment,
@@ -34,10 +39,25 @@ import { PlaylistService } from './services/playlist.service';
       SavedPost,
       PostVideo,
       Notification,
+      PostFolder,
+      PostFolderItem,
     ]),
   ],
-  controllers: [PostController],
-  providers: [PostService, PostListener, PlaylistService],
+  controllers: [
+    PostController,
+    PostCommentController,
+    PostFolderController,
+    PostLikeController,
+    PostSavedController,
+  ],
+  providers: [
+    PostService,
+    PostListener,
+    FolderService,
+    PostCommentService,
+    PostLikeService,
+    PostSavedService,
+  ],
   exports: [PostService],
 })
 export class PostModule {}

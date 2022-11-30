@@ -1,19 +1,25 @@
-import { Box, Button, Text } from 'grommet';
+import { Box, Button } from 'grommet';
 import React, { FC, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { ChatMessage } from '../../../store/types/chat.types';
 import { useThrottle } from '../../../hooks/useThrottle';
-import InitialsAvatar from '../../utils/InitialsAvatar';
 import { User } from '../../../store/types/auth.types';
 import MessageFiles from './MessageFiles';
 import MessageAttachments from './MessageAttachments';
 import MessageTextArea from './MessageTextArea';
 import { getFileKey } from '../../../helpers/utils';
+import { SendButton, SendButtonContainer } from './ChatComponentsStyle';
+import { searchProfileAction } from '../../../store/actions/user.action';
+import { UserAvatar } from '../../utils/Avatars/UserAvatar';
 
 interface Props {
   name?: string;
   handleTypingEvent?: boolean;
   onTyping: () => void;
-  uploadingFiles: boolean;
+  uploadingFiles: Array<File>;
+  uploadedFiles: string[];
+  uploadErrors: string[];
   user: User;
   messageErrorDraft: null | {
     message: Partial<ChatMessage>;
@@ -32,14 +38,19 @@ const MessageBox: FC<Props> = ({
   onSubmit,
   handleTypingEvent,
   uploadingFiles,
+  uploadedFiles,
+  uploadErrors,
   onTyping,
   messageErrorDraft,
   onSendAgain,
   canAddFile,
   user,
 }) => {
+  const { t } = useTranslation();
   const throttle = useThrottle();
+  const dispatch = useDispatch();
   const componentRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const [text, setText] = useState<string>('');
   const [emojiPickerVisibility, setEmojiPickerVisibility] = useState(false);
   const [suggestionPickerVisibility, setSuggestionPickerVisibility] = useState(
@@ -67,19 +78,47 @@ const MessageBox: FC<Props> = ({
     return null;
   };
 
+  const onFileSelected = (files: File[]) => {
+    if (canAddFile) {
+      const incomingFileKeys = files.map(getFileKey);
+      setAttachments((existingFiles) => [
+        ...existingFiles.filter(
+          (f) => !incomingFileKeys.includes(getFileKey(f))
+        ),
+        ...files,
+      ]);
+    }
+  };
+
+  const toggleEmojiPicker = () => {
+    const newValue = !emojiPickerVisibility;
+    if (!newValue) {
+      inputRef.current?.focus();
+    } else {
+      dispatch(searchProfileAction({ name: '', userContacts: false }));
+    }
+    setEmojiPickerVisibility(newValue);
+  };
+
+  const toggleMentionPicker = () => {
+    const newValue = !mentionPickerVisibility;
+    if (!newValue) inputRef.current?.focus();
+    setMentionPickerVisibility(newValue);
+  };
+
   return (
     <Box
       direction="row"
       align="center"
-      ref={componentRef}
       margin={{ right: 'small', left: 'small' }}
     >
       {user && (
         <Box flex={{ shrink: 0 }}>
-          <InitialsAvatar
+          <UserAvatar
             size="medium"
             id={user.id}
-            value={`${user?.firstName} ${user?.lastName}`}
+            name={user.fullName}
+            src={user.displayPhoto}
           />
         </Box>
       )}
@@ -92,6 +131,17 @@ const MessageBox: FC<Props> = ({
         height="fit-content"
         width="100%"
       >
+        {canAddFile && (
+          <MessageFiles
+            files={attachments}
+            uploadingFiles={uploadingFiles}
+            uploadedFiles={uploadedFiles}
+            uploadErrors={uploadErrors}
+            onDeleteFile={(file) =>
+              setAttachments((files) => files.filter((f) => f !== file))
+            }
+          />
+        )}
         <MessageTextArea
           name={name}
           onKeyDown={onKeyDown}
@@ -102,62 +152,36 @@ const MessageBox: FC<Props> = ({
           setSuggestionPickerVisibility={setSuggestionPickerVisibility}
           setMentionPickerVisibility={setMentionPickerVisibility}
           suggestionPickerVisibility={suggestionPickerVisibility}
+          textAreaRef={inputRef}
           componentRef={componentRef}
           mentionPickerVisibility={mentionPickerVisibility}
         />
-        {canAddFile && attachments && (
-          <MessageFiles
-            files={attachments}
-            onDeleteFile={(file) =>
-              setAttachments((files) => files.filter((f) => f !== file))
-            }
-          />
-        )}
-        {uploadingFiles && <Text size="small">Uploading Files...</Text>}
         {messageErrorDraft ? (
           <Button
-            label="Send Message Again"
+            label={t('MessageBox.sendAgain')}
             onClick={() => {
               onSendAgain();
             }}
           />
         ) : null}
-        <MessageAttachments
-          attachmentToolVisibility
-          onFilesSelected={
-            canAddFile
-              ? (files) => {
-                  const incomingFileKeys = files.map(getFileKey);
 
-                  setAttachments((existingFiles) => [
-                    ...existingFiles.filter(
-                      (f) => !incomingFileKeys.includes(getFileKey(f))
-                    ),
-                    ...files,
-                  ]);
-                }
-              : null
-          }
-          toggleEmojiPicker={() =>
-            setEmojiPickerVisibility(!emojiPickerVisibility)
-          }
-          toggleMentionPicker={() =>
-            setMentionPickerVisibility(!mentionPickerVisibility)
-          }
+        <MessageAttachments
+          onFilesSelected={onFileSelected}
+          toggleEmojiPicker={toggleEmojiPicker}
+          toggleMentionPicker={toggleMentionPicker}
           sendButton={
-            <Box>
+            <SendButtonContainer margin="small">
               {(text.length || !!attachments.length) && (
-                <Button
+                <SendButton
                   size="small"
                   primary
-                  label="Send"
+                  label={t('common.send')}
                   onClick={() => {
                     onSend(text);
                   }}
-                  margin={{ right: 'small', bottom: 'small' }}
                 />
               )}
-            </Box>
+            </SendButtonContainer>
           }
         />
       </Box>

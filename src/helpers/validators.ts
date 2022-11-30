@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import i18n from '../config/i18n/i18n-config';
+
 const isExisty = (value: any) => value !== null && value !== undefined;
 const isEmpty = (value: any) => value === '';
 const isDefaultRequiredValue = (value: any) =>
@@ -46,17 +48,18 @@ const isBiggerOrEqual = (n: number) => (value: any) =>
 const isSmallerOrEqual = (n: number) => (value: any) =>
   !isExisty(value) || value <= n;
 
-const requiredMsg = 'This field is required';
-const urlMsg = 'Please enter a valid url';
-const emailMsg = 'Please enter a valid email';
-const notEmptyStringMsg = "This field can't be empty";
-const numericMsg = 'Please enter a numeric value';
-const alphaMsg = 'Please enter only alphabets';
-const regexMsg = 'Value is invalid';
-const alphaNumericMsg = 'Please enter only alphabets and numbers';
-const intMsg = 'Please enter only numbers';
-const floatMsg = 'Please enter only decimal numbers';
-const wordsMsg = 'Please enter a collection of words';
+const requiredMsg = (field: string) =>
+  i18n.t('validators.requiredMsg', { field });
+const urlMsg = i18n.t('validators.urlMsg');
+const emailMsg = i18n.t('validators.emailMsg');
+const notEmptyStringMsg = i18n.t('validators.notEmptyStringMsg');
+const numericMsg = i18n.t('validators.numericMsg');
+const alphaMsg = i18n.t('validators.alphaMsg');
+const regexMsg = i18n.t('validators.regexMsg');
+const alphaNumericMsg = i18n.t('validators.alphaNumericMsg');
+const intMsg = i18n.t('validators.intMsg');
+const floatMsg = i18n.t('validators.floatMsg');
+const wordsMsg = i18n.t('validators.wordsMsg');
 
 const ruleWrapper = (
   rule: (...args: any[]) => boolean,
@@ -65,16 +68,17 @@ const ruleWrapper = (
 ) => {
   return (value: any, data: any) => {
     if (rule(value, data)) return undefined;
-    return defaultMsg || customMsg;
+    return customMsg || defaultMsg;
   };
 };
 
 export const validators = {
-  required: (message?: string) => ruleWrapper(required, requiredMsg, message),
+  required: (field: string, message?: string) =>
+    ruleWrapper(required, requiredMsg(field), message),
   email: (message?: string) => ruleWrapper(isEmail, emailMsg, message),
   url: (message?: string) => ruleWrapper(isUrl, urlMsg, message),
-  defaultRequired: (message?: string) =>
-    ruleWrapper(isDefaultRequiredValue, requiredMsg, message),
+  defaultRequired: (field: string, message?: string) =>
+    ruleWrapper(isDefaultRequiredValue, requiredMsg(field), message),
   notEmptyString: (message?: string) =>
     ruleWrapper(notEmptyString, notEmptyStringMsg, message),
   numeric: (message?: string) => ruleWrapper(isNumeric, numericMsg, message),
@@ -87,55 +91,88 @@ export const validators = {
   float: (message?: string) => ruleWrapper(isFloat, floatMsg, message),
   words: (message?: string) => ruleWrapper(isWords, wordsMsg, message),
   length: (length: number, message?: string) =>
-    ruleWrapper(isLength(length), `must be ${length} characters long`, message),
-  minLength: (length: number, message?: string) =>
+    ruleWrapper(
+      isLength(length),
+      i18n.t('validators.lengthDefaultMsg', {
+        length,
+      }),
+      message
+    ),
+  minLength: (field: string, length: number, message?: string) =>
     ruleWrapper(
       minLength(length),
-      `Please enter at least ${length} characters long`,
+      i18n.t('validators.minLengthDefaultMsg', {
+        field,
+        length,
+      }),
       message
     ),
   maxLength: (length: number, message?: string) =>
     ruleWrapper(
       maxLength(length),
-      `Please enter up to ${length} characters long`,
+      i18n.t('validators.maxLengthDefaultMsg', {
+        length,
+      }),
       message
     ),
   equals: (value: any, message?: string) =>
-    ruleWrapper(equals(value), `This field must be equal to ${value}`, message),
+    ruleWrapper(
+      equals(value),
+      i18n.t('validators.equalsDefaultMsg', {
+        value,
+      }),
+      message
+    ),
   equalsField: (field: any, fieldLabel: any, message?: string) =>
     ruleWrapper(
       equalsField(field),
-      `This field does not match ${fieldLabel}`,
+      i18n.t('validators.equalsFieldDefaultMsg', {
+        fieldLabel,
+      }),
       message
     ),
   True: (message?: string) =>
-    ruleWrapper(isTrue, `This field must be True`, message),
+    ruleWrapper(isTrue, i18n.t('validators.trueDefaultMsg'), message),
   False: (message?: string) =>
-    ruleWrapper(isFalse, `This field must be False`, message),
+    ruleWrapper(isFalse, i18n.t('validators.falseDefaultMsg'), message),
   bigger: (value: number, message?: string) =>
-    ruleWrapper(isBigger(value), `must be bigger than ${value}`, message),
+    ruleWrapper(
+      isBigger(value),
+      i18n.t('validators.biggerDefaultMsg', {
+        value,
+      }),
+      message
+    ),
   biggerOrEqual: (value: number, message?: string) =>
     ruleWrapper(
       isBiggerOrEqual(value),
-      `This field must be bigger or equal to ${value}`,
+      i18n.t('validators.biggerOrEqualDefaultMsg', {
+        value,
+      }),
       message
     ),
   smaller: (value: any, message?: string) =>
     ruleWrapper(
       isSmaller(value),
-      `This field must be smaller than ${value}`,
+      i18n.t('validators.smallerDefaultMsg', {
+        value,
+      }),
       message
     ),
   smallerOrEqual: (value: any, message?: string) =>
     ruleWrapper(
       isSmallerOrEqual(value),
-      `This field must be smaller or equal to ${value}`,
+      i18n.t('validators.smallerOrEqualDefaultMsg', {
+        value,
+      }),
       message
     ),
   startsWith: (value: any, message?: string) =>
     ruleWrapper(
       startsWith(value),
-      `This field must start with ${value}`,
+      i18n.t('validators.startsWithDefaultMsg', {
+        value,
+      }),
       message
     ),
 };

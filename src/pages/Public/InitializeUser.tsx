@@ -1,25 +1,18 @@
 import React, { FC, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Box,
-  Button,
-  Form,
-  FormField,
-  Image,
-  Main,
-  Text,
-  TextInput,
-} from 'grommet';
+import { Box, Form, FormField, Image, Main, Text, TextInput } from 'grommet';
+import { useTranslation } from 'react-i18next';
 import { AppState } from '../../store/reducers/root.reducer';
-import Logo from '../../assets/octopus-logo/logo-color.svg';
-import OctopusText from '../../assets/octopus-logo/octopus-text-2.png';
+import LogoHorizontalColor from '../../assets/purpie-logo/logo-horizontal-color.svg';
 import { validators } from '../../helpers/validators';
 import { useTitle } from '../../hooks/useTitle';
 import { useResponsive } from '../../hooks/useResponsive';
 import { FormSubmitEvent } from '../../models/form-submit-event';
 import { initializeUserAction } from '../../store/actions/auth.action';
 import { RegisterPayload } from '../../store/types/auth.types';
+import AuthFormButton from '../../components/auth/AuthFormButton';
+import { USER_NAME_CONSTRAINT } from '../../helpers/constants';
 
 const InitializeUser: FC = () => {
   const {
@@ -27,15 +20,18 @@ const InitializeUser: FC = () => {
     initializeUser: { loading },
   } = useSelector((state: AppState) => state.auth);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const history = useHistory();
 
   const size = useResponsive();
 
-  useTitle('Initialize User - Octopus');
+  useTitle(t('InitializeUser.title'));
 
   useEffect(() => {
-    if (!isInitialUserSetup) history.push('/login');
+    if (!isInitialUserSetup) {
+      history.push('/login');
+    }
   }, []);
 
   const handleSubmit: FormSubmitEvent<RegisterPayload> = ({ value }) => {
@@ -58,37 +54,38 @@ const InitializeUser: FC = () => {
       >
         <Box gap="medium">
           <Box direction="row" align="center" gap="small">
-            <Image height="54px" width="54px" src={Logo} />
-            <Image height="24px" src={OctopusText} />
+            <Image
+              width={size === 'small' ? '112px' : '132px'}
+              src={LogoHorizontalColor}
+            />
           </Box>
           <Box gap="small">
             <Text size="xlarge" weight="bold">
-              Welcome to Octopus!
+              {t('InitializeUser.formTitle')}
             </Text>
             <Text size="small" margin="">
-              Sign up with an account to continue
+              {t('InitializeUser.formSubTitle')}
             </Text>
           </Box>
           <Form onSubmit={handleSubmit}>
             <FormField
-              label="FIRST NAME"
-              validate={validators.required()}
-              name="firstName"
-              htmlFor="firstNameInput"
+              label={t('common.fullName')}
+              validate={validators.required(t('common.fullName'))}
+              name="fullName"
+              htmlFor="fullNameInput"
             >
-              <TextInput name="firstName" />
+              <TextInput name="fullName" />
             </FormField>
             <FormField
-              label="LAST NAME"
-              validate={validators.required()}
-              name="lastName"
-              htmlFor="lastNameInput"
-            >
-              <TextInput name="lastName" />
-            </FormField>
-            <FormField
-              label="USERNAME"
-              validate={validators.required()}
+              label={t('common.userName')}
+              validate={[
+                validators.required(t('common.userName')),
+                validators.minLength(t('common.userName'), 6),
+                validators.matches(
+                  USER_NAME_CONSTRAINT,
+                  t('common.invalidUserName')
+                ),
+              ]}
               name="userName"
               htmlFor="userNameInput"
             >
@@ -97,37 +94,42 @@ const InitializeUser: FC = () => {
             <FormField
               name="email"
               htmlFor="emailInput"
-              label="EMAIL"
-              validate={[validators.required(), validators.email()]}
+              label={t('common.email')}
+              validate={[
+                validators.required(t('common.email')),
+                validators.email(),
+              ]}
             >
               <TextInput id="emailInput" name="email" type="email" />
             </FormField>
             <FormField
-              label="PASSWORD"
+              label={t('common.password')}
               name="password"
               htmlFor="passwordInput"
-              validate={[validators.required(), validators.minLength(6)]}
+              validate={[
+                validators.required(t('common.password')),
+                validators.minLength(t('common.password'), 6),
+              ]}
             >
               <TextInput id="passwordInput" name="password" type="password" />
             </FormField>
             <FormField
-              label="CONFIRM PASSWORD"
+              label={t('common.confirmPassword')}
               name="password1"
               htmlFor="password1Input"
               validate={[
-                validators.required(),
-                validators.equalsField('password', 'password'),
+                validators.required(t('common.confirmPassword')),
+                validators.equalsField('password', t('common.passwords')),
               ]}
             >
               <TextInput id="password1Input" name="password1" type="password" />
             </FormField>
-            <Button
-              fill="horizontal"
+            <AuthFormButton
               primary
               margin={{ top: 'medium' }}
               disabled={loading}
               type="submit"
-              label="CREATE ACCOUNT"
+              label={t('InitializeUser.createAccount')}
             />
           </Form>
         </Box>

@@ -1,158 +1,119 @@
 import {
-  PUBLIC_FEED_REQUESTED,
-  PUBLIC_FEED_SUCCESS,
-  PUBLIC_FEED_FAILED,
-  USER_FEED_REQUESTED,
-  USER_FEED_SUCCESS,
-  USER_FEED_FAILED,
-  ZONE_FEED_REQUESTED,
-  ZONE_FEED_SUCCESS,
-  ZONE_FEED_FAILED,
-  CHANNEL_FEED_REQUESTED,
-  CHANNEL_FEED_SUCCESS,
-  CHANNEL_FEED_FAILED,
-  POST_DETAIL_REQUESTED,
-  POST_DETAIL_SUCCESS,
-  POST_DETAIL_FAILED,
-  CREATE_VIDEO_REQUESTED,
-  CREATE_VIDEO_SUCCESS,
-  CREATE_VIDEO_FAILED,
-  OPEN_CREATE_VIDEO_LAYER,
+  ADD_POST_SUCCESS,
   CLOSE_CREATE_VIDEO_LAYER,
-  CREATE_POST_LIKE_REQUESTED,
-  CREATE_POST_LIKE_SUCCESS,
-  CREATE_POST_LIKE_FAILED,
-  REMOVE_POST_LIKE_REQUESTED,
-  REMOVE_POST_LIKE_SUCCESS,
-  REMOVE_POST_LIKE_FAILED,
-  CREATE_POST_SAVE_REQUESTED,
-  CREATE_POST_SAVE_SUCCESS,
-  CREATE_POST_SAVE_FAILED,
-  REMOVE_POST_SAVE_REQUESTED,
-  REMOVE_POST_SAVE_SUCCESS,
-  REMOVE_POST_SAVE_FAILED,
-  SAVED_POSTS_REQUESTED,
-  SAVED_POSTS_SUCCESS,
-  SAVED_POSTS_FAILED,
-  SEARCH_POST_REQUESTED,
-  SEARCH_POST_SUCCESS,
-  SEARCH_POST_FAILED,
-  CREATE_POST_COMMENT_REQUESTED,
-  CREATE_POST_COMMENT_SUCCESS,
   CREATE_POST_COMMENT_FAILED,
-  UPDATE_POST_COMMENT_REQUESTED,
-  UPDATE_POST_COMMENT_SUCCESS,
-  UPDATE_POST_COMMENT_FAILED,
-  REMOVE_POST_COMMENT_REQUESTED,
-  REMOVE_POST_COMMENT_SUCCESS,
-  REMOVE_POST_COMMENT_FAILED,
-  LIST_POST_COMMENTS_REQUESTED,
-  LIST_POST_COMMENTS_SUCCESS,
-  LIST_POST_COMMENTS_FAILED,
-  LIST_POST_COMMENT_REPLIES_REQUESTED,
-  LIST_POST_COMMENT_REPLIES_SUCCESS,
-  LIST_POST_COMMENT_REPLIES_FAILED,
+  CREATE_POST_COMMENT_LIKE_FAILED,
   CREATE_POST_COMMENT_LIKE_REQUESTED,
   CREATE_POST_COMMENT_LIKE_SUCCESS,
-  CREATE_POST_COMMENT_LIKE_FAILED,
+  CREATE_POST_COMMENT_REQUESTED,
+  CREATE_POST_COMMENT_SUCCESS,
+  CREATE_POST_LIKE_FAILED,
+  CREATE_POST_LIKE_REQUESTED,
+  CREATE_POST_LIKE_SUCCESS,
+  CREATE_POST_SAVE_FAILED,
+  CREATE_POST_SAVE_REQUESTED,
+  CREATE_POST_SAVE_SUCCESS,
+  CREATE_VIDEO_FAILED,
+  CREATE_VIDEO_REQUESTED,
+  CREATE_VIDEO_SUCCESS,
+  FEED_FAILED,
+  FEED_REQUESTED,
+  FEED_SUCCESS,
+  GET_FEATURED_POST_FAILED,
+  GET_FEATURED_POST_REQUESTED,
+  GET_FEATURED_POST_SUCCESS,
+  LIST_POST_COMMENT_REPLIES_FAILED,
+  LIST_POST_COMMENT_REPLIES_REQUESTED,
+  LIST_POST_COMMENT_REPLIES_SUCCESS,
+  LIST_POST_COMMENTS_FAILED,
+  LIST_POST_COMMENTS_REQUESTED,
+  LIST_POST_COMMENTS_SUCCESS,
+  OPEN_CREATE_VIDEO_LAYER,
+  POST_DETAIL_FAILED,
+  POST_DETAIL_REQUESTED,
+  POST_DETAIL_SUCCESS,
+  REMOVE_POST_COMMENT_FAILED,
+  REMOVE_POST_COMMENT_LIKE_FAILED,
   REMOVE_POST_COMMENT_LIKE_REQUESTED,
   REMOVE_POST_COMMENT_LIKE_SUCCESS,
-  REMOVE_POST_COMMENT_LIKE_FAILED,
+  REMOVE_POST_COMMENT_REQUESTED,
+  REMOVE_POST_COMMENT_SUCCESS,
+  REMOVE_POST_FAILED,
+  REMOVE_POST_LIKE_FAILED,
+  REMOVE_POST_LIKE_REQUESTED,
+  REMOVE_POST_LIKE_SUCCESS,
+  REMOVE_POST_SAVE_FAILED,
+  REMOVE_POST_SAVE_REQUESTED,
+  REMOVE_POST_SAVE_SUCCESS,
+  REMOVE_POST_SUCCESS,
+  SAVED_POSTS_FAILED,
+  SAVED_POSTS_REQUESTED,
+  SAVED_POSTS_SUCCESS,
+  SEARCH_POST_FAILED,
+  SEARCH_POST_REQUESTED,
+  SEARCH_POST_SUCCESS,
+  UPDATE_POST_COMMENT_FAILED,
+  UPDATE_POST_COMMENT_REQUESTED,
+  UPDATE_POST_COMMENT_SUCCESS,
+  UPDATE_POST_DETAIL_FAILED,
+  UPDATE_POST_DETAIL_REQUESTED,
+  UPDATE_POST_DETAIL_SUCCESS,
 } from '../constants/post.constants';
 
 import * as PostService from '../services/post.service';
 import { store } from '../store';
 import {
   CreateVideoPayload,
+  EditVideoPayload,
   FeedPayload,
   ListPostCommentRepliesParams,
   ListPostCommentsParams,
+  Post,
   PostAction,
   PostSearchParams,
 } from '../types/post.types';
 
-export const getPublicFeedAction = (payload: FeedPayload): PostAction => {
+export const removePostAction = (payload: { postId: number }): PostAction => {
   return async (dispatch) => {
-    dispatch({
-      type: PUBLIC_FEED_REQUESTED,
-      payload,
-    });
     try {
-      const response = await PostService.getPublicFeed(payload);
+      await PostService.removePost(payload.postId);
       dispatch({
-        type: PUBLIC_FEED_SUCCESS,
-        payload: response,
+        type: REMOVE_POST_SUCCESS,
+        payload,
       });
-    } catch (err: any) {
+    } catch (err) {
       dispatch({
-        type: PUBLIC_FEED_FAILED,
+        type: REMOVE_POST_FAILED,
         payload: err?.response?.data,
       });
     }
   };
 };
 
-export const getUserFeedAction = (payload: FeedPayload): PostAction => {
-  return async (dispatch) => {
+export const addPostAction = (payload: Post): PostAction => {
+  return (dispatch) => {
     dispatch({
-      type: USER_FEED_REQUESTED,
-      payload,
+      type: ADD_POST_SUCCESS,
+      payload: { ...payload, newlyCreated: true },
     });
-    try {
-      const response = await PostService.getUserFeed(payload);
-      dispatch({
-        type: USER_FEED_SUCCESS,
-        payload: response,
-      });
-    } catch (err: any) {
-      dispatch({
-        type: USER_FEED_FAILED,
-        payload: err?.response?.data,
-      });
-    }
   };
 };
 
-export const getZoneFeedAction = (
-  payload: FeedPayload & { zoneId: number }
-): PostAction => {
+export const getFeedListAction = (payload: FeedPayload): PostAction => {
   return async (dispatch) => {
     dispatch({
-      type: ZONE_FEED_REQUESTED,
+      type: FEED_REQUESTED,
       payload,
     });
     try {
-      const response = await PostService.getZoneFeed(payload);
+      const response = await PostService.getPostFeeds(payload);
       dispatch({
-        type: ZONE_FEED_SUCCESS,
+        type: FEED_SUCCESS,
         payload: response,
       });
     } catch (err: any) {
       dispatch({
-        type: ZONE_FEED_FAILED,
-        payload: err?.response?.data,
-      });
-    }
-  };
-};
-
-export const getChannelFeedAction = (
-  payload: FeedPayload & { channelId: number }
-): PostAction => {
-  return async (dispatch) => {
-    dispatch({
-      type: CHANNEL_FEED_REQUESTED,
-      payload,
-    });
-    try {
-      const response = await PostService.getChannelFeed(payload);
-      dispatch({
-        type: CHANNEL_FEED_SUCCESS,
-        payload: response,
-      });
-    } catch (err: any) {
-      dispatch({
-        type: CHANNEL_FEED_FAILED,
+        type: FEED_FAILED,
         payload: err?.response?.data,
       });
     }
@@ -190,9 +151,10 @@ export const createVideoAction = (
       payload,
     });
     try {
-      await PostService.createVideo(payload, onUploadProgress);
+      const response = await PostService.createVideo(payload, onUploadProgress);
       dispatch({
         type: CREATE_VIDEO_SUCCESS,
+        payload: { ...response, newlyCreated: true },
       });
     } catch (err: any) {
       dispatch({
@@ -391,6 +353,27 @@ export const createPostCommentAction = (
   };
 };
 
+export const updatePostAction = (payload: EditVideoPayload): PostAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: UPDATE_POST_DETAIL_REQUESTED,
+      payload,
+    });
+    try {
+      await PostService.updatePostDetail(payload);
+      dispatch({
+        type: UPDATE_POST_DETAIL_SUCCESS,
+        payload,
+      });
+    } catch (err) {
+      dispatch({
+        type: UPDATE_POST_DETAIL_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
 export const updatePostCommentAction = (
   comment: string,
   commentId: number,
@@ -545,6 +528,28 @@ export const removePostCommentLikeAction = (payload: {
     } catch (err: any) {
       dispatch({
         type: REMOVE_POST_COMMENT_LIKE_FAILED,
+        payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const getFeaturedPostAction = (payload: {
+  userId: number;
+}): PostAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: GET_FEATURED_POST_REQUESTED,
+    });
+    try {
+      const response = await PostService.getFeaturedPost(payload.userId);
+      dispatch({
+        type: GET_FEATURED_POST_SUCCESS,
+        payload: response,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: GET_FEATURED_POST_FAILED,
         payload: err?.reponse?.data,
       });
     }

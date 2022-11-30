@@ -3,14 +3,20 @@ import { Anchor, Box, Text } from 'grommet';
 import React, { FC } from 'react';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import { useSelector } from 'react-redux';
-import { ChatMessage } from '../../store/types/chat.types';
-import InitialsAvatar from '../utils/InitialsAvatar';
+import { useTranslation } from 'react-i18next';
+import { ChatAttachment, ChatMessage } from '../../store/types/chat.types';
 import { AppState } from '../../store/reducers/root.reducer';
 import {
   LeftShadowBox,
   RightShadowBox,
   UserFullName,
 } from './MessageItem.styled';
+import {
+  MessageBoxHorizontalScroll,
+  UploadedImage,
+  UploadedImageContainer,
+} from './components/ChatComponentsStyle';
+import { UserAvatar } from '../utils/Avatars/UserAvatar';
 
 interface Props {
   message: ChatMessage;
@@ -22,6 +28,8 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
   const {
     auth: { user: currentUser },
   } = useSelector((state: AppState) => state);
+  const { t } = useTranslation();
+
   const ownMessage = message.createdBy.id === currentUser?.id;
 
   const renderContextMenu = () => (
@@ -45,6 +53,33 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
       </Box>
     </ContextMenu>
   );
+
+  const renderAttachments = (attachments?: ChatAttachment[]) => {
+    if (!attachments) return null;
+    return (
+      <MessageBoxHorizontalScroll direction="row" overflow="auto" width="100%">
+        {attachments?.map((attachment) => {
+          const url = `${process.env.REACT_APP_SERVER_HOST}/v1/chat/attachment/${attachment.name}`;
+          return (
+            <UploadedImageContainer
+              key={attachment.name}
+              direction="row"
+              justify="between"
+              align="center"
+              margin="xxsmall"
+              pad={{ bottom: 'small' }}
+              hoverIndicator={{ background: 'rgba(0,0,0,0.1)' }}
+              round="small"
+              width="fit-content"
+              height={attachments.length === 1 ? 'fit-content' : 'xsmall'}
+            >
+              <UploadedImage width="100%" height="100%" src={url} />
+            </UploadedImageContainer>
+          );
+        })}
+      </MessageBoxHorizontalScroll>
+    );
+  };
 
   const ContentBox = ownMessage ? RightShadowBox : LeftShadowBox;
   return (
@@ -71,22 +106,25 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
               margin={{ [ownMessage ? 'right' : 'left']: '-15.5px' }}
               pad="1px"
               height="42px"
-              width={ownMessage ? '42px' : '48px'}
+              width={ownMessage ? '48px' : '42px'}
               round="xlarge"
               border={{ color: '#E4E9F2', size: 'small' }}
             >
-              <InitialsAvatar
+              <UserAvatar
                 size="medium"
-                fontSize="small"
+                textProps={{
+                  size: 'small',
+                }}
                 id={message.createdBy.id}
-                value={`${message.createdBy.firstName} ${message.createdBy.lastName} `}
+                name={message.createdBy.fullName}
+                src={message.createdBy.displayPhoto}
               />
             </Box>
             <Box
               direction="column"
               justify="end"
               margin={{ right: 'small' }}
-              width={{ width: ownMessage ? '50%' : '100%' }}
+              width="100%"
             >
               <Box direction="row" justify={ownMessage ? 'end' : 'start'}>
                 <Box direction="row">
@@ -97,45 +135,41 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
                     textAlign={ownMessage ? 'end' : 'start'}
                   >
                     {ownMessage
-                      ? 'You'
-                      : `${message.createdBy.firstName} ${message.createdBy.lastName}`}
+                      ? t('MessageItem.you')
+                      : message.createdBy.fullName}
                   </UserFullName>
                   <Text size="small">
                     {dayjs(message.createdOn).format('hh:mm:a')}
                   </Text>
                 </Box>
               </Box>
-              <Box>
-                {message.parent ? (
-                  <Text size="xsmall" margin={{ bottom: 'xsmall' }}>
-                    <Text size="xsmall" as="i" margin={{ right: 'xsmall' }}>
-                      Replied to:
+              <Box align={ownMessage ? 'end' : 'start'}>
+                <Box width={ownMessage ? '50%' : '100%'}>
+                  {message.parent ? (
+                    <Text size="xsmall" margin={{ bottom: 'xsmall' }}>
+                      <Text size="xsmall" as="i" margin={{ right: 'xsmall' }}>
+                        {t('MessageItem.repliedTo')}
+                      </Text>
+                      <Anchor
+                        href={`#message-item-${message.parent.identifier}`}
+                      >
+                        {message.parent.message}
+                      </Anchor>
                     </Text>
-                    <Anchor href={`#message-item-${message.parent.identifier}`}>
-                      {message.parent.message}
-                    </Anchor>
+                  ) : null}
+                </Box>
+                <Box width={ownMessage ? '50%' : '100%'}>
+                  <Text
+                    size="small"
+                    margin={{ right: 'xsmall' }}
+                    textAlign={ownMessage ? 'end' : 'start'}
+                  >
+                    {message.deleted
+                      ? t('MessageItem.messageDeleted')
+                      : message.message}
                   </Text>
-                ) : null}
-                <Text
-                  size="small"
-                  margin={{ right: 'xsmall' }}
-                  textAlign={ownMessage ? 'end' : 'start'}
-                >
-                  {message.deleted
-                    ? 'This message has been deleted'
-                    : message.message}
-                </Text>
-                {message.attachments?.map((attachment) => (
-                  <Text key={attachment.name}>
-                    <a
-                      href={`${process.env.REACT_APP_SERVER_HOST}/v1/chat/attachment/${attachment.name}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {attachment.originalFileName}
-                    </a>
-                  </Text>
-                ))}
+                </Box>
+                {renderAttachments(message.attachments)}
                 {message.edited ? <Text size="xsmall">(edited)</Text> : null}
                 {children}
               </Box>

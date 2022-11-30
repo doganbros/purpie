@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import nodemailer from 'nodemailer';
 import path from 'path';
 import ehbs from 'express-handlebars';
-import sendGrid, { MailDataRequired } from '@sendgrid/mail';
+import sendGrid from '@sendgrid/mail';
 
 const rootViewPath = path.join(__dirname, '..', '..', 'mail', 'views');
 
@@ -22,9 +22,21 @@ sendGrid.setApiKey(SENDGRID_API_KEY);
 
 @Injectable()
 export class MailService {
+  // private mailTransport: nodemailer.Transporter;
+
   private testMailTransport: nodemailer.Transporter;
 
   constructor() {
+    // this.mailTransport = nodemailer.createTransport({
+    //   host: 'smtp.sendgrid.net',
+    //   port: 587,
+    //   ignoreTLS: true,
+    //   auth: {
+    //     user: 'apikey',
+    //     pass: SENDGRID_API_KEY,
+    //   },
+    // });
+
     if (process.env.NODE_ENV === 'development') {
       this.testMailTransport = nodemailer.createTransport({
         port: 1025,
@@ -40,13 +52,15 @@ export class MailService {
     context: Record<string, any> = {},
   ) {
     const result = await this.renderMail(viewName, context);
-    const message: MailDataRequired = {
+    // Todo: Maybe make the sendgrid do templating
+    const message = {
       to,
       from: SENDGRID_FROM_EMAIL,
       subject,
       html: result,
     };
     return sendGrid.send(message);
+    // return this.sendg.sendMail(message);
   }
 
   async sendTestMail(
@@ -65,13 +79,14 @@ export class MailService {
   }
 
   async sendMailByText(to: string, subject: string, msg: string) {
-    const message: MailDataRequired = {
+    const message = {
       to,
       from: SENDGRID_FROM_EMAIL,
       subject,
       html: msg,
     };
     return sendGrid.send(message);
+    // return this.mailTransport.sendMail(message);
   }
 
   renderMail(

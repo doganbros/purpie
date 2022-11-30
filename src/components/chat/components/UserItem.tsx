@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { Box, Text } from 'grommet';
-import { UserBasic } from '../../../store/types/auth.types';
-import InitialsAvatar from '../../utils/InitialsAvatar';
+import { User } from '../../../store/types/auth.types';
+import { UserAvatar } from '../../utils/Avatars/UserAvatar';
 
 interface Props {
-  user: UserBasic;
+  user: User;
   onClick: () => void;
 }
 
@@ -22,10 +22,11 @@ const UserItem: FC<Props> = ({ user, onClick }) => {
       pad={{ vertical: 'xsmall', horizontal: 'small' }}
     >
       <Box flex={{ shrink: 0 }}>
-        <InitialsAvatar
+        <UserAvatar
           size="small"
           id={user.id}
-          value={`${user.firstName} ${user.lastName}`}
+          name={user.fullName}
+          src={user.displayPhoto}
         />
       </Box>
       <Box>
@@ -35,7 +36,7 @@ const UserItem: FC<Props> = ({ user, onClick }) => {
           size="small"
           style={{ userSelect: 'none' }}
         >
-          {user.firstName} {user.lastName}
+          {user.fullName}
         </Text>
         <Text
           color="status-disabled"

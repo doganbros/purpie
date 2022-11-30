@@ -1,19 +1,20 @@
-import { Button, Form, FormField, TextInput, Image, Text } from 'grommet';
+import { Form, FormField, Image, Text, TextInput } from 'grommet';
 import React, { FC, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import AuthLayout from '../../components/layouts/AuthLayout';
 import { validators } from '../../helpers/validators';
 import { FormSubmitEvent } from '../../models/form-submit-event';
 import { verifyUserEmailAction } from '../../store/actions/auth.action';
 import Figure from '../../assets/verify-email-bg/figure-2.svg';
 import Banner from '../../assets/verify-email-bg/banner.png';
-import { useResponsive } from '../../hooks/useResponsive';
 import { userNameExistsCheck } from '../../store/services/auth.service';
 import { useDebouncer } from '../../hooks/useDebouncer';
 import { theme } from '../../config/app-config';
 import { USER_NAME_CONSTRAINT } from '../../helpers/constants';
 import { ExistenceResult } from '../../store/types/auth.types';
+import AuthFormButton from '../../components/auth/AuthFormButton';
 
 interface Params {
   token: string;
@@ -25,6 +26,7 @@ const VerifyUserEmail: FC = () => {
   const debouncer = useDebouncer();
 
   const { token } = useParams<Params>();
+  const { t } = useTranslation();
 
   const [
     existenceResult,
@@ -50,13 +52,11 @@ const VerifyUserEmail: FC = () => {
     }
   };
 
-  const size = useResponsive();
-
   return (
     <AuthLayout
-      title="Email Verification"
-      formTitle="Email Verification"
-      formSubTitle="Please create a user name to continue email verification process."
+      title={t('VerifyUserEmail.title')}
+      formTitle={t('VerifyUserEmail.title')}
+      formSubTitle={t('VerifyUserEmail.formSubTitle')}
       background={
         <>
           <Image
@@ -84,23 +84,32 @@ const VerifyUserEmail: FC = () => {
           <FormField
             name="userName"
             htmlFor="userNameInput"
-            label="User Name"
+            label={t('common.userName')}
             error={
               existenceResult &&
               existenceResult.exists &&
-              `User Name ${existenceResult.userName} already exists!`
+              t('VerifyUserEmail.userNameNotAvailable', {
+                userName: existenceResult.userName,
+              })
             }
             info={
               existenceResult &&
               !existenceResult.exists && (
                 <Text color="status-ok" size="small">
-                  User Name {existenceResult.userName} can be used!
+                  {t('VerifyUserEmail.userNameAvailable', {
+                    userName: existenceResult.userName,
+                  })}
                 </Text>
               )
             }
             validate={[
-              validators.required(),
-              validators.matches(USER_NAME_CONSTRAINT, 'User Name is invalid'),
+              validators.required(t('common.userName')),
+              validators.minLength(t('common.userName'), 4),
+              validators.maxLength(16),
+              validators.matches(
+                USER_NAME_CONSTRAINT,
+                t('common.invalidUserName')
+              ),
             ]}
             contentProps={
               existenceResult && !existenceResult.exists
@@ -121,13 +130,11 @@ const VerifyUserEmail: FC = () => {
               name="userName"
             />
           </FormField>
-          <Button
-            fill="horizontal"
+          <AuthFormButton
             primary
-            size={size}
             margin={{ top: '55%' }}
             type="submit"
-            label="SEND"
+            label={t('common.continue')}
           />
         </Form>
       </>

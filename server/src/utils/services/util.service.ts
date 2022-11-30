@@ -11,23 +11,23 @@ export class UtilService {
   ) {}
 
   async onModuleInit() {
-    const octopusClientApiKey = process.env.OCTOPUS_API_KEY;
-    const octopusClientApiSecret = process.env.OCTOPUS_API_SECRET;
+    const clientApiKey = process.env.OCTOPUS_API_KEY;
+    const clientApiSecret = process.env.OCTOPUS_API_SECRET;
 
-    if (octopusClientApiKey && octopusClientApiSecret) {
+    if (clientApiKey && clientApiSecret) {
       const existingClient = await this.clientRepository.findOne({
         where: {
-          apiKey: octopusClientApiKey,
+          apiKey: clientApiKey,
         },
       });
 
       if (!existingClient) {
-        const hashedSecret = await bcrypt.hash(octopusClientApiSecret, 10);
+        const hashedSecret = await bcrypt.hash(clientApiSecret, 10);
         this.clientRepository
           .create({
-            apiKey: octopusClientApiKey,
+            apiKey: clientApiKey,
             apiSecret: hashedSecret,
-            name: 'Default Octopus Client',
+            name: 'Default Purpie Client',
             clientRoleCode: 'SUPER_ADMIN',
           })
           .save();

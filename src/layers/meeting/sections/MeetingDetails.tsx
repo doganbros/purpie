@@ -2,16 +2,17 @@ import React, { FC, useContext, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Box,
-  TextInput,
-  TextArea,
   DateInput,
   FormField,
-  Text,
-  Select,
-  ResponsiveContext,
   Grid,
+  ResponsiveContext,
+  Select,
+  Text,
+  TextArea,
+  TextInput,
 } from 'grommet';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action';
 import TimeInput from '../../../components/utils/TimeInput';
@@ -21,6 +22,7 @@ import Switch from '../../../components/utils/Switch';
 
 const MeetingDetails: FC = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const {
     meeting: {
@@ -43,7 +45,7 @@ const MeetingDetails: FC = () => {
           onBlur={(e) =>
             dispatch(setMeetingFormFieldAction({ title: e.target.value }))
           }
-          placeholder="Meeting Name"
+          placeholder={t('MeetingDetails.meetingName')}
         />
       </FormField>
       <FormField
@@ -59,12 +61,12 @@ const MeetingDetails: FC = () => {
           }
           name="description"
           resize={false}
-          placeholder="Meeting Description"
+          placeholder={t('MeetingDetails.meetingDescription')}
         />
       </FormField>
       <Switch
-        label="Plan For Later"
-        width={size === 'small' ? '100%' : '170px'}
+        label={t('MeetingDetails.planForLater')}
+        width={size === 'small' ? '100%' : '175px'}
         margin={{ vertical: size === 'small' ? 'large' : 'medium' }}
         defaultValue={!!formPayload?.planForLater}
         onChange={(v) => {
@@ -87,7 +89,7 @@ const MeetingDetails: FC = () => {
           >
             <Box>
               <Text size="xsmall" color="dark-6" margin={{ bottom: 'xxsmall' }}>
-                Start Date
+                {t('MeetingDetails.startDate')}
               </Text>
               <Box direction="row" gap={size === 'small' ? 'medium' : 'xsmall'}>
                 <FormField
@@ -128,7 +130,7 @@ const MeetingDetails: FC = () => {
                       );
                     }}
                     name="startDate"
-                    placeholder="Set Date"
+                    placeholder={t('MeetingDetails.setDate')}
                   />
                 </FormField>
                 <FormField name="time" htmlFor="timeValue" fill="horizontal">
@@ -159,7 +161,7 @@ const MeetingDetails: FC = () => {
             </Box>
             <Box>
               <Text size="xsmall" color="dark-6" margin={{ bottom: 'xxsmall' }}>
-                End Date
+                {t('MeetingDetails.endDate')}
               </Text>
               <Box direction="row" gap={size === 'small' ? 'medium' : 'xsmall'}>
                 <FormField name="endDate" htmlFor="dateValue" fill="horizontal">
@@ -198,7 +200,7 @@ const MeetingDetails: FC = () => {
                       );
                     }}
                     name="endDate"
-                    placeholder="Set Date"
+                    placeholder={t('MeetingDetails.setDate')}
                   />
                 </FormField>
                 <FormField name="time" htmlFor="timeValue" fill="horizontal">
@@ -230,7 +232,7 @@ const MeetingDetails: FC = () => {
           </Grid>
           <Box>
             <Text size="xsmall" color="dark-6" margin={{ bottom: 'xxsmall' }}>
-              Time Zone
+              {t('MeetingDetails.timeZone')}
             </Text>
             <Select
               options={currentTimeZones}

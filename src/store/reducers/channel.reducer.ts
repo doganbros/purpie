@@ -13,6 +13,7 @@ import {
   SEARCH_CHANNEL_SUCCESS,
   SET_SELECTED_CHANNEL,
   UNSET_SELECTED_CHANNEL,
+  CHANGE_CHANNEL_PICTURE_SUCCESS,
 } from '../constants/channel.constants';
 import { ChannelActionParams, ChannelState } from '../types/channel.types';
 
@@ -144,6 +145,24 @@ const channelReducer = (
           error: action.payload,
         },
       };
+    case CHANGE_CHANNEL_PICTURE_SUCCESS: {
+      const test = state.userChannels.data.map((item) =>
+        item.id === action.channelId
+          ? {
+              ...item,
+              channel: { ...item.channel, displayPhoto: action.payload },
+            }
+          : item
+      );
+      return {
+        ...state,
+        userChannels: {
+          data: test,
+          loading: false,
+          error: null,
+        },
+      };
+    }
     default:
       return state;
   }

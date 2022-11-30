@@ -1,12 +1,13 @@
 import React, { FC, useEffect } from 'react';
 import { Box, InfiniteScroll, Stack, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
-import InitialsAvatar from '../../../../components/utils/InitialsAvatar';
+import { useTranslation } from 'react-i18next';
 import { listPostCommentsAction } from '../../../../store/actions/post.action';
 import { AppState } from '../../../../store/reducers/root.reducer';
 import CommentBase from './CommentBase';
 import Input from './Input';
 import Replies from './Replies';
+import { UserAvatar } from '../../../../components/utils/Avatars/UserAvatar';
 
 interface CommentsProps {
   postId: number;
@@ -20,6 +21,7 @@ const CommentList: FC<CommentsProps> = ({ postId }) => {
     },
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const getComments = (skip?: number) => {
     dispatch(listPostCommentsAction({ postId, skip }));
@@ -32,14 +34,12 @@ const CommentList: FC<CommentsProps> = ({ postId }) => {
   return (
     <Box gap="medium">
       <Text size="large" color="brand" weight="bold">
-        Comments
+        {t('CommentList.comments')}
       </Text>
       {user && <Input user={user} postId={postId} />}
       {comments.data.length === 0 ? (
         <Box margin={{ vertical: 'small' }}>
-          <Text color="status-disabled">
-            No comments yet. Be the first one to comment!
-          </Text>
+          <Text color="status-disabled">{t('CommentList.noCommentMsg')}</Text>
         </Box>
       ) : (
         <InfiniteScroll items={comments.data}>
@@ -58,9 +58,10 @@ const CommentList: FC<CommentsProps> = ({ postId }) => {
                   )}
                 </Box>
               </Box>
-              <InitialsAvatar
+              <UserAvatar
                 id={item.user.id}
-                value={`${item.user.firstName} ${item.user.lastName}`}
+                name={item.user.fullName}
+                src={item.user.displayPhoto}
               />
             </Stack>
           )}

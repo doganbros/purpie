@@ -1,10 +1,11 @@
 import { Box, Button, Text } from 'grommet';
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { joinChannelAction } from '../../../store/actions/channel.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { ChannelListItem } from '../../../store/types/channel.types';
-import InitialsAvatar from '../InitialsAvatar';
+import { ChannelAvatar } from '../Avatars/ChannelAvatar';
 
 interface ChannelSearchItemProps {
   channel: ChannelListItem;
@@ -12,6 +13,7 @@ interface ChannelSearchItemProps {
 
 const ChannelSearchItem: FC<ChannelSearchItemProps> = ({ channel }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     channel: {
       userChannels: { data },
@@ -23,7 +25,11 @@ const ChannelSearchItem: FC<ChannelSearchItemProps> = ({ channel }) => {
   return (
     <Box direction="row" align="center" gap="small" key={channel.id}>
       <Box flex={{ shrink: 0 }}>
-        <InitialsAvatar value={channel.name} id={channel.id} />
+        <ChannelAvatar
+          name={channel.name}
+          id={channel.id}
+          src={channel.displayPhoto}
+        />
       </Box>
       <Box fill align="end" direction="row" gap="small">
         <Text color="brand" weight="bold">
@@ -37,7 +43,9 @@ const ChannelSearchItem: FC<ChannelSearchItemProps> = ({ channel }) => {
         disabled={isFollowing(channel.id)}
         onClick={() => dispatch(joinChannelAction(channel.id))}
         primary
-        label={isFollowing(channel.id) ? 'Following' : 'Follow'}
+        label={
+          isFollowing(channel.id) ? t('common.following') : t('common.follow')
+        }
       />
     </Box>
   );

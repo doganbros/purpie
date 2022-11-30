@@ -3,6 +3,7 @@ import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
 import {
   CreateVideoPayload,
+  EditVideoPayload,
   FeedPayload,
   ListPostCommentsParams,
   Post,
@@ -11,53 +12,25 @@ import {
   SavedPost,
 } from '../types/post.types';
 
-export const getPublicFeed = (
+export const getPostFeeds = (
   params: FeedPayload
 ): Promise<PaginatedResponse<Post>> =>
   http
-    .get('/post/list/feed/public', {
+    .get('/post/list/feed', {
       params,
     })
     .then((res) => res.data);
-
-export const getUserFeed = (
-  params: FeedPayload
-): Promise<PaginatedResponse<Post>> =>
-  http
-    .get('/post/list/feed/user', {
-      params,
-    })
-    .then((res) => res.data);
-
-export const getZoneFeed = (
-  payload: FeedPayload & { zoneId: number }
-): Promise<PaginatedResponse<Post>> => {
-  const { zoneId, ...params } = payload;
-  return http
-    .get(`/post/list/feed/zone/${zoneId}`, {
-      params,
-    })
-    .then((res) => res.data);
-};
-
-export const getChannelFeed = (
-  payload: FeedPayload & { channelId: number }
-): Promise<PaginatedResponse<Post>> => {
-  const { channelId, ...params } = payload;
-  return http
-    .get(`/post/list/feed/channel/${channelId}`, {
-      params,
-    })
-    .then((res) => res.data);
-};
 
 export const getPostDetail = (postId: number): Promise<Post> =>
   http.get(`/post/detail/feed/${postId}`).then((res) => res.data);
 
+export const updatePostDetail = (payload: EditVideoPayload): Promise<Post> =>
+  http.put(`/post/update/${payload.postId}`, payload).then((res) => res.data);
+
 export const createVideo = (
   data: CreateVideoPayload,
   onUploadProgress: (progressEvent: ProgressEvent<XMLHttpRequestUpload>) => void
-): Promise<any> =>
+): Promise<Post> =>
   http
     .post('video/create/', serialize(data), { onUploadProgress })
     .then((res) => res.data);
@@ -70,6 +43,9 @@ export const createPostLike = (postId: number): Promise<Post> =>
 
 export const removePostLike = (postId: number): Promise<Post> =>
   http.delete(`/post/like/remove/${postId}`).then((res) => res.data);
+
+export const removePost = (postId: number): Promise<Post> =>
+  http.delete(`/post/remove/${postId}`).then((res) => res.data);
 
 export const createPostSave = (postId: number): Promise<Post> =>
   http.post('/post/saved/create', { postId }).then((res) => res.data);
@@ -86,7 +62,7 @@ export const getSavedPost = (params: {
 export const searchPost = (
   params: PostSearchParams
 ): Promise<PaginatedResponse<Post>> =>
-  http.get(`/post/list/feed/user`, { params }).then((res) => res.data);
+  http.get(`/post/list/feed`, { params }).then((res) => res.data);
 
 export const postViewStats = (
   postId: number,
@@ -144,3 +120,6 @@ export const createPostCommentLike = (params: {
 
 export const removePostCommentLike = (commentId: number): Promise<string> =>
   http.delete(`/post/comment/like/remove/${commentId}`).then((res) => res.data);
+
+export const getFeaturedPost = (userId: number): Promise<Post> =>
+  http.get(`/post/featured/user/${userId}`).then((res) => res.data);

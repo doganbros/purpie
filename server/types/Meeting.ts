@@ -94,8 +94,6 @@ export class JitsiConfig {
 class PrivacyConfig {
   public?: boolean;
 
-  userContactExclusive?: boolean;
-
   liveStream?: boolean;
 
   record?: boolean;

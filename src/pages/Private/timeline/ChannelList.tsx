@@ -1,24 +1,28 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { Box, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
-  getUserChannelsAction,
   setSelectedChannelAction,
   unsetSelectedChannelAction,
 } from '../../../store/actions/channel.action';
-import InitialsAvatar from '../../../components/utils/InitialsAvatar';
+import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
+import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
 
-const ChannelList: FC = () => {
+interface ChannelListProps {
+  handleWaiting?: () => void;
+}
+const ChannelList: FC<ChannelListProps> = ({
+  handleWaiting,
+}: ChannelListProps) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const {
     channel: { selectedChannel, userChannels },
     zone: { selectedUserZone },
   } = useSelector((state: AppState) => state);
-
-  useEffect(() => {
-    dispatch(getUserChannelsAction());
-  }, []);
 
   const userChannelsFiltered: typeof userChannels = selectedUserZone
     ? {
@@ -30,17 +34,23 @@ const ChannelList: FC = () => {
     : userChannels;
 
   return (
-    <Box fill direction="row" align="center">
-      {userChannelsFiltered.loading && <Text size="small">Loading</Text>}
+    <Box direction="row">
+      {userChannelsFiltered.loading && (
+        <PurpieLogoAnimated width={50} height={50} color="#956aea" />
+      )}
       {!userChannelsFiltered.loading &&
         (userChannelsFiltered.data.length === 0 ? (
           <Text size="small">
-            No channels are followed{selectedUserZone ? ' on this zone' : ''}
+            {t('ChannelList.noFollowedChannel', {
+              zone: selectedUserZone ? t('ChannelList.onThisZone') : '',
+            })}
           </Text>
         ) : (
           userChannelsFiltered.data.map((c) => (
             <Box
               onClick={() => {
+                handleWaiting?.();
+                //   event.stopPropagation();
                 if (c.channel.id === selectedChannel?.channel.id)
                   dispatch(unsetSelectedChannelAction());
                 else dispatch(setSelectedChannelAction(c));
@@ -51,12 +61,18 @@ const ChannelList: FC = () => {
               flex={{ shrink: 0 }}
               round="small"
               pad="small"
+              width="110px"
               background={
                 selectedChannel?.channel.id === c.channel.id ? 'brand' : ''
               }
             >
-              <InitialsAvatar id={c.channel.id} value={c.channel.name} />
-              <Text
+              <ChannelAvatar
+                id={c.channel.id}
+                name={c.channel.name}
+                src={c.channel.displayPhoto}
+              />
+              <EllipsesOverflowText
+                textAlign="center"
                 size="small"
                 color={
                   c.channel.id === selectedChannel?.channel.id
@@ -65,17 +81,7 @@ const ChannelList: FC = () => {
                 }
               >
                 {c.channel.name}
-              </Text>
-              <Text
-                size="xsmall"
-                color={
-                  c.channel.id === selectedChannel?.channel.id
-                    ? 'light-2'
-                    : 'dark-1'
-                }
-              >
-                {c.channel.topic}
-              </Text>
+              </EllipsesOverflowText>
             </Box>
           ))
         ))}

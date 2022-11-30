@@ -27,7 +27,7 @@ const PrivateRoute: React.FC<Props> = ({ component: Page, ...rest }) => {
         ) : (
           <Redirect
             to={{
-              pathname: '/login',
+              pathname: '/join',
               state: { referrer: props.location },
             }}
           />

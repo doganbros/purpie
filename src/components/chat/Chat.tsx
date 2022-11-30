@@ -1,9 +1,10 @@
-import { Box, Header, Text } from 'grommet';
+import { Box, Text } from 'grommet';
 import { nanoid } from 'nanoid';
 import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { socket } from '../../helpers/socket';
 import { getChatMessages } from '../../store/services/chat.service';
 import { ChatAttachment, ChatMessage } from '../../store/types/chat.types';
@@ -13,10 +14,17 @@ import { User } from '../../store/types/auth.types';
 import ReplyMessage from './layers/ReplyMessage';
 import EditMessage from './layers/EditMessage';
 import MessageBox from './components/MessageBox';
-import { MessageBoxContainer } from './ChatStyled';
+import {
+  MessageBoxContainer,
+  DayContainer,
+  DayDivider,
+  ScrollContainer,
+  DayHeader,
+} from './ChatStyled';
 import PlanMeetingTheme from '../../layers/meeting/custom-theme';
 import { errorResponseMessage, getChatRoomName } from '../../helpers/utils';
 import { http } from '../../config/http';
+import PurpieLogoAnimated from '../../assets/purpie-logo/purpie-logo-animated';
 
 interface Props {
   medium: 'direct' | 'channel' | 'post';
@@ -28,6 +36,7 @@ interface Props {
   handleTypingEvent?: boolean;
   canAddFile?: boolean;
 }
+
 const FETCH_MESSAGE_LIMIT = 50;
 
 const Chat: React.FC<Props> = ({
@@ -40,6 +49,8 @@ const Chat: React.FC<Props> = ({
   canEdit = true,
   canAddFile = false,
 }) => {
+  const { t } = useTranslation();
+
   const [messages, setMessages] = useState<Array<ChatMessage> | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [typingUser, setTypingUser] = useState<User | null>(null);
@@ -51,7 +62,9 @@ const Chat: React.FC<Props> = ({
     null
   );
   const [editedMessage, setEditedMessage] = useState<ChatMessage | null>(null);
-  const [uploadingFiles, setUploadingFiles] = useState(false);
+  const [uploadingFiles, setUploadingFiles] = useState<Array<File>>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+  const [uploadErrors, setUploadErrors] = useState<string[]>([]);
   const roomName = getChatRoomName(id, medium);
   const dispatch = useDispatch();
   const [messageErrorDraft, setMessageErrorDraft] = useState<{
@@ -73,8 +86,8 @@ const Chat: React.FC<Props> = ({
     const result = await getChatMessages(
       medium,
       id,
-      FETCH_MESSAGE_LIMIT,
-      messages?.length ? messages[0].createdOn : undefined
+      FETCH_MESSAGE_LIMIT
+      // messages?.length ? messages[0].createdOn : undefined // TODO what is this 'lastDate' logic
     ).then((res) => res.data);
 
     if (!result.length) setHasMore(false);
@@ -87,9 +100,9 @@ const Chat: React.FC<Props> = ({
 
   const parseDateToString = (date: Date) => {
     const diff = dayjs().startOf('day').diff(dayjs(date).startOf('day'), 'day');
-    if (diff === 0) return 'Today';
+    if (diff === 0) return t('Chat.today');
 
-    if (diff === 1) return 'Yesterday';
+    if (diff === 1) return t('Chat.yesterday');
 
     const equalYears = dayjs(date).get('year') === dayjs().get('year');
 
@@ -151,21 +164,23 @@ const Chat: React.FC<Props> = ({
         });
       }
 
-      if (attachments?.length) setUploadingFiles(true);
-
       const attachmentsResponse: Array<ChatAttachment> = !attachments?.length
         ? []
         : await Promise.all(
             attachments.map(async (attachment) => {
+              setUploadingFiles((i) => [...i, attachment]);
               const formData = new FormData();
               formData.append('file', attachment);
 
               return http
                 .post('/chat/attachment', formData)
-                .then((res) => res.data);
+                .then(async (res) => {
+                  await setUploadedFiles((i) => [...i, attachment.name]);
+                  return res.data;
+                })
+                .catch(() => setUploadErrors((i) => [...i, attachment.name]));
             })
           );
-
       message.attachments = attachmentsResponse;
 
       socket.emit('message', message, (payloadMsg: ChatMessage) => {
@@ -194,7 +209,8 @@ const Chat: React.FC<Props> = ({
         },
       });
     } finally {
-      setUploadingFiles(false);
+      setUploadingFiles([]);
+      setUploadedFiles([]);
     }
   };
 
@@ -291,21 +307,36 @@ const Chat: React.FC<Props> = ({
     return undefined;
   }, [medium, id]);
 
-  if (!messages) return <Box>Loading...</Box>;
+  if (!messages)
+    return (
+      <Box justify="center" align="center" height="large">
+        <PurpieLogoAnimated width={70} height={70} color="#956aea" />
+      </Box>
+    );
 
   const renderDayItem = (message: ChatMessage) => {
     return (
-      <Header
-        round="small"
-        pad={{ horizontal: 'small', vertical: 'xsmall' }}
-        margin={{ vertical: 'xsmall' }}
-        justify="center"
-        border={{ color: 'rgba(0,0,0,0.1)', size: 'xsmall' }}
-      >
-        <Text textAlign="center" size="small">
-          {parseDateToString(message.createdOn)}
-        </Text>
-      </Header>
+      <DayContainer width="100%" justify="start" alignSelf="start">
+        <DayDivider width="100%" height="3px">
+          <Box
+            width="100%"
+            height="3px"
+            background="linear-gradient(315deg, rgba(255, 248, 247, 0.0001) 0%, rgba(255, 240, 237, 0.815838) 52.11%, #FFEEEB 100%)"
+          />
+        </DayDivider>
+        <DayHeader
+          round="xsmall"
+          width="fit-content"
+          pad={{ horizontal: 'small', vertical: 'xsmall' }}
+          margin={{ vertical: 'xsmall', horizontal: 'medium' }}
+          justify="start"
+          background="#FFEEEB"
+        >
+          <Text textAlign="center" size="small" weight={400} color="#202631">
+            <i>{parseDateToString(message.createdOn)}</i>
+          </Text>
+        </DayHeader>
+      </DayContainer>
     );
   };
 
@@ -329,13 +360,13 @@ const Chat: React.FC<Props> = ({
             onSubmit={handleSendMessage}
           />
         ) : null}
-        <Box>
-          <Box
+        <Box height={`${window.innerHeight}px`}>
+          <ScrollContainer
             overflow="auto"
             flex={{ grow: 1 }}
             direction="column-reverse"
             ref={messageBoxScrollRef}
-            height="calc(100vh - 175px)"
+            height="calc(100vh - 500px)"
             id={containerId}
           >
             <InfiniteScroll
@@ -344,7 +375,9 @@ const Chat: React.FC<Props> = ({
               inverse
               hasMore={hasMore}
               next={fetchMessages}
-              loader={<h4>Loading...</h4>}
+              loader={
+                <PurpieLogoAnimated width={50} height={50} color="#956aea" />
+              }
               scrollableTarget={containerId}
             >
               {messages?.map((message) => {
@@ -359,19 +392,17 @@ const Chat: React.FC<Props> = ({
                 ) {
                   if (canEdit)
                     menuItems.push({
-                      label: 'Edit',
+                      label: t('common.edit'),
                       onClick: () => {
                         setEditedMessage(message);
                       },
                     });
                   if (canDelete)
                     menuItems.push({
-                      label: 'Delete',
+                      label: t('common.delete'),
                       onClick: async () => {
                         // eslint-disable-next-line no-alert
-                        const proceed = window.confirm(
-                          'Are you sure you want to delete this message?'
-                        );
+                        const proceed = window.confirm(t('Chat.deleteConfirm'));
                         if (proceed) {
                           handleDeleteMsg(message);
                         }
@@ -380,7 +411,7 @@ const Chat: React.FC<Props> = ({
                 }
                 if (canReply && !message.deleted)
                   menuItems.push({
-                    label: 'Reply',
+                    label: t('common.reply'),
                     onClick: () => {
                       setRepliedMessage(message);
                     },
@@ -390,6 +421,7 @@ const Chat: React.FC<Props> = ({
                     key={message.identifier}
                     alignSelf="center"
                     align="center"
+                    width="100%"
                   >
                     {!lastDate ||
                     dayjs(message.createdOn)
@@ -409,12 +441,14 @@ const Chat: React.FC<Props> = ({
                 return item;
               })}
             </InfiniteScroll>
-          </Box>
-          <MessageBoxContainer flex={false} pad="small">
+          </ScrollContainer>
+          <MessageBoxContainer pad="small">
             <MessageBox
               name={name}
               handleTypingEvent={handleTypingEvent}
               uploadingFiles={uploadingFiles}
+              uploadedFiles={uploadedFiles}
+              uploadErrors={uploadErrors}
               onTyping={onTyping}
               user={currentUser!}
               canAddFile={canAddFile}
@@ -443,7 +477,7 @@ const Chat: React.FC<Props> = ({
 
           {typingUser ? (
             <Text size="small" as="i" textAlign="center">
-              {typingUser.firstName} {typingUser.lastName} is typing...
+              {t('common.typing', { name: typingUser.fullName })}
             </Text>
           ) : null}
         </Box>

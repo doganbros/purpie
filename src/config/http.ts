@@ -1,16 +1,18 @@
 import axios from 'axios';
 import { nanoid } from 'nanoid';
 import { appSubdomain } from '../helpers/app-subdomain';
-import { errorResponseMessage } from '../helpers/utils';
+import { errorResponseMessage, getCookie } from '../helpers/utils';
 import { REMOVE_TOAST } from '../store/constants/util.constants';
 import { store } from '../store/store';
 
-const {
+export const {
   REACT_APP_API_VERSION = 'v1',
   REACT_APP_SERVER_HOST = 'http://localhost:8000',
 } = process.env;
 
-axios.defaults.baseURL = `${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}`;
+export const apiURL = `${REACT_APP_SERVER_HOST}/${REACT_APP_API_VERSION}`;
+
+axios.defaults.baseURL = apiURL;
 
 axios.defaults.withCredentials = true;
 
@@ -31,14 +33,20 @@ axios.interceptors.response.use(
   (response) => response,
   (error) => {
     const showErrorToast = error?.response.config?.showErrorToast;
-
-    if (error?.response?.data?.error === 'NOT_SIGNED_IN') {
+    if (error?.response?.data?.message === 'NOT_SIGNED_IN') {
       store.dispatch({ type: 'LOGOUT' });
     } else if (showErrorToast ? showErrorToast(error) : true) {
       const toastId = nanoid();
 
-      // eslint-disable-next-line no-console
-      console.error(error);
+      if (
+        error &&
+        error?.response.status === 401 &&
+        !getCookie('PURPIE_REFRESH_ACCESS_TOKEN')
+      ) {
+        if (error?.response?.data?.message === 'MUST_VERIFY_EMAIL')
+          return Promise.reject(error);
+        return Promise.reject();
+      }
       store.dispatch({
         type: 'SET_TOAST',
         payload: {

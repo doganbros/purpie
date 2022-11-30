@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Category } from 'entities/Category.entity';
 import { ChannelRole } from 'entities/ChannelRole.entity';
 import { User } from 'entities/User.entity';
 
@@ -11,16 +10,10 @@ class ChannelForUserChannelList {
   name: string;
 
   @ApiProperty()
-  topic: string;
-
-  @ApiProperty()
   description: string;
 
   @ApiProperty()
   public: boolean;
-
-  @ApiProperty()
-  category: Category;
 
   @ApiProperty()
   zoneId: number;

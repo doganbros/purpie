@@ -1,20 +1,23 @@
 import React, { FC } from 'react';
-import { Button, Image, Form, FormField, TextInput } from 'grommet';
+import { Form, FormField, Image, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
+import { useTranslation } from 'react-i18next';
 import { RegisterPayload } from '../../store/types/auth.types';
 import { registerAction } from '../../store/actions/auth.action';
 import { AppState } from '../../store/reducers/root.reducer';
 import AuthLayout from '../../components/layouts/AuthLayout';
 import { FormSubmitEvent } from '../../models/form-submit-event';
 import { validators } from '../../helpers/validators';
-import Figure from '../../assets/register-bg/figure.png';
-import { useResponsive } from '../../hooks/useResponsive';
+import Figure from '../../assets/register-bg/figure.svg';
+import Banner from '../../assets/register-bg/banner.svg';
+import AuthFormButton from '../../components/auth/AuthFormButton';
 
 const Register: FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { t } = useTranslation();
 
   const {
     register: { loading },
@@ -24,25 +27,32 @@ const Register: FC = () => {
     dispatch(registerAction(value));
   };
 
-  const size = useResponsive();
-
   return (
     <AuthLayout
-      title="Register"
-      formTitle="Create an Account"
-      formSubTitle="Sign up to continue"
+      title={t('Register.title')}
+      formTitle={t('Register.formTitle')}
+      formSubTitle={t('Register.formSubTitle')}
       callToAction={{
-        title: 'Already have an account?',
-        body: 'SIGN IN',
+        title: t('Register.alreadyHaveAccount'),
+        body: t('common.signIn'),
         onClick: () => history.push('/login'),
       }}
       background={
         <>
           <Image
-            width="90%"
+            width="60%"
+            src={Banner}
+            style={{
+              position: 'absolute',
+              pointerEvents: 'none',
+              top: 0,
+              left: 250,
+            }}
+          />
+          <Image
+            width="60%"
             alignSelf="center"
-            margin={{ bottom: 'large' }}
-            style={{ maxHeight: '80%', zIndex: 1 }}
+            style={{ zIndex: 1 }}
             src={Figure}
           />
         </>
@@ -51,58 +61,54 @@ const Register: FC = () => {
       <>
         <Form onSubmit={handleSubmit}>
           <FormField
-            label="FIRST NAME"
-            name="firstName"
-            htmlFor="firstNameInput"
-            validate={validators.required()}
+            label={t('common.fullName')}
+            name="fullName"
+            htmlFor="fullNameInput"
+            validate={validators.required(t('common.fullName'))}
           >
-            <TextInput id="firstNameInput" name="firstName" />
-          </FormField>
-          <FormField
-            label="LAST NAME"
-            name="lastName"
-            htmlFor="lastNameInput"
-            validate={validators.required()}
-          >
-            <TextInput id="lastNameInput" name="lastName" />
+            <TextInput id="fullNameInput" name="fullName" />
           </FormField>
 
           <FormField
             name="email"
             htmlFor="emailInput"
-            label="EMAIL"
-            validate={[validators.required(), validators.email()]}
+            label={t('common.email')}
+            validate={[
+              validators.required(t('common.email')),
+              validators.email(),
+            ]}
           >
-            <TextInput id="emailInput" name="email" type="email" />
+            <TextInput id="emailInput" name="email" />
           </FormField>
 
           <FormField
             name="password"
             htmlFor="passwordInput"
-            label="PASSWORD"
-            validate={[validators.required(), validators.minLength(6)]}
+            label={t('common.password')}
+            validate={[
+              validators.required(t('common.password')),
+              validators.minLength(t('common.password'), 6),
+            ]}
           >
             <TextInput id="passwordInput" name="password" type="password" />
           </FormField>
           <FormField
             name="password1"
             htmlFor="password1Input"
-            label="CONFIRM PASSWORD"
+            label={t('common.confirmPassword')}
             validate={[
-              validators.required(),
-              validators.equalsField('password', 'Password'),
+              validators.required(t('common.confirmPassword')),
+              validators.equalsField('password', t('common.passwords')),
             ]}
           >
             <TextInput id="password1Input" name="password1" type="password" />
           </FormField>
-          <Button
-            fill="horizontal"
+          <AuthFormButton
             primary
-            size={size}
             margin={{ top: 'medium' }}
             disabled={loading}
             type="submit"
-            label="SIGN UP"
+            label={t('Register.signUp')}
           />
         </Form>
       </>

@@ -1,7 +1,8 @@
-import { PaginatedResponse } from '../../models/paginated-response';
-import { ResponseError } from '../../models/response-error';
-import { Category } from '../../models/utils';
 import {
+  CHANGE_ZONE_PERMISSIONS_FAILED,
+  CHANGE_ZONE_PERMISSIONS_REQUESTED,
+  CHANGE_ZONE_INFO_REQUESTED,
+  CHANGE_ZONE_INFO_FAILED,
   CLOSE_CREATE_ZONE_LAYER,
   CREATE_ZONE_FAILED,
   CREATE_ZONE_REQUESTED,
@@ -10,34 +11,36 @@ import {
   DELETE_USER_ZONE_REQUESTED,
   DELETE_ZONE_FAILED,
   DELETE_ZONE_REQUESTED,
-  GET_CATEGORIES_FAILED,
-  GET_CATEGORIES_REQUESTED,
-  GET_CATEGORIES_SUCCESS,
-  GET_ZONE_CATEGORIES_FAILED,
-  GET_ZONE_CATEGORIES_REQUESTED,
-  GET_ZONE_CATEGORIES_SUCCESS,
   GET_CURRENT_USER_ZONE_FAILED,
   GET_CURRENT_USER_ZONE_REQUESTED,
   GET_CURRENT_USER_ZONE_SUCCESS,
-  GET_USER_ZONES_FAILED,
-  GET_USER_ZONES_REQUESTED,
-  GET_USER_ZONES_SUCCESS,
   GET_USER_ZONE_BY_ID_FAILED,
   GET_USER_ZONE_BY_ID_REQUESTED,
   GET_USER_ZONE_BY_ID_SUCCESS,
+  GET_USER_ZONES_FAILED,
+  GET_USER_ZONES_REQUESTED,
+  GET_USER_ZONES_SUCCESS,
   INVITE_TO_ZONE_FAILED,
   INVITE_TO_ZONE_REQUESTED,
   JOIN_ZONE_FAILED,
   JOIN_ZONE_REQUESTED,
   JOIN_ZONE_SUCCESS,
   OPEN_CREATE_ZONE_LAYER,
+  SEARCH_ZONE_FAILED,
+  SEARCH_ZONE_REQUESTED,
+  SEARCH_ZONE_SUCCESS,
   SET_CURRENT_USER_ZONE,
   UPDATE_ZONE_FAILED,
   UPDATE_ZONE_REQUESTED,
-  SEARCH_ZONE_REQUESTED,
-  SEARCH_ZONE_SUCCESS,
-  SEARCH_ZONE_FAILED,
+  CHANGE_ZONE_PICTURE_SUCCESS,
+  CHANGE_ZONE_PICTURE_REQUESTED,
+  CHANGE_ZONE_PICTURE_FAILED,
+  CHANGE_ZONE_PERMISSIONS_SUCCESS,
+  CHANGE_ZONE_INFO_SUCCESS,
 } from '../constants/zone.constants';
+
+import { PaginatedResponse } from '../../models/paginated-response';
+import { ResponseError } from '../../models/response-error';
 import { User } from './auth.types';
 import { UtilActionParams } from './util.types';
 
@@ -49,9 +52,9 @@ export interface ZoneBasic {
 }
 
 export interface ZoneListItem extends ZoneBasic {
+  displayPhoto: string | undefined;
   description: string;
   createdBy?: User;
-  category?: Category;
 }
 
 export type ZoneRoleCode = 'SUPER_ADMIN' | 'ADMIN' | 'EDITOR' | 'NORMAL';
@@ -63,6 +66,7 @@ export interface ZoneRole {
   canInvite: boolean;
   canDelete: boolean;
   canEdit: boolean;
+  canManageRole: boolean;
 }
 
 export interface UserZoneListItem {
@@ -84,7 +88,13 @@ export interface CreateZonePayload {
   categoryId: number;
 }
 
-export type UpdateZonePayload = Partial<CreateZonePayload>;
+export interface UpdateZonePayload {
+  name: string;
+  description: string;
+  subdomain: string;
+  id: number;
+  public: boolean;
+}
 
 export type ZoneDetail = Required<ZoneListItem>;
 
@@ -98,20 +108,9 @@ export interface ZoneState {
   selectedUserZone: UserZoneListItem | null;
   userZoneInitialized: boolean;
   showCreateZoneLayer: boolean;
-  getCategories: {
-    loading: boolean;
-    categories: Array<Category> | null;
-    error: ResponseError | null;
-  };
-  getZoneCategories: {
-    loading: boolean;
-    categories: Array<Category> | null;
-    error: ResponseError | null;
-    zoneId: number | null;
-  };
   getUserZones: {
     loading: boolean;
-    userZones: Array<UserZoneListItem> | null;
+    userZones: Array<UserZoneListItem> | null | undefined;
     error: ResponseError | null;
   };
   joinZone: {
@@ -150,8 +149,12 @@ export type ZoneActionParams =
         | typeof JOIN_ZONE_SUCCESS
         | typeof OPEN_CREATE_ZONE_LAYER
         | typeof CLOSE_CREATE_ZONE_LAYER
-        | typeof GET_CATEGORIES_REQUESTED
-        | typeof CREATE_ZONE_SUCCESS;
+        | typeof CREATE_ZONE_SUCCESS
+        | typeof CHANGE_ZONE_PICTURE_REQUESTED
+        | typeof CHANGE_ZONE_INFO_REQUESTED
+        | typeof CHANGE_ZONE_INFO_SUCCESS
+        | typeof CHANGE_ZONE_PERMISSIONS_REQUESTED
+        | typeof CHANGE_ZONE_PERMISSIONS_SUCCESS;
     }
   | {
       type:
@@ -165,8 +168,9 @@ export type ZoneActionParams =
         | typeof SEARCH_ZONE_FAILED
         | typeof UPDATE_ZONE_FAILED
         | typeof JOIN_ZONE_FAILED
-        | typeof GET_CATEGORIES_FAILED
-        | typeof GET_ZONE_CATEGORIES_FAILED;
+        | typeof CHANGE_ZONE_PICTURE_FAILED
+        | typeof CHANGE_ZONE_INFO_FAILED
+        | typeof CHANGE_ZONE_PERMISSIONS_FAILED;
       payload: ResponseError;
     }
   | {
@@ -182,7 +186,7 @@ export type ZoneActionParams =
       payload: PaginatedResponse<ZoneListItem>;
     }
   | {
-      type: typeof JOIN_ZONE_REQUESTED | typeof GET_ZONE_CATEGORIES_REQUESTED;
+      type: typeof JOIN_ZONE_REQUESTED;
       payload: number;
     }
   | {
@@ -196,12 +200,9 @@ export type ZoneActionParams =
       payload: UserZoneListItem;
     }
   | {
-      type: typeof GET_CATEGORIES_SUCCESS;
-      payload: Array<Category>;
-    }
-  | {
-      type: typeof GET_ZONE_CATEGORIES_SUCCESS;
-      payload: { categories: Array<Category>; zoneId: number };
+      type: typeof CHANGE_ZONE_PICTURE_SUCCESS;
+      payload: string;
+      zoneId: number;
     };
 
 export interface ZoneDispatch {
