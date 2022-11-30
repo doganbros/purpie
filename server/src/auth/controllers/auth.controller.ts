@@ -153,6 +153,7 @@ export class AuthController {
       fullName: user.fullName,
       email: user.email,
       userName: user.userName,
+      displayPhoto: user.displayPhoto,
       userRole: {
         ...user.userRole,
       },
