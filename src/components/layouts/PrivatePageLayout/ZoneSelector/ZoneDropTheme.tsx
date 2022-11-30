@@ -6,12 +6,6 @@ const ZoneDropTheme: FC = ({ children }) => {
     global: {
       drop: {
         background: 'white',
-        extend: `
-        & > * > *:hover {
-          font-weight: bold;
-          background: #E4E9F2;
-        };
-      `,
       },
     },
   };

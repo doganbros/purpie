@@ -54,7 +54,7 @@ const SocialArray: FC = () => {
         title="I am inviting you to join Purple."
         url="https://www.purpie.io/invite"
       >
-        <WhatsappIcon size={48} round />
+        <WhatsappIcon size={45} round />
       </WhatsappShareButton>
     ),
     Facebook: (
@@ -62,7 +62,7 @@ const SocialArray: FC = () => {
         title="I am inviting you to join Purple."
         url="https://www.purpie.io/invite"
       >
-        <FacebookIcon size={48} round />
+        <FacebookIcon size={45} round />
       </FacebookShareButton>
     ),
     Twitter: (
@@ -70,7 +70,7 @@ const SocialArray: FC = () => {
         title="I am inviting you to join Purple."
         url="https://www.purpie.io/invite"
       >
-        <TwitterIcon size={48} round />
+        <TwitterIcon size={45} round />
       </TwitterShareButton>
     ),
 
@@ -90,16 +90,10 @@ const SocialArray: FC = () => {
   return (
     <>
       {socialArray.map((social) => (
-        <Box
-          key={nanoid()}
-          gap="small"
-          margin="small"
-          justify="center"
-          align="center"
-        >
+        <Box key={nanoid()} gap="small" justify="center" align="center">
           {socialComponents[social as keyof SocialArrayProps]}
 
-          <Text>{social}</Text>
+          <Text size="12px">{social}</Text>
         </Box>
       ))}
     </>

@@ -23,7 +23,7 @@ export const UserAvatar: FC<AvatarItemProps> = ({
   const {
     auth: { user },
   } = useSelector((state: AppState) => state);
-  const avatarUrl = user?.displayPhoto ? user?.displayPhoto : null;
+  const avatarUrl = user?.displayPhoto;
   const AvatarComponent = () => {
     if (src === null) {
       return (
@@ -41,6 +41,16 @@ export const UserAvatar: FC<AvatarItemProps> = ({
           alignSelf="center"
           round="full"
           src={`${apiURL}/user/display-photo/${src}`}
+          size={size || 'medium'}
+        />
+      );
+    }
+    if (avatarUrl === null) {
+      return (
+        <InitialsAvatar
+          id={id}
+          value={name}
+          textProps={textProps}
           size={size || 'medium'}
         />
       );

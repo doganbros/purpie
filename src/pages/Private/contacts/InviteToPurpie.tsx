@@ -29,7 +29,7 @@ const InviteToPurpie: FC = () => {
   };
   return (
     <Box gap="small">
-      <Text color="brand" weight="bold">
+      <Text color="brand" weight="bold" size="small">
         {' '}
         Invite People to Purpie
       </Text>
@@ -40,7 +40,7 @@ const InviteToPurpie: FC = () => {
         pad="small"
       >
         <DropButton
-          label="Type email"
+          label={<Text size="small">Type Email</Text>}
           open={open}
           onClick={() => setOpen(true)}
           onOpen={() => {
@@ -58,9 +58,9 @@ const InviteToPurpie: FC = () => {
               justify="center"
               pad={{ top: 'small', horizontal: 'small' }}
             >
-              <Box direction="row" pad={{ bottom: 'small' }}>
+              <Box direction="row" pad={{ bottom: 'small' }} align="center">
                 <FormPrevious onClick={() => setOpen(false)} />
-                <Text>Invite People</Text>
+                <Text size="small">Invite People</Text>
               </Box>
 
               <Form onSubmit={handleSubmit} color="transparent">
@@ -84,12 +84,12 @@ const InviteToPurpie: FC = () => {
                 gap="small"
                 align="center"
               >
-                <AddCircle size="large" color="brand" />
+                <AddCircle size="34px" color="brand" />
                 <Box direction="row" gap="xxsmall">
-                  <Text color="brand" textAlign="justify">
+                  <Text color="brand" textAlign="justify" size="small">
                     Write the email{' '}
                   </Text>
-                  <Text>you want to invite</Text>
+                  <Text size="small">you want to invite</Text>
                 </Box>
               </Box>
               {mailList.length > 1 && (
@@ -106,8 +106,10 @@ const InviteToPurpie: FC = () => {
                         justify="between"
                         pad={{ top: 'small' }}
                       >
-                        <Text>{mail}</Text>
-                        <Text color="blue">Invited</Text>
+                        <Text size="small">{mail}</Text>
+                        <Text color="blue" size="small">
+                          Invited
+                        </Text>
                       </Box>
                     );
                   })}
@@ -118,12 +120,12 @@ const InviteToPurpie: FC = () => {
         />
       </Box>
       <Box direction="row" gap="small">
-        <ShareOption color="brand" onClick={() => setShow(true)} />
+        <ShareOption color="brand" onClick={() => setShow(true)} size="21px" />
         <Box direction="row" gap="xxsmall">
-          <Text color="brand" onClick={() => setShow(true)}>
+          <Text color="brand" onClick={() => setShow(true)} size="small">
             Share the Link{' '}
           </Text>{' '}
-          <Text> to invite people</Text>
+          <Text size="small"> to invite people</Text>
         </Box>
       </Box>
       {show && (
@@ -135,11 +137,17 @@ const InviteToPurpie: FC = () => {
           onEsc={() => setShow(false)}
           onClickOutside={() => setShow(false)}
         >
-          <ExtendedBox direction="row" justify="between" pad="small">
+          <ExtendedBox direction="row" justify="between" pad="medium">
             <SocialArray />
           </ExtendedBox>
-          <Box direction="row" justify="between" pad="small">
-            <Text>https://www.purpie.io/invite</Text>
+          <Box
+            direction="row"
+            justify="between"
+            pad="small"
+            align="center"
+            gap="small"
+          >
+            <Text size="small">https://www.purpie.io/invite</Text>
 
             <Button
               label="COPY"
@@ -149,7 +157,7 @@ const InviteToPurpie: FC = () => {
                 navigator.clipboard.writeText('https://www.purpie.io/invite')
               }
             >
-              COPY
+              <Text size="small"> COPY</Text>
             </Button>
           </Box>
         </Layer>

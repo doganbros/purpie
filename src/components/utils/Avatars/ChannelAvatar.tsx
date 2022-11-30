@@ -23,8 +23,8 @@ export const ChannelAvatar: FC<ChannelAvatarProps> = ({
   } = useSelector((state: AppState) => state);
 
   const channelAvatarUrl = userChannels.data.filter(
-    (userChannel) => userChannel.channel.name === name
-  )[0]?.channel?.displayPhoto;
+    (userChannel) => userChannel?.channel?.name === name
+  )?.[0]?.channel?.displayPhoto;
   const AvatarComponent = () => {
     if (src === null || src === undefined) {
       return <InitialsAvatar id={id} value={name} textProps={textProps} />;

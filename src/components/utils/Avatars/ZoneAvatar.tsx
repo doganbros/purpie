@@ -29,8 +29,11 @@ export const ZoneAvatar: FC<AvatarItemProps> = ({
     },
   } = useSelector((state: AppState) => state);
   const zoneAvatarUrl = userZones?.filter(
-    (userZone) => userZone.zone.name === name
-  )[0].zone.displayPhoto;
+    (userZone) => userZone?.zone?.name === name
+  )?.[0]?.zone?.displayPhoto;
+
+  const roundSize = textProps.textProps?.size;
+
   const AvatarComponent = () => {
     if (src === null || src === undefined) {
       return (
@@ -38,7 +41,7 @@ export const ZoneAvatar: FC<AvatarItemProps> = ({
           id={id}
           value={name}
           textProps={textProps}
-          roundSize="small"
+          round={roundSize || '15px'}
           size={size || 'medium'}
         />
       );
@@ -47,7 +50,7 @@ export const ZoneAvatar: FC<AvatarItemProps> = ({
       return (
         <Avatar
           alignSelf="center"
-          round="small"
+          round={roundSize || '15px'}
           src={`${apiURL}/zone/display-photo/${src}`}
           background="red"
           size={size || 'medium'}
@@ -57,7 +60,7 @@ export const ZoneAvatar: FC<AvatarItemProps> = ({
     return (
       <Avatar
         alignSelf="center"
-        round="small"
+        round={roundSize || '15px'}
         src={`${apiURL}/zone/display-photo/${zoneAvatarUrl}`}
         background="red"
         size={size || 'medium'}
