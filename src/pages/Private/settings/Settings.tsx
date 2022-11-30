@@ -240,6 +240,7 @@ const Settings: FC = () => {
               overflow="auto"
               fill="horizontal"
               width={{ max: '1440px' }}
+              height="80vh"
             >
               {renderSettings()}
             </Box>
