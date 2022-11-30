@@ -334,8 +334,8 @@
     "viewProfile": "View full profile"
   },
   "EmptyContact": {
-    "title": "DONT HAVE ANY CONTACT",
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "title": "DON'T HAVE ANY CONTACT",
+    "description": "You don't seem to have a contact. Let's find a contact",
     "findContact": "Find Contact"
   },
   "SelectedUser": {
@@ -512,8 +512,8 @@
     "changeZoneSubdomain":"Change zone subdomain",
     "changeZoneDescription":"Change zone description",
     "noSettings":"Can't find related settings. You may be misspelled it.",
-    "noChannel":"You don't seem like to have a channel",
-    "noZone":"You dont seem like to have a zone",
+    "noChannel":"You don't seem to have a channel that you can edit",
+    "noZone":"You don't seem to have a zone that you can edit",
     "in":"in",
     "zone":"Zone",
     "cancel":"Cancel",

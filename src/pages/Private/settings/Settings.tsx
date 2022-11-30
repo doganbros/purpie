@@ -86,13 +86,14 @@ const Settings: FC = () => {
         )}
         <Box direction="row" justify="between">
           {selectedItem.avatarWidget}
-          <Button
-            onClick={selectedItem.onSave}
-            primary
-            label={t('settings.save')}
-            disabled={selectedItem.isEmpty}
-            margin={{ vertical: 'medium' }}
-          />
+          {!selectedItem.isEmpty && (
+            <Button
+              onClick={selectedItem.onSave}
+              primary
+              label={t('settings.save')}
+              margin={{ vertical: 'medium' }}
+            />
+          )}
         </Box>
         {selectedItem?.items?.map<React.ReactNode>((setting) => {
           const descriptionParts = setting.description.split(
@@ -165,23 +166,18 @@ const Settings: FC = () => {
   return (
     <Box>
       <Box flex={{ grow: 1 }}>
-        <Box
-          direction="row"
-          gap="large"
-          pad="medium"
-          align="center"
-          background="brand"
-        >
-          <Box onClick={() => history.push('/')} pad={{ right: 'large' }}>
-            <Avatar
-              alignSelf="center"
-              size="medium"
-              round="0"
-              src={LogoWhite}
-            />
+        <Box direction="row" pad="medium" background="brand">
+          <Box
+            onClick={() => history.push('/')}
+            width="300px"
+            align="start"
+            justify="start"
+            focusIndicator={false}
+          >
+            <Avatar round="0" src={LogoWhite} />
           </Box>
-          <Box pad={{ right: 'medium' }} />
-          <Box flex={{ grow: 1 }} pad={{ left: 'xlarge' }}>
+
+          <Box flex="grow" width={{ max: '1440px' }} alignSelf="center">
             <SearchBar value={searchText} onChange={setSearchText} />
           </Box>
         </Box>
@@ -241,10 +237,10 @@ const Settings: FC = () => {
               flex="grow"
               round="medium"
               pad="medium"
-              height="80vh"
               overflow="auto"
               fill="horizontal"
               width={{ max: '1440px' }}
+              height="80vh"
             >
               {renderSettings()}
             </Box>

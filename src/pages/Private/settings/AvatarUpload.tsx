@@ -21,7 +21,7 @@ const AvatarUpload: FC<AvatarUploadProps> = ({ onSubmit, onDismiss }) => {
   const { t } = useTranslation();
 
   return (
-    <Layer>
+    <Layer responsive={false}>
       <Box
         width="medium"
         height="medium"
