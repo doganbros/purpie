@@ -1,11 +1,11 @@
 import { Box } from 'grommet';
 import videojs from 'video.js';
-import { Bookmark } from 'grommet-icons';
 import React, { FC, useRef, useState } from 'react';
 import { http } from '../../config/http';
 import { BookmarkFill } from '../utils/CustomIcons';
 import ExtendedBox from '../utils/ExtendedBox';
 import VideoJs from './VideoJs';
+import { AddToFolderDrop } from '../../layers/saved-video/folder/AddToFolderDrop';
 
 interface VideoPostProps {
   id: number;
@@ -19,12 +19,12 @@ interface VideoPostProps {
 const { REACT_APP_STREAMING_URL } = process.env;
 
 export const VideoPost: FC<VideoPostProps> = ({
-  id,
+  // id,
   videoName,
   slug,
   live,
   saved,
-  onClickSave,
+  // onClickSave,
 }) => {
   const player = useRef<videojs.Player | null>(null);
   const [hover, setHover] = useState(false);
@@ -39,7 +39,8 @@ export const VideoPost: FC<VideoPostProps> = ({
         }
       }}
       onMouseLeave={() => {
-        setHover(false);
+        // setHover(false);
+        // setOpen(false);
         if (player.current) {
           player.current.pause();
           player.current.currentTime(0);
@@ -96,19 +97,12 @@ export const VideoPost: FC<VideoPostProps> = ({
             />
           )}
         </Box>
-        <Box
-          pad="small"
-          margin="small"
-          focusIndicator={false}
-          onClick={(e) => {
-            e.stopPropagation();
-            onClickSave(id);
-          }}
-        >
+
+        <Box pad="small" margin="small" focusIndicator={false}>
           {saved ? (
-            <BookmarkFill color="accent-1" />
+            <BookmarkFill color="white" />
           ) : (
-            hover && <Bookmark color="status-disabled" />
+            hover && <AddToFolderDrop />
           )}
         </Box>
       </ExtendedBox>

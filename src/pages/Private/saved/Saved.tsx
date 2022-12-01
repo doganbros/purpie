@@ -1,7 +1,14 @@
 import React, { FC, useContext, useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Box, Grid, InfiniteScroll, ResponsiveContext, Text } from 'grommet';
+import {
+  Box,
+  Button,
+  Grid,
+  InfiniteScroll,
+  ResponsiveContext,
+  Text,
+} from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -14,12 +21,12 @@ import {
   removePostSaveAction,
 } from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
-import ChannelList from '../timeline/ChannelList';
 import ChannelsToFollow from '../timeline/ChannelsToFollow';
 import LastActivities from '../timeline/LastActivities';
 import ZonesToJoin from '../timeline/ZonesToJoin';
 import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 import SavedVideo from '../../../layers/saved-video/SavedVideo';
+import { CreateFolderDrop } from '../../../layers/saved-video/folder/CreateFolderDrop';
 
 dayjs.extend(relativeTime);
 
@@ -70,11 +77,17 @@ const Saved: FC = () => {
           <LastActivities />
         </Box>
       }
-      topComponent={<ChannelList />}
     >
-      <Box pad={{ vertical: 'medium' }} gap="medium">
+      <Box pad={{ vertical: 'large' }} gap="medium">
         <Box direction="row" justify="between" align="center">
-          <Text weight="bold">{t('Saved.title')}</Text>
+          <Text weight="bold" color="brand-alt">
+            {t('Saved.title')}
+          </Text>
+          <CreateFolderDrop
+            dropLabel={
+              <Button size="small" primary label="Create New Folder" />
+            }
+          />
         </Box>
         <Grid
           columns={size !== 'small' ? 'medium' : '100%'}
