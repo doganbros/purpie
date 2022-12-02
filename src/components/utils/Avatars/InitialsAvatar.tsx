@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
-import { Avatar, AvatarExtendedProps, Text, TextExtendedProps } from 'grommet';
+import { Avatar, AvatarExtendedProps, TextExtendedProps } from 'grommet';
 import { getColorPairFromId } from '../../../helpers/utils';
+import EllipsesOverflowText from '../EllipsesOverflowText';
 
 interface InitialsAvatarProps extends Omit<AvatarExtendedProps, 'id'> {
   id: number;
@@ -23,14 +24,14 @@ const InitialsAvatar: FC<InitialsAvatarProps> = ({
       background={{ color: background }}
       {...avatarProps}
     >
-      <Text color={foreground} {...textProps}>
+      <EllipsesOverflowText color={foreground} {...textProps} weight="normal">
         {value
           .replace(/[^a-zA-Z ]/g, '')
           .split(' ')
           .filter((_v, i: number) => i < 2)
           .map((v) => v && v[0].toUpperCase())
           .join('')}
-      </Text>
+      </EllipsesOverflowText>
     </Avatar>
   ) : (
     <Avatar round background="#eee" />
