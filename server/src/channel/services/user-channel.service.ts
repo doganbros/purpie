@@ -97,6 +97,7 @@ export class UserChannelService {
       )
       .getRawMany();
 
+    console.log(records);
     return records.map((record) => ({
       id: record.user_channel_id,
       createdOn: record.user_channel_createdOn,
@@ -107,6 +108,7 @@ export class UserChannelService {
         description: record.channel_description,
         public: record.channel_public,
         zoneId: record.channel_zoneId,
+        displayPhoto: record.channel_displayPhoto,
         createdBy: {
           id: record.createdBy_id,
           fullName: record.createdBy_fullName,
