@@ -52,7 +52,7 @@ const PersonalSettings: () => SettingsData | null = () => {
               <UserAvatar
                 src={user?.displayPhoto}
                 name={user.fullName}
-                id={1}
+                id={user?.id}
               />
             </Box>
             <Box background="#6FFFB0" round pad="xsmall">
