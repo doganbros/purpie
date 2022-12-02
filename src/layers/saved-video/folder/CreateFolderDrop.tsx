@@ -36,7 +36,7 @@ export const CreateFolderDrop: FC<Props> = ({ dropLabel }) => {
               Create New Folder
             </Heading>
           </Box>
-          <CreateFolder />
+          <CreateFolder closeDrop={() => setOpen(false)} />
         </ExtendedBox>
       }
     />

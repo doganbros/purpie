@@ -25,7 +25,11 @@ export const AddToFolderDropContent: FC = () => {
           {createMode ? <Close size="18px" /> : <Add size="18px" />}
         </Box>
       </Box>
-      {createMode ? <CreateFolder /> : <FolderList />}
+      {createMode ? (
+        <CreateFolder closeDrop={() => setCreateMode(false)} />
+      ) : (
+        <FolderList />
+      )}
     </ExtendedBox>
   );
 };

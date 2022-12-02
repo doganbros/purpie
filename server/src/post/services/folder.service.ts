@@ -42,7 +42,6 @@ export class FolderService {
     const payload: Partial<PostFolder> = {
       title: info.title,
       createdById: userId,
-      description: info.description ?? null,
     };
 
     const folder = await this.folderRepository.create(payload).save();
@@ -61,10 +60,6 @@ export class FolderService {
 
   async updateFolder(userId: number, info: UpdatePostFolderDto) {
     const payload: Partial<PostFolder> = {};
-
-    if (info.description) {
-      payload.description = info.description;
-    }
 
     if (info.title) {
       payload.title = info.title;

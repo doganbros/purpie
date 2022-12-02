@@ -8,9 +8,6 @@ export class PostFolder extends RecordEntity {
   @Column()
   title: string;
 
-  @Column({ nullable: true, type: 'character varying' })
-  description: string | null;
-
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'createdById', referencedColumnName: 'id' })
   createdBy: User;
