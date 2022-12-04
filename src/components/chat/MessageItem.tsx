@@ -106,7 +106,7 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
               margin={{ [ownMessage ? 'right' : 'left']: '-15.5px' }}
               pad="1px"
               height="42px"
-              width={ownMessage ? '48px' : '42px'}
+              width="48px"
               round="xlarge"
               border={{ color: '#E4E9F2', size: 'small' }}
             >

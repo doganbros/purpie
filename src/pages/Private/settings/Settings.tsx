@@ -11,6 +11,7 @@ import PersonalSettings from './PersonalSettings';
 import SearchBar from './SearchBar';
 import { SettingFormItem, SettingsData } from './types';
 import ZoneSettings from './ZoneSettings';
+import './Style.scss';
 
 const Settings: FC = () => {
   const history = useHistory();
@@ -164,86 +165,89 @@ const Settings: FC = () => {
   };
 
   return (
-    <Box>
-      <Box flex={{ grow: 1 }}>
-        <Box direction="row" pad="medium" background="brand">
+    <Box flex={{ grow: 1 }}>
+      <Box direction="row" pad="medium" background="brand" height="100px">
+        <Box
+          onClick={() => history.push('/')}
+          width="300px"
+          align="start"
+          justify="start"
+          focusIndicator={false}
+        >
+          <Avatar round="0" src={LogoWhite} />
+        </Box>
+        <Box fill="horizontal" justify="center">
           <Box
-            onClick={() => history.push('/')}
-            width="300px"
-            align="start"
-            justify="start"
-            focusIndicator={false}
+            fill="horizontal"
+            width={{ max: '1440px' }}
+            alignSelf="center"
+            pad={{ horizontal: 'medium' }}
           >
-            <Avatar round="0" src={LogoWhite} />
-          </Box>
-
-          <Box flex="grow" width={{ max: '1440px' }} alignSelf="center">
             <SearchBar value={searchText} onChange={setSearchText} />
           </Box>
         </Box>
-        <Box direction="row" pad={{ horizontal: 'medium', bottom: 'medium' }}>
-          <Box justify="between">
-            <Box>
-              <Box
-                pad={{ horizontal: 'small', top: 'medium', bottom: 'small' }}
-              >
-                <Text weight="bold" color="brand">
-                  {t('settings.settings')}
-                </Text>
-              </Box>
-              {data.map((menuItem, index) => (
-                <React.Fragment key={menuItem.key}>
-                  <Box
-                    focusIndicator={false}
-                    onClick={() => {
-                      setSelectedIndex(index);
-                      setSearchTextValue('');
-                    }}
-                    pad="small"
-                    justify="between"
-                    direction="row"
-                    width="300px"
-                  >
-                    <Text
-                      weight={
-                        index === selectedIndex && searchText === ''
-                          ? 'bold'
-                          : 'normal'
-                      }
-                    >
-                      {menuItem.label}
-                    </Text>
-                    <CaretRightFill color="brand" />
-                  </Box>
-                  <Divider color="status-disabled-light" />
-                </React.Fragment>
-              ))}
-            </Box>
-            <Box
-              direction="row"
-              align="center"
-              gap="small"
-              onClick={() => history.push('/')}
-            >
-              <Home color="brand" size="large" fontWeight="bold" />
-
-              <Text color="brand" weight="bold">
-                Home Page
+      </Box>
+      <Box direction="row" pad={{ horizontal: 'medium', bottom: 'medium' }}>
+        <Box justify="between">
+          <Box>
+            <Box pad={{ horizontal: 'small', top: 'medium', bottom: 'small' }}>
+              <Text weight="bold" color="brand">
+                {t('settings.settings')}
               </Text>
             </Box>
+            {data.map((menuItem, index) => (
+              <React.Fragment key={menuItem.key}>
+                <Box
+                  focusIndicator={false}
+                  onClick={() => {
+                    setSelectedIndex(index);
+                    setSearchTextValue('');
+                  }}
+                  pad="small"
+                  justify="between"
+                  direction="row"
+                  width="300px"
+                >
+                  <Text
+                    weight={
+                      index === selectedIndex && searchText === ''
+                        ? 'bold'
+                        : 'normal'
+                    }
+                  >
+                    {menuItem.label}
+                  </Text>
+                  <CaretRightFill color="brand" />
+                </Box>
+                <Divider color="status-disabled-light" />
+              </React.Fragment>
+            ))}
           </Box>
-          <Box justify="center" fill="horizontal" align="center">
-            <Box
-              flex="grow"
-              round="medium"
-              pad="medium"
-              overflow="auto"
-              fill="horizontal"
-              width={{ max: '1440px' }}
-              height="80vh"
-            >
-              {renderSettings()}
-            </Box>
+          <Box
+            direction="row"
+            align="center"
+            gap="small"
+            onClick={() => history.push('/')}
+            pad={{ bottom: 'xxsmall' }}
+          >
+            <Home color="brand" size="large" fontWeight="bold" />
+
+            <Text color="brand" weight="bold">
+              Home Page
+            </Text>
+          </Box>
+        </Box>
+        <Box justify="center" fill="horizontal" align="center">
+          <Box
+            flex="grow"
+            round="medium"
+            pad="medium"
+            overflow="auto"
+            fill="horizontal"
+            width={{ max: '1440px' }}
+            className="settings-container"
+          >
+            {renderSettings()}
           </Box>
         </Box>
       </Box>

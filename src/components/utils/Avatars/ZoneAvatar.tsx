@@ -20,11 +20,12 @@ export const ZoneAvatar: FC<AvatarItemProps> = ({
   id,
   size,
   ...textProps
-}) =>
-  src ? (
+}) => {
+  const round = textProps?.textProps?.size;
+  return src ? (
     <Avatar
       alignSelf="center"
-      round="small"
+      round={round || '15px'}
       src={`${apiURL}/zone/display-photo/${src}`}
       background="red"
       size={size || 'medium'}
@@ -34,7 +35,8 @@ export const ZoneAvatar: FC<AvatarItemProps> = ({
       id={id}
       value={name}
       textProps={textProps}
-      roundSize="small"
+      roundSize={round || '15px'}
       size={size || 'medium'}
     />
   );
+};
