@@ -34,6 +34,7 @@ import i18n from '../../../config/i18n/i18n-config';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 import { DELAY_TIME } from '../../../helpers/constants';
 import useWaitTime from '../../../hooks/useDelayTime';
+import { listFolderAction } from '../../../store/actions/folder.action';
 
 const tabs = [
   {
@@ -78,6 +79,14 @@ const Timeline: FC = () => {
   const [showAddContent, setShowAddContent] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [hasNewlyCreatedFeed, setHasNewlyCreatedFeed] = useState(false);
+
+  useEffect(() => {
+    dispatch(
+      listFolderAction({
+        skip: 0,
+      })
+    );
+  }, []);
 
   const getFeed = (skip?: number) => {
     const request: FeedPayload = { skip };

@@ -34,6 +34,7 @@ export class FolderService {
             .where('folderItem.folderId = folder.id'),
         'folder_itemCount',
       )
+      .leftJoinAndSelect('folder.folderItems', 'folderItems')
       .where('folder.createdById = :userId', { userId })
       .paginate(query);
   }

@@ -1,5 +1,5 @@
 import { Box, ResponsiveContext, Text } from 'grommet';
-import { AddCircle, Share } from 'grommet-icons';
+import { AddCircle } from 'grommet-icons';
 import React, { FC, useContext } from 'react';
 import GradientScroll from '../../components/utils/GradientScroll';
 
@@ -16,7 +16,7 @@ const SavedVideo: FC<Props> = ({ text, numberOfVideos }) => {
       <Box direction="row" gap="small">
         <Box direction="column" width={{ min: 'small', max: 'small' }}>
           <Box>
-            <Text size="large" weight="bold">
+            <Text color="dark" size="large" weight="bold">
               {text}
             </Text>
             <Text size="small" color="status-disabled">
@@ -41,19 +41,11 @@ const SavedVideo: FC<Props> = ({ text, numberOfVideos }) => {
           </GradientScroll>
         </Box>
       </Box>
-      <Box direction="row" justify="between">
-        <Box direction="row" gap="small" align="center">
-          <AddCircle color="brand" size="medium" />
-          <Text color="brand" size="small">
-            Add New Video
-          </Text>
-        </Box>
-        <Box direction="row" gap="small" align="center">
-          <Share color="brand" size="medium" />
-          <Text color="brand" size="small">
-            Share Video
-          </Text>
-        </Box>
+      <Box direction="row" gap="small" align="center">
+        <AddCircle color="brand" size="medium" />
+        <Text color="brand" size="small">
+          Add New Video
+        </Text>
       </Box>
     </Box>
   );

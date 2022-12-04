@@ -45,7 +45,6 @@ const PostGridItem: FC<PostGridItemProps> = ({
               id={post.id}
               live={post.streaming}
               onClickSave={onClickSave}
-              saved={post.saved}
               slug={post.slug}
               videoName={post.videoName}
             />

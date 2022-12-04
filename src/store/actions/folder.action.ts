@@ -6,6 +6,9 @@ import {
   FolderAction,
 } from '../types/folder.types';
 import {
+  ADD_FOLDER_ITEM_FAILED,
+  ADD_FOLDER_ITEM_REQUESTED,
+  ADD_FOLDER_ITEM_SUCCESS,
   CREATE_FOLDER_FAILED,
   CREATE_FOLDER_REQUESTED,
   CREATE_FOLDER_SUCCESS,
@@ -58,6 +61,29 @@ export const listFolderAction = (payload: {
     } catch (err: any) {
       dispatch({
         type: LIST_FOLDER_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const addFolderItemAction = (
+  folderId: number,
+  postId: number
+): FolderAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: ADD_FOLDER_ITEM_REQUESTED,
+    });
+    try {
+      const response = await FolderService.addFolderItem(folderId, postId);
+      dispatch({
+        type: ADD_FOLDER_ITEM_SUCCESS,
+        payload: response,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: ADD_FOLDER_ITEM_FAILED,
         payload: err?.response?.data,
       });
     }

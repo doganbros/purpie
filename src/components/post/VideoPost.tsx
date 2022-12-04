@@ -2,7 +2,6 @@ import { Box } from 'grommet';
 import videojs from 'video.js';
 import React, { FC, useRef, useState } from 'react';
 import { http } from '../../config/http';
-import { BookmarkFill } from '../utils/CustomIcons';
 import ExtendedBox from '../utils/ExtendedBox';
 import VideoJs from './VideoJs';
 import { AddToFolderDrop } from '../../layers/saved-video/folder/AddToFolderDrop';
@@ -12,18 +11,16 @@ interface VideoPostProps {
   videoName: string;
   slug: string;
   live: boolean;
-  saved: boolean;
   onClickSave: (id: number) => any;
 }
 
 const { REACT_APP_STREAMING_URL } = process.env;
 
 export const VideoPost: FC<VideoPostProps> = ({
-  // id,
+  id,
   videoName,
   slug,
   live,
-  saved,
   // onClickSave,
 }) => {
   const player = useRef<videojs.Player | null>(null);
@@ -99,11 +96,7 @@ export const VideoPost: FC<VideoPostProps> = ({
         </Box>
 
         <Box pad="small" margin="small" focusIndicator={false}>
-          {saved ? (
-            <BookmarkFill color="white" />
-          ) : (
-            hover && <AddToFolderDrop />
-          )}
+          {hover && <AddToFolderDrop postId={id} />}
         </Box>
       </ExtendedBox>
     </ExtendedBox>
