@@ -16,11 +16,9 @@ import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import {
   createPostLikeAction,
-  createPostSaveAction,
   getPostDetailAction,
   removePostAction,
   removePostLikeAction,
-  removePostSaveAction,
 } from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import RecommendedVideos from './RecommendedVideos';
@@ -43,6 +41,7 @@ import {
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 import { DELAY_TIME } from '../../../helpers/constants';
 import useDelayTime from '../../../hooks/useDelayTime';
+import { AddToFolderDrop } from '../../../layers/saved-video/folder/AddToFolderDrop';
 
 interface RouteParams {
   id: string;
@@ -322,23 +321,21 @@ const Video: FC = () => {
                     <ShareOption color="status-disabled" size="19px" />
                     <Text color="status-disabled">{t('common.share')}</Text>
                   </Box>
-                  <Box
-                    direction="row"
-                    gap="xsmall"
-                    align="center"
-                    onClick={() => {
-                      if (data.saved)
-                        dispatch(removePostSaveAction({ postId: data.id }));
-                      else dispatch(createPostSaveAction({ postId: data.id }));
-                    }}
-                  >
-                    <AddCircle
-                      color={data.saved ? 'brand' : 'status-disabled'}
-                      size="21px"
+                  <Box pad="small" margin="small" focusIndicator={false}>
+                    <AddToFolderDrop
+                      postId={data.id}
+                      dropLabels={(isActive) => (
+                        <Box direction="row" gap="xsmall" align="center">
+                          <AddCircle
+                            color={isActive ? 'brand' : 'status-disabled'}
+                            size="21px"
+                          />
+                          <Text color={isActive ? 'brand' : 'status-disabled'}>
+                            {isActive ? t('common.saved') : t('common.save')}
+                          </Text>
+                        </Box>
+                      )}
                     />
-                    <Text color={data.saved ? 'brand' : 'status-disabled'}>
-                      {data.saved ? t('common.saved') : t('common.save')}
-                    </Text>
                   </Box>
                   <Box direction="row" gap="xsmall" align="center">
                     <ChatIcon color="status-disabled" size="17px" />

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Box, Button, Text } from 'grommet';
@@ -15,7 +15,6 @@ import ZonesToJoin from '../timeline/ZonesToJoin';
 import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 import SavedVideo from '../../../layers/saved-video/SavedVideo';
 import { CreateFolderDrop } from '../../../layers/saved-video/folder/CreateFolderDrop';
-import { listFolderAction } from '../../../store/actions/folder.action';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 dayjs.extend(relativeTime);
@@ -42,18 +41,6 @@ const Saved: FC = () => {
   const closeConfirmation = () => {
     setConfirmation({ visible: false, postId: null });
   };
-
-  const getFolders = (skip?: number) => {
-    dispatch(
-      listFolderAction({
-        skip,
-      })
-    );
-  };
-
-  useEffect(() => {
-    getFolders();
-  }, []);
 
   return (
     <PrivatePageLayout
@@ -87,11 +74,7 @@ const Saved: FC = () => {
         ) : (
           <Box gap="large">
             {folderList.data.map((folder) => (
-              <SavedVideo
-                key={`folder-item-${folder.id}`}
-                text={folder.title}
-                numberOfVideos={folder.itemCount}
-              />
+              <SavedVideo key={`folder-item-${folder.id}`} folder={folder} />
             ))}
           </Box>
         )}

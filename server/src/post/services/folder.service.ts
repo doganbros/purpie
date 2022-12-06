@@ -9,7 +9,7 @@ import { PostFolder } from '../../../entities/PostFolder.entity';
 import { PostFolderItem } from '../../../entities/PostFolderItem.entity';
 import { CreatePostFolderDto } from '../dto/create-post-folder.dto';
 import { UpdatePostFolderDto } from '../dto/update-post-folder.dto';
-import { AddPostFolderItemDto } from '../dto/add-post-folder-item.dto';
+import { AddOrRemovePostFolderItemDto } from '../dto/add-or-remove-post-folder-item.dto';
 
 @Injectable()
 export class FolderService {
@@ -23,7 +23,7 @@ export class FolderService {
     private postService: PostService,
   ) {}
 
-  async getUserPostFolders(userId: number, query: PaginationQuery) {
+  async getUserPostFolders(userId: number) {
     return this.folderRepository
       .createQueryBuilder('folder')
       .addSelect(
@@ -35,8 +35,9 @@ export class FolderService {
         'folder_itemCount',
       )
       .leftJoinAndSelect('folder.folderItems', 'folderItems')
+      .leftJoinAndSelect('folderItems.post', 'post')
       .where('folder.createdById = :userId', { userId })
-      .paginate(query);
+      .getMany();
   }
 
   async createFolder(userId: number, info: CreatePostFolderDto) {
@@ -56,6 +57,7 @@ export class FolderService {
         .save();
     }
 
+    folder.folderItems = [];
     return folder;
   }
 
@@ -93,7 +95,7 @@ export class FolderService {
     return this.folderRepository.delete({ id: folderId });
   }
 
-  async addFolderItem(userId: number, info: AddPostFolderItemDto) {
+  async addFolderItem(userId: number, info: AddOrRemovePostFolderItemDto) {
     const folder = await this.folderRepository.findOne({
       where: { id: info.folderId },
       select: ['id', 'createdById'],
@@ -116,17 +118,20 @@ export class FolderService {
     if (!post)
       throw new NotFoundException(ErrorTypes.POST_NOT_FOUND, 'Post not found');
 
-    return this.folderItemRepository
+    const folderItem = await this.folderItemRepository
       .create({
         postId: info.postId,
         folderId: info.folderId,
       })
       .save();
+
+    folderItem.post = post;
+    return folderItem;
   }
 
-  async removeFolderItem(userId: number, folderItemId: number) {
+  async removeFolderItem(userId: number, info: AddOrRemovePostFolderItemDto) {
     const folderItem = await this.folderItemRepository.findOne({
-      where: { id: folderItemId },
+      where: { postId: info.postId, folderId: info.folderId },
       relations: ['folder'],
     });
 
@@ -144,6 +149,9 @@ export class FolderService {
         'Post folder item not found',
       );
 
-    return this.folderItemRepository.delete({ id: folderItemId });
+    return this.folderItemRepository.delete({
+      postId: info.postId,
+      folderId: info.folderId,
+    });
   }
 }

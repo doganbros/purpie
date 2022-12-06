@@ -12,14 +12,9 @@ import { UserAvatar } from '../utils/Avatars/UserAvatar';
 interface PostGridItemProps {
   post: Post;
   onClickPlay: (id: number) => any;
-  onClickSave: (id: number) => any;
 }
 
-const PostGridItem: FC<PostGridItemProps> = ({
-  post,
-  onClickPlay,
-  onClickSave,
-}) => {
+const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
   const [hover, setHover] = useState(false);
   return (
     <Stack
@@ -44,7 +39,6 @@ const PostGridItem: FC<PostGridItemProps> = ({
             <VideoPost
               id={post.id}
               live={post.streaming}
-              onClickSave={onClickSave}
               slug={post.slug}
               videoName={post.videoName}
             />

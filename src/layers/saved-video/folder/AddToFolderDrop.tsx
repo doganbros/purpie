@@ -1,24 +1,27 @@
 import { Box, DropButton, Heading } from 'grommet';
-import { Add, Bookmark, Close } from 'grommet-icons';
-import React, { FC, useEffect, useState } from 'react';
+import { Add, Close } from 'grommet-icons';
+import React, { FC, ReactNode, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { AppState } from '../../../store/reducers/root.reducer';
-import { BookmarkFill } from '../../../components/utils/CustomIcons';
 import { CreateFolder } from './CreateFolder';
 import { FolderList } from './FolderList';
 import ExtendedBox from '../../../components/utils/ExtendedBox';
 
 interface AddToFolderDropProps {
   postId: number;
+  dropLabels: (isActive: boolean) => ReactNode;
 }
 
-export const AddToFolderDrop: FC<AddToFolderDropProps> = ({ postId }) => {
+export const AddToFolderDrop: FC<AddToFolderDropProps> = ({
+  postId,
+  dropLabels,
+}) => {
   const {
     folder: { folderList },
   } = useSelector((state: AppState) => state);
 
   const [open, setOpen] = useState(false);
-  const [postFolderId, setPostFolderId] = useState<number | null>(null);
+  const [selectedFolderIds, setSelectedFolderIds] = useState<number[]>([]);
   const [createMode, setCreateMode] = useState(false);
 
   useEffect(() => {
@@ -26,20 +29,15 @@ export const AddToFolderDrop: FC<AddToFolderDropProps> = ({ postId }) => {
       const postFolderIndex = f.folderItems.findIndex(
         (item) => item.postId === postId
       );
-      if (postFolderIndex !== -1) setPostFolderId(f.id);
+      if (postFolderIndex !== -1) setSelectedFolderIds((ids) => [...ids, f.id]);
+      else setSelectedFolderIds((ids) => ids.filter((id) => id !== f.id));
     });
   }, [folderList]);
 
   return (
     <DropButton
       plain
-      label={
-        postFolderId ? (
-          <BookmarkFill color="white" />
-        ) : (
-          <Bookmark color="white" />
-        )
-      }
+      label={dropLabels(selectedFolderIds.length !== 0)}
       open={open}
       onClose={() => setOpen(false)}
       onOpen={(e) => {
@@ -68,7 +66,7 @@ export const AddToFolderDrop: FC<AddToFolderDropProps> = ({ postId }) => {
           {createMode ? (
             <CreateFolder closeDrop={() => setCreateMode(false)} />
           ) : (
-            <FolderList postId={postId} postFolderId={postFolderId} />
+            <FolderList postId={postId} selectedFolderIds={selectedFolderIds} />
           )}
         </ExtendedBox>
       }

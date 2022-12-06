@@ -15,6 +15,9 @@ import {
   LIST_FOLDER_FAILED,
   LIST_FOLDER_REQUESTED,
   LIST_FOLDER_SUCCESS,
+  REMOVE_FOLDER_ITEM_FAILED,
+  REMOVE_FOLDER_ITEM_REQUESTED,
+  REMOVE_FOLDER_ITEM_SUCCESS,
 } from '../constants/folder.constants';
 
 export const createFolderAction = (
@@ -44,16 +47,13 @@ export const createFolderAction = (
   };
 };
 
-export const listFolderAction = (payload: {
-  limit?: number;
-  skip?: number;
-}): FolderAction => {
+export const listFolderAction = (): FolderAction => {
   return async (dispatch) => {
     dispatch({
       type: LIST_FOLDER_REQUESTED,
     });
     try {
-      const response = await FolderService.listFolders(payload);
+      const response = await FolderService.listFolders();
       dispatch({
         type: LIST_FOLDER_SUCCESS,
         payload: response,
@@ -84,6 +84,29 @@ export const addFolderItemAction = (
     } catch (err: any) {
       dispatch({
         type: ADD_FOLDER_ITEM_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const removeFolderItemAction = (
+  folderId: number,
+  postId: number
+): FolderAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: REMOVE_FOLDER_ITEM_REQUESTED,
+    });
+    try {
+      await FolderService.removeFolderItem(folderId, postId);
+      dispatch({
+        type: REMOVE_FOLDER_ITEM_SUCCESS,
+        payload: { folderId, postId },
+      });
+    } catch (err: any) {
+      dispatch({
+        type: REMOVE_FOLDER_ITEM_FAILED,
         payload: err?.response?.data,
       });
     }

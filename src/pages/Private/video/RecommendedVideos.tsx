@@ -5,11 +5,7 @@ import { Box, Grid, Text } from 'grommet';
 import { useTranslation } from 'react-i18next';
 import PostGridItem from '../../../components/post/PostGridItem';
 import { AppState } from '../../../store/reducers/root.reducer';
-import {
-  createPostSaveAction,
-  getFeedListAction,
-  removePostSaveAction,
-} from '../../../store/actions/post.action';
+import { getFeedListAction } from '../../../store/actions/post.action';
 import GradientScroll from '../../../components/utils/GradientScroll';
 
 const RecommendedVideos: FC = () => {
@@ -43,11 +39,6 @@ const RecommendedVideos: FC = () => {
               key={post.id}
               post={post}
               onClickPlay={() => history.push(`${post.id}`)}
-              onClickSave={() => {
-                if (post.saved)
-                  dispatch(removePostSaveAction({ postId: post.id }));
-                else dispatch(createPostSaveAction({ postId: post.id }));
-              }}
             />
           ))}
         </Grid>

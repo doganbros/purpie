@@ -1,15 +1,16 @@
-import { Box, ResponsiveContext, Text } from 'grommet';
-import { AddCircle } from 'grommet-icons';
-import React, { FC, useContext } from 'react';
+import { Box, Text } from 'grommet';
+import React, { FC } from 'react';
+import { useHistory } from 'react-router-dom';
 import GradientScroll from '../../components/utils/GradientScroll';
+import { Folder } from '../../store/types/folder.types';
+import SavedVideoItem from './SavedVideoItem';
 
 interface Props {
-  text: string;
-  numberOfVideos: number;
+  folder: Folder;
 }
-const SavedVideo: FC<Props> = ({ text, numberOfVideos }) => {
-  const size = useContext(ResponsiveContext);
-  const filledArray = new Array(numberOfVideos).fill('hello');
+
+const SavedVideo: FC<Props> = ({ folder }) => {
+  const history = useHistory();
 
   return (
     <Box direction="column" gap="small">
@@ -17,36 +18,33 @@ const SavedVideo: FC<Props> = ({ text, numberOfVideos }) => {
         <Box direction="column" width={{ min: 'small', max: 'small' }}>
           <Box>
             <Text color="dark" size="large" weight="bold">
-              {text}
+              {folder.title}
             </Text>
             <Text size="small" color="status-disabled">
-              {numberOfVideos} Video
+              {folder.itemCount} Video
             </Text>
           </Box>
         </Box>
         <Box>
           <GradientScroll>
             <Box direction="row" gap="small">
-              {filledArray.map((item) => (
-                <Box
-                  width={size !== 'small' ? '144px' : undefined}
-                  height={size !== 'small' ? '100px' : undefined}
-                  round={size !== 'small' ? '14px' : undefined}
-                  fill={size === 'small'}
-                  background="blue"
-                  key={item}
+              {folder.folderItems.map((item) => (
+                <SavedVideoItem
+                  key={item.id}
+                  post={item.post}
+                  onClickPlay={() => history.push(`video/${item.postId}`)}
                 />
               ))}
             </Box>
           </GradientScroll>
         </Box>
       </Box>
-      <Box direction="row" gap="small" align="center">
-        <AddCircle color="brand" size="medium" />
-        <Text color="brand" size="small">
-          Add New Video
-        </Text>
-      </Box>
+      {/* <Box direction="row" gap="small" align="center"> */}
+      {/*  <AddCircle color="brand" size="medium" /> */}
+      {/*  <Text color="brand" size="small"> */}
+      {/*    Add New Video */}
+      {/*  </Text> */}
+      {/* </Box> */}
     </Box>
   );
 };

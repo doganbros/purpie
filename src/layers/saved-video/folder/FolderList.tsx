@@ -8,10 +8,13 @@ import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated
 
 interface FolderListProps {
   postId: number;
-  postFolderId: number | null;
+  selectedFolderIds: number[];
 }
 
-export const FolderList: FC<FolderListProps> = ({ postId, postFolderId }) => {
+export const FolderList: FC<FolderListProps> = ({
+  postId,
+  selectedFolderIds,
+}) => {
   const {
     folder: { folderList },
   } = useSelector((state: AppState) => state);
@@ -30,7 +33,7 @@ export const FolderList: FC<FolderListProps> = ({ postId, postFolderId }) => {
             id={folder.id}
             name={folder.title}
             videoCount={folder.itemCount}
-            selected={folder.id === postFolderId}
+            selected={selectedFolderIds.includes(folder.id)}
             postId={postId}
           />
         ))

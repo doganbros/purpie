@@ -13,14 +13,9 @@ dayjs.extend(relativeTime);
 interface PostListItemProps {
   post: Post;
   onClickPlay: (id: number) => any;
-  onClickSave: (id: number) => any;
 }
 
-const PostListItem: FC<PostListItemProps> = ({
-  post,
-  onClickPlay,
-  onClickSave,
-}) => {
+const PostListItem: FC<PostListItemProps> = ({ post, onClickPlay }) => {
   const [hover, setHover] = useState(false);
   const isVideoPost = post.videoName || post.streaming;
   return (
@@ -45,7 +40,6 @@ const PostListItem: FC<PostListItemProps> = ({
               <VideoPost
                 id={post.id}
                 live={post.streaming}
-                onClickSave={onClickSave}
                 slug={post.slug}
                 videoName={post.videoName}
               />

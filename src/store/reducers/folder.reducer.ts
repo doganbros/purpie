@@ -1,4 +1,3 @@
-import { paginationInitialState } from '../../helpers/constants';
 import { FolderActionParams, FolderState } from '../types/folder.types';
 import {
   ADD_FOLDER_ITEM_SUCCESS,
@@ -6,11 +5,12 @@ import {
   LIST_FOLDER_FAILED,
   LIST_FOLDER_REQUESTED,
   LIST_FOLDER_SUCCESS,
+  REMOVE_FOLDER_ITEM_SUCCESS,
 } from '../constants/folder.constants';
 
 const initialState: FolderState = {
   folderList: {
-    ...paginationInitialState,
+    data: [],
     loading: false,
     error: null,
   },
@@ -42,7 +42,7 @@ const folderReducer = (
       return {
         ...state,
         folderList: {
-          ...action.payload,
+          data: action.payload,
           loading: false,
           error: null,
         },
@@ -66,6 +66,23 @@ const folderReducer = (
         action.payload,
       ];
       newFolderList[index].itemCount++;
+
+      return {
+        ...state,
+        folderList: { ...state.folderList, data: newFolderList },
+      };
+    }
+    case REMOVE_FOLDER_ITEM_SUCCESS: {
+      const removedFolderIndex = state.folderList.data.findIndex(
+        (f) => f.id === action.payload.folderId
+      );
+
+      const newFolderList = [...state.folderList.data];
+      newFolderList[removedFolderIndex].folderItems = newFolderList[
+        removedFolderIndex
+      ].folderItems.filter((f) => f.postId !== action.payload.postId);
+
+      newFolderList[removedFolderIndex].itemCount--;
 
       return {
         ...state,

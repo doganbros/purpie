@@ -4,7 +4,10 @@ import { useDispatch } from 'react-redux';
 import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
 import InitialsAvatar from '../../../components/utils/Avatars/InitialsAvatar';
 import ExtendedBox from '../../../components/utils/ExtendedBox';
-import { addFolderItemAction } from '../../../store/actions/folder.action';
+import {
+  addFolderItemAction,
+  removeFolderItemAction,
+} from '../../../store/actions/folder.action';
 
 interface Props {
   id: number;
@@ -29,9 +32,13 @@ export const FolderListItem: FC<Props> = ({
     dispatch(addFolderItemAction(id, postId));
   };
 
+  const removeFromFolder = () => {
+    dispatch(removeFolderItemAction(id, postId));
+  };
+
   return (
     <ExtendedBox
-      onClick={() => addToFolder()}
+      onClick={() => (selected ? removeFromFolder() : addToFolder())}
       direction="row"
       align="center"
       gap="small"
@@ -42,6 +49,7 @@ export const FolderListItem: FC<Props> = ({
         side: 'all',
         color: hover || selected ? '#00C781' : 'white',
       }}
+      boxShadow="none"
       minHeight="36px"
       round="xsmall"
     >
