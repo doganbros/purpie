@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, Stack, Text, TextInput } from 'grommet';
 import { Edit, Hide, View } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,6 +17,7 @@ const PersonalSettings: () => SettingsData | null = () => {
     auth: { user },
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
+  const [changed, setChanged] = useState(false);
   const [userPayload, setUserPayload] = useState({
     userName: user?.userName || '',
     fullName: user?.fullName || '',
@@ -28,6 +29,14 @@ const PersonalSettings: () => SettingsData | null = () => {
     confirm: false,
   });
   const { t } = useTranslation();
+  useEffect(() => {
+    if (
+      user?.userName !== userPayload.userName ||
+      user?.fullName !== userPayload.fullName
+    ) {
+      setChanged(true);
+    } else setChanged(false);
+  }, [userPayload]);
   if (!user) return null;
   return {
     id: 0,
@@ -35,6 +44,7 @@ const PersonalSettings: () => SettingsData | null = () => {
     label: t('settings.personalSettings'),
     url: 'personalSettings',
     name: user?.fullName,
+    changed,
     onSave: () => {
       dispatch(changeProfileInfo(userPayload));
     },
@@ -98,12 +108,12 @@ const PersonalSettings: () => SettingsData | null = () => {
               value={userPayload.userName}
               plain
               focusIndicator={false}
-              onChange={(event) =>
+              onChange={(event) => {
                 setUserPayload({
                   ...userPayload,
                   userName: event.target.value,
-                })
-              }
+                });
+              }}
             />
           </Box>
         ),
@@ -127,12 +137,12 @@ const PersonalSettings: () => SettingsData | null = () => {
               value={userPayload.fullName}
               plain
               focusIndicator={false}
-              onChange={(event) =>
+              onChange={(event) => {
                 setUserPayload({
                   ...userPayload,
                   fullName: event.target.value,
-                })
-              }
+                });
+              }}
             />
           </Box>
         ),

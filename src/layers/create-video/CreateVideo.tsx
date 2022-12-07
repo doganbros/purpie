@@ -154,6 +154,13 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
                   onChange={(e) =>
                     setVideoFile(e.target.files ? e.target.files[0] : null)
                   }
+                  type="file"
+                  accept="video/3gpp,
+          video/mp4,
+          video/quicktime,
+          video/webm,
+          video/x-flv,
+          video/mpeg,"
                 />
               </FormField>
             </Box>

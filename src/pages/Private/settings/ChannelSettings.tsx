@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, DropButton, Stack, Text, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { CaretDownFill, CaretRightFill, Edit } from 'grommet-icons';
@@ -23,7 +23,7 @@ const ChannelSettings: () => SettingsData = () => {
     },
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
-
+  const [changed, setChanged] = useState<boolean>(false);
   const [selectedUserChannelIndex, setSelectedUserChannelIndex] = useState(0);
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
   const [channelPayload, setChannelPayload] = useState<UpdateChannelPayload>({
@@ -39,7 +39,18 @@ const ChannelSettings: () => SettingsData = () => {
   const [showChannelSelector, setShowChannelSelector] = useState(true);
 
   const channelId = userChannels.data[selectedUserChannelIndex]?.channel?.id;
-
+  useEffect(() => {
+    if (
+      channelPayload.name !==
+        userChannels?.data[selectedUserChannelIndex]?.channel?.name ||
+      channelPayload.description !==
+        userChannels?.data[selectedUserChannelIndex]?.channel.description ||
+      channelPayload.public !==
+        userChannels?.data[selectedUserChannelIndex]?.channel?.public
+    ) {
+      setChanged(true);
+    } else setChanged(false);
+  }, [channelPayload]);
   if (userChannels.data.length === 0) {
     return {
       id: 1,
@@ -75,6 +86,7 @@ const ChannelSettings: () => SettingsData = () => {
     key: 'channel',
     label: t('settings.channelSettings'),
     url: 'channel',
+    changed,
     onSave: () => {
       if (!(channelId === null || channelId === undefined)) {
         dispatch(changeChannelInformationAction(channelId, channelPayload));

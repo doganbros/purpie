@@ -7,11 +7,11 @@ import LogoWhite from '../../../assets/purpie-logo/logo-white.svg';
 import Divider from '../../../components/layouts/PrivatePageLayout/ZoneSelector/Divider';
 import { useDebouncer } from '../../../hooks/useDebouncer';
 import ChannelSettings from './ChannelSettings';
-import PersonalSettings from './PersonalSettings';
 import SearchBar from './SearchBar';
 import { SettingFormItem, SettingsData } from './types';
 import ZoneSettings from './ZoneSettings';
 import './Style.scss';
+import PersonalSettings from './PersonalSettings';
 
 const Settings: FC = () => {
   const history = useHistory();
@@ -93,6 +93,7 @@ const Settings: FC = () => {
               primary
               label={t('settings.save')}
               margin={{ vertical: 'medium' }}
+              disabled={!selectedItem.changed}
             />
           )}
         </Box>

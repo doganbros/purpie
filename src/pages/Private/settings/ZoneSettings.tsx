@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, DropButton, Stack, Text, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { CaretDownFill, CaretRightFill, Edit } from 'grommet-icons';
@@ -28,7 +28,7 @@ const ZoneSettings: () => SettingsData | null = () => {
   const { t } = useTranslation();
 
   const [showZoneSelector, setShowZoneSelector] = useState(true);
-
+  const [changed, setChanged] = useState<boolean>(false);
   const [zonePayload, setZonePayload] = useState<UpdateZonePayload>({
     name: '',
     description: '',
@@ -36,6 +36,18 @@ const ZoneSettings: () => SettingsData | null = () => {
     id: userZones?.[0]?.zone?.id || 0,
     public: userZones?.[0]?.zone?.public || false,
   });
+  useEffect(() => {
+    if (
+      zonePayload.name !== userZones?.[selectedUserZoneIndex]?.zone?.name ||
+      zonePayload.description !==
+        userZones?.[selectedUserZoneIndex]?.zone?.description ||
+      zonePayload.subdomain !==
+        userZones?.[selectedUserZoneIndex]?.zone?.subdomain ||
+      zonePayload.public !== userZones?.[selectedUserZoneIndex]?.zone?.public
+    ) {
+      setChanged(true);
+    } else setChanged(false);
+  }, [zonePayload]);
 
   if (userZones?.length === 0) {
     return {
@@ -73,6 +85,7 @@ const ZoneSettings: () => SettingsData | null = () => {
     key: 'zone',
     label: t('settings.zoneSettings'),
     url: 'zone',
+    changed,
     onSave: () => {
       if (!(zoneId === null || zoneId === undefined)) {
         dispatch(changeZoneInformationAction(zoneId, zonePayload));

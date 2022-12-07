@@ -17,6 +17,7 @@ export interface SettingsData {
   onSave?: () => void;
   avatarWidget?: ReactNode;
   isEmpty?: boolean;
+  changed?: boolean;
 }
 
 export interface MediumType {
