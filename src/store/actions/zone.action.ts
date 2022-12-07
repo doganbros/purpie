@@ -173,6 +173,7 @@ export const changeZoneInformationAction = (
       dispatch({
         type: CHANGE_ZONE_INFO_SUCCESS,
       });
+      setToastAction('ok', `Saved Successfully!`)(dispatch);
     } catch (err: any) {
       dispatch({
         type: CHANGE_ZONE_INFO_FAILED,

@@ -207,6 +207,7 @@ export const changeChannelInformationAction = (
       dispatch({
         type: CHANGE_CHANNEL_INFO_SUCCESS,
       });
+      setToastAction('ok', `Saved Successfully!`)(dispatch);
     } catch (err: any) {
       dispatch({
         type: CHANGE_CHANNEL_INFO_FAILED,

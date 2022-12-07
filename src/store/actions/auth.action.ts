@@ -287,6 +287,7 @@ export const changeProfileInfo = (user: ChangeProfileInfo): AuthAction => {
         type: CHANGE_PROFILE_INFO_SUCCESS,
         payload: user,
       });
+      setToastAction('ok', `Saved Successfully!`)(dispatch);
     } catch (err: any) {
       dispatch({
         type: CHANGE_PROFILE_INFO_FAILED,
