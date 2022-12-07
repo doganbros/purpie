@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, DropButton, Stack, Text, TextInput } from 'grommet';
+import { Box, Button, DropButton, Stack, Text, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { CaretDownFill, CaretRightFill, Edit } from 'grommet-icons';
 import { useTranslation } from 'react-i18next';
@@ -68,17 +68,33 @@ const ZoneSettings: () => SettingsData | null = () => {
     };
   }
 
-  const zoneId = userZones?.[selectedUserZoneIndex]?.zone?.id;
+  const selectedZone = userZones?.[selectedUserZoneIndex]?.zone;
+  const zoneId = selectedZone?.id;
+
+  const isFormInitialState =
+    zonePayload.name === selectedZone?.name &&
+    zonePayload.description === selectedZone?.description &&
+    zonePayload.subdomain === selectedZone?.subdomain &&
+    zonePayload.public === selectedZone?.public;
+
   return {
     id: 2,
     key: 'zone',
     label: t('settings.zoneSettings'),
     url: 'zone',
-    onSave: () => {
-      if (!(zoneId === null || zoneId === undefined)) {
-        dispatch(updateZoneInfoAction(zoneId, zonePayload));
-      }
-    },
+    saveButton: (
+      <Button
+        disabled={isFormInitialState}
+        onClick={() => {
+          if (!(zoneId === null || zoneId === undefined)) {
+            dispatch(updateZoneInfoAction(zoneId, zonePayload));
+          }
+        }}
+        primary
+        label={t('settings.save')}
+        margin={{ vertical: 'medium' }}
+      />
+    ),
     avatarWidget: (
       <Box direction="row" gap="small">
         {!showZoneSelector && (
@@ -91,9 +107,9 @@ const ZoneSettings: () => SettingsData | null = () => {
               pad="5px"
             >
               <ZoneAvatar
-                id={userZones?.[selectedUserZoneIndex]?.zone?.id || 1}
-                name={userZones?.[selectedUserZoneIndex]?.zone?.name}
-                src={userZones?.[selectedUserZoneIndex]?.zone?.displayPhoto}
+                id={selectedZone?.id || 1}
+                name={selectedZone?.name}
+                src={selectedZone?.displayPhoto}
               />
             </Box>
             <Box background="#6FFFB0" round pad="xsmall">
@@ -145,10 +161,8 @@ const ZoneSettings: () => SettingsData | null = () => {
           {!showZoneSelector ? (
             <Box direction="row">
               <Box>
-                <Text>{userZones?.[selectedUserZoneIndex]?.zone?.name}</Text>
-                <Text color="#8F9BB3">
-                  {userZones?.[selectedUserZoneIndex]?.zone?.subdomain}
-                </Text>
+                <Text>{selectedZone?.name}</Text>
+                <Text color="#8F9BB3">{selectedZone?.subdomain}</Text>
               </Box>
               <CaretDownFill />
             </Box>

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Accordion, AccordionPanel, Avatar, Box, Button, Text } from 'grommet';
+import { Accordion, AccordionPanel, Avatar, Box, Text } from 'grommet';
 import { CaretRightFill, Home } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -87,14 +87,7 @@ const Settings: FC = () => {
         )}
         <Box direction="row" justify="between">
           {selectedItem.avatarWidget}
-          {!selectedItem.isEmpty && (
-            <Button
-              onClick={selectedItem.onSave}
-              primary
-              label={t('settings.save')}
-              margin={{ vertical: 'medium' }}
-            />
-          )}
+          {!selectedItem.isEmpty && selectedItem.saveButton}
         </Box>
         {selectedItem?.items?.map<React.ReactNode>((setting) => {
           const descriptionParts = setting.description.split(

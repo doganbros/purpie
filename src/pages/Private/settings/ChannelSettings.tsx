@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, DropButton, Stack, Text, TextInput } from 'grommet';
+import { Box, Button, DropButton, Stack, Text, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { CaretDownFill, CaretRightFill, Edit } from 'grommet-icons';
 import { useTranslation } from 'react-i18next';
@@ -38,7 +38,13 @@ const ChannelSettings: () => SettingsData = () => {
 
   const [showChannelSelector, setShowChannelSelector] = useState(true);
 
-  const channelId = userChannels.data[selectedUserChannelIndex]?.channel?.id;
+  const selectedChannel = userChannels.data[selectedUserChannelIndex]?.channel;
+  const channelId = selectedChannel?.id;
+
+  const isFormInitialState =
+    channelPayload.name === selectedChannel?.name &&
+    channelPayload.description === selectedChannel?.description &&
+    channelPayload.public === selectedChannel?.public;
 
   if (userChannels.data.length === 0) {
     return {
@@ -75,11 +81,19 @@ const ChannelSettings: () => SettingsData = () => {
     key: 'channel',
     label: t('settings.channelSettings'),
     url: 'channel',
-    onSave: () => {
-      if (!(channelId === null || channelId === undefined)) {
-        dispatch(updateChannelInfoAction(channelId, channelPayload));
-      }
-    },
+    saveButton: (
+      <Button
+        disabled={isFormInitialState}
+        onClick={() => {
+          if (!(channelId === null || channelId === undefined)) {
+            dispatch(updateChannelInfoAction(channelId, channelPayload));
+          }
+        }}
+        primary
+        label={t('settings.save')}
+        margin={{ vertical: 'medium' }}
+      />
+    ),
     avatarWidget: (
       <>
         <Box width="medium" direction="row" gap="small" align="center">
@@ -93,14 +107,9 @@ const ChannelSettings: () => SettingsData = () => {
                 pad="5px"
               >
                 <ChannelAvatar
-                  id={userChannels?.data[selectedUserChannelIndex]?.channel?.id}
-                  name={
-                    userChannels?.data[selectedUserChannelIndex]?.channel?.name
-                  }
-                  src={
-                    userChannels?.data[selectedUserChannelIndex]?.channel
-                      ?.displayPhoto
-                  }
+                  id={selectedChannel?.id}
+                  name={selectedChannel?.name}
+                  src={selectedChannel?.displayPhoto}
                 />
               </Box>
               <Box background="#6FFFB0" round pad="xsmall">
@@ -142,10 +151,7 @@ const ChannelSettings: () => SettingsData = () => {
                         src={item.channel.displayPhoto}
                       />
                     }
-                    selected={
-                      userChannels.data[selectedUserChannelIndex].channel
-                        .name === item.channel.name
-                    }
+                    selected={selectedChannel.name === item.channel.name}
                   />
                 ))}
               </Box>
@@ -158,20 +164,13 @@ const ChannelSettings: () => SettingsData = () => {
                 gap="small"
               >
                 <Box>
-                  <Text>
-                    {
-                      userChannels?.data[selectedUserChannelIndex]?.channel
-                        ?.name
-                    }
-                  </Text>
+                  <Text>{selectedChannel?.name}</Text>
                   <Text color="#8F9BB3">
                     {t('settings.in')}{' '}
                     {
                       userZones?.find(
                         (userZone) =>
-                          userZone.zone.id ===
-                          userChannels.data[selectedUserChannelIndex].channel
-                            .zoneId
+                          userZone.zone.id === selectedChannel.zoneId
                       )?.zone.name
                     }{' '}
                     {t('settings.zone')}

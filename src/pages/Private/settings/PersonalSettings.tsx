@@ -29,15 +29,17 @@ const PersonalSettings: () => SettingsData | null = () => {
   });
   const { t } = useTranslation();
   if (!user) return null;
+
+  const isFormInitialState =
+    userPayload.userName === user.userName &&
+    userPayload.fullName === user.fullName;
   return {
     id: 0,
     key: 'personalSettings',
     label: t('settings.personalSettings'),
     url: 'personalSettings',
     name: user?.fullName,
-    onSave: () => {
-      dispatch(updateProfileInfoAction(userPayload));
-    },
+
     avatarWidget: (
       <>
         <Box direction="row" gap="small" align="center">
@@ -249,6 +251,17 @@ const PersonalSettings: () => SettingsData | null = () => {
         ),
       },
     ],
+    saveButton: (
+      <Button
+        disabled={isFormInitialState}
+        onClick={() => {
+          dispatch(updateProfileInfoAction(userPayload));
+        }}
+        primary
+        label={t('settings.save')}
+        margin={{ vertical: 'medium' }}
+      />
+    ),
   };
 };
 

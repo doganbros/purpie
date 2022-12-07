@@ -14,7 +14,7 @@ export interface SettingsData {
   label: string;
   url: string;
   items?: SettingFormItem[];
-  onSave?: () => void;
+  saveButton?: ReactNode;
   avatarWidget?: ReactNode;
   isEmpty?: boolean;
 }
