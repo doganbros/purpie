@@ -164,7 +164,6 @@ const ChannelSettings: () => SettingsData = () => {
                         ?.name
                     }
                   </Text>
-                  <Text color="#8F9BB3">224 members</Text>
                   <Text color="#8F9BB3">
                     {t('settings.in')}{' '}
                     {
