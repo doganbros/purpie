@@ -1,3 +1,4 @@
+import i18n from '../../config/i18n/i18n-config';
 import { navigateToSubdomain } from '../../helpers/app-subdomain';
 import appHistory from '../../helpers/history';
 import {
@@ -283,6 +284,7 @@ export const changeProfileInfo = (user: ChangeProfileInfo): AuthAction => {
     });
     try {
       await AuthService.changeProfileService(user);
+      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
       dispatch({
         type: CHANGE_PROFILE_INFO_SUCCESS,
         payload: user,
@@ -304,6 +306,7 @@ export const changeProfilePicture = (profilePhoto: any): AuthAction => {
     });
     try {
       const payload = await AuthService.changeProfilePic(profilePhoto);
+      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
       dispatch({
         type: CHANGE_PROFILE_PICTURE_SUCCESS,
         payload,

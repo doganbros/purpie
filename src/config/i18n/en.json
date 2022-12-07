@@ -521,7 +521,8 @@
     "cancel": "Cancel",
     "submit": "Submit",
     "selectZone": "Select Zone",
-    "selectChannel": "Select Channel"
+    "selectChannel": "Select Channel",
+    "changesSaved": "Changes saved successfully"
   },
   "ContactsToFollow": {
     "title": "People to add",

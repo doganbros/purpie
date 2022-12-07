@@ -33,6 +33,7 @@ import {
 
 import * as ZoneService from '../services/zone.service';
 import { setToastAction } from './util.action';
+import i18n from '../../config/i18n/i18n-config';
 
 export const getUserZonesAction = (): ZoneAction => {
   return async (dispatch) => {
@@ -146,6 +147,7 @@ export const changeZonePhoto = (
     });
     try {
       const payload = await ZoneService.changeZonePic(profilePhoto, zoneId);
+      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
       dispatch({
         type: CHANGE_ZONE_PICTURE_SUCCESS,
         payload,
@@ -170,6 +172,7 @@ export const changeZoneInformationAction = (
     });
     try {
       await ZoneService.changeZoneInfo(zoneId, params);
+      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
       dispatch({
         type: CHANGE_ZONE_INFO_SUCCESS,
       });
@@ -192,6 +195,7 @@ export const changeZonePermissionsAction = (
     });
     try {
       await ZoneService.changeZonePermissions(zoneId, params);
+      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
       dispatch({
         type: CHANGE_ZONE_PERMISSIONS_SUCCESS,
       });

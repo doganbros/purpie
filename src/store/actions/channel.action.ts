@@ -38,6 +38,7 @@ import * as ChannelService from '../services/channel.service';
 
 import { setToastAction } from './util.action';
 import { getUserZonesAction } from './zone.action';
+import i18n from '../../config/i18n/i18n-config';
 
 export const getUserChannelsAction = (): ChannelAction => {
   return async (dispatch) => {
@@ -180,6 +181,7 @@ export const changeChannelPhoto = (
         profilePhoto,
         channelId
       );
+      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
       dispatch({
         type: CHANGE_CHANNEL_PICTURE_SUCCESS,
         payload,
@@ -204,6 +206,7 @@ export const changeChannelInformationAction = (
     });
     try {
       await ChannelService.changeChannelInfo(channelId, params);
+      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
       dispatch({
         type: CHANGE_CHANNEL_INFO_SUCCESS,
       });
