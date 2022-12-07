@@ -1,8 +1,8 @@
 import {
-  CHANGE_ZONE_PERMISSIONS_FAILED,
-  CHANGE_ZONE_PERMISSIONS_REQUESTED,
-  CHANGE_ZONE_INFO_REQUESTED,
-  CHANGE_ZONE_INFO_FAILED,
+  UPDATE_ZONE_PERMISSIONS_FAILED,
+  UPDATE_ZONE_PERMISSIONS_REQUESTED,
+  UPDATE_ZONE_INFO_REQUESTED,
+  UPDATE_ZONE_INFO_FAILED,
   CLOSE_CREATE_ZONE_LAYER,
   CREATE_ZONE_FAILED,
   CREATE_ZONE_REQUESTED,
@@ -32,11 +32,11 @@ import {
   SET_CURRENT_USER_ZONE,
   UPDATE_ZONE_FAILED,
   UPDATE_ZONE_REQUESTED,
-  CHANGE_ZONE_PICTURE_SUCCESS,
-  CHANGE_ZONE_PICTURE_REQUESTED,
-  CHANGE_ZONE_PICTURE_FAILED,
-  CHANGE_ZONE_PERMISSIONS_SUCCESS,
-  CHANGE_ZONE_INFO_SUCCESS,
+  UPDATE_ZONE_PHOTO_SUCCESS,
+  UPDATE_ZONE_PHOTO_REQUESTED,
+  UPDATE_ZONE_PHOTO_FAILED,
+  UPDATE_ZONE_PERMISSIONS_SUCCESS,
+  UPDATE_ZONE_INFO_SUCCESS,
 } from '../constants/zone.constants';
 
 import { PaginatedResponse } from '../../models/paginated-response';
@@ -150,11 +150,11 @@ export type ZoneActionParams =
         | typeof OPEN_CREATE_ZONE_LAYER
         | typeof CLOSE_CREATE_ZONE_LAYER
         | typeof CREATE_ZONE_SUCCESS
-        | typeof CHANGE_ZONE_PICTURE_REQUESTED
-        | typeof CHANGE_ZONE_INFO_REQUESTED
-        | typeof CHANGE_ZONE_INFO_SUCCESS
-        | typeof CHANGE_ZONE_PERMISSIONS_REQUESTED
-        | typeof CHANGE_ZONE_PERMISSIONS_SUCCESS;
+        | typeof UPDATE_ZONE_PHOTO_REQUESTED
+        | typeof UPDATE_ZONE_INFO_REQUESTED
+        | typeof UPDATE_ZONE_INFO_SUCCESS
+        | typeof UPDATE_ZONE_PERMISSIONS_REQUESTED
+        | typeof UPDATE_ZONE_PERMISSIONS_SUCCESS;
     }
   | {
       type:
@@ -168,9 +168,9 @@ export type ZoneActionParams =
         | typeof SEARCH_ZONE_FAILED
         | typeof UPDATE_ZONE_FAILED
         | typeof JOIN_ZONE_FAILED
-        | typeof CHANGE_ZONE_PICTURE_FAILED
-        | typeof CHANGE_ZONE_INFO_FAILED
-        | typeof CHANGE_ZONE_PERMISSIONS_FAILED;
+        | typeof UPDATE_ZONE_PHOTO_FAILED
+        | typeof UPDATE_ZONE_INFO_FAILED
+        | typeof UPDATE_ZONE_PERMISSIONS_FAILED;
       payload: ResponseError;
     }
   | {
@@ -200,7 +200,7 @@ export type ZoneActionParams =
       payload: UserZoneListItem;
     }
   | {
-      type: typeof CHANGE_ZONE_PICTURE_SUCCESS;
+      type: typeof UPDATE_ZONE_PHOTO_SUCCESS;
       payload: string;
       zoneId: number;
     };

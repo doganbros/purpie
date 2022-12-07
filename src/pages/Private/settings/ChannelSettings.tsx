@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Box, DropButton, Stack, Text, TextInput } from 'grommet';
+import { Box, Button, DropButton, Stack, Text, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { CaretDownFill, CaretRightFill, Edit } from 'grommet-icons';
 import { useTranslation } from 'react-i18next';
 import ListButton from '../../../components/utils/ListButton';
 
 import {
-  changeChannelInformationAction,
-  changeChannelPhoto,
+  updateChannelInfoAction,
+  updateChannelPhoto,
 } from '../../../store/actions/channel.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { UpdateChannelPayload } from '../../../store/types/channel.types';
@@ -33,12 +33,18 @@ const ChannelSettings: () => SettingsData = () => {
     public: userChannels?.data[0]?.channel?.public,
   });
 
-  const [open, setOpen] = useState(false);
+  const [isDropOpen, setIsDropOpen] = useState(false);
   const { t } = useTranslation();
 
   const [showChannelSelector, setShowChannelSelector] = useState(true);
 
-  const channelId = userChannels.data[selectedUserChannelIndex]?.channel?.id;
+  const selectedChannel = userChannels.data[selectedUserChannelIndex]?.channel;
+  const channelId = selectedChannel?.id;
+
+  const isFormInitialState =
+    channelPayload.name === selectedChannel?.name &&
+    channelPayload.description === selectedChannel?.description &&
+    channelPayload.public === selectedChannel?.public;
 
   if (userChannels.data.length === 0) {
     return {
@@ -75,11 +81,19 @@ const ChannelSettings: () => SettingsData = () => {
     key: 'channel',
     label: t('settings.channelSettings'),
     url: 'channel',
-    onSave: () => {
-      if (!(channelId === null || channelId === undefined)) {
-        dispatch(changeChannelInformationAction(channelId, channelPayload));
-      }
-    },
+    saveButton: (
+      <Button
+        disabled={isFormInitialState}
+        onClick={() => {
+          if (!(channelId === null || channelId === undefined)) {
+            dispatch(updateChannelInfoAction(channelId, channelPayload));
+          }
+        }}
+        primary
+        label={t('settings.save')}
+        margin={{ vertical: 'medium' }}
+      />
+    ),
     avatarWidget: (
       <>
         <Box width="medium" direction="row" gap="small" align="center">
@@ -93,14 +107,9 @@ const ChannelSettings: () => SettingsData = () => {
                 pad="5px"
               >
                 <ChannelAvatar
-                  id={userChannels?.data[selectedUserChannelIndex]?.channel?.id}
-                  name={
-                    userChannels?.data[selectedUserChannelIndex]?.channel?.name
-                  }
-                  src={
-                    userChannels?.data[selectedUserChannelIndex]?.channel
-                      ?.displayPhoto
-                  }
+                  id={selectedChannel?.id}
+                  name={selectedChannel?.name}
+                  src={selectedChannel?.displayPhoto}
                 />
               </Box>
               <Box background="#6FFFB0" round pad="xsmall">
@@ -109,9 +118,9 @@ const ChannelSettings: () => SettingsData = () => {
             </Stack>
           )}
           <DropButton
-            open={open}
-            onOpen={() => setOpen(true)}
-            onClose={() => setOpen(false)}
+            open={isDropOpen}
+            onOpen={() => setIsDropOpen(true)}
+            onClose={() => setIsDropOpen(false)}
             dropAlign={{ left: 'right', top: 'top' }}
             dropProps={{
               responsive: false,
@@ -133,6 +142,7 @@ const ChannelSettings: () => SettingsData = () => {
                       });
                       setSelectedUserChannelIndex(index);
                       setShowChannelSelector(false);
+                      setIsDropOpen(false);
                     }}
                     leftIcon={
                       <ChannelAvatar
@@ -141,33 +151,26 @@ const ChannelSettings: () => SettingsData = () => {
                         src={item.channel.displayPhoto}
                       />
                     }
-                    selected={
-                      userChannels.data[selectedUserChannelIndex].channel
-                        .name === item.channel.name
-                    }
+                    selected={selectedChannel.name === item.channel.name}
                   />
                 ))}
               </Box>
             }
           >
             {!showChannelSelector ? (
-              <Box onClick={() => setOpen(true)} direction="row" gap="small">
+              <Box
+                onClick={() => setIsDropOpen(true)}
+                direction="row"
+                gap="small"
+              >
                 <Box>
-                  <Text>
-                    {
-                      userChannels?.data[selectedUserChannelIndex]?.channel
-                        ?.name
-                    }
-                  </Text>
-                  <Text color="#8F9BB3">224 members</Text>
+                  <Text>{selectedChannel?.name}</Text>
                   <Text color="#8F9BB3">
                     {t('settings.in')}{' '}
                     {
                       userZones?.find(
                         (userZone) =>
-                          userZone.zone.id ===
-                          userChannels.data[selectedUserChannelIndex].channel
-                            .zoneId
+                          userZone.zone.id === selectedChannel.zoneId
                       )?.zone.name
                     }{' '}
                     {t('settings.zone')}
@@ -192,7 +195,7 @@ const ChannelSettings: () => SettingsData = () => {
         {showAvatarUpload && !(channelId === null || channelId === undefined) && (
           <AvatarUpload
             onSubmit={(file: any) => {
-              dispatch(changeChannelPhoto(file, channelId));
+              dispatch(updateChannelPhoto(file, channelId));
               setShowAvatarUpload(false);
             }}
             onDismiss={() => {

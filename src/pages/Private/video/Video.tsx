@@ -245,6 +245,7 @@ const Video: FC = () => {
                 }}
                 onReady={onReady}
                 options={{
+                  aspectRatio: '16:9',
                   autoplay: true,
                   muted: false,
                   controls: true,

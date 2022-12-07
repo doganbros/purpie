@@ -55,9 +55,9 @@ const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
             <Box direction="row" align="center">
               <Box
                 margin={{ top: '-35px', left: '-3px' }}
-                background="brand"
-                round="large"
+                round="full"
                 border={{ size: 'large', color: 'white' }}
+                flex={{ shrink: 0 }}
               >
                 <UserAvatar
                   id={post.createdBy.id}

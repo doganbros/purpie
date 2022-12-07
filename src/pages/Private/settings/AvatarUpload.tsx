@@ -49,6 +49,12 @@ const AvatarUpload: FC<AvatarUploadProps> = ({ onSubmit, onDismiss }) => {
               name="photoFile"
               id="photoFile"
               multiple={false}
+              type="file"
+              accept="image/jpg,
+          image/jpeg,
+          image/png,
+          image/bmp,
+          image/svg+xml"
               renderFile={(file) => {
                 <Box width="small" height="small">
                   <Text>{file.name}</Text>

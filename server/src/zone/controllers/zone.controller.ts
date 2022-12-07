@@ -279,8 +279,8 @@ export class ZoneController {
         if (!isValid)
           return cb(
             new BadRequestException(
+              ErrorTypes.INVALID_IMAGE_FORMAT,
               'Please upload a valid photo format',
-              'FILE_FORMAT_MUST_BE_PHOTO',
             ),
             false,
           );
