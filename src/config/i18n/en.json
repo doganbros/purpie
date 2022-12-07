@@ -484,7 +484,7 @@
     "username": "Username",
     "changeUsername": "Change Username",
     "fullName": "Full Name",
-    "changeName": "Change your ame",
+    "changeName": "Change your name",
     "mainEmail": "Your main email address",
     "email": "Email",
     "passwordChange": "Password Change",
@@ -521,7 +521,8 @@
     "cancel": "Cancel",
     "submit": "Submit",
     "selectZone": "Select Zone",
-    "selectChannel": "Select Channel"
+    "selectChannel": "Select Channel",
+    "changesSaved": "Changes saved successfully"
   },
   "ContactsToFollow": {
     "title": "People to add",

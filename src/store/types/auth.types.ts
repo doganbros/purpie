@@ -1,7 +1,7 @@
 import {
-  CHANGE_PROFILE_PICTURE_FAILED,
-  CHANGE_PROFILE_PICTURE_REQUESTED,
-  CHANGE_PROFILE_PICTURE_SUCCESS,
+  UPDATE_PROFILE_PHOTO_FAILED,
+  UPDATE_PROFILE_PHOTO_REQUESTED,
+  UPDATE_PROFILE_PHOTO_SUCCESS,
   LOGIN_REQUESTED,
   RESET_PASSWORD_REQUESTED,
   FORGOT_PASSWORD_REQUESTED,
@@ -32,9 +32,9 @@ import {
   INITIALIZE_USER_REQUESTED,
   INITIALIZE_USER_SUCCESS,
   INITIALIZE_USER_FAILED,
-  CHANGE_PROFILE_INFO_FAILED,
-  CHANGE_PROFILE_INFO_SUCCESS,
-  CHANGE_PROFILE_INFO_REQUESTED,
+  UPDATE_PROFILE_INFO_FAILED,
+  UPDATE_PROFILE_INFO_SUCCESS,
+  UPDATE_PROFILE_INFO_REQUESTED,
 } from '../constants/auth.constants';
 import { ResponseError } from '../../models/response-error';
 
@@ -116,10 +116,6 @@ export interface AuthState {
     loading: boolean;
     error: ResponseError | null;
   };
-  changeProfileInfo: {
-    loading: boolean;
-    error: ResponseError | null;
-  };
 }
 
 export interface LoginPayload {
@@ -143,7 +139,7 @@ export interface VerifyEmailPayload {
   userName: string;
 }
 
-export interface ChangeProfileInfo {
+export interface UpdateProfileInfoPayload {
   userName: string;
   fullName: string;
 }
@@ -164,13 +160,13 @@ export type AuthActionParams =
         | typeof LOGOUT
         | typeof RESET_PASSWORD_SUCCESS
         | typeof INITIALIZE_USER_REQUESTED
-        | typeof CHANGE_PROFILE_INFO_REQUESTED
-        | typeof CHANGE_PROFILE_PICTURE_REQUESTED;
+        | typeof UPDATE_PROFILE_INFO_REQUESTED
+        | typeof UPDATE_PROFILE_PHOTO_REQUESTED;
     }
   | {
       type:
         | typeof THIRD_PARTY_URL_REQUESTED
-        | typeof CHANGE_PROFILE_PICTURE_SUCCESS;
+        | typeof UPDATE_PROFILE_PHOTO_SUCCESS;
       payload: string;
     }
   | {
@@ -184,7 +180,7 @@ export type AuthActionParams =
       payload: User;
     }
   | {
-      type: typeof CHANGE_PROFILE_INFO_SUCCESS;
+      type: typeof UPDATE_PROFILE_INFO_SUCCESS;
       payload: { userName: string; fullName: string };
     }
   | {
@@ -203,8 +199,8 @@ export type AuthActionParams =
         | typeof USER_RETRIEVED_FAILED
         | typeof FORGOT_PASSWORD_FAILED
         | typeof INITIALIZE_USER_FAILED
-        | typeof CHANGE_PROFILE_INFO_FAILED
-        | typeof CHANGE_PROFILE_PICTURE_FAILED;
+        | typeof UPDATE_PROFILE_INFO_FAILED
+        | typeof UPDATE_PROFILE_PHOTO_FAILED;
       payload: ResponseError;
     };
 

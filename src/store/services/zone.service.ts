@@ -47,18 +47,21 @@ export const searchZone = (
 ): Promise<PaginatedResponse<ZoneListItem>> =>
   http.get(`/zone/search`, { params }).then((res) => res.data);
 
-export const changeZonePic = (photoFile: File, zoneId: number): Promise<any> =>
+export const updateZonePhoto = (
+  photoFile: File,
+  zoneId: number
+): Promise<any> =>
   http
     .put(`zone/${zoneId}/display-photo`, serialize(photoFile))
     .then((res) => res.data);
 
-export const changeZoneInfo = (
+export const updateZoneInfo = (
   zoneId: number,
   params: ZoneBasic
 ): Promise<any> =>
   http.put(`zone/update/${zoneId}`, params).then((res) => res.data);
 
-export const changeZonePermissions = (
+export const updateZonePermissions = (
   zoneId: number,
   params: ZoneRole
 ): Promise<any> =>

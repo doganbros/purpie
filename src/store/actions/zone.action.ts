@@ -20,19 +20,20 @@ import {
   SEARCH_ZONE_FAILED,
   SEARCH_ZONE_REQUESTED,
   SEARCH_ZONE_SUCCESS,
-  CHANGE_ZONE_PICTURE_SUCCESS,
-  CHANGE_ZONE_PICTURE_REQUESTED,
-  CHANGE_ZONE_PICTURE_FAILED,
-  CHANGE_ZONE_INFO_REQUESTED,
-  CHANGE_ZONE_INFO_SUCCESS,
-  CHANGE_ZONE_INFO_FAILED,
-  CHANGE_ZONE_PERMISSIONS_REQUESTED,
-  CHANGE_ZONE_PERMISSIONS_SUCCESS,
-  CHANGE_ZONE_PERMISSIONS_FAILED,
+  UPDATE_ZONE_PHOTO_SUCCESS,
+  UPDATE_ZONE_PHOTO_REQUESTED,
+  UPDATE_ZONE_PHOTO_FAILED,
+  UPDATE_ZONE_INFO_REQUESTED,
+  UPDATE_ZONE_INFO_SUCCESS,
+  UPDATE_ZONE_INFO_FAILED,
+  UPDATE_ZONE_PERMISSIONS_REQUESTED,
+  UPDATE_ZONE_PERMISSIONS_SUCCESS,
+  UPDATE_ZONE_PERMISSIONS_FAILED,
 } from '../constants/zone.constants';
 
 import * as ZoneService from '../services/zone.service';
 import { setToastAction } from './util.action';
+import i18n from '../../config/i18n/i18n-config';
 
 export const getUserZonesAction = (): ZoneAction => {
   return async (dispatch) => {
@@ -135,69 +136,72 @@ export const searchZoneAction = (params: ZoneSearchParams): ZoneAction => {
   };
 };
 
-export const changeZonePhoto = (
+export const updateZonePhotoAction = (
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  profilePhoto: any,
+  profilePhoto: File,
   zoneId: number
 ): ZoneAction => {
   return async (dispatch) => {
     dispatch({
-      type: CHANGE_ZONE_PICTURE_REQUESTED,
+      type: UPDATE_ZONE_PHOTO_REQUESTED,
     });
     try {
-      const payload = await ZoneService.changeZonePic(profilePhoto, zoneId);
+      const payload = await ZoneService.updateZonePhoto(profilePhoto, zoneId);
+      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
       dispatch({
-        type: CHANGE_ZONE_PICTURE_SUCCESS,
+        type: UPDATE_ZONE_PHOTO_SUCCESS,
         payload,
         zoneId,
       });
     } catch (err: any) {
       dispatch({
-        type: CHANGE_ZONE_PICTURE_FAILED,
+        type: UPDATE_ZONE_PHOTO_FAILED,
         payload: err?.response?.data,
       });
     }
   };
 };
 
-export const changeZoneInformationAction = (
+export const updateZoneInfoAction = (
   zoneId: number,
   params: ZoneBasic
 ): ZoneAction => {
   return async (dispatch) => {
     dispatch({
-      type: CHANGE_ZONE_INFO_REQUESTED,
+      type: UPDATE_ZONE_INFO_REQUESTED,
     });
     try {
-      await ZoneService.changeZoneInfo(zoneId, params);
+      await ZoneService.updateZoneInfo(zoneId, params);
+      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
       dispatch({
-        type: CHANGE_ZONE_INFO_SUCCESS,
+        type: UPDATE_ZONE_INFO_SUCCESS,
       });
     } catch (err: any) {
       dispatch({
-        type: CHANGE_ZONE_INFO_FAILED,
+        type: UPDATE_ZONE_INFO_FAILED,
         payload: err?.response?.data,
       });
     }
   };
 };
 
-export const changeZonePermissionsAction = (
+export const updateZonePermissionsAction = (
   zoneId: number,
   params: ZoneRole
 ): ZoneAction => {
   return async (dispatch) => {
     dispatch({
-      type: CHANGE_ZONE_PERMISSIONS_REQUESTED,
+      type: UPDATE_ZONE_PERMISSIONS_REQUESTED,
     });
     try {
-      await ZoneService.changeZonePermissions(zoneId, params);
+      await ZoneService.updateZonePermissions(zoneId, params);
+      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
       dispatch({
-        type: CHANGE_ZONE_PERMISSIONS_SUCCESS,
+        type: UPDATE_ZONE_PERMISSIONS_SUCCESS,
       });
     } catch (err: any) {
       dispatch({
-        type: CHANGE_ZONE_PERMISSIONS_FAILED,
+        type: UPDATE_ZONE_PERMISSIONS_FAILED,
         payload: err?.response?.data,
       });
     }

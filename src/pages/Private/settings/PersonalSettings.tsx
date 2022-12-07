@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { SettingsData } from './types';
 import {
-  changeProfileInfo,
-  changeProfilePicture,
+  updateProfileInfoAction,
+  updateProfilePhotoAction,
 } from '../../../store/actions/auth.action';
 import AvatarUpload from './AvatarUpload';
 import { UserAvatar } from '../../../components/utils/Avatars/UserAvatar';
@@ -29,15 +29,17 @@ const PersonalSettings: () => SettingsData | null = () => {
   });
   const { t } = useTranslation();
   if (!user) return null;
+
+  const isFormInitialState =
+    userPayload.userName === user.userName &&
+    userPayload.fullName === user.fullName;
   return {
     id: 0,
     key: 'personalSettings',
     label: t('settings.personalSettings'),
     url: 'personalSettings',
     name: user?.fullName,
-    onSave: () => {
-      dispatch(changeProfileInfo(userPayload));
-    },
+
     avatarWidget: (
       <>
         <Box direction="row" gap="small" align="center">
@@ -68,7 +70,7 @@ const PersonalSettings: () => SettingsData | null = () => {
         {showAvatarUpload && (
           <AvatarUpload
             onSubmit={(file: any) => {
-              dispatch(changeProfilePicture(file));
+              dispatch(updateProfilePhotoAction(file));
               setShowAvatarUpload(false);
             }}
             onDismiss={() => {
@@ -249,6 +251,17 @@ const PersonalSettings: () => SettingsData | null = () => {
         ),
       },
     ],
+    saveButton: (
+      <Button
+        disabled={isFormInitialState}
+        onClick={() => {
+          dispatch(updateProfileInfoAction(userPayload));
+        }}
+        primary
+        label={t('settings.save')}
+        margin={{ vertical: 'medium' }}
+      />
+    ),
   };
 };
 
