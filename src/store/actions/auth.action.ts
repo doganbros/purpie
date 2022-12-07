@@ -30,17 +30,17 @@ import {
   INITIALIZE_USER_REQUESTED,
   INITIALIZE_USER_SUCCESS,
   INITIALIZE_USER_FAILED,
-  CHANGE_PROFILE_INFO_FAILED,
-  CHANGE_PROFILE_INFO_SUCCESS,
-  CHANGE_PROFILE_INFO_REQUESTED,
-  CHANGE_PROFILE_PICTURE_REQUESTED,
-  CHANGE_PROFILE_PICTURE_FAILED,
-  CHANGE_PROFILE_PICTURE_SUCCESS,
+  UPDATE_PROFILE_INFO_FAILED,
+  UPDATE_PROFILE_INFO_SUCCESS,
+  UPDATE_PROFILE_INFO_REQUESTED,
+  UPDATE_PROFILE_PHOTO_REQUESTED,
+  UPDATE_PROFILE_PHOTO_FAILED,
+  UPDATE_PROFILE_PHOTO_SUCCESS,
 } from '../constants/auth.constants';
 import * as AuthService from '../services/auth.service';
 import {
   AuthAction,
-  ChangeProfileInfo,
+  UpdateProfileInfoPayload,
   LoginPayload,
   RegisterPayload,
   ResetPasswordPayload,
@@ -277,21 +277,23 @@ export const initializeUserAction = (user: RegisterPayload): AuthAction => {
   };
 };
 
-export const changeProfileInfo = (user: ChangeProfileInfo): AuthAction => {
+export const updateProfileInfoAction = (
+  user: UpdateProfileInfoPayload
+): AuthAction => {
   return async (dispatch) => {
     dispatch({
-      type: CHANGE_PROFILE_INFO_REQUESTED,
+      type: UPDATE_PROFILE_INFO_REQUESTED,
     });
     try {
-      await AuthService.changeProfileService(user);
+      await AuthService.updateProfileInfo(user);
       setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
       dispatch({
-        type: CHANGE_PROFILE_INFO_SUCCESS,
+        type: UPDATE_PROFILE_INFO_SUCCESS,
         payload: user,
       });
     } catch (err: any) {
       dispatch({
-        type: CHANGE_PROFILE_INFO_FAILED,
+        type: UPDATE_PROFILE_INFO_FAILED,
         payload: err?.response?.data,
       });
     }
@@ -299,21 +301,21 @@ export const changeProfileInfo = (user: ChangeProfileInfo): AuthAction => {
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const changeProfilePicture = (profilePhoto: any): AuthAction => {
+export const updateProfilePhotoAction = (profilePhoto: any): AuthAction => {
   return async (dispatch) => {
     dispatch({
-      type: CHANGE_PROFILE_PICTURE_REQUESTED,
+      type: UPDATE_PROFILE_PHOTO_REQUESTED,
     });
     try {
-      const payload = await AuthService.changeProfilePic(profilePhoto);
+      const payload = await AuthService.updateProfilePhoto(profilePhoto);
       setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
       dispatch({
-        type: CHANGE_PROFILE_PICTURE_SUCCESS,
+        type: UPDATE_PROFILE_PHOTO_SUCCESS,
         payload,
       });
     } catch (err: any) {
       dispatch({
-        type: CHANGE_PROFILE_PICTURE_FAILED,
+        type: UPDATE_PROFILE_PHOTO_FAILED,
         payload: err?.response?.data,
       });
     }

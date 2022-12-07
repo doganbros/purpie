@@ -53,7 +53,7 @@ export const searchChannel = (
 ): Promise<PaginatedResponse<ChannelListItem>> =>
   http.get(`/channel/search`, { params }).then((res) => res.data);
 
-export const changeChannelPic = (
+export const updateChannelPhoto = (
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   photoFile: any,
   channelId: number
@@ -62,13 +62,13 @@ export const changeChannelPic = (
     .put(`channel/${channelId}/display-photo`, serialize(photoFile))
     .then((res) => res.data);
 
-export const changeChannelInfo = (
+export const updateChannelInfo = (
   channelId: number,
   params: ChannelBasic
 ): Promise<any> =>
   http.put(`channel/update/${channelId}`, params).then((res) => res.data);
 
-export const changeChannelPermissions = (
+export const updateChannelPermissions = (
   channelId: number,
   params: UserChannelPermissionList
 ): Promise<any> =>

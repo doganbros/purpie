@@ -7,7 +7,7 @@ import {
   ResetPasswordPayload,
   User,
   VerifyEmailPayload,
-  ChangeProfileInfo,
+  UpdateProfileInfoPayload,
 } from '../types/auth.types';
 
 export const login = async (user: LoginPayload): Promise<User> =>
@@ -77,9 +77,10 @@ export const authenticateWithThirdPartyCode = async (
 export const initializeUser = (user: RegisterPayload): Promise<User> =>
   http.post('auth/initial-user', user).then((res) => res.data);
 
-export const changeProfileService = (user: ChangeProfileInfo): Promise<User> =>
-  http.put('user/profile', user).then((res) => res.data);
+export const updateProfileInfo = (
+  user: UpdateProfileInfoPayload
+): Promise<User> => http.put('user/profile', user).then((res) => res.data);
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const changeProfilePic = (photoFile: any): Promise<any> =>
+export const updateProfilePhoto = (photoFile: any): Promise<any> =>
   http.put(`user/display-photo/`, serialize(photoFile)).then((res) => res.data);

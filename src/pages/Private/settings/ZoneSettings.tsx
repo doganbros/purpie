@@ -8,8 +8,8 @@ import { AppState } from '../../../store/reducers/root.reducer';
 import { UpdateZonePayload } from '../../../store/types/zone.types';
 import { SettingsData } from './types';
 import {
-  changeZoneInformationAction,
-  changeZonePhoto,
+  updateZoneInfoAction,
+  updateZonePhotoAction,
 } from '../../../store/actions/zone.action';
 import AvatarUpload from './AvatarUpload';
 import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
@@ -76,7 +76,7 @@ const ZoneSettings: () => SettingsData | null = () => {
     url: 'zone',
     onSave: () => {
       if (!(zoneId === null || zoneId === undefined)) {
-        dispatch(changeZoneInformationAction(zoneId, zonePayload));
+        dispatch(updateZoneInfoAction(zoneId, zonePayload));
       }
     },
     avatarWidget: (
@@ -168,7 +168,7 @@ const ZoneSettings: () => SettingsData | null = () => {
         {showAvatarUpload && !(zoneId === null) && (
           <AvatarUpload
             onSubmit={(file: any) => {
-              dispatch(changeZonePhoto(file, zoneId || 1));
+              dispatch(updateZonePhotoAction(file, zoneId || 1));
               setShowAvatarUpload(false);
             }}
             onDismiss={() => {

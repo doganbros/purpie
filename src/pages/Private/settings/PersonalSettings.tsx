@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { SettingsData } from './types';
 import {
-  changeProfileInfo,
-  changeProfilePicture,
+  updateProfileInfoAction,
+  updateProfilePhotoAction,
 } from '../../../store/actions/auth.action';
 import AvatarUpload from './AvatarUpload';
 import { UserAvatar } from '../../../components/utils/Avatars/UserAvatar';
@@ -36,7 +36,7 @@ const PersonalSettings: () => SettingsData | null = () => {
     url: 'personalSettings',
     name: user?.fullName,
     onSave: () => {
-      dispatch(changeProfileInfo(userPayload));
+      dispatch(updateProfileInfoAction(userPayload));
     },
     avatarWidget: (
       <>
@@ -68,7 +68,7 @@ const PersonalSettings: () => SettingsData | null = () => {
         {showAvatarUpload && (
           <AvatarUpload
             onSubmit={(file: any) => {
-              dispatch(changeProfilePicture(file));
+              dispatch(updateProfilePhotoAction(file));
               setShowAvatarUpload(false);
             }}
             onDismiss={() => {

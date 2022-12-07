@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import ListButton from '../../../components/utils/ListButton';
 
 import {
-  changeChannelInformationAction,
-  changeChannelPhoto,
+  updateChannelInfoAction,
+  updateChannelPhoto,
 } from '../../../store/actions/channel.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { UpdateChannelPayload } from '../../../store/types/channel.types';
@@ -77,7 +77,7 @@ const ChannelSettings: () => SettingsData = () => {
     url: 'channel',
     onSave: () => {
       if (!(channelId === null || channelId === undefined)) {
-        dispatch(changeChannelInformationAction(channelId, channelPayload));
+        dispatch(updateChannelInfoAction(channelId, channelPayload));
       }
     },
     avatarWidget: (
@@ -196,7 +196,7 @@ const ChannelSettings: () => SettingsData = () => {
         {showAvatarUpload && !(channelId === null || channelId === undefined) && (
           <AvatarUpload
             onSubmit={(file: any) => {
-              dispatch(changeChannelPhoto(file, channelId));
+              dispatch(updateChannelPhoto(file, channelId));
               setShowAvatarUpload(false);
             }}
             onDismiss={() => {
