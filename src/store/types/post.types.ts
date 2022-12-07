@@ -10,9 +10,6 @@ import {
   CREATE_POST_LIKE_FAILED,
   CREATE_POST_LIKE_REQUESTED,
   CREATE_POST_LIKE_SUCCESS,
-  CREATE_POST_SAVE_FAILED,
-  CREATE_POST_SAVE_REQUESTED,
-  CREATE_POST_SAVE_SUCCESS,
   CREATE_VIDEO_FAILED,
   CREATE_VIDEO_REQUESTED,
   CREATE_VIDEO_SUCCESS,
@@ -43,13 +40,7 @@ import {
   REMOVE_POST_LIKE_REQUESTED,
   REMOVE_POST_LIKE_SUCCESS,
   REMOVE_POST_REQUESTED,
-  REMOVE_POST_SAVE_FAILED,
-  REMOVE_POST_SAVE_REQUESTED,
-  REMOVE_POST_SAVE_SUCCESS,
   REMOVE_POST_SUCCESS,
-  SAVED_POSTS_FAILED,
-  SAVED_POSTS_REQUESTED,
-  SAVED_POSTS_SUCCESS,
   SEARCH_POST_FAILED,
   SEARCH_POST_REQUESTED,
   SEARCH_POST_SUCCESS,
@@ -111,12 +102,6 @@ export interface PostComment {
   replyCount: number;
   likesCount: number;
   liked: boolean;
-}
-
-export interface SavedPost {
-  id: number;
-  createdOn: Date;
-  post: Post;
 }
 
 export interface CreateVideoPayload {
@@ -198,10 +183,6 @@ export interface PostState {
     uploading: boolean;
     error: ResponseError | null;
   };
-  saved: PaginatedResponse<SavedPost> & {
-    loading: boolean;
-    error: ResponseError | null;
-  };
   search: {
     results: PaginatedResponse<Post>;
     loading: boolean;
@@ -227,11 +208,7 @@ export type PostActionParams =
         | typeof POST_DETAIL_REQUESTED
         | typeof CREATE_POST_LIKE_REQUESTED
         | typeof REMOVE_POST_LIKE_REQUESTED
-        | typeof CREATE_POST_SAVE_REQUESTED
-        | typeof REMOVE_POST_SAVE_REQUESTED
         | typeof REMOVE_POST_REQUESTED
-        | typeof CREATE_POST_SAVE_SUCCESS
-        | typeof REMOVE_POST_SAVE_SUCCESS
         | typeof REMOVE_POST_SUCCESS;
       payload: {
         postId: number;
@@ -244,13 +221,6 @@ export type PostActionParams =
   | {
       type: typeof ADD_POST_SUCCESS;
       payload: Post;
-    }
-  | {
-      type: typeof SAVED_POSTS_REQUESTED;
-      payload: {
-        limit?: number;
-        skip?: number;
-      };
     }
   | {
       type: typeof CREATE_POST_COMMENT_REQUESTED;
@@ -313,7 +283,6 @@ export type PostActionParams =
       type: typeof FEED_SUCCESS;
       payload: PaginatedResponse<Post>;
     }
-  | { type: typeof SAVED_POSTS_SUCCESS; payload: PaginatedResponse<SavedPost> }
   | {
       type: typeof POST_DETAIL_SUCCESS;
       payload: Post;
@@ -348,9 +317,6 @@ export type PostActionParams =
         | typeof CREATE_VIDEO_FAILED
         | typeof CREATE_POST_LIKE_FAILED
         | typeof REMOVE_POST_LIKE_FAILED
-        | typeof CREATE_POST_SAVE_FAILED
-        | typeof REMOVE_POST_SAVE_FAILED
-        | typeof SAVED_POSTS_FAILED
         | typeof SEARCH_POST_FAILED
         | typeof CREATE_POST_COMMENT_FAILED
         | typeof UPDATE_POST_COMMENT_FAILED

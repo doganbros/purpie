@@ -321,22 +321,20 @@ const Video: FC = () => {
                     <ShareOption color="status-disabled" size="19px" />
                     <Text color="status-disabled">{t('common.share')}</Text>
                   </Box>
-                  <Box pad="small" margin="small" focusIndicator={false}>
-                    <AddToFolderDrop
-                      postId={data.id}
-                      dropLabels={(isActive) => (
-                        <Box direction="row" gap="xsmall" align="center">
-                          <AddCircle
-                            color={isActive ? 'brand' : 'status-disabled'}
-                            size="21px"
-                          />
-                          <Text color={isActive ? 'brand' : 'status-disabled'}>
-                            {isActive ? t('common.saved') : t('common.save')}
-                          </Text>
-                        </Box>
-                      )}
-                    />
-                  </Box>
+                  <AddToFolderDrop
+                    postId={data.id}
+                    dropLabels={(isActive) => (
+                      <Box direction="row" gap="xsmall" align="center">
+                        <AddCircle
+                          color={isActive ? 'brand' : 'status-disabled'}
+                          size="21px"
+                        />
+                        <Text color={isActive ? 'brand' : 'status-disabled'}>
+                          {isActive ? t('common.saved') : t('common.save')}
+                        </Text>
+                      </Box>
+                    )}
+                  />
                   <Box direction="row" gap="xsmall" align="center">
                     <ChatIcon color="status-disabled" size="17px" />
                     <Text color="status-disabled">

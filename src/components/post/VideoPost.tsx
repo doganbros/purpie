@@ -38,7 +38,7 @@ export const VideoPost: FC<VideoPostProps> = ({
         }
       }}
       onMouseLeave={() => {
-        // setHover(false);
+        setHover(false);
         // setOpen(false);
         if (player.current) {
           player.current.pause();

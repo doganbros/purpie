@@ -4,8 +4,6 @@ import {
   CREATE_POST_COMMENT_LIKE_SUCCESS,
   CREATE_POST_COMMENT_SUCCESS,
   CREATE_POST_LIKE_SUCCESS,
-  CREATE_POST_SAVE_FAILED,
-  CREATE_POST_SAVE_SUCCESS,
   CREATE_VIDEO_FAILED,
   CREATE_VIDEO_REQUESTED,
   CREATE_VIDEO_SUCCESS,
@@ -28,11 +26,6 @@ import {
   REMOVE_POST_COMMENT_LIKE_SUCCESS,
   REMOVE_POST_COMMENT_SUCCESS,
   REMOVE_POST_LIKE_SUCCESS,
-  REMOVE_POST_SAVE_FAILED,
-  REMOVE_POST_SAVE_SUCCESS,
-  SAVED_POSTS_FAILED,
-  SAVED_POSTS_REQUESTED,
-  SAVED_POSTS_SUCCESS,
   SEARCH_POST_FAILED,
   SEARCH_POST_REQUESTED,
   SEARCH_POST_SUCCESS,
@@ -62,11 +55,6 @@ const initialState: PostState = {
   createVideo: {
     showCreateVideoLayer: false,
     uploading: false,
-    error: null,
-  },
-  saved: {
-    ...paginationInitialState,
-    loading: false,
     error: null,
   },
   search: {
@@ -249,110 +237,6 @@ const postReducer = (
                 },
               }
             : state.postDetail.data,
-        },
-      };
-    case CREATE_POST_SAVE_SUCCESS: {
-      const { postDetail, feed, search } = state;
-
-      if (postDetail.data?.id === action.payload.postId)
-        postDetail.data.saved = true;
-
-      const feedPostIndex = feed.data.findIndex(
-        (p) => p.id === action.payload.postId
-      );
-
-      if (feedPostIndex !== -1) feed.data[feedPostIndex].saved = true;
-
-      const searchPostIndex = search.results.data.findIndex(
-        (p) => p.id === action.payload.postId
-      );
-
-      if (searchPostIndex !== -1)
-        search.results.data[searchPostIndex].saved = true;
-
-      return {
-        ...state,
-        postDetail,
-        feed,
-        search,
-      };
-    }
-    case REMOVE_POST_SAVE_SUCCESS: {
-      const { postDetail, feed, saved, search } = state;
-
-      if (postDetail.data?.id === action.payload.postId)
-        postDetail.data.saved = false;
-
-      const feedPostIndex = feed.data.findIndex(
-        (p) => p.id === action.payload.postId
-      );
-
-      if (feedPostIndex !== -1) feed.data[feedPostIndex].saved = false;
-
-      const searchPostIndex = search.results.data.findIndex(
-        (p) => p.id === action.payload.postId
-      );
-
-      if (searchPostIndex !== -1)
-        search.results.data[searchPostIndex].saved = false;
-
-      saved.data = saved.data.filter((p) => p.id !== action.payload.postId);
-
-      return {
-        ...state,
-        postDetail,
-        feed,
-        saved,
-        search,
-      };
-    }
-    case CREATE_POST_SAVE_FAILED:
-      return {
-        ...state,
-        saved: {
-          ...state.saved,
-          loading: false,
-          error: action.payload,
-        },
-      };
-    case REMOVE_POST_SAVE_FAILED:
-      return {
-        ...state,
-        saved: {
-          ...state.saved,
-          loading: false,
-          error: action.payload,
-        },
-      };
-    case SAVED_POSTS_REQUESTED:
-      return {
-        ...state,
-        saved: {
-          ...state.saved,
-          loading: true,
-          error: null,
-        },
-      };
-    case SAVED_POSTS_SUCCESS:
-      return {
-        ...state,
-        saved: {
-          ...action.payload,
-          data:
-            action.payload.skip > 0
-              ? [...state.saved.data, ...action.payload.data]
-              : action.payload.data,
-          loading: false,
-          error: null,
-        },
-      };
-    case SAVED_POSTS_FAILED:
-      return {
-        ...state,
-        saved: {
-          ...state.saved,
-          loading: false,
-          error: action.payload,
         },
       };
     case SEARCH_POST_REQUESTED:

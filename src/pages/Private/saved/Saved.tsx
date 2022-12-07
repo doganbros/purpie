@@ -2,12 +2,11 @@ import React, { FC, useState } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Box, Button, Text } from 'grommet';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
 import SearchBar from '../../../components/utils/SearchBar';
-import { removePostSaveAction } from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import ChannelsToFollow from '../timeline/ChannelsToFollow';
 import LastActivities from '../timeline/LastActivities';
@@ -25,10 +24,7 @@ interface ConfirmationState {
 }
 
 const Saved: FC = () => {
-  // const size = useContext(ResponsiveContext);
-  // const history = useHistory();
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const {
     folder: { folderList },
   } = useSelector((state: AppState) => state);
@@ -80,11 +76,7 @@ const Saved: FC = () => {
         )}
         {confirmation.visible && (
           <ConfirmDialog
-            onConfirm={() => {
-              if (confirmation.postId !== null) {
-                dispatch(removePostSaveAction({ postId: confirmation.postId }));
-              }
-            }}
+            onConfirm={() => 'remove post from folder'}
             onDismiss={closeConfirmation}
             message={t('Saved.removeConfirmMsg')}
             confirmButtonText={t('common.remove')}
