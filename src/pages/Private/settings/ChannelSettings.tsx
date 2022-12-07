@@ -33,7 +33,7 @@ const ChannelSettings: () => SettingsData = () => {
     public: userChannels?.data[0]?.channel?.public,
   });
 
-  const [open, setOpen] = useState(false);
+  const [isDropOpen, setIsDropOpen] = useState(false);
   const { t } = useTranslation();
 
   const [showChannelSelector, setShowChannelSelector] = useState(true);
@@ -109,9 +109,9 @@ const ChannelSettings: () => SettingsData = () => {
             </Stack>
           )}
           <DropButton
-            open={open}
-            onOpen={() => setOpen(true)}
-            onClose={() => setOpen(false)}
+            open={isDropOpen}
+            onOpen={() => setIsDropOpen(true)}
+            onClose={() => setIsDropOpen(false)}
             dropAlign={{ left: 'right', top: 'top' }}
             dropProps={{
               responsive: false,
@@ -133,6 +133,7 @@ const ChannelSettings: () => SettingsData = () => {
                       });
                       setSelectedUserChannelIndex(index);
                       setShowChannelSelector(false);
+                      setIsDropOpen(false);
                     }}
                     leftIcon={
                       <ChannelAvatar
@@ -151,7 +152,11 @@ const ChannelSettings: () => SettingsData = () => {
             }
           >
             {!showChannelSelector ? (
-              <Box onClick={() => setOpen(true)} direction="row" gap="small">
+              <Box
+                onClick={() => setIsDropOpen(true)}
+                direction="row"
+                gap="small"
+              >
                 <Box>
                   <Text>
                     {

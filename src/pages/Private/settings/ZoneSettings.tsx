@@ -28,6 +28,7 @@ const ZoneSettings: () => SettingsData | null = () => {
   const { t } = useTranslation();
 
   const [showZoneSelector, setShowZoneSelector] = useState(true);
+  const [isDropOpen, setIsDropOpen] = useState(false);
 
   const [zonePayload, setZonePayload] = useState<UpdateZonePayload>({
     name: '',
@@ -101,6 +102,9 @@ const ZoneSettings: () => SettingsData | null = () => {
           </Stack>
         )}
         <DropButton
+          open={isDropOpen}
+          onOpen={() => setIsDropOpen(true)}
+          onClose={() => setIsDropOpen(false)}
           dropProps={{
             responsive: false,
             stretch: false,
@@ -123,6 +127,7 @@ const ZoneSettings: () => SettingsData | null = () => {
                     });
                     setSelectedUserZoneIndex(index);
                     setShowZoneSelector(false);
+                    setIsDropOpen(false);
                   }}
                   leftIcon={
                     <ZoneAvatar
