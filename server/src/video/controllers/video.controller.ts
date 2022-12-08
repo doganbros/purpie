@@ -24,6 +24,7 @@ import { VideoService } from '../services/video.service';
 import { VideoUploadClientFeedbackDto } from '../dto/video-upload-client-feedback.dto';
 import { User } from '../../../entities/User.entity';
 import { PostReaction } from '../../../entities/PostReaction.entity';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const { S3_VIDEO_POST_DIR = '' } = process.env;
 
@@ -52,8 +53,8 @@ export class VideoController {
         if (!isValid)
           return cb(
             new BadRequestException(
+              ErrorTypes.INVALID_VIDEO_FORMAT,
               'Please upload a valid video format',
-              'FILE_FORMAT_MUST_BE_VIDEO',
             ),
             false,
           );

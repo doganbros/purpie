@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, DropButton, Stack, Text, TextInput } from 'grommet';
+import { Box, Button, DropButton, Stack, Text, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { CaretDownFill, CaretRightFill, Edit } from 'grommet-icons';
 import { useTranslation } from 'react-i18next';
@@ -8,8 +8,8 @@ import { AppState } from '../../../store/reducers/root.reducer';
 import { UpdateZonePayload } from '../../../store/types/zone.types';
 import { SettingsData } from './types';
 import {
-  changeZoneInformationAction,
-  changeZonePhoto,
+  updateZoneInfoAction,
+  updateZonePhotoAction,
 } from '../../../store/actions/zone.action';
 import AvatarUpload from './AvatarUpload';
 import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
@@ -28,6 +28,7 @@ const ZoneSettings: () => SettingsData | null = () => {
   const { t } = useTranslation();
 
   const [showZoneSelector, setShowZoneSelector] = useState(true);
+  const [isDropOpen, setIsDropOpen] = useState(false);
 
   const [zonePayload, setZonePayload] = useState<UpdateZonePayload>({
     name: '',
@@ -67,17 +68,33 @@ const ZoneSettings: () => SettingsData | null = () => {
     };
   }
 
-  const zoneId = userZones?.[selectedUserZoneIndex]?.zone?.id;
+  const selectedZone = userZones?.[selectedUserZoneIndex]?.zone;
+  const zoneId = selectedZone?.id;
+
+  const isFormInitialState =
+    zonePayload.name === selectedZone?.name &&
+    zonePayload.description === selectedZone?.description &&
+    zonePayload.subdomain === selectedZone?.subdomain &&
+    zonePayload.public === selectedZone?.public;
+
   return {
     id: 2,
     key: 'zone',
     label: t('settings.zoneSettings'),
     url: 'zone',
-    onSave: () => {
-      if (!(zoneId === null || zoneId === undefined)) {
-        dispatch(changeZoneInformationAction(zoneId, zonePayload));
-      }
-    },
+    saveButton: (
+      <Button
+        disabled={isFormInitialState}
+        onClick={() => {
+          if (!(zoneId === null || zoneId === undefined)) {
+            dispatch(updateZoneInfoAction(zoneId, zonePayload));
+          }
+        }}
+        primary
+        label={t('settings.save')}
+        margin={{ vertical: 'medium' }}
+      />
+    ),
     avatarWidget: (
       <Box direction="row" gap="small">
         {!showZoneSelector && (
@@ -90,9 +107,9 @@ const ZoneSettings: () => SettingsData | null = () => {
               pad="5px"
             >
               <ZoneAvatar
-                id={userZones?.[selectedUserZoneIndex]?.zone?.id || 1}
-                name={userZones?.[selectedUserZoneIndex]?.zone?.name}
-                src={userZones?.[selectedUserZoneIndex]?.zone?.displayPhoto}
+                id={selectedZone?.id || 1}
+                name={selectedZone?.name}
+                src={selectedZone?.displayPhoto}
               />
             </Box>
             <Box background="#6FFFB0" round pad="xsmall">
@@ -101,6 +118,9 @@ const ZoneSettings: () => SettingsData | null = () => {
           </Stack>
         )}
         <DropButton
+          open={isDropOpen}
+          onOpen={() => setIsDropOpen(true)}
+          onClose={() => setIsDropOpen(false)}
           dropProps={{
             responsive: false,
             stretch: false,
@@ -123,6 +143,7 @@ const ZoneSettings: () => SettingsData | null = () => {
                     });
                     setSelectedUserZoneIndex(index);
                     setShowZoneSelector(false);
+                    setIsDropOpen(false);
                   }}
                   leftIcon={
                     <ZoneAvatar
@@ -140,10 +161,8 @@ const ZoneSettings: () => SettingsData | null = () => {
           {!showZoneSelector ? (
             <Box direction="row">
               <Box>
-                <Text>{userZones?.[selectedUserZoneIndex]?.zone?.name}</Text>
-                <Text color="#8F9BB3">
-                  {userZones?.[selectedUserZoneIndex]?.zone?.subdomain}
-                </Text>
+                <Text>{selectedZone?.name}</Text>
+                <Text color="#8F9BB3">{selectedZone?.subdomain}</Text>
               </Box>
               <CaretDownFill />
             </Box>
@@ -163,7 +182,7 @@ const ZoneSettings: () => SettingsData | null = () => {
         {showAvatarUpload && !(zoneId === null) && (
           <AvatarUpload
             onSubmit={(file: any) => {
-              dispatch(changeZonePhoto(file, zoneId || 1));
+              dispatch(updateZonePhotoAction(file, zoneId || 1));
               setShowAvatarUpload(false);
             }}
             onDismiss={() => {

@@ -75,13 +75,15 @@ const ZoneSelector: FC = () => {
                       navigateToSubdomain(z.zone.subdomain);
                     }}
                     leftIcon={
-                      <ZoneAvatar
-                        id={z.zone.id}
-                        name={z.zone.name}
-                        src={z.zone.displayPhoto}
-                        size="small"
-                        textProps={{ size: 'xsmall', weight: 'normal' }}
-                      />
+                      <Box width={{ min: '24px' }} height="24px">
+                        <ZoneAvatar
+                          id={z.zone.id}
+                          name={z.zone.name}
+                          src={z.zone.displayPhoto}
+                          size="small"
+                          textProps={{ size: 'xsmall', weight: 'normal' }}
+                        />
+                      </Box>
                     }
                     key={z.zone.id}
                     label={z.zone.name}
