@@ -3,6 +3,7 @@ import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
 import {
   CreateVideoPayload,
+  EditVideoPayload,
   FeedPayload,
   ListPostCommentsParams,
   Post,
@@ -11,62 +12,25 @@ import {
   SavedPost,
 } from '../types/post.types';
 
-export const getPublicFeed = (
+export const getPostFeeds = (
   params: FeedPayload
 ): Promise<PaginatedResponse<Post>> =>
   http
-    .get('/post/list/feed/public', {
+    .get('/post/list/feed', {
       params,
     })
     .then((res) => res.data);
-
-export const getUserFeed = (
-  params: FeedPayload
-): Promise<PaginatedResponse<Post>> =>
-  http
-    .get('/post/list/feed/user', {
-      params,
-    })
-    .then((res) => res.data);
-
-export const getZoneFeed = (
-  payload: FeedPayload & { zoneId: number }
-): Promise<PaginatedResponse<Post>> => {
-  const { zoneId, ...params } = payload;
-  return http
-    .get(`/post/list/feed/zone/${zoneId}`, {
-      params,
-    })
-    .then((res) => res.data);
-};
-
-export const getChannelFeed = (
-  payload: FeedPayload & { channelId: number }
-): Promise<PaginatedResponse<Post>> => {
-  const { channelId, ...params } = payload;
-  return http
-    .get(`/post/list/feed/channel/${channelId}`, {
-      params,
-    })
-    .then((res) => res.data);
-};
 
 export const getPostDetail = (postId: number): Promise<Post> =>
   http.get(`/post/detail/feed/${postId}`).then((res) => res.data);
 
-export const updatePostDetail = (
-  postId: number,
-  title: string,
-  description: string
-): Promise<Post> =>
-  http
-    .put(`/post/update/${postId}`, { title, description })
-    .then((res) => res.data);
+export const updatePostDetail = (payload: EditVideoPayload): Promise<Post> =>
+  http.put(`/post/update/${payload.postId}`, payload).then((res) => res.data);
 
 export const createVideo = (
   data: CreateVideoPayload,
   onUploadProgress: (progressEvent: ProgressEvent<XMLHttpRequestUpload>) => void
-): Promise<any> =>
+): Promise<Post> =>
   http
     .post('video/create/', serialize(data), { onUploadProgress })
     .then((res) => res.data);
@@ -98,7 +62,7 @@ export const getSavedPost = (params: {
 export const searchPost = (
   params: PostSearchParams
 ): Promise<PaginatedResponse<Post>> =>
-  http.get(`/post/list/feed/user`, { params }).then((res) => res.data);
+  http.get(`/post/list/feed`, { params }).then((res) => res.data);
 
 export const postViewStats = (
   postId: number,

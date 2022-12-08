@@ -33,6 +33,7 @@ import timezone from 'dayjs/plugin/timezone';
 import { ClientMeetingEventDto } from '../dto/client-meeting-event.dto';
 import { CreateMeetingDto } from '../dto/create-meeting.dto';
 import { ConferenceInfoResponse } from '../responses/conference-info.response';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -62,12 +63,20 @@ export class MeetingService {
     private mailService: MailService,
   ) {}
 
-  async validateUserChannel(userId: number, channelId: number) {
+  async validateUserChannel(
+    userId: number,
+    channelId: number,
+  ): Promise<UserChannel> {
     const userChannel = await this.userChannelRepository.findOne({
-      channelId,
-      userId,
+      where: { channelId, userId },
+      relations: ['channel'],
     });
-    if (!userChannel) throw new NotFoundException('User channel not found');
+    if (!userChannel)
+      throw new NotFoundException(
+        ErrorTypes.CHANNEL_NOT_FOUND,
+        'User channel not found',
+      );
+    return userChannel;
   }
 
   async getMeetingConfig(userId: number, createMeetingInfo: CreateMeetingDto) {
@@ -87,10 +96,6 @@ export class MeetingService {
     meetingConfig.privacyConfig = {
       public:
         createMeetingInfo.public ?? meetingConfig.privacyConfig.public ?? true,
-      userContactExclusive:
-        createMeetingInfo.userContactExclusive ??
-        meetingConfig.privacyConfig.userContactExclusive ??
-        false,
       liveStream:
         createMeetingInfo.liveStream ??
         meetingConfig.privacyConfig.liveStream ??
@@ -106,15 +111,15 @@ export class MeetingService {
     const maxCreateAttempts = 5;
     let createAttempts = 0;
 
+    const request = payload;
     while (createAttempts < maxCreateAttempts) {
       try {
-        payload.slug = separateString(generateLowerAlphaNumId(9), 3);
+        request.slug = separateString(generateLowerAlphaNumId(9), 3);
         if (MEETING_HOST) {
-          payload.slug += `_${MEETING_HOST}`;
+          request.slug += `_${MEETING_HOST}`;
         }
 
-        const meeting = await this.postRepository.create(payload).save();
-        return meeting;
+        return this.postRepository.create(payload).save();
       } catch (err: any) {
         if (createAttempts === maxCreateAttempts) throw err;
         createAttempts++;
@@ -122,8 +127,8 @@ export class MeetingService {
     }
 
     throw new InternalServerErrorException(
+      ErrorTypes.COULD_NOT_CREATE_MEETING,
       'Could not create meeting',
-      'COULD_NOT_CREATE_MEETING',
     );
   }
 
@@ -161,7 +166,7 @@ export class MeetingService {
     };
     return this.mailService.sendMailByView(
       user.email,
-      'Octopus Meeting',
+      'Purpie Meeting',
       'meeting-info',
       context,
     );
@@ -202,12 +207,15 @@ export class MeetingService {
     ).getOne();
 
     if (!result)
-      throw new NotFoundException('Meeting not found', 'MEETING_NOT_FOUND');
+      throw new NotFoundException(
+        ErrorTypes.MEETING_NOT_FOUND,
+        'Meeting not found',
+      );
 
     if (!result.record)
       throw new BadRequestException(
+        ErrorTypes.MEETING_RECORDING_NOT_ENABLED,
         'Recording was not enabled for meeting',
-        'MEETING_RECORDING_NOT_ENABLED',
       );
 
     return result;

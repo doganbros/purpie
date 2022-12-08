@@ -44,9 +44,13 @@ import { CreateMeetingDto } from '../dto/create-meeting.dto';
 import { MeetingService } from '../services/meeting.service';
 import { ClientVerifyMeetingAuthDto } from '../dto/client-verify-meeting-auth.dto';
 import { ConferenceInfoResponse } from '../responses/conference-info.response';
+import { User } from '../../../entities/User.entity';
+import { PostReaction } from '../../../entities/PostReaction.entity';
+import { UserChannel } from '../../../entities/UserChannel.entity';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
 @Controller({ path: 'meeting', version: '1' })
 @ApiTags('meeting')
 export class MeetingController {
@@ -76,15 +80,6 @@ export class MeetingController {
       privacyConfig,
     } = await this.meetingService.getMeetingConfig(user.id, createMeetingInfo);
 
-    if (
-      createMeetingInfo.public === true &&
-      createMeetingInfo.userContactExclusive === true
-    )
-      createMeetingInfo.userContactExclusive = false;
-
-    const userContactExclusive =
-      createMeetingInfo.userContactExclusive ??
-      privacyConfig.userContactExclusive;
     const publicMeeting = createMeetingInfo.public ?? privacyConfig.public;
     const liveStream = createMeetingInfo.liveStream ?? privacyConfig.liveStream;
     const record = createMeetingInfo.record ?? privacyConfig.record;
@@ -112,12 +107,14 @@ export class MeetingController {
     };
 
     if (channelId) {
-      await this.meetingService.validateUserChannel(user.id, channelId);
+      const userChannel: UserChannel = await this.meetingService.validateUserChannel(
+        user.id,
+        channelId,
+      );
       meetingPayload.channelId = channelId;
+      meetingPayload.public = userChannel.channel.public;
     } else {
-      meetingPayload.public = publicMeeting === true;
-      meetingPayload.userContactExclusive =
-        userContactExclusive === true && !meetingPayload.public;
+      meetingPayload.public = publicMeeting;
     }
 
     meetingPayload.config = jitsiConfig;
@@ -162,10 +159,23 @@ export class MeetingController {
         privacyConfig,
       });
 
-    if (!createMeetingInfo.startDate)
-      return this.meetingService.generateMeetingUrl(meeting, user, true);
+    meeting.createdBy = {
+      id: user.id,
+      email: user.email,
+      fullName: user.email,
+    } as User;
+    meeting.postReaction = new PostReaction();
 
-    return meeting.id;
+    if (!createMeetingInfo.startDate) {
+      const meetingUrl = await this.meetingService.generateMeetingUrl(
+        meeting,
+        user,
+        true,
+      );
+      return { meetingUrl, meeting };
+    }
+
+    return { meeting };
   }
 
   @Get('join/:slug')
@@ -295,7 +305,7 @@ export class MeetingController {
   @Post('/client/verify')
   @ApiCreatedResponse({
     description:
-      'Client athenticates an octopus user for a meeting. Client must have manageMeeting permission.',
+      'Client athenticates an purpie user for a meeting. Client must have manageMeeting permission.',
     schema: { type: 'string', example: 'OK' },
   })
   @ApiNotFoundResponse({

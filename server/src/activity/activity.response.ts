@@ -26,12 +26,6 @@ class PublicChannelSuggestionList {
   zone_subdomain: string;
 
   @ApiProperty()
-  category_id: number;
-
-  @ApiProperty()
-  category_name: string;
-
-  @ApiProperty()
   channel_membersCount: string;
 }
 
@@ -53,12 +47,6 @@ class PublicZoneSuggestionList {
 
   @ApiProperty()
   channel_public: boolean;
-
-  @ApiProperty()
-  category_id: number;
-
-  @ApiProperty()
-  category_name: string;
 
   @ApiProperty()
   zone_channelCount: string;

@@ -46,7 +46,7 @@ export const SidebarButton: FC<Props> = ({
             pad={{ vertical: 'small' }}
             align="center"
           >
-            <IconComponent size="32px" color={hover ? 'accent-1' : 'white'} />
+            <IconComponent size="28px" color={hover ? 'accent-1' : 'white'} />
           </ExtendedBox>
         )}
       </Button>

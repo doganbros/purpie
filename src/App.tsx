@@ -18,9 +18,13 @@ import { AppState } from './store/reducers/root.reducer';
 import InitializeUser from './pages/Public/InitializeUser';
 import { initializeSocket } from './helpers/socket';
 import { getUserChannelsAction } from './store/actions/channel.action';
+import { DELAY_TIME } from './helpers/constants';
+import useDelayTime from './hooks/useDelayTime';
 
 const App: FC = () => {
   const dispatch = useDispatch();
+
+  const { delay } = useDelayTime(DELAY_TIME);
 
   const {
     auth: {
@@ -52,7 +56,7 @@ const App: FC = () => {
           message={toast.message}
           id={toast.toastId}
         />
-        {loading || (isAuthenticated && !userZoneInitialized) ? (
+        {delay || loading || (isAuthenticated && !userZoneInitialized) ? (
           <Loader />
         ) : (
           <Router history={appHistory}>

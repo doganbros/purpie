@@ -59,6 +59,7 @@ import { InviteToJoinChannelDto } from '../dto/invite-to-join-channel.dto';
 import { SearchChannelQuery } from '../dto/search-channel.query';
 import { UpdateChannelUserRoleDto } from '../dto/update-channel-user-role.dto';
 import { UpdateChannelPermission } from '../dto/update-channel-permission.dto';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 
@@ -138,7 +139,10 @@ export class ChannelController {
     );
 
     if (!channel)
-      throw new NotFoundException('Channel not found', 'CHANNEL_NOT_FOUND');
+      throw new NotFoundException(
+        ErrorTypes.CHANNEL_NOT_FOUND,
+        'Channel not found',
+      );
 
     let userZone = await this.userZoneService.userExistsInZone(
       userProfile.id,
@@ -220,7 +224,11 @@ export class ChannelController {
       userProfile.email,
     );
 
-    if (!invitation) throw new NotFoundException('Invitation not found');
+    if (!invitation)
+      throw new NotFoundException(
+        ErrorTypes.INVITATION_NOT_FOUND,
+        'Invitation not found',
+      );
 
     if (invitationResponse.status === 'reject') {
       invitation.remove();
@@ -410,8 +418,8 @@ export class ChannelController {
         if (!isValid)
           return cb(
             new BadRequestException(
+              ErrorTypes.INVALID_IMAGE_FORMAT,
               'Please upload a valid photo format',
-              'FILE_FORMAT_MUST_BE_PHOTO',
             ),
             false,
           );

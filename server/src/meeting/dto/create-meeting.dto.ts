@@ -42,24 +42,17 @@ export class CreateMeetingDto {
 
   @ApiProperty()
   @ValidateIf((o) => {
-    return !o.userContactExclusive && !o.public;
+    return !o.public;
   })
   @IsInt()
   channelId?: number;
 
   @ApiProperty()
   @ValidateIf((o) => {
-    return !o.userContactExclusive && !o.channelId;
+    return !o.channelId;
   })
   @IsBoolean()
   public?: boolean;
-
-  @ApiProperty()
-  @ValidateIf((o) => {
-    return !o.channelId && !o.public;
-  })
-  @IsBoolean()
-  userContactExclusive?: boolean;
 
   @ApiProperty()
   @IsOptional()

@@ -2,12 +2,6 @@ import {
   CHANNEL_SUGGESTIONS_FAILED,
   CHANNEL_SUGGESTIONS_REQUESTED,
   CHANNEL_SUGGESTIONS_SUCCESS,
-  GET_INVITATION_RESPONSE_FAILED,
-  GET_INVITATION_RESPONSE_REQUESTED,
-  GET_INVITATION_RESPONSE_SUCCESS,
-  LIST_INVITATION_FAILED,
-  LIST_INVITATION_REQUESTED,
-  LIST_INVITATION_SUCCESS,
   NOTIFICATION_COUNT_FAILED,
   NOTIFICATION_COUNT_REQUESTED,
   NOTIFICATION_COUNT_SUCCESS,
@@ -16,6 +10,18 @@ import {
   NOTIFICATION_SUCCESS,
   VIEW_NOTIFICATION_REQUESTED,
   VIEW_NOTIFICATION_SUCCESS,
+  CONTACT_SUGGESTIONS_FAILED,
+  CONTACT_SUGGESTIONS_REQUESTED,
+  CONTACT_SUGGESTIONS_SUCCESS,
+  CREATE_CONTACT_INVITATION_FAILED,
+  CREATE_CONTACT_INVITATION_REQUESTED,
+  CREATE_CONTACT_INVITATION_SUCCESS,
+  GET_INVITATION_RESPONSE_FAILED,
+  GET_INVITATION_RESPONSE_REQUESTED,
+  GET_INVITATION_RESPONSE_SUCCESS,
+  LIST_INVITATION_FAILED,
+  LIST_INVITATION_REQUESTED,
+  LIST_INVITATION_SUCCESS,
   ZONE_SUGGESTIONS_FAILED,
   ZONE_SUGGESTIONS_REQUESTED,
   ZONE_SUGGESTIONS_SUCCESS,
@@ -31,6 +37,11 @@ const initialState: ActivityState = {
   },
   channelSuggestions: {
     ...paginationInitialState,
+    loading: false,
+    error: null,
+  },
+  contactSuggestions: {
+    data: [],
     loading: false,
     error: null,
   },
@@ -53,6 +64,11 @@ const initialState: ActivityState = {
   responseInvitation: {
     loading: false,
     error: null,
+  },
+  invitedContacts: {
+    loading: false,
+    error: null,
+    userIds: [],
   },
 };
 
@@ -84,6 +100,33 @@ const activityReducer = (
         ...state,
         zoneSuggestions: {
           ...state.zoneSuggestions,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case CONTACT_SUGGESTIONS_REQUESTED:
+      return {
+        ...state,
+        contactSuggestions: {
+          ...state.contactSuggestions,
+          loading: true,
+          error: null,
+        },
+      };
+    case CONTACT_SUGGESTIONS_SUCCESS:
+      return {
+        ...state,
+        contactSuggestions: {
+          data: action.payload,
+          loading: false,
+          error: null,
+        },
+      };
+    case CONTACT_SUGGESTIONS_FAILED:
+      return {
+        ...state,
+        contactSuggestions: {
+          ...state.contactSuggestions,
           loading: false,
           error: action.payload,
         },
@@ -181,6 +224,32 @@ const activityReducer = (
           error: action.payload,
         },
       };
+    case CREATE_CONTACT_INVITATION_REQUESTED:
+      return {
+        ...state,
+        invitedContacts: {
+          ...state.invitedContacts,
+          loading: true,
+        },
+      };
+    case CREATE_CONTACT_INVITATION_SUCCESS:
+      return {
+        ...state,
+        invitedContacts: {
+          userIds: [...state.invitedContacts.userIds, action.payload],
+          loading: false,
+          error: null,
+        },
+      };
+    case CREATE_CONTACT_INVITATION_FAILED:
+      return {
+        ...state,
+        invitedContacts: {
+          ...state.invitedContacts,
+          loading: false,
+          error: action.payload,
+        },
+      };
     case NOTIFICATION_REQUESTED:
       return {
         ...state,
@@ -193,11 +262,20 @@ const activityReducer = (
     case NOTIFICATION_SUCCESS:
       return {
         ...state,
-        notification: {
-          ...action.payload,
-          loading: false,
-          error: null,
-        },
+        // notification: {
+        //   ...action.payload,
+        //   loading: false,
+        //   error: null,
+        // },
+        notification:
+          action.payload.skip > 0
+            ? {
+                ...action.payload,
+                data: [...state.notification.data, ...action.payload.data],
+                loading: false,
+                error: null,
+              }
+            : { ...action.payload, loading: false, error: null },
       };
     case NOTIFICATION_FAILED:
       return {

@@ -15,38 +15,33 @@ const NotificationListItem: FC<NotificationListItemProps> = ({
   const getNotificationPayload = () => {
     const iconColor = notification.viewedOn ? 'black' : 'brand';
 
+    const notificationText = (
+      <Trans
+        i18nKey={`NotificationListItem.${notification.type.toString()}`}
+        components={{
+          user: (
+            <Anchor
+              weight="bold"
+              href={`/user/${notification.createdBy.userName}`}
+            />
+          ),
+          post: (
+            <Anchor weight="bold" href={`/video/${notification.post.id}`} />
+          ),
+        }}
+        values={{ userName: notification.createdBy.fullName }}
+      />
+    );
     switch (notification.type) {
       case NotificationType.POST:
         return {
           icon: <TextWrap size="16" color={iconColor} />,
-          title: (
-            <Trans
-              i18nKey="NotificationListItem.POST"
-              components={{
-                user: (
-                  <Anchor href={`/user/${notification.createdBy.userName}`} />
-                ),
-                post: <Anchor href={`/video/${notification.post.id}`} />,
-              }}
-              values={{ userName: notification.createdBy.fullName }}
-            />
-          ),
+          title: notificationText,
         };
       case NotificationType.POST_LIKE:
         return {
           icon: <Favorite size="16" color={iconColor} />,
-          title: (
-            <Trans
-              i18nKey="NotificationListItem.POST_LIKE"
-              components={{
-                user: (
-                  <Anchor href={`/user/${notification.createdBy.userName}`} />
-                ),
-                post: <Anchor href={`/video/${notification.post.id}`} />,
-              }}
-              values={{ userName: notification.createdBy.fullName }}
-            />
-          ),
+          title: notificationText,
         };
       case NotificationType.POST_COMMENT:
         return {
@@ -56,9 +51,17 @@ const NotificationListItem: FC<NotificationListItemProps> = ({
               i18nKey="NotificationListItem.POST_COMMENT"
               components={{
                 user: (
-                  <Anchor href={`/user/${notification.createdBy.userName}`} />
+                  <Anchor
+                    weight="bold"
+                    href={`/user/${notification.createdBy.userName}`}
+                  />
                 ),
-                post: <Anchor href={`/video/${notification.post.id}`} />,
+                post: (
+                  <Anchor
+                    weight="bold"
+                    href={`/video/${notification.post.id}`}
+                  />
+                ),
               }}
               values={{ userName: notification.createdBy.fullName }}
             />
@@ -72,9 +75,17 @@ const NotificationListItem: FC<NotificationListItemProps> = ({
               i18nKey="NotificationListItem.POST_COMMENT_LIKE"
               components={{
                 user: (
-                  <Anchor href={`/user/${notification.createdBy.userName}`} />
+                  <Anchor
+                    weight="bold"
+                    href={`/user/${notification.createdBy.userName}`}
+                  />
                 ),
-                post: <Anchor href={`/video/${notification.post.id}`} />,
+                post: (
+                  <Anchor
+                    weight="bold"
+                    href={`/video/${notification.post.id}`}
+                  />
+                ),
               }}
               values={{ userName: notification.createdBy.fullName }}
             />
@@ -88,9 +99,17 @@ const NotificationListItem: FC<NotificationListItemProps> = ({
               i18nKey="NotificationListItem.POST_COMMENT_REPLY"
               components={{
                 user: (
-                  <Anchor href={`/user/${notification.createdBy.userName}`} />
+                  <Anchor
+                    weight="bold"
+                    href={`/user/${notification.createdBy.userName}`}
+                  />
                 ),
-                post: <Anchor href={`/video/${notification.post.id}`} />,
+                post: (
+                  <Anchor
+                    weight="bold"
+                    href={`/video/${notification.post.id}`}
+                  />
+                ),
               }}
               values={{ userName: notification.createdBy.fullName }}
             />
@@ -155,7 +174,7 @@ const NotificationListItem: FC<NotificationListItemProps> = ({
       {icon}
       <Text
         color={notification.viewedOn ? 'black' : 'brand'}
-        weight={notification.viewedOn ? 400 : 600}
+        weight={notification.viewedOn ? 400 : 500}
         size="xsmall"
       >
         {title}

@@ -44,14 +44,15 @@ const ListButton: FC<ListButtonProps> = ({
       }}
       pad={{ vertical: 'xsmall', horizontal: 'small' }}
       {...props}
+      flex={{ grow: 1 }}
     >
       <Box fill direction="row" align="center" justify="between">
         <Box direction="row" align="center" gap="small">
           {leftIcon}
 
           <EllipsesOverflowText
-            maxWidth="210px"
-            weight={selected ? 'bold' : 'normal'}
+            maxWidth="195px"
+            weight={selected ? 'bold' : 0}
             size="xsmall"
             color={setTextColor()}
             {...textProps}

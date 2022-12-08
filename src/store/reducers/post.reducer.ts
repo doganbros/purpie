@@ -1,7 +1,5 @@
 import {
-  CHANNEL_FEED_FAILED,
-  CHANNEL_FEED_REQUESTED,
-  CHANNEL_FEED_SUCCESS,
+  ADD_POST_SUCCESS,
   CLOSE_CREATE_VIDEO_LAYER,
   CREATE_POST_COMMENT_LIKE_SUCCESS,
   CREATE_POST_COMMENT_SUCCESS,
@@ -11,6 +9,9 @@ import {
   CREATE_VIDEO_FAILED,
   CREATE_VIDEO_REQUESTED,
   CREATE_VIDEO_SUCCESS,
+  FEED_FAILED,
+  FEED_REQUESTED,
+  FEED_SUCCESS,
   GET_FEATURED_POST_FAILED,
   GET_FEATURED_POST_REQUESTED,
   GET_FEATURED_POST_SUCCESS,
@@ -24,9 +25,6 @@ import {
   POST_DETAIL_FAILED,
   POST_DETAIL_REQUESTED,
   POST_DETAIL_SUCCESS,
-  PUBLIC_FEED_FAILED,
-  PUBLIC_FEED_REQUESTED,
-  PUBLIC_FEED_SUCCESS,
   REMOVE_POST_COMMENT_LIKE_SUCCESS,
   REMOVE_POST_COMMENT_SUCCESS,
   REMOVE_POST_LIKE_SUCCESS,
@@ -40,12 +38,6 @@ import {
   SEARCH_POST_SUCCESS,
   UPDATE_POST_COMMENT_SUCCESS,
   UPDATE_POST_DETAIL_SUCCESS,
-  USER_FEED_FAILED,
-  USER_FEED_REQUESTED,
-  USER_FEED_SUCCESS,
-  ZONE_FEED_FAILED,
-  ZONE_FEED_REQUESTED,
-  ZONE_FEED_SUCCESS,
 } from '../constants/post.constants';
 import { PostActionParams, PostState } from '../types/post.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -94,6 +86,14 @@ const postReducer = (
   action: PostActionParams
 ): PostState => {
   switch (action.type) {
+    case ADD_POST_SUCCESS:
+      return {
+        ...state,
+        feed: {
+          ...state.feed,
+          data: [action.payload, ...state.feed.data],
+        },
+      };
     case UPDATE_POST_DETAIL_SUCCESS:
       return {
         ...state,
@@ -108,7 +108,7 @@ const postReducer = (
         },
       };
       break;
-    case PUBLIC_FEED_REQUESTED:
+    case FEED_REQUESTED:
       return {
         ...state,
         feed: {
@@ -120,7 +120,7 @@ const postReducer = (
           error: null,
         },
       };
-    case PUBLIC_FEED_SUCCESS:
+    case FEED_SUCCESS:
       return {
         ...state,
         feed: {
@@ -133,109 +133,7 @@ const postReducer = (
           error: null,
         },
       };
-    case PUBLIC_FEED_FAILED:
-      return {
-        ...state,
-        feed: {
-          ...state.feed,
-          loadingState: LoadingState.done,
-          error: action.payload,
-        },
-      };
-    case USER_FEED_REQUESTED:
-      return {
-        ...state,
-        feed: {
-          ...state.feed,
-          loadingState:
-            (action.payload.skip || 0) > 0
-              ? LoadingState.more
-              : LoadingState.loading,
-          error: null,
-        },
-      };
-    case USER_FEED_SUCCESS:
-      return {
-        ...state,
-        feed: {
-          ...action.payload,
-          data:
-            action.payload.skip > 0
-              ? [...state.feed.data, ...action.payload.data]
-              : action.payload.data,
-          loadingState: LoadingState.done,
-          error: null,
-        },
-      };
-    case USER_FEED_FAILED:
-      return {
-        ...state,
-        feed: {
-          ...state.feed,
-          loadingState: LoadingState.done,
-          error: action.payload,
-        },
-      };
-    case ZONE_FEED_REQUESTED:
-      return {
-        ...state,
-        feed: {
-          ...state.feed,
-          loadingState:
-            (action.payload.skip || 0) > 0
-              ? LoadingState.more
-              : LoadingState.loading,
-          error: null,
-        },
-      };
-    case ZONE_FEED_SUCCESS:
-      return {
-        ...state,
-        feed: {
-          ...action.payload,
-          data:
-            action.payload.skip > 0
-              ? [...state.feed.data, ...action.payload.data]
-              : action.payload.data,
-          loadingState: LoadingState.done,
-          error: null,
-        },
-      };
-    case ZONE_FEED_FAILED:
-      return {
-        ...state,
-        feed: {
-          ...state.feed,
-          loadingState: LoadingState.done,
-          error: action.payload,
-        },
-      };
-    case CHANNEL_FEED_REQUESTED:
-      return {
-        ...state,
-        feed: {
-          ...state.feed,
-          loadingState:
-            (action.payload.skip || 0) > 0
-              ? LoadingState.more
-              : LoadingState.loading,
-          error: null,
-        },
-      };
-    case CHANNEL_FEED_SUCCESS:
-      return {
-        ...state,
-        feed: {
-          ...action.payload,
-          data:
-            action.payload.skip > 0
-              ? [...state.feed.data, ...action.payload.data]
-              : action.payload.data,
-          loadingState: LoadingState.done,
-          error: null,
-        },
-      };
-    case CHANNEL_FEED_FAILED:
+    case FEED_FAILED:
       return {
         ...state,
         feed: {
@@ -284,6 +182,10 @@ const postReducer = (
     case CREATE_VIDEO_SUCCESS:
       return {
         ...state,
+        feed: {
+          ...state.feed,
+          data: [action.payload, ...state.feed.data],
+        },
         createVideo: {
           ...state.createVideo,
           uploading: false,

@@ -3,9 +3,9 @@ import React, { FC } from 'react';
 import ExtendedBox from '../../../utils/ExtendedBox';
 import LogoWhite from '../../../../assets/purpie-logo/logo-white.svg';
 import Sidebar from '../Sidebar';
-import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import GradientScroll from '../../../utils/GradientScroll';
 import Divider from '../../../utils/Divider';
+import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
 
 interface Props {
@@ -92,7 +92,9 @@ const Desktop: FC<Props> = ({
             pad={{ horizontal: 'large' }}
             direction="column"
           >
-            <GradientScroll height="100%">{topComponent}</GradientScroll>
+            <GradientScroll justify="center" height="100%" pad="xsmall">
+              {topComponent}
+            </GradientScroll>
             <Box fill="horizontal">
               <Divider />
             </Box>

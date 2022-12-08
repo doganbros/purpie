@@ -60,7 +60,6 @@ export class AuthChanges1633783711421 implements MigrationInterface {
         jitsiConfig: oldConfig,
         privacyConfig: {
           public: true,
-          userContactExclusive: false,
           liveStream: false,
           record: false,
         },

@@ -25,8 +25,10 @@ import {
   INITIALIZE_USER_REQUESTED,
   INITIALIZE_USER_SUCCESS,
   INITIALIZE_USER_FAILED,
+  UPDATE_PROFILE_PHOTO_SUCCESS,
+  UPDATE_PROFILE_INFO_SUCCESS,
 } from '../constants/auth.constants';
-import { AuthState, AuthActionParams } from '../types/auth.types';
+import { AuthActionParams, AuthState } from '../types/auth.types';
 
 const initialState: AuthState = {
   user: null,
@@ -312,6 +314,20 @@ const authReducer = (
           error: action.payload,
         },
       };
+    case UPDATE_PROFILE_INFO_SUCCESS:
+      return {
+        ...state,
+        user: state.user ? { ...state.user, ...action.payload } : null,
+      };
+
+    case UPDATE_PROFILE_PHOTO_SUCCESS:
+      return {
+        ...state,
+        user: state.user
+          ? { ...state.user, displayPhoto: action.payload }
+          : null,
+      };
+
     default:
       return state;
   }

@@ -10,3 +10,5 @@ export const paginationInitialState = {
   total: 0,
 };
 export const USER_NAME_CONSTRAINT = /^[a-zA-Z0-9_]{4,16}$/;
+
+export const DELAY_TIME = 1000;

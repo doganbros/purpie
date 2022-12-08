@@ -3,12 +3,13 @@ import { Box, Button, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
-import { getZoneSuggestionsAction } from '../../../store/actions/activity.action';
 import ZoneListItem from '../../../components/utils/zone/ZoneListItem';
 import {
   SUGGESTION_AMOUNT_LESS,
   SUGGESTION_AMOUNT_MORE,
 } from '../../../helpers/constants';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
+import { getZoneSuggestionsAction } from '../../../store/actions/activity.action';
 
 const ZonesToJoin: FC = () => {
   const dispatch = useDispatch();
@@ -48,7 +49,7 @@ const ZonesToJoin: FC = () => {
       </Box>
 
       {zoneSuggestions.loading && (
-        <Text size="small">{t('common.loading')}</Text>
+        <PurpieLogoAnimated width={50} height={50} color="#956aea" />
       )}
 
       {!zoneSuggestions.loading &&
@@ -64,6 +65,7 @@ const ZonesToJoin: FC = () => {
                 name={z.zone_name}
                 channelCount={+z.zone_channelCount}
                 memberCount={+z.zone_membersCount}
+                displayPhoto={z.zone_displayPhoto}
               />
             ))
         ))}

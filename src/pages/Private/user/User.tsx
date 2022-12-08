@@ -1,4 +1,4 @@
-import { Box, Grid, Layer, Spinner, Text } from 'grommet';
+import { Box, Grid, Layer, Text } from 'grommet';
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
@@ -20,6 +20,7 @@ import { UserSummary } from './UserSummary';
 import UserFriends from './UserFriends';
 import UserPublicChannels from './UserPublicChannels';
 import UserPublicZones from './UserPublicZones';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 interface UserParams {
   userName: string;
@@ -63,12 +64,12 @@ const User: FC = () => {
     >
       {detail.loading || !detail.user ? (
         <Layer responsive={false} plain>
-          <Spinner />
+          <PurpieLogoAnimated width={50} height={50} color="#956aea" />
         </Layer>
       ) : (
         <Box gap="medium" pad={{ vertical: 'medium' }}>
           {featuredPost.loading && (
-            <Text size="small">{t('common.loading')}</Text>
+            <PurpieLogoAnimated width={50} height={50} color="#956aea" />
           )}
           {!featuredPost.loading && featuredPost.data && (
             <Text size="small">{t('User.noPinnedPost')}</Text>

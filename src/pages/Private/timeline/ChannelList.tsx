@@ -7,10 +7,16 @@ import {
   setSelectedChannelAction,
   unsetSelectedChannelAction,
 } from '../../../store/actions/channel.action';
-import InitialsAvatar from '../../../components/utils/InitialsAvatar';
 import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
+import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
 
-const ChannelList: FC = () => {
+interface ChannelListProps {
+  handleWaiting?: () => void;
+}
+const ChannelList: FC<ChannelListProps> = ({
+  handleWaiting,
+}: ChannelListProps) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const {
@@ -28,9 +34,9 @@ const ChannelList: FC = () => {
     : userChannels;
 
   return (
-    <Box fill direction="row" align="center">
+    <Box direction="row">
       {userChannelsFiltered.loading && (
-        <Text size="small">{t('common.loading')}</Text>
+        <PurpieLogoAnimated width={50} height={50} color="#956aea" />
       )}
       {!userChannelsFiltered.loading &&
         (userChannelsFiltered.data.length === 0 ? (
@@ -43,6 +49,8 @@ const ChannelList: FC = () => {
           userChannelsFiltered.data.map((c) => (
             <Box
               onClick={() => {
+                handleWaiting?.();
+                //   event.stopPropagation();
                 if (c.channel.id === selectedChannel?.channel.id)
                   dispatch(unsetSelectedChannelAction());
                 else dispatch(setSelectedChannelAction(c));
@@ -53,11 +61,16 @@ const ChannelList: FC = () => {
               flex={{ shrink: 0 }}
               round="small"
               pad="small"
+              width="110px"
               background={
                 selectedChannel?.channel.id === c.channel.id ? 'brand' : ''
               }
             >
-              <InitialsAvatar id={c.channel.id} value={c.channel.name} />
+              <ChannelAvatar
+                id={c.channel.id}
+                name={c.channel.name}
+                src={c.channel.displayPhoto}
+              />
               <EllipsesOverflowText
                 textAlign="center"
                 size="small"

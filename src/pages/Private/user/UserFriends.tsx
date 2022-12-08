@@ -3,9 +3,10 @@ import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import GradientScroll from '../../../components/utils/GradientScroll';
-import InitialsAvatar from '../../../components/utils/InitialsAvatar';
 import { listContactsAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
+import { UserAvatar } from '../../../components/utils/Avatars/UserAvatar';
 
 const UserFriends: FC<{ userName: string }> = ({ userName }) => {
   const dispatch = useDispatch();
@@ -25,15 +26,18 @@ const UserFriends: FC<{ userName: string }> = ({ userName }) => {
       </Text>
       <GradientScroll>
         <Box direction="row" gap="medium">
-          {contacts.loading && <Text size="small">{t('common.loading')}</Text>}
+          {contacts.loading && (
+            <PurpieLogoAnimated width={50} height={50} color="#956aea" />
+          )}
           {!contacts.loading && contacts.data.length === 0 ? (
             <Text size="small">{t('UserFriends.noFriendsFound')}</Text>
           ) : (
             contacts.data.map((contact) => (
               <Box key={contact.id} gap="small" align="center">
-                <InitialsAvatar
+                <UserAvatar
                   id={contact.id}
-                  value={contact.contactUser.fullName}
+                  name={contact.contactUser.fullName}
+                  src={contact.contactUser.displayPhoto}
                 />
                 <Box align="center">
                   <Text size="small" weight="bold">

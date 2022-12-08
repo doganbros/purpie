@@ -1,5 +1,7 @@
-import { ResponseError } from '../../models/response-error';
 import {
+  UPDATE_PROFILE_PHOTO_FAILED,
+  UPDATE_PROFILE_PHOTO_REQUESTED,
+  UPDATE_PROFILE_PHOTO_SUCCESS,
   LOGIN_REQUESTED,
   RESET_PASSWORD_REQUESTED,
   FORGOT_PASSWORD_REQUESTED,
@@ -30,7 +32,12 @@ import {
   INITIALIZE_USER_REQUESTED,
   INITIALIZE_USER_SUCCESS,
   INITIALIZE_USER_FAILED,
+  UPDATE_PROFILE_INFO_FAILED,
+  UPDATE_PROFILE_INFO_SUCCESS,
+  UPDATE_PROFILE_INFO_REQUESTED,
 } from '../constants/auth.constants';
+import { ResponseError } from '../../models/response-error';
+
 import { UtilActionParams } from './util.types';
 
 export type UserRoleCode = 'SUPER_ADMIN' | 'ADMIN' | 'NORMAL';
@@ -55,10 +62,12 @@ export interface UserBasic {
   fullName: string;
   userName: string;
   email: string;
+  displayPhoto?: string;
 }
 
 export interface User extends UserBasic {
   userRole?: UserRole;
+  fullName: string;
 }
 
 export interface AuthState {
@@ -130,6 +139,11 @@ export interface VerifyEmailPayload {
   userName: string;
 }
 
+export interface UpdateProfileInfoPayload {
+  userName: string;
+  fullName: string;
+}
+
 export type AuthActionParams =
   | {
       type:
@@ -145,10 +159,14 @@ export type AuthActionParams =
         | typeof RESEND_MAIL_VERIFICATION_TOKEN_SUCCESS
         | typeof LOGOUT
         | typeof RESET_PASSWORD_SUCCESS
-        | typeof INITIALIZE_USER_REQUESTED;
+        | typeof INITIALIZE_USER_REQUESTED
+        | typeof UPDATE_PROFILE_INFO_REQUESTED
+        | typeof UPDATE_PROFILE_PHOTO_REQUESTED;
     }
   | {
-      type: typeof THIRD_PARTY_URL_REQUESTED;
+      type:
+        | typeof THIRD_PARTY_URL_REQUESTED
+        | typeof UPDATE_PROFILE_PHOTO_SUCCESS;
       payload: string;
     }
   | {
@@ -160,6 +178,10 @@ export type AuthActionParams =
         | typeof USER_RETRIEVED_SUCCESS
         | typeof INITIALIZE_USER_SUCCESS;
       payload: User;
+    }
+  | {
+      type: typeof UPDATE_PROFILE_INFO_SUCCESS;
+      payload: { userName: string; fullName: string };
     }
   | {
       type: typeof LOGIN_SUCCESS | typeof REGISTER_SUCCESS;
@@ -176,7 +198,9 @@ export type AuthActionParams =
         | typeof RESEND_MAIL_VERIFICATION_TOKEN_FAILED
         | typeof USER_RETRIEVED_FAILED
         | typeof FORGOT_PASSWORD_FAILED
-        | typeof INITIALIZE_USER_FAILED;
+        | typeof INITIALIZE_USER_FAILED
+        | typeof UPDATE_PROFILE_INFO_FAILED
+        | typeof UPDATE_PROFILE_PHOTO_FAILED;
       payload: ResponseError;
     };
 

@@ -29,7 +29,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const {
-    channel: { userChannels },
+    channel: { userChannels, selectedChannel },
     post: {
       createVideo: { uploading, error },
     },
@@ -39,7 +39,6 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState<string | undefined>();
   const [publicVideo, setPublicVideo] = useState(true);
-  const [userContactExclusive, setUserContactExclusive] = useState(false);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [uploadStarted, setUploadStarted] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -129,45 +128,39 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
                   placeholder={t('CreateVideo.selectChannel')}
                   onChange={({ option }) => {
                     setChannelId(option.id);
-                    setUserContactExclusive(false);
+
+                    setPublicVideo(true);
                   }}
                 />
               </FormField>
-              <FormField name="userContactExclusive">
-                <Switch
-                  width="fit-content"
-                  direction="row-reverse"
-                  label={t('common.exclusiveContacts')}
-                  name="userContactExclusive"
-                  value={userContactExclusive}
-                  onChange={(checked) => {
-                    if (checked) {
-                      setPublicVideo(false);
-                      setChannelId(undefined);
-                      setUserContactExclusive(checked);
-                    }
-                  }}
-                />
-              </FormField>
-              <FormField name="public">
-                <Switch
-                  width="fit-content"
-                  direction="row-reverse"
-                  label={t('common.public')}
-                  name="public"
-                  value={publicVideo}
-                  onChange={(checked) => {
-                    setPublicVideo(checked);
-                    setUserContactExclusive(false);
-                  }}
-                />
-              </FormField>
+
+              {!selectedChannel && (
+                <FormField name="public">
+                  <Switch
+                    width="fit-content"
+                    direction="row-reverse"
+                    label={t('common.public')}
+                    name="public"
+                    value={publicVideo}
+                    onChange={(checked) => {
+                      setPublicVideo(checked);
+                    }}
+                  />
+                </FormField>
+              )}
               <FormField required name="videoFile">
                 <FileInput
                   name="videoFile"
                   onChange={(e) =>
                     setVideoFile(e.target.files ? e.target.files[0] : null)
                   }
+                  type="file"
+                  accept="video/3gpp,
+          video/mp4,
+          video/quicktime,
+          video/webm,
+          video/x-flv,
+          video/mpeg,"
                 />
               </FormField>
             </Box>
@@ -182,7 +175,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
               type="submit"
               disabled={notValid || uploading}
               primary
-              icon={uploading ? <Spinner /> : undefined}
+              icon={uploading ? <Spinner color="white" /> : undefined}
               label={(() => {
                 if (uploading) {
                   return t('CreateVideo.uploading', {

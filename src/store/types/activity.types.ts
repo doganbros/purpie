@@ -2,6 +2,12 @@ import {
   CHANNEL_SUGGESTIONS_FAILED,
   CHANNEL_SUGGESTIONS_REQUESTED,
   CHANNEL_SUGGESTIONS_SUCCESS,
+  CONTACT_SUGGESTIONS_FAILED,
+  CONTACT_SUGGESTIONS_REQUESTED,
+  CONTACT_SUGGESTIONS_SUCCESS,
+  CREATE_CONTACT_INVITATION_FAILED,
+  CREATE_CONTACT_INVITATION_REQUESTED,
+  CREATE_CONTACT_INVITATION_SUCCESS,
   GET_INVITATION_RESPONSE_FAILED,
   GET_INVITATION_RESPONSE_REQUESTED,
   GET_INVITATION_RESPONSE_SUCCESS,
@@ -35,6 +41,7 @@ export interface ZoneSuggestionListItem {
   zone_id: number;
   zone_createdOn: Date;
   zone_name: string;
+  zone_displayPhoto: string;
   zone_subdomain: string;
   zone_description: string;
   channel_public: boolean;
@@ -48,6 +55,7 @@ export interface ChannelSuggestionListItem {
   channel_id: number;
   channel_createdOn: Date;
   channel_name: string;
+  channel_displayPhoto: string;
   channel_topic: string;
   channel_description: string;
   channel_public: boolean;
@@ -57,6 +65,14 @@ export interface ChannelSuggestionListItem {
   category_id: number;
   category_name: string;
   channel_membersCount: string;
+}
+
+export interface ContactSuggestionListItem {
+  userId: number;
+  fullName: string;
+  email: string;
+  userName: string;
+  displayPhoto: string;
 }
 
 export interface InvitationListItem {
@@ -120,6 +136,11 @@ export interface ActivityState {
     loading: boolean;
     error: ResponseError | null;
   };
+  contactSuggestions: {
+    data: ContactSuggestionListItem[];
+    loading: boolean;
+    error: ResponseError | null;
+  };
   invitations: PaginatedResponse<InvitationListItem> & {
     loading: boolean;
     error: ResponseError | null;
@@ -127,6 +148,11 @@ export interface ActivityState {
   responseInvitation: {
     loading: boolean;
     error: ResponseError | null;
+  };
+  invitedContacts: {
+    loading: boolean;
+    error: ResponseError | null;
+    userIds: Array<string>;
   };
   notification: PaginatedResponse<NotificationListItem> & {
     loading: boolean;
@@ -142,21 +168,32 @@ export type ActivityActionParams =
   | {
       type:
         | typeof ZONE_SUGGESTIONS_REQUESTED
+        | typeof CONTACT_SUGGESTIONS_REQUESTED
         | typeof CHANNEL_SUGGESTIONS_REQUESTED
         | typeof LIST_INVITATION_REQUESTED
         | typeof GET_INVITATION_RESPONSE_REQUESTED
         | typeof CHANNEL_SUGGESTIONS_REQUESTED
         | typeof NOTIFICATION_REQUESTED
         | typeof NOTIFICATION_COUNT_REQUESTED
-        | typeof VIEW_NOTIFICATION_REQUESTED;
+        | typeof VIEW_NOTIFICATION_REQUESTED
+        | typeof GET_INVITATION_RESPONSE_REQUESTED
+        | typeof CREATE_CONTACT_INVITATION_REQUESTED;
     }
   | {
       type: typeof ZONE_SUGGESTIONS_SUCCESS;
       payload: PaginatedResponse<ZoneSuggestionListItem>;
     }
   | {
+      type: typeof CONTACT_SUGGESTIONS_SUCCESS;
+      payload: ContactSuggestionListItem[];
+    }
+  | {
       type: typeof CHANNEL_SUGGESTIONS_SUCCESS;
       payload: PaginatedResponse<ChannelSuggestionListItem>;
+    }
+  | {
+      type: typeof CREATE_CONTACT_INVITATION_SUCCESS;
+      payload: string;
     }
   | {
       type: typeof LIST_INVITATION_SUCCESS;
@@ -169,9 +206,11 @@ export type ActivityActionParams =
   | {
       type:
         | typeof CHANNEL_SUGGESTIONS_FAILED
+        | typeof CONTACT_SUGGESTIONS_FAILED
         | typeof ZONE_SUGGESTIONS_FAILED
         | typeof LIST_INVITATION_FAILED
-        | typeof GET_INVITATION_RESPONSE_FAILED;
+        | typeof GET_INVITATION_RESPONSE_FAILED
+        | typeof CREATE_CONTACT_INVITATION_FAILED;
       payload: ResponseError;
     }
   | {

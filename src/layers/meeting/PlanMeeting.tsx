@@ -50,6 +50,7 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
       },
       userMeetingConfig,
     },
+    channel: { selectedChannel },
   } = useSelector((state: AppState) => state);
 
   useEffect(() => {
@@ -112,6 +113,8 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
             record,
           }
         );
+      if (selectedChannel) formPayload.channelId = selectedChannel.id;
+
       if (!showPersistance && configChanged) {
         setShowPersistance(true);
       } else {

@@ -1,4 +1,13 @@
 import {
+  ChannelBasic,
+  ChannelAction,
+  ChannelSearchParams,
+  CreateChannelPayload,
+  UserChannelListItem,
+  UserChannelPermissionList,
+  // eslint-disable-next-line import/named
+} from '../types/channel.types';
+import {
   CLOSE_CREATE_CHANNEL_LAYER,
   GET_USER_CHANNELS_FAILED,
   GET_USER_CHANNELS_REQUESTED,
@@ -15,16 +24,21 @@ import {
   SEARCH_CHANNEL_REQUESTED,
   SEARCH_CHANNEL_SUCCESS,
   SEARCH_CHANNEL_FAILED,
+  UPDATE_CHANNEL_PHOTO_REQUESTED,
+  UPDATE_CHANNEL_PHOTO_SUCCESS,
+  UPDATE_CHANNEL_PHOTO_FAILED,
+  UPDATE_CHANNEL_INFO_REQUESTED,
+  UPDATE_CHANNEL_INFO_FAILED,
+  UPDATE_CHANNEL_INFO_SUCCESS,
+  UPDATE_CHANNEL_PERMISSIONS_REQUESTED,
+  UPDATE_CHANNEL_PERMISSIONS_SUCCESS,
+  UPDATE_CHANNEL_PERMISSIONS_FAILED,
 } from '../constants/channel.constants';
 import * as ChannelService from '../services/channel.service';
-import {
-  ChannelAction,
-  ChannelSearchParams,
-  CreateChannelPayload,
-  UserChannelListItem,
-} from '../types/channel.types';
+
 import { setToastAction } from './util.action';
 import { getUserZonesAction } from './zone.action';
+import i18n from '../../config/i18n/i18n-config';
 
 export const getUserChannelsAction = (): ChannelAction => {
   return async (dispatch) => {
@@ -101,7 +115,7 @@ export const createChannelAction = (
       dispatch({
         type: CREATE_CHANNEL_SUCCESS,
       });
-      setToastAction('ok', `Channel created successfully`)(dispatch);
+      setToastAction('ok', `Channel Created!`)(dispatch);
       getUserChannelsAction()(dispatch);
     } catch (err: any) {
       dispatch({
@@ -149,6 +163,79 @@ export const searchChannelAction = (
       dispatch({
         type: SEARCH_CHANNEL_FAILED,
         payload: err?.reponse?.data,
+      });
+    }
+  };
+};
+
+export const updateChannelPhoto = (
+  profilePhoto: File,
+  channelId: number
+): ChannelAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: UPDATE_CHANNEL_PHOTO_REQUESTED,
+    });
+    try {
+      const payload = await ChannelService.updateChannelPhoto(
+        profilePhoto,
+        channelId
+      );
+      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
+      dispatch({
+        type: UPDATE_CHANNEL_PHOTO_SUCCESS,
+        payload,
+        channelId,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: UPDATE_CHANNEL_PHOTO_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const updateChannelInfoAction = (
+  channelId: number,
+  params: ChannelBasic
+): ChannelAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: UPDATE_CHANNEL_INFO_REQUESTED,
+    });
+    try {
+      await ChannelService.updateChannelInfo(channelId, params);
+      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
+      dispatch({
+        type: UPDATE_CHANNEL_INFO_SUCCESS,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: UPDATE_CHANNEL_INFO_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const updateChannelPermissionsAction = (
+  channelId: number,
+  params: UserChannelPermissionList
+): ChannelAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: UPDATE_CHANNEL_PERMISSIONS_REQUESTED,
+    });
+    try {
+      await ChannelService.updateChannelPermissions(channelId, params);
+      dispatch({
+        type: UPDATE_CHANNEL_PERMISSIONS_SUCCESS,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: UPDATE_CHANNEL_PERMISSIONS_FAILED,
+        payload: err?.response?.data,
       });
     }
   };

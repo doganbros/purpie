@@ -5,14 +5,17 @@ import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
 import { Notification } from 'entities/Notification.entity';
-import { Brackets, IsNull, Repository } from 'typeorm';
+import { Brackets, getManager, IsNull, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
+import { Contact } from '../../../entities/Contact.entity';
+import { User } from '../../../entities/User.entity';
 
 @Injectable()
 export class ActivityService {
   constructor(
     @InjectRepository(Zone) private zoneRepository: Repository<Zone>,
     @InjectRepository(Channel) private channelRepository: Repository<Channel>,
+    @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Notification)
     private notificationRepository: Repository<Notification>,
   ) {}
@@ -26,8 +29,7 @@ export class ActivityService {
         'channel.name',
         'channel.description',
         'channel.public',
-        'category.id',
-        'category.name',
+        'channel.displayPhoto',
         'zone.id',
         'zone.name',
         'zone.subdomain',
@@ -39,7 +41,6 @@ export class ActivityService {
           .from(UserChannel, 'user_channel');
       }, 'channel_membersCount')
       .leftJoin('channel.zone', 'zone')
-      .leftJoin('channel.category', 'category')
       .leftJoin(
         UserChannel,
         'user_channel',
@@ -69,12 +70,11 @@ export class ActivityService {
       .select([
         'zone.id',
         'zone.name',
+        'zone.displayPhoto',
         'zone.subdomain',
         'zone.description',
         'zone.createdOn',
         'zone.public',
-        'category.id',
-        'category.name',
       ])
       .addSelect((subQuery) => {
         return subQuery
@@ -88,18 +88,76 @@ export class ActivityService {
           .where('user_zone.zoneId = zone.id')
           .from(UserZone, 'user_zone');
       }, 'zone_membersCount')
-      .leftJoin('zone.category', 'category')
       .leftJoin(
         UserZone,
         'user_zone',
         'user_zone.zoneId = zone.id and user_zone.userId = :userId',
         { userId },
       )
-      .where('zone.public = true')
-      .where('user_zone.id is null')
+      .where('zone.public')
+      .andWhere('user_zone.id is null')
       .orderBy('zone.createdOn', 'DESC')
-
       .paginateRaw(query);
+  }
+
+  getContactSuggestions(userId: number) {
+    const entityManager = getManager();
+
+    const baseQuery = this.userRepository
+      .createQueryBuilder('user')
+      .select('user.id', 'userId')
+      .addSelect('user.fullName', 'fullName')
+      .addSelect('user.email', 'email')
+      .addSelect('user.userName', 'userName')
+      .addSelect('user.displayPhoto', 'displayPhoto')
+      .innerJoin(Contact, 'contact', 'user.id = contact.contactUserId')
+      .innerJoin(
+        Contact,
+        'contactOfContact',
+        'contact.userId = contactOfContact.contactUserId',
+      )
+      .andWhere(`contactOfContact.userId = ${userId}`)
+      .andWhere(`user.id != ${userId}`)
+      .andWhere(
+        (qb) =>
+          `user.id NOT IN ${qb
+            .subQuery()
+            .select('directContact.contactUserId')
+            .from(Contact, 'directContact')
+            .where(`directContact.userId = ${userId}`)
+            .getQuery()}`,
+      )
+      .getSql();
+
+    const baseQuery2 = this.userRepository
+      .createQueryBuilder('user')
+      .select('user.id', 'userId')
+      .addSelect('user.fullName', 'fullName')
+      .addSelect('user.email', 'email')
+      .addSelect('user.userName', 'userName')
+      .addSelect('user.displayPhoto', 'displayPhoto')
+      .innerJoin(UserChannel, 'user_channel1', 'user.id = user_channel1.userId')
+      .innerJoin(
+        UserChannel,
+        'user_channel2',
+        'user_channel1.channelId = user_channel2.channelId',
+      )
+      .andWhere(`user_channel2.userId = ${userId}`)
+      .andWhere(`user.id != ${userId}`)
+      .andWhere(
+        (qb) =>
+          `user.id NOT IN ${qb
+            .subQuery()
+            .select('directContact.contactUserId')
+            .from(Contact, 'directContact')
+            .where(`directContact.userId = ${userId}`)
+            .getQuery()}`,
+      )
+      .getSql();
+
+    return entityManager
+      .query(`${baseQuery} UNION ${baseQuery2}`)
+      .then((t) => t);
   }
 
   getNotifications(userId: number, query: PaginationQuery) {

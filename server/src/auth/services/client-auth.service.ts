@@ -12,8 +12,9 @@ import { customAlphabet } from 'nanoid';
 import { IsNull, Not, Repository } from 'typeorm';
 import { CreateClientDto } from '../dto/create-client.dto';
 import { LoginClientDto } from '../dto/login-client.dto';
-import { OCTOPUS_CLIENT_AUTH_TYPE } from '../constants/auth.constants';
+import { PURPIE_CLIENT_AUTH_TYPE } from '../constants/auth.constants';
 import { AuthService } from './auth.service';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const { AUTH_TOKEN_SECRET_REFRESH = '' } = process.env;
 
@@ -53,23 +54,23 @@ export class ClientAuthService {
 
     if (!client)
       throw new NotFoundException(
+        ErrorTypes.INVALID_AUTH_CLIENT_CREDENTIALS,
         'Wrong client apiKey or apiSecret',
-        'WRONG_CLIENT_API_KEY_OR_SECRET',
       );
 
     const isValid = await bcrypt.compare(info.apiSecret, client.apiSecret);
 
     if (!isValid)
       throw new NotFoundException(
+        ErrorTypes.INVALID_AUTH_CLIENT_CREDENTIALS,
         'Wrong client apiKey or apiSecret',
-        'WRONG_CLIENT_API_KEY_OR_SECRET',
       );
 
     const tokens = await this.authService.generateLoginToken({
       id: client.id,
       name: client.name,
       clientRole: client.clientRole,
-      authType: OCTOPUS_CLIENT_AUTH_TYPE,
+      authType: PURPIE_CLIENT_AUTH_TYPE,
     });
 
     client.refreshToken = await hash(tokens.refreshToken);
@@ -89,21 +90,21 @@ export class ClientAuthService {
 
       const isValid = await compareHash(refreshToken, client.refreshToken!);
 
-      if (!isValid) throw new Error('Not Valid');
+      if (!isValid) throw new Error(ErrorTypes.NOT_VALID);
 
       const tokens = await this.authService.generateLoginToken({
         id: client.id,
         name: client.name,
         clientRole: client.clientRole,
-        authType: OCTOPUS_CLIENT_AUTH_TYPE,
+        authType: PURPIE_CLIENT_AUTH_TYPE,
       });
       client.refreshToken = await hash(tokens.refreshToken);
       await client.save();
       return tokens;
     } catch (err: any) {
       throw new UnauthorizedException(
+        ErrorTypes.INVALID_REFRESH_TOKEN,
         'Invalid Refresh Token',
-        'INVALID_REFRESH_TOKEN',
       );
     }
   }

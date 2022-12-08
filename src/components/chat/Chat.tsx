@@ -24,6 +24,7 @@ import {
 import PlanMeetingTheme from '../../layers/meeting/custom-theme';
 import { errorResponseMessage, getChatRoomName } from '../../helpers/utils';
 import { http } from '../../config/http';
+import PurpieLogoAnimated from '../../assets/purpie-logo/purpie-logo-animated';
 
 interface Props {
   medium: 'direct' | 'channel' | 'post';
@@ -306,7 +307,12 @@ const Chat: React.FC<Props> = ({
     return undefined;
   }, [medium, id]);
 
-  if (!messages) return <Box>Loading...</Box>;
+  if (!messages)
+    return (
+      <Box justify="center" align="center" height="large">
+        <PurpieLogoAnimated width={70} height={70} color="#956aea" />
+      </Box>
+    );
 
   const renderDayItem = (message: ChatMessage) => {
     return (
@@ -369,7 +375,9 @@ const Chat: React.FC<Props> = ({
               inverse
               hasMore={hasMore}
               next={fetchMessages}
-              loader={<h4>{t('common.loading')}</h4>}
+              loader={
+                <PurpieLogoAnimated width={50} height={50} color="#956aea" />
+              }
               scrollableTarget={containerId}
             >
               {messages?.map((message) => {

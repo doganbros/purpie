@@ -1,16 +1,14 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
-import dayjs from 'dayjs';
 import videojs from 'video.js';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import { Box, Button, Menu, Layer, Spinner, Text } from 'grommet';
+import { Box, Button, Menu, Text } from 'grommet';
 import {
-  Chat as ChatIcon,
-  SettingsOption,
-  Like,
-  Dislike,
-  ShareOption,
-  More,
   AddCircle,
+  Chat as ChatIcon,
+  Dislike,
+  Like,
+  More,
+  SettingsOption,
+  ShareOption,
 } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
@@ -18,11 +16,11 @@ import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import {
   createPostLikeAction,
-  getPostDetailAction,
-  removePostLikeAction,
-  removePostAction,
-  removePostSaveAction,
   createPostSaveAction,
+  getPostDetailAction,
+  removePostAction,
+  removePostLikeAction,
+  removePostSaveAction,
 } from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import RecommendedVideos from './RecommendedVideos';
@@ -38,9 +36,13 @@ import ChannelBadge from '../../../components/utils/channel/ChannelBadge';
 import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
 import UserBadge from '../../../components/utils/UserBadge';
 import Highlight from '../../../components/utils/Highlight';
-import { matchDescriptionTags } from '../../../helpers/utils';
-
-dayjs.extend(relativeTime);
+import {
+  getTimezoneTimeFromUTC,
+  matchDescriptionTags,
+} from '../../../helpers/utils';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
+import { DELAY_TIME } from '../../../helpers/constants';
+import useDelayTime from '../../../hooks/useDelayTime';
 
 interface RouteParams {
   id: string;
@@ -68,6 +70,8 @@ const Video: FC = () => {
   const startedFrom = useRef(0);
 
   const player = useRef<videojs.Player | null>(null);
+
+  const { delay } = useDelayTime(DELAY_TIME);
 
   const maybeSendViewStat = () => {
     if (previousTime.current > startedFrom.current) {
@@ -176,7 +180,7 @@ const Video: FC = () => {
 
   return (
     <PrivatePageLayout
-      rightComponentWithoutOverflow
+      rightComponentWithoutOverflow={!showSettings}
       title={data?.title || t('common.loading')}
       rightComponent={
         showSettings ? (
@@ -189,10 +193,10 @@ const Video: FC = () => {
         )
       }
     >
-      {loading || !data ? (
-        <Layer responsive={false} plain>
-          <Spinner />
-        </Layer>
+      {delay || loading || !data ? (
+        <Box height="100vh" justify="center" align="center">
+          <PurpieLogoAnimated width={100} height={100} color="#956aea" />
+        </Box>
       ) : (
         <Box gap="large" pad={{ vertical: 'medium' }}>
           <Box>
@@ -202,19 +206,21 @@ const Video: FC = () => {
                   {data.title}
                 </Text>
               </Box>
-              <Text weight="bold">{dayjs(data.createdOn).fromNow()}</Text>
+              <Text weight="bold">
+                {getTimezoneTimeFromUTC(data.createdOn).fromNow()}
+              </Text>
             </Box>
             <Box justify="between" align="center" direction="row">
               {(data?.type === 'video' && (
                 <Box direction="row" align="center" gap="medium">
-                  {data?.channel?.name && (
-                    <ChannelBadge name={data.channel.name} url="/" />
-                  )}
                   {data?.channel?.zone && (
                     <ZoneBadge
                       name={data.channel.zone.name}
                       subdomain={data.channel.zone.subdomain}
                     />
+                  )}
+                  {data?.channel?.name && (
+                    <ChannelBadge name={data.channel.name} url="/" />
                   )}
                   <UserBadge url="/" fullName={data?.createdBy?.fullName} />
                 </Box>
@@ -240,6 +246,7 @@ const Video: FC = () => {
                 }}
                 onReady={onReady}
                 options={{
+                  aspectRatio: '16:9',
                   autoplay: true,
                   muted: false,
                   controls: true,

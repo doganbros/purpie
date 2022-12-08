@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { FC, useContext, useEffect, useState } from 'react';
 import {
   Box,
@@ -16,10 +17,7 @@ import PostGridItem from '../../../components/post/PostGridItem';
 import SearchBar from '../../../components/utils/SearchBar';
 import {
   createPostSaveAction,
-  getChannelFeedAction,
-  getPublicFeedAction,
-  getUserFeedAction,
-  getZoneFeedAction,
+  getFeedListAction,
   removePostSaveAction,
 } from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
@@ -28,37 +26,35 @@ import ChannelsToFollow from './ChannelsToFollow';
 import Notifications from './Notifications';
 import ZonesToJoin from './ZonesToJoin';
 import AddContent from '../../../layers/add-content/AddContent';
-import { Post } from '../../../store/types/post.types';
+import { FeedPayload, Post } from '../../../store/types/post.types';
 import EmptyFeedContent from './EmptyFeedContent';
 import { LoadingState } from '../../../models/utils';
 import InvitationList from './InvitationList';
 import i18n from '../../../config/i18n/i18n-config';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
+import { DELAY_TIME } from '../../../helpers/constants';
+import useWaitTime from '../../../hooks/useDelayTime';
 
-const initialFilters = [
+const tabs = [
   {
     id: 0,
-    filterName: i18n.t('Timeline.all'),
-    active: true,
+    name: i18n.t('Timeline.all'),
   },
   {
     id: 1,
-    filterName: i18n.t('common.following'),
-    active: false,
+    name: i18n.t('common.following'),
   },
   {
     id: 2,
-    filterName: i18n.t('Timeline.live'),
-    active: false,
+    name: i18n.t('Timeline.live'),
   },
   {
     id: 3,
-    filterName: i18n.t('Timeline.newest'),
-    active: false,
+    name: i18n.t('Timeline.newest'),
   },
   {
     id: 4,
-    filterName: i18n.t('Timeline.popular'),
-    active: false,
+    name: i18n.t('Timeline.popular'),
   },
 ];
 
@@ -67,6 +63,12 @@ const Timeline: FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+
+  const { delay, setDelay } = useWaitTime(DELAY_TIME);
+
+  const handleWaiting = () => {
+    setDelay(true);
+  };
   const {
     post: { feed },
     zone: { selectedUserZone },
@@ -74,41 +76,28 @@ const Timeline: FC = () => {
   } = useSelector((state: AppState) => state);
 
   const [showAddContent, setShowAddContent] = useState(false);
-  const [filters, setFilters] = useState(initialFilters);
+  const [activeTab, setActiveTab] = useState(0);
+  const [hasNewlyCreatedFeed, setHasNewlyCreatedFeed] = useState(false);
 
   const getFeed = (skip?: number) => {
-    const activeFilterId = filters.find((f) => f.active)?.id;
-    switch (activeFilterId) {
+    const request: FeedPayload = { skip };
+    switch (activeTab) {
       case 0:
       case 1:
       case 2:
-        if (selectedChannel)
-          dispatch(
-            getChannelFeedAction({
-              skip,
-              channelId: selectedChannel.channel.id,
-              streaming: activeFilterId === 2,
-            })
-          );
-        else if (selectedUserZone) {
-          dispatch(
-            getZoneFeedAction({
-              skip,
-              zoneId: selectedUserZone.zone.id,
-              streaming: activeFilterId === 2,
-            })
-          );
-        } else {
-          dispatch(
-            getUserFeedAction({ skip, streaming: activeFilterId === 2 })
-          );
-        }
+        if (selectedChannel) request.channelId = selectedChannel.channel.id;
+        else if (selectedUserZone) request.zoneId = selectedUserZone.zone.id;
+        request.streaming = activeTab === 2;
+
+        dispatch(getFeedListAction(request));
         break;
       case 3:
-        dispatch(getPublicFeedAction({ skip, sortBy: 'time' }));
+        dispatch(getFeedListAction({ skip, public: true, sortBy: 'time' }));
         break;
       case 4:
-        dispatch(getPublicFeedAction({ skip, sortBy: 'popularity' }));
+        dispatch(
+          getFeedListAction({ skip, public: true, sortBy: 'popularity' })
+        );
         break;
       default:
         break;
@@ -116,14 +105,36 @@ const Timeline: FC = () => {
   };
 
   useEffect(() => {
-    getFeed();
-  }, [filters, selectedChannel]);
+    const newlyCreatedFeeds = feed.data.filter((f) => f.newlyCreated);
+    if (newlyCreatedFeeds.length > 0 && activeTab !== 0) {
+      setHasNewlyCreatedFeed(true);
+      setActiveTab(0);
+    }
+  }, [feed]);
+
+  useEffect(() => {
+    if (!hasNewlyCreatedFeed) getFeed();
+    setHasNewlyCreatedFeed(false);
+  }, [activeTab, selectedChannel]);
 
   const getTimelineContent = () => {
     if (
-      [LoadingState.loading, LoadingState.pending].includes(feed.loadingState)
+      [LoadingState.loading, LoadingState.pending].includes(
+        feed.loadingState
+      ) ||
+      delay
     )
-      return t('common.loading'); // We can return a loader component later
+      return (
+        <Box
+          justify="center"
+          align="center"
+          alignSelf="center"
+          height="medium"
+          pad={{ top: 'large' }}
+        >
+          <PurpieLogoAnimated width={100} height={100} color="#956aea" />
+        </Box>
+      );
 
     if (!feed.data.length)
       return <EmptyFeedContent onAddContent={() => setShowAddContent(true)} />;
@@ -171,7 +182,7 @@ const Timeline: FC = () => {
           <Notifications />
         </Box>
       }
-      topComponent={<ChannelList />}
+      topComponent={<ChannelList handleWaiting={handleWaiting} />}
     >
       {showAddContent && (
         <AddContent onDismiss={() => setShowAddContent(false)} />
@@ -180,21 +191,20 @@ const Timeline: FC = () => {
         <Box direction="row" justify="between" align="center">
           <Text weight="bold">Timeline</Text>
           <Box direction="row" gap="small">
-            {filters.map((f) => (
+            {tabs.map((tab) => (
               <Button
-                key={f.id}
+                key={`timelineTab${tab.id}`}
                 onClick={() => {
-                  setFilters(
-                    filters.map((v) => ({ ...v, active: v.id === f.id }))
-                  );
+                  setDelay(true);
+                  setActiveTab(tab.id);
                 }}
               >
                 <Text
                   size="small"
-                  weight={f.active ? 'bold' : 'normal'}
-                  color={f.active ? 'brand' : 'status-disabled'}
+                  weight={activeTab === tab.id ? 'bold' : 'normal'}
+                  color={activeTab === tab.id ? 'brand' : 'status-disabled'}
                 >
-                  {f.filterName}
+                  {tab.name}
                 </Text>
               </Button>
             ))}

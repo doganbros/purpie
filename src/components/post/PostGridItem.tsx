@@ -1,16 +1,13 @@
 import React, { FC, useState } from 'react';
 import { Box, Stack, Text } from 'grommet';
 import { Chat, Favorite } from 'grommet-icons';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import ExtendedBox from '../utils/ExtendedBox';
-import InitialsAvatar from '../utils/InitialsAvatar';
 import { VideoPost } from './VideoPost';
 import { ImagePost } from './ImagePost';
 import { Post } from '../../store/types/post.types';
 import { FavoriteFill } from '../utils/CustomIcons';
-
-dayjs.extend(relativeTime);
+import { getTimezoneTimeFromUTC } from '../../helpers/utils';
+import { UserAvatar } from '../utils/Avatars/UserAvatar';
 
 interface PostGridItemProps {
   post: Post;
@@ -65,19 +62,20 @@ const PostGridItem: FC<PostGridItemProps> = ({
             <Box direction="row" align="center">
               <Box
                 margin={{ top: '-35px', left: '-3px' }}
-                background="brand"
-                round="large"
+                round="full"
                 border={{ size: 'large', color: 'white' }}
+                flex={{ shrink: 0 }}
               >
-                <InitialsAvatar
+                <UserAvatar
                   id={post.createdBy.id}
-                  value={post.createdBy.fullName}
+                  name={post.createdBy.fullName}
+                  src={post.createdBy.displayPhoto}
                 />
               </Box>
               <Text color="status-disabled">{post.createdBy?.fullName}</Text>
             </Box>
             <Text color="status-disabled">
-              {dayjs(post.createdOn).fromNow()}
+              {getTimezoneTimeFromUTC(post.createdOn).fromNow()}
             </Text>
           </ExtendedBox>
           <Box direction="row" justify="between" align="start">

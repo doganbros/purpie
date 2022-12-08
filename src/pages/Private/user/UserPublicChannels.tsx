@@ -3,9 +3,10 @@ import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import GradientScroll from '../../../components/utils/GradientScroll';
-import InitialsAvatar from '../../../components/utils/InitialsAvatar';
 import { listUserPublicChannelsAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
+import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
 
 const UserPublicChannels: FC<{ userName: string }> = ({ userName }) => {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ const UserPublicChannels: FC<{ userName: string }> = ({ userName }) => {
         {t('UserFriends.title')}
       </Text>
       {publicChannels.loading && (
-        <Text size="small">{t('common.loading')}</Text>
+        <PurpieLogoAnimated width={50} height={50} color="#956aea" />
       )}
       {!publicChannels.loading && publicChannels.data.length === 0 ? (
         <Text size="small">{t('UserPublicChannels.noChannelsFound')}</Text>
@@ -33,7 +34,11 @@ const UserPublicChannels: FC<{ userName: string }> = ({ userName }) => {
           <Box direction="row" gap="medium">
             {publicChannels.data.map(({ channel }) => (
               <Box key={channel.id} gap="small" align="center">
-                <InitialsAvatar id={channel.id} value={channel.name} />
+                <ChannelAvatar
+                  id={channel.id}
+                  name={channel.name}
+                  src={channel.displayPhoto}
+                />
                 <Box align="center">
                   <Text size="small">{channel.name}</Text>
                 </Box>

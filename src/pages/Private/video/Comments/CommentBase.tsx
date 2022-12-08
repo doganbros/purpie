@@ -5,7 +5,7 @@ import { Box, Button, DropButton, Text, TextInput } from 'grommet';
 import { Like, MoreVertical } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import InitialsAvatar from '../../../../components/utils/InitialsAvatar';
+import InitialsAvatar from '../../../../components/utils/Avatars/InitialsAvatar';
 import ListButton from '../../../../components/utils/ListButton';
 import { AppState } from '../../../../store/reducers/root.reducer';
 import { PostComment } from '../../../../store/types/post.types';

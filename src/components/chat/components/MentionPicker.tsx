@@ -1,14 +1,14 @@
 import React, { FC } from 'react';
 import { Box } from 'grommet';
 import ExtendedBox from '../../utils/ExtendedBox';
-import { UserBasic } from '../../../store/types/auth.types';
+import { User } from '../../../store/types/auth.types';
 import UserItem from './UserItem';
 
 interface Props {
   visibility: boolean;
   bottom: string;
   width: string;
-  userList: UserBasic[];
+  userList: User[];
   onSelect: (user: any) => void;
 }
 

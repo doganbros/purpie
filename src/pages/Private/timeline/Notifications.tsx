@@ -5,13 +5,13 @@ import {
   INVITATION_AMOUNT_LESS,
   INVITATION_AMOUNT_MORE,
 } from '../../../helpers/constants';
+import { AppState } from '../../../store/reducers/root.reducer';
+import NotificationListItem from './NotificationListItem';
 import {
   getNotificationCountAction,
   getNotificationsAction,
   viewNotificationsAction,
 } from '../../../store/actions/activity.action';
-import { AppState } from '../../../store/reducers/root.reducer';
-import NotificationListItem from './NotificationListItem';
 
 const Notifications: FC = () => {
   const [displayCount, setDisplayCount] = useState(INVITATION_AMOUNT_LESS);
@@ -72,7 +72,7 @@ const Notifications: FC = () => {
           step={6}
           items={data}
           onMore={() => {
-            // getNotifications(notification.data.length);
+            getNotifications(notification.data.length);
           }}
         >
           {(item: typeof notification.data[0]) => (

@@ -1,3 +1,4 @@
+import i18n from '../../config/i18n/i18n-config';
 import { navigateToSubdomain } from '../../helpers/app-subdomain';
 import appHistory from '../../helpers/history';
 import {
@@ -29,10 +30,17 @@ import {
   INITIALIZE_USER_REQUESTED,
   INITIALIZE_USER_SUCCESS,
   INITIALIZE_USER_FAILED,
+  UPDATE_PROFILE_INFO_FAILED,
+  UPDATE_PROFILE_INFO_SUCCESS,
+  UPDATE_PROFILE_INFO_REQUESTED,
+  UPDATE_PROFILE_PHOTO_REQUESTED,
+  UPDATE_PROFILE_PHOTO_FAILED,
+  UPDATE_PROFILE_PHOTO_SUCCESS,
 } from '../constants/auth.constants';
 import * as AuthService from '../services/auth.service';
 import {
   AuthAction,
+  UpdateProfileInfoPayload,
   LoginPayload,
   RegisterPayload,
   ResetPasswordPayload,
@@ -58,7 +66,7 @@ export const loginAction = (user: LoginPayload): AuthAction => {
         type: LOGIN_FAILED,
         payload: err?.response?.data,
       });
-      if (err?.response?.data?.error === 'MUST_VERIFY_EMAIL') {
+      if (err?.response?.data?.message === 'MUST_VERIFY_EMAIL') {
         appHistory.push(`/verify-email-info/${err?.response?.data.user.id}`);
       }
     }
@@ -74,7 +82,7 @@ export const retrieveUserAction = (): AuthAction => {
         payload,
       });
     } catch (err: any) {
-      if (err?.response?.data?.error === 'INITIAL_USER_REQUIRED') {
+      if (err?.response?.data?.message === 'INITIAL_USER_REQUIRED') {
         return dispatch({ type: MUST_SET_INITIAL_USER });
       }
       dispatch({
@@ -263,6 +271,51 @@ export const initializeUserAction = (user: RegisterPayload): AuthAction => {
     } catch (err: any) {
       dispatch({
         type: INITIALIZE_USER_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const updateProfileInfoAction = (
+  user: UpdateProfileInfoPayload
+): AuthAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: UPDATE_PROFILE_INFO_REQUESTED,
+    });
+    try {
+      await AuthService.updateProfileInfo(user);
+      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
+      dispatch({
+        type: UPDATE_PROFILE_INFO_SUCCESS,
+        payload: user,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: UPDATE_PROFILE_INFO_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const updateProfilePhotoAction = (profilePhoto: any): AuthAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: UPDATE_PROFILE_PHOTO_REQUESTED,
+    });
+    try {
+      const payload = await AuthService.updateProfilePhoto(profilePhoto);
+      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
+      dispatch({
+        type: UPDATE_PROFILE_PHOTO_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: UPDATE_PROFILE_PHOTO_FAILED,
         payload: err?.response?.data,
       });
     }

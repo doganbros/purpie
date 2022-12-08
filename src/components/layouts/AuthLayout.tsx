@@ -25,7 +25,7 @@ interface Props {
   };
   background?: JSX.Element;
   formTitle: string;
-  formSubTitle: string | JSX.Element;
+  formSubTitle?: string | JSX.Element;
 }
 
 const AuthLayout: React.FC<Props> = ({
@@ -50,7 +50,7 @@ const AuthLayout: React.FC<Props> = ({
   const headingSize = {
     small: '30px',
     medium: '38px',
-    large: '45px',
+    large: '38px',
   };
 
   return (

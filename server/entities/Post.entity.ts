@@ -56,10 +56,6 @@ export class Post extends RecordEntity {
   public: boolean;
 
   @Column({ default: false })
-  // Should be visible to only user who created
-  private: boolean;
-
-  @Column({ default: false })
   liveStream: boolean;
 
   @Column({ default: false })
@@ -67,9 +63,6 @@ export class Post extends RecordEntity {
 
   @Column({ nullable: true, type: 'character varying' })
   videoName: string | null;
-
-  @Column({ default: false })
-  userContactExclusive: boolean;
 
   @Column({ type: 'simple-json', nullable: true, select: false })
   config: JitsiConfig;
