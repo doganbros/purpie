@@ -7,13 +7,11 @@ import {
   ParseIntPipe,
   Post,
   Put,
-  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
-import { PaginationQuery } from 'types/PaginationQuery';
 import { FolderService } from '../services/folder.service';
 import { CreatePostFolderDto } from '../dto/create-post-folder.dto';
 import { UpdatePostFolderDto } from '../dto/update-post-folder.dto';

@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { Repository } from 'typeorm';
-import { PaginationQuery } from 'types/PaginationQuery';
 import { PostService } from './post.service';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { PostFolder } from '../../../entities/PostFolder.entity';
