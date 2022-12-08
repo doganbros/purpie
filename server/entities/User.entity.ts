@@ -38,8 +38,8 @@ export class User extends RecordEntity {
   @Column({ nullable: true })
   password: string;
 
-  @Column({ nullable: true })
-  displayPhoto: string;
+  @Column({ type: 'varchar', nullable: true })
+  displayPhoto: string | null;
 
   @Column({ nullable: true })
   googleId: string;

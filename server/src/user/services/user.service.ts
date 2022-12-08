@@ -482,6 +482,10 @@ export class UserService {
     );
   }
 
+  async deleteDisplayPhoto(userId: number) {
+    return this.userRepository.update({ id: userId }, { displayPhoto: null });
+  }
+
   async updateProfile(userId: number, payload: UpdateProfileDto) {
     const userProfile = await this.authService.getUserProfile(userId);
 
