@@ -29,10 +29,16 @@ const RecommendedVideos: FC = () => {
   }, []);
   const filteredFeed = feed.data.filter((p) => p.id !== postDetail.data?.id);
   return (
-    <Box gap="small">
-      <Text size="large" weight="bold" color="brand">
-        {t('RecommendedVideos.title')}
-      </Text>
+    <Box gap="small" width={filteredFeed?.length === 1 ? 'medium' : 'xxlarge'}>
+      {filteredFeed?.length === 1 ? (
+        <Text size="large" weight="bold" color="brand">
+          {t('RecommendedVideos.singleTitle')}
+        </Text>
+      ) : (
+        <Text size="large" weight="bold" color="brand">
+          {t('RecommendedVideos.title')}
+        </Text>
+      )}
       <GradientScroll>
         <Grid
           columns={{ count: filteredFeed.length, size: 'medium' }}
