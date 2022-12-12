@@ -2,8 +2,11 @@ import React, { FC, useMemo } from 'react';
 import { Anchor, Box, Text } from 'grommet';
 import { Chat, Favorite, TextWrap, User, UserAdd } from 'grommet-icons';
 import { Trans } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { NotificationType } from '../../../models/utils';
 import { NotificationListItem as NotificationListItemType } from '../../../store/types/activity.types';
+import { readNotificationsAction } from '../../../store/actions/activity.action';
 
 interface NotificationListItemProps {
   notification: NotificationListItemType;
@@ -12,159 +15,70 @@ interface NotificationListItemProps {
 const NotificationListItem: FC<NotificationListItemProps> = ({
   notification,
 }) => {
+  const history = useHistory();
+  const dispatch = useDispatch();
+
+  const navigateContent = (path: string) => {
+    if (!notification.readOn) {
+      dispatch(readNotificationsAction(notification.id));
+    }
+    history.push(path);
+  };
+
   const getNotificationPayload = () => {
     const iconColor = notification.viewedOn ? 'black' : 'brand';
 
-    const notificationText = (
+    const title = (
       <Trans
         i18nKey={`NotificationListItem.${notification.type.toString()}`}
         components={{
           user: (
             <Anchor
-              weight="bold"
-              href={`/user/${notification.createdBy.userName}`}
+              weight="600"
+              onClick={() =>
+                navigateContent(`/user/${notification.createdBy.userName}`)
+              }
             />
           ),
           post: (
-            <Anchor weight="bold" href={`/video/${notification.post.id}`} />
+            <Anchor
+              weight="600"
+              onClick={() => navigateContent(`/video/${notification.post.id}`)}
+            />
           ),
         }}
         values={{ userName: notification.createdBy.fullName }}
       />
     );
+
+    const iconProps = { size: '16', color: iconColor };
+    let icon;
     switch (notification.type) {
       case NotificationType.POST:
-        return {
-          icon: <TextWrap size="16" color={iconColor} />,
-          title: notificationText,
-        };
+        icon = <TextWrap {...iconProps} />;
+        break;
       case NotificationType.POST_LIKE:
-        return {
-          icon: <Favorite size="16" color={iconColor} />,
-          title: notificationText,
-        };
-      case NotificationType.POST_COMMENT:
-        return {
-          icon: <Chat size="16" color={iconColor} />,
-          title: (
-            <Trans
-              i18nKey="NotificationListItem.POST_COMMENT"
-              components={{
-                user: (
-                  <Anchor
-                    weight="bold"
-                    href={`/user/${notification.createdBy.userName}`}
-                  />
-                ),
-                post: (
-                  <Anchor
-                    weight="bold"
-                    href={`/video/${notification.post.id}`}
-                  />
-                ),
-              }}
-              values={{ userName: notification.createdBy.fullName }}
-            />
-          ),
-        };
       case NotificationType.POST_COMMENT_LIKE:
-        return {
-          icon: <Favorite size="16" color={iconColor} />,
-          title: (
-            <Trans
-              i18nKey="NotificationListItem.POST_COMMENT_LIKE"
-              components={{
-                user: (
-                  <Anchor
-                    weight="bold"
-                    href={`/user/${notification.createdBy.userName}`}
-                  />
-                ),
-                post: (
-                  <Anchor
-                    weight="bold"
-                    href={`/video/${notification.post.id}`}
-                  />
-                ),
-              }}
-              values={{ userName: notification.createdBy.fullName }}
-            />
-          ),
-        };
+        icon = <Favorite {...iconProps} />;
+        break;
+      case NotificationType.POST_COMMENT:
       case NotificationType.POST_COMMENT_REPLY:
-        return {
-          icon: <Chat size="16" color={iconColor} />,
-          title: (
-            <Trans
-              i18nKey="NotificationListItem.POST_COMMENT_REPLY"
-              components={{
-                user: (
-                  <Anchor
-                    weight="bold"
-                    href={`/user/${notification.createdBy.userName}`}
-                  />
-                ),
-                post: (
-                  <Anchor
-                    weight="bold"
-                    href={`/video/${notification.post.id}`}
-                  />
-                ),
-              }}
-              values={{ userName: notification.createdBy.fullName }}
-            />
-          ),
-        };
+        icon = <Chat {...iconProps} />;
+        break;
       case NotificationType.POST_COMMENT_MENTION:
-        return {
-          icon: <UserAdd size="16" color={iconColor} />,
-          title: (
-            <Trans
-              i18nKey="NotificationListItem.POST_COMMENT_MENTION"
-              components={{
-                user: (
-                  <Anchor href={`/user/${notification.createdBy.userName}`} />
-                ),
-                post: <Anchor href={`/video/${notification.post.id}`} />,
-              }}
-              values={{ userName: notification.createdBy.fullName }}
-            />
-          ),
-        };
-      case NotificationType.CONTACT_REQUEST_ACCEPTED:
-        return {
-          icon: <User size="16" color={iconColor} />,
-          title: (
-            <Trans
-              i18nKey="NotificationListItem.CONTACT_REQUEST_ACCEPTED"
-              components={{
-                user: (
-                  <Anchor href={`/user/${notification.createdBy.userName}`} />
-                ),
-              }}
-              values={{ userName: notification.createdBy.fullName }}
-            />
-          ),
-        };
       case NotificationType.CONTACT_REQUEST_RECEIVED:
-        return {
-          icon: <UserAdd color={iconColor} size="16" />,
-          title: (
-            <Trans
-              i18nKey="NotificationListItem.CONTACT_REQUEST_ACCEPTED"
-              components={{
-                user: (
-                  <Anchor href={`/user/${notification.createdBy.userName}`} />
-                ),
-              }}
-              values={{ userName: notification.createdBy.fullName }}
-            />
-          ),
-        };
+        icon = <UserAdd {...iconProps} />;
+        break;
+      case NotificationType.CONTACT_REQUEST_ACCEPTED:
+        icon = <User {...iconProps} />;
+        break;
       default:
-        return {};
+        break;
     }
+
+    return { icon, title };
   };
+
   const { icon, title } = useMemo(() => getNotificationPayload(), [
     notification,
   ]);
@@ -174,7 +88,7 @@ const NotificationListItem: FC<NotificationListItemProps> = ({
       {icon}
       <Text
         color={notification.viewedOn ? 'black' : 'brand'}
-        weight={notification.viewedOn ? 400 : 500}
+        weight={500}
         size="xsmall"
       >
         {title}

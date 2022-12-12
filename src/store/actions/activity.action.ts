@@ -1,4 +1,5 @@
 import {
+  CHANNEL_SUGGESTIONS_FAILED,
   CHANNEL_SUGGESTIONS_REQUESTED,
   CHANNEL_SUGGESTIONS_SUCCESS,
   CONTACT_SUGGESTIONS_FAILED,
@@ -13,18 +14,20 @@ import {
   LIST_INVITATION_FAILED,
   LIST_INVITATION_REQUESTED,
   LIST_INVITATION_SUCCESS,
-  ZONE_SUGGESTIONS_FAILED,
-  ZONE_SUGGESTIONS_REQUESTED,
-  ZONE_SUGGESTIONS_SUCCESS,
-  CHANNEL_SUGGESTIONS_FAILED,
-  NOTIFICATION_REQUESTED,
-  NOTIFICATION_SUCCESS,
-  NOTIFICATION_FAILED,
   NOTIFICATION_COUNT_FAILED,
   NOTIFICATION_COUNT_REQUESTED,
   NOTIFICATION_COUNT_SUCCESS,
+  NOTIFICATION_FAILED,
+  NOTIFICATION_REQUESTED,
+  NOTIFICATION_SUCCESS,
+  READ_NOTIFICATION_REQUESTED,
+  READ_NOTIFICATION_SUCCESS,
+  VIEW_NOTIFICATION_FAILED,
   VIEW_NOTIFICATION_REQUESTED,
   VIEW_NOTIFICATION_SUCCESS,
+  ZONE_SUGGESTIONS_FAILED,
+  ZONE_SUGGESTIONS_REQUESTED,
+  ZONE_SUGGESTIONS_SUCCESS,
 } from '../constants/activity.constants';
 
 import * as ActivityService from '../services/activity.service';
@@ -205,16 +208,40 @@ export const getNotificationCountAction = (): ActivityAction => {
   };
 };
 
-export const viewNotificationsAction = (viewCount: number): ActivityAction => {
+export const viewNotificationsAction = (
+  notificationIds: number[]
+): ActivityAction => {
   return async (dispatch) => {
     dispatch({
       type: VIEW_NOTIFICATION_REQUESTED,
     });
     try {
-      await ActivityService.viewNotifications();
+      await ActivityService.viewNotifications(notificationIds);
       dispatch({
         type: VIEW_NOTIFICATION_SUCCESS,
-        payload: viewCount,
+        payload: notificationIds,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: VIEW_NOTIFICATION_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const readNotificationsAction = (
+  notificationId: number
+): ActivityAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: READ_NOTIFICATION_REQUESTED,
+    });
+    try {
+      await ActivityService.readNotification(notificationId);
+      dispatch({
+        type: READ_NOTIFICATION_SUCCESS,
+        payload: notificationId,
       });
     } catch (err: any) {
       dispatch({

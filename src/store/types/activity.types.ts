@@ -20,6 +20,9 @@ import {
   NOTIFICATION_FAILED,
   NOTIFICATION_REQUESTED,
   NOTIFICATION_SUCCESS,
+  READ_NOTIFICATION_FAILED,
+  READ_NOTIFICATION_REQUESTED,
+  READ_NOTIFICATION_SUCCESS,
   VIEW_NOTIFICATION_FAILED,
   VIEW_NOTIFICATION_REQUESTED,
   VIEW_NOTIFICATION_SUCCESS,
@@ -176,6 +179,7 @@ export type ActivityActionParams =
         | typeof NOTIFICATION_REQUESTED
         | typeof NOTIFICATION_COUNT_REQUESTED
         | typeof VIEW_NOTIFICATION_REQUESTED
+        | typeof READ_NOTIFICATION_REQUESTED
         | typeof GET_INVITATION_RESPONSE_REQUESTED
         | typeof CREATE_CONTACT_INVITATION_REQUESTED;
     }
@@ -223,6 +227,10 @@ export type ActivityActionParams =
     }
   | {
       type: typeof VIEW_NOTIFICATION_SUCCESS;
+      payload: number[];
+    }
+  | {
+      type: typeof READ_NOTIFICATION_SUCCESS;
       payload: number;
     }
   | {
@@ -231,7 +239,8 @@ export type ActivityActionParams =
         | typeof ZONE_SUGGESTIONS_FAILED
         | typeof NOTIFICATION_FAILED
         | typeof NOTIFICATION_COUNT_FAILED
-        | typeof VIEW_NOTIFICATION_FAILED;
+        | typeof VIEW_NOTIFICATION_FAILED
+        | typeof READ_NOTIFICATION_FAILED;
       payload: ResponseError;
     };
 

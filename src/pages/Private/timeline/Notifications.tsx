@@ -24,7 +24,12 @@ const Notifications: FC = () => {
     getNotifications();
 
     return () => {
-      dispatch(viewNotificationsAction(displayCount));
+      const data =
+        displayCount === INVITATION_AMOUNT_LESS
+          ? notification.data.slice(0, displayCount).filter((d) => !d.viewedOn)
+          : notification.data.filter((d) => !d.viewedOn);
+
+      if (data.length) dispatch(viewNotificationsAction(data.map((d) => d.id)));
     };
   }, []);
 

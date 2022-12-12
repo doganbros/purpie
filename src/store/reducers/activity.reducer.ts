@@ -2,14 +2,6 @@ import {
   CHANNEL_SUGGESTIONS_FAILED,
   CHANNEL_SUGGESTIONS_REQUESTED,
   CHANNEL_SUGGESTIONS_SUCCESS,
-  NOTIFICATION_COUNT_FAILED,
-  NOTIFICATION_COUNT_REQUESTED,
-  NOTIFICATION_COUNT_SUCCESS,
-  NOTIFICATION_FAILED,
-  NOTIFICATION_REQUESTED,
-  NOTIFICATION_SUCCESS,
-  VIEW_NOTIFICATION_REQUESTED,
-  VIEW_NOTIFICATION_SUCCESS,
   CONTACT_SUGGESTIONS_FAILED,
   CONTACT_SUGGESTIONS_REQUESTED,
   CONTACT_SUGGESTIONS_SUCCESS,
@@ -22,6 +14,18 @@ import {
   LIST_INVITATION_FAILED,
   LIST_INVITATION_REQUESTED,
   LIST_INVITATION_SUCCESS,
+  NOTIFICATION_COUNT_FAILED,
+  NOTIFICATION_COUNT_REQUESTED,
+  NOTIFICATION_COUNT_SUCCESS,
+  NOTIFICATION_FAILED,
+  NOTIFICATION_REQUESTED,
+  NOTIFICATION_SUCCESS,
+  READ_NOTIFICATION_FAILED,
+  READ_NOTIFICATION_REQUESTED,
+  READ_NOTIFICATION_SUCCESS,
+  VIEW_NOTIFICATION_FAILED,
+  VIEW_NOTIFICATION_REQUESTED,
+  VIEW_NOTIFICATION_SUCCESS,
   ZONE_SUGGESTIONS_FAILED,
   ZONE_SUGGESTIONS_REQUESTED,
   ZONE_SUGGESTIONS_SUCCESS,
@@ -262,11 +266,6 @@ const activityReducer = (
     case NOTIFICATION_SUCCESS:
       return {
         ...state,
-        // notification: {
-        //   ...action.payload,
-        //   loading: false,
-        //   error: null,
-        // },
         notification:
           action.payload.skip > 0
             ? {
@@ -287,7 +286,9 @@ const activityReducer = (
         },
       };
 
-    case NOTIFICATION_COUNT_REQUESTED || VIEW_NOTIFICATION_REQUESTED:
+    case NOTIFICATION_COUNT_REQUESTED ||
+      VIEW_NOTIFICATION_REQUESTED ||
+      READ_NOTIFICATION_REQUESTED:
       return {
         ...state,
         notificationCount: {
@@ -305,7 +306,9 @@ const activityReducer = (
           error: null,
         },
       };
-    case NOTIFICATION_COUNT_FAILED || NOTIFICATION_COUNT_FAILED:
+    case NOTIFICATION_COUNT_FAILED ||
+      VIEW_NOTIFICATION_FAILED ||
+      READ_NOTIFICATION_FAILED:
       return {
         ...state,
         notificationCount: {
@@ -319,7 +322,18 @@ const activityReducer = (
         ...state,
         notificationCount: {
           ...state.notificationCount,
-          unviewedCount: state.notificationCount.unviewedCount - action.payload,
+          unviewedCount:
+            state.notificationCount.unviewedCount - action.payload.length,
+          loading: false,
+          error: null,
+        },
+      };
+    case READ_NOTIFICATION_SUCCESS:
+      return {
+        ...state,
+        notificationCount: {
+          ...state.notificationCount,
+          unreadCount: state.notificationCount.unreadCount - 1,
           loading: false,
           error: null,
         },

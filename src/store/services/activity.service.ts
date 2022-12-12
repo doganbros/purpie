@@ -64,8 +64,13 @@ export const getNotifications = (
 export const getNotificationCount = (): Promise<NotificationCount> =>
   http.get('/notification/count').then((res) => res.data);
 
-export const viewNotifications = (): Promise<string> =>
-  http.post('/notification/view').then((res) => res.data);
+export const viewNotifications = (notificationIds: number[]): Promise<string> =>
+  http
+    .post('/notification/view', null, { params: { notificationIds } })
+    .then((res) => res.data);
+
+export const readNotification = (notificationId: number): Promise<string> =>
+  http.post(`/notification/read/${notificationId}`).then((res) => res.data);
 
 export const createInvitation = (email: string): Promise<string> =>
   http
