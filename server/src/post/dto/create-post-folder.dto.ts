@@ -6,11 +6,6 @@ export class CreatePostFolderDto {
   @IsString()
   title: string;
 
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  description?: string;
-
   @ApiProperty({
     required: false,
     description: 'This is the first post that will be added to the folder',

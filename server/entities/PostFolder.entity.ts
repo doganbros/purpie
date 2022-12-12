@@ -8,9 +8,6 @@ export class PostFolder extends RecordEntity {
   @Column()
   title: string;
 
-  @Column({ nullable: true, type: 'character varying' })
-  description: string | null;
-
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'createdById', referencedColumnName: 'id' })
   createdBy: User;
@@ -21,6 +18,6 @@ export class PostFolder extends RecordEntity {
   @OneToMany(() => PostFolderItem, (post) => post.folder)
   folderItems: Array<PostFolderItem>;
 
-  @Column({ select: false, nullable: true, insert: false, type: 'int' })
+  @Column({ select: false, default: 0, insert: false, type: 'int' })
   itemCount: number;
 }

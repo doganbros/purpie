@@ -12,6 +12,7 @@ interface Props extends BoxExtendedProps {
   minWidth?: string;
   maxWidth?: string;
   minHeight?: string;
+  maxHeight?: string;
   opacity?: string;
   transition?: string;
   transform?: string;
@@ -31,6 +32,7 @@ const ExtendedBoxCSS = css`
   min-width: ${(props: Props) => props.minWidth};
   max-width: ${(props: Props) => props.maxWidth};
   min-height: ${(props: Props) => props.minHeight};
+  max-height: ${(props: Props) => props.maxHeight};
   opacity: ${(props: Props) => props.opacity};
   box-shadow: ${(props: Props) => props.boxShadow};
   user-select: ${(props: Props) => props.userSelect};

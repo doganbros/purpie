@@ -386,7 +386,8 @@
     "loadMore": "Load more"
   },
   "RecommendedVideos": {
-    "title": "Recommended Videos"
+    "title": "Recommended Videos",
+    "singleTitle": "Recommended Video"
   },
   "Video": {
     "followChannel": "Follow This Channel",

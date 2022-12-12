@@ -33,7 +33,7 @@ import {
   CurrentUser,
   CurrentUserProfile,
 } from 'src/auth/decorators/current-user.decorator';
-import { s3HeadObject, s3Storage, s3 } from 'config/s3-storage';
+import { deleteObject, s3, s3HeadObject, s3Storage } from 'config/s3-storage';
 import {
   UserProfile,
   UserTokenPayload,
@@ -466,6 +466,27 @@ export class UserController {
     await this.userService.changeDisplayPhoto(user.id, fileName);
 
     return fileName;
+  }
+
+  @Delete('display-photo')
+  @ApiOkResponse({
+    description: 'Delete user display photo',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @HttpCode(HttpStatus.OK)
+  @IsAuthenticated([], { injectUserProfile: true })
+  async deleteDisplayPhoto(@CurrentUserProfile() userProfile: UserProfile) {
+    if (!userProfile.displayPhoto)
+      throw new NotFoundException(
+        ErrorTypes.USER_DISPLAY_PHOTO_NOT_FOUND,
+        'The specified user has not any display photo!',
+      );
+    await this.userService.deleteDisplayPhoto(userProfile.id);
+
+    await deleteObject({
+      Key: `${S3_PROFILE_PHOTO_DIR}/user-dp/${userProfile.displayPhoto}`,
+      Bucket: S3_VIDEO_BUCKET_NAME,
+    });
   }
 
   @Get('display-photo/:fileName')

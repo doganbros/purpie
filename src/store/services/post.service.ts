@@ -9,7 +9,6 @@ import {
   Post,
   PostComment,
   PostSearchParams,
-  SavedPost,
 } from '../types/post.types';
 
 export const getPostFeeds = (
@@ -46,18 +45,6 @@ export const removePostLike = (postId: number): Promise<Post> =>
 
 export const removePost = (postId: number): Promise<Post> =>
   http.delete(`/post/remove/${postId}`).then((res) => res.data);
-
-export const createPostSave = (postId: number): Promise<Post> =>
-  http.post('/post/saved/create', { postId }).then((res) => res.data);
-
-export const removePostSave = (postId: number): Promise<Post> =>
-  http.delete(`/post/saved/remove/${postId}`).then((res) => res.data);
-
-export const getSavedPost = (params: {
-  limit?: number;
-  skip?: number;
-}): Promise<PaginatedResponse<SavedPost>> =>
-  http.get('/post/saved/list', { params }).then((res) => res.data);
 
 export const searchPost = (
   params: PostSearchParams

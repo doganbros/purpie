@@ -10,9 +10,6 @@ import {
   CREATE_POST_LIKE_FAILED,
   CREATE_POST_LIKE_REQUESTED,
   CREATE_POST_LIKE_SUCCESS,
-  CREATE_POST_SAVE_FAILED,
-  CREATE_POST_SAVE_REQUESTED,
-  CREATE_POST_SAVE_SUCCESS,
   CREATE_VIDEO_FAILED,
   CREATE_VIDEO_REQUESTED,
   CREATE_VIDEO_SUCCESS,
@@ -42,13 +39,7 @@ import {
   REMOVE_POST_LIKE_FAILED,
   REMOVE_POST_LIKE_REQUESTED,
   REMOVE_POST_LIKE_SUCCESS,
-  REMOVE_POST_SAVE_FAILED,
-  REMOVE_POST_SAVE_REQUESTED,
-  REMOVE_POST_SAVE_SUCCESS,
   REMOVE_POST_SUCCESS,
-  SAVED_POSTS_FAILED,
-  SAVED_POSTS_REQUESTED,
-  SAVED_POSTS_SUCCESS,
   SEARCH_POST_FAILED,
   SEARCH_POST_REQUESTED,
   SEARCH_POST_SUCCESS,
@@ -219,76 +210,6 @@ export const removePostLikeAction = (payload: {
     } catch (err: any) {
       dispatch({
         type: REMOVE_POST_LIKE_FAILED,
-        payload: err?.response?.data,
-      });
-    }
-  };
-};
-
-export const createPostSaveAction = (payload: {
-  postId: number;
-}): PostAction => {
-  return async (dispatch) => {
-    dispatch({
-      type: CREATE_POST_SAVE_REQUESTED,
-      payload,
-    });
-    try {
-      await PostService.createPostSave(payload.postId);
-      dispatch({
-        type: CREATE_POST_SAVE_SUCCESS,
-        payload,
-      });
-    } catch (err: any) {
-      dispatch({
-        type: CREATE_POST_SAVE_FAILED,
-        payload: err?.response?.data,
-      });
-    }
-  };
-};
-
-export const removePostSaveAction = (payload: {
-  postId: number;
-}): PostAction => {
-  return async (dispatch) => {
-    dispatch({
-      type: REMOVE_POST_SAVE_REQUESTED,
-      payload,
-    });
-    try {
-      await PostService.removePostSave(payload.postId);
-      dispatch({
-        type: REMOVE_POST_SAVE_SUCCESS,
-        payload,
-      });
-    } catch (err: any) {
-      dispatch({
-        type: REMOVE_POST_SAVE_FAILED,
-        payload: err?.response?.data,
-      });
-    }
-  };
-};
-
-export const getSavedPostAction = (payload: {
-  limit?: number;
-  skip?: number;
-}): PostAction => {
-  return async (dispatch) => {
-    dispatch({
-      type: SAVED_POSTS_REQUESTED,
-      payload,
-    });
-    try {
-      const response = await PostService.getSavedPost(payload);
-      dispatch({
-        type: SAVED_POSTS_SUCCESS,
-        payload: response,
-      });
-    } catch (err: any) {
-      dispatch({
-        type: SAVED_POSTS_FAILED,
         payload: err?.response?.data,
       });
     }

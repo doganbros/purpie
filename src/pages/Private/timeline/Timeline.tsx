@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { FC, useContext, useEffect, useState } from 'react';
 import {
   Box,
@@ -15,11 +14,7 @@ import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/Pri
 import Divider from '../../../components/utils/Divider';
 import PostGridItem from '../../../components/post/PostGridItem';
 import SearchBar from '../../../components/utils/SearchBar';
-import {
-  createPostSaveAction,
-  getFeedListAction,
-  removePostSaveAction,
-} from '../../../store/actions/post.action';
+import { getFeedListAction } from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import ChannelList from './ChannelList';
 import ChannelsToFollow from './ChannelsToFollow';
@@ -154,11 +149,6 @@ const Timeline: FC = () => {
                 key={item.id}
                 post={item}
                 onClickPlay={() => history.push(`video/${item.id}`)}
-                onClickSave={() => {
-                  if (item.saved)
-                    dispatch(removePostSaveAction({ postId: item.id }));
-                  else dispatch(createPostSaveAction({ postId: item.id }));
-                }}
               />
             );
           }}

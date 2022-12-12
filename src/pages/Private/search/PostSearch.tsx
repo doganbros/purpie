@@ -15,10 +15,7 @@ import Notifications from '../timeline/Notifications';
 import ZonesToJoin from '../timeline/ZonesToJoin';
 import FilterWrapper from './FilterWrapper';
 import SearchInput from './SearchInput';
-import {
-  createPostSaveAction,
-  searchPostAction,
-} from '../../../store/actions/post.action';
+import { searchPostAction } from '../../../store/actions/post.action';
 import { SearchParams } from '../../../models/utils';
 import Switch from '../../../components/utils/Switch';
 
@@ -73,10 +70,6 @@ const PostSearch: FC = () => {
             <PostGridItem
               post={item}
               onClickPlay={() => history.push(`/video/${item.id}`)}
-              onClickSave={() => {
-                if (!item.saved)
-                  dispatch(createPostSaveAction({ postId: item.id }));
-              }}
             />
           )}
         </InfiniteScroll>

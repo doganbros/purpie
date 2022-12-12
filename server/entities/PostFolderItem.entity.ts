@@ -1,4 +1,11 @@
-import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  Unique,
+} from 'typeorm';
 import { RecordEntity } from './base/RecordEntity';
 import { PostFolder } from './PostFolder.entity';
 import { Post } from './Post.entity';
@@ -6,7 +13,7 @@ import { Post } from './Post.entity';
 @Entity()
 @Unique(['postId', 'folderId'])
 export class PostFolderItem extends RecordEntity {
-  @ManyToOne(() => Post, { onDelete: 'CASCADE' })
+  @OneToOne(() => Post, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'postId', referencedColumnName: 'id' })
   post: Post;
 

@@ -5,11 +5,7 @@ import { Box, Grid, Text } from 'grommet';
 import { useTranslation } from 'react-i18next';
 import PostGridItem from '../../../components/post/PostGridItem';
 import { AppState } from '../../../store/reducers/root.reducer';
-import {
-  createPostSaveAction,
-  getFeedListAction,
-  removePostSaveAction,
-} from '../../../store/actions/post.action';
+import { getFeedListAction } from '../../../store/actions/post.action';
 import GradientScroll from '../../../components/utils/GradientScroll';
 
 const RecommendedVideos: FC = () => {
@@ -29,10 +25,16 @@ const RecommendedVideos: FC = () => {
   }, []);
   const filteredFeed = feed.data.filter((p) => p.id !== postDetail.data?.id);
   return (
-    <Box gap="small">
-      <Text size="large" weight="bold" color="brand">
-        {t('RecommendedVideos.title')}
-      </Text>
+    <Box gap="small" width={filteredFeed?.length === 1 ? 'medium' : 'xxlarge'}>
+      {filteredFeed?.length === 1 ? (
+        <Text size="large" weight="bold" color="brand">
+          {t('RecommendedVideos.singleTitle')}
+        </Text>
+      ) : (
+        <Text size="large" weight="bold" color="brand">
+          {t('RecommendedVideos.title')}
+        </Text>
+      )}
       <GradientScroll>
         <Grid
           columns={{ count: filteredFeed.length, size: 'medium' }}
@@ -43,11 +45,6 @@ const RecommendedVideos: FC = () => {
               key={post.id}
               post={post}
               onClickPlay={() => history.push(`${post.id}`)}
-              onClickSave={() => {
-                if (post.saved)
-                  dispatch(removePostSaveAction({ postId: post.id }));
-                else dispatch(createPostSaveAction({ postId: post.id }));
-              }}
             />
           ))}
         </Grid>

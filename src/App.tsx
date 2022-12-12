@@ -20,6 +20,7 @@ import { initializeSocket } from './helpers/socket';
 import { getUserChannelsAction } from './store/actions/channel.action';
 import { DELAY_TIME } from './helpers/constants';
 import useDelayTime from './hooks/useDelayTime';
+import { listFolderAction } from './store/actions/folder.action';
 
 const App: FC = () => {
   const dispatch = useDispatch();
@@ -44,6 +45,7 @@ const App: FC = () => {
       initializeSocket();
       dispatch(getUserChannelsAction());
       dispatch(getUserZonesAction());
+      dispatch(listFolderAction());
     }
   }, [isAuthenticated]);
 
