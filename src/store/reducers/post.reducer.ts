@@ -38,6 +38,7 @@ import {
   SEARCH_POST_SUCCESS,
   UPDATE_POST_COMMENT_SUCCESS,
   UPDATE_POST_DETAIL_SUCCESS,
+  REMOVE_POST_SUCCESS,
 } from '../constants/post.constants';
 import { PostActionParams, PostState } from '../types/post.types';
 import { paginationInitialState } from '../../helpers/constants';
@@ -675,6 +676,14 @@ const postReducer = (
         },
       };
     }
+    case REMOVE_POST_SUCCESS:
+      return {
+        ...state,
+        feed: {
+          ...state.feed,
+          data: state.feed.data.filter((p) => p.id !== action.payload.postId),
+        },
+      };
     case GET_FEATURED_POST_REQUESTED:
       return {
         ...state,
