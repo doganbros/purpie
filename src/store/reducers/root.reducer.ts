@@ -8,6 +8,7 @@ import postReducer from './post.reducer';
 import userReducer from './user.reducer';
 import utilReducer from './util.reducer';
 import zoneReducer from './zone.reducer';
+import folderReducer from './folder.reducer';
 
 const rootReducer = combineReducers({
   activity: activityReducer,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   user: userReducer,
   zone: zoneReducer,
   chat: chatReducer,
+  folder: folderReducer,
 });
 
 export type AppState = ReturnType<typeof rootReducer>;

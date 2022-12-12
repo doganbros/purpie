@@ -1,19 +1,19 @@
 import { Box } from 'grommet';
 import videojs from 'video.js';
-import { Bookmark } from 'grommet-icons';
 import React, { FC, useRef, useState } from 'react';
+import { Bookmark } from 'grommet-icons';
 import { http } from '../../config/http';
-import { BookmarkFill } from '../utils/CustomIcons';
 import ExtendedBox from '../utils/ExtendedBox';
 import VideoJs from './VideoJs';
+import { AddToFolderDrop } from '../../layers/saved-video/folder/AddToFolderDrop';
+import { BookmarkFill } from '../utils/CustomIcons';
 
 interface VideoPostProps {
   id: number;
   videoName: string;
   slug: string;
   live: boolean;
-  saved: boolean;
-  onClickSave: (id: number) => any;
+  savedIcon?: boolean;
 }
 
 const { REACT_APP_STREAMING_URL } = process.env;
@@ -23,8 +23,7 @@ export const VideoPost: FC<VideoPostProps> = ({
   videoName,
   slug,
   live,
-  saved,
-  onClickSave,
+  savedIcon = true,
 }) => {
   const player = useRef<videojs.Player | null>(null);
   const [hover, setHover] = useState(false);
@@ -40,6 +39,7 @@ export const VideoPost: FC<VideoPostProps> = ({
       }}
       onMouseLeave={() => {
         setHover(false);
+        // setOpen(false);
         if (player.current) {
           player.current.pause();
           player.current.currentTime(0);
@@ -96,21 +96,23 @@ export const VideoPost: FC<VideoPostProps> = ({
             />
           )}
         </Box>
-        <Box
-          pad="small"
-          margin="small"
-          focusIndicator={false}
-          onClick={(e) => {
-            e.stopPropagation();
-            onClickSave(id);
-          }}
-        >
-          {saved ? (
-            <BookmarkFill color="accent-1" />
-          ) : (
-            hover && <Bookmark color="status-disabled" />
-          )}
-        </Box>
+
+        {savedIcon && (
+          <Box pad="small" margin="small" focusIndicator={false}>
+            {hover && (
+              <AddToFolderDrop
+                postId={id}
+                dropLabels={(isActive) =>
+                  isActive ? (
+                    <BookmarkFill color="white" />
+                  ) : (
+                    <Bookmark color="white" />
+                  )
+                }
+              />
+            )}
+          </Box>
+        )}
       </ExtendedBox>
     </ExtendedBox>
   );

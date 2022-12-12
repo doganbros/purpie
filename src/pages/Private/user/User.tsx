@@ -7,11 +7,7 @@ import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/Pri
 import PostListItem from '../../../components/post/PostListItem';
 import Divider from '../../../components/utils/Divider';
 import GradientScroll from '../../../components/utils/GradientScroll';
-import {
-  createPostSaveAction,
-  getFeaturedPostAction,
-  removePostSaveAction,
-} from '../../../store/actions/post.action';
+import { getFeaturedPostAction } from '../../../store/actions/post.action';
 import { getUserDetailAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import Header from './Header';
@@ -78,7 +74,6 @@ const User: FC = () => {
             <PostListItem
               post={featuredPost.data}
               onClickPlay={() => history.push(`video/${featuredPost.data?.id}`)}
-              onClickSave={() => {}}
             />
           )}
 
@@ -111,11 +106,6 @@ const User: FC = () => {
                       key={p.id}
                       post={p}
                       onClickPlay={() => history.push(`video/${p.id}`)}
-                      onClickSave={() => {
-                        if (p.saved)
-                          dispatch(removePostSaveAction({ postId: p.id }));
-                        else dispatch(createPostSaveAction({ postId: p.id }));
-                      }}
                     />
                   ))}
                 </Grid>

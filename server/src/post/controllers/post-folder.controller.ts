@@ -7,17 +7,15 @@ import {
   ParseIntPipe,
   Post,
   Put,
-  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
-import { PaginationQuery } from 'types/PaginationQuery';
 import { FolderService } from '../services/folder.service';
 import { CreatePostFolderDto } from '../dto/create-post-folder.dto';
 import { UpdatePostFolderDto } from '../dto/update-post-folder.dto';
-import { AddPostFolderItemDto } from '../dto/add-post-folder-item.dto';
+import { AddOrRemovePostFolderItemDto } from '../dto/add-or-remove-post-folder-item.dto';
 
 @Controller({ version: '1', path: 'post/folder' })
 @ApiTags('post/folder')
@@ -26,11 +24,8 @@ export class PostFolderController {
 
   @Get('list')
   @IsAuthenticated()
-  getUserFolderList(
-    @CurrentUser() user: UserTokenPayload,
-    @Query() query: PaginationQuery,
-  ) {
-    return this.folderService.getUserPostFolders(user.id, query);
+  getUserFolderList(@CurrentUser() user: UserTokenPayload) {
+    return this.folderService.getUserPostFolders(user.id);
   }
 
   @Post('create')
@@ -66,19 +61,17 @@ export class PostFolderController {
   @IsAuthenticated()
   addFolderItem(
     @CurrentUser() user: UserTokenPayload,
-    @Body() info: AddPostFolderItemDto,
+    @Body() info: AddOrRemovePostFolderItemDto,
   ) {
     return this.folderService.addFolderItem(user.id, info);
   }
 
-  @Delete('item/remove/:folderItemId')
+  @Post('item/remove')
   @IsAuthenticated()
-  async removeFolderItem(
+  removeFolderItem(
     @CurrentUser() user: UserTokenPayload,
-    @Param('folderItemId', ParseIntPipe) folderItemId: number,
+    @Body() info: AddOrRemovePostFolderItemDto,
   ) {
-    await this.folderService.removeFolderItem(user.id, folderItemId);
-
-    return 'OK';
+    return this.folderService.removeFolderItem(user.id, info);
   }
 }

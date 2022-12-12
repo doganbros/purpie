@@ -1,24 +1,20 @@
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Box, Grid, InfiniteScroll, ResponsiveContext, Text } from 'grommet';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { Box, Button, Text } from 'grommet';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import Divider from '../../../components/utils/Divider';
-import PostGridItem from '../../../components/post/PostGridItem';
 import SearchBar from '../../../components/utils/SearchBar';
-import {
-  getSavedPostAction,
-  removePostSaveAction,
-} from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
-import ChannelList from '../timeline/ChannelList';
 import ChannelsToFollow from '../timeline/ChannelsToFollow';
 import LastActivities from '../timeline/LastActivities';
 import ZonesToJoin from '../timeline/ZonesToJoin';
 import ConfirmDialog from '../../../components/utils/ConfirmDialog';
+import SavedVideo from '../../../layers/saved-video/SavedVideo';
+import { CreateFolderDrop } from '../../../layers/saved-video/folder/CreateFolderDrop';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 dayjs.extend(relativeTime);
 
@@ -28,12 +24,9 @@ interface ConfirmationState {
 }
 
 const Saved: FC = () => {
-  const size = useContext(ResponsiveContext);
-  const history = useHistory();
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const {
-    post: { saved },
+    folder: { folderList },
   } = useSelector((state: AppState) => state);
 
   const [confirmation, setConfirmation] = useState<ConfirmationState>({
@@ -44,18 +37,6 @@ const Saved: FC = () => {
   const closeConfirmation = () => {
     setConfirmation({ visible: false, postId: null });
   };
-
-  const getSaved = (skip?: number) => {
-    dispatch(
-      getSavedPostAction({
-        skip,
-      })
-    );
-  };
-
-  useEffect(() => {
-    getSaved();
-  }, []);
 
   return (
     <PrivatePageLayout
@@ -69,48 +50,33 @@ const Saved: FC = () => {
           <LastActivities />
         </Box>
       }
-      topComponent={<ChannelList />}
     >
-      <Box pad={{ vertical: 'medium' }} gap="medium">
+      <Box pad={{ vertical: 'large' }} gap="large">
         <Box direction="row" justify="between" align="center">
-          <Text weight="bold">{t('Saved.title')}</Text>
+          <Text weight="bold" color="brand-alt">
+            {t('Saved.title')}
+          </Text>
+          <CreateFolderDrop
+            dropLabel={
+              <Button size="small" primary label="Create New Folder" />
+            }
+          />
         </Box>
-        <Grid
-          columns={size !== 'small' ? 'medium' : '100%'}
-          gap={{ row: 'large', column: 'medium' }}
-        >
-          {saved.data.length === 0 ? (
-            <Text size="small" color="status-disabled">
-              {t('Saved.emptyMsg')}
-            </Text>
-          ) : (
-            <InfiniteScroll
-              items={saved.data}
-              onMore={() => {
-                getSaved(saved.data.length);
-              }}
-              step={6}
-            >
-              {({ post }: typeof saved.data[0]) => (
-                <PostGridItem
-                  key={post.id}
-                  post={{ ...post, saved: true }}
-                  onClickPlay={() => history.push(`video/${post.id}`)}
-                  onClickSave={() => {
-                    setConfirmation({ visible: true, postId: post.id });
-                  }}
-                />
-              )}
-            </InfiniteScroll>
-          )}
-        </Grid>
+        {folderList.loading && (
+          <PurpieLogoAnimated width={100} height={100} color="#956aea" />
+        )}
+        {!folderList.loading && folderList.data.length === 0 ? (
+          <Text size="small">No post folder found!</Text>
+        ) : (
+          <Box gap="large">
+            {folderList.data.map((folder) => (
+              <SavedVideo key={`folder-item-${folder.id}`} folder={folder} />
+            ))}
+          </Box>
+        )}
         {confirmation.visible && (
           <ConfirmDialog
-            onConfirm={() => {
-              if (confirmation.postId !== null) {
-                dispatch(removePostSaveAction({ postId: confirmation.postId }));
-              }
-            }}
+            onConfirm={() => 'remove post from folder'}
             onDismiss={closeConfirmation}
             message={t('Saved.removeConfirmMsg')}
             confirmButtonText={t('common.remove')}
