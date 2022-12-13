@@ -108,6 +108,7 @@ export class VideoController {
     const videoPost = await this.staticVideoService.createNewVideoPost(
       videoPostPayload,
     );
+
     videoPostPayload.id = videoPost.id;
 
     await this.staticVideoService.sendVideoInfoMail(user, videoPost);
