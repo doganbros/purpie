@@ -12,7 +12,7 @@ import { AppState } from '../../../store/reducers/root.reducer';
 import { UserBasic } from '../../../store/types/auth.types';
 import { ProfileSearchOptions } from '../../../store/types/user.types';
 import ChannelsToFollow from '../timeline/ChannelsToFollow';
-import LastActivities from '../timeline/LastActivities';
+import Notifications from '../timeline/Notifications';
 import ZonesToJoin from '../timeline/ZonesToJoin';
 import FilterWrapper from './FilterWrapper';
 import SearchInput from './SearchInput';
@@ -93,7 +93,7 @@ const ProfileSearch: FC = () => {
           <ChannelsToFollow />
           <Divider />
           <ZonesToJoin />
-          <LastActivities />
+          <Notifications />
         </Box>
       }
     >

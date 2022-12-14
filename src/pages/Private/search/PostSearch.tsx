@@ -11,7 +11,7 @@ import { useResponsive } from '../../../hooks/useResponsive';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { Post, PostSearchOptions } from '../../../store/types/post.types';
 import ChannelsToFollow from '../timeline/ChannelsToFollow';
-import LastActivities from '../timeline/LastActivities';
+import Notifications from '../timeline/Notifications';
 import ZonesToJoin from '../timeline/ZonesToJoin';
 import FilterWrapper from './FilterWrapper';
 import SearchInput from './SearchInput';
@@ -97,7 +97,7 @@ const PostSearch: FC = () => {
           <ChannelsToFollow />
           <Divider />
           <ZonesToJoin />
-          <LastActivities />
+          <Notifications />
         </Box>
       }
     >

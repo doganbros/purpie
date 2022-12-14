@@ -18,6 +18,6 @@ export class PostFolder extends RecordEntity {
   @OneToMany(() => PostFolderItem, (post) => post.folder)
   folderItems: Array<PostFolderItem>;
 
-  @Column({ select: false, default: 0, insert: false, type: 'int' })
+  @Column({ default: 0, type: 'int' })
   itemCount: number;
 }

@@ -1,5 +1,6 @@
 import {
   Controller,
+  DefaultValuePipe,
   Get,
   Param,
   ParseArrayPipe,
@@ -39,6 +40,7 @@ export class NotificationController {
     @CurrentUser() user: UserTokenPayload,
     @Query(
       'notificationIds',
+      new DefaultValuePipe('-1'),
       new ParseArrayPipe({ items: Number, separator: ',' }),
     )
     notificationIds: Array<number>,

@@ -3,12 +3,12 @@ import { Box, Button, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
-import { getZoneSuggestionsAction } from '../../../store/actions/activity.action';
 import ZoneListItem from '../../../components/utils/zone/ZoneListItem';
 import {
   SUGGESTION_AMOUNT_LESS,
   SUGGESTION_AMOUNT_MORE,
 } from '../../../helpers/constants';
+import { getZoneSuggestionsAction } from '../../../store/actions/activity.action';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 const ZonesToJoin: FC = () => {

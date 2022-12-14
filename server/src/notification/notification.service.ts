@@ -56,7 +56,6 @@ export class NotificationService {
         'createdBy.displayPhoto',
         'post.id',
         'post.title',
-        'post.userContactExclusive',
         'post.description',
         'post.slug',
         'post.type',

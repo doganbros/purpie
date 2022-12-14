@@ -9,7 +9,7 @@ import Divider from '../../../components/utils/Divider';
 import SearchBar from '../../../components/utils/SearchBar';
 import { AppState } from '../../../store/reducers/root.reducer';
 import ChannelsToFollow from '../timeline/ChannelsToFollow';
-import LastActivities from '../timeline/LastActivities';
+import Notifications from '../timeline/Notifications';
 import ZonesToJoin from '../timeline/ZonesToJoin';
 import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 import SavedVideo from '../../../layers/saved-video/SavedVideo';
@@ -47,7 +47,7 @@ const Saved: FC = () => {
           <ChannelsToFollow />
           <Divider />
           <ZonesToJoin />
-          <LastActivities />
+          <Notifications />
         </Box>
       }
     >
