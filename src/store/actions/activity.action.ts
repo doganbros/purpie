@@ -14,6 +14,17 @@ import {
   LIST_INVITATION_FAILED,
   LIST_INVITATION_REQUESTED,
   LIST_INVITATION_SUCCESS,
+  NOTIFICATION_COUNT_FAILED,
+  NOTIFICATION_COUNT_REQUESTED,
+  NOTIFICATION_COUNT_SUCCESS,
+  NOTIFICATION_FAILED,
+  NOTIFICATION_REQUESTED,
+  NOTIFICATION_SUCCESS,
+  READ_NOTIFICATION_REQUESTED,
+  READ_NOTIFICATION_SUCCESS,
+  VIEW_NOTIFICATION_FAILED,
+  VIEW_NOTIFICATION_REQUESTED,
+  VIEW_NOTIFICATION_SUCCESS,
   ZONE_SUGGESTIONS_FAILED,
   ZONE_SUGGESTIONS_REQUESTED,
   ZONE_SUGGESTIONS_SUCCESS,
@@ -148,6 +159,93 @@ export const createContactInvitation = (email: string): ActivityAction => {
     } catch (err: any) {
       dispatch({
         type: CREATE_CONTACT_INVITATION_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+export const getNotificationsAction = (
+  limit: number,
+  skip?: number,
+  type?: 'all' | 'unread' | 'read'
+): ActivityAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: NOTIFICATION_REQUESTED,
+    });
+    try {
+      const payload = await ActivityService.getNotifications(limit, skip, type);
+      dispatch({
+        type: NOTIFICATION_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: NOTIFICATION_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const getNotificationCountAction = (): ActivityAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: NOTIFICATION_COUNT_REQUESTED,
+    });
+    try {
+      const payload = await ActivityService.getNotificationCount();
+      dispatch({
+        type: NOTIFICATION_COUNT_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: NOTIFICATION_COUNT_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const viewNotificationsAction = (
+  notificationIds: number[]
+): ActivityAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: VIEW_NOTIFICATION_REQUESTED,
+    });
+    try {
+      await ActivityService.viewNotifications(notificationIds);
+      dispatch({
+        type: VIEW_NOTIFICATION_SUCCESS,
+        payload: notificationIds,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: VIEW_NOTIFICATION_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const readNotificationsAction = (
+  notificationId: number
+): ActivityAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: READ_NOTIFICATION_REQUESTED,
+    });
+    try {
+      await ActivityService.readNotification(notificationId);
+      dispatch({
+        type: READ_NOTIFICATION_SUCCESS,
+        payload: notificationId,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: NOTIFICATION_FAILED,
         payload: err?.response?.data,
       });
     }

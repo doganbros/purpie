@@ -14,14 +14,31 @@ import {
   LIST_INVITATION_FAILED,
   LIST_INVITATION_REQUESTED,
   LIST_INVITATION_SUCCESS,
+  NOTIFICATION_COUNT_FAILED,
+  NOTIFICATION_COUNT_REQUESTED,
+  NOTIFICATION_COUNT_SUCCESS,
+  NOTIFICATION_FAILED,
+  NOTIFICATION_REQUESTED,
+  NOTIFICATION_SUCCESS,
+  READ_NOTIFICATION_FAILED,
+  READ_NOTIFICATION_REQUESTED,
+  READ_NOTIFICATION_SUCCESS,
+  VIEW_NOTIFICATION_FAILED,
+  VIEW_NOTIFICATION_REQUESTED,
+  VIEW_NOTIFICATION_SUCCESS,
   ZONE_SUGGESTIONS_FAILED,
   ZONE_SUGGESTIONS_REQUESTED,
   ZONE_SUGGESTIONS_SUCCESS,
 } from '../constants/activity.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
-import { InvitationResponseType, InvitationType } from '../../models/utils';
+import { Post } from './post.types';
 import { User } from './auth.types';
+import {
+  InvitationResponseType,
+  InvitationType,
+  NotificationType,
+} from '../../models/utils';
 
 export interface ZoneSuggestionListItem {
   zone_id: number;
@@ -96,6 +113,23 @@ export interface InvitationResponse {
   type: InvitationType;
 }
 
+export interface NotificationListItem {
+  id: number;
+  createdBy: User;
+  createdOn: Date;
+  message: string;
+  counter: number;
+  type: NotificationType;
+  readOn: Date;
+  viewedOn: Date;
+  post: Post;
+}
+
+export interface NotificationCount {
+  unviewedCount: number;
+  unreadCount: number;
+}
+
 export interface ActivityState {
   zoneSuggestions: PaginatedResponse<ZoneSuggestionListItem> & {
     loading: boolean;
@@ -123,6 +157,14 @@ export interface ActivityState {
     error: ResponseError | null;
     userIds: Array<string>;
   };
+  notification: PaginatedResponse<NotificationListItem> & {
+    loading: boolean;
+    error: ResponseError | null;
+  };
+  notificationCount: NotificationCount & {
+    loading: boolean;
+    error: ResponseError | null;
+  };
 }
 
 export type ActivityActionParams =
@@ -132,6 +174,12 @@ export type ActivityActionParams =
         | typeof CONTACT_SUGGESTIONS_REQUESTED
         | typeof CHANNEL_SUGGESTIONS_REQUESTED
         | typeof LIST_INVITATION_REQUESTED
+        | typeof GET_INVITATION_RESPONSE_REQUESTED
+        | typeof CHANNEL_SUGGESTIONS_REQUESTED
+        | typeof NOTIFICATION_REQUESTED
+        | typeof NOTIFICATION_COUNT_REQUESTED
+        | typeof VIEW_NOTIFICATION_REQUESTED
+        | typeof READ_NOTIFICATION_REQUESTED
         | typeof GET_INVITATION_RESPONSE_REQUESTED
         | typeof CREATE_CONTACT_INVITATION_REQUESTED;
     }
@@ -167,6 +215,32 @@ export type ActivityActionParams =
         | typeof LIST_INVITATION_FAILED
         | typeof GET_INVITATION_RESPONSE_FAILED
         | typeof CREATE_CONTACT_INVITATION_FAILED;
+      payload: ResponseError;
+    }
+  | {
+      type: typeof NOTIFICATION_SUCCESS;
+      payload: PaginatedResponse<NotificationListItem>;
+    }
+  | {
+      type: typeof NOTIFICATION_COUNT_SUCCESS;
+      payload: NotificationCount;
+    }
+  | {
+      type: typeof VIEW_NOTIFICATION_SUCCESS;
+      payload: number[];
+    }
+  | {
+      type: typeof READ_NOTIFICATION_SUCCESS;
+      payload: number;
+    }
+  | {
+      type:
+        | typeof CHANNEL_SUGGESTIONS_FAILED
+        | typeof ZONE_SUGGESTIONS_FAILED
+        | typeof NOTIFICATION_FAILED
+        | typeof NOTIFICATION_COUNT_FAILED
+        | typeof VIEW_NOTIFICATION_FAILED
+        | typeof READ_NOTIFICATION_FAILED;
       payload: ResponseError;
     };
 

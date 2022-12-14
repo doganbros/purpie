@@ -18,7 +18,7 @@ import { getFeedListAction } from '../../../store/actions/post.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import ChannelList from './ChannelList';
 import ChannelsToFollow from './ChannelsToFollow';
-import LastActivities from './LastActivities';
+import Notifications from './Notifications';
 import ZonesToJoin from './ZonesToJoin';
 import AddContent from '../../../layers/add-content/AddContent';
 import { FeedPayload, Post } from '../../../store/types/post.types';
@@ -168,7 +168,8 @@ const Timeline: FC = () => {
           <ChannelsToFollow />
           <Divider />
           <ZonesToJoin />
-          <LastActivities />
+          <Divider />
+          <Notifications />
         </Box>
       }
       topComponent={<ChannelList handleWaiting={handleWaiting} />}

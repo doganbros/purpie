@@ -8,8 +8,8 @@ import { recordEntityColumns } from './data/record-entity';
 
 export class PostFolder1668969892227 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE IF EXISTS playlist CASCADE;`);
-    await queryRunner.query(`DROP TABLE IF EXISTS playlist_item CASCADE;`);
+    // await queryRunner.query(`DROP TABLE IF EXISTS playlist CASCADE;`);
+    // await queryRunner.query(`DROP TABLE IF EXISTS playlist_item CASCADE;`);
 
     await queryRunner.createTable(
       new Table({

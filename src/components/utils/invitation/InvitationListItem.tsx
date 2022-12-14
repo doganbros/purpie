@@ -2,9 +2,9 @@ import React, { FC, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, Text } from 'grommet';
 import { useTranslation } from 'react-i18next';
-import { InvitationListItem as InvitationListItemType } from '../../../store/types/activity.types';
 import { InvitationResponseType, InvitationType } from '../../../models/utils';
 import { responseInvitationActions } from '../../../store/actions/activity.action';
+import { InvitationListItem as InvitationListItemType } from '../../../store/types/activity.types';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { UserAvatar } from '../Avatars/UserAvatar';
 

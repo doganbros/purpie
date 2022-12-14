@@ -202,7 +202,7 @@ export class AuthService {
       ])
       .innerJoinAndSelect('user.userRole', 'userRole')
       .where('id = :userId', { userId })
-      .getOne();
+      .getOneOrFail();
   }
 
   async registerUser({

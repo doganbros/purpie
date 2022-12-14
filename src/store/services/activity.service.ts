@@ -2,9 +2,11 @@ import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
 import {
   ChannelSuggestionListItem,
+  NotificationCount,
   ContactSuggestionListItem,
   InvitationResponse,
   ZoneSuggestionListItem,
+  NotificationListItem,
 } from '../types/activity.types';
 import { User } from '../types/auth.types';
 import { InvitationType } from '../../models/utils';
@@ -49,6 +51,26 @@ export const responseInvitation = async (
 
   return http.post(endpoint, request).then((res) => res.data);
 };
+
+export const getNotifications = (
+  limit: number,
+  skip?: number,
+  type?: 'all' | 'unread' | 'read'
+): Promise<PaginatedResponse<NotificationListItem>> =>
+  http
+    .get('/notification/list', { params: { limit, skip, type } })
+    .then((res) => res.data);
+
+export const getNotificationCount = (): Promise<NotificationCount> =>
+  http.get('/notification/count').then((res) => res.data);
+
+export const viewNotifications = (notificationIds: number[]): Promise<string> =>
+  http
+    .post('/notification/view', null, { params: { notificationIds } })
+    .then((res) => res.data);
+
+export const readNotification = (notificationId: number): Promise<string> =>
+  http.post(`/notification/read/${notificationId}`).then((res) => res.data);
 
 export const createInvitation = (email: string): Promise<string> =>
   http

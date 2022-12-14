@@ -444,8 +444,6 @@
     "POST_DISLIKE_NOT_ALLOWED": "This post doesn't allow dislikes.",
     "VIDEO_NOT_FOUND": "Video not found!",
     "USER_NOT_CHANNEL_MEMBER": "User is not a member of selected channel.",
-    "PLAYLIST_NOT_FOUND": "Playlist not found!",
-    "PLAYLIST_ITEM_NOT_FOUND": "Playlist item not found!",
     "CONTACT_INVITATION_NOT_FOUND": "Contact Invitation not found!",
     "CONTACT_ELIGIBILITY_ERROR": "You cannot add yourself to your contacts.",
     "INVITATION_ALREADY_SENT_FOR_USER": "Invitation to this user has already been sent.",
@@ -529,5 +527,15 @@
     "title": "People to add",
     "add": "Add",
     "noContactsFound": "No contacts found!"
+  },
+  "NotificationListItem": {
+    "post": "<user>{{userName}}</user> has started new <post>post</post>.",
+    "post_like": "<user>{{userName}}</user> has liked your <post>post</post>.",
+    "post_comment": "<user>{{userName}}</user> has commented on your <post>post</post>.",
+    "post_comment_like": "<user>{{userName}}</user> has liked your <post>post</post> comment.",
+    "post_comment_reply": "<user>{{userName}}</user> has replied your <post>post</post> comment.",
+    "post_comment_mention": "<user>{{userName}}</user> has mentioned your <post>post</post> comment.",
+    "contact_request_accepted": "<user>{{userName}}</user> has accepted your contact request.",
+    "contact_request_received": "<user>{{userName}}</user> has want to add you as a contact."
   }
 }

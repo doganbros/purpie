@@ -27,3 +27,15 @@ export enum InvitationType {
   ZONE = 'ZONE',
   CONTACT = 'CONTACT',
 }
+
+export enum NotificationType {
+  POST = 'post',
+  POST_LIKE = 'post_like',
+  POST_COMMENT = 'post_comment',
+  POST_COMMENT_LIKE = 'post_comment_like',
+  POST_COMMENT_REPLY = 'post_comment_reply',
+  POST_COMMENT_MENTION = 'post_comment_mention',
+  CONTACT_REQUEST_ACCEPTED = 'contact_request_accepted',
+  CONTACT_REQUEST_RECEIVED = 'contact_request_received',
+  SYSTEM_NOTIFICATION = 'system_notification',
+}

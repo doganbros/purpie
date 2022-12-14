@@ -2,11 +2,11 @@ import React, { FC, useEffect } from 'react';
 import { Box, Button, Text } from 'grommet';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from '../../../store/reducers/root.reducer';
 import {
   createContactInvitation,
   getContactSuggestionsAction,
 } from '../../../store/actions/activity.action';
+import { AppState } from '../../../store/reducers/root.reducer';
 import { UserAvatar } from '../../../components/utils/Avatars/UserAvatar';
 
 const ContactsToFollow: FC = () => {
