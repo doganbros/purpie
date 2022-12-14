@@ -100,13 +100,16 @@ export class VideoController {
     videoPostPayload.createdBy = {
       id: user.id,
       email: user.email,
-      fullName: user.email,
+      fullName: user.fullName,
+      displayPhoto: user.displayPhoto,
     } as User;
     videoPostPayload.postReaction = new PostReaction();
 
     const videoPost = await this.staticVideoService.createNewVideoPost(
       videoPostPayload,
     );
+
+    videoPostPayload.id = videoPost.id;
 
     await this.staticVideoService.sendVideoInfoMail(user, videoPost);
 
