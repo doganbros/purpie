@@ -3,7 +3,7 @@ import { Box, Button, InfiniteScroll, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
-import { getInvitationListAction } from '../../../store/actions/activity.action';
+import { getInvitationListAction } from '../../../store/actions/invitation.action';
 import {
   INVITATION_AMOUNT_LESS,
   INVITATION_AMOUNT_MORE,
@@ -11,14 +11,14 @@ import {
 import InvitationListItem from '../../../components/utils/invitation/InvitationListItem';
 import InvitationListHeader from '../../../components/utils/invitation/InvitationListHeader';
 import Divider from '../../../components/utils/Divider';
-import { InvitationListItem as InvitationListItemType } from '../../../store/types/activity.types';
+import { InvitationListItem as InvitationListItemType } from '../../../store/types/invitation.types';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 const InvitationList: FC = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const {
-    activity: { invitations },
+    invitation: { invitations },
   } = useSelector((state: AppState) => state);
   const [displayCount, setDisplayCount] = useState(INVITATION_AMOUNT_LESS);
 

@@ -29,6 +29,7 @@ import i18n from '../../../config/i18n/i18n-config';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 import { DELAY_TIME } from '../../../helpers/constants';
 import useWaitTime from '../../../hooks/useDelayTime';
+import InviteDropButton from './InviteDropButton';
 
 const tabs = [
   {
@@ -163,7 +164,12 @@ const Timeline: FC = () => {
       rightComponent={
         <Box pad="medium" gap="medium">
           <SearchBar />
-          <InvitationList />
+          {selectedChannel ? (
+            <InviteDropButton channelName={selectedChannel.channel.name} />
+          ) : (
+            <InvitationList />
+          )}
+          {selectedChannel && <Box>Member</Box>}
           <Divider />
           <ChannelsToFollow />
           <Divider />
