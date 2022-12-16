@@ -1,7 +1,6 @@
 import { serialize } from 'object-to-formdata';
 import {
   ZoneBasic,
-  ZoneRole,
   CreateZonePayload,
   UpdateZonePayload,
   UserZoneDetail,
@@ -60,9 +59,3 @@ export const updateZoneInfo = (
   params: ZoneBasic
 ): Promise<any> =>
   http.put(`zone/update/${zoneId}`, params).then((res) => res.data);
-
-export const updateZonePermissions = (
-  zoneId: number,
-  params: ZoneRole
-): Promise<any> =>
-  http.put(`zone/permissions/update/${zoneId}`, params).then((res) => res.data);

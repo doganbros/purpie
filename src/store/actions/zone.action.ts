@@ -2,7 +2,6 @@ import {
   ZoneBasic,
   CreateZonePayload,
   ZoneAction,
-  ZoneRole,
   ZoneSearchParams,
 } from '../types/zone.types';
 import {
@@ -26,9 +25,6 @@ import {
   UPDATE_ZONE_INFO_REQUESTED,
   UPDATE_ZONE_INFO_SUCCESS,
   UPDATE_ZONE_INFO_FAILED,
-  UPDATE_ZONE_PERMISSIONS_REQUESTED,
-  UPDATE_ZONE_PERMISSIONS_SUCCESS,
-  UPDATE_ZONE_PERMISSIONS_FAILED,
 } from '../constants/zone.constants';
 
 import * as ZoneService from '../services/zone.service';
@@ -179,29 +175,6 @@ export const updateZoneInfoAction = (
     } catch (err: any) {
       dispatch({
         type: UPDATE_ZONE_INFO_FAILED,
-        payload: err?.response?.data,
-      });
-    }
-  };
-};
-
-export const updateZonePermissionsAction = (
-  zoneId: number,
-  params: ZoneRole
-): ZoneAction => {
-  return async (dispatch) => {
-    dispatch({
-      type: UPDATE_ZONE_PERMISSIONS_REQUESTED,
-    });
-    try {
-      await ZoneService.updateZonePermissions(zoneId, params);
-      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
-      dispatch({
-        type: UPDATE_ZONE_PERMISSIONS_SUCCESS,
-      });
-    } catch (err: any) {
-      dispatch({
-        type: UPDATE_ZONE_PERMISSIONS_FAILED,
         payload: err?.response?.data,
       });
     }

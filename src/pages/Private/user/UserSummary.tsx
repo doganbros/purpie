@@ -19,6 +19,7 @@ export const UserSummary: FC<UserBasic> = ({
         id={id}
         size="355px"
         round="medium"
+        maxWidth="300px"
         textProps={{ size: '120px' }}
       />
       <Text weight="bold" size="large" alignSelf="end">

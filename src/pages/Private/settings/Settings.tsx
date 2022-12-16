@@ -77,6 +77,10 @@ const Settings: FC = () => {
     }
   }, [searchTextValue]);
 
+  useEffect(() => {
+    document.title = t('settings.documentTitle');
+  }, []);
+
   const renderSettingCategory = (selectedItem: SettingsData) => {
     return (
       <Box flex="grow" pad={{ horizontal: 'small' }} gap="medium">

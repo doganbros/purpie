@@ -8,6 +8,7 @@ interface InitialsAvatarProps extends Omit<AvatarExtendedProps, 'id'> {
   value?: string;
   textProps?: TextExtendedProps;
   roundSize?: string;
+  maxWidth?: string;
 }
 
 const InitialsAvatar: FC<InitialsAvatarProps> = ({
@@ -15,6 +16,7 @@ const InitialsAvatar: FC<InitialsAvatarProps> = ({
   value,
   textProps,
   roundSize,
+  maxWidth,
   ...avatarProps
 }) => {
   const { background, foreground } = getColorPairFromId(id);
@@ -24,7 +26,12 @@ const InitialsAvatar: FC<InitialsAvatarProps> = ({
       background={{ color: background }}
       {...avatarProps}
     >
-      <EllipsesOverflowText color={foreground} {...textProps} weight="normal">
+      <EllipsesOverflowText
+        color={foreground}
+        {...textProps}
+        weight="normal"
+        maxWidth={maxWidth || '102px'}
+      >
         {value
           .replace(/[^a-zA-Z ]/g, '')
           .split(' ')

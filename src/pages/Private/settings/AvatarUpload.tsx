@@ -10,13 +10,21 @@ import {
   Text,
 } from 'grommet';
 import { useTranslation } from 'react-i18next';
+import { apiURL } from '../../../config/http';
 
 interface AvatarUploadProps {
   onSubmit: any | ((arg0: File) => void);
   onDismiss: () => void;
+  src?: string;
+  type?: string;
 }
 
-const AvatarUpload: FC<AvatarUploadProps> = ({ onSubmit, onDismiss }) => {
+const AvatarUpload: FC<AvatarUploadProps> = ({
+  onSubmit,
+  onDismiss,
+  src,
+  type,
+}) => {
   const [imgSrc, setImgSrc] = useState<string>();
   const { t } = useTranslation();
 
@@ -42,7 +50,16 @@ const AvatarUpload: FC<AvatarUploadProps> = ({ onSubmit, onDismiss }) => {
             alignSelf="center"
             justify="center"
           >
-            {imgSrc && <Image fit="contain" src={imgSrc} />}
+            {imgSrc ? (
+              <Image fit="contain" src={imgSrc} />
+            ) : (
+              src !== null && (
+                <Image
+                  fit="contain"
+                  src={`${apiURL}/${type}/display-photo/${src}`}
+                />
+              )
+            )}
           </Box>
           <FormField name="photoFile" htmlFor="file-input">
             <FileInput
@@ -88,6 +105,7 @@ const AvatarUpload: FC<AvatarUploadProps> = ({ onSubmit, onDismiss }) => {
               size="large"
               fill="horizontal"
               margin={{ top: 'medium' }}
+              disabled={!imgSrc}
             />
           </Box>
         </Form>

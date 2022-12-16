@@ -521,7 +521,8 @@
     "submit": "Submit",
     "selectZone": "Select Zone",
     "selectChannel": "Select Channel",
-    "changesSaved": "Changes saved successfully"
+    "changesSaved": "Changes saved successfully",
+    "documentTitle":"Settings - Purpie"
   },
   "ContactsToFollow": {
     "title": "People to add",
