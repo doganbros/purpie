@@ -179,7 +179,6 @@ export class ActivityService {
         'post.createdOn',
         'post.public',
         'post.videoName',
-        'post.userContactExclusive',
         'post.channelId',
         'post.liveStream',
         'post.record',

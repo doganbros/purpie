@@ -59,11 +59,6 @@ export class VideoPost1631826481845 implements MigrationInterface {
             type: 'boolean',
             default: false,
           },
-          {
-            name: 'userContactExclusive',
-            type: 'boolean',
-            default: false,
-          },
         ],
       }),
       true,
