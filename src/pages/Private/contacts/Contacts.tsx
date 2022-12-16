@@ -118,7 +118,7 @@ const Contacts: FC = () => {
             )}
           </InfiniteScroll>
         ) : (
-          renderEmpty(contacts?.data?.length > 1)
+          renderEmpty(contacts?.data?.length > 0)
         )}
       </Box>
     </PrivatePageLayout>
