@@ -96,7 +96,6 @@ export class VideoService {
         'videoPost.description',
         'videoPost.public',
         'videoPost.videoName',
-        'videoPost.userContactExclusive',
         'tags.value',
         'createdBy.id',
         'createdBy.fullName',
@@ -119,7 +118,7 @@ export class VideoService {
       .leftJoin(
         Contact,
         'contact',
-        'videoPost.userContactExclusive = true AND videoPost.createdById = contact.userId AND contact.contactUserId = :userId',
+        'videoPost.public = false AND videoPost.createdById = contact.userId AND contact.contactUserId = :userId',
         { userId },
       )
       .where('videoPost.type = :type', { type: 'video' })

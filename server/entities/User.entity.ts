@@ -18,6 +18,7 @@ import { UserRole } from './UserRole.entity';
 import { Contact } from './Contact.entity';
 import { baseMeetingConfig } from './data/base-meeting-config';
 import { defaultPostSettings } from './data/default-post-settings';
+
 @Entity()
 export class User extends RecordEntity {
   @Column()
@@ -59,7 +60,6 @@ export class User extends RecordEntity {
       jitsiConfig: baseMeetingConfig,
       privacyConfig: {
         public: true,
-        userContactExclusive: false,
         record: false,
         liveStream: false,
       },

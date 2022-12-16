@@ -30,9 +30,6 @@ class BaseMeetingList {
   liveStream: boolean;
 
   @ApiProperty()
-  userContactExclusive: boolean;
-
-  @ApiProperty()
   channelId: number;
 
   @ApiProperty()
