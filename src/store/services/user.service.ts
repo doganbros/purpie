@@ -9,7 +9,11 @@ import { UserChannelListItem } from '../types/channel.types';
 export const searchUser = (
   params: ProfileSearchParams
 ): Promise<PaginatedResponse<UserBasic>> =>
-  http.get(`/user/search`, { params }).then((res) => res.data);
+  http
+    .get(`/user/search`, {
+      params: { ...params, excludeIds: params.excludeIds?.join(',') },
+    })
+    .then((res) => res.data);
 
 export const listContacts = ({
   userName,

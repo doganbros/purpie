@@ -29,7 +29,8 @@ import i18n from '../../../config/i18n/i18n-config';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 import { DELAY_TIME } from '../../../helpers/constants';
 import useWaitTime from '../../../hooks/useDelayTime';
-import InviteDropButton from './InviteDropButton';
+import InviteToChannel from './InviteToChannel';
+import InviteToZone from './InviteToZone';
 
 const tabs = [
   {
@@ -67,7 +68,10 @@ const Timeline: FC = () => {
   };
   const {
     post: { feed },
-    zone: { selectedUserZone },
+    zone: {
+      selectedUserZone,
+      getUserZones: { userZones },
+    },
     channel: { selectedChannel },
   } = useSelector((state: AppState) => state);
 
@@ -165,7 +169,14 @@ const Timeline: FC = () => {
         <Box pad="medium" gap="medium">
           <SearchBar />
           {selectedChannel ? (
-            <InviteDropButton channelName={selectedChannel.channel.name} />
+            <Box gap="medium">
+              <InviteToChannel channel={selectedChannel} />
+              <InviteToZone
+                zone={userZones?.find(
+                  (z) => z.zone.id === selectedChannel?.channel.zoneId
+                )}
+              />
+            </Box>
           ) : (
             <InvitationList />
           )}
