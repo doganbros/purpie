@@ -162,7 +162,8 @@ export class MeetingController {
     meeting.createdBy = {
       id: user.id,
       email: user.email,
-      fullName: user.email,
+      fullName: user.fullName,
+      displayPhoto: user.displayPhoto,
     } as User;
     meeting.postReaction = new PostReaction();
 

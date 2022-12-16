@@ -10,7 +10,6 @@ import {
 } from 'typeorm';
 import { recordEntityColumns } from './data/record-entity';
 
-
 export class ContactInvitation1628182792637 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
@@ -68,14 +67,6 @@ export class ContactInvitation1628182792637 implements MigrationInterface {
     await queryRunner.addColumn(
       'meeting',
       new TableColumn({
-        name: 'userContactExclusive',
-        type: 'boolean',
-        default: false,
-      }),
-    );
-    await queryRunner.addColumn(
-      'meeting',
-      new TableColumn({
         name: 'config',
         type: 'text',
         default: `'${JSON.stringify(baseMeetingConfig)}'`,
@@ -92,7 +83,7 @@ export class ContactInvitation1628182792637 implements MigrationInterface {
 
     await queryRunner.dropColumn('channel', 'defaultChannel');
     await queryRunner.dropColumn('zone', 'defaultZone');
-    
+
     await queryRunner.changeColumn(
       'channel',
       'channelMeetingConfig',
@@ -150,7 +141,6 @@ export class ContactInvitation1628182792637 implements MigrationInterface {
       }),
     );
 
-    await queryRunner.dropColumn('meeting', 'userContactExclusive');
     await queryRunner.dropColumn('meeting', 'public');
     await queryRunner.dropColumn('meeting', 'userContactExclusive');
     await queryRunner.dropColumn('meeting', 'config');

@@ -185,7 +185,7 @@ export class MeetingService {
       .leftJoin(
         Contact,
         'contact',
-        'meeting.userContactExclusive = true AND meeting.createdById = contact.userId AND contact.contactUserId = :userId',
+        'meeting.public = false AND meeting.createdById = contact.userId AND contact.contactUserId = :userId',
         { userId },
       )
       .where('meeting.slug = :slug', { slug })
@@ -324,7 +324,6 @@ export class MeetingService {
         'meeting.slug',
         'meeting.description',
         'meeting.startDate',
-        'meeting.userContactExclusive',
         'meeting.public',
         'meeting.channelId',
         'meeting.record',
@@ -410,7 +409,7 @@ export class MeetingService {
       .leftJoinAndSelect(
         Contact,
         'contact',
-        'meeting.userContactExclusive = true AND contact.userId = meeting.createdById AND contact.contactUserId = :userId',
+        'meeting.public = false AND contact.userId = meeting.createdById AND contact.contactUserId = :userId',
         { userId },
       )
       .where('meeting.slug = :slug', { slug })
