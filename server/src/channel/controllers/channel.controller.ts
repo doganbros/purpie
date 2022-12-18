@@ -1,20 +1,20 @@
 import {
-  Post,
-  Controller,
-  Param,
-  NotFoundException,
+  BadRequestException,
   Body,
+  Controller,
   Delete,
-  Put,
+  Get,
   HttpCode,
   HttpStatus,
-  Get,
-  Query,
+  NotFoundException,
+  Param,
   ParseIntPipe,
-  UseInterceptors,
-  BadRequestException,
-  UploadedFile,
+  Post,
+  Put,
+  Query,
   Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -60,6 +60,7 @@ import { SearchChannelQuery } from '../dto/search-channel.query';
 import { UpdateChannelUserRoleDto } from '../dto/update-channel-user-role.dto';
 import { UpdateChannelPermission } from '../dto/update-channel-permission.dto';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { UserChannelService } from '../services/user-channel.service';
 
 const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
 
@@ -69,6 +70,7 @@ export class ChannelController {
   constructor(
     private channelService: ChannelService,
     private userZoneService: UserZoneService,
+    private userChannelService: UserChannelService,
   ) {}
 
   @Post('/create/:userZoneId')
@@ -231,7 +233,7 @@ export class ChannelController {
       );
 
     if (invitationResponse.status === 'reject') {
-      invitation.remove();
+      await invitation.remove();
       return 'OK';
     }
 

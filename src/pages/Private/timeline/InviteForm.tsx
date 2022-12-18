@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState } from 'react';
+import React, { FC, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, FormField, Text, TextInput, ThemeContext } from 'grommet';
 import ChannelBadge from '../../../components/utils/channel/ChannelBadge';
@@ -15,7 +15,8 @@ interface InviteDropButtonProps {
   channelName?: string;
   zoneName?: string;
   zoneSubdomain?: string;
-  createInvitation: () => void;
+  createInvitation: (user: User) => void;
+  invitedUsers: User[];
 }
 
 const InviteForm: FC<InviteDropButtonProps> = ({
@@ -23,12 +24,11 @@ const InviteForm: FC<InviteDropButtonProps> = ({
   zoneName,
   zoneSubdomain,
   createInvitation,
+  invitedUsers,
 }) => {
   const textInput = useRef<HTMLInputElement>(null);
   const debouncer = useDebouncer();
   const dispatch = useDispatch();
-
-  const [invitedUsers, setInvitedUsers] = useState<Array<User>>([]);
 
   const {
     auth: { user: currentUser },
@@ -38,7 +38,7 @@ const InviteForm: FC<InviteDropButtonProps> = ({
   const onChange = (value: string) => {
     const request: ProfileSearchParams = {
       name: value,
-      excludeIds: [currentUser!.id, ...invitedUsers.map((v) => v.id)],
+      excludeIds: [currentUser!.id, ...invitedUsers.map((user) => user.id)],
     };
     dispatch(searchProfileAction(request));
   };
@@ -80,8 +80,7 @@ const InviteForm: FC<InviteDropButtonProps> = ({
                 debouncer(() => onChange(e.target.value), 300)
               }
               onSuggestionSelect={(e) => {
-                createInvitation();
-                setInvitedUsers((users) => [e.suggestion.value, ...users]);
+                createInvitation(e.suggestion.value);
                 if (textInput.current) textInput.current.value = '';
               }}
             />

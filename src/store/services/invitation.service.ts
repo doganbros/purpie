@@ -29,3 +29,15 @@ export const createInvitation = (email: string): Promise<string> =>
   http
     .post('/user/contact/invitation/create', { email })
     .then((res) => res.data);
+
+export const createChannelInvitation = (
+  channelId: number,
+  email: string
+): Promise<any> =>
+  http.post(`/channel/invite/${channelId}`, { email }).then((res) => res.data);
+
+export const createZoneInvitation = (
+  zoneId: number,
+  email: string
+): Promise<any> =>
+  http.post(`/zone/invite/${zoneId}`, { email }).then((res) => res.data);

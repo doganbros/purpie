@@ -160,10 +160,7 @@ export class ZoneController {
     @CurrentUserZone() currentUserZone: UserZone,
     @CurrentUser() user: User,
   ) {
-    const zone = await this.zoneService.validateInviteUser(email, zoneId);
-
-    if (!zone)
-      throw new NotFoundException(ErrorTypes.ZONE_NOT_FOUND, 'Zone not found');
+    await this.zoneService.validateInviteUser(email, zoneId);
 
     const invitation = await this.zoneService.addUserToZoneInvitation(
       email,
@@ -173,7 +170,7 @@ export class ZoneController {
 
     this.zoneService.sendZoneInvitationMail(currentUserZone.zone, email);
 
-    return invitation.id;
+    return invitation;
   }
 
   @Post('/invitation/response')

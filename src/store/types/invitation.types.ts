@@ -1,7 +1,13 @@
 import {
+  CREATE_CHANNEL_INVITATION_FAILED,
+  CREATE_CHANNEL_INVITATION_REQUESTED,
+  CREATE_CHANNEL_INVITATION_SUCCESS,
   CREATE_CONTACT_INVITATION_FAILED,
   CREATE_CONTACT_INVITATION_REQUESTED,
   CREATE_CONTACT_INVITATION_SUCCESS,
+  CREATE_ZONE_INVITATION_FAILED,
+  CREATE_ZONE_INVITATION_REQUESTED,
+  CREATE_ZONE_INVITATION_SUCCESS,
   GET_INVITATION_RESPONSE_FAILED,
   GET_INVITATION_RESPONSE_REQUESTED,
   GET_INVITATION_RESPONSE_SUCCESS,
@@ -63,6 +69,16 @@ export interface InvitationState {
     error: ResponseError | null;
     userIds: Array<string>;
   };
+  channelInvitations: {
+    loading: boolean;
+    error: ResponseError | null;
+    data: { invitation: InvitationListItem; user: User }[];
+  };
+  zoneInvitations: {
+    loading: boolean;
+    error: ResponseError | null;
+    data: { invitation: InvitationListItem; user: User }[];
+  };
 }
 
 export type InvitationActionParams =
@@ -70,7 +86,22 @@ export type InvitationActionParams =
       type:
         | typeof LIST_INVITATION_REQUESTED
         | typeof GET_INVITATION_RESPONSE_REQUESTED
-        | typeof CREATE_CONTACT_INVITATION_REQUESTED;
+        | typeof CREATE_CONTACT_INVITATION_REQUESTED
+        | typeof CREATE_CHANNEL_INVITATION_REQUESTED
+        | typeof CREATE_ZONE_INVITATION_REQUESTED;
+    }
+  | {
+      type: typeof CREATE_CONTACT_INVITATION_SUCCESS;
+      payload: string;
+    }
+  | {
+      type:
+        | typeof CREATE_CHANNEL_INVITATION_SUCCESS
+        | typeof CREATE_ZONE_INVITATION_SUCCESS;
+      payload: {
+        invitation: InvitationListItem;
+        user: User;
+      };
     }
   | {
       type: typeof CREATE_CONTACT_INVITATION_SUCCESS;
@@ -88,7 +119,9 @@ export type InvitationActionParams =
       type:
         | typeof LIST_INVITATION_FAILED
         | typeof GET_INVITATION_RESPONSE_FAILED
-        | typeof CREATE_CONTACT_INVITATION_FAILED;
+        | typeof CREATE_CHANNEL_INVITATION_FAILED
+        | typeof CREATE_CONTACT_INVITATION_FAILED
+        | typeof CREATE_ZONE_INVITATION_FAILED;
       payload: ResponseError;
     };
 

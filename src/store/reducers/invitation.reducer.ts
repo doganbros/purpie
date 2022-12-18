@@ -1,7 +1,13 @@
 import {
+  CREATE_CHANNEL_INVITATION_FAILED,
+  CREATE_CHANNEL_INVITATION_REQUESTED,
+  CREATE_CHANNEL_INVITATION_SUCCESS,
   CREATE_CONTACT_INVITATION_FAILED,
   CREATE_CONTACT_INVITATION_REQUESTED,
   CREATE_CONTACT_INVITATION_SUCCESS,
+  CREATE_ZONE_INVITATION_FAILED,
+  CREATE_ZONE_INVITATION_REQUESTED,
+  CREATE_ZONE_INVITATION_SUCCESS,
   GET_INVITATION_RESPONSE_FAILED,
   GET_INVITATION_RESPONSE_REQUESTED,
   GET_INVITATION_RESPONSE_SUCCESS,
@@ -29,6 +35,16 @@ const initialState: InvitationState = {
     loading: false,
     error: null,
     userIds: [],
+  },
+  channelInvitations: {
+    loading: false,
+    error: null,
+    data: [],
+  },
+  zoneInvitations: {
+    loading: false,
+    error: null,
+    data: [],
   },
 };
 
@@ -124,6 +140,58 @@ const invitationReducer = (
         ...state,
         invitedContacts: {
           ...state.invitedContacts,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case CREATE_CHANNEL_INVITATION_REQUESTED:
+      return {
+        ...state,
+        channelInvitations: {
+          ...state.channelInvitations,
+          loading: true,
+        },
+      };
+    case CREATE_CHANNEL_INVITATION_SUCCESS:
+      return {
+        ...state,
+        channelInvitations: {
+          data: [...state.channelInvitations.data, action.payload],
+          loading: false,
+          error: null,
+        },
+      };
+    case CREATE_CHANNEL_INVITATION_FAILED:
+      return {
+        ...state,
+        channelInvitations: {
+          ...state.channelInvitations,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case CREATE_ZONE_INVITATION_REQUESTED:
+      return {
+        ...state,
+        zoneInvitations: {
+          ...state.zoneInvitations,
+          loading: true,
+        },
+      };
+    case CREATE_ZONE_INVITATION_SUCCESS:
+      return {
+        ...state,
+        zoneInvitations: {
+          data: [...state.zoneInvitations.data, action.payload],
+          loading: false,
+          error: null,
+        },
+      };
+    case CREATE_ZONE_INVITATION_FAILED:
+      return {
+        ...state,
+        channelInvitations: {
+          ...state.channelInvitations,
           loading: false,
           error: action.payload,
         },
