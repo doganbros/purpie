@@ -48,7 +48,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
       description: t('AddContent.meetDescription'),
       onClick: () => {
         const meeting: CreateMeetingPayload = { public: true };
-        if (selectedChannel) meeting.channelId = selectedChannel.id;
+        if (selectedChannel) meeting.channelId = selectedChannel.channel.id;
         if (!submitting) dispatch(createMeetingAction(meeting));
         onDismiss();
       },
