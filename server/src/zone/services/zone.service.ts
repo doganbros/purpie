@@ -23,7 +23,6 @@ import { EditZoneDto } from '../dto/edit-zone.dto';
 import { UpdateUserZoneRoleDto } from '../dto/update-user-zone-role.dto';
 import { UpdateZonePermission } from '../dto/update-zone-permission.dto';
 import { ErrorTypes } from '../../../types/ErrorTypes';
-import { UserChannel } from '../../../entities/UserChannel.entity';
 
 const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
 
