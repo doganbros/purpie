@@ -300,6 +300,7 @@ export class MeetingService {
           email: user.email,
           id: user.id,
           room: meeting.slug,
+          lobby_bypass: moderator,
         },
         group: 'a122-123-456-789',
       },
@@ -311,8 +312,7 @@ export class MeetingService {
       room: meeting.slug,
       sub: new URL(JITSI_DOMAIN).hostname,
     };
-
-    return generateJWT(payload, JITSI_SECRET);
+    if (moderator) return generateJWT(payload, JITSI_SECRET);
   }
 
   get meetingSelections() {
