@@ -312,7 +312,7 @@ export class MeetingService {
       room: meeting.slug,
       sub: new URL(JITSI_DOMAIN).hostname,
     };
-    if (moderator) return generateJWT(payload, JITSI_SECRET);
+    return generateJWT(payload, JITSI_SECRET);
   }
 
   get meetingSelections() {
