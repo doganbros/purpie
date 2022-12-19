@@ -463,6 +463,7 @@
     "USER_PAYLOAD_REQUIRED": "User payload must be retrieved before using this guard.",
     "USER_ALREADY_INVITED_TO_CHANNEL": "The specified user has already been invited to this channel.",
     "USER_ALREADY_MEMBER_OF_CHANNEL": "The specified user is already a member of this channel.",
+    "USER_ALREADY_MEMBER_OF_ZONE": "The specified user is already a member of this zone.",
     "USER_ALREADY_INVITED_TO_ZONE": "The specified user has already been invited to this zone.",
     "COULD_NOT_CREATE_MEETING": "Could not create meeting.",
     "EDIT_POST_PAYLOAD_EMPTY": "Edit Payload empty.",

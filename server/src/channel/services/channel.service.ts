@@ -242,16 +242,12 @@ export class ChannelService {
         `The user with the email ${email} has already been invited to this channel`,
       );
 
-    const channel = await this.channelRepository
-      .createQueryBuilder('channel')
-      .select('user.id', 'userId')
-      .innerJoin(
-        UserChannel,
-        'user_channel',
-        'user_channel.channelId = channel.id',
-      )
+    const channel = await this.userChannelRepository
+      .createQueryBuilder('user_channel')
+      .select('user_channel.userId', 'userId')
       .innerJoin(User, 'user', 'user.id = user_channel.userId')
-      .where('user.email = :email', { email })
+      .andWhere('user.email = :email', { email })
+      .andWhere('user_channel.channelId = :channelId', { channelId })
       .getRawOne();
 
     if (channel)

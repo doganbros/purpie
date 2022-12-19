@@ -8,8 +8,8 @@ import {
   SUGGESTION_AMOUNT_LESS,
   SUGGESTION_AMOUNT_MORE,
 } from '../../../helpers/constants';
-import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 import { getZoneSuggestionsAction } from '../../../store/actions/activity.action';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 const ZonesToJoin: FC = () => {
   const dispatch = useDispatch();

@@ -9,6 +9,7 @@ import userReducer from './user.reducer';
 import utilReducer from './util.reducer';
 import zoneReducer from './zone.reducer';
 import folderReducer from './folder.reducer';
+import invitationReducer from './invitation.reducer';
 
 const rootReducer = combineReducers({
   activity: activityReducer,
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   zone: zoneReducer,
   chat: chatReducer,
   folder: folderReducer,
+  invitation: invitationReducer,
 });
 
 export type AppState = ReturnType<typeof rootReducer>;

@@ -1,11 +1,10 @@
 import { serialize } from 'object-to-formdata';
 import {
-  UserChannelPermissionList,
   ChannelBasic,
   ChannelListItem,
   ChannelSearchParams,
   CreateChannelPayload,
-  // eslint-disable-next-line import/named
+  UserChannelPermissionList,
 } from '../types/channel.types';
 
 import { http } from '../../config/http';
@@ -38,12 +37,6 @@ export const updateChannel = (
   channelId: number
 ): Promise<any> =>
   http.put(`/channel/update/${channelId}`, channel).then((res) => res.data);
-
-export const inviteToChannel = (
-  channelId: number,
-  email: string
-): Promise<any> =>
-  http.post(`/channel/invite/${channelId}`, { email }).then((res) => res.data);
 
 export const deleteUserChannel = (userChannelId: number): Promise<any> =>
   http.delete(`/user-channel/remove/${userChannelId}`).then((res) => res.data);
