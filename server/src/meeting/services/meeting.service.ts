@@ -11,7 +11,7 @@ import { Post } from 'entities/Post.entity';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { PostVideo } from 'entities/PostVideo.entity';
-import { generateJWT } from 'helpers/jwt';
+import { generateJWT, verifyJWT } from 'helpers/jwt';
 import { Brackets, DeepPartial, Repository } from 'typeorm';
 import { UserProfile } from 'src/auth/interfaces/user.interface';
 import {
@@ -77,6 +77,10 @@ export class MeetingService {
         'User channel not found',
       );
     return userChannel;
+  }
+
+  async verifyJitsiToken(token: string) {
+    return verifyJWT(token, JITSI_SECRET);
   }
 
   async getMeetingConfig(userId: number, createMeetingInfo: CreateMeetingDto) {
@@ -147,10 +151,20 @@ export class MeetingService {
     return this.userRepository.findByIds(ids);
   }
 
-  async sendMeetingInfoMail(user: UserProfile, meeting: Post, creator = false) {
+  async sendMeetingInfoMail(
+    user: UserProfile,
+    meeting: Post,
+    moderator = false,
+  ) {
+    const meetingToken = await this.generateMeetingToken(
+      meeting,
+      user,
+      moderator,
+    );
+
     const context = {
       fullName: user.fullName,
-      creator,
+      creator: moderator,
       meeting: {
         ...meeting,
         endDate: meeting.endDate
@@ -162,14 +176,16 @@ export class MeetingService {
           .tz(meeting.timeZone || undefined)
           .format('dddd D MMMM, YYYY h:mm A Z'),
       },
-      link: `${REACT_APP_SERVER_HOST}/v1/meeting/join/${meeting.slug}`,
+      link: `${REACT_APP_SERVER_HOST}/v1/meeting/join/${meetingToken}`,
     };
-    return this.mailService.sendMailByView(
+    await this.mailService.sendMailByView(
       user.email,
       'Purpie Meeting',
       'meeting-info',
       context,
     );
+
+    return meetingToken;
   }
 
   currentUserMeetingBaseValidator(userId: number, slug: string) {
@@ -261,13 +277,7 @@ export class MeetingService {
     return this.userRepository.update(userId, { userMeetingConfig: config });
   }
 
-  async generateMeetingUrl(
-    meeting: Post,
-    user: UserProfile,
-    moderator: boolean,
-  ) {
-    const token = await this.generateMeetingToken(meeting, user, moderator);
-
+  async generateMeetingUrl(meeting: Post, token: string) {
     meeting.config.subject = meeting.title;
     const otherConfig: Record<string, any> = {
       autoRecording: meeting.record,
@@ -288,14 +298,13 @@ export class MeetingService {
     meeting: Post,
     user: UserProfile,
     moderator: boolean,
-  ) {
+  ): Promise<string> {
     const payload = {
       context: {
         user: {
-          avatar: `https://gravatar.com/avatar/${crypto
-            .createHash('md5')
-            .update(user.email)
-            .digest('hex')}`,
+          avatar: user.displayPhoto
+            ? `${REACT_APP_SERVER_HOST}/v1/user/display-photo/${user.displayPhoto}`
+            : undefined,
           name: user.fullName,
           email: user.email,
           id: user.id,

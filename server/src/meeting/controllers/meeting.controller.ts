@@ -47,6 +47,7 @@ import { ConferenceInfoResponse } from '../responses/conference-info.response';
 import { User } from '../../../entities/User.entity';
 import { PostReaction } from '../../../entities/PostReaction.entity';
 import { UserChannel } from '../../../entities/UserChannel.entity';
+import { generateJWT, verifyJWT } from '../../../helpers/jwt';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -133,12 +134,11 @@ export class MeetingController {
       meeting.description,
     );
 
-    this.meetingService
-      .sendMeetingInfoMail(user, meeting, true)
-      .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.log(err);
-      });
+    const moderatorMeetingToken = await this.meetingService.sendMeetingInfoMail(
+      user,
+      meeting,
+      true,
+    );
 
     if (
       createMeetingInfo.invitationIds &&
@@ -154,7 +154,7 @@ export class MeetingController {
     }
 
     if (createMeetingInfo.saveConfig)
-      this.meetingService.saveCurrentUserMeetingConfig(user.id, {
+      await this.meetingService.saveCurrentUserMeetingConfig(user.id, {
         jitsiConfig,
         privacyConfig,
       });
@@ -170,8 +170,7 @@ export class MeetingController {
     if (!createMeetingInfo.startDate) {
       const meetingUrl = await this.meetingService.generateMeetingUrl(
         meeting,
-        user,
-        true,
+        moderatorMeetingToken,
       );
       return { meetingUrl, meeting };
     }
@@ -179,7 +178,7 @@ export class MeetingController {
     return { meeting };
   }
 
-  @Get('join/:slug')
+  @Get('join/:token')
   @ApiNotFoundResponse({
     description:
       "Error thrown is meeting doesn't exist or current user doesn't have the priviledge to join",
@@ -199,15 +198,13 @@ export class MeetingController {
       ],
     },
   })
-  @IsAuthenticated([], { injectUserProfile: true })
-  async joinMeeting(
-    @Param('slug') slug: string,
-    @CurrentUserProfile() user: UserProfile,
-    @Res() res: Response,
-  ) {
+  async joinMeeting(@Param('token') token: string, @Res() res: Response) {
+    const jitsiToken = await this.meetingService.verifyJitsiToken(token);
+    const { user } = jitsiToken.context;
+
     const meeting = await this.meetingService.currentUserJoinMeetingValidator(
       user.id,
-      slug,
+      user.room,
     );
 
     if (!meeting)
@@ -226,11 +223,7 @@ export class MeetingController {
         'MEETING_NOT_STARTED',
       );
 
-    const url = await this.meetingService.generateMeetingUrl(
-      meeting,
-      user,
-      user.id === meeting.createdById,
-    );
+    const url = await this.meetingService.generateMeetingUrl(meeting, token);
     return res.redirect(url);
   }
 
