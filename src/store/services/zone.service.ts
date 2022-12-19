@@ -33,9 +33,6 @@ export const updateZone = (
 ): Promise<any> =>
   http.put(`/zone/update/${zoneId}`, zone).then((res) => res.data);
 
-export const inviteToZone = (zoneId: number, email: string): Promise<any> =>
-  http.post(`/zone/invite/${zoneId}`, { email }).then((res) => res.data);
-
 export const deleteUserZone = (userZoneId: number): Promise<any> =>
   http.delete(`/user-zone/remove/${userZoneId}`).then((res) => res.data);
 

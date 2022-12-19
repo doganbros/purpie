@@ -2,14 +2,18 @@ import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { User, UserBasic } from '../types/auth.types';
 import { ContactUser, ProfileSearchParams } from '../types/user.types';
-import { InvitationListItem } from '../types/activity.types';
+import { InvitationListItem } from '../types/invitation.types';
 import { UserZoneListItem } from '../types/zone.types';
 import { UserChannelListItem } from '../types/channel.types';
 
 export const searchUser = (
   params: ProfileSearchParams
 ): Promise<PaginatedResponse<UserBasic>> =>
-  http.get(`/user/search`, { params }).then((res) => res.data);
+  http
+    .get(`/user/search`, {
+      params: { ...params, excludeIds: params.excludeIds?.join(',') },
+    })
+    .then((res) => res.data);
 
 export const listContacts = ({
   userName,

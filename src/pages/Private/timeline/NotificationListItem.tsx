@@ -5,8 +5,8 @@ import { Trans } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { NotificationType } from '../../../models/utils';
-import { NotificationListItem as NotificationListItemType } from '../../../store/types/activity.types';
 import { readNotificationsAction } from '../../../store/actions/activity.action';
+import { NotificationListItem as NotificationListItemType } from '../../../store/types/activity.types';
 
 interface NotificationListItemProps {
   notification: NotificationListItemType;

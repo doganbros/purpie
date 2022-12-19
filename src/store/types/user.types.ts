@@ -28,7 +28,7 @@ import { UserChannelListItem } from './channel.types';
 import { UserZoneListItem } from './zone.types';
 
 export interface ProfileSearchOptions {
-  excludeIds?: string;
+  excludeIds?: number[];
   channelId?: number;
   userContacts?: boolean;
 }

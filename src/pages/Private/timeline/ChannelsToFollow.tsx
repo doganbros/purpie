@@ -3,8 +3,8 @@ import { Box, Button, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import ChannelListItem from '../../../components/utils/channel/ChannelListItem';
-import { getChannelSuggestionsAction } from '../../../store/actions/activity.action';
 import { AppState } from '../../../store/reducers/root.reducer';
+import { getChannelSuggestionsAction } from '../../../store/actions/activity.action';
 import {
   SUGGESTION_AMOUNT_LESS,
   SUGGESTION_AMOUNT_MORE,

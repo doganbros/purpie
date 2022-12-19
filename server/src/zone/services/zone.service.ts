@@ -23,6 +23,7 @@ import { EditZoneDto } from '../dto/edit-zone.dto';
 import { UpdateUserZoneRoleDto } from '../dto/update-user-zone-role.dto';
 import { UpdateZonePermission } from '../dto/update-zone-permission.dto';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { UserChannel } from '../../../entities/UserChannel.entity';
 
 const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
 
@@ -91,15 +92,16 @@ export class ZoneService {
     const zone = await this.zoneRepository
       .createQueryBuilder('zone')
       .select('user.id', 'userId')
-      .leftJoin(UserZone, 'user_zone', 'user_zone.zoneId = zone.id')
-      .leftJoin(User, 'user', 'user.id = user_zone.userId')
-
-      .andWhere('zone.id = :zoneId', { zoneId })
-      .andWhere('user.email <> :email', { email })
-
+      .innerJoin(UserZone, 'user_zone', 'user_zone.zoneId = zone.id')
+      .innerJoin(User, 'user', 'user.id = user_zone.userId')
+      .where('user.email = :email', { email })
       .getRawOne();
 
-    return zone;
+    if (zone)
+      throw new BadRequestException(
+        ErrorTypes.USER_ALREADY_MEMBER_OF_ZONE,
+        `The user with the email ${email} is already a member of this zone`,
+      );
   }
 
   async addUserToZoneInvitation(email: string, zoneId: number, userId: number) {
