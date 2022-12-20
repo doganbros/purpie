@@ -47,7 +47,6 @@ import { ConferenceInfoResponse } from '../responses/conference-info.response';
 import { User } from '../../../entities/User.entity';
 import { PostReaction } from '../../../entities/PostReaction.entity';
 import { UserChannel } from '../../../entities/UserChannel.entity';
-import { generateJWT, verifyJWT } from '../../../helpers/jwt';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

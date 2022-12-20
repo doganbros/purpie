@@ -5,7 +5,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import crypto from 'crypto';
 
 import { Post } from 'entities/Post.entity';
 import { User } from 'entities/User.entity';
