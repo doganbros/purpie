@@ -49,7 +49,6 @@ export interface CreateMeetingPayload {
   endDate?: string | null;
   channelId?: number | null;
   public?: boolean | null;
-  userContactExclusive?: boolean | null;
   config?: Record<string, any> | null;
   saveConfig?: boolean;
   planForLater?: boolean;
@@ -63,8 +62,6 @@ export type UpdateMeetingPayload = Partial<CreateMeetingPayload>;
 
 interface MeetingPrivacyConfig {
   public: boolean;
-
-  userContactExclusive: boolean;
 
   liveStream: boolean;
 

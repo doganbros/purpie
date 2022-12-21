@@ -53,7 +53,6 @@ export const createMeetingAction = (
             jitsiConfig: meeting.config,
             privacyConfig: {
               public: meeting.public!,
-              userContactExclusive: meeting.userContactExclusive!,
               liveStream: meeting.liveStream!,
               record: meeting.record!,
             },
@@ -104,14 +103,12 @@ export const getUserMeetingConfigAction = (): MeetingAction => {
 export const getUserSuggestionsForMeetingAction = (
   name: string,
   excludeIds?: Array<number>,
-  userContacts?: boolean | null,
   channelId?: number | null
 ): MeetingAction => {
   return async (dispatch) => {
     MeetingService.getUserSuggestionsForMeeting(
       name,
       excludeIds,
-      userContacts,
       channelId
     ).then((response) => {
       dispatch({
