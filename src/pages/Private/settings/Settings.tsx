@@ -12,6 +12,7 @@ import SearchBar from './SearchBar';
 import { SettingFormItem, SettingsData } from './types';
 import ZoneSettings from './ZoneSettings';
 import './Style.scss';
+import { useTitle } from '../../../hooks/useTitle';
 
 const Settings: FC = () => {
   const history = useHistory();
@@ -21,6 +22,7 @@ const Settings: FC = () => {
   const [searchTextValue, setSearchTextValue] = useState<string>('');
 
   const { t } = useTranslation();
+  useTitle(t('settings.documentTitle'));
 
   const data: SettingsData[] = [
     PersonalSettings(),
@@ -76,10 +78,6 @@ const Settings: FC = () => {
       setActiveAccordionIndex(0);
     }
   }, [searchTextValue]);
-
-  useEffect(() => {
-    document.title = t('settings.documentTitle');
-  }, []);
 
   const renderSettingCategory = (selectedItem: SettingsData) => {
     return (
