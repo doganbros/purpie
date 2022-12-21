@@ -53,6 +53,7 @@ import {
 import { InitialUserGuard } from '../guards/initial-user.guard';
 import { InitializeUserDto } from '../dto/initialize-user.dto';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { ChangePasswordDto } from '../dto/change-password.dto';
 
 const { VERIFICATION_TOKEN_SECRET = '' } = process.env;
 
@@ -344,6 +345,28 @@ export class AuthController {
     user.forgotPasswordToken = null!;
 
     user.save();
+
+    return 'OK';
+  }
+
+  @Put('/change-password')
+  @ApiCreatedResponse({
+    description: 'User changes a password for user.',
+    schema: { type: 'string', example: 'OK' },
+  })
+  @ValidationBadRequest()
+  @IsAuthenticated()
+  async changePassword(
+    @CurrentUser() user: UserTokenPayload,
+    @Body() changePasswordDto: ChangePasswordDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.authService.changePassword(
+      user.id,
+      changePasswordDto,
+    );
+
+    if (result) this.authService.removeAccessTokens(res);
 
     return 'OK';
   }
