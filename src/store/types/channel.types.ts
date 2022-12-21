@@ -24,12 +24,16 @@ import {
   UPDATE_CHANNEL_INFO_SUCCESS,
   UPDATE_CHANNEL_INFO_FAILED,
   UPDATE_CHANNEL_PERMISSIONS_FAILED,
+  GET_CHANNEL_USERS_REQUESTED,
+  GET_CHANNEL_USERS_FAILED,
+  GET_CHANNEL_USERS_SUCCESS,
 } from '../constants/channel.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
-import { User } from './auth.types';
+import { User, UserBasic } from './auth.types';
 import { UtilActionParams } from './util.types';
 import { ZoneActionParams } from './zone.types';
+import { ChannelSuggestionListItem } from './activity.types';
 
 export interface ChannelBasic {
   id: number;
@@ -57,11 +61,18 @@ export interface UserChannelListItem {
   channel: ChannelListItem;
   displayPhoto: string | null;
 }
+
 export interface UserChannelPermissionList {
   canInvite: boolean;
   canDelete: boolean;
   canEdit: boolean;
   canManageRole: boolean;
+}
+
+export interface ChannelUser {
+  id: number;
+  createdOn: Date;
+  user: User;
 }
 
 export interface UserChannelDetail extends UserChannelListItem {
@@ -92,6 +103,10 @@ export interface ChannelState {
   };
   search: {
     results: PaginatedResponse<ChannelListItem>;
+    loading: boolean;
+    error: ResponseError | null;
+  };
+  channelUsers: PaginatedResponse<ChannelUser> & {
     loading: boolean;
     error: ResponseError | null;
   };
@@ -148,12 +163,17 @@ export type ChannelActionParams =
         | typeof UPDATE_CHANNEL_INFO_REQUESTED
         | typeof UPDATE_CHANNEL_PERMISSIONS_REQUESTED
         | typeof UPDATE_CHANNEL_INFO_SUCCESS
-        | typeof UPDATE_CHANNEL_PERMISSIONS_SUCCESS;
+        | typeof UPDATE_CHANNEL_PERMISSIONS_SUCCESS
+        | typeof GET_CHANNEL_USERS_REQUESTED;
     }
   | {
       type: typeof UPDATE_CHANNEL_PHOTO_SUCCESS;
       payload: string;
       channelId: number;
+    }
+  | {
+      type: typeof GET_CHANNEL_USERS_SUCCESS;
+      payload: PaginatedResponse<ChannelUser>;
     }
   | {
       type:
@@ -163,7 +183,8 @@ export type ChannelActionParams =
         | typeof SEARCH_CHANNEL_FAILED
         | typeof UPDATE_CHANNEL_PHOTO_FAILED
         | typeof UPDATE_CHANNEL_INFO_FAILED
-        | typeof UPDATE_CHANNEL_PERMISSIONS_FAILED;
+        | typeof UPDATE_CHANNEL_PERMISSIONS_FAILED
+        | typeof GET_CHANNEL_USERS_FAILED;
       payload: ResponseError;
     };
 
