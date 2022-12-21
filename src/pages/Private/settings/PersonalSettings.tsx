@@ -76,6 +76,8 @@ const PersonalSettings: () => SettingsData | null = () => {
             onDismiss={() => {
               setShowAvatarUpload(false);
             }}
+            type="user"
+            src={user?.displayPhoto}
           />
         )}
       </>

@@ -1,12 +1,11 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import videojs from 'video.js';
-import { Box, Button, Menu, Text } from 'grommet';
+import { Box, Button, Text } from 'grommet';
 import {
   AddCircle,
   Chat as ChatIcon,
   Dislike,
   Like,
-  More,
   SettingsOption,
   ShareOption,
 } from 'grommet-icons';
@@ -59,7 +58,6 @@ const Video: FC = () => {
     post: {
       postDetail: { data, loading },
     },
-    auth: { user },
   } = useSelector((state: AppState) => state);
   const history = useHistory();
   const [showSettings, setShowSettings] = useState(false);
@@ -114,26 +112,6 @@ const Video: FC = () => {
       ) : null,
     [data, params.id]
   );
-
-  const actionMenu = useMemo(() => {
-    if (data?.createdBy?.id === user?.id) {
-      return [
-        {
-          label: t('common.edit'),
-          onClick: () => setShowSettings((state) => !state),
-        },
-        {
-          label: t('common.delete'),
-          onClick: () => setShowDeleteConfirmation(true),
-        },
-      ];
-    }
-    return [
-      { label: t('Video.followChannel') },
-      { label: t('Video.joinZone') },
-      { label: t('Video.report') },
-    ];
-  }, [data, user]);
 
   useEffect(() => {
     dispatch(getPostDetailAction(+params.id));
@@ -224,19 +202,13 @@ const Video: FC = () => {
                   <UserBadge url="/" fullName={data?.createdBy?.fullName} />
                 </Box>
               )) || <Box />}
-              <Menu
-                margin={{ right: '-10px' }}
-                plain
-                icon={
-                  data?.createdBy?.id === user?.id ? (
-                    <SettingsOption size="medium" color="brand" />
-                  ) : (
-                    <More size="medium" color="brand" />
-                  )
-                }
-                items={actionMenu}
-                dropAlign={{ top: 'bottom', left: 'left' }}
-              />
+              <Box
+                onClick={() => setShowSettings((previous) => !previous)}
+                focusIndicator={false}
+                pad={{ vertical: 'small' }}
+              >
+                <SettingsOption size="medium" color="brand" />
+              </Box>
             </Box>
             <Box margin={{ top: 'small' }} gap="medium">
               <VideoJs

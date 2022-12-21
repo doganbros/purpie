@@ -1,4 +1,6 @@
 import {
+  BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -30,6 +32,7 @@ import {
   UserTokenPayload,
 } from '../interfaces/user.interface';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { ChangePasswordDto } from '../dto/change-password.dto';
 
 const {
   AUTH_TOKEN_SECRET = '',
@@ -443,5 +446,37 @@ export class AuthService {
       'reset-password',
       context,
     );
+  }
+
+  async changePassword(
+    userId: number,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<boolean> {
+    if (changePasswordDto.newPassword !== changePasswordDto.confirmNewPassword)
+      throw new BadRequestException(
+        ErrorTypes.PASSWORDS_NOT_MATCH,
+        'New password and confirm passwords needs to be same!',
+      );
+
+    const user: User = await this.userRepository.findOneOrFail({
+      where: {
+        id: userId,
+      },
+    });
+
+    const validPassword = await bcrypt.compare(
+      changePasswordDto.currentPassword,
+      user.password,
+    );
+    if (!validPassword)
+      throw new ForbiddenException(
+        ErrorTypes.CURRENT_PASSWORD_NOT_CORRECT,
+        'User current password is invalid!',
+      );
+
+    user.password = await bcrypt.hash(changePasswordDto.newPassword, 10);
+    await user.save();
+
+    return true;
   }
 }

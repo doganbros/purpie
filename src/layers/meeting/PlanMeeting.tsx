@@ -108,7 +108,7 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
             record,
           }
         );
-      if (selectedChannel) formPayload.channelId = selectedChannel.id;
+      if (selectedChannel) formPayload.channelId = selectedChannel.channel.id;
 
       if (!showPersistance && configChanged) {
         setShowPersistance(true);

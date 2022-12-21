@@ -3,6 +3,7 @@ import { Accordion, AccordionPanel, Avatar, Box, Text } from 'grommet';
 import { CaretRightFill, Home } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { nanoid } from 'nanoid';
 import LogoWhite from '../../../assets/purpie-logo/logo-white.svg';
 import Divider from '../../../components/layouts/PrivatePageLayout/ZoneSelector/Divider';
 import { useDebouncer } from '../../../hooks/useDebouncer';
@@ -12,6 +13,7 @@ import SearchBar from './SearchBar';
 import { SettingFormItem, SettingsData } from './types';
 import ZoneSettings from './ZoneSettings';
 import './Style.scss';
+import { useTitle } from '../../../hooks/useTitle';
 
 const Settings: FC = () => {
   const history = useHistory();
@@ -21,6 +23,7 @@ const Settings: FC = () => {
   const [searchTextValue, setSearchTextValue] = useState<string>('');
 
   const { t } = useTranslation();
+  useTitle(t('settings.documentTitle'));
 
   const data: SettingsData[] = [
     PersonalSettings(),
@@ -90,12 +93,12 @@ const Settings: FC = () => {
           {!selectedItem.isEmpty && selectedItem.saveButton}
         </Box>
         {selectedItem?.items?.map<React.ReactNode>((setting) => {
-          const descriptionParts = setting.description.split(
-            new RegExp(`(${searchText})`, 'gi')
-          );
-          const titleParts = setting.title.split(
-            new RegExp(`(${searchText})`, 'gi')
-          );
+          const descriptionParts = setting.description
+            .split(new RegExp(`(${searchText})`, 'gi'))
+            .map((p) => ({ part: p, id: nanoid() }));
+          const titleParts = setting.title
+            .split(new RegExp(`(${searchText})`, 'gi'))
+            .map((p) => ({ part: p, id: nanoid() }));
 
           return (
             <Box
@@ -106,21 +109,25 @@ const Settings: FC = () => {
               gap="small"
             >
               <Box width="medium" direction="column">
-                <Text key={setting.key} size="medium" weight="bold">
-                  {titleParts.map((part) =>
+                <Text size="medium" weight="bold">
+                  {titleParts.map(({ part, id }) =>
                     part.toLowerCase() !== searchText.toLowerCase() ? (
                       `${part}`
                     ) : (
-                      <Text weight="bold">{part}</Text>
+                      <Text key={id} weight="bold">
+                        {part}
+                      </Text>
                     )
                   )}
                 </Text>
-                <Text key={setting.key}>
-                  {descriptionParts.map((part) =>
+                <Text>
+                  {descriptionParts.map(({ part, id }) =>
                     part.toLowerCase() !== searchText.toLowerCase() ? (
                       `${part}`
                     ) : (
-                      <Text weight="bold">{part}</Text>
+                      <Text key={id} weight="bold">
+                        {part}
+                      </Text>
                     )
                   )}
                 </Text>

@@ -40,15 +40,6 @@ const Contacts: FC = () => {
     );
   };
 
-  const unSelectContact = () => {
-    dispatch(
-      selectContactAction({
-        userName: '',
-        contactId: 0,
-      })
-    );
-  };
-
   const searchContact = () => {
     return (
       <Box
@@ -70,6 +61,10 @@ const Contacts: FC = () => {
         <Search />
       </Box>
     );
+  };
+
+  const renderEmpty = (isEmpty: boolean) => {
+    return isEmpty ? <EmptyContact onFindContact={() => {}} /> : null;
   };
 
   useEffect(() => {
@@ -118,14 +113,12 @@ const Contacts: FC = () => {
               <ContactListItem
                 selected={contacts.selected.contactId === item.id}
                 contact={item}
-                onClick={
-                  contacts.selected.contactId ? unSelectContact : selectContact
-                }
+                onClick={selectContact}
               />
             )}
           </InfiniteScroll>
         ) : (
-          <EmptyContact onFindContact={() => {}} />
+          renderEmpty(contacts?.data?.length > 0)
         )}
       </Box>
     </PrivatePageLayout>
