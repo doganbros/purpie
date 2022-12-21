@@ -9,7 +9,6 @@ const ZoneDropTheme: FC = ({ children }) => {
         extend: `
         & > * > *:hover {
           font-weight: bold;
-          background: status-disabled-light;
         };
       `,
       },
