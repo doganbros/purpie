@@ -162,6 +162,7 @@ const ChannelSettings: () => SettingsData = () => {
                 onClick={() => setIsDropOpen(true)}
                 direction="row"
                 gap="small"
+                align="center"
               >
                 <Box>
                   <Text>{selectedChannel?.name}</Text>
@@ -201,6 +202,8 @@ const ChannelSettings: () => SettingsData = () => {
             onDismiss={() => {
               setShowAvatarUpload(false);
             }}
+            type="channel"
+            src={selectedChannel?.displayPhoto}
           />
         )}
       </>

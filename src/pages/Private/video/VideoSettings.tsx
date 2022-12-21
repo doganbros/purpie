@@ -28,7 +28,6 @@ const VideoSettings: FC<VideoSettingsProps> = ({
 
   const [title, setTitle] = useState(data?.title);
   const [description, setDescription] = useState(data?.description);
-  const [exclusive, setExclusive] = useState(data?.userContactExclusive);
   const [publicVisibility, setPublicVisibility] = useState(data?.public);
 
   const onSubmit = () => {
@@ -38,12 +37,19 @@ const VideoSettings: FC<VideoSettingsProps> = ({
         title,
         description,
         public: publicVisibility,
-        userContactExclusive: exclusive,
       };
 
       dispatch(updatePostAction(request));
       setShowSettings(false);
     }
+  };
+  const isVideoSettingsChanged = (): boolean => {
+    const isTitleChanged: boolean = title !== data?.title;
+    const isDescriptionChanged: boolean = description !== data?.description;
+    const isPublicChanged: boolean = publicVisibility !== data?.public;
+    const isChanged: boolean =
+      isTitleChanged || isDescriptionChanged || isPublicChanged;
+    return isChanged;
   };
 
   const notValid = !title;
@@ -90,39 +96,32 @@ const VideoSettings: FC<VideoSettingsProps> = ({
         >
           <Box gap="small">
             <Switch
-              label={t('common.exclusiveContacts')}
-              value={exclusive}
-              onChange={(checked) => {
-                setExclusive(checked);
-                setPublicVisibility(!checked);
-              }}
-            />
-            <Switch
               label={t('common.public')}
               value={publicVisibility}
               onChange={(checked) => {
                 setPublicVisibility(checked);
-                setExclusive(!checked);
               }}
             />
           </Box>
         </Box>
         <Box margin={{ vertical: 'auto' }} />
         <Box gap="small" margin={{ top: '20px' }}>
-          <Button
-            size="large"
-            type="submit"
-            disabled={notValid}
-            onClick={onSubmit}
-            primary
-            label={t('VideoSettings.save')}
-          />
-          <Button
-            size="large"
-            type="button"
-            label={t('common.close')}
-            onClick={() => setShowSettings(false)}
-          />
+          <Box direction="row" gap="small">
+            <Button
+              type="button"
+              label={t('common.close')}
+              onClick={() => setShowSettings(false)}
+              fill="horizontal"
+            />
+            <Button
+              type="submit"
+              disabled={notValid || !isVideoSettingsChanged()}
+              onClick={onSubmit}
+              primary
+              fill="horizontal"
+              label={t('VideoSettings.save')}
+            />
+          </Box>
           <Box align="center" flex={{ shrink: 0 }} margin={{ top: 'medium' }}>
             <Anchor
               weight="400"

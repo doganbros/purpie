@@ -13,6 +13,7 @@ import SearchBar from './SearchBar';
 import { SettingFormItem, SettingsData } from './types';
 import ZoneSettings from './ZoneSettings';
 import './Style.scss';
+import { useTitle } from '../../../hooks/useTitle';
 
 const Settings: FC = () => {
   const history = useHistory();
@@ -22,6 +23,7 @@ const Settings: FC = () => {
   const [searchTextValue, setSearchTextValue] = useState<string>('');
 
   const { t } = useTranslation();
+  useTitle(t('settings.documentTitle'));
 
   const data: SettingsData[] = [
     PersonalSettings(),

@@ -96,7 +96,7 @@ const ZoneSettings: () => SettingsData | null = () => {
       />
     ),
     avatarWidget: (
-      <Box direction="row" gap="small">
+      <Box direction="row" gap="small" align="center">
         {!showZoneSelector && (
           <Stack anchor="top-right" onClick={() => setShowAvatarUpload(true)}>
             <Box
@@ -159,7 +159,7 @@ const ZoneSettings: () => SettingsData | null = () => {
           }
         >
           {!showZoneSelector ? (
-            <Box direction="row">
+            <Box direction="row" align="center">
               <Box>
                 <Text>{selectedZone?.name}</Text>
                 <Text color="#8F9BB3">{selectedZone?.subdomain}</Text>
@@ -173,6 +173,7 @@ const ZoneSettings: () => SettingsData | null = () => {
               round="small"
               direction="row"
               align="center"
+              justify="center"
             >
               <Text>{t('settings.selectZone')}</Text>
               <CaretRightFill color="brand" />{' '}
@@ -188,6 +189,8 @@ const ZoneSettings: () => SettingsData | null = () => {
             onDismiss={() => {
               setShowAvatarUpload(false);
             }}
+            type="zone"
+            src={selectedZone?.displayPhoto}
           />
         )}
       </Box>
