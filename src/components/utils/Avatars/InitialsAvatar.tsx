@@ -33,7 +33,7 @@ const InitialsAvatar: FC<InitialsAvatarProps> = ({
       </Text>
     </Avatar>
   ) : (
-    <Avatar round background="#eee" />
+    <Avatar round background="light-gray" />
   );
 };
 

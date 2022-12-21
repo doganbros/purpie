@@ -128,8 +128,8 @@ const Login: FC = () => {
           <Box margin={{ vertical: 'small' }} style={{ textAlign: 'center' }}>
             <AuthFormButton
               label={<span />}
-              color="#F3F3F3"
-              backgroundColor="#F3F3F3"
+              color="gray96"
+              backgroundColor="gray96"
               disabled={googleAuthBtnLoading}
               onClick={() => dispatch(getThirdPartyUrlAction('google'))}
               icon={<Google color="plain" size="28px" />}
@@ -138,8 +138,8 @@ const Login: FC = () => {
 
             <AuthFormButton
               label={<span />}
-              color="#3B5998"
-              backgroundColor="#3B5998"
+              color="grayish-blue"
+              backgroundColor="grayish-blue"
               disabled={facebookAuthBtnLoading}
               onClick={() => dispatch(getThirdPartyUrlAction('facebook'))}
               icon={<FacebookOption color="white" size="28px" />}

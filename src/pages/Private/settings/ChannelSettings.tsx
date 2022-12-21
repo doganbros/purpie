@@ -101,7 +101,7 @@ const ChannelSettings: () => SettingsData = () => {
             <Stack anchor="top-right" onClick={() => setShowAvatarUpload(true)}>
               <Box
                 round="full"
-                border={{ color: '#F2F2F2', size: 'medium' }}
+                border={{ color: 'gray95', size: 'medium' }}
                 wrap
                 justify="center"
                 pad="5px"
@@ -112,7 +112,7 @@ const ChannelSettings: () => SettingsData = () => {
                   src={selectedChannel?.displayPhoto}
                 />
               </Box>
-              <Box background="#6FFFB0" round pad="xsmall">
+              <Box background="mint-green" round pad="xsmall">
                 <Edit size="small" />
               </Box>
             </Stack>
@@ -166,7 +166,7 @@ const ChannelSettings: () => SettingsData = () => {
               >
                 <Box>
                   <Text>{selectedChannel?.name}</Text>
-                  <Text color="#8F9BB3">
+                  <Text color="status-disabled">
                     {t('settings.in')}{' '}
                     {
                       userZones?.find(

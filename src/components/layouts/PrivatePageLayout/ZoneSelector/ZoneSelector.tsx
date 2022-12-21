@@ -103,9 +103,7 @@ const ZoneSelector: FC = () => {
                   <Add
                     size="small"
                     color={
-                      createChannelButtonDisabled
-                        ? 'status-disabled'
-                        : '#444444'
+                      createChannelButtonDisabled ? 'status-disabled' : 'gray44'
                     }
                   />
                 }
@@ -116,13 +114,13 @@ const ZoneSelector: FC = () => {
                   dispatch(openCreateZoneLayerAction());
                 }}
                 label={t('ZoneSelector.createZone')}
-                rightIcon={<Add size="small" color="#444444" />}
+                rightIcon={<Add size="small" color="gray44" />}
               />
               <Divider margin={{ vertical: 'xxsmall' }} />
               <ListButton
                 label={t('ZoneSelector.settings')}
                 onClick={() => history.push('/settings')}
-                rightIcon={<SettingsOption size="small" color="#444444" />}
+                rightIcon={<SettingsOption size="small" color="gray44" />}
               />
               <Divider margin={{ vertical: 'xxsmall' }} />
               <ListButton

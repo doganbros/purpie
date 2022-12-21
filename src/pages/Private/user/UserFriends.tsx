@@ -27,7 +27,7 @@ const UserFriends: FC<{ userName: string }> = ({ userName }) => {
       <GradientScroll>
         <Box direction="row" gap="medium">
           {contacts.loading && (
-            <PurpieLogoAnimated width={50} height={50} color="#956aea" />
+            <PurpieLogoAnimated width={50} height={50} color="brand" />
           )}
           {!contacts.loading && contacts.data.length === 0 ? (
             <Text size="small">{t('UserFriends.noFriendsFound')}</Text>

@@ -101,7 +101,7 @@ const ZoneSettings: () => SettingsData | null = () => {
           <Stack anchor="top-right" onClick={() => setShowAvatarUpload(true)}>
             <Box
               round={{ size: 'medium' }}
-              border={{ color: '#F2F2F2', size: 'medium' }}
+              border={{ color: 'gray95', size: 'medium' }}
               wrap
               justify="center"
               pad="5px"
@@ -112,7 +112,7 @@ const ZoneSettings: () => SettingsData | null = () => {
                 src={selectedZone?.displayPhoto}
               />
             </Box>
-            <Box background="#6FFFB0" round pad="xsmall">
+            <Box background="mint-green" round pad="xsmall">
               <Edit size="small" />
             </Box>
           </Stack>
@@ -162,7 +162,7 @@ const ZoneSettings: () => SettingsData | null = () => {
             <Box direction="row" align="center">
               <Box>
                 <Text>{selectedZone?.name}</Text>
-                <Text color="#8F9BB3">{selectedZone?.subdomain}</Text>
+                <Text color="status-disabled">{selectedZone?.subdomain}</Text>
               </Box>
               <CaretDownFill />
             </Box>

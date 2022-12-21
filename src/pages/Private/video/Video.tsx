@@ -172,7 +172,7 @@ const Video: FC = () => {
     >
       {delay || loading || !data ? (
         <Box height="100vh" justify="center" align="center">
-          <PurpieLogoAnimated width={100} height={100} color="#956aea" />
+          <PurpieLogoAnimated width={100} height={100} color="brand" />
         </Box>
       ) : (
         <Box gap="large" pad={{ vertical: 'medium' }}>
