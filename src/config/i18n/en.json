@@ -542,6 +542,6 @@
   },
   "ChannelMembers": {
     "title": "Members",
-    "noMembersFound": "No members found on selected channel."
+    "noMembersFound": "No members found."
   }
 }

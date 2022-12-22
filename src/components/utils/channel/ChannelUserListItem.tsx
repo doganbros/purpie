@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { Box, Text } from 'grommet';
+import { useHistory } from 'react-router-dom';
 import EllipsesOverflowText from '../EllipsesOverflowText';
 import { UserAvatar } from '../Avatars/UserAvatar';
 
@@ -16,8 +17,16 @@ const ChannelUserListItem: FC<ChannelUserListItemProps> = ({
   userName,
   displayPhoto,
 }) => {
+  const history = useHistory();
+
   return (
-    <Box direction="row" align="center" gap="small">
+    <Box
+      direction="row"
+      align="center"
+      gap="small"
+      onClick={() => history.push(`/user/${userName}`)}
+      focusIndicator={false}
+    >
       <UserAvatar id={id} name={name} src={displayPhoto} />
       <Box>
         <EllipsesOverflowText
