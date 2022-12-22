@@ -16,73 +16,76 @@ const MeetingPrivacy: FC = () => {
       },
     },
     zone: { selectedUserZone },
+    channel: { userChannels, selectedChannel },
   } = useSelector((state: AppState) => state);
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const size = useContext(ResponsiveContext);
-  const options = [
-    { label: 'option 1', value: 1 },
-    { label: 'option 2', value: 2 },
-    { label: 'option 3', value: 3 },
-  ]; // will be channels for the current zone later
 
   return (
     <>
-      <SectionContainer label={t('MeetingPrivacy.joining')}>
-        {!selectedUserZone ? (
-          <Grid
-            columns={size === 'small' ? 'full' : { count: 2, size: 'small' }}
-            gap={{ column: 'xlarge', row: 'small' }}
-          >
-            <Switch
-              label={t('MeetingPrivacy.publicMeeting')}
-              fill="vertical"
-              value={!!formPayload?.public}
-              onChange={(v) => {
-                dispatch(
-                  setMeetingFormFieldAction({
-                    public: v,
-                    userContactExclusive: !v,
-                    channelId: null,
-                  })
-                );
-              }}
-            />
-            <Switch
-              label={t('MeetingPrivacy.openContacts')}
-              fill="vertical"
-              value={!!formPayload?.userContactExclusive}
-              onChange={(v) => {
-                dispatch(
-                  setMeetingFormFieldAction({
-                    userContactExclusive: v,
-                    public: !v,
-                    channelId: null,
-                  })
-                );
-              }}
-            />
-          </Grid>
-        ) : (
-          <Box justify="between" align="center" direction="row">
-            <FormField
-              label={t('MeetingPrivacy.selectChannel')}
-              name="select"
-              validate={validators.required(t('MeetingPrivacy.selectChannel'))}
-            >
-              <Select
-                name="select"
-                placeholder={t('common.choose')}
-                options={options}
-                labelKey="label"
-                valueKey="value"
-              />
-            </FormField>
-          </Box>
-        )}
-      </SectionContainer>
-      <Box height="20px" />
+      {!selectedChannel && (
+        <>
+          <SectionContainer label={t('MeetingPrivacy.joining')}>
+            {!selectedUserZone ? (
+              <Grid
+                columns={
+                  size === 'small' ? 'full' : { count: 2, size: 'small' }
+                }
+                gap={{ column: 'xlarge', row: 'small' }}
+              >
+                <Switch
+                  label={t('MeetingPrivacy.publicMeeting')}
+                  fill="vertical"
+                  value={!!formPayload?.public}
+                  onChange={(v) => {
+                    dispatch(
+                      setMeetingFormFieldAction({
+                        public: v,
+                        channelId: null,
+                      })
+                    );
+                  }}
+                />
+              </Grid>
+            ) : (
+              <Box justify="between" align="center" direction="row">
+                <FormField
+                  label={t('MeetingPrivacy.selectChannel')}
+                  name="channelId"
+                  validate={validators.required(
+                    t('MeetingPrivacy.selectChannel')
+                  )}
+                >
+                  <Select
+                    name="channelId"
+                    placeholder={t('common.choose')}
+                    options={userChannels.data
+                      .filter(
+                        (c) => c.channel.zoneId === selectedUserZone?.zone.id
+                      )
+                      .map(({ channel: { id, name } }) => ({
+                        id,
+                        name,
+                      }))}
+                    labelKey="name"
+                    valueKey={{ key: 'id', reduce: true }}
+                    onChange={({ option }) => {
+                      dispatch(
+                        setMeetingFormFieldAction({
+                          channelId: option.id,
+                        })
+                      );
+                    }}
+                  />
+                </FormField>
+              </Box>
+            )}
+          </SectionContainer>
+          <Box height="20px" />
+        </>
+      )}
       <SectionContainer label={t('MeetingPrivacy.streamingRecording')}>
         <Grid
           columns={size === 'small' ? 'full' : { count: 2, size: 'small' }}

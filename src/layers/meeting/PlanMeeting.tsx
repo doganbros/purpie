@@ -62,7 +62,6 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
     if (userMeetingConfig.config && !formPayload && visible) {
       const {
         public: publicMeeting,
-        userContactExclusive,
         liveStream,
         record,
       } = userMeetingConfig.config.privacyConfig;
@@ -71,7 +70,6 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
         startDate: null,
         config: userMeetingConfig.config.jitsiConfig,
         public: !appSubdomain && publicMeeting,
-        userContactExclusive: !appSubdomain && userContactExclusive,
         planForLater: false,
         liveStream,
         record,
@@ -92,7 +90,6 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
     if (formPayload && userMeetingConfig.config) {
       const {
         public: publicMeeting,
-        userContactExclusive,
         liveStream,
         record,
       } = userMeetingConfig.config.privacyConfig;
@@ -102,13 +99,11 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
         !isEqual(
           {
             public: formPayload.public,
-            userContactExclusive: formPayload.userContactExclusive,
             liveStream: formPayload.liveStream,
             record: formPayload.record,
           },
           {
             public: !appSubdomain && publicMeeting,
-            userContactExclusive: !appSubdomain && userContactExclusive,
             liveStream,
             record,
           }

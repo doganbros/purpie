@@ -35,7 +35,6 @@ const MeetingInvitation: FC = () => {
       getUserSuggestionsForMeetingAction(
         value,
         [currentUser!.id, ...invitedUsers.map((v) => v.id)],
-        payload?.userContactExclusive,
         payload?.channelId
       )
     );

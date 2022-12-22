@@ -41,10 +41,8 @@ export class CreateMeetingDto {
   endDate?: Date;
 
   @ApiProperty()
-  @ValidateIf((o) => {
-    return !o.public;
-  })
   @IsInt()
+  @IsOptional()
   channelId?: number;
 
   @ApiProperty()
