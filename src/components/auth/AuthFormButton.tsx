@@ -1,11 +1,12 @@
 import { Button, ButtonExtendedProps, ThemeContext } from 'grommet';
+import { ColorType } from 'grommet/utils';
 import React, { FC } from 'react';
 import { css } from 'styled-components';
 import { theme } from '../../config/app-config';
 
-interface Props extends ButtonExtendedProps {
+interface Props extends Omit<ButtonExtendedProps, 'backgroundColor'> {
   fontSize?: string;
-  backgroundColor?: string;
+  backgroundColor?: ColorType;
   minWidth?: string;
   maxWidth?: string;
 }

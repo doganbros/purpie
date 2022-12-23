@@ -69,7 +69,7 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
             src={invitation.createdBy.displayPhoto}
           />
           <Box>
-            <Text size="small" weight={500} color="#202631">
+            <Text size="small" weight={500} color="dark">
               {invitation.createdBy.fullName}
             </Text>
             <Text size="10px" color="status-disabled">

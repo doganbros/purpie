@@ -16,6 +16,7 @@ import ExtendedBox from '../../../utils/ExtendedBox';
 import ZoneDropTheme from './ZoneDropTheme';
 import { UserAvatar } from '../../../utils/Avatars/UserAvatar';
 import { ZoneAvatar } from '../../../utils/Avatars/ZoneAvatar';
+import { theme } from '../../../../config/app-config';
 
 const ZoneSelector: FC = () => {
   const { t } = useTranslation();
@@ -103,9 +104,7 @@ const ZoneSelector: FC = () => {
                   <Add
                     size="small"
                     color={
-                      createChannelButtonDisabled
-                        ? 'status-disabled'
-                        : '#444444'
+                      createChannelButtonDisabled ? 'status-disabled' : 'dark-1'
                     }
                   />
                 }
@@ -116,13 +115,13 @@ const ZoneSelector: FC = () => {
                   dispatch(openCreateZoneLayerAction());
                 }}
                 label={t('ZoneSelector.createZone')}
-                rightIcon={<Add size="small" color="#444444" />}
+                rightIcon={<Add size="small" color="dark-1" />}
               />
               <Divider margin={{ vertical: 'xxsmall' }} />
               <ListButton
                 label={t('ZoneSelector.settings')}
                 onClick={() => history.push('/settings')}
-                rightIcon={<SettingsOption size="small" color="#444444" />}
+                rightIcon={<SettingsOption size="small" color="dark-1" />}
               />
               <Divider margin={{ vertical: 'xxsmall' }} />
               <ListButton
@@ -144,7 +143,7 @@ const ZoneSelector: FC = () => {
               align="center"
               justify="around"
               gap="small"
-              background="linear-gradient(133.92deg, #9060eb 0%, #7d4cdb 98.18%)"
+              background={`linear-gradient(133.92deg, ${theme.global?.colors?.brand} 0%, #7d4cdb 98.18%)`}
               round="16px"
               border={{ size: '1.2px', color: 'white' }}
               pad={{

@@ -310,7 +310,7 @@ const Chat: React.FC<Props> = ({
   if (!messages)
     return (
       <Box justify="center" align="center" height="large">
-        <PurpieLogoAnimated width={70} height={70} color="#956aea" />
+        <PurpieLogoAnimated width={70} height={70} color="brand" />
       </Box>
     );
 
@@ -321,7 +321,7 @@ const Chat: React.FC<Props> = ({
           <Box
             width="100%"
             height="3px"
-            background="linear-gradient(315deg, rgba(255, 248, 247, 0.0001) 0%, rgba(255, 240, 237, 0.815838) 52.11%, #FFEEEB 100%)"
+            background="linear-gradient(315deg, rgba(255, 248, 247, 0.0001) 0%, rgba(255, 240, 237, 0.815838) 52.11%,  100%)"
           />
         </DayDivider>
         <DayHeader
@@ -330,9 +330,9 @@ const Chat: React.FC<Props> = ({
           pad={{ horizontal: 'small', vertical: 'xsmall' }}
           margin={{ vertical: 'xsmall', horizontal: 'medium' }}
           justify="start"
-          background="#FFEEEB"
+          background="baby-pink"
         >
-          <Text textAlign="center" size="small" weight={400} color="#202631">
+          <Text textAlign="center" size="small" weight={400} color="dark">
             <i>{parseDateToString(message.createdOn)}</i>
           </Text>
         </DayHeader>
@@ -376,7 +376,7 @@ const Chat: React.FC<Props> = ({
               hasMore={hasMore}
               next={fetchMessages}
               loader={
-                <PurpieLogoAnimated width={50} height={50} color="#956aea" />
+                <PurpieLogoAnimated width={50} height={50} color="brand" />
               }
               scrollableTarget={containerId}
             >

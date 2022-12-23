@@ -47,7 +47,7 @@ export const FolderListItem: FC<Props> = ({
       border={{
         size: '1px',
         side: 'all',
-        color: hover || selected ? '#00C781' : 'white',
+        color: hover || selected ? 'status-ok' : 'white',
       }}
       boxShadow="none"
       minHeight="36px"

@@ -57,7 +57,7 @@ const Replies: FC<RepliesProps> = ({ parentComment, postId }) => {
         <Box gap="small">
           {parentComment.replies.loading &&
           !parentComment.replies.data.length ? (
-            <PurpieLogoAnimated width={50} height={50} color="#956aea" />
+            <PurpieLogoAnimated width={50} height={50} color="brand" />
           ) : (
             parentComment.replies.data.map((c) => (
               <CommentBase key={c.id} comment={c} postId={postId} />

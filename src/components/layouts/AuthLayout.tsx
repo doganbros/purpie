@@ -59,7 +59,7 @@ const AuthLayout: React.FC<Props> = ({
         direction="row"
         justify="between"
         height={{ min: '100vh' }}
-        background={{ color: '#FFE7E3' }}
+        background={{ color: 'baby-pink' }}
       >
         {size !== 'small' ? (
           <Box

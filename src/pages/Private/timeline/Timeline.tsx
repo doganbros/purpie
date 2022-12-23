@@ -133,7 +133,7 @@ const Timeline: FC = () => {
           height="medium"
           pad={{ top: 'large' }}
         >
-          <PurpieLogoAnimated width={100} height={100} color="#956aea" />
+          <PurpieLogoAnimated width={100} height={100} color="brand" />
         </Box>
       );
 
