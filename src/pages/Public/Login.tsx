@@ -18,6 +18,7 @@ import SignInRect from '../../assets/sign-in-rect.svg';
 import Figure from '../../assets/login-bg/figure.svg';
 import Banner from '../../assets/login-bg/banner.svg';
 import AuthFormButton from '../../components/auth/AuthFormButton';
+import { theme } from '../../config/app-config';
 
 const Login: FC = () => {
   const dispatch = useDispatch();
@@ -128,8 +129,8 @@ const Login: FC = () => {
           <Box margin={{ vertical: 'small' }} style={{ textAlign: 'center' }}>
             <AuthFormButton
               label={<span />}
-              color="light-3"
-              backgroundColor="light-3"
+              color={theme.global?.colors?.['light-3']}
+              backgroundColor={theme.global?.colors?.['light-3']}
               disabled={googleAuthBtnLoading}
               onClick={() => dispatch(getThirdPartyUrlAction('google'))}
               icon={<Google color="plain" size="28px" />}
@@ -138,8 +139,8 @@ const Login: FC = () => {
 
             <AuthFormButton
               label={<span />}
-              color="grayish-blue"
-              backgroundColor="#3B5998"
+              color={theme.global?.colors?.['grayish-blue']}
+              backgroundColor={theme.global?.colors?.['grayish-blue']}
               disabled={facebookAuthBtnLoading}
               onClick={() => dispatch(getThirdPartyUrlAction('facebook'))}
               icon={<FacebookOption color="white" size="28px" />}
