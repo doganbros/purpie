@@ -321,7 +321,7 @@ const Chat: React.FC<Props> = ({
           <Box
             width="100%"
             height="3px"
-            background="linear-gradient(315deg, rgba(255, 248, 247, 0.0001) 0%, rgba(255, 240, 237, 0.815838) 52.11%, #FFEEEB 100%)"
+            background="linear-gradient(315deg, rgba(255, 248, 247, 0.0001) 0%, rgba(255, 240, 237, 0.815838) 52.11%,  100%)"
           />
         </DayDivider>
         <DayHeader

@@ -46,7 +46,7 @@ const PersonalSettings: () => SettingsData | null = () => {
           <Stack anchor="top-right" onClick={() => setShowAvatarUpload(true)}>
             <Box
               round="full"
-              border={{ color: 'gray95', size: 'medium' }}
+              border={{ color: 'light-2', size: 'medium' }}
               wrap
               justify="center"
               pad="5px"
@@ -57,7 +57,7 @@ const PersonalSettings: () => SettingsData | null = () => {
                 id={user?.id}
               />
             </Box>
-            <Box background="mint-green" round pad="xsmall">
+            <Box background="focus" round pad="xsmall">
               <Edit size="small" />
             </Box>
           </Stack>

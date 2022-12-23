@@ -26,7 +26,7 @@ const ChannelDummy: FC = () => (
         width="45px"
         height="45px"
         round="45px"
-        background="light-gray"
+        background="light-4"
         key={v.id}
       />
     ))}
