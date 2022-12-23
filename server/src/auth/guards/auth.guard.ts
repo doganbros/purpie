@@ -67,6 +67,7 @@ export class AuthGuard implements CanActivate {
           const newRefreshTokenId = await this.authService.setAccessTokens(
             userPayload,
             res,
+            req,
           );
 
           userPayload.refreshTokenId = newRefreshTokenId;
@@ -74,7 +75,7 @@ export class AuthGuard implements CanActivate {
           req.user = userPayload;
         } catch (err: any) {
           if (userPermissionOptions.removeAccessTokens)
-            this.authService.removeAccessTokens(res);
+            this.authService.removeAccessTokens(req, res);
 
           const systemUserCount = await this.authService.systemUserCount();
 
