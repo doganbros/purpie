@@ -36,6 +36,9 @@ import {
   UPDATE_PROFILE_PHOTO_REQUESTED,
   UPDATE_PROFILE_PHOTO_FAILED,
   UPDATE_PROFILE_PHOTO_SUCCESS,
+  UPDATE_PASSWORD_REQUESTED,
+  UPDATE_PASSWORD_SUCCESS,
+  UPDATE_PASSWORD_FAILED,
 } from '../constants/auth.constants';
 import * as AuthService from '../services/auth.service';
 import {
@@ -45,6 +48,7 @@ import {
   RegisterPayload,
   ResetPasswordPayload,
   VerifyEmailPayload,
+  UpdatePasswordPayload,
 } from '../types/auth.types';
 import { setToastAction } from './util.action';
 
@@ -316,6 +320,29 @@ export const updateProfilePhotoAction = (profilePhoto: any): AuthAction => {
     } catch (err: any) {
       dispatch({
         type: UPDATE_PROFILE_PHOTO_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const updatePasswordAction = (
+  password: UpdatePasswordPayload
+): AuthAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: UPDATE_PASSWORD_REQUESTED,
+    });
+    try {
+      const payload = await AuthService.updatePassword(password);
+      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
+      dispatch({
+        type: UPDATE_PASSWORD_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: UPDATE_PASSWORD_FAILED,
         payload: err?.response?.data,
       });
     }

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { SettingsData } from './types';
 import {
+  updatePasswordAction,
   updateProfileInfoAction,
   updateProfilePhotoAction,
 } from '../../../store/actions/auth.action';
@@ -21,6 +22,12 @@ const PersonalSettings: () => SettingsData | null = () => {
     userName: user?.userName || '',
     fullName: user?.fullName || '',
   });
+
+  const [passwordPayload, setPasswordPayload] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmNewPassword: '',
+  });
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
   const [reveal, setReveal] = useState({
     current: false,
@@ -33,6 +40,21 @@ const PersonalSettings: () => SettingsData | null = () => {
   const isFormInitialState =
     userPayload.userName === user.userName &&
     userPayload.fullName === user.fullName;
+
+  const isPasswordFormInitialState =
+    passwordPayload.currentPassword === '' &&
+    passwordPayload.newPassword === '' &&
+    passwordPayload.confirmNewPassword === '';
+
+  const handleSaveChanges = () => {
+    if (!isFormInitialState) {
+      dispatch(updateProfileInfoAction(userPayload));
+    }
+    if (!isPasswordFormInitialState) {
+      dispatch(updatePasswordAction(password));
+    }
+  };
+
   return {
     id: 0,
     key: 'personalSettings',
@@ -182,7 +204,13 @@ const PersonalSettings: () => SettingsData | null = () => {
                 placeholder={t('settings.currentPassword')}
                 autoComplete="new-password"
                 focusIndicator={false}
-                onChange={() => {}}
+                onChange={(event) => {
+                  setPasswordPayload({
+                    ...passwordPayload,
+                    currentPassword: event.target.value,
+                  });
+                }}
+                value={passwordPayload.currentPassword}
               />
               <Button
                 icon={
@@ -211,7 +239,13 @@ const PersonalSettings: () => SettingsData | null = () => {
                 type={reveal.new ? 'text' : 'password'}
                 placeholder={t('settings.newPassword')}
                 focusIndicator={false}
-                onChange={() => {}}
+                onChange={(event) => {
+                  setPasswordPayload({
+                    ...passwordPayload,
+                    newPassword: event.target.value,
+                  });
+                }}
+                value={passwordPayload.newPassword}
               />
               <Button
                 icon={
@@ -234,7 +268,13 @@ const PersonalSettings: () => SettingsData | null = () => {
                 type={reveal.confirm ? 'text' : 'password'}
                 placeholder={t('settings.confirmPassword')}
                 focusIndicator={false}
-                onChange={() => {}}
+                onChange={(event) => {
+                  setPasswordPayload({
+                    ...passwordPayload,
+                    confirmNewPassword: event.target.value,
+                  });
+                }}
+                value={passwordPayload.confirmNewPassword}
               />
               <Button
                 icon={
@@ -255,10 +295,8 @@ const PersonalSettings: () => SettingsData | null = () => {
     ],
     saveButton: (
       <Button
-        disabled={isFormInitialState}
-        onClick={() => {
-          dispatch(updateProfileInfoAction(userPayload));
-        }}
+        disabled={isFormInitialState && isPasswordFormInitialState}
+        onClick={handleSaveChanges}
         primary
         label={t('settings.save')}
         margin={{ vertical: 'medium' }}
