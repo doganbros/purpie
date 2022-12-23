@@ -68,3 +68,12 @@ export const updateChannelPermissions = (
   http
     .put(`channel/permissions/update/${channelId}`, params)
     .then((res) => res.data);
+
+export const listChannelUsers = (
+  channelId: number,
+  limit?: number,
+  skip?: number
+): Promise<any> =>
+  http
+    .get(`channel/users/list/${channelId}`, { params: { limit, skip } })
+    .then((res) => res.data);

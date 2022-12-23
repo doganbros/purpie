@@ -1,6 +1,9 @@
 import { paginationInitialState } from '../../helpers/constants';
 import {
   CLOSE_CREATE_CHANNEL_LAYER,
+  GET_CHANNEL_USERS_FAILED,
+  GET_CHANNEL_USERS_REQUESTED,
+  GET_CHANNEL_USERS_SUCCESS,
   GET_USER_CHANNELS_FAILED,
   GET_USER_CHANNELS_REQUESTED,
   GET_USER_CHANNELS_SUCCESS,
@@ -31,6 +34,11 @@ const initialState: ChannelState = {
   },
   search: {
     results: paginationInitialState,
+    loading: false,
+    error: null,
+  },
+  channelUsers: {
+    ...paginationInitialState,
     loading: false,
     error: null,
   },
@@ -163,6 +171,33 @@ const channelReducer = (
         },
       };
     }
+    case GET_CHANNEL_USERS_REQUESTED:
+      return {
+        ...state,
+        channelUsers: {
+          ...state.channelUsers,
+          loading: true,
+          error: null,
+        },
+      };
+    case GET_CHANNEL_USERS_SUCCESS:
+      return {
+        ...state,
+        channelUsers: {
+          ...action.payload,
+          loading: false,
+          error: null,
+        },
+      };
+    case GET_CHANNEL_USERS_FAILED:
+      return {
+        ...state,
+        channelUsers: {
+          ...state.channelUsers,
+          loading: false,
+          error: action.payload,
+        },
+      };
     default:
       return state;
   }
