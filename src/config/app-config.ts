@@ -20,7 +20,7 @@ export const theme: typeof grommet = deepMerge(base, {
       'baby-pink': '#FFEEEB',
       'soft-pink': '#FFE7E3',
       'grayish-blue': '#3B5998',
-      'light-turquoise': '#74C0BFF',
+      'light-turquoise': '#74C0BF',
     },
     input: {
       extend: 'color: grey;',
