@@ -10,9 +10,10 @@ import {
   InternalServerErrorException,
   Param,
   Post,
+  Req,
   Res,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { ApiParam, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from 'entities/User.entity';
 import { AuthByThirdPartyDto } from '../dto/auth-by-third-party.dto';
@@ -100,6 +101,7 @@ export class AuthThirdPartyController {
     @Param() { name }: ThirdPartyLoginParams,
     @Body() { code }: AuthByThirdPartyDto,
     @Res({ passthrough: true }) res: Response,
+    @Req() req: Request,
   ) {
     let user: User | undefined;
     if (name === 'google') {
@@ -165,6 +167,7 @@ export class AuthThirdPartyController {
           id: user.id,
         },
         res,
+        req,
       );
 
       return userPayload;

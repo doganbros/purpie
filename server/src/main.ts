@@ -8,6 +8,7 @@ import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { json } from 'express';
+import cors from 'cors';
 import { AppModule } from './app.module';
 
 initApp();
@@ -22,11 +23,14 @@ async function bootstrap() {
   app.use(helmet());
   app.use(json({ limit: HTTP_MAX_BODY_SIZE || '500mb' }));
 
-  app.enableCors({
+  const corsOptions = {
     origin: true,
     credentials: true,
     preflightContinue: false,
-  });
+  };
+
+  app.use(cors(corsOptions));
+  app.enableCors(corsOptions);
   app.use(cookieParser());
   app.use(compression());
 

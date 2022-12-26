@@ -5,6 +5,7 @@ import path from 'path';
 import { JitsiConfig, JitsiConfigKey } from 'types/Meeting';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { customAlphabet } from 'nanoid';
+import { BrowserType } from '../types/BrowserType';
 
 export const loadEnv = (defaultPath?: string) => {
   const envPath =
@@ -128,4 +129,15 @@ export const tsqueryParam = (value: string): string => {
   if (!value?.trim().length) return '';
 
   return `${value.trim().replace(/[&|]/g, '').replace(/\s/g, ' & ')}:*`;
+};
+
+export const detectBrowser = (userAgent: string): BrowserType => {
+  let browser = BrowserType.UNKNOWN;
+
+  if (/firefox/i.test(userAgent!)) browser = BrowserType.FIREFOX;
+  else if (/chrome/i.test(userAgent!)) browser = BrowserType.CHROME;
+  else if (/safari/i.test(userAgent!)) browser = BrowserType.SAFARI;
+  else if (/msie/i.test(userAgent!)) browser = BrowserType.MSIE;
+
+  return browser;
 };
