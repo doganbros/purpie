@@ -5,12 +5,6 @@ import { theme as globalTheme } from '../../config/app-config';
 const PlanMeetingTheme: FC = ({ children }) => {
   const size = useContext(ResponsiveContext);
   const theme: ThemeType = {
-    formField: {
-      border: {
-        color: 'brand',
-      },
-      round: 'small',
-    },
     tabs: {
       header: {
         extend: `

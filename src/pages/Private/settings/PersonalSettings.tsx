@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Stack, Text, TextInput } from 'grommet';
+import { Box, Button, Form, FormField, Stack, Text, TextInput } from 'grommet';
 import { Edit, Hide, View } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +12,9 @@ import {
 } from '../../../store/actions/auth.action';
 import AvatarUpload from './AvatarUpload';
 import { UserAvatar } from '../../../components/utils/Avatars/UserAvatar';
+import { validators } from '../../../helpers/validators';
+import { UpdatePasswordPayload } from '../../../store/types/auth.types';
+import { FormSubmitEvent } from '../../../models/form-submit-event';
 
 const PersonalSettings: () => SettingsData | null = () => {
   const {
@@ -28,6 +31,7 @@ const PersonalSettings: () => SettingsData | null = () => {
     newPassword: '',
     confirmNewPassword: '',
   });
+
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
   const [reveal, setReveal] = useState({
     current: false,
@@ -42,16 +46,21 @@ const PersonalSettings: () => SettingsData | null = () => {
     userPayload.fullName === user.fullName;
 
   const isPasswordFormInitialState =
-    passwordPayload.currentPassword === '' &&
-    passwordPayload.newPassword === '' &&
+    passwordPayload.currentPassword === '' ||
+    passwordPayload.newPassword === '' ||
     passwordPayload.confirmNewPassword === '';
+
+  const handleSubmitPassword: FormSubmitEvent<UpdatePasswordPayload> = ({
+    value,
+  }) => {
+    if (Object.keys(value).length !== 0) {
+      dispatch(updatePasswordAction(value));
+    }
+  };
 
   const handleSaveChanges = () => {
     if (!isFormInitialState) {
       dispatch(updateProfileInfoAction(userPayload));
-    }
-    if (!isPasswordFormInitialState) {
-      dispatch(updatePasswordAction(password));
     }
   };
 
@@ -86,6 +95,7 @@ const PersonalSettings: () => SettingsData | null = () => {
           <Box>
             <Text>{user.fullName}</Text>
             <Text color="status-disabled">{user.userName}</Text>
+            <Text color="status-disabled">{user.email}</Text>
           </Box>
         </Box>
 
@@ -163,132 +173,153 @@ const PersonalSettings: () => SettingsData | null = () => {
           </Box>
         ),
       },
-
-      {
-        key: 'email',
-        title: t('settings.email'),
-        description: t('settings.mainEmail'),
-        value: user?.email,
-        component: (
-          <Box
-            direction="row"
-            justify="between"
-            align="center"
-            border={{ size: 'xsmall', color: 'brand' }}
-            round="small"
-            gap="small"
-            pad="xxsmall"
-          >
-            <TextInput value={user?.email} plain focusIndicator={false} />
-          </Box>
-        ),
-      },
       {
         key: 'pasword',
         title: t('settings.passwordChange'),
         description: t('settings.changePassword'),
         component: (
           <Box gap="small">
-            <Box
-              direction="row"
-              justify="between"
-              align="center"
-              gap="small"
-              border={{ size: 'xsmall', color: 'brand' }}
-              round="small"
-              pad="xxsmall"
-            >
-              <TextInput
-                plain
-                type={reveal.current ? 'text' : 'password'}
-                placeholder={t('settings.currentPassword')}
-                autoComplete="new-password"
-                focusIndicator={false}
-                onChange={(event) => {
-                  setPasswordPayload({
-                    ...passwordPayload,
-                    currentPassword: event.target.value,
-                  });
-                }}
-                value={passwordPayload.currentPassword}
-              />
-              <Button
-                icon={
-                  reveal.current ? (
-                    <View size="medium" />
-                  ) : (
-                    <Hide size="medium" />
-                  )
-                }
-                onClick={() =>
-                  setReveal({ ...reveal, current: !reveal.current })
-                }
-              />
-            </Box>
-            <Box
-              direction="row"
-              justify="between"
-              align="center"
-              gap="small"
-              border={{ size: 'xsmall', color: 'brand' }}
-              round="small"
-              pad="xxsmall"
-            >
-              <TextInput
-                plain
-                type={reveal.new ? 'text' : 'password'}
-                placeholder={t('settings.newPassword')}
-                focusIndicator={false}
-                onChange={(event) => {
-                  setPasswordPayload({
-                    ...passwordPayload,
-                    newPassword: event.target.value,
-                  });
-                }}
-                value={passwordPayload.newPassword}
-              />
-              <Button
-                icon={
-                  reveal.new ? <View size="medium" /> : <Hide size="medium" />
-                }
-                onClick={() => setReveal({ ...reveal, new: !reveal.new })}
-              />
-            </Box>
-            <Box
-              direction="row"
-              justify="between"
-              align="center"
-              gap="small"
-              border={{ size: 'xsmall', color: 'brand' }}
-              round="small"
-              pad="xxsmall"
-            >
-              <TextInput
-                plain
-                type={reveal.confirm ? 'text' : 'password'}
-                placeholder={t('settings.confirmPassword')}
-                focusIndicator={false}
-                onChange={(event) => {
-                  setPasswordPayload({
-                    ...passwordPayload,
-                    confirmNewPassword: event.target.value,
-                  });
-                }}
-                value={passwordPayload.confirmNewPassword}
-              />
-              <Button
-                icon={
-                  reveal.confirm ? (
-                    <View size="medium" />
-                  ) : (
-                    <Hide size="medium" />
-                  )
-                }
-                onClick={() =>
-                  setReveal({ ...reveal, confirm: !reveal.confirm })
-                }
-              />
-            </Box>
+            <Form onSubmit={handleSubmitPassword} id="passwordForm">
+              <FormField
+                name="currentPassword"
+                htmlFor="currentPassword"
+                validate={[validators.minLength(t('common.password'), 6)]}
+              >
+                <Box
+                  direction="row"
+                  justify="between"
+                  align="center"
+                  gap="small"
+                  round="small"
+                  pad="xxsmall"
+                >
+                  <TextInput
+                    plain
+                    name="currentPassword"
+                    id="currentPassword"
+                    type={reveal.current ? 'text' : 'password'}
+                    placeholder={t('settings.currentPassword')}
+                    autoComplete="new-password"
+                    focusIndicator={false}
+                    value={passwordPayload.currentPassword}
+                    onChange={(event) =>
+                      setPasswordPayload({
+                        ...passwordPayload,
+                        currentPassword: event.target.value,
+                      })
+                    }
+                  />
+
+                  <Button
+                    icon={
+                      reveal.current ? (
+                        <View size="medium" />
+                      ) : (
+                        <Hide size="medium" />
+                      )
+                    }
+                    onClick={() =>
+                      setReveal({ ...reveal, current: !reveal.current })
+                    }
+                  />
+                </Box>
+              </FormField>
+
+              <FormField
+                name="newPassword"
+                htmlFor="newPassword"
+                validate={[
+                  validators.minLength(t('common.password'), 6),
+                  validators.equalsField(
+                    'confirmNewPassword',
+                    t('common.passwords')
+                  ),
+                ]}
+              >
+                <Box
+                  direction="row"
+                  justify="between"
+                  align="center"
+                  gap="small"
+                  round="small"
+                  pad="xxsmall"
+                >
+                  <TextInput
+                    name="newPassword"
+                    id="newPassword"
+                    plain
+                    type={reveal.new ? 'text' : 'password'}
+                    placeholder={t('settings.newPassword')}
+                    focusIndicator={false}
+                    value={passwordPayload.newPassword}
+                    onChange={(event) =>
+                      setPasswordPayload({
+                        ...passwordPayload,
+                        newPassword: event.target.value,
+                      })
+                    }
+                  />
+
+                  <Button
+                    icon={
+                      reveal.new ? (
+                        <View size="medium" />
+                      ) : (
+                        <Hide size="medium" />
+                      )
+                    }
+                    onClick={() => setReveal({ ...reveal, new: !reveal.new })}
+                  />
+                </Box>
+              </FormField>
+
+              <FormField
+                name="confirmNewPassword"
+                htmlFor="confirmNewPassword"
+                validate={[
+                  validators.minLength(t('common.password'), 6),
+                  validators.equalsField('newPassword', t('common.passwords')),
+                ]}
+              >
+                <Box
+                  direction="row"
+                  justify="between"
+                  align="center"
+                  gap="small"
+                  round="small"
+                  pad="xxsmall"
+                >
+                  <TextInput
+                    name="confirmNewPassword"
+                    id="confirmNewPassword"
+                    plain
+                    type={reveal.confirm ? 'text' : 'password'}
+                    placeholder={t('settings.confirmPassword')}
+                    focusIndicator={false}
+                    value={passwordPayload.confirmNewPassword}
+                    onChange={(event) =>
+                      setPasswordPayload({
+                        ...passwordPayload,
+                        confirmNewPassword: event.target.value,
+                      })
+                    }
+                  />
+
+                  <Button
+                    icon={
+                      reveal.confirm ? (
+                        <View size="medium" />
+                      ) : (
+                        <Hide size="medium" />
+                      )
+                    }
+                    onClick={() =>
+                      setReveal({ ...reveal, confirm: !reveal.confirm })
+                    }
+                  />
+                </Box>
+              </FormField>
+            </Form>
           </Box>
         ),
       },
@@ -300,6 +331,8 @@ const PersonalSettings: () => SettingsData | null = () => {
         primary
         label={t('settings.save')}
         margin={{ vertical: 'medium' }}
+        type="submit"
+        form="passwordForm"
       />
     ),
   };

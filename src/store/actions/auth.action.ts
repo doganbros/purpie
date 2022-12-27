@@ -335,7 +335,7 @@ export const updatePasswordAction = (
     });
     try {
       const payload = await AuthService.updatePassword(password);
-      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
+      setToastAction('ok', i18n.t('settings.passwordChanged'))(dispatch);
       dispatch({
         type: UPDATE_PASSWORD_SUCCESS,
         payload,

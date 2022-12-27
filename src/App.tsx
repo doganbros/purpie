@@ -1,4 +1,4 @@
-import { Grommet } from 'grommet';
+import { Grommet, ThemeContext } from 'grommet';
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Router, Switch } from 'react-router-dom';
@@ -71,15 +71,33 @@ const App: FC = () => {
                   component={component}
                 />
               ))}
-              {publicRoutes.map(({ id, path, component, exact = true }) => (
-                <PublicRoute
-                  key={id}
-                  exact={exact}
-                  path={path}
-                  component={component}
+              <ThemeContext.Extend
+                value={{
+                  ...theme,
+                  formField: {
+                    ...theme?.formField,
+                    border: {
+                      side: 'all',
+                      color: 'light-5',
+                    },
+                    round: 'large',
+                  },
+                }}
+              >
+                {publicRoutes.map(({ id, path, component, exact = true }) => (
+                  <PublicRoute
+                    key={id}
+                    exact={exact}
+                    path={path}
+                    component={component}
+                  />
+                ))}
+                <Route
+                  exact
+                  path="/initialize-user"
+                  component={InitializeUser}
                 />
-              ))}
-              <Route exact path="/initialize-user" component={InitializeUser} />
+              </ThemeContext.Extend>
               <Route exact path="*" component={NotFound} />
             </Switch>
           </Router>
