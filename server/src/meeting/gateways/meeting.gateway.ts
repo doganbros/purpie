@@ -4,12 +4,20 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { MeetingService } from '../services/meeting.service';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 interface SocketWithTokenPayload extends Socket {
   user: {
+    avatar: string;
+    name: string;
+    email: string;
     id: number;
+    room: string;
+    lobby_bypass: boolean;
   };
 }
 
@@ -30,10 +38,12 @@ const { REACT_APP_CLIENT_HOST = '' } = process.env;
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   },
-  namespace: '/jitsi',
+  namespace: '/',
 })
 export class MeetingGateway {
   @WebSocketServer() io: Server;
+
+  constructor(private meetingService: MeetingService) {}
 
   @SubscribeMessage('test')
   handleMessageDeleted(
@@ -43,7 +53,48 @@ export class MeetingGateway {
       data: string;
     },
   ) {
-    console.log('DATA RECEIVED: ', payload.data, ' SOCKET: ', socket);
+    const roomName = socket.user.room;
+    if (!socket.rooms.has(roomName))
+      throw new WsException(ErrorTypes.NOT_AUTHORIZED);
+
+    console.log('DATA RECEIVED: ', payload.data, 'SOCKET USER: ', socket.user);
     return 'OK';
+  }
+
+  async handleConnection(socket: SocketWithTokenPayload) {
+    try {
+      const token = socket.handshake.headers.authorization;
+
+      const jwtToken = token?.split(' ')[1];
+      const payload = await this.meetingService.verifyJitsiToken(jwtToken!);
+
+      if (!payload) return null;
+      socket.user = payload.context.user;
+      const meetingSlug = socket.user.room;
+
+      socket.join(meetingSlug);
+
+      socket.emit(
+        'meeting_info',
+        await this.meetingService.getConferenceInfo(
+          meetingSlug,
+          socket.user.id,
+        ),
+      );
+
+      socket.on('disconnecting', () => this.handleDisconnecting(socket));
+      return null;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  async handleDisconnecting(socket: SocketWithTokenPayload) {
+    try {
+      console.log('DISCONNECTING');
+      socket.leave(socket.user.room);
+    } catch (error) {
+      //
+    }
   }
 }
