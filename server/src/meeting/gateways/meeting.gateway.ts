@@ -57,8 +57,7 @@ export class MeetingGateway {
     if (!socket.rooms.has(roomName))
       throw new WsException(ErrorTypes.NOT_AUTHORIZED);
 
-    console.log('DATA RECEIVED: ', payload.data, 'SOCKET USER: ', socket.user);
-    return 'OK';
+    return payload;
   }
 
   async handleConnection(socket: SocketWithTokenPayload) {
@@ -91,7 +90,6 @@ export class MeetingGateway {
 
   async handleDisconnecting(socket: SocketWithTokenPayload) {
     try {
-      console.log('DISCONNECTING');
       socket.leave(socket.user.room);
     } catch (error) {
       //
