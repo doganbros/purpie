@@ -6,7 +6,7 @@ const Loader: FC = () => {
   return (
     <Box height="100vh" align="center" justify="center" background="brand">
       <Heading color="white">
-        <PurpieLogoAnimated width={100} height={100} color="#FFFFFF" />
+        <PurpieLogoAnimated width={100} height={100} color="white" />
       </Heading>
     </Box>
   );

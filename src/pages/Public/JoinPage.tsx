@@ -11,6 +11,7 @@ import SignInRect from '../../assets/sign-in-rect.svg';
 import Figure from '../../assets/register-bg/figure.svg';
 import Banner from '../../assets/register-bg/banner.svg';
 import AuthFormButton from '../../components/auth/AuthFormButton';
+import { theme } from '../../config/app-config';
 
 const JoinPage: FC = () => {
   const dispatch = useDispatch();
@@ -83,8 +84,8 @@ const JoinPage: FC = () => {
           <Box margin={{ vertical: 'small' }} style={{ textAlign: 'center' }}>
             <AuthFormButton
               label={<span />}
-              color="#F3F3F3"
-              backgroundColor="#F3F3F3"
+              color={theme.global?.colors?.['light-3']}
+              backgroundColor={theme.global?.colors?.['light-3']}
               disabled={googleAuthBtnLoading}
               onClick={() => dispatch(getThirdPartyUrlAction('google'))}
               icon={<Google color="plain" size="28px" />}
@@ -93,8 +94,8 @@ const JoinPage: FC = () => {
 
             <AuthFormButton
               label={<span />}
-              color="#3B5998"
-              backgroundColor="#3B5998"
+              color={theme.global?.colors?.['grayish-blue']}
+              backgroundColor={theme.global?.colors?.['grayish-blue']}
               disabled={facebookAuthBtnLoading}
               onClick={() => dispatch(getThirdPartyUrlAction('facebook'))}
               icon={<FacebookOption color="white" size="28px" />}

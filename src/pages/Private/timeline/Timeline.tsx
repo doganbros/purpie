@@ -31,6 +31,7 @@ import { DELAY_TIME } from '../../../helpers/constants';
 import useWaitTime from '../../../hooks/useDelayTime';
 import InviteToChannel from './InviteToChannel';
 import InviteToZone from './InviteToZone';
+import ChannelMembers from './ChannelMembers';
 
 const tabs = [
   {
@@ -132,7 +133,7 @@ const Timeline: FC = () => {
           height="medium"
           pad={{ top: 'large' }}
         >
-          <PurpieLogoAnimated width={100} height={100} color="#956aea" />
+          <PurpieLogoAnimated width={100} height={100} color="brand" />
         </Box>
       );
 
@@ -180,7 +181,9 @@ const Timeline: FC = () => {
           ) : (
             <InvitationList />
           )}
-          {selectedChannel && <Box>Member</Box>}
+          {selectedChannel && (
+            <ChannelMembers channelId={selectedChannel.channel.id} />
+          )}
           <Divider />
           <ChannelsToFollow />
           <Divider />

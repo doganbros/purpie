@@ -13,9 +13,9 @@ import { UserRefreshToken } from 'entities/UserRefreshToken.entity';
 import { UserRole } from 'entities/UserRole.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { generateJWT } from 'helpers/jwt';
-import { compareHash, hash } from 'helpers/utils';
+import { compareHash, detectBrowser, hash } from 'helpers/utils';
 import { nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
 import { Brackets, IsNull, Not, Repository } from 'typeorm';
@@ -33,6 +33,7 @@ import {
 } from '../interfaces/user.interface';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { ChangePasswordDto } from '../dto/change-password.dto';
+import { BrowserType } from '../../../types/BrowserType';
 
 const {
   AUTH_TOKEN_SECRET = '',
@@ -96,7 +97,11 @@ export class AuthService {
     );
   }
 
-  async setAccessTokens(userPayload: UserTokenPayload, res: Response) {
+  async setAccessTokens(
+    userPayload: UserTokenPayload,
+    res: Response,
+    req: Request,
+  ) {
     if (userPayload.refreshTokenId) {
       await this.userRefreshTokenRepository.delete({
         userId: userPayload.id,
@@ -121,39 +126,46 @@ export class AuthService {
     const domain = `.${new URL(REACT_APP_SERVER_HOST).hostname}`;
     const isDevelopment = NODE_ENV === 'development';
 
+    const userAgent = req.headers['user-agent'];
+    const isSafariBrowser = detectBrowser(userAgent!) === BrowserType.SAFARI;
+
     res.cookie('PURPIE_ACCESS_TOKEN', accessToken, {
       expires: dayjs().add(30, 'days').toDate(),
       domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
-      secure: true,
+      secure: !(isDevelopment && isSafariBrowser),
       sameSite: isDevelopment ? 'none' : 'lax',
     });
     res.cookie('PURPIE_REFRESH_ACCESS_TOKEN', refreshToken, {
       expires: dayjs().add(30, 'days').toDate(),
       domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
-      secure: true,
+      secure: !(isDevelopment && isSafariBrowser),
       sameSite: isDevelopment ? 'none' : 'lax',
     });
 
     return refreshTokenId;
   }
 
-  removeAccessTokens(res: Response) {
+  removeAccessTokens(req: Request, res: Response) {
     const domain = `.${new URL(REACT_APP_SERVER_HOST).hostname}`;
     const isDevelopment = NODE_ENV === 'development';
+
+    const userAgent = req.headers['user-agent'];
+    const isSafariBrowser = detectBrowser(userAgent!) === BrowserType.SAFARI;
+
     res.clearCookie('PURPIE_ACCESS_TOKEN', {
       expires: dayjs().add(30, 'days').toDate(),
       domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
-      secure: true,
+      secure: !(isDevelopment && isSafariBrowser),
       sameSite: isDevelopment ? 'none' : 'lax',
     });
     res.clearCookie('PURPIE_REFRESH_ACCESS_TOKEN', {
       expires: dayjs().add(30, 'days').toDate(),
       domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
-      secure: true,
+      secure: !(isDevelopment && isSafariBrowser),
       sameSite: isDevelopment ? 'none' : 'lax',
     });
   }
@@ -374,7 +386,7 @@ export class AuthService {
     };
   }
 
-  async initializeUser(info: InitializeUserDto, res: Response) {
+  async initializeUser(info: InitializeUserDto, res: Response, req: Request) {
     const user = await this.userRepository
       .create({
         fullName: info.fullName,
@@ -407,6 +419,7 @@ export class AuthService {
           id: user.id,
         },
         res,
+        req,
       );
 
       return userPayload;

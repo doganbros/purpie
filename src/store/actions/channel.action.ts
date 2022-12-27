@@ -33,6 +33,9 @@ import {
   UPDATE_CHANNEL_PERMISSIONS_REQUESTED,
   UPDATE_CHANNEL_PERMISSIONS_SUCCESS,
   UPDATE_CHANNEL_PERMISSIONS_FAILED,
+  GET_CHANNEL_USERS_REQUESTED,
+  GET_CHANNEL_USERS_SUCCESS,
+  GET_CHANNEL_USERS_FAILED,
 } from '../constants/channel.constants';
 import * as ChannelService from '../services/channel.service';
 
@@ -235,6 +238,34 @@ export const updateChannelPermissionsAction = (
     } catch (err: any) {
       dispatch({
         type: UPDATE_CHANNEL_PERMISSIONS_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const listChannelUsersAction = (
+  channelId: number,
+  limit: number,
+  skip: number
+): ChannelAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: GET_CHANNEL_USERS_REQUESTED,
+    });
+    try {
+      const payload = await ChannelService.listChannelUsers(
+        channelId,
+        limit,
+        skip
+      );
+      dispatch({
+        type: GET_CHANNEL_USERS_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: GET_CHANNEL_USERS_FAILED,
         payload: err?.response?.data,
       });
     }

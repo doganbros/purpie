@@ -539,5 +539,9 @@
     "post_comment_mention": "<user>{{userName}}</user> has mentioned your <post>post</post> comment.",
     "contact_request_accepted": "<user>{{userName}}</user> has accepted your contact request.",
     "contact_request_received": "<user>{{userName}}</user> has want to add you as a contact."
+  },
+  "ChannelMembers": {
+    "title": "Members",
+    "noMembersFound": "No members found."
   }
 }

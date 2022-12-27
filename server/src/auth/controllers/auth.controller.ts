@@ -11,6 +11,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Req,
   Res,
   UnauthorizedException,
   UseGuards,
@@ -25,7 +26,7 @@ import {
   ApiUnauthorizedResponse,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { errorResponseDoc } from 'helpers/error-response-doc';
 import { hash } from 'helpers/utils';
@@ -115,6 +116,7 @@ export class AuthController {
     @Body() loginUserDto: LoginUserDto,
     @Headers('app-subdomain') subdomain: string,
     @Res({ passthrough: true }) res: Response,
+    @Req() req: Request,
   ) {
     if (subdomain)
       await this.authService.subdomainValidity(
@@ -171,6 +173,7 @@ export class AuthController {
         id: user.id,
       },
       res,
+      req,
     );
 
     return userPayload;
@@ -183,10 +186,11 @@ export class AuthController {
   async logout(
     @CurrentUser() user: UserTokenPayload,
     @Res({ passthrough: true }) res: Response,
+    @Req() req: Request,
   ) {
     await this.authService.removeRefreshToken(user.id, user.refreshTokenId!);
 
-    this.authService.removeAccessTokens(res);
+    this.authService.removeAccessTokens(req, res);
 
     return 'OK';
   }
@@ -204,8 +208,9 @@ export class AuthController {
   async setInitialUser(
     @Body() info: InitializeUserDto,
     @Res({ passthrough: true }) res: Response,
+    @Req() req: Request,
   ) {
-    return this.authService.initializeUser(info, res);
+    return this.authService.initializeUser(info, res, req);
   }
 
   @Post('/verify-email')
@@ -360,13 +365,14 @@ export class AuthController {
     @CurrentUser() user: UserTokenPayload,
     @Body() changePasswordDto: ChangePasswordDto,
     @Res({ passthrough: true }) res: Response,
+    @Req() req: Request,
   ) {
     const result = await this.authService.changePassword(
       user.id,
       changePasswordDto,
     );
 
-    if (result) this.authService.removeAccessTokens(res);
+    if (result) this.authService.removeAccessTokens(req, res);
 
     return 'OK';
   }

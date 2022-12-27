@@ -10,7 +10,7 @@ const InvitationListHeader: FC<InvitationListHeaderProps> = ({ count }) => {
   const { t } = useTranslation();
   return (
     <Box direction="row" gap="small" align="center">
-      <Text color="#202631" size="small" weight="bold">
+      <Text color="dark" size="small" weight="bold">
         {t('Invitations.title')}
       </Text>
       <Box

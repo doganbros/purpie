@@ -1,7 +1,11 @@
 import {
-  UPDATE_CHANNEL_INFO_REQUESTED,
-  UPDATE_CHANNEL_PERMISSIONS_REQUESTED,
   CLOSE_CREATE_CHANNEL_LAYER,
+  CREATE_CHANNEL_FAILED,
+  CREATE_CHANNEL_REQUESTED,
+  CREATE_CHANNEL_SUCCESS,
+  GET_CHANNEL_USERS_FAILED,
+  GET_CHANNEL_USERS_REQUESTED,
+  GET_CHANNEL_USERS_SUCCESS,
   GET_USER_CHANNELS_FAILED,
   GET_USER_CHANNELS_REQUESTED,
   GET_USER_CHANNELS_SUCCESS,
@@ -9,21 +13,20 @@ import {
   JOIN_CHANNEL_REQUESTED,
   JOIN_CHANNEL_SUCCESS,
   OPEN_CREATE_CHANNEL_LAYER,
-  CREATE_CHANNEL_FAILED,
-  CREATE_CHANNEL_REQUESTED,
-  CREATE_CHANNEL_SUCCESS,
-  SET_SELECTED_CHANNEL,
-  UNSET_SELECTED_CHANNEL,
+  SEARCH_CHANNEL_FAILED,
   SEARCH_CHANNEL_REQUESTED,
   SEARCH_CHANNEL_SUCCESS,
-  SEARCH_CHANNEL_FAILED,
+  SET_SELECTED_CHANNEL,
+  UNSET_SELECTED_CHANNEL,
+  UPDATE_CHANNEL_INFO_FAILED,
+  UPDATE_CHANNEL_INFO_REQUESTED,
+  UPDATE_CHANNEL_INFO_SUCCESS,
+  UPDATE_CHANNEL_PERMISSIONS_FAILED,
+  UPDATE_CHANNEL_PERMISSIONS_REQUESTED,
+  UPDATE_CHANNEL_PERMISSIONS_SUCCESS,
+  UPDATE_CHANNEL_PHOTO_FAILED,
   UPDATE_CHANNEL_PHOTO_REQUESTED,
   UPDATE_CHANNEL_PHOTO_SUCCESS,
-  UPDATE_CHANNEL_PHOTO_FAILED,
-  UPDATE_CHANNEL_PERMISSIONS_SUCCESS,
-  UPDATE_CHANNEL_INFO_SUCCESS,
-  UPDATE_CHANNEL_INFO_FAILED,
-  UPDATE_CHANNEL_PERMISSIONS_FAILED,
 } from '../constants/channel.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
@@ -57,11 +60,18 @@ export interface UserChannelListItem {
   channel: ChannelListItem;
   displayPhoto: string | null;
 }
+
 export interface UserChannelPermissionList {
   canInvite: boolean;
   canDelete: boolean;
   canEdit: boolean;
   canManageRole: boolean;
+}
+
+export interface ChannelUser {
+  id: number;
+  createdOn: Date;
+  user: User;
 }
 
 export interface UserChannelDetail extends UserChannelListItem {
@@ -92,6 +102,10 @@ export interface ChannelState {
   };
   search: {
     results: PaginatedResponse<ChannelListItem>;
+    loading: boolean;
+    error: ResponseError | null;
+  };
+  channelUsers: PaginatedResponse<ChannelUser> & {
     loading: boolean;
     error: ResponseError | null;
   };
@@ -148,12 +162,17 @@ export type ChannelActionParams =
         | typeof UPDATE_CHANNEL_INFO_REQUESTED
         | typeof UPDATE_CHANNEL_PERMISSIONS_REQUESTED
         | typeof UPDATE_CHANNEL_INFO_SUCCESS
-        | typeof UPDATE_CHANNEL_PERMISSIONS_SUCCESS;
+        | typeof UPDATE_CHANNEL_PERMISSIONS_SUCCESS
+        | typeof GET_CHANNEL_USERS_REQUESTED;
     }
   | {
       type: typeof UPDATE_CHANNEL_PHOTO_SUCCESS;
       payload: string;
       channelId: number;
+    }
+  | {
+      type: typeof GET_CHANNEL_USERS_SUCCESS;
+      payload: PaginatedResponse<ChannelUser>;
     }
   | {
       type:
@@ -163,7 +182,8 @@ export type ChannelActionParams =
         | typeof SEARCH_CHANNEL_FAILED
         | typeof UPDATE_CHANNEL_PHOTO_FAILED
         | typeof UPDATE_CHANNEL_INFO_FAILED
-        | typeof UPDATE_CHANNEL_PERMISSIONS_FAILED;
+        | typeof UPDATE_CHANNEL_PERMISSIONS_FAILED
+        | typeof GET_CHANNEL_USERS_FAILED;
       payload: ResponseError;
     };
 

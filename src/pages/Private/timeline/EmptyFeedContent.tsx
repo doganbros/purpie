@@ -37,7 +37,7 @@ const EmptyFeedContent: FC<Props> = ({ onAddContent }) => {
         <Image src={EmptyTimeLineImage} />
       </Box>
       <Box margin={{ top: 'large' }}>
-        <EmptyTitle textAlign="center" margin="xxsmall" color="#202631">
+        <EmptyTitle textAlign="center" margin="xxsmall" color="dark">
           {t('EmptyFeedContent.noContent')}
         </EmptyTitle>
         <EmptyText textAlign="center">

@@ -45,7 +45,7 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
             key={item.label}
             onClick={() => {}}
             pad={{ horizontal: 'small', vertical: 'xsmall' }}
-            hoverIndicator={{ background: '#8F9BB3' }}
+            hoverIndicator={{ background: 'status-disabled' }}
           >
             <MenuItem onClick={item.onClick}>{item.label}</MenuItem>
           </Box>
@@ -108,7 +108,7 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
               height="42px"
               width="48px"
               round="xlarge"
-              border={{ color: '#E4E9F2', size: 'small' }}
+              border={{ color: 'status-disabled-light', size: 'small' }}
             >
               <UserAvatar
                 size="medium"

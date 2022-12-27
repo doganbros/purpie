@@ -39,7 +39,7 @@ const InitializeUser: FC = () => {
   };
   return (
     <Main
-      background="#FFE7E3"
+      background="soft-pink"
       height={{ min: '100vh' }}
       justify="center"
       align={size === 'small' ? 'stretch' : 'center'}

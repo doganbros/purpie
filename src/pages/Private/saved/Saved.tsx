@@ -63,7 +63,7 @@ const Saved: FC = () => {
           />
         </Box>
         {folderList.loading && (
-          <PurpieLogoAnimated width={100} height={100} color="#956aea" />
+          <PurpieLogoAnimated width={100} height={100} color="brand" />
         )}
         {!folderList.loading && folderList.data.length === 0 ? (
           <Text size="small">No post folder found!</Text>

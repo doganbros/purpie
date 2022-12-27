@@ -23,9 +23,9 @@ import {
 } from '../constants/activity.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
-import { Post } from './post.types';
 import { User } from './auth.types';
 import { NotificationType } from '../../models/utils';
+import { Post } from './post.types';
 
 export interface ZoneSuggestionListItem {
   zone_id: number;
