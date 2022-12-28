@@ -17,11 +17,17 @@ import { validators } from '../../../helpers/validators';
 import { FormSubmitEvent } from '../../../models/form-submit-event';
 import SocialArray from './SocialArray';
 
-const InviteToPurpie: FC = () => {
+interface InvitationPurpieProps {
+  isVisibleDrop: boolean;
+  setVisibleDrop: (visible: boolean) => void;
+}
+
+const InviteToPurpie: FC<InvitationPurpieProps> = ({
+  isVisibleDrop,
+  setVisibleDrop,
+}) => {
   const [mailList, setMailList] = useState(['']);
   const [show, setShow] = useState(false);
-
-  const [open, setOpen] = useState(false);
 
   const handleSubmit: FormSubmitEvent<{ email: string }> = ({ value }) => {
     const { email } = value;
@@ -41,13 +47,13 @@ const InviteToPurpie: FC = () => {
       >
         <DropButton
           label={<Text size="small">Type Email</Text>}
-          open={open}
-          onClick={() => setOpen(true)}
+          open={isVisibleDrop}
+          onClick={() => setVisibleDrop(true)}
           onOpen={() => {
-            setOpen(true);
+            setVisibleDrop(true);
           }}
           onClose={() => {
-            setOpen(false);
+            setVisibleDrop(false);
           }}
           plain
           color="status-disabled"
@@ -59,7 +65,7 @@ const InviteToPurpie: FC = () => {
               pad={{ top: 'small', horizontal: 'small' }}
             >
               <Box direction="row" pad={{ bottom: 'small' }} align="center">
-                <FormPrevious onClick={() => setOpen(false)} />
+                <FormPrevious onClick={() => setVisibleDrop(false)} />
                 <Text size="small">Invite People</Text>
               </Box>
 

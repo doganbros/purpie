@@ -71,6 +71,7 @@ const App: FC = () => {
                   component={component}
                 />
               ))}
+
               {publicRoutes.map(({ id, path, component, exact = true }) => (
                 <PublicRoute
                   key={id}

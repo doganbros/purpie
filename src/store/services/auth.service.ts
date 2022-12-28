@@ -8,6 +8,7 @@ import {
   User,
   VerifyEmailPayload,
   UpdateProfileInfoPayload,
+  UpdatePasswordPayload,
 } from '../types/auth.types';
 
 export const login = async (user: LoginPayload): Promise<User> =>
@@ -84,3 +85,6 @@ export const updateProfileInfo = (
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const updateProfilePhoto = (photoFile: any): Promise<any> =>
   http.put(`user/display-photo/`, serialize(photoFile)).then((res) => res.data);
+
+export const updatePassword = (password: UpdatePasswordPayload): Promise<any> =>
+  http.put('auth/change-password', password).then((res) => res.data);

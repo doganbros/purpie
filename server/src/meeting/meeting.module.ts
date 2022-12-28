@@ -11,6 +11,7 @@ import { MailModule } from 'src/mail/mail.module';
 import { ZoneModule } from 'src/zone/zone.module';
 import { MeetingController } from './controllers/meeting.controller';
 import { MeetingService } from './services/meeting.service';
+import { MeetingGateway } from './gateways/meeting.gateway';
 
 @Module({
   imports: [
@@ -27,6 +28,6 @@ import { MeetingService } from './services/meeting.service';
     ChannelModule,
   ],
   controllers: [MeetingController],
-  providers: [MeetingService],
+  providers: [MeetingService, MeetingGateway],
 })
 export class MeetingModule {}

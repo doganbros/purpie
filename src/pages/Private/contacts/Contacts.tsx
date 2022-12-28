@@ -23,6 +23,8 @@ const Contacts: FC = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
+  const [isVisibleInvitationDrop, setVisibleInvitationDrop] = useState(false);
+
   const {
     user: { contacts },
   } = useSelector((state: AppState) => state);
@@ -64,7 +66,9 @@ const Contacts: FC = () => {
   };
 
   const renderEmpty = (isEmpty: boolean) => {
-    return isEmpty ? <EmptyContact onFindContact={() => {}} /> : null;
+    return isEmpty ? (
+      <EmptyContact onFindContact={() => setVisibleInvitationDrop(true)} />
+    ) : null;
   };
 
   useEffect(() => {
@@ -85,7 +89,10 @@ const Contacts: FC = () => {
             <SearchBar />
             <InvitationList />
             <Divider />
-            <InviteToPurpie />
+            <InviteToPurpie
+              isVisibleDrop={isVisibleInvitationDrop}
+              setVisibleDrop={setVisibleInvitationDrop}
+            />
             <Divider />
             <ContactsToFollow />
           </Box>

@@ -54,101 +54,119 @@ const AuthLayout: React.FC<Props> = ({
   };
 
   return (
-    <PublicPageLayout title={title}>
-      <Box
-        direction="row"
-        justify="between"
-        height={{ min: '100vh' }}
-        background={{ color: 'baby-pink' }}
-      >
-        {size !== 'small' ? (
-          <Box
-            basis={size === 'medium' ? '55%' : '60%'}
-            height="100%"
-            alignSelf="center"
-            margin="0"
-          >
-            <Box basis="70%">{background}</Box>
-            <Box basis="25%" align="center">
-              {callToAction && (
-                <>
-                  <Text size="16px" margin={{ bottom: '14px', top: '20px' }}>
-                    {callToAction.title}
-                  </Text>
-                  <AuthFormButton
-                    fontSize="16px"
-                    disabled={callToAction.disabled || false}
-                    minWidth={size === 'large' ? '430px' : '320px'}
-                    maxWidth={size === 'large' ? '600px' : '320px'}
-                    onClick={callToAction.onClick}
-                    primary
-                    label={callToAction.body}
-                  />
-                </>
-              )}
-            </Box>
-          </Box>
-        ) : null}
-        <Box basis={formWidth[size]} margin="0" style={{ zIndex: 2 }}>
-          <Card
-            elevation="indigo"
-            background={theme.dark ? 'dark-2' : 'white'}
-            round={{ corner: 'left', size: 'large' }}
-            width="100%"
-            height="100%"
-            align="center"
-            overflow="auto"
-          >
-            <CardBody width="80%" justify="center" pad={{ vertical: 'large' }}>
-              <Box
-                margin={{ bottom: 'xsmall' }}
-                direction="row"
-                style={{ cursor: 'pointer' }}
-                onClick={() => history.push('/login')}
-                align="center"
-                fill="horizontal"
-              >
-                <Image
-                  width={size === 'small' ? '112px' : '132px'}
-                  src={theme.dark ? LogoHorizontalWhite : LogoHorizontalColor}
-                />
+    <ThemeContext.Extend
+      value={{
+        ...theme,
+        formField: {
+          ...theme?.formField,
+          border: {
+            side: 'all',
+            color: 'light-5',
+          },
+          round: true,
+        },
+      }}
+    >
+      <PublicPageLayout title={title}>
+        <Box
+          direction="row"
+          justify="between"
+          height={{ min: '100vh' }}
+          background={{ color: 'baby-pink' }}
+        >
+          {size !== 'small' ? (
+            <Box
+              basis={size === 'medium' ? '55%' : '60%'}
+              height="100%"
+              alignSelf="center"
+              margin="0"
+            >
+              <Box basis="70%">{background}</Box>
+              <Box basis="25%" align="center">
+                {callToAction && (
+                  <>
+                    <Text size="16px" margin={{ bottom: '14px', top: '20px' }}>
+                      {callToAction.title}
+                    </Text>
+                    <AuthFormButton
+                      fontSize="16px"
+                      disabled={callToAction.disabled || false}
+                      minWidth={size === 'large' ? '430px' : '320px'}
+                      maxWidth={size === 'large' ? '600px' : '320px'}
+                      onClick={callToAction.onClick}
+                      primary
+                      label={callToAction.body}
+                    />
+                  </>
+                )}
               </Box>
-              <Heading
-                color="dark"
-                size={headingSize[size]}
-                margin={{ bottom: 'xxsmall' }}
+            </Box>
+          ) : null}
+          <Box basis={formWidth[size]} margin="0" style={{ zIndex: 2 }}>
+            <Card
+              elevation="indigo"
+              background={theme.dark ? 'dark-2' : 'white'}
+              round={{ corner: 'left', size: 'large' }}
+              width="100%"
+              height="100%"
+              align="center"
+              overflow="auto"
+            >
+              <CardBody
+                width="80%"
+                justify="center"
+                pad={{ vertical: 'large' }}
               >
-                {formTitle}
-              </Heading>
-              <Text
-                size="14px"
-                weight={300}
-                margin={{ left: 'xsmall', bottom: size }}
-              >
-                {formSubTitle}
-              </Text>
-              {children}
-              {size === 'small' && callToAction && (
-                <Box>
-                  <Text
-                    textAlign="center"
-                    margin={{ bottom: '20px', top: '20px' }}
-                  >
-                    {callToAction.title}
-                  </Text>
-                  <AuthFormButton
-                    fontSize="16px"
-                    onClick={callToAction.onClick}
-                    primary
-                    label={callToAction.body}
+                <Box
+                  margin={{ bottom: 'xsmall' }}
+                  direction="row"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => history.push('/login')}
+                  align="center"
+                  fill="horizontal"
+                >
+                  <Image
+                    width={size === 'small' ? '112px' : '132px'}
+                    src={theme.dark ? LogoHorizontalWhite : LogoHorizontalColor}
                   />
                 </Box>
-              )}
-            </CardBody>
-          </Card>
+                <Heading
+                  color="dark"
+                  size={headingSize[size]}
+                  margin={{ bottom: 'xxsmall' }}
+                >
+                  {formTitle}
+                </Heading>
+                <Text
+                  size="14px"
+                  weight={300}
+                  margin={{ left: 'xsmall', bottom: size }}
+                >
+                  {formSubTitle}
+                </Text>
+                {children}
+                {size === 'small' && callToAction && (
+                  <Box>
+                    <Text
+                      textAlign="center"
+                      margin={{ bottom: '20px', top: '20px' }}
+                    >
+                      {callToAction.title}
+                    </Text>
+                    <AuthFormButton
+                      fontSize="16px"
+                      onClick={callToAction.onClick}
+                      primary
+                      label={callToAction.body}
+                    />
+                  </Box>
+                )}
+              </CardBody>
+            </Card>
+          </Box>
         </Box>
-      </Box>
-    </PublicPageLayout>
+      </PublicPageLayout>
+    </ThemeContext.Extend>
   );
 };
 

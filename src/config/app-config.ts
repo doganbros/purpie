@@ -71,12 +71,9 @@ export const theme: typeof grommet = deepMerge(base, {
   formField: {
     border: {
       side: 'all',
-      color: {
-        dark: base.global?.colors?.['dark-6']?.toString(),
-        light: base.global?.colors?.['light-5']?.toString(),
-      },
+      color: 'brand',
     },
-    round: 'large',
+    round: 'small',
     label: {
       margin: { horizontal: 'small' },
       size: 'small',

@@ -523,7 +523,8 @@
     "selectZone": "Select Zone",
     "selectChannel": "Select Channel",
     "changesSaved": "Changes saved successfully",
-    "documentTitle":"Settings - Purpie"
+    "documentTitle":"Settings - Purpie",
+    "passwordChanged":"Password changed successfully"
   },
   "ContactsToFollow": {
     "title": "People to add",
