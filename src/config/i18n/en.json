@@ -473,7 +473,9 @@
     "MEETING_RECORDING_NOT_ENABLED": "Recording was not enabled for meeting.",
     "MEETING_NOT_FOUND": "Meeting Not Found!",
     "INVALID_IMAGE_FORMAT": "Please upload a valid image format!",
-    "INVALID_VIDEO_FORMAT": "Please upload a valid video format!"
+    "INVALID_VIDEO_FORMAT": "Please upload a valid video format!",
+    "CURRENT_PASSWORD_NOT_CORRECT": "Current password is not correct!",
+    "PASSWORDS_NOT_MATCH": "Passwords do not match!"
   },
   "settings": {
     "personalSettings": "Personal Settings",
