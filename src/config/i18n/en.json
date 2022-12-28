@@ -543,5 +543,15 @@
   "ChannelMembers": {
     "title": "Members",
     "noMembersFound": "No members found."
+  },
+  "ToastMessages":{
+    "zoneCreated": "Zone created successfully",
+    "channelCreated": "Channel created successfully",
+    "emailVerified":"Your email {{email}} has been verified successfully. Please Login to continue",
+    "passwordResetLinkSent":"A password reset link has been sent to {{email}}",
+    "passwordResetSuccess":"Your password has been reset successfully",
+    "verificationEmailSent":"Your email verification link has successfully been sent to your email adress",
+    "meetingCreated":"New meeting with the id {{meetingId}} has been created successfully",
+    "newFolderCreated":"New folder with the name {{folderName}} has been created successfully"
   }
 }
