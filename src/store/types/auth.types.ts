@@ -35,6 +35,9 @@ import {
   UPDATE_PROFILE_INFO_FAILED,
   UPDATE_PROFILE_INFO_SUCCESS,
   UPDATE_PROFILE_INFO_REQUESTED,
+  UPDATE_PASSWORD_REQUESTED,
+  UPDATE_PASSWORD_SUCCESS,
+  UPDATE_PASSWORD_FAILED,
 } from '../constants/auth.constants';
 import { ResponseError } from '../../models/response-error';
 
@@ -144,6 +147,12 @@ export interface UpdateProfileInfoPayload {
   fullName: string;
 }
 
+export interface UpdatePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
+
 export type AuthActionParams =
   | {
       type:
@@ -161,12 +170,14 @@ export type AuthActionParams =
         | typeof RESET_PASSWORD_SUCCESS
         | typeof INITIALIZE_USER_REQUESTED
         | typeof UPDATE_PROFILE_INFO_REQUESTED
-        | typeof UPDATE_PROFILE_PHOTO_REQUESTED;
+        | typeof UPDATE_PROFILE_PHOTO_REQUESTED
+        | typeof UPDATE_PASSWORD_REQUESTED;
     }
   | {
       type:
         | typeof THIRD_PARTY_URL_REQUESTED
-        | typeof UPDATE_PROFILE_PHOTO_SUCCESS;
+        | typeof UPDATE_PROFILE_PHOTO_SUCCESS
+        | typeof UPDATE_PASSWORD_SUCCESS;
       payload: string;
     }
   | {
@@ -200,7 +211,8 @@ export type AuthActionParams =
         | typeof FORGOT_PASSWORD_FAILED
         | typeof INITIALIZE_USER_FAILED
         | typeof UPDATE_PROFILE_INFO_FAILED
-        | typeof UPDATE_PROFILE_PHOTO_FAILED;
+        | typeof UPDATE_PROFILE_PHOTO_FAILED
+        | typeof UPDATE_PASSWORD_FAILED;
       payload: ResponseError;
     };
 

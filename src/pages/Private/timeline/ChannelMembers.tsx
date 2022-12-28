@@ -33,7 +33,7 @@ const ChannelMembers: FC<ChannelMembersProps> = ({ channelId }) => {
         <Text size="small" weight="bold">
           {t('ChannelMembers.title')}
         </Text>
-        {channelUsers.data.length > SUGGESTION_AMOUNT_LESS && (
+        {channelUsers?.data?.length > SUGGESTION_AMOUNT_LESS && (
           <Button
             onClick={() => {
               setDisplayCount((ps) =>
@@ -51,12 +51,12 @@ const ChannelMembers: FC<ChannelMembersProps> = ({ channelId }) => {
           </Button>
         )}
       </Box>
-      {channelUsers.loading && <Text size="small">Loading</Text>}
-      {!channelUsers.loading &&
-        (channelUsers.data.length === 0 ? (
+      {channelUsers?.loading && <Text size="small">Loading</Text>}
+      {!channelUsers?.loading &&
+        (channelUsers?.data?.length === 0 ? (
           <Text size="small">{t('ChannelMembers.noMembersFound')}</Text>
         ) : (
-          channelUsers.data
+          channelUsers?.data
             .slice(0, displayCount)
             .map((c) => (
               <ChannelUserListItem

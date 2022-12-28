@@ -1,9 +1,4 @@
 export const CreateFormTheme = {
-  formField: {
-    round: 'small',
-    border: { color: 'brand-alt' },
-  },
-
   button: {
     primary: {
       extend: 'font-weight: bold; font-size: 14px; color: white;',
