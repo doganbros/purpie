@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Box, Stack, Text } from 'grommet';
-import { Chat, Favorite } from 'grommet-icons';
+import { Add, Chat, Favorite, Play } from 'grommet-icons';
 import ExtendedBox from '../utils/ExtendedBox';
 import { VideoPost } from './VideoPost';
 import { ImagePost } from './ImagePost';
@@ -97,6 +97,38 @@ const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
             </Box>
           </Box>
         </Box>
+        {hover && (post.streaming || post.liveStream) && (
+          <>
+            <ExtendedBox position="absolute" top="64px" left="56px">
+              <Box direction="row" align="center" gap="xsmall">
+                <Box
+                  background="accent-4"
+                  round="small"
+                  pad={{ vertical: 'xsmall', horizontal: 'small' }}
+                >
+                  <Add color="black" size="medium" />
+                </Box>
+                <Text size="large" color="white" weight="bolder">
+                  Join
+                </Text>
+              </Box>
+            </ExtendedBox>
+            <ExtendedBox position="absolute" top="64px" right="56px">
+              <Box direction="row" align="center" gap="xsmall">
+                <Box
+                  background="white"
+                  round="small"
+                  pad={{ vertical: 'xsmall', horizontal: 'small' }}
+                >
+                  <Play color="black" size="medium" />
+                </Box>
+                <Text size="large" color="white" weight="bolder">
+                  Watch
+                </Text>
+              </Box>
+            </ExtendedBox>
+          </>
+        )}
       </Box>
       {hover && (
         <Box
