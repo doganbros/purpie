@@ -21,21 +21,8 @@ export const socket =
     ? io(process.env.REACT_APP_SERVER_HOST || 'http://localhost:4000', options)
     : io(options);
 
-// TODO JUST FOR TESTING
-// export const jitsiSocket =
-//   process.env.NODE_ENV === 'development'
-//     ? io('http://octopus.localhost:8081', options)
-//     : io(options);
-
 export const initializeSocket = (): void => {
   socket.connect();
-  // jitsiSocket.connect(); // TODO JUST FOR TESTING
-
-  // TODO JUST FOR TESTING
-  // jitsiSocket.on('meeting_info', (message: any) => {
-  //   console.log(message);
-  //   jitsiSocket.emit('test', { data: 'TEST JITSI SOCKET' });
-  // });
 
   socket.on('contact_user_connected', (userId: number) => {
     store.dispatch(addUserOnline(userId));
