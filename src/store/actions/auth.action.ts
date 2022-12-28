@@ -107,7 +107,7 @@ export const verifyUserEmailAction = (body: VerifyEmailPayload): AuthAction => {
       const payload = await AuthService.verifyUserEmail(body);
       setToastAction(
         'ok',
-        `Your email ${payload.email} has been verified successfully. Please Login to continue`
+        i18n.t('ToastsMessages.emailVerified', { email: payload.email })
       )(dispatch);
       appHistory.replace('/login');
       dispatch({
@@ -200,7 +200,7 @@ export const resetPasswordRequestAction = (email: string): AuthAction => {
       });
       setToastAction(
         'ok',
-        `A password reset link has been sent to ${email}`
+        i18n.t('ToastMessages.passwordResetLinkSent', { email })
       )(dispatch);
       appHistory.replace('/login');
     } catch (err: any) {
@@ -224,7 +224,7 @@ export const resetPasswordAction = (body: ResetPasswordPayload): AuthAction => {
       });
       setToastAction(
         'ok',
-        'Your password has been reset successfully'
+        i18n.t('ToastMessages.passwordResetSuccess')
       )(dispatch);
       appHistory.replace('/login');
     } catch (err: any) {
@@ -249,7 +249,7 @@ export const resendMailVerificationTokenAction = (
       });
       setToastAction(
         'ok',
-        'Your email verification link has successfully been sent to your email'
+        i18n.t('ToastMessages.verificationEmailSent')
       )(dispatch);
       appHistory.replace('/login');
     } catch (err: any) {

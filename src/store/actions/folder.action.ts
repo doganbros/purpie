@@ -19,6 +19,7 @@ import {
   REMOVE_FOLDER_ITEM_REQUESTED,
   REMOVE_FOLDER_ITEM_SUCCESS,
 } from '../constants/folder.constants';
+import i18n from '../../config/i18n/i18n-config';
 
 export const createFolderAction = (
   folder: CreateFolderPayload
@@ -36,7 +37,7 @@ export const createFolderAction = (
 
       setToastAction(
         'ok',
-        `New folder with the name ${payload.title} has been created successfully`
+        i18n.t('ToastMessages.newFolderCreated', { folderName: payload.title })
       )(dispatch);
     } catch (err: any) {
       dispatch({

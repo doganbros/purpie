@@ -30,6 +30,7 @@ import {
 import { setToastAction } from './util.action';
 import { Post } from '../types/post.types';
 import { addPostAction } from './post.action';
+import i18n from '../../config/i18n/i18n-config';
 
 export const createMeetingAction = (
   meeting: CreateMeetingPayload
@@ -69,7 +70,9 @@ export const createMeetingAction = (
 
       setToastAction(
         'ok',
-        `New meeting with the id ${response.meeting.id} has been created successfully`
+        i18n.t('ToastMessages.meetingCreated', {
+          meetingId: response.meeting.id,
+        })
       )(dispatch);
     } catch (err: any) {
       dispatch({

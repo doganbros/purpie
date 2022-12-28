@@ -473,7 +473,9 @@
     "MEETING_RECORDING_NOT_ENABLED": "Recording was not enabled for meeting.",
     "MEETING_NOT_FOUND": "Meeting Not Found!",
     "INVALID_IMAGE_FORMAT": "Please upload a valid image format!",
-    "INVALID_VIDEO_FORMAT": "Please upload a valid video format!"
+    "INVALID_VIDEO_FORMAT": "Please upload a valid video format!",
+    "CURRENT_PASSWORD_NOT_CORRECT": "Current password is not correct!",
+    "PASSWORDS_NOT_MATCH": "Passwords do not match!"
   },
   "settings": {
     "personalSettings": "Personal Settings",
@@ -544,5 +546,15 @@
   "ChannelMembers": {
     "title": "Members",
     "noMembersFound": "No members found."
+  },
+  "ToastMessages":{
+    "zoneCreated": "Zone created successfully",
+    "channelCreated": "Channel created successfully",
+    "emailVerified":"Your email {{email}} has been verified successfully. Please Login to continue",
+    "passwordResetLinkSent":"A password reset link has been sent to {{email}}",
+    "passwordResetSuccess":"Your password has been reset successfully",
+    "verificationEmailSent":"Your email verification link has successfully been sent to your email adress",
+    "meetingCreated":"New meeting with the id {{meetingId}} has been created successfully",
+    "newFolderCreated":"New folder with the name {{folderName}} has been created successfully"
   }
 }
