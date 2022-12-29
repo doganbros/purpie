@@ -83,6 +83,10 @@ export class MeetingController {
     const publicMeeting = createMeetingInfo.public ?? privacyConfig.public;
     const liveStream = createMeetingInfo.liveStream ?? privacyConfig.liveStream;
     const record = createMeetingInfo.record ?? privacyConfig.record;
+    const tokenExpiry =
+      createMeetingInfo.joinLinkExpiryAsHours ??
+      privacyConfig.joinLinkExpiryAsHours ??
+      24;
 
     const meetingPayload: Partial<PostEntity> = {
       title: createMeetingInfo.title || 'Untitled Meeting',
@@ -137,6 +141,7 @@ export class MeetingController {
       user,
       meeting,
       true,
+      tokenExpiry,
     );
 
     if (
@@ -148,7 +153,7 @@ export class MeetingController {
       );
 
       users.forEach((u) => {
-        this.meetingService.sendMeetingInfoMail(u, meeting, false);
+        this.meetingService.sendMeetingInfoMail(u, meeting, false, tokenExpiry);
       });
     }
 

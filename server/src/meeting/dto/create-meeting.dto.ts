@@ -5,6 +5,7 @@ import {
   IsIn,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsObject,
   IsOptional,
   IsString,
@@ -97,4 +98,9 @@ export class CreateMeetingDto {
   @IsNotEmpty()
   @IsIn(timeZones, { message: 'Invalid timezone option specified' })
   timeZone?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsInt()
+  joinLinkExpiryAsHours?: number;
 }
