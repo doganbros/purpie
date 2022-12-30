@@ -304,8 +304,7 @@ export const updateProfileInfoAction = (
   };
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const updateProfilePhotoAction = (profilePhoto: any): AuthAction => {
+export const updateProfilePhotoAction = (profilePhoto: File): AuthAction => {
   return async (dispatch) => {
     dispatch({
       type: UPDATE_PROFILE_PHOTO_REQUESTED,
