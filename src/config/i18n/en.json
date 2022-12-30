@@ -550,7 +550,7 @@
   "ToastMessages":{
     "zoneCreated": "Zone created successfully",
     "channelCreated": "Channel created successfully",
-    "emailVerified":"Your email {{email}} has been verified successfully. Please Login to continue",
+    "emailVerified":"Your email {{email}} has been verified successfully. Please login to continue",
     "passwordResetLinkSent":"A password reset link has been sent to {{email}}",
     "passwordResetSuccess":"Your password has been reset successfully",
     "verificationEmailSent":"Your email verification link has successfully been sent to your email adress",
