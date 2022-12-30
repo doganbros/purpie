@@ -33,6 +33,7 @@ import ChannelBadge from '../../../components/utils/channel/ChannelBadge';
 import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
 import UserBadge from '../../../components/utils/UserBadge';
 import Highlight from '../../../components/utils/Highlight';
+import { setSelectedChannelAction } from '../../../store/actions/channel.action';
 import {
   getTimezoneTimeFromUTC,
   matchDescriptionTags,
@@ -55,6 +56,7 @@ const Video: FC = () => {
   const [liveStreamCount, setLiveStreamCount] = useState(0);
   const dispatch = useDispatch();
   const {
+    channel: { userChannels },
     post: {
       postDetail: { data, loading },
     },
@@ -65,6 +67,9 @@ const Video: FC = () => {
   const previousTime = useRef(0);
   const currentTime = useRef(0);
   const startedFrom = useRef(0);
+  const userChannelsFiltered = userChannels.data.filter(
+    (c) => c.channel.id === data?.channel?.id
+  )[0];
 
   const player = useRef<videojs.Player | null>(null);
 
@@ -112,6 +117,12 @@ const Video: FC = () => {
       ) : null,
     [data, params.id]
   );
+
+  const handleSelectChannel = () => {
+    if (data?.channel) {
+      dispatch(setSelectedChannelAction(userChannelsFiltered));
+    }
+  };
 
   useEffect(() => {
     dispatch(getPostDetailAction(+params.id));
@@ -197,9 +208,17 @@ const Video: FC = () => {
                     />
                   )}
                   {data?.channel?.name && (
-                    <ChannelBadge name={data.channel.name} url="/" />
+                    <Box onClick={handleSelectChannel}>
+                      <ChannelBadge name={data.channel.name} url="/" />
+                    </Box>
                   )}
-                  <UserBadge url="/" fullName={data?.createdBy?.fullName} />
+
+                  <UserBadge
+                    // it is not working right now, but will work when backend is ready
+                    // also we can remove these comment lines when backend is ready
+                    url={`/user/${data?.createdBy?.userName}`}
+                    fullName={data?.createdBy?.fullName}
+                  />
                 </Box>
               )) || <Box />}
               <Box
