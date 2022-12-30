@@ -82,8 +82,7 @@ export const updateProfileInfo = (
   user: UpdateProfileInfoPayload
 ): Promise<User> => http.put('user/profile', user).then((res) => res.data);
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const updateProfilePhoto = (photoFile: any): Promise<any> =>
+export const updateProfilePhoto = (photoFile: File): Promise<any> =>
   http.put(`user/display-photo/`, serialize(photoFile)).then((res) => res.data);
 
 export const updatePassword = (password: UpdatePasswordPayload): Promise<any> =>

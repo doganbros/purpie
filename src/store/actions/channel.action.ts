@@ -5,7 +5,6 @@ import {
   CreateChannelPayload,
   UserChannelListItem,
   UserChannelPermissionList,
-  // eslint-disable-next-line import/named
 } from '../types/channel.types';
 import {
   CLOSE_CREATE_CHANNEL_LAYER,
