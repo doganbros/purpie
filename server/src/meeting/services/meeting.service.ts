@@ -306,7 +306,7 @@ export class MeetingService {
     tokenExpiry: number,
   ): Promise<string> {
     const now = new Date();
-    const exp = now.setHours(now.getHours() + tokenExpiry);
+    const exp = Math.floor(now.setHours(now.getHours() + tokenExpiry) / 1000);
 
     const payload = {
       context: {
@@ -326,7 +326,6 @@ export class MeetingService {
       exp,
       aud: JWT_APP_ID,
       iss: JWT_APP_ID,
-      nbf: new Date().getTime(),
       room: meeting.slug,
       sub: new URL(JITSI_DOMAIN).hostname,
     };
