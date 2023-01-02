@@ -131,6 +131,10 @@ export class UserChannelService {
   ) {
     if (subdomain) return this.getCurrentUserZoneChannels(subdomain, userId);
 
+    return this.getUserAllChannels(userId);
+  }
+
+  async getUserAllChannels(userId: number) {
     return this.userChannelRepository
       .createQueryBuilder('user_channel')
       .select([

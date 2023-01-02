@@ -34,6 +34,18 @@ export class UserChannelController {
     return this.userChannelService.getCurrentUserChannels(user.id, subdomain);
   }
 
+  @Get('list/all')
+  @ApiOkResponse({
+    type: UserChannelListResponse,
+    isArray: true,
+    description:
+      "Get the list of current user's channels. public channels of zone not joined yet will be listed when user is authorized in the zone(public, or userzone). But the userChannel id will be null",
+  })
+  @IsAuthenticated()
+  async getCurrentUserAllChannels(@CurrentUser() user: UserTokenPayload) {
+    return this.userChannelService.getUserAllChannels(user.id);
+  }
+
   @Delete('remove/:userChannelId')
   @ApiParam({
     name: 'UserZoneIdParams',
