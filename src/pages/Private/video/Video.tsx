@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import videojs from 'video.js';
-import { Box, Button, Text } from 'grommet';
+import { Box, Button, Layer, Text } from 'grommet';
 import {
   AddCircle,
   Chat as ChatIcon,
@@ -41,6 +41,7 @@ import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated
 import { DELAY_TIME } from '../../../helpers/constants';
 import useDelayTime from '../../../hooks/useDelayTime';
 import { AddToFolderDrop } from '../../../layers/saved-video/folder/AddToFolderDrop';
+import { useResponsive } from '../../../hooks/useResponsive';
 
 interface RouteParams {
   id: string;
@@ -65,6 +66,8 @@ const Video: FC = () => {
   const previousTime = useRef(0);
   const currentTime = useRef(0);
   const startedFrom = useRef(0);
+
+  const size = useResponsive();
 
   const player = useRef<videojs.Player | null>(null);
 
@@ -112,6 +115,38 @@ const Video: FC = () => {
       ) : null,
     [data, params.id]
   );
+
+  const renderVideoSettingsResponsive = () => {
+    if (size === 'small' && showSettings) {
+      return (
+        <Layer>
+          <VideoSettings
+            setShowSettings={setShowSettings}
+            setShowDeleteConfirmation={setShowDeleteConfirmation}
+          />
+        </Layer>
+      );
+    }
+    return true;
+  };
+
+  const renderChatResponsive = () => {
+    if (size === 'small') {
+      return (
+        <Box
+          width={{ max: '100%' }}
+          height="500px"
+          background="white"
+          round="large"
+          pad={{ bottom: 'medium' }}
+          elevation="indigo"
+        >
+          {chatComponent}
+        </Box>
+      );
+    }
+    return true;
+  };
 
   useEffect(() => {
     dispatch(getPostDetailAction(+params.id));
@@ -170,6 +205,7 @@ const Video: FC = () => {
         )
       }
     >
+      {renderVideoSettingsResponsive()}
       {delay || loading || !data ? (
         <Box height="100vh" justify="center" align="center">
           <PurpieLogoAnimated width={100} height={100} color="brand" />
@@ -265,6 +301,7 @@ const Video: FC = () => {
                     )}
                   </Text>
                 )}
+
                 <Box direction="row" gap="medium">
                   <Box direction="row" gap="xsmall" align="center">
                     <Button
@@ -327,6 +364,7 @@ const Video: FC = () => {
               text={data.description}
             />
           )}
+          {renderChatResponsive()}
           <RecommendedVideos />
           <CommentList postId={+params.id} />
           {showDeleteConfirmation && (

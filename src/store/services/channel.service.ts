@@ -47,8 +47,7 @@ export const searchChannel = (
   http.get(`/channel/search`, { params }).then((res) => res.data);
 
 export const updateChannelPhoto = (
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  photoFile: any,
+  photoFile: File,
   channelId: number
 ): Promise<any> =>
   http

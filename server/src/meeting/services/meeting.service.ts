@@ -105,6 +105,10 @@ export class MeetingService {
         false,
       record:
         createMeetingInfo.record ?? meetingConfig.privacyConfig.record ?? false,
+      joinLinkExpiryAsHours:
+        createMeetingInfo.joinLinkExpiryAsHours ??
+        meetingConfig.privacyConfig.joinLinkExpiryAsHours ??
+        24,
     };
 
     return meetingConfig;
@@ -154,11 +158,13 @@ export class MeetingService {
     user: UserProfile,
     meeting: Post,
     moderator = false,
+    tokenExpiry: number,
   ) {
     const meetingToken = await this.generateMeetingToken(
       meeting,
       user,
       moderator,
+      tokenExpiry,
     );
 
     const context = {
@@ -297,7 +303,11 @@ export class MeetingService {
     meeting: Post,
     user: UserProfile,
     moderator: boolean,
+    tokenExpiry: number,
   ): Promise<string> {
+    const now = new Date();
+    const exp = now.setHours(now.getHours() + tokenExpiry);
+
     const payload = {
       context: {
         user: {
@@ -313,10 +323,10 @@ export class MeetingService {
         group: 'a122-123-456-789',
       },
       moderator,
-      exp: 1696284052,
+      exp,
       aud: JWT_APP_ID,
       iss: JWT_APP_ID,
-      nbf: 1596197652,
+      nbf: new Date().getTime(),
       room: meeting.slug,
       sub: new URL(JITSI_DOMAIN).hostname,
     };
