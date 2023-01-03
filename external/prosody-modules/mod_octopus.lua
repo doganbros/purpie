@@ -1,6 +1,6 @@
-local octopusBaseUrl = module:get_option_string('octopusAPIBaseUrl');
-local octopusApiKey = module:get_option_string("octopusApiKey”);
-local octopusApiSecret = module:get_option_string("octopusApiSecret”);
+local octopusBaseUrl = module:get_option_string("octopusAPIBaseUrl");
+local octopusApiKey = module:get_option_string("octopusApiKey");
+local octopusApiSecret = module:get_option_string("octopusApiSecret");
 --local allowedURLS = os.getenv("ALLOWED_URLS")
 local storage = module:open_store()
 
