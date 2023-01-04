@@ -15,6 +15,7 @@ import { UpdateChannelPayload } from '../../../store/types/channel.types';
 import AvatarUpload from './AvatarUpload';
 import { SettingsData } from './types';
 import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
+import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
 
 const ChannelSettings: () => SettingsData = () => {
   const {
@@ -171,16 +172,22 @@ const ChannelSettings: () => SettingsData = () => {
               >
                 <Box>
                   <Text>{selectedChannel?.name}</Text>
-                  <Text color="status-disabled">
-                    {t('settings.in')}{' '}
-                    {
-                      userZones?.find(
-                        (userZone) =>
-                          userZone.zone.id === selectedChannel.zoneId
-                      )?.zone.name
-                    }{' '}
-                    {t('settings.zone')}
-                  </Text>
+                  <Box direction="row" gap="small" align="center">
+                    <ZoneBadge
+                      subdomain={
+                        userZones?.find(
+                          (userZone) =>
+                            userZone.zone.id === selectedChannel.zoneId
+                        )?.zone.subdomain
+                      }
+                      name={
+                        userZones?.find(
+                          (userZone) =>
+                            userZone.zone.id === selectedChannel.zoneId
+                        )?.zone.name
+                      }
+                    />
+                  </Box>
                 </Box>
                 <CaretDownFill />
               </Box>
