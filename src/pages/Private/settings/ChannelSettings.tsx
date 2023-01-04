@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, DropButton, Stack, Text, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { CaretDownFill, CaretRightFill, Edit } from 'grommet-icons';
@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import ListButton from '../../../components/utils/ListButton';
 
 import {
+  getUserChannelsAllAction,
   updateChannelInfoAction,
   updateChannelPhoto,
 } from '../../../store/actions/channel.action';
@@ -45,6 +46,10 @@ const ChannelSettings: () => SettingsData = () => {
     channelPayload.name === selectedChannel?.name &&
     channelPayload.description === selectedChannel?.description &&
     channelPayload.public === selectedChannel?.public;
+
+  useEffect(() => {
+    dispatch(getUserChannelsAllAction());
+  }, []);
 
   if (userChannels.data.length === 0) {
     return {
