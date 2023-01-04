@@ -133,7 +133,6 @@ export const searchZoneAction = (params: ZoneSearchParams): ZoneAction => {
 };
 
 export const updateZonePhotoAction = (
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   profilePhoto: File,
   zoneId: number
 ): ZoneAction => {
