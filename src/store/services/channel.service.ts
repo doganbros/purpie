@@ -21,6 +21,9 @@ export const createChannel = (
 export const getUserChannels = (): Promise<PaginatedResponse<any>> =>
   http.get('/user-channel/list').then((res) => res.data);
 
+export const getUserChannelsAll = (): Promise<PaginatedResponse<any>> =>
+  http.get('/user-channel/list/all').then((res) => res.data);
+
 export const getUserChannelsByZoneId = (
   zoneId: number
 ): Promise<PaginatedResponse<any>> =>
