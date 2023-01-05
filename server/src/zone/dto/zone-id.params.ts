@@ -1,11 +1,11 @@
-import { IsInt, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
 export class ZoneIdParams {
   @ApiProperty()
-  @IsInt()
+  @IsUUID()
   @IsNotEmpty()
   @Type(() => Number)
-  zoneId: number;
+  zoneId: string;
 }

@@ -5,7 +5,7 @@ import {
   ForbiddenException,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Query,
 } from '@nestjs/common';
@@ -91,7 +91,7 @@ export class PostLikeController {
   @IsAuthenticated()
   async getPostLikes(
     @Query() query: PostLikeQuery,
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param('postId', ParseUUIDPipe) postId: string,
     @CurrentUser() user: UserTokenPayload,
   ) {
     await this.postService.validatePost(user.id, postId);
@@ -115,7 +115,7 @@ export class PostLikeController {
   })
   @IsAuthenticated()
   async getPostLikeCount(
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param('postId', ParseUUIDPipe) postId: string,
     @CurrentUser() user: UserTokenPayload,
   ) {
     await this.postService.validatePost(user.id, postId);
@@ -132,7 +132,7 @@ export class PostLikeController {
   @IsAuthenticated()
   async removePostLike(
     @CurrentUser() user: UserTokenPayload,
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param('postId', ParseUUIDPipe) postId: string,
   ) {
     const result = await this.postLikeService.removePostLike(user.id, postId);
 

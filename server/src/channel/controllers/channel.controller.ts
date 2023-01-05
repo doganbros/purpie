@@ -9,6 +9,7 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Put,
   Query,
@@ -118,7 +119,7 @@ export class ChannelController {
   @Get('/list/public/:zoneId')
   @IsAuthenticated()
   async listPublicChannelsByZoneId(
-    @Param('zoneId', ParseIntPipe) zoneId: number,
+    @Param('zoneId', ParseUUIDPipe) zoneId: string,
     @CurrentUser() user: UserTokenPayload,
   ) {
     return this.channelService.getPublicChannels(user.id, zoneId);
@@ -133,7 +134,7 @@ export class ChannelController {
   @IsAuthenticated([], { injectUserProfile: true })
   async joinPublicChannel(
     @CurrentUserProfile() userProfile: UserProfile,
-    @Param('channelId', ParseIntPipe) channelId: number,
+    @Param('channelId', ParseUUIDPipe) channelId: string,
   ) {
     const channel = await this.channelService.validateJoinPublicChannel(
       userProfile.id,
@@ -189,7 +190,7 @@ export class ChannelController {
   })
   @ValidationBadRequest()
   async inviteToJoinChannel(
-    @Param('channelId', ParseIntPipe) channelId: number,
+    @Param('channelId', ParseUUIDPipe) channelId: string,
     @Body() { email }: InviteToJoinChannelDto,
     @CurrentUserChannel() currentUserChannel: UserChannel,
     @CurrentUser() currentUser: User,
@@ -329,7 +330,7 @@ export class ChannelController {
   @UserChannelRole(['canManageRole'])
   async createChannelRole(
     @Body() info: ChannelRole,
-    @Param('channelId', ParseIntPipe) channelId: number,
+    @Param('channelId', ParseUUIDPipe) channelId: string,
   ) {
     await this.channelService.createChannelRole(channelId, info);
     return 'OK';
@@ -345,7 +346,7 @@ export class ChannelController {
   @UserChannelRole(['canManageRole'])
   async changeUserChannelRole(
     @Body() info: UpdateChannelUserRoleDto,
-    @Param('channelId', ParseIntPipe) channelId: number,
+    @Param('channelId', ParseUUIDPipe) channelId: string,
   ) {
     await this.channelService.changeUserChannelRole(channelId, info);
     return 'OK';
@@ -361,7 +362,7 @@ export class ChannelController {
   @UserChannelRole(['canManageRole'])
   async removeChannelRole(
     @Param('roleCode') roleCode: string,
-    @Param('channelId', ParseIntPipe) channelId: number,
+    @Param('channelId', ParseUUIDPipe) channelId: string,
   ) {
     const result = await this.channelService.removeChannelRole(
       channelId,
@@ -380,7 +381,7 @@ export class ChannelController {
   @UserChannelRole(['canManageRole'])
   async updateUserRolePermissions(
     @Body() info: UpdateChannelPermission,
-    @Param('channelId', ParseIntPipe) channelId: number,
+    @Param('channelId', ParseUUIDPipe) channelId: string,
   ) {
     await this.channelService.editChannelRolePermissions(
       channelId,
@@ -436,7 +437,7 @@ export class ChannelController {
   async changeDisplayPhoto(
     @CurrentUserChannel() userChannel: UserChannel,
     @UploadedFile() file: Express.MulterS3.File,
-    @Param('userChannelId', ParseIntPipe) userChannelId: number,
+    @Param('userChannelId', ParseUUIDPipe) userChannelId: string,
   ) {
     const fileName = file.key.replace(
       `${S3_PROFILE_PHOTO_DIR}/channel-dp/`,
@@ -483,7 +484,7 @@ export class ChannelController {
   @Put('post-settings/update/:channelId')
   @UserChannelRole(['canEdit'])
   updatePostSettings(
-    @Param('channelId', ParseIntPipe) channelId: number,
+    @Param('channelId', ParseUUIDPipe) channelId: string,
     @Body() settings: PostSettings,
   ) {
     return this.channelService.updatePostSettings(channelId, settings);

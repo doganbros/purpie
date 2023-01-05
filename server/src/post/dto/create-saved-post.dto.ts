@@ -1,8 +1,8 @@
-import { IsInt } from 'class-validator';
+import { IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateSavedPostDto {
   @ApiProperty()
-  @IsInt()
-  postId: number;
+  @IsUUID()
+  postId: string;
 }

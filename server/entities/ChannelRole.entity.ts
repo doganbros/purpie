@@ -13,7 +13,7 @@ export class ChannelRole extends BaseEntity {
 
   @ApiProperty()
   @Column()
-  channelId: number;
+  channelId: string;
 
   @Column()
   @ApiProperty()

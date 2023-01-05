@@ -1,4 +1,9 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 import { recordEntityColumns } from './data/record-entity';
 
 export class ChatMessageAttachment1652816252349 implements MigrationInterface {
@@ -10,7 +15,7 @@ export class ChatMessageAttachment1652816252349 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'chatMessageId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'name',
@@ -18,7 +23,7 @@ export class ChatMessageAttachment1652816252349 implements MigrationInterface {
           },
           {
             name: 'createdById',
-            type: 'int',
+            type: 'uuid',
           },
         ],
       }),

@@ -25,7 +25,7 @@ export class ClientAuthService {
     private authService: AuthService,
   ) {}
 
-  async createClient(userId: number, createClientInfo: CreateClientDto) {
+  async createClient(userId: string, createClientInfo: CreateClientDto) {
     const apiKey = customAlphabet(alphaNum, 50)();
     const apiSecret = customAlphabet(alphaNum, 70)();
 

@@ -13,7 +13,7 @@ export class ZoneRole extends BaseEntity {
 
   @ApiProperty()
   @Column()
-  zoneId: number;
+  zoneId: string;
 
   @Column()
   @ApiProperty()

@@ -1,4 +1,9 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CurrentStreamViewer1632826042892 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -13,7 +18,7 @@ export class CurrentStreamViewer1632826042892 implements MigrationInterface {
           },
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'slug',
@@ -30,14 +35,14 @@ export class CurrentStreamViewer1632826042892 implements MigrationInterface {
     );
 
     await queryRunner.createForeignKey(
-        'current_stream_viewer',
-        new TableForeignKey({
-          columnNames: ['userId'],
-          referencedColumnNames: ['id'],
-          referencedTableName: 'user',
-          onDelete: 'CASCADE',
-        }),
-      );
+      'current_stream_viewer',
+      new TableForeignKey({
+        columnNames: ['userId'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'user',
+        onDelete: 'CASCADE',
+      }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {}

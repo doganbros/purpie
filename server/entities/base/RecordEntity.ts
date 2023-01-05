@@ -8,8 +8,8 @@ import {
 
 export abstract class RecordEntity extends BaseEntity {
   @ApiProperty()
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @CreateDateColumn()
   createdOn: Date;

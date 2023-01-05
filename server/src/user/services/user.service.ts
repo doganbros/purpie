@@ -55,7 +55,7 @@ export class UserService {
     private mailService: MailService,
   ) {}
 
-  async createNewContact(userId: number, contactUserId: number) {
+  async createNewContact(userId: string, contactUserId: string) {
     if (userId === contactUserId)
       throw new BadRequestException(
         ErrorTypes.CONTACT_ELIGIBILITY_ERROR,
@@ -76,7 +76,7 @@ export class UserService {
     return true;
   }
 
-  userBaseSelect(excludeUserIds: Array<number>, query: SearchUsersQuery) {
+  userBaseSelect(excludeUserIds: Array<string>, query: SearchUsersQuery) {
     return this.userRepository
       .createQueryBuilder('user')
       .setParameter('searchTerm', tsqueryParam(query.name))
@@ -96,13 +96,13 @@ export class UserService {
       .orderBy('search_rank', 'DESC');
   }
 
-  async searchUsers(excludeUserIds: Array<number>, query: SearchUsersQuery) {
+  async searchUsers(excludeUserIds: Array<string>, query: SearchUsersQuery) {
     return this.userBaseSelect(excludeUserIds, query).paginate(query);
   }
 
   async searchInUserContacts(
-    userId: number,
-    excludeUserIds: Array<number>,
+    userId: string,
+    excludeUserIds: Array<string>,
     query: SearchUsersQuery,
   ) {
     return this.userBaseSelect(excludeUserIds, query)
@@ -113,7 +113,7 @@ export class UserService {
 
   async searchInChannels(
     channelId: number,
-    excludeUserIds: Array<number>,
+    excludeUserIds: Array<string>,
     query: SearchUsersQuery,
   ) {
     return this.userBaseSelect(excludeUserIds, query)
@@ -194,7 +194,7 @@ export class UserService {
     );
   }
 
-  listContactInvitations(userId: number, query: PaginationQuery) {
+  listContactInvitations(userId: string, query: PaginationQuery) {
     return this.invitationRepository
       .createQueryBuilder('contact_invitation')
       .innerJoin('contact_invitation.createdBy', 'inviter')
@@ -214,7 +214,7 @@ export class UserService {
       .paginate(query);
   }
 
-  getContactInvitationByIdAndInviteeId(id: number, inviteeId: number) {
+  getContactInvitationByIdAndInviteeId(id: number, inviteeId: string) {
     return this.invitationRepository
       .createQueryBuilder('invitation')
       .innerJoin('invitation.createdBy', 'inviter')
@@ -232,7 +232,7 @@ export class UserService {
       .getOne();
   }
 
-  async listInvitationsForUser(userId: number, query: PaginationQuery) {
+  async listInvitationsForUser(userId: string, query: PaginationQuery) {
     return this.invitationRepository
       .createQueryBuilder('invitation')
       .innerJoin('invitation.createdBy', 'inviter')
@@ -301,7 +301,7 @@ export class UserService {
     return baseQuery.paginate(query);
   }
 
-  async deleteContact(userId: number, id: number) {
+  async deleteContact(userId: string, id: number) {
     return this.contactRepository
       .createQueryBuilder()
       .delete()
@@ -316,7 +316,7 @@ export class UserService {
     return this.userRoleRepository.find({ take: 30 });
   }
 
-  async getPublicUserProfile(currentUserId: number, userName: string) {
+  async getPublicUserProfile(currentUserId: string, userName: string) {
     const result = await this.userRepository
       .createQueryBuilder('user')
       .select([
@@ -475,18 +475,18 @@ export class UserService {
     return this.userRepository.findOne({ where: { userName }, select: ['id'] });
   }
 
-  async changeDisplayPhoto(userId: number, fileName: string) {
+  async changeDisplayPhoto(userId: string, fileName: string) {
     return this.userRepository.update(
       { id: userId },
       { displayPhoto: fileName },
     );
   }
 
-  async deleteDisplayPhoto(userId: number) {
+  async deleteDisplayPhoto(userId: string) {
     return this.userRepository.update({ id: userId }, { displayPhoto: null });
   }
 
-  async updateProfile(userId: number, payload: UpdateProfileDto) {
+  async updateProfile(userId: string, payload: UpdateProfileDto) {
     const userProfile = await this.authService.getUserProfile(userId);
 
     if (!userProfile)
@@ -538,7 +538,7 @@ export class UserService {
     return suggestions.filter((v) => !result.includes(v));
   }
 
-  getUserChannels(userId: number, userName: string, query: PaginationQuery) {
+  getUserChannels(userId: string, userName: string, query: PaginationQuery) {
     return this.userChannelRepository
       .createQueryBuilder('user_channel')
       .select('user_channel.id')
@@ -569,7 +569,7 @@ export class UserService {
       .paginate(query);
   }
 
-  getUserZones(userId: number, userName: string, query: PaginationQuery) {
+  getUserZones(userId: string, userName: string, query: PaginationQuery) {
     return this.userZoneRepository
       .createQueryBuilder('user_zone')
       .select('user_zone.id')
@@ -600,7 +600,7 @@ export class UserService {
       .paginate(query);
   }
 
-  getBlockedUsers(userId: number, query: PaginationQuery) {
+  getBlockedUsers(userId: string, query: PaginationQuery) {
     return this.blockedUserRepository
       .createQueryBuilder('blocked_user')
       .innerJoin('blocked_user.user', 'user')
@@ -618,7 +618,7 @@ export class UserService {
       .paginate(query);
   }
 
-  async createBlockedUser(createdById: number, userId: number) {
+  async createBlockedUser(createdById: string, userId: string) {
     if (createdById === userId)
       throw new BadRequestException(
         'You cannot block yourself',
@@ -667,7 +667,7 @@ export class UserService {
       .execute();
   }
 
-  async unBlockUser(createdById: number, userId: number) {
+  async unBlockUser(createdById: string, userId: string) {
     if (createdById === userId)
       throw new BadRequestException(
         'You cannot unblock yourself',
@@ -676,7 +676,7 @@ export class UserService {
     await this.blockedUserRepository.delete({ createdById, userId });
   }
 
-  getPostSettings(userId: number) {
+  getPostSettings(userId: string) {
     return this.userRepository
       .findOne({
         where: { id: userId },
@@ -685,7 +685,7 @@ export class UserService {
       .then((res) => res?.postSettings);
   }
 
-  async updatePostSettings(userId: number, settings: PostSettings) {
+  async updatePostSettings(userId: string, settings: PostSettings) {
     const updates: Partial<PostSettings> = {};
 
     const user = await this.userRepository.findOne(userId, {
@@ -708,7 +708,7 @@ export class UserService {
     await this.userRepository.update({ id: userId }, { postSettings: updates });
   }
 
-  async setFeaturedPost(userId: number, postId: number) {
+  async setFeaturedPost(userId: string, postId: string) {
     const hasFeaturedPost = await this.featuredPostRepository.count({
       where: { userId, postId },
     });
@@ -720,7 +720,7 @@ export class UserService {
     return this.featuredPostRepository.create({ userId, postId }).save();
   }
 
-  async removeFeaturedPost(userId: number) {
+  async removeFeaturedPost(userId: string) {
     return this.featuredPostRepository.delete({ userId });
   }
 }

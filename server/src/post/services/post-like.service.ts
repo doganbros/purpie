@@ -15,7 +15,7 @@ export class PostLikeService {
     private eventEmitter: EventEmitter2,
   ) {}
 
-  async createPostLike(userId: number, info: CreatePostLikeDto) {
+  async createPostLike(userId: string, info: CreatePostLikeDto) {
     const positive = info.type !== 'dislike';
     const postLike = await this.postLikeRepository
       .create({
@@ -30,7 +30,7 @@ export class PostLikeService {
     return postLike;
   }
 
-  getPostLikes(postId: number, query: PostLikeQuery) {
+  getPostLikes(postId: string, query: PostLikeQuery) {
     const baseQuery = this.postLikeRepository
       .createQueryBuilder('postLike')
       .select([
@@ -52,11 +52,11 @@ export class PostLikeService {
     return baseQuery.paginate(query);
   }
 
-  getPostLikeCount(postId: number) {
+  getPostLikeCount(postId: string) {
     return this.postLikeRepository.count({ where: { postId } });
   }
 
-  removePostLike(userId: number, postId: number) {
+  removePostLike(userId: string, postId: string) {
     return this.postLikeRepository.delete({ userId, postId });
   }
 }

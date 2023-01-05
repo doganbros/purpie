@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Query,
   Res,
@@ -33,7 +34,7 @@ export class ChatController {
   @IsAuthenticated()
   listChatMessages(
     @Param('medium') medium: string,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() user: UserTokenPayload,
     @Query() query: ChatMessageListQuery,
   ) {

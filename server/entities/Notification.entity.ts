@@ -20,7 +20,7 @@ export type NotificationType =
 @Entity()
 export class Notification extends RecordEntity {
   @Column()
-  userId: number;
+  userId: string;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
@@ -31,28 +31,28 @@ export class Notification extends RecordEntity {
   post: Post;
 
   @Column({ nullable: true })
-  postId: number;
+  postId: string;
 
   @ManyToOne(() => PostComment)
   @JoinColumn({ name: 'postCommentId', referencedColumnName: 'id' })
   postComment: PostComment;
 
   @Column({ nullable: true })
-  postCommentId: number;
+  postCommentId: string;
 
   @ManyToOne(() => PostLike)
   @JoinColumn({ name: 'postLikeId', referencedColumnName: 'id' })
   postLike: PostLike;
 
   @Column({ nullable: true })
-  postLikeId: number;
+  postLikeId: string;
 
   @ManyToOne(() => PostCommentLike)
   @JoinColumn({ name: 'postCommentLikeId', referencedColumnName: 'id' })
   postCommentLike: PostCommentLike;
 
   @Column({ nullable: true })
-  postCommentLikeId: number;
+  postCommentLikeId: string;
 
   @Column({ nullable: true })
   message: string;
@@ -62,7 +62,7 @@ export class Notification extends RecordEntity {
   createdBy: User;
 
   @Column({ nullable: true })
-  createdById: number;
+  createdById: string;
 
   @Column({ default: 1 })
   counter: number;

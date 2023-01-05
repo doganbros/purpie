@@ -17,13 +17,13 @@ import { UserZone } from './UserZone.entity';
 @Unique(['userId', 'channelId', 'channelRoleCode'])
 export class UserChannel extends RecordEntity {
   @Column()
-  userId: number;
+  userId: string;
 
   @Column({ nullable: true })
-  userZoneId: number;
+  userZoneId: string;
 
   @Column()
-  channelId: number;
+  channelId: string;
 
   @ManyToOne(() => UserZone, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userZoneId' })

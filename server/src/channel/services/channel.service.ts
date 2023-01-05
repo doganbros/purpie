@@ -45,9 +45,9 @@ export class ChannelService {
   ) {}
 
   async createChannel(
-    userId: number,
-    userZoneId: number,
-    zoneId: number,
+    userId: string,
+    userZoneId: string,
+    zoneId: string,
     createChannelInfo: CreateChannelDto,
   ) {
     const userChannel = await this.userChannelRepository
@@ -98,7 +98,7 @@ export class ChannelService {
     );
   }
 
-  async getPublicChannels(userId: number, zoneId: number) {
+  async getPublicChannels(userId: string, zoneId: string) {
     return this.channelRepository
       .createQueryBuilder('channel')
       .select([
@@ -188,7 +188,7 @@ export class ChannelService {
     return baseQuery.paginate(query);
   }
 
-  async validateJoinPublicChannel(userId: number, channelId: number) {
+  async validateJoinPublicChannel(userId: string, channelId: string) {
     const channel = await this.channelRepository
       .createQueryBuilder('channel')
       .leftJoin(
@@ -217,9 +217,9 @@ export class ChannelService {
   }
 
   async addUserToChannel(
-    userId: number,
-    userZoneId: number,
-    channelId: number,
+    userId: string,
+    userZoneId: string,
+    channelId: string,
   ) {
     return this.userChannelRepository
       .create({
@@ -231,7 +231,7 @@ export class ChannelService {
       .save();
   }
 
-  async validateInviteUser(email: string, channelId: number) {
+  async validateInviteUser(email: string, channelId: string) {
     const invitation = await this.invitationRepository.findOne({
       where: { email, channelId },
     });
@@ -259,8 +259,8 @@ export class ChannelService {
 
   async addUserToChannelInvitation(
     email: string,
-    channelId: number,
-    userId: number,
+    channelId: string,
+    userId: string,
   ) {
     return this.invitationRepository
       .create({
@@ -286,11 +286,11 @@ export class ChannelService {
     );
   }
 
-  async removeInvitation(email: string, channelId: number) {
+  async removeInvitation(email: string, channelId: string) {
     return this.invitationRepository.delete({ email, channelId });
   }
 
-  async changeDisplayPhoto(channelId: number, fileName: string) {
+  async changeDisplayPhoto(channelId: string, fileName: string) {
     return this.channelRepository.update(
       { id: channelId },
       { displayPhoto: fileName },
@@ -307,11 +307,11 @@ export class ChannelService {
     });
   }
 
-  async deleteByChannelId(id: number) {
+  async deleteByChannelId(id: string) {
     return this.channelRepository.delete({ id });
   }
 
-  async editChannelById(id: number, editInfo: any) {
+  async editChannelById(id: string, editInfo: any) {
     return this.channelRepository.update(
       { id },
       pick(editInfo, ['name', 'description', 'public']),
@@ -355,7 +355,7 @@ export class ChannelService {
   }
 
   async changeUserChannelRole(
-    channelId: number,
+    channelId: string,
     info: UpdateChannelUserRoleDto,
   ) {
     const { channelRoleCode } = info;
@@ -383,7 +383,7 @@ export class ChannelService {
     );
   }
 
-  async createChannelRole(channelId: number, info: ChannelRole) {
+  async createChannelRole(channelId: string, info: ChannelRole) {
     const existingRoleCodes = await this.channelRoleRepository.count({
       where: { roleCode: info.roleCode, channelId },
     });
@@ -397,7 +397,7 @@ export class ChannelService {
     return this.channelRoleRepository.create({ ...info, channelId }).save();
   }
 
-  async removeChannelRole(channelId: number, roleCode: any) {
+  async removeChannelRole(channelId: string, roleCode: any) {
     const existing = await this.userChannelRepository.count({
       where: { channelRoleCode: roleCode, channelId },
     });
@@ -414,7 +414,7 @@ export class ChannelService {
   }
 
   async editChannelRolePermissions(
-    channelId: number,
+    channelId: string,
     roleCode: string,
     info: Partial<UpdateChannelPermission>,
   ) {
@@ -455,7 +455,7 @@ export class ChannelService {
       .then((res) => res?.postSettings);
   }
 
-  async updatePostSettings(channelId: number, settings: PostSettings) {
+  async updatePostSettings(channelId: string, settings: PostSettings) {
     const updates: Partial<PostSettings> = {};
 
     const channel = await this.channelRepository.findOne(channelId, {

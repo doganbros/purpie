@@ -6,7 +6,7 @@ export class UpdateChannelUserRoleDto {
   @ApiProperty()
   @IsInt()
   @IsNotEmpty()
-  userId: number;
+  userId: string;
 
   @ApiProperty()
   @IsString()

@@ -41,8 +41,8 @@ export class UserListener {
     createdById,
     userId,
   }: {
-    createdById: number;
-    userId: number;
+    createdById: string;
+    userId: string;
   }) {
     await this.notificationRepository
       .create({

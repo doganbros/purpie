@@ -51,7 +51,7 @@ export class MeetingSchemaChanges1632558361217 implements MigrationInterface {
           },
           {
             name: 'postId',
-            type: 'int',
+            type: 'uuid',
           },
         ],
       }),

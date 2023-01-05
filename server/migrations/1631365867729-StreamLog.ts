@@ -17,7 +17,7 @@ export class StreamLog1631365867729 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
             isNullable: true,
           },
           {

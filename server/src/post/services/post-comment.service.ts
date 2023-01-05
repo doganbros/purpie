@@ -20,7 +20,7 @@ export class PostCommentService {
   ) {}
 
   async createComment(
-    userId: number,
+    userId: string,
     info: CreatePostCommentDto,
   ): Promise<PostComment> {
     const postComment = await this.postCommentRepository
@@ -60,8 +60,8 @@ export class PostCommentService {
   }
 
   async listComments(
-    userId: number,
-    postId: number,
+    userId: string,
+    postId: string,
     query: PaginationQuery,
     params: Record<string, any>,
   ): Promise<PaginationResponse<PostComment>> {
@@ -122,7 +122,7 @@ export class PostCommentService {
       .paginate(query);
   }
 
-  editComment(userId: number, commentId: number, comment: string) {
+  editComment(userId: string, commentId: string, comment: string) {
     return this.postCommentRepository.update(
       { userId, id: commentId },
       { comment, edited: true, updatedOn: new Date() },
@@ -138,11 +138,11 @@ export class PostCommentService {
     });
   }
 
-  removeComment(userId: number, commentId: number) {
+  removeComment(userId: string, commentId: string) {
     return this.postCommentRepository.delete({ userId, id: commentId });
   }
 
-  async createCommentLike(userId: number, info: CreatePostCommentLikeDto) {
+  async createCommentLike(userId: string, info: CreatePostCommentLikeDto) {
     const postCommentLike = await this.postCommentLikeRepository
       .create({
         userId,
@@ -158,7 +158,7 @@ export class PostCommentService {
     return postCommentLike;
   }
 
-  getCommentLikes(postId: number, commentId: number, query: PaginationQuery) {
+  getCommentLikes(postId: string, commentId: string, query: PaginationQuery) {
     return this.postCommentLikeRepository
       .createQueryBuilder('postCommentLike')
       .select([
@@ -175,7 +175,7 @@ export class PostCommentService {
       .paginate(query);
   }
 
-  removeCommentLike(userId: number, commentId: number) {
+  removeCommentLike(userId: string, commentId: string) {
     return this.postCommentLikeRepository.delete({ userId, commentId });
   }
 }
