@@ -1,4 +1,5 @@
 import i18n from '../../config/i18n/i18n-config';
+import { navigateToSubdomain } from '../../helpers/app-subdomain';
 import appHistory from '../../helpers/history';
 import {
   FORGOT_PASSWORD_FAILED,
@@ -158,6 +159,7 @@ export const authenticateWithThirdPartyCodeAction = (
 
 export const logoutAction = (): AuthAction => {
   return async (dispatch) => {
+    navigateToSubdomain();
     await AuthService.logOut();
     dispatch({
       type: LOGOUT,
