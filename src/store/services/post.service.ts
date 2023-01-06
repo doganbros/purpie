@@ -20,7 +20,7 @@ export const getPostFeeds = (
     })
     .then((res) => res.data);
 
-export const getPostDetail = (postId: number): Promise<Post> =>
+export const getPostDetail = (postId: string): Promise<Post> =>
   http.get(`/post/detail/feed/${postId}`).then((res) => res.data);
 
 export const updatePostDetail = (payload: EditVideoPayload): Promise<Post> =>
@@ -37,13 +37,13 @@ export const createVideo = (
 export const create = (postId: number): Promise<Post> =>
   http.get(`/post/detail/feed/${postId}`).then((res) => res.data);
 
-export const createPostLike = (postId: number): Promise<Post> =>
+export const createPostLike = (postId: string): Promise<Post> =>
   http.post('/post/like/create', { postId }).then((res) => res.data);
 
-export const removePostLike = (postId: number): Promise<Post> =>
+export const removePostLike = (postId: string): Promise<Post> =>
   http.delete(`/post/like/remove/${postId}`).then((res) => res.data);
 
-export const removePost = (postId: number): Promise<Post> =>
+export const removePost = (postId: string): Promise<Post> =>
   http.delete(`/post/remove/${postId}`).then((res) => res.data);
 
 export const searchPost = (
@@ -67,8 +67,8 @@ export const postViewStats = (
 
 export const createPostComment = (
   comment: string,
-  postId: number,
-  parentId?: number
+  postId: string,
+  parentId?: string
 ): Promise<PostComment> =>
   http
     .post('/post/comment/create', { comment, postId, parentId })
@@ -76,13 +76,13 @@ export const createPostComment = (
 
 export const updatePostComment = (
   comment: string,
-  commentId: number
+  commentId: string
 ): Promise<'OK'> =>
   http
     .put('/post/comment/update', { comment, commentId })
     .then((res) => res.data);
 
-export const removePostComment = (commentId: number): Promise<'OK'> =>
+export const removePostComment = (commentId: string): Promise<'OK'> =>
   http.delete(`/post/comment/remove/${commentId}`).then((res) => res.data);
 
 export const listPostComments = ({
@@ -90,7 +90,7 @@ export const listPostComments = ({
   parentId,
   limit,
   skip,
-}: ListPostCommentsParams & { parentId?: number }): Promise<
+}: ListPostCommentsParams & { parentId?: string }): Promise<
   PaginatedResponse<PostComment>
 > =>
   http
@@ -100,13 +100,13 @@ export const listPostComments = ({
     .then((res) => res.data);
 
 export const createPostCommentLike = (params: {
-  postId: number;
-  postCommentId: number;
+  postId: string;
+  postCommentId: string;
 }): Promise<number> =>
   http.post('/post/comment/like/create', params).then((res) => res.data);
 
-export const removePostCommentLike = (commentId: number): Promise<string> =>
+export const removePostCommentLike = (commentId: string): Promise<string> =>
   http.delete(`/post/comment/like/remove/${commentId}`).then((res) => res.data);
 
-export const getFeaturedPost = (userId: number): Promise<Post> =>
+export const getFeaturedPost = (userId: string): Promise<Post> =>
   http.get(`/post/featured/user/${userId}`).then((res) => res.data);

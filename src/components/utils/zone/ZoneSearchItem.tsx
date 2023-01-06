@@ -18,7 +18,7 @@ const ZoneSearchItem: FC<ZoneSearchItemProps> = ({ zone }) => {
     zone: { getUserZones },
   } = useSelector((state: AppState) => state);
 
-  const isJoined = (id: number) =>
+  const isJoined = (id: string) =>
     !!getUserZones.userZones?.find((z) => z.zone.id === id);
 
   return (

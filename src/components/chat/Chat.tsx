@@ -29,7 +29,7 @@ import PurpieLogoAnimated from '../../assets/purpie-logo/purpie-logo-animated';
 interface Props {
   medium: 'direct' | 'channel' | 'post';
   name?: string;
-  id: number;
+  id: string;
   canReply?: boolean;
   canDelete?: boolean;
   canEdit?: boolean;

@@ -29,7 +29,7 @@ const ChannelSettings: () => SettingsData = () => {
   const [channelPayload, setChannelPayload] = useState<UpdateChannelPayload>({
     name: '',
     description: '',
-    id: 1,
+    id: '',
     public: userChannels?.data[0]?.channel?.public,
   });
 

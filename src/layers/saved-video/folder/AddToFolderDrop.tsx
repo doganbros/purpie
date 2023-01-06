@@ -8,7 +8,7 @@ import { FolderList } from './FolderList';
 import ExtendedBox from '../../../components/utils/ExtendedBox';
 
 interface AddToFolderDropProps {
-  postId: number;
+  postId: string;
   dropLabels: (isActive: boolean) => ReactNode;
 }
 
@@ -21,7 +21,7 @@ export const AddToFolderDrop: FC<AddToFolderDropProps> = ({
   } = useSelector((state: AppState) => state);
 
   const [open, setOpen] = useState(false);
-  const [selectedFolderIds, setSelectedFolderIds] = useState<number[]>([]);
+  const [selectedFolderIds, setSelectedFolderIds] = useState<string[]>([]);
   const [createMode, setCreateMode] = useState(false);
 
   useEffect(() => {

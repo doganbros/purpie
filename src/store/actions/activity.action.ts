@@ -135,7 +135,7 @@ export const getNotificationCountAction = (): ActivityAction => {
 };
 
 export const viewNotificationsAction = (
-  notificationIds: number[]
+  notificationIds: string[]
 ): ActivityAction => {
   return async (dispatch) => {
     dispatch({
@@ -157,7 +157,7 @@ export const viewNotificationsAction = (
 };
 
 export const readNotificationsAction = (
-  notificationId: number
+  notificationId: string
 ): ActivityAction => {
   return async (dispatch) => {
     dispatch({

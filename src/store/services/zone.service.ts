@@ -14,7 +14,7 @@ import { PaginatedResponse } from '../../models/paginated-response';
 export const createZone = (zone: CreateZonePayload): Promise<any> =>
   http.post('/zone/create', zone).then((res) => res.data);
 
-export const joinZone = (id: number): Promise<any> =>
+export const joinZone = (id: string): Promise<any> =>
   http.post(`/zone/join/${id}`).then((res) => res.data);
 
 export const getCategories = (): Promise<any> =>
@@ -45,14 +45,14 @@ export const searchZone = (
 
 export const updateZonePhoto = (
   photoFile: File,
-  zoneId: number
+  zoneId: string
 ): Promise<any> =>
   http
     .put(`zone/${zoneId}/display-photo`, serialize(photoFile))
     .then((res) => res.data);
 
 export const updateZoneInfo = (
-  zoneId: number,
+  zoneId: string,
   params: ZoneBasic
 ): Promise<any> =>
   http.put(`zone/update/${zoneId}`, params).then((res) => res.data);

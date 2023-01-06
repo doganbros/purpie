@@ -76,13 +76,15 @@ export function getCookie(name: string): string | null {
   return null;
 }
 
-export const getColorPairFromId = (id: number): typeof colorPair[0] =>
-  colorPair[id % colorPair.length];
+export const getColorPairFromId = (id: string): typeof colorPair[0] => {
+  console.log(id);
+  return colorPair[5 % colorPair.length];
+};
 
 export const matchDescriptionTags = /(#\w+)/gi;
 
 export const getChatRoomName = (
-  id: number,
+  id: string,
   medium: 'post' | 'direct' | 'channel' = 'direct'
 ): string => `${medium}_${id}`;
 

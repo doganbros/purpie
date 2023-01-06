@@ -9,7 +9,7 @@ import { AddToFolderDrop } from '../../layers/saved-video/folder/AddToFolderDrop
 import { BookmarkFill } from '../utils/CustomIcons';
 
 interface VideoPostProps {
-  id: number;
+  id: string;
   videoName: string;
   slug: string;
   live: boolean;

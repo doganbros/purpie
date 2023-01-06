@@ -62,7 +62,7 @@ export const getUserChannelsAction = (): ChannelAction => {
   };
 };
 
-export const joinChannelAction = (id: number): ChannelAction => {
+export const joinChannelAction = (id: string): ChannelAction => {
   return async (dispatch) => {
     dispatch({
       type: JOIN_CHANNEL_REQUESTED,
@@ -172,7 +172,7 @@ export const searchChannelAction = (
 
 export const updateChannelPhoto = (
   profilePhoto: File,
-  channelId: number
+  channelId: string
 ): ChannelAction => {
   return async (dispatch) => {
     dispatch({
@@ -199,7 +199,7 @@ export const updateChannelPhoto = (
 };
 
 export const updateChannelInfoAction = (
-  channelId: number,
+  channelId: string,
   params: ChannelBasic
 ): ChannelAction => {
   return async (dispatch) => {
@@ -244,7 +244,7 @@ export const updateChannelPermissionsAction = (
 };
 
 export const listChannelUsersAction = (
-  channelId: number,
+  channelId: string,
   limit: number,
   skip: number
 ): ChannelAction => {

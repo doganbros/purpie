@@ -1,7 +1,7 @@
 import { PostType } from '../../../store/types/post.types';
 
 const post1 = {
-  id: 26,
+  id: '26',
   createdOn: new Date('2022-02-09T18:08:38.702Z'),
   updatedOn: null,
   title: 'Lemon cocktail closeup',
@@ -11,8 +11,8 @@ const post1 = {
   conferenceEndDate: null,
   timeZone: null,
   type: PostType.video,
-  createdById: 1,
-  channelId: 5,
+  createdById: '1',
+  channelId: '5',
   streaming: false,
   public: false,
   private: false,
@@ -20,7 +20,7 @@ const post1 = {
   record: false,
   videoName: 'b987019d-771c-41a7-bd8b-9cbec637cfe2.mp4',
   userContactExclusive: false,
-  postReactionId: 25,
+  postReactionId: '25',
   allowDislike: true,
   allowReaction: true,
   allowComment: true,
@@ -28,7 +28,7 @@ const post1 = {
   saved: false,
   disliked: false,
   createdBy: {
-    id: 1,
+    id: '1',
     fullName: 'Fecri Kaan Ulubey',
     email: 'f.kaan93@gmail.com',
     userName: 'f.kaan93',
@@ -41,13 +41,13 @@ const post1 = {
     liveStreamViewersCount: 0,
   },
   channel: {
-    id: 5,
+    id: '5',
     name: 'Jazz',
     topic: 'jazz',
     description: 'Jazz',
     public: true,
     zone: {
-      id: 3,
+      id: '3',
       name: 'Everything Music',
       subdomain: 'everything-music',
       public: true,
@@ -55,7 +55,7 @@ const post1 = {
   },
 };
 const post2 = {
-  id: 25,
+  id: '25',
   createdOn: new Date('2022-02-09T18:08:38.702Z'),
   updatedOn: null,
   title: 'Bird on a tree',
@@ -65,8 +65,8 @@ const post2 = {
   conferenceEndDate: null,
   timeZone: null,
   type: PostType.video,
-  createdById: 1,
-  channelId: 5,
+  createdById: '1',
+  channelId: '5',
   streaming: false,
   public: false,
   private: false,
@@ -74,7 +74,7 @@ const post2 = {
   record: false,
   videoName: '6f38f04c-7a57-496b-ac00-1ed2f3e20ca2.mp4',
   userContactExclusive: false,
-  postReactionId: 25,
+  postReactionId: '25',
   allowDislike: true,
   allowReaction: true,
   allowComment: true,
@@ -82,7 +82,7 @@ const post2 = {
   saved: false,
   disliked: false,
   createdBy: {
-    id: 1,
+    id: '1',
     fullName: 'Fecri Kaan Ulubey',
     email: 'f.kaan93@gmail.com',
     userName: 'f.kaan93',
@@ -95,13 +95,13 @@ const post2 = {
     liveStreamViewersCount: 0,
   },
   channel: {
-    id: 5,
+    id: '5',
     name: 'Jazz',
     topic: 'jazz',
     description: 'Jazz',
     public: true,
     zone: {
-      id: 3,
+      id: '3',
       name: 'Everything Music',
       subdomain: 'everything-music',
       public: true,
@@ -111,7 +111,7 @@ const post2 = {
 export const userData = {
   featuredPost: post1,
   sharedLists: [
-    { id: 1, name: 'Some Video List', posts: [post1, post2, post1] },
-    { id: 1, name: 'Test List', posts: [post1, post2] },
+    { id: '1', name: 'Some Video List', posts: [post1, post2, post1] },
+    { id: '1', name: 'Test List', posts: [post1, post2] },
   ],
 };
