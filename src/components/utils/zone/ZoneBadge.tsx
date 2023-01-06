@@ -6,12 +6,12 @@ interface ZoneBadgeProps {
   name?: string;
   subdomain?: string;
   textProps?: TextExtendedProps;
-  truncate?: boolean;
+  truncateWith?: number;
 }
 const ZoneBadge: FC<ZoneBadgeProps> = ({
   name,
   subdomain,
-  truncate,
+  truncateWith,
   textProps,
 }) => {
   return (
@@ -27,8 +27,13 @@ const ZoneBadge: FC<ZoneBadgeProps> = ({
       <Anchor
         onClick={() => navigateToSubdomain(subdomain)}
         label={
-          truncate ? (
-            <Text {...textProps}>▣ {`${name?.slice(0, 15)}.`}</Text>
+          truncateWith ? (
+            <Text {...textProps}>
+              ▣{' '}
+              {name && name?.length > truncateWith
+                ? `${name?.slice(0, truncateWith)}.`
+                : name}
+            </Text>
           ) : (
             <Text {...textProps}>▣ {name}</Text>
           )
