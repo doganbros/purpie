@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Text, TextExtendedProps } from 'grommet';
+import { Text, TextExtendedProps, ThemeContext } from 'grommet';
 import { AnchorLink } from './AnchorLink';
 
 interface UserBadgeProps {
@@ -10,7 +10,17 @@ interface UserBadgeProps {
 
 const UserBadge: FC<UserBadgeProps> = ({ fullName, url, textProps }) => {
   return (
-    <AnchorLink to={url} label={<Text {...textProps}>@ {fullName}</Text>} />
+    <ThemeContext.Extend
+      value={{
+        anchor: {
+          hover: {
+            textDecoration: 'none',
+          },
+        },
+      }}
+    >
+      <AnchorLink to={url} label={<Text {...textProps}>@ {fullName}</Text>} />
+    </ThemeContext.Extend>
   );
 };
 
