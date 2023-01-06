@@ -88,6 +88,7 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                     validate={[
                       validators.required(t('CreateZone.zoneName')),
                       validators.maxLength(32),
+                      validators.minLength(t('CreateZone.zoneName'), 3),
                     ]}
                   >
                     <TextInput

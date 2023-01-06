@@ -25,7 +25,7 @@ const InitialsAvatar: FC<InitialsAvatarProps> = ({
     >
       <Text color={foreground} {...textProps} weight="normal">
         {value
-          .replace(/[^a-zA-Z ]/g, '')
+          .replace(/[^a-zA-Z0-9 ]/g, '')
           .split(' ')
           .filter((_v, i: number) => i < 2)
           .map((v) => v && v[0].toUpperCase())
