@@ -33,6 +33,7 @@ import ChannelBadge from '../../../components/utils/channel/ChannelBadge';
 import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
 import UserBadge from '../../../components/utils/UserBadge';
 import Highlight from '../../../components/utils/Highlight';
+import { setSelectedChannelAction } from '../../../store/actions/channel.action';
 import {
   getTimezoneTimeFromUTC,
   matchDescriptionTags,
@@ -56,6 +57,7 @@ const Video: FC = () => {
   const [liveStreamCount, setLiveStreamCount] = useState(0);
   const dispatch = useDispatch();
   const {
+    channel: { userChannels },
     post: {
       postDetail: { data, loading },
     },
@@ -66,6 +68,9 @@ const Video: FC = () => {
   const previousTime = useRef(0);
   const currentTime = useRef(0);
   const startedFrom = useRef(0);
+  const userChannelsFiltered = userChannels.data.filter(
+    (c) => c.channel.id === data?.channel?.id
+  )[0];
 
   const size = useResponsive();
 
@@ -146,6 +151,12 @@ const Video: FC = () => {
       );
     }
     return true;
+  };
+
+  const handleSelectChannel = () => {
+    if (data?.channel) {
+      dispatch(setSelectedChannelAction(userChannelsFiltered));
+    }
   };
 
   useEffect(() => {
@@ -233,9 +244,15 @@ const Video: FC = () => {
                     />
                   )}
                   {data?.channel?.name && (
-                    <ChannelBadge name={data.channel.name} url="/" />
+                    <Box onClick={handleSelectChannel}>
+                      <ChannelBadge name={data.channel.name} url="/" />
+                    </Box>
                   )}
-                  <UserBadge url="/" fullName={data?.createdBy?.fullName} />
+
+                  <UserBadge
+                    url={`/user/${data?.createdBy?.userName}`}
+                    fullName={data?.createdBy?.fullName}
+                  />
                 </Box>
               )) || <Box />}
               <Box
