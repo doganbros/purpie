@@ -250,8 +250,6 @@ const Video: FC = () => {
                   )}
 
                   <UserBadge
-                    // it is not working right now, but will work when backend is ready
-                    // also we can remove these comment lines when backend is ready
                     url={`/user/${data?.createdBy?.userName}`}
                     fullName={data?.createdBy?.fullName}
                   />
