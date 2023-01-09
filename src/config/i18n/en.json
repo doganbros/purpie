@@ -525,7 +525,8 @@
     "selectChannel": "Select Channel",
     "changesSaved": "Changes saved successfully",
     "documentTitle":"Settings - Purpie",
-    "passwordChanged":"Password changed successfully"
+    "passwordChanged":"Password changed successfully",
+    "chooseProfilePicture": "Choose Profile Picture"
   },
   "ContactsToFollow": {
     "title": "People to add",
