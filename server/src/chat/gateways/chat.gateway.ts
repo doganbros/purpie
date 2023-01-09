@@ -99,7 +99,11 @@ export class ChatGateway {
     @MessageBody() postId: string,
   ) {
     const roomName = this.chatService.getRoomName(postId, 'post');
-    const post = await this.postService.getOnePost(socket.user.id, postId);
+    const post = await this.postService.getOnePost(
+      socket.user.id,
+      postId,
+      null,
+    );
 
     if (!post) throw new WsException(ErrorTypes.POST_NOT_FOUND);
 

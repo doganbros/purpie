@@ -21,15 +21,15 @@ export class ListPostFeedQuery extends PaginationQuery {
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsInt()
-  @Type(() => Number)
-  zoneId: number;
+  @IsUUID()
+  @Type(() => String)
+  zoneId: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsInt()
-  @Type(() => Number)
-  channelId: number;
+  @IsUUID()
+  @Type(() => String)
+  channelId: string;
 
   @ApiProperty({
     required: false,

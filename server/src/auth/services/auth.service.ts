@@ -272,7 +272,7 @@ export class AuthService {
         }),
       );
 
-    if (typeof identifier === 'number')
+    if (typeof identifier === 'string' && !identifier.includes('@'))
       baseQuery.andWhere('user.id = :identifier');
     else {
       baseQuery.andWhere(

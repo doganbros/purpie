@@ -116,7 +116,7 @@ export class PostCommentService {
           ? 'postComment.parentId = :parentId'
           : 'postComment.parentId is null',
         {
-          parentId: Number.parseInt(params.parentId, 10),
+          parentId: params.parentId,
         },
       )
       .paginate(query);

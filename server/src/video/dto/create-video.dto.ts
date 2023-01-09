@@ -23,7 +23,6 @@ export class CreateVideoDto {
     return !o.public;
   })
   @IsUUID()
-  @Transform(({ value }) => Number.parseInt(value, 10))
   channelId?: string;
 
   @ApiProperty({ required: false })

@@ -6,6 +6,6 @@ export class ZoneIdParams {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  @Type(() => Number)
+  @Type(() => String)
   zoneId: string;
 }

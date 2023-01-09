@@ -9,14 +9,14 @@ export class PostView extends RecordEntity {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @Column()
+  @Column('uuid')
   userId: string;
 
   @ManyToOne(() => Post, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'postId' })
   post: Post;
 
-  @Column()
+  @Column('uuid')
   postId: string;
 
   @Column()

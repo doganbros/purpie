@@ -260,11 +260,7 @@ export class UserController {
   async searchUsers(
     @CurrentUser() user: UserTokenPayload,
     @Query() query: SearchUsersQuery,
-    @Query(
-      'excludeIds',
-      new DefaultValuePipe('-1'),
-      new ParseArrayPipe({ items: String, separator: ',' }),
-    )
+    @Query('excludeIds')
     excludeIds: Array<string>,
   ) {
     if (!query.name.trim())

@@ -127,7 +127,7 @@ export class ChatService {
     query: ChatMessageListQuery,
   ) {
     if (medium === 'post') {
-      const post = await this.postService.getOnePost(userId, id, false);
+      const post = await this.postService.getOnePost(userId, id, null, false);
       if (!post)
         throw new ForbiddenException(
           ErrorTypes.NOT_AUTHORIZED,

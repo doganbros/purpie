@@ -322,7 +322,7 @@ export class ChannelService {
     return this.channelRoleRepository.find({ take: 30, where: { channelId } });
   }
 
-  listChannelUsers(channelId: number, query: SystemUserListQuery) {
+  listChannelUsers(channelId: string, query: SystemUserListQuery) {
     const baseQuery = this.userChannelRepository
       .createQueryBuilder('userChannel')
       .select([

@@ -76,7 +76,7 @@ const Video: FC = () => {
   const maybeSendViewStat = () => {
     if (previousTime.current > startedFrom.current) {
       postViewStats(
-        +params.id,
+        params.id,
         startedFrom.current * DECISECOND,
         (player.current?.ended()
           ? player.current.duration()
@@ -104,7 +104,7 @@ const Video: FC = () => {
     });
 
     player.current?.on('firstplay', () => {
-      postViewStats(+params.id, 0, 0);
+      postViewStats(params.id, 0, 0);
     });
   };
 

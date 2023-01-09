@@ -5,6 +5,5 @@ import { Transform } from 'class-transformer';
 export class VideoIdParams {
   @ApiProperty()
   @IsInt()
-  @Transform(({ value }) => Number.parseInt(value, 10))
   videoId: number;
 }

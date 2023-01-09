@@ -77,7 +77,7 @@ export class UserService {
   }
 
   userBaseSelect(excludeUserIds: Array<string>, query: SearchUsersQuery) {
-    return this.userRepository
+    const result = this.userRepository
       .createQueryBuilder('user')
       .setParameter('searchTerm', tsqueryParam(query.name))
       .select([
@@ -91,9 +91,13 @@ export class UserService {
         `ts_rank(user.search_document, to_tsquery('simple', :searchTerm))`,
         'search_rank',
       )
-      .where(`user.search_document @@ to_tsquery('simple', :searchTerm)`)
-      .andWhere('user.id not IN (:...excludeUserIds)', { excludeUserIds })
-      .orderBy('search_rank', 'DESC');
+      .where(`user.search_document @@ to_tsquery('simple', :searchTerm)`);
+    if (excludeUserIds)
+      result.andWhere('user.id not IN (:...excludeUserIds)', {
+        excludeUserIds: excludeUserIds || [],
+      });
+    result.orderBy('search_rank', 'DESC');
+    return result;
   }
 
   async searchUsers(excludeUserIds: Array<string>, query: SearchUsersQuery) {

@@ -116,15 +116,15 @@ export class ActivityService {
         'contactOfContact',
         'contact.userId = contactOfContact.contactUserId',
       )
-      .andWhere(`contactOfContact.userId = ${userId}`)
-      .andWhere(`user.id != ${userId}`)
+      .andWhere(`contactOfContact.userId = '${userId}'`)
+      .andWhere(`user.id != '${userId}'`)
       .andWhere(
         (qb) =>
           `user.id NOT IN ${qb
             .subQuery()
             .select('directContact.contactUserId')
             .from(Contact, 'directContact')
-            .where(`directContact.userId = ${userId}`)
+            .where(`directContact.userId = '${userId}'`)
             .getQuery()}`,
       )
       .getSql();
@@ -142,19 +142,20 @@ export class ActivityService {
         'user_channel2',
         'user_channel1.channelId = user_channel2.channelId',
       )
-      .andWhere(`user_channel2.userId = ${userId}`)
-      .andWhere(`user.id != ${userId}`)
+      .andWhere(`user_channel2.userId = '${userId}'`)
+      .andWhere(`user.id != '${userId}'`)
       .andWhere(
         (qb) =>
           `user.id NOT IN ${qb
             .subQuery()
             .select('directContact.contactUserId')
             .from(Contact, 'directContact')
-            .where(`directContact.userId = ${userId}`)
+            .where(`directContact.userId = '${userId}'`)
             .getQuery()}`,
       )
       .getSql();
 
+    console.log(`${baseQuery} UNION ${baseQuery2}`);
     return entityManager
       .query(`${baseQuery} UNION ${baseQuery2}`)
       .then((t) => t);

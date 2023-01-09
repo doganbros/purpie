@@ -52,7 +52,7 @@ export const searchPost = (
   http.get(`/post/list/feed`, { params }).then((res) => res.data);
 
 export const postViewStats = (
-  postId: number,
+  postId: string,
   startedFrom: number,
   endedAt: number
 ): Promise<'Created'> => {

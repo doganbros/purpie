@@ -36,14 +36,14 @@ export class UserChannelGuard implements CanActivate {
       req.userChannel = await this.userChannelService.getUserChannel(
         req.user.id,
         {
-          channelId: Number.parseInt(channelId, 10),
+          channelId,
         },
       );
     } else if (userChannelId) {
       req.userChannel = await this.userChannelService.getUserChannel(
         req.user.id,
         {
-          id: Number.parseInt(userChannelId, 10),
+          id: userChannelId,
         },
       );
     }

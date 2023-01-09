@@ -45,7 +45,12 @@ export class PostService {
     private postVideoRepository: Repository<PostVideo>,
   ) {}
 
-  getOnePost(userId: string, identity: number | string, preview = false) {
+  getOnePost(
+    userId: string,
+    postId: string | null,
+    slug: string | null,
+    preview = false,
+  ) {
     return this.postRepository
       .createQueryBuilder('post')
       .select([
@@ -79,12 +84,9 @@ export class PostService {
         'contact.userId = post.createdById AND contact.contactUserId = :userId',
         { userId },
       )
-      .where(
-        typeof identity === 'string'
-          ? 'post.slug = :identity'
-          : 'post.id = :identity',
-        { identity },
-      )
+      .where(postId ? 'post.id = :identity' : 'post.slug = :identity', {
+        identity: postId || slug,
+      })
       .andWhere(
         new Brackets((qb) => {
           qb.where('post.public = true').orWhere(
@@ -205,7 +207,7 @@ export class PostService {
     slug: string,
     fileName: string,
   ) {
-    const post = await this.getOnePost(userId, slug, true);
+    const post = await this.getOnePost(userId, null, slug, true);
 
     if (!post)
       throw new NotFoundException(
@@ -618,7 +620,7 @@ export class PostService {
   }
 
   async validatePost(userId: string, postId: string) {
-    const post = await this.getOnePost(userId, postId, true);
+    const post = await this.getOnePost(userId, postId, null, true);
 
     if (!post)
       throw new NotFoundException(

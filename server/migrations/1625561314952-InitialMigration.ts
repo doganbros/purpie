@@ -121,6 +121,7 @@ export class InitialMigration1625561314952 implements MigrationInterface {
       new Table({
         name: 'user',
         columns: [
+          ...recordEntityColumns,
           {
             name: 'firstName',
             type: 'character varying',

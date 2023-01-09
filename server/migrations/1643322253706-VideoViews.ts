@@ -44,7 +44,7 @@ export class VideoViews1643322253706 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'startedFrom',

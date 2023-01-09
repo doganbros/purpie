@@ -77,8 +77,8 @@ export function getCookie(name: string): string | null {
 }
 
 export const getColorPairFromId = (id: string): typeof colorPair[0] => {
-  console.log(id);
-  return colorPair[5 % colorPair.length];
+  const lastPart = id.split('-').join();
+  return colorPair[parseInt(lastPart!, 16) % colorPair.length];
 };
 
 export const matchDescriptionTags = /(#\w+)/gi;

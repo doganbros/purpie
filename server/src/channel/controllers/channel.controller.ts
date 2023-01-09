@@ -303,7 +303,7 @@ export class ChannelController {
   @UserChannelRole(['canManageRole'])
   channelUserList(
     @Query() query: SystemUserListQuery,
-    @Param('channelId', ParseIntPipe) channelId: number,
+    @Param('channelId', ParseUUIDPipe) channelId: string,
   ) {
     return this.channelService.listChannelUsers(channelId, query);
   }

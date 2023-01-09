@@ -194,6 +194,7 @@ export class PostListener {
     const post = await this.postService.getOnePost(
       userId,
       postComment.postId,
+      null,
       false,
     );
 
