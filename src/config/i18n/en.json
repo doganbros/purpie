@@ -525,7 +525,12 @@
     "selectChannel": "Select Channel",
     "changesSaved": "Changes saved successfully",
     "documentTitle":"Settings - Purpie",
-    "passwordChanged":"Password changed successfully"
+    "passwordChanged":"Password changed successfully",
+    "zoneNamePlaceholder": "Change zone name",
+    "zoneSubdomainPlaceholder": "Change zone subdomain",
+    "zoneDescriptionPlaceholder": "Change zone description",
+    "channelNamePlaceholder": "Change channel name",
+    "channelDescriptionPlaceholder": "Change channel description"
   },
   "ContactsToFollow": {
     "title": "People to add",
