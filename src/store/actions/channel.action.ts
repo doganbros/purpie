@@ -62,6 +62,26 @@ export const getUserChannelsAction = (): ChannelAction => {
   };
 };
 
+export const getUserChannelsAllAction = (): ChannelAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: GET_USER_CHANNELS_REQUESTED,
+    });
+    try {
+      const payload = (await ChannelService.getUserChannelsAll()) as any;
+      dispatch({
+        type: GET_USER_CHANNELS_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: GET_USER_CHANNELS_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
 export const joinChannelAction = (id: string): ChannelAction => {
   return async (dispatch) => {
     dispatch({

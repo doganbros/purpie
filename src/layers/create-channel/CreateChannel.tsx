@@ -105,6 +105,7 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                   validate={[
                     validators.required(t('CreateChannel.channelName')),
                     validators.maxLength(32),
+                    validators.minLength(t('CreateChannel.channelName'), 3),
                   ]}
                 >
                   <TextInput

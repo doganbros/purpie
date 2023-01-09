@@ -7,7 +7,6 @@ import {
   CONTACT_SUGGESTIONS_SUCCESS,
   NOTIFICATION_COUNT_FAILED,
   NOTIFICATION_COUNT_REQUESTED,
-  NOTIFICATION_COUNT_SUCCESS,
   NOTIFICATION_FAILED,
   NOTIFICATION_REQUESTED,
   NOTIFICATION_SUCCESS,
@@ -120,11 +119,11 @@ export const getNotificationCountAction = (): ActivityAction => {
       type: NOTIFICATION_COUNT_REQUESTED,
     });
     try {
-      const payload = await ActivityService.getNotificationCount();
-      dispatch({
-        type: NOTIFICATION_COUNT_SUCCESS,
-        payload,
-      });
+      // const payload = await ActivityService.getNotificationCount();
+      // dispatch({
+      //   type: NOTIFICATION_COUNT_SUCCESS,
+      //   payload,
+      // });
     } catch (err: any) {
       dispatch({
         type: NOTIFICATION_COUNT_FAILED,

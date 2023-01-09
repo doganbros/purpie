@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, DropButton, Stack, Text, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { CaretDownFill, CaretRightFill, Edit } from 'grommet-icons';
@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import ListButton from '../../../components/utils/ListButton';
 
 import {
+  getUserChannelsAllAction,
   updateChannelInfoAction,
   updateChannelPhoto,
 } from '../../../store/actions/channel.action';
@@ -14,6 +15,7 @@ import { UpdateChannelPayload } from '../../../store/types/channel.types';
 import AvatarUpload from './AvatarUpload';
 import { SettingsData } from './types';
 import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
+import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
 
 const ChannelSettings: () => SettingsData = () => {
   const {
@@ -45,6 +47,10 @@ const ChannelSettings: () => SettingsData = () => {
     channelPayload.name === selectedChannel?.name &&
     channelPayload.description === selectedChannel?.description &&
     channelPayload.public === selectedChannel?.public;
+
+  useEffect(() => {
+    dispatch(getUserChannelsAllAction());
+  }, []);
 
   if (userChannels.data.length === 0) {
     return {
@@ -166,16 +172,24 @@ const ChannelSettings: () => SettingsData = () => {
               >
                 <Box>
                   <Text>{selectedChannel?.name}</Text>
-                  <Text color="status-disabled">
-                    {t('settings.in')}{' '}
-                    {
-                      userZones?.find(
-                        (userZone) =>
-                          userZone.zone.id === selectedChannel.zoneId
-                      )?.zone.name
-                    }{' '}
-                    {t('settings.zone')}
-                  </Text>
+                  <Box direction="row" gap="small" align="center">
+                    <ZoneBadge
+                      truncateWith={15}
+                      textProps={{ size: 'small' }}
+                      subdomain={
+                        userZones?.find(
+                          (userZone) =>
+                            userZone.zone.id === selectedChannel.zoneId
+                        )?.zone.subdomain
+                      }
+                      name={
+                        userZones?.find(
+                          (userZone) =>
+                            userZone.zone.id === selectedChannel.zoneId
+                        )?.zone.name
+                      }
+                    />
+                  </Box>
                 </Box>
                 <CaretDownFill />
               </Box>
