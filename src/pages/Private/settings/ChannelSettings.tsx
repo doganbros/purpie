@@ -174,6 +174,8 @@ const ChannelSettings: () => SettingsData = () => {
                   <Text>{selectedChannel?.name}</Text>
                   <Box direction="row" gap="small" align="center">
                     <ZoneBadge
+                      truncateWith={15}
+                      textProps={{ size: 'small' }}
                       subdomain={
                         userZones?.find(
                           (userZone) =>
