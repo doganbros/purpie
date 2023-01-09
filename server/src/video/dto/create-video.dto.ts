@@ -1,8 +1,8 @@
 import {
   IsBoolean,
-  IsInt,
   IsOptional,
   IsString,
+  IsUUID,
   ValidateIf,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
@@ -22,9 +22,8 @@ export class CreateVideoDto {
   @ValidateIf((o) => {
     return !o.public;
   })
-  @IsInt()
-  @Transform(({ value }) => Number.parseInt(value, 10))
-  channelId?: number;
+  @IsUUID()
+  channelId?: string;
 
   @ApiProperty({ required: false })
   @ValidateIf((o) => {

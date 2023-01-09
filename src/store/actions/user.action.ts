@@ -80,7 +80,7 @@ export const listContactsAction = (params: {
 
 export const selectContactAction = (params: {
   userName: string;
-  contactId: number;
+  contactId: string;
 }): UserAction => {
   return async (dispatch) => {
     dispatch({
@@ -102,7 +102,7 @@ export const selectContactAction = (params: {
   };
 };
 
-export const removeContactAction = (contactId: number): UserAction => {
+export const removeContactAction = (contactId: string): UserAction => {
   return async (dispatch) => {
     dispatch({
       type: REMOVE_CONTACT_REQUESTED,

@@ -221,14 +221,6 @@ export class SchemaChanges1626633791984 implements MigrationInterface {
     const user_channel = await queryRunner.getTable('user_channel');
 
     if (user_channel) {
-      const foreignKey = user_channel.foreignKeys.find((f) =>
-        f.columnNames.includes('userChannelPermissionId'),
-      );
-      if (foreignKey)
-        await queryRunner.dropForeignKey(user_channel, foreignKey);
-
-      await queryRunner.dropColumn(user_channel, 'userChannelPermissionId');
-
       await queryRunner.addColumn(
         user_channel,
         new TableColumn({
@@ -287,22 +279,6 @@ export class SchemaChanges1626633791984 implements MigrationInterface {
         await queryRunner.dropForeignKey(user_channel, foreignKey);
 
       await queryRunner.dropColumn(user_channel, 'channelRoleCode');
-      await queryRunner.addColumn(
-        user_channel,
-        new TableColumn({
-          name: 'userChannelPermissionId',
-          type: 'int',
-        }),
-      );
-      await queryRunner.createForeignKey(
-        user_channel,
-        new TableForeignKey({
-          columnNames: ['userChannelPermissionId'],
-          referencedColumnNames: ['id'],
-          referencedTableName: 'user_channel_permission',
-          onDelete: 'RESTRICT',
-        }),
-      );
     }
 
     const user_zone = await queryRunner.getTable('user_zone');
@@ -343,7 +319,7 @@ export class SchemaChanges1626633791984 implements MigrationInterface {
         user_zone,
         new TableColumn({
           name: 'userZonePermissionId',
-          type: 'int',
+          type: 'uuid',
         }),
       );
       await queryRunner.createForeignKey(
@@ -378,7 +354,7 @@ export class SchemaChanges1626633791984 implements MigrationInterface {
         invitation,
         new TableColumn({
           name: 'userId',
-          type: 'int',
+          type: 'uuid',
         }),
       );
 

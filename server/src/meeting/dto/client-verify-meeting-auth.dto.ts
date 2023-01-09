@@ -5,7 +5,7 @@ export class ClientVerifyMeetingAuthDto {
   @ApiProperty()
   @IsInt()
   @IsNotEmpty()
-  userId: number;
+  userId: string;
 
   @ApiProperty()
   @IsString()

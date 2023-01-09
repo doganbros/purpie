@@ -236,7 +236,7 @@ export const resetPasswordAction = (body: ResetPasswordPayload): AuthAction => {
   };
 };
 export const resendMailVerificationTokenAction = (
-  userId: number
+  userId: string
 ): AuthAction => {
   return async (dispatch) => {
     dispatch({

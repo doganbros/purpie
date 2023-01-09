@@ -9,6 +9,7 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Put,
   Query,
@@ -292,7 +293,7 @@ export class ZoneController {
   async changeDisplayPhoto(
     @CurrentUserZone() userZone: UserZone,
     @UploadedFile() file: Express.MulterS3.File,
-    @Param('userZoneId', ParseIntPipe) userZoneId: number,
+    @Param('userZoneId', ParseUUIDPipe) userZoneId: string,
   ) {
     const fileName = file.key.replace(`${S3_PROFILE_PHOTO_DIR}/zone-dp/`, '');
 
@@ -349,7 +350,7 @@ export class ZoneController {
   @UserZoneRole(['canManageRole'])
   async createZoneRole(
     @Body() info: ZoneRole,
-    @Param('zoneId', ParseIntPipe) zoneId: number,
+    @Param('zoneId', ParseUUIDPipe) zoneId: string,
   ) {
     await this.zoneService.createZoneRole(zoneId, info);
     return 'OK';
@@ -365,7 +366,7 @@ export class ZoneController {
   @UserZoneRole(['canManageRole'])
   async changeUserZoneRole(
     @Body() info: UpdateUserZoneRoleDto,
-    @Param('zoneId', ParseIntPipe) zoneId: number,
+    @Param('zoneId', ParseUUIDPipe) zoneId: string,
   ) {
     await this.zoneService.changeUserZoneRole(zoneId, info);
     return 'OK';
@@ -385,7 +386,7 @@ export class ZoneController {
   @UserZoneRole(['canManageRole'])
   async removeChannelRole(
     @Param('roleCode') roleCode: string,
-    @Param('zoneId', ParseIntPipe) zoneId: number,
+    @Param('zoneId', ParseUUIDPipe) zoneId: string,
   ) {
     const result = await this.zoneService.removeZoneRole(zoneId, roleCode);
     return result ? 'Created' : 'OK';
@@ -405,7 +406,7 @@ export class ZoneController {
   @UserZoneRole(['canManageRole'])
   async updateUserRolePermissions(
     @Body() info: UpdateZonePermission,
-    @Param('zoneId', ParseIntPipe) zoneId: number,
+    @Param('zoneId', ParseUUIDPipe) zoneId: string,
   ) {
     await this.zoneService.editZoneRolePermissions(zoneId, info.roleCode, info);
     return 'OK';

@@ -48,7 +48,7 @@ export const verifyUserEmail = async ({
 };
 
 export const resendMailVerificationToken = async (
-  userId: number
+  userId: string
 ): Promise<any> => {
   return http
     .post(`/auth/resend-mail-verification-token/${userId}`)

@@ -28,37 +28,37 @@ import { NotificationType } from '../../models/utils';
 import { Post } from './post.types';
 
 export interface ZoneSuggestionListItem {
-  zone_id: number;
+  zone_id: string;
   zone_createdOn: Date;
   zone_name: string;
   zone_displayPhoto: string;
   zone_subdomain: string;
   zone_description: string;
   channel_public: boolean;
-  category_id: number;
+  category_id: string;
   category_name: string;
   zone_channelCount: string;
   zone_membersCount: string;
 }
 
 export interface ChannelSuggestionListItem {
-  channel_id: number;
+  channel_id: string;
   channel_createdOn: Date;
   channel_name: string;
   channel_displayPhoto: string;
   channel_topic: string;
   channel_description: string;
   channel_public: boolean;
-  zone_id: number;
+  zone_id: string;
   zone_name: string;
   zone_subdomain: string;
-  category_id: number;
+  category_id: string;
   category_name: string;
   channel_membersCount: string;
 }
 
 export interface ContactSuggestionListItem {
-  userId: number;
+  userId: string;
   fullName: string;
   email: string;
   userName: string;
@@ -66,7 +66,7 @@ export interface ContactSuggestionListItem {
 }
 
 export interface NotificationListItem {
-  id: number;
+  id: string;
   createdBy: User;
   createdOn: Date;
   message: string;
@@ -148,11 +148,11 @@ export type ActivityActionParams =
     }
   | {
       type: typeof VIEW_NOTIFICATION_SUCCESS;
-      payload: number[];
+      payload: string[];
     }
   | {
       type: typeof READ_NOTIFICATION_SUCCESS;
-      payload: number;
+      payload: string;
     }
   | {
       type:

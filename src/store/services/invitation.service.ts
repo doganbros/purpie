@@ -31,13 +31,13 @@ export const createInvitation = (email: string): Promise<string> =>
     .then((res) => res.data);
 
 export const createChannelInvitation = (
-  channelId: number,
+  channelId: string,
   email: string
 ): Promise<any> =>
   http.post(`/channel/invite/${channelId}`, { email }).then((res) => res.data);
 
 export const createZoneInvitation = (
-  zoneId: number,
+  zoneId: string,
   email: string
 ): Promise<any> =>
   http.post(`/zone/invite/${zoneId}`, { email }).then((res) => res.data);

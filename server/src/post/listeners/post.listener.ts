@@ -25,12 +25,12 @@ export class PostListener {
     private postService: PostService,
   ) {}
 
-  getPost(postId: number) {
+  getPost(postId: string) {
     return this.postRepository.findOne(postId);
   }
 
   getUnviewedNotification(
-    param: { userId: number; postId: number },
+    param: { userId: string; postId: string },
     type: NotificationType,
     otherFields?: any,
   ) {
@@ -194,6 +194,7 @@ export class PostListener {
     const post = await this.postService.getOnePost(
       userId,
       postComment.postId,
+      null,
       false,
     );
 

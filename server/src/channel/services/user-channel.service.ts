@@ -40,7 +40,7 @@ export class UserChannelService {
 
   async getCurrentUserZoneChannels(
     identifier: number | string,
-    userId: number,
+    userId: string,
   ) {
     const records = await this.channelRepository
       .createQueryBuilder('channel')
@@ -126,7 +126,7 @@ export class UserChannelService {
   }
 
   async getCurrentUserChannels(
-    userId: number,
+    userId: string,
     subdomain: string | null = null,
   ) {
     if (subdomain) return this.getCurrentUserZoneChannels(subdomain, userId);

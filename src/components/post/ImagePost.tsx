@@ -4,7 +4,7 @@ import { Group } from 'grommet-icons';
 import { getColorPairFromId } from '../../helpers/utils';
 
 interface ImagePostProps {
-  id: number;
+  id: string;
 }
 
 export const ImagePost: FC<ImagePostProps> = ({ id }) => {

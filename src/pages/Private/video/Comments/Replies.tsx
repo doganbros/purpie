@@ -9,7 +9,7 @@ import CommentBase from './CommentBase';
 import PurpieLogoAnimated from '../../../../assets/purpie-logo/purpie-logo-animated';
 
 interface RepliesProps {
-  postId: number;
+  postId: string;
   parentComment: PostCommentState;
 }
 

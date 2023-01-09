@@ -32,7 +32,7 @@ import { UtilActionParams } from './util.types';
 import { PostActionParams } from './post.types';
 
 export interface Meeting {
-  id: number;
+  id: string;
   title: string;
   slug: string;
   description: string;
@@ -47,14 +47,14 @@ export interface CreateMeetingPayload {
   description?: string;
   startDate?: string | null;
   endDate?: string | null;
-  channelId?: number | null;
+  channelId?: string | null;
   public?: boolean | null;
   config?: Record<string, any> | null;
   saveConfig?: boolean;
   planForLater?: boolean;
   record?: boolean;
   liveStream?: boolean;
-  invitationIds?: Array<number>;
+  invitationIds?: Array<string>;
   timeZone?: string;
 }
 
@@ -132,9 +132,11 @@ export type MeetingActionParams =
       payload: UserMeetingConfig;
     }
   | {
-      type:
-        | typeof PLAN_A_MEETING_DIALOG_SET
-        | typeof REMOVE_USER_FROM_INVITATION;
+      type: typeof REMOVE_USER_FROM_INVITATION;
+      payload: string;
+    }
+  | {
+      type: typeof PLAN_A_MEETING_DIALOG_SET;
       payload: number;
     }
   | {

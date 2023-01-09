@@ -20,7 +20,7 @@ import { UserAvatar } from '../utils/Avatars/UserAvatar';
 
 interface Props {
   message: ChatMessage;
-  id?: number;
+  id?: string;
   menuItems?: { label: string; onClick: () => void }[] | null;
 }
 

@@ -12,7 +12,7 @@ export class NotificationService {
     private notificationRepository: Repository<Notification>,
   ) {}
 
-  async getNotificationCount(userId: number) {
+  async getNotificationCount(userId: string) {
     const queryRunner = this.connection.createQueryRunner();
     const [
       result,
@@ -24,21 +24,21 @@ export class NotificationService {
     return result;
   }
 
-  async markNotificationsAsViewed(userId: number, notificationIds: number[]) {
+  async markNotificationsAsViewed(userId: string, notificationIds: string[]) {
     return this.notificationRepository.update(
       { id: In([...notificationIds]), userId },
       { viewedOn: new Date() },
     );
   }
 
-  async markNotificationsAsRead(userId: number, notificationId?: number) {
+  async markNotificationsAsRead(userId: string, notificationId?: string) {
     return this.notificationRepository.update(
       { userId, readOn: IsNull(), id: notificationId || undefined },
       { readOn: new Date() },
     );
   }
 
-  async listNotifications(userId: number, query: ListNotificationQuery) {
+  async listNotifications(userId: string, query: ListNotificationQuery) {
     const baseQuery = this.notificationRepository
       .createQueryBuilder('notification')
       .select([

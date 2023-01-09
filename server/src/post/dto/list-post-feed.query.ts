@@ -1,4 +1,4 @@
-import { IsIn, IsInt, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsInt, IsOptional, IsString, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { Type } from 'class-transformer';
@@ -15,21 +15,21 @@ export class ListPostFeedQuery extends PaginationQuery {
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsInt()
-  @Type(() => Number)
-  userId: number;
+  @IsUUID()
+  @Type(() => String)
+  userId: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsInt()
-  @Type(() => Number)
-  zoneId: number;
+  @IsUUID()
+  @Type(() => String)
+  zoneId: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsInt()
-  @Type(() => Number)
-  channelId: number;
+  @IsUUID()
+  @Type(() => String)
+  channelId: string;
 
   @ApiProperty({
     required: false,

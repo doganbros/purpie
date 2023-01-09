@@ -8,10 +8,10 @@ import { ZoneRole } from './ZoneRole.entity';
 @Entity('user_zone')
 export class UserZone extends RecordEntity {
   @Column()
-  userId: number;
+  userId: string;
 
   @Column()
-  zoneId: number;
+  zoneId: string;
 
   @ManyToOne(() => User, (user) => user.zones, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })

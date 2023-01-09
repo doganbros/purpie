@@ -61,7 +61,7 @@ export interface UserRole {
 }
 
 export interface UserBasic {
-  id: number;
+  id: string;
   fullName: string;
   userName: string;
   email: string;

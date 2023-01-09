@@ -4,7 +4,7 @@ import { SoftEntity } from 'types/SoftEntity';
 
 export class UserProfile {
   @ApiProperty()
-  id: number;
+  id: string;
 
   @ApiProperty()
   fullName: string;
@@ -38,7 +38,7 @@ export class UserProfile {
 }
 
 export interface UserTokenPayload {
-  id: number;
+  id: string;
   refreshTokenId?: string;
 }
 

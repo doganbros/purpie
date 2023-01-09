@@ -17,7 +17,7 @@ export class PostSavedService {
   ) {}
 
   createSavedPost(
-    userId: number,
+    userId: string,
     info: CreateSavedPostDto,
   ): Promise<SavedPost> {
     return this.savedPostRepository
@@ -29,7 +29,7 @@ export class PostSavedService {
   }
 
   listSavedPost(
-    userId: number,
+    userId: string,
     query: PaginationQuery,
   ): Promise<PaginationResponse<SavedPost>> {
     return this.savedPostRepository
@@ -124,7 +124,7 @@ export class PostSavedService {
       .paginate(query);
   }
 
-  removeSavedPost(userId: number, postId: number): Promise<DeleteResult> {
+  removeSavedPost(userId: string, postId: string): Promise<DeleteResult> {
     return this.savedPostRepository.delete({ userId, postId });
   }
 }

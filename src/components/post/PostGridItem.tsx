@@ -11,7 +11,7 @@ import { UserAvatar } from '../utils/Avatars/UserAvatar';
 
 interface PostGridItemProps {
   post: Post;
-  onClickPlay: (id: number) => any;
+  onClickPlay: (id: string) => any;
 }
 
 const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {

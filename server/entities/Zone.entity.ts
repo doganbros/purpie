@@ -39,8 +39,8 @@ export class Zone extends RecordEntity {
   @JoinColumn({ name: 'createdById' })
   createdBy: User;
 
-  @Column({ type: 'int' })
-  createdById: number;
+  @Column({ type: 'uuid' })
+  createdById: string;
 
   @OneToMany(() => UserZone, (userZone) => userZone.zone)
   userZone: Array<UserZone>;

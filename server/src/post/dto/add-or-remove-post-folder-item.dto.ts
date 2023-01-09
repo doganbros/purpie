@@ -1,12 +1,12 @@
-import { IsInt } from 'class-validator';
+import { IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AddOrRemovePostFolderItemDto {
   @ApiProperty()
-  @IsInt()
-  folderId: number;
+  @IsUUID()
+  folderId: string;
 
   @ApiProperty()
-  @IsInt()
-  postId: number;
+  @IsUUID()
+  postId: string;
 }

@@ -8,7 +8,7 @@ import EllipsesOverflowText from '../EllipsesOverflowText';
 import { ChannelAvatar } from '../Avatars/ChannelAvatar';
 
 interface ChannelListItemProps {
-  id: number;
+  id: string;
   zoneSubdomain: string;
   name: string;
   displayPhoto: string;

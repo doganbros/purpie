@@ -21,7 +21,7 @@ import { InvitationResponseType, InvitationType } from '../../models/utils';
 import { User } from './auth.types';
 
 export interface InvitationListItem {
-  id: number;
+  id: string;
   createdOn: Date;
   createdBy: User;
   zone: InvitationZone;
@@ -30,7 +30,7 @@ export interface InvitationListItem {
 }
 
 export interface InvitationZone {
-  id: number;
+  id: string;
   createdOn: Date;
   name: string;
   displayPhoto: string;
@@ -40,7 +40,7 @@ export interface InvitationZone {
 }
 
 export interface InvitationChannel {
-  id: number;
+  id: string;
   createdOn: Date;
   name: string;
   displayPhoto: string;
@@ -50,7 +50,7 @@ export interface InvitationChannel {
 }
 
 export interface InvitationResponse {
-  id: number;
+  id: string;
   response: InvitationResponseType;
   type: InvitationType;
 }

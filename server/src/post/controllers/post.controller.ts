@@ -5,7 +5,7 @@ import {
   Get,
   NotFoundException,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Put,
   Query,
@@ -132,7 +132,7 @@ export class PostController {
   })
   @IsAuthenticated()
   async getFeedById(
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param('postId', ParseUUIDPipe) postId: string,
     @CurrentUser() user: UserTokenPayload,
   ) {
     const result = await this.postService.getPostById(user.id, postId);
@@ -149,7 +149,7 @@ export class PostController {
   @Put('update/:postId')
   @IsAuthenticated()
   async editPostById(
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param('postId', ParseUUIDPipe) postId: string,
     @CurrentUser() user: UserTokenPayload,
     @Body() editPostPayload: EditPostDto,
   ) {
@@ -170,7 +170,7 @@ export class PostController {
     ),
   })
   async removePostById(
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param('postId', ParseUUIDPipe) postId: string,
     @CurrentUser() user: UserTokenPayload,
   ) {
     const result = await this.postService.removePost(user.id, postId);
@@ -194,7 +194,7 @@ export class PostController {
     ),
   })
   async removePostVideo(
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param('postId', ParseUUIDPipe) postId: string,
     @Param('videoName') videoName: string,
     @CurrentUser() user: UserTokenPayload,
   ) {
@@ -207,7 +207,7 @@ export class PostController {
   @IsAuthenticated()
   getFeaturedPost(
     @CurrentUser() user: UserTokenPayload,
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('userId', ParseUUIDPipe) userId: string,
   ) {
     return this.postService.getFeaturedPost(userId, user.id);
   }

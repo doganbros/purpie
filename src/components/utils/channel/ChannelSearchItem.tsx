@@ -20,7 +20,7 @@ const ChannelSearchItem: FC<ChannelSearchItemProps> = ({ channel }) => {
     },
   } = useSelector((state: AppState) => state);
 
-  const isFollowing = (id: number) => !!data.find((c) => c.channel.id === id);
+  const isFollowing = (id: string) => !!data.find((c) => c.channel.id === id);
 
   return (
     <Box direction="row" align="center" gap="small" key={channel.id}>

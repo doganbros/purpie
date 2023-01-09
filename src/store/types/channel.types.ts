@@ -35,12 +35,12 @@ import { UtilActionParams } from './util.types';
 import { ZoneActionParams } from './zone.types';
 
 export interface ChannelBasic {
-  id: number;
+  id: string;
   name: string;
   description: string;
   public: boolean;
   zone?: {
-    id: number;
+    id: string;
     name: string;
     subdomain: string;
     public: boolean;
@@ -50,12 +50,12 @@ export interface ChannelBasic {
 export interface ChannelListItem extends ChannelBasic {
   displayPhoto: string | undefined;
   createdBy?: User;
-  zoneId: number;
+  zoneId: string;
 }
 
 export interface UserChannelListItem {
   channelRole: any;
-  id?: number | null;
+  id?: string | null;
   createdOn?: Date | null;
   channel: ChannelListItem;
   displayPhoto: string | null;
@@ -69,7 +69,7 @@ export interface UserChannelPermissionList {
 }
 
 export interface ChannelUser {
-  id: number;
+  id: string;
   createdOn: Date;
   user: User;
 }
@@ -79,7 +79,7 @@ export interface UserChannelDetail extends UserChannelListItem {
 }
 
 export interface ChannelSearchOptions {
-  zoneId?: number;
+  zoneId?: string;
 }
 
 export interface ChannelSearchParams extends ChannelSearchOptions {
@@ -121,7 +121,7 @@ export interface CreateChannelPayload {
 export interface UpdateChannelPayload {
   name: string;
   description: string;
-  id: number;
+  id: string;
   public: boolean;
 }
 
@@ -140,7 +140,7 @@ export type ChannelActionParams =
     }
   | {
       type: typeof JOIN_CHANNEL_REQUESTED;
-      payload: number;
+      payload: string;
     }
   | {
       type: typeof CREATE_CHANNEL_REQUESTED;
@@ -168,7 +168,7 @@ export type ChannelActionParams =
   | {
       type: typeof UPDATE_CHANNEL_PHOTO_SUCCESS;
       payload: string;
-      channelId: number;
+      channelId: string;
     }
   | {
       type: typeof GET_CHANNEL_USERS_SUCCESS;

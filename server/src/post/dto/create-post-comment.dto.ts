@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreatePostCommentDto {
@@ -8,11 +8,11 @@ export class CreatePostCommentDto {
   comment: string;
 
   @ApiProperty()
-  @IsInt()
-  postId: number;
+  @IsUUID()
+  postId: string;
 
   @ApiProperty({ description: 'If reply specify the parent post.' })
-  @IsInt()
+  @IsUUID()
   @IsOptional()
-  parentId?: number;
+  parentId?: string;
 }

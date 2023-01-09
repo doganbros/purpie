@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { recordEntityColumns } from './data/record-entity';
 
-
 export class Client1629235524265 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropColumn('zone', 'apiKey');
@@ -81,7 +80,7 @@ export class Client1629235524265 implements MigrationInterface {
           },
           {
             name: 'createdById',
-            type: 'int',
+            type: 'uuid',
           },
         ],
       }),

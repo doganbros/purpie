@@ -23,7 +23,7 @@ dayjs.extend(LocalizedFormat);
 
 interface CommentBaseProps {
   comment: PostComment;
-  postId: number;
+  postId: string;
 }
 
 const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {

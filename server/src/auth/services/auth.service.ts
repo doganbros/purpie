@@ -193,7 +193,7 @@ export class AuthService {
     return true;
   }
 
-  async removeRefreshToken(userId: number, refreshTokenId: string) {
+  async removeRefreshToken(userId: string, refreshTokenId: string) {
     const userRefreshToken = await this.userRefreshTokenRepository.findOne({
       where: { id: refreshTokenId, userId },
     });
@@ -205,7 +205,7 @@ export class AuthService {
     return this.userRepository.count();
   }
 
-  getUserProfile(userId: number) {
+  getUserProfile(userId: string) {
     return this.userRepository
       .createQueryBuilder('user')
       .select([
@@ -272,7 +272,7 @@ export class AuthService {
         }),
       );
 
-    if (typeof identifier === 'number')
+    if (typeof identifier === 'string' && !identifier.includes('@'))
       baseQuery.andWhere('user.id = :identifier');
     else {
       baseQuery.andWhere(
@@ -315,7 +315,7 @@ export class AuthService {
     });
   }
 
-  async verifyResendMailVerificationToken(userId: number) {
+  async verifyResendMailVerificationToken(userId: string) {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
@@ -462,7 +462,7 @@ export class AuthService {
   }
 
   async changePassword(
-    userId: number,
+    userId: string,
     changePasswordDto: ChangePasswordDto,
   ): Promise<boolean> {
     if (changePasswordDto.newPassword !== changePasswordDto.confirmNewPassword)

@@ -15,15 +15,15 @@ export class PostCommentLike1645634323730 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'postId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'commentId',
-            type: 'int',
+            type: 'uuid',
           },
         ],
         uniques: [

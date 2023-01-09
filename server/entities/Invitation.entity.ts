@@ -22,15 +22,15 @@ export class Invitation extends RecordEntity {
   zone: Zone;
 
   @Column({ nullable: true })
-  channelId: number;
+  channelId: string;
 
   @Column({ nullable: true })
-  zoneId: number;
+  zoneId: string;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'createdById' })
   createdBy: User;
 
   @Column({ nullable: true })
-  createdById: number;
+  createdById: string;
 }

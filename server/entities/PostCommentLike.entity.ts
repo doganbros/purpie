@@ -12,19 +12,19 @@ export class PostCommentLike extends RecordEntity {
   user: User;
 
   @Column()
-  userId: number;
+  userId: string;
 
   @ManyToOne(() => Post, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'postId' })
   post: Post;
 
   @Column()
-  postId: number;
+  postId: string;
 
   @ManyToOne(() => PostComment, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'commentId' })
   postComment: PostComment;
 
   @Column()
-  commentId: number;
+  commentId: string;
 }

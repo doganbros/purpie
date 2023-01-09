@@ -40,7 +40,7 @@ const MeetingInvitation: FC = () => {
     );
   };
 
-  const removeUserInvitation = (id: number) => {
+  const removeUserInvitation = (id: string) => {
     dispatch(removeUserFromInvitationsAction(id));
   };
 

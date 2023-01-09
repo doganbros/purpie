@@ -7,8 +7,8 @@ import { AppState } from '../../../store/reducers/root.reducer';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 interface FolderListProps {
-  postId: number;
-  selectedFolderIds: number[];
+  postId: string;
+  selectedFolderIds: string[];
 }
 
 export const FolderList: FC<FolderListProps> = ({

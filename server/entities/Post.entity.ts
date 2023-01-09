@@ -40,14 +40,14 @@ export class Post extends RecordEntity {
   createdBy: User;
 
   @Column({ nullable: true })
-  createdById: number;
+  createdById: string;
 
   @ManyToOne(() => Channel, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'channelId' })
   channel: Channel;
 
   @Column({ nullable: true })
-  channelId: number;
+  channelId: string;
 
   @Column({ default: false })
   streaming: boolean;
@@ -77,7 +77,7 @@ export class Post extends RecordEntity {
   postReaction: PostReaction;
 
   @Column({ nullable: true })
-  postReactionId: number;
+  postReactionId: string;
 
   @Column({ default: true })
   allowDislike: boolean;

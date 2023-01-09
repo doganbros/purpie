@@ -7,7 +7,7 @@ import { Post } from './Post.entity';
 @Entity()
 export class StreamLog extends RecordEntity {
   @Column({ nullable: true })
-  userId: number;
+  userId: string;
 
   @Column()
   slug: string;

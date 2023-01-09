@@ -22,7 +22,7 @@ export class FolderService {
     private postService: PostService,
   ) {}
 
-  async getUserPostFolders(userId: number) {
+  async getUserPostFolders(userId: string) {
     return this.folderRepository
       .createQueryBuilder('folder')
       .addSelect(
@@ -39,7 +39,7 @@ export class FolderService {
       .getMany();
   }
 
-  async createFolder(userId: number, info: CreatePostFolderDto) {
+  async createFolder(userId: string, info: CreatePostFolderDto) {
     const payload: Partial<PostFolder> = {
       title: info.title,
       createdById: userId,
@@ -60,7 +60,7 @@ export class FolderService {
     return folder;
   }
 
-  async updateFolder(userId: number, info: UpdatePostFolderDto) {
+  async updateFolder(userId: string, info: UpdatePostFolderDto) {
     const payload: Partial<PostFolder> = {};
 
     if (info.title) {
@@ -73,7 +73,7 @@ export class FolderService {
     );
   }
 
-  async removeFolder(userId: number, folderId: number) {
+  async removeFolder(userId: string, folderId: string) {
     const folder = await this.folderRepository.findOne({
       where: { id: folderId },
       select: ['id', 'createdById'],
@@ -94,7 +94,7 @@ export class FolderService {
     return this.folderRepository.delete({ id: folderId });
   }
 
-  async addFolderItem(userId: number, info: AddOrRemovePostFolderItemDto) {
+  async addFolderItem(userId: string, info: AddOrRemovePostFolderItemDto) {
     const folder = await this.folderRepository.findOne({
       where: { id: info.folderId },
       select: ['id', 'createdById'],
@@ -128,7 +128,7 @@ export class FolderService {
     return folderItem;
   }
 
-  async removeFolderItem(userId: number, info: AddOrRemovePostFolderItemDto) {
+  async removeFolderItem(userId: string, info: AddOrRemovePostFolderItemDto) {
     const folderItem = await this.folderItemRepository.findOne({
       where: { postId: info.postId, folderId: info.folderId },
       relations: ['folder'],

@@ -32,8 +32,8 @@ export class Channel extends RecordEntity {
   @JoinColumn({ name: 'createdById' })
   createdBy: User;
 
-  @Column('int')
-  createdById: number;
+  @Column('uuid')
+  createdById: string;
 
   @Column({ nullable: true })
   displayPhoto: string;
@@ -42,8 +42,8 @@ export class Channel extends RecordEntity {
   @JoinColumn({ name: 'zoneId' })
   zone: Zone;
 
-  @Column('int')
-  zoneId: number;
+  @Column('uuid')
+  zoneId: string;
 
   @OneToMany(() => UserChannel, (userChannel) => userChannel.channel)
   userChannel: Array<UserChannel>;

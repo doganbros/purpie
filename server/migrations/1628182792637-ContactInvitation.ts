@@ -1,6 +1,4 @@
 import { baseMeetingConfig } from 'entities/data/base-meeting-config';
-import { Zone } from 'entities/Zone.entity';
-import { Channel } from 'entities/Channel.entity';
 import {
   MigrationInterface,
   QueryRunner,
@@ -19,11 +17,11 @@ export class ContactInvitation1628182792637 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'inviteeId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'inviterId',
-            type: 'int',
+            type: 'uuid',
           },
         ],
         uniques: [
@@ -128,7 +126,7 @@ export class ContactInvitation1628182792637 implements MigrationInterface {
       'meeting',
       new TableColumn({
         name: 'adminId',
-        type: 'int',
+        type: 'uuid',
       }),
     );
     await queryRunner.createForeignKey(
@@ -142,7 +140,6 @@ export class ContactInvitation1628182792637 implements MigrationInterface {
     );
 
     await queryRunner.dropColumn('meeting', 'public');
-    await queryRunner.dropColumn('meeting', 'userContactExclusive');
     await queryRunner.dropColumn('meeting', 'config');
     await queryRunner.dropColumn('user', 'userMeetingConfig');
   }

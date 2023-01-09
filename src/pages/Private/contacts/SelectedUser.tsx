@@ -10,7 +10,7 @@ import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated
 
 interface SelectedUserProps {
   user: User | null;
-  contactId?: number;
+  contactId?: string;
 }
 
 const SelectedUser: FC<SelectedUserProps> = ({ user, contactId }) => {

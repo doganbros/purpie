@@ -69,8 +69,8 @@ export const listFolderAction = (): FolderAction => {
 };
 
 export const addFolderItemAction = (
-  folderId: number,
-  postId: number
+  folderId: string,
+  postId: string
 ): FolderAction => {
   return async (dispatch) => {
     dispatch({
@@ -92,8 +92,8 @@ export const addFolderItemAction = (
 };
 
 export const removeFolderItemAction = (
-  folderId: number,
-  postId: number
+  folderId: string,
+  postId: string
 ): FolderAction => {
   return async (dispatch) => {
     dispatch({

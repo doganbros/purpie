@@ -12,7 +12,7 @@ dayjs.extend(relativeTime);
 
 interface PostListItemProps {
   post: Post;
-  onClickPlay: (id: number) => any;
+  onClickPlay: (id: string) => any;
 }
 
 const PostListItem: FC<PostListItemProps> = ({ post, onClickPlay }) => {
