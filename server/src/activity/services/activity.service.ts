@@ -155,7 +155,6 @@ export class ActivityService {
       )
       .getSql();
 
-    console.log(`${baseQuery} UNION ${baseQuery2}`);
     return entityManager
       .query(`${baseQuery} UNION ${baseQuery2}`)
       .then((t) => t);
