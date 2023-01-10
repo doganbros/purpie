@@ -134,7 +134,7 @@ export class UserChannelService {
     return this.getUserAllChannels(userId);
   }
 
-  async getUserAllChannels(userId: number) {
+  async getUserAllChannels(userId: string) {
     return this.userChannelRepository
       .createQueryBuilder('user_channel')
       .select([
