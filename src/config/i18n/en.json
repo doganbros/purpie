@@ -520,13 +520,14 @@
     "noZone": "You don't seem to have a zone that you can edit",
     "zone": "Zone",
     "cancel": "Cancel",
-    "submit": "Submit",
+    "submit": "SUBMIT",
     "selectZone": "Select Zone",
     "selectChannel": "Select Channel",
     "changesSaved": "Changes saved successfully",
     "documentTitle":"Settings - Purpie",
     "passwordChanged":"Password changed successfully",
-    "chooseProfilePicture": "Choose Profile Picture"
+    "chooseProfilePicture": "Choose Profile Picture",
+    "browse":"Browse"
   },
   "ContactsToFollow": {
     "title": "People to add",
