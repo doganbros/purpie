@@ -62,7 +62,6 @@ const ChannelSettings: () => SettingsData = () => {
         {
           key: 'channelName',
           title: '',
-          description: '',
           value: 'value',
           component: (
             <Box
@@ -226,7 +225,6 @@ const ChannelSettings: () => SettingsData = () => {
       {
         key: 'channelName',
         title: t('settings.channelName'),
-        description: t('settings.changeChannelName'),
         value: 'value',
         component: (
           <Box
@@ -239,6 +237,7 @@ const ChannelSettings: () => SettingsData = () => {
             pad="xxsmall"
           >
             <TextInput
+              placeholder={t('settings.channelNamePlaceholder')}
               value={channelPayload.name}
               plain
               focusIndicator={false}
@@ -255,7 +254,6 @@ const ChannelSettings: () => SettingsData = () => {
       {
         key: 'channelTitle',
         title: t('settings.channelDescription'),
-        description: t('settings.changeChannelDescription'),
         value: 'value',
         component: (
           <Box
@@ -268,6 +266,7 @@ const ChannelSettings: () => SettingsData = () => {
             pad="xxsmall"
           >
             <TextInput
+              placeholder={t('settings.channelDescriptionPlaceholder')}
               value={channelPayload.description}
               plain
               focusIndicator={false}
