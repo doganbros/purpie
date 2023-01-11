@@ -29,8 +29,8 @@ export class VideoService {
   ) {}
 
   async validateUserChannel(
-    userId: number,
-    channelId: number,
+    userId: string,
+    channelId: string,
   ): Promise<UserChannel> {
     const userChannel = await this.userChannelRepository.findOne({
       where: { channelId, userId },
@@ -57,7 +57,7 @@ export class VideoService {
     return videoPost;
   }
 
-  async createVideoTags(videoId: number, description?: string) {
+  async createVideoTags(videoId: string, description?: string) {
     const tags = parsePostTags(description);
 
     if (tags?.length) {
@@ -144,7 +144,7 @@ export class VideoService {
       .getOne();
   }
 
-  async removeVideoPost(userId: number, videoId: number) {
+  async removeVideoPost(userId: string, videoId: string) {
     return this.postRepository
       .delete({
         id: videoId,

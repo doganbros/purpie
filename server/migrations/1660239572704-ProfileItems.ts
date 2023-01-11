@@ -15,11 +15,11 @@ export class ProfileItems1660239572704 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'postId',
-            type: 'int',
+            type: 'uuid',
           },
         ],
         uniques: [

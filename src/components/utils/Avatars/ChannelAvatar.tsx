@@ -6,7 +6,7 @@ import { apiURL } from '../../../config/http';
 interface ChannelAvatarProps {
   name?: string;
   src?: string;
-  id: number;
+  id: string;
   textProps?: TextExtendedProps;
 }
 

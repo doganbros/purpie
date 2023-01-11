@@ -45,7 +45,12 @@ export class PostService {
     private postVideoRepository: Repository<PostVideo>,
   ) {}
 
-  getOnePost(userId: number, identity: number | string, preview = false) {
+  getOnePost(
+    userId: string,
+    postId: string | null,
+    slug: string | null,
+    preview = false,
+  ) {
     return this.postRepository
       .createQueryBuilder('post')
       .select([
@@ -79,12 +84,9 @@ export class PostService {
         'contact.userId = post.createdById AND contact.contactUserId = :userId',
         { userId },
       )
-      .where(
-        typeof identity === 'string'
-          ? 'post.slug = :identity'
-          : 'post.id = :identity',
-        { identity },
-      )
+      .where(postId ? 'post.id = :identity' : 'post.slug = :identity', {
+        identity: postId || slug,
+      })
       .andWhere(
         new Brackets((qb) => {
           qb.where('post.public = true').orWhere(
@@ -131,7 +133,7 @@ export class PostService {
       .getOne();
   }
 
-  async dropPostVideosByUser(userId: number, identity: string | number) {
+  async dropPostVideosByUser(userId: string, identity: string | number) {
     const filter: Record<string, any> = { createdById: userId };
     if (typeof identity === 'string') filter.slug = identity;
     else filter.id = identity;
@@ -165,12 +167,12 @@ export class PostService {
     return true;
   }
 
-  async removePost(userId: number, postId: number) {
+  async removePost(userId: string, postId: string) {
     await this.dropPostVideosByUser(userId, postId);
     return this.postRepository.delete({ createdById: userId, id: postId });
   }
 
-  async removePostVideo(postId: number, userId: number, videoName: string) {
+  async removePostVideo(postId: string, userId: string, videoName: string) {
     const post = await this.postRepository.findOne({
       where: { createdById: userId, id: postId },
     });
@@ -201,11 +203,11 @@ export class PostService {
   }
 
   async getPostVideoForUserBySlugAndFileName(
-    userId: number,
+    userId: string,
     slug: string,
     fileName: string,
   ) {
-    const post = await this.getOnePost(userId, slug, true);
+    const post = await this.getOnePost(userId, null, slug, true);
 
     if (!post)
       throw new NotFoundException(
@@ -227,7 +229,7 @@ export class PostService {
       .getOne();
   }
 
-  basePost(query: Partial<ListPostFeedQuery>, userId: number) {
+  basePost(query: Partial<ListPostFeedQuery>, userId: string) {
     const builder = this.postRepository
       .createQueryBuilder('post')
       .addSelect(
@@ -382,7 +384,7 @@ export class PostService {
     return builder;
   }
 
-  baseChannelPosts(query: PaginationQuery, userId: number) {
+  baseChannelPosts(query: PaginationQuery, userId: string) {
     return this.basePost(query, userId)
       .addSelect([
         'zone.id',
@@ -428,11 +430,11 @@ export class PostService {
   }
 
   getUserFeedSelection(
-    userId: number,
+    userId: string,
     query: Partial<ListPostFeedQuery>,
     includePublic = false,
     includePublicZoneChannel = false,
-    createdByUserId?: number,
+    createdByUserId?: string,
   ) {
     const baseSelection = this.basePost(query, userId)
       .addSelect([
@@ -513,7 +515,7 @@ export class PostService {
     return baseSelection;
   }
 
-  getPostById(userId: number, postId: number) {
+  getPostById(userId: string, postId: string) {
     return this.getUserFeedSelection(userId, {}, true, true)
       .andWhere('post.id = :postId', { postId })
       .getOne();
@@ -521,7 +523,7 @@ export class PostService {
 
   async getFeedList(
     query: ListPostFeedQuery,
-    userId: number,
+    userId: string,
   ): Promise<PaginationResponse<Post>> {
     if (query.userId)
       return this.getUserFeedSelection(
@@ -550,7 +552,7 @@ export class PostService {
     return this.getUserFeedSelection(userId, query, true, true).paginate(query);
   }
 
-  async getFeaturedPost(userId: number, currentUserId: number) {
+  async getFeaturedPost(userId: string, currentUserId: string) {
     const featuredPost = await this.featuredPostRepository
       .createQueryBuilder('featuredPost')
       .select(['featuredPost.id', 'featuredPost.createdOn'])
@@ -571,7 +573,7 @@ export class PostService {
     return post;
   }
 
-  editPost(postId: number, userId: number, payload: EditPostDto) {
+  editPost(postId: string, userId: string, payload: EditPostDto) {
     const editPayload: Partial<EditPostDto> = {};
 
     if (payload.title) editPayload.title = payload.title;
@@ -590,7 +592,7 @@ export class PostService {
     );
   }
 
-  async videoViewStats(userId: number, payload: VideoViewStats) {
+  async videoViewStats(userId: string, payload: VideoViewStats) {
     const viewDate = new Date();
     const { VIDEO_VIEW_COUNT_HOUR_INTERVAL = 12 } = process.env;
 
@@ -617,8 +619,8 @@ export class PostService {
       .save();
   }
 
-  async validatePost(userId: number, postId: number) {
-    const post = await this.getOnePost(userId, postId, true);
+  async validatePost(userId: string, postId: string) {
+    const post = await this.getOnePost(userId, postId, null, true);
 
     if (!post)
       throw new NotFoundException(

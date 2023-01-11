@@ -10,7 +10,7 @@ import Replies from './Replies';
 import { UserAvatar } from '../../../../components/utils/Avatars/UserAvatar';
 
 interface CommentsProps {
-  postId: number;
+  postId: string;
 }
 
 const CommentList: FC<CommentsProps> = ({ postId }) => {

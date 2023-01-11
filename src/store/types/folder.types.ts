@@ -17,9 +17,9 @@ import { UtilActionParams } from './util.types';
 import { Post } from './post.types';
 
 export interface Folder {
-  createdById: number;
+  createdById: string;
   createdOn: Date;
-  id: number;
+  id: string;
   itemCount: number;
   folderItems: FolderItem[];
   title: string;
@@ -27,10 +27,10 @@ export interface Folder {
 }
 
 export interface FolderItem {
-  id: number;
-  postId: number;
+  id: string;
+  postId: string;
   post: Post;
-  folderId: number;
+  folderId: string;
 }
 
 export interface CreateFolderPayload {
@@ -67,7 +67,7 @@ export type FolderActionParams =
     }
   | {
       type: typeof REMOVE_FOLDER_ITEM_SUCCESS;
-      payload: { postId: number; folderId: number };
+      payload: { postId: string; folderId: string };
     }
   | {
       type:

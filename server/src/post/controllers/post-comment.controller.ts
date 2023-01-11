@@ -5,7 +5,7 @@ import {
   ForbiddenException,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Put,
   Query,
@@ -96,7 +96,7 @@ export class PostCommentController {
   @IsAuthenticated()
   async listComments(
     @Query() query: PaginationQuery,
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param('postId', ParseUUIDPipe) postId: string,
     @Param() params: Record<string, any>,
     @CurrentUser() user: UserTokenPayload,
   ) {
@@ -156,7 +156,7 @@ export class PostCommentController {
     @Param('parentId') parentId: string,
     @CurrentUser() user: UserTokenPayload,
   ) {
-    await this.postService.validatePost(user.id, Number(postId));
+    await this.postService.validatePost(user.id, postId);
 
     return this.postCommentService.getCommentCount(
       Number(postId),
@@ -181,7 +181,7 @@ export class PostCommentController {
   ) {
     const result = await this.postCommentService.removeComment(
       user.id,
-      Number(commentId),
+      commentId,
     );
 
     return result.affected === 0 ? 'OK' : 'Created';
@@ -231,8 +231,8 @@ export class PostCommentController {
   @IsAuthenticated()
   async getCommentLikes(
     @Query() query: PaginationQuery,
-    @Param('postId', ParseIntPipe) postId: number,
-    @Param('commentId', ParseIntPipe) commentId: number,
+    @Param('postId', ParseUUIDPipe) postId: string,
+    @Param('commentId', ParseUUIDPipe) commentId: string,
     @CurrentUser() user: UserTokenPayload,
   ) {
     await this.postService.validatePost(user.id, postId);
@@ -249,7 +249,7 @@ export class PostCommentController {
   @IsAuthenticated()
   async removeCommentLike(
     @CurrentUser() user: UserTokenPayload,
-    @Param('commentId', ParseIntPipe) commentId: number,
+    @Param('commentId', ParseUUIDPipe) commentId: string,
   ) {
     const result = await this.postCommentService.removeCommentLike(
       user.id,

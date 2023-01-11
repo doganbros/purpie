@@ -59,7 +59,7 @@ export class ChannelZoneRole1642937884729 implements MigrationInterface {
       'zone_role',
       new TableColumn({
         name: 'zoneId',
-        type: 'int',
+        type: 'uuid',
         isNullable: true,
       }),
     );
@@ -67,7 +67,7 @@ export class ChannelZoneRole1642937884729 implements MigrationInterface {
       'channel_role',
       new TableColumn({
         name: 'channelId',
-        type: 'int',
+        type: 'uuid',
         isNullable: true,
       }),
     );

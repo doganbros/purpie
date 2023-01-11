@@ -26,7 +26,7 @@ export class PostReaction1641815577475 implements MigrationInterface {
           },
           {
             name: 'postId',
-            type: 'int',
+            type: 'uuid',
             isUnique: true,
           },
         ],
@@ -47,7 +47,7 @@ export class PostReaction1641815577475 implements MigrationInterface {
       'post',
       new TableColumn({
         name: 'postReactionId',
-        type: 'int',
+        type: 'uuid',
         isNullable: true,
       }),
     );

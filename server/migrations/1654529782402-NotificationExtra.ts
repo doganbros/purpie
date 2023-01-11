@@ -1,4 +1,9 @@
-import { MigrationInterface, QueryRunner, TableColumn, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  TableColumn,
+  TableForeignKey,
+} from 'typeorm';
 
 export class NotificationExtra1654529782402 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -6,7 +11,7 @@ export class NotificationExtra1654529782402 implements MigrationInterface {
       'notification',
       new TableColumn({
         name: 'postCommentId',
-        type: 'int',
+        type: 'uuid',
         isNullable: true,
       }),
     );

@@ -43,7 +43,7 @@ export class CreateMeetingDto {
   @ApiProperty()
   @IsInt()
   @IsOptional()
-  channelId?: number;
+  channelId?: string;
 
   @ApiProperty()
   @ValidateIf((o) => {

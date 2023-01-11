@@ -6,10 +6,10 @@ import { User } from './User.entity';
 @Unique(['userId', 'contactUserId'])
 export class Contact extends RecordEntity {
   @Column()
-  userId: number;
+  userId: string;
 
   @Column()
-  contactUserId: number;
+  contactUserId: string;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })

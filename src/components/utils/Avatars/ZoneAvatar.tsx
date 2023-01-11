@@ -9,7 +9,7 @@ interface AvatarItemProps {
   onClickEdit?: () => void;
   editAvatar?: boolean;
   outerCircle?: boolean;
-  id: number;
+  id: string;
   textProps?: TextExtendedProps;
   size?: string;
 }

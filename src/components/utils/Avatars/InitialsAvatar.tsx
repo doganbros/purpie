@@ -3,7 +3,7 @@ import { Avatar, AvatarExtendedProps, Text, TextExtendedProps } from 'grommet';
 import { getColorPairFromId } from '../../../helpers/utils';
 
 interface InitialsAvatarProps extends Omit<AvatarExtendedProps, 'id'> {
-  id: number;
+  id: string;
   value?: string;
   textProps?: TextExtendedProps;
   roundSize?: string;

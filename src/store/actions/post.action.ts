@@ -64,7 +64,7 @@ import {
   PostSearchParams,
 } from '../types/post.types';
 
-export const removePostAction = (payload: { postId: number }): PostAction => {
+export const removePostAction = (payload: { postId: string }): PostAction => {
   return async (dispatch) => {
     try {
       await PostService.removePost(payload.postId);
@@ -111,7 +111,7 @@ export const getFeedListAction = (payload: FeedPayload): PostAction => {
   };
 };
 
-export const getPostDetailAction = (postId: number): PostAction => {
+export const getPostDetailAction = (postId: string): PostAction => {
   return async (dispatch) => {
     dispatch({
       type: POST_DETAIL_REQUESTED,
@@ -173,7 +173,7 @@ export const closeCreateVideoLayerAction = (): PostAction => {
 };
 
 export const createPostLikeAction = (payload: {
-  postId: number;
+  postId: string;
 }): PostAction => {
   return async (dispatch) => {
     dispatch({
@@ -195,7 +195,7 @@ export const createPostLikeAction = (payload: {
 };
 
 export const removePostLikeAction = (payload: {
-  postId: number;
+  postId: string;
 }): PostAction => {
   return async (dispatch) => {
     dispatch({
@@ -239,8 +239,8 @@ export const searchPostAction = (params: PostSearchParams): PostAction => {
 
 export const createPostCommentAction = (
   comment: string,
-  postId: number,
-  parentId?: number
+  postId: string,
+  parentId?: string
 ): PostAction => {
   return async (dispatch) => {
     dispatch({
@@ -297,8 +297,8 @@ export const updatePostAction = (payload: EditVideoPayload): PostAction => {
 
 export const updatePostCommentAction = (
   comment: string,
-  commentId: number,
-  parentId?: number
+  commentId: string,
+  parentId?: string
 ): PostAction => {
   return async (dispatch) => {
     dispatch({
@@ -329,8 +329,8 @@ export const updatePostCommentAction = (
 };
 
 export const removePostCommentAction = (
-  commentId: number,
-  parentId?: number
+  commentId: string,
+  parentId?: string
 ): PostAction => {
   return async (dispatch) => {
     dispatch({
@@ -403,9 +403,9 @@ export const listPostCommentRepliesAction = (
 };
 
 export const createPostCommentLikeAction = (params: {
-  postId: number;
-  commentId: number;
-  parentId?: number;
+  postId: string;
+  commentId: string;
+  parentId?: string;
 }): PostAction => {
   return async (dispatch) => {
     const { postId, ...payload } = params;
@@ -432,8 +432,8 @@ export const createPostCommentLikeAction = (params: {
 };
 
 export const removePostCommentLikeAction = (payload: {
-  commentId: number;
-  parentId?: number;
+  commentId: string;
+  parentId?: string;
 }): PostAction => {
   return async (dispatch) => {
     dispatch({
@@ -456,7 +456,7 @@ export const removePostCommentLikeAction = (payload: {
 };
 
 export const getFeaturedPostAction = (payload: {
-  userId: number;
+  userId: string;
 }): PostAction => {
   return async (dispatch) => {
     dispatch({

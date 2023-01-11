@@ -34,7 +34,7 @@ const ZoneSettings: () => SettingsData | null = () => {
     name: '',
     description: '',
     subdomain: '',
-    id: userZones?.[0]?.zone?.id || 0,
+    id: userZones?.[0]?.zone?.id || '',
     public: userZones?.[0]?.zone?.public || false,
   });
 
@@ -106,7 +106,7 @@ const ZoneSettings: () => SettingsData | null = () => {
               pad="5px"
             >
               <ZoneAvatar
-                id={selectedZone?.id || 1}
+                id={selectedZone?.id || ''}
                 name={selectedZone?.name}
                 src={selectedZone?.displayPhoto}
               />
@@ -182,7 +182,7 @@ const ZoneSettings: () => SettingsData | null = () => {
         {showAvatarUpload && !(zoneId === null) && (
           <AvatarUpload
             onSubmit={(file: any) => {
-              dispatch(updateZonePhotoAction(file, zoneId || 1));
+              dispatch(updateZonePhotoAction(file, zoneId!));
               setShowAvatarUpload(false);
             }}
             onDismiss={() => {

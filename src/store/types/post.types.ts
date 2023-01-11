@@ -64,11 +64,11 @@ export enum PostType {
 
 export interface Post {
   channel?: ChannelBasic;
-  channelId?: number;
+  channelId?: string;
   createdBy: UserBasic;
   createdOn: Date;
   description: string;
-  id: number;
+  id: string;
   liked: boolean;
   liveStream: boolean;
   public: boolean;
@@ -91,9 +91,9 @@ export interface Post {
 }
 
 export interface PostComment {
-  id: number;
+  id: string;
   comment: string;
-  parentId: number | null;
+  parentId: string | null;
   createdOn: Date;
   updatedOn: Date | null;
   edited: true;
@@ -107,14 +107,14 @@ export interface PostComment {
 export interface CreateVideoPayload {
   title: string;
   description?: string;
-  channelId?: number;
+  channelId?: string;
   public?: boolean;
   userContactExclusive?: boolean;
   videoFile: File;
 }
 
 export interface EditVideoPayload {
-  postId: number;
+  postId: string;
   title: string;
   description?: string;
   public?: boolean;
@@ -131,9 +131,9 @@ export interface FeedPayload {
   sortDirection?: 'ASC' | 'DESC';
   tags?: string;
   public?: boolean;
-  userId?: number;
-  zoneId?: number;
-  channelId?: number;
+  userId?: string;
+  zoneId?: string;
+  channelId?: string;
 }
 
 export interface PostSearchOptions {
@@ -150,11 +150,11 @@ export interface PostSearchParams extends PostSearchOptions {
 export interface ListPostCommentsParams {
   limit?: number;
   skip?: number;
-  postId: number;
+  postId: string;
 }
 
 export interface ListPostCommentRepliesParams extends ListPostCommentsParams {
-  parentId: number;
+  parentId: string;
 }
 
 export interface PostCommentState extends PostComment {
@@ -211,7 +211,7 @@ export type PostActionParams =
         | typeof REMOVE_POST_REQUESTED
         | typeof REMOVE_POST_SUCCESS;
       payload: {
-        postId: number;
+        postId: string;
       };
     }
   | {
@@ -226,8 +226,8 @@ export type PostActionParams =
       type: typeof CREATE_POST_COMMENT_REQUESTED;
       payload: {
         comment: string;
-        postId: number;
-        parentId?: number;
+        postId: string;
+        parentId?: string;
       };
     }
   | {
@@ -240,8 +240,8 @@ export type PostActionParams =
         | typeof UPDATE_POST_COMMENT_SUCCESS;
       payload: {
         comment: string;
-        commentId: number;
-        parentId?: number;
+        commentId: string;
+        parentId?: string;
       };
     }
   | {
@@ -259,8 +259,8 @@ export type PostActionParams =
         | typeof REMOVE_POST_COMMENT_LIKE_REQUESTED
         | typeof REMOVE_POST_COMMENT_LIKE_SUCCESS;
       payload: {
-        commentId: number;
-        parentId?: number;
+        commentId: string;
+        parentId?: string;
       };
     }
   | {
@@ -277,7 +277,7 @@ export type PostActionParams =
     }
   | {
       type: typeof LIST_POST_COMMENT_REPLIES_SUCCESS;
-      payload: PaginatedResponse<PostComment> & { parentId: number };
+      payload: PaginatedResponse<PostComment> & { parentId: string };
     }
   | {
       type: typeof FEED_SUCCESS;
@@ -331,7 +331,7 @@ export type PostActionParams =
     }
   | {
       type: typeof LIST_POST_COMMENT_REPLIES_FAILED;
-      payload: ResponseError & { parentId: number };
+      payload: ResponseError & { parentId: string };
     };
 
 export interface PostDispatch {

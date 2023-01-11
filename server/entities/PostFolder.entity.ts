@@ -13,7 +13,7 @@ export class PostFolder extends RecordEntity {
   createdBy: User;
 
   @Column()
-  createdById: number;
+  createdById: string;
 
   @OneToMany(() => PostFolderItem, (post) => post.folder)
   folderItems: Array<PostFolderItem>;

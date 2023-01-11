@@ -13,7 +13,7 @@ export class UserZoneService {
     private zoneRepository: Repository<Zone>,
   ) {}
 
-  async addUserToZone(userId: number, zoneId: number) {
+  async addUserToZone(userId: string, zoneId: string) {
     return this.userZoneRepository
       .create({
         userId,
@@ -23,7 +23,7 @@ export class UserZoneService {
       .save();
   }
 
-  async getCurrentUserZones(userId: number, subdomain: string | null = null) {
+  async getCurrentUserZones(userId: string, subdomain: string | null = null) {
     const records = await this.zoneRepository
       .createQueryBuilder('zone')
       .select([
@@ -109,7 +109,7 @@ export class UserZoneService {
     return baseQuery.getOne();
   }
 
-  async userExistsInZone(userId: number, zoneId: number) {
+  async userExistsInZone(userId: string, zoneId: string) {
     return this.userZoneRepository.findOne({ where: { userId, zoneId } });
   }
 }

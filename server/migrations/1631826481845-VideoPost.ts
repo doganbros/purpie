@@ -47,11 +47,11 @@ export class VideoPost1631826481845 implements MigrationInterface {
           },
           {
             name: 'createdById',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'channelId',
-            type: 'int',
+            type: 'uuid',
             isNullable: true,
           },
           {

@@ -36,11 +36,11 @@ export class UserZoneGuard implements CanActivate {
 
     if (zoneId) {
       req.userZone = await this.userZoneService.getUserZone(req.user.id, {
-        zoneId: Number.parseInt(zoneId, 10),
+        zoneId,
       });
     } else if (userZoneId) {
       req.userZone = await this.userZoneService.getUserZone(req.user.id, {
-        userZoneId: Number.parseInt(userZoneId, 10),
+        userZoneId,
       });
     } else if (subdomain) {
       req.userZone = await this.userZoneService.getUserZone(req.user.id, {

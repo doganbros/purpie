@@ -4,7 +4,7 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -50,7 +50,7 @@ export class PostFolderController {
   @IsAuthenticated()
   async removePostFolder(
     @CurrentUser() user: UserTokenPayload,
-    @Param('folderId', ParseIntPipe) folderId: number,
+    @Param('folderId', ParseUUIDPipe) folderId: string,
   ) {
     await this.folderService.removeFolder(user.id, folderId);
 

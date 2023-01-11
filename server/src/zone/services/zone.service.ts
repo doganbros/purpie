@@ -39,7 +39,7 @@ export class ZoneService {
     private mailService: MailService,
   ) {}
 
-  async createZone(userId: number, createZoneInfo: CreateZoneDto) {
+  async createZone(userId: string, createZoneInfo: CreateZoneDto) {
     const userZone = await this.userZoneRepository
       .create({
         userId,
@@ -63,7 +63,7 @@ export class ZoneService {
     return userZone;
   }
 
-  async validateJoinPublicZone(userId: number, zoneId: number) {
+  async validateJoinPublicZone(userId: string, zoneId: string) {
     const zone = await this.zoneRepository
       .createQueryBuilder('zone')
       .leftJoin(UserZone, 'user_zone', 'user_zone.zoneId = zone.id')
@@ -77,7 +77,7 @@ export class ZoneService {
     return zone;
   }
 
-  async validateInviteUser(email: string, zoneId: number) {
+  async validateInviteUser(email: string, zoneId: string) {
     const invitation = await this.invitationRepository.findOne({
       where: { email, zoneId },
     });
@@ -103,7 +103,7 @@ export class ZoneService {
       );
   }
 
-  async addUserToZoneInvitation(email: string, zoneId: number, userId: number) {
+  async addUserToZoneInvitation(email: string, zoneId: string, userId: string) {
     return this.invitationRepository
       .create({
         email,
@@ -113,7 +113,7 @@ export class ZoneService {
       .save();
   }
 
-  async removeInvitation(email: string, zoneId: number) {
+  async removeInvitation(email: string, zoneId: string) {
     return this.invitationRepository.delete({ email, zoneId });
   }
 
@@ -126,7 +126,7 @@ export class ZoneService {
     });
   }
 
-  async searchZone(userId: number, query: SearchQuery) {
+  async searchZone(userId: string, query: SearchQuery) {
     return this.zoneRepository
       .createQueryBuilder('zone')
       .select([
@@ -190,18 +190,18 @@ export class ZoneService {
     );
   }
 
-  async deleteZoneById(id: number) {
+  async deleteZoneById(id: string) {
     return this.zoneRepository.delete({ id });
   }
 
-  async changeDisplayPhoto(zoneId: number, fileName: string) {
+  async changeDisplayPhoto(zoneId: string, fileName: string) {
     return this.zoneRepository.update(
       { id: zoneId },
       { displayPhoto: fileName },
     );
   }
 
-  async editZoneById(id: number, editInfo: EditZoneDto) {
+  async editZoneById(id: string, editInfo: EditZoneDto) {
     return this.zoneRepository.update(
       { id },
       pick(editInfo, ['name', 'description', 'subdomain', 'public']),
@@ -249,7 +249,7 @@ export class ZoneService {
     return baseQuery.paginate(query);
   }
 
-  async changeUserZoneRole(zoneId: number, info: UpdateUserZoneRoleDto) {
+  async changeUserZoneRole(zoneId: string, info: UpdateUserZoneRoleDto) {
     const { zoneRoleCode } = info;
     if (zoneRoleCode !== 'SUPER_ADMIN') {
       const remainingSuperAdminCount = await this.userZoneRepository.count({
@@ -275,7 +275,7 @@ export class ZoneService {
     );
   }
 
-  async createZoneRole(zoneId: number, info: ZoneRole) {
+  async createZoneRole(zoneId: string, info: ZoneRole) {
     const existingRoleCodes = await this.zoneRoleRepository.count({
       where: { roleCode: info.roleCode, zoneId },
     });
@@ -289,7 +289,7 @@ export class ZoneService {
     return this.zoneRoleRepository.create({ ...info, zoneId }).save();
   }
 
-  async removeZoneRole(zoneId: number, roleCode: string) {
+  async removeZoneRole(zoneId: string, roleCode: string) {
     const existing = await this.userZoneRepository.count({
       where: { zoneRoleCode: roleCode, zoneId },
     });
@@ -306,7 +306,7 @@ export class ZoneService {
   }
 
   async editZoneRolePermissions(
-    zoneId: number,
+    zoneId: string,
     roleCode: any,
     info: Partial<UpdateZonePermission>,
   ) {

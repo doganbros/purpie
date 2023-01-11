@@ -20,7 +20,7 @@ export class ActivityService {
     private notificationRepository: Repository<Notification>,
   ) {}
 
-  getPublicChannelSuggestions(userId: number, query: PaginationQuery) {
+  getPublicChannelSuggestions(userId: string, query: PaginationQuery) {
     return this.channelRepository
       .createQueryBuilder('channel')
       .select([
@@ -64,7 +64,7 @@ export class ActivityService {
       .paginateRaw(query);
   }
 
-  getPublicZoneSuggestions(userId: number, query: PaginationQuery) {
+  getPublicZoneSuggestions(userId: string, query: PaginationQuery) {
     return this.zoneRepository
       .createQueryBuilder('zone')
       .select([
@@ -100,7 +100,7 @@ export class ActivityService {
       .paginateRaw(query);
   }
 
-  getContactSuggestions(userId: number) {
+  getContactSuggestions(userId: string) {
     const entityManager = getManager();
 
     const baseQuery = this.userRepository
@@ -116,15 +116,15 @@ export class ActivityService {
         'contactOfContact',
         'contact.userId = contactOfContact.contactUserId',
       )
-      .andWhere(`contactOfContact.userId = ${userId}`)
-      .andWhere(`user.id != ${userId}`)
+      .andWhere(`contactOfContact.userId = '${userId}'`)
+      .andWhere(`user.id != '${userId}'`)
       .andWhere(
         (qb) =>
           `user.id NOT IN ${qb
             .subQuery()
             .select('directContact.contactUserId')
             .from(Contact, 'directContact')
-            .where(`directContact.userId = ${userId}`)
+            .where(`directContact.userId = '${userId}'`)
             .getQuery()}`,
       )
       .getSql();
@@ -142,15 +142,15 @@ export class ActivityService {
         'user_channel2',
         'user_channel1.channelId = user_channel2.channelId',
       )
-      .andWhere(`user_channel2.userId = ${userId}`)
-      .andWhere(`user.id != ${userId}`)
+      .andWhere(`user_channel2.userId = '${userId}'`)
+      .andWhere(`user.id != '${userId}'`)
       .andWhere(
         (qb) =>
           `user.id NOT IN ${qb
             .subQuery()
             .select('directContact.contactUserId')
             .from(Contact, 'directContact')
-            .where(`directContact.userId = ${userId}`)
+            .where(`directContact.userId = '${userId}'`)
             .getQuery()}`,
       )
       .getSql();
@@ -160,7 +160,7 @@ export class ActivityService {
       .then((t) => t);
   }
 
-  getNotifications(userId: number, query: PaginationQuery) {
+  getNotifications(userId: string, query: PaginationQuery) {
     return this.notificationRepository
       .createQueryBuilder('notification')
       .leftJoin('notification.post', 'post')
@@ -193,21 +193,21 @@ export class ActivityService {
       .paginate(query);
   }
 
-  markNotificationAsRead(userId: number, notificationId: number) {
+  markNotificationAsRead(userId: string, notificationId: string) {
     return this.notificationRepository.update(
       { id: notificationId, userId },
       { readOn: new Date() },
     );
   }
 
-  markAllNotificationsAsRead(userId: number) {
+  markAllNotificationsAsRead(userId: string) {
     return this.notificationRepository.update(
       { userId, readOn: IsNull() },
       { readOn: new Date() },
     );
   }
 
-  removeNotification(userId: number, notificationId: number) {
+  removeNotification(userId: string, notificationId: string) {
     return this.notificationRepository.delete({ id: notificationId, userId });
   }
 }

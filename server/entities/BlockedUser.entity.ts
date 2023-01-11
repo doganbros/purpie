@@ -10,12 +10,12 @@ export class BlockedUser extends RecordEntity {
   user: User;
 
   @Column()
-  userId: number;
+  userId: string;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'createdById' })
   createdBy: User;
 
   @Column()
-  createdById: number;
+  createdById: string;
 }

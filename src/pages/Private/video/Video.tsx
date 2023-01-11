@@ -81,7 +81,7 @@ const Video: FC = () => {
   const maybeSendViewStat = () => {
     if (previousTime.current > startedFrom.current) {
       postViewStats(
-        +params.id,
+        params.id,
         startedFrom.current * DECISECOND,
         (player.current?.ended()
           ? player.current.duration()
@@ -109,14 +109,14 @@ const Video: FC = () => {
     });
 
     player.current?.on('firstplay', () => {
-      postViewStats(+params.id, 0, 0);
+      postViewStats(params.id, 0, 0);
     });
   };
 
   const chatComponent = useMemo(
     () =>
       data ? (
-        <Chat medium="post" id={+params.id} handleTypingEvent canAddFile />
+        <Chat medium="post" id={params.id} handleTypingEvent canAddFile />
       ) : null,
     [data, params.id]
   );
@@ -160,7 +160,7 @@ const Video: FC = () => {
   };
 
   useEffect(() => {
-    dispatch(getPostDetailAction(+params.id));
+    dispatch(getPostDetailAction(params.id));
   }, [params.id]);
 
   useEffect(() => {
@@ -168,13 +168,13 @@ const Video: FC = () => {
   }, [data]);
 
   useEffect(() => {
-    if (data && +params.id === data.id && data.streaming) {
+    if (data && params.id === data.id && data.streaming) {
       const handleCountChange = ({
         counter,
         postId,
       }: {
         counter: number;
-        postId: number;
+        postId: string;
       }) => {
         if (postId === data.id) setLiveStreamCount(counter);
       };
@@ -383,7 +383,7 @@ const Video: FC = () => {
           )}
           {renderChatResponsive()}
           <RecommendedVideos />
-          <CommentList postId={+params.id} />
+          <CommentList postId={params.id} />
           {showDeleteConfirmation && (
             <ConfirmDialog
               onConfirm={() => {

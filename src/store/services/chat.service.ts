@@ -4,7 +4,7 @@ import { ChatMessage } from '../types/chat.types';
 
 export const getChatMessages = (
   medium: string,
-  id: number,
+  id: string,
   limit = 30,
   lastDate?: Date
 ): Promise<PaginatedResponse<ChatMessage>> =>

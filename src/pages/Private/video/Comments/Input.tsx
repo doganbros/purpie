@@ -8,7 +8,7 @@ import { UserAvatar } from '../../../../components/utils/Avatars/UserAvatar';
 
 interface InputProps {
   user: User;
-  postId: number;
+  postId: string;
 }
 const Input: FC<InputProps> = ({ user, postId }) => {
   const dispatch = useDispatch();

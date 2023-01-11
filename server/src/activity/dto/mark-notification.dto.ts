@@ -1,14 +1,14 @@
-import { IsInt, IsOptional } from 'class-validator';
+import { IsOptional, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class MarkNotificationDto {
   @ApiProperty({
-    type: Number,
+    type: String,
     required: false,
     description:
       'Notification to mark as read. If null is specified, all notifications will be marked as read',
   })
-  @IsInt()
+  @IsUUID()
   @IsOptional()
-  notificationId?: number | null;
+  notificationId?: string | null;
 }

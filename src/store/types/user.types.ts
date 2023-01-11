@@ -28,8 +28,8 @@ import { UserChannelListItem } from './channel.types';
 import { UserZoneListItem } from './zone.types';
 
 export interface ProfileSearchOptions {
-  excludeIds?: number[];
-  channelId?: number;
+  excludeIds?: string[];
+  channelId?: string;
   userContacts?: boolean;
 }
 
@@ -40,7 +40,7 @@ export interface ProfileSearchParams extends ProfileSearchOptions {
 }
 
 export interface ContactUser {
-  id: number;
+  id: string;
   createdOn: Date;
   contactUser: User;
 }
@@ -55,7 +55,7 @@ export interface UserState {
     loading: boolean;
     error: ResponseError | null;
     selected: {
-      contactId: number | null;
+      contactId: string | null;
       user: User | null;
       loading: boolean;
       error: ResponseError | null;
@@ -112,7 +112,7 @@ export type UserActionParams =
       type: typeof SELECT_CONTACT_REQUESTED;
       payload: {
         userName: string;
-        contactId: number;
+        contactId: string;
       };
     }
   | {
@@ -128,7 +128,7 @@ export type UserActionParams =
   | {
       type: typeof REMOVE_CONTACT_REQUESTED | typeof REMOVE_CONTACT_SUCCESS;
       payload: {
-        contactId: number;
+        contactId: string;
       };
     }
   | {

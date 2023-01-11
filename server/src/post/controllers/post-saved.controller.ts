@@ -4,7 +4,7 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Query,
 } from '@nestjs/common';
@@ -85,7 +85,7 @@ export class PostSavedController {
   @IsAuthenticated()
   async removeSavedPost(
     @CurrentUser() user: UserTokenPayload,
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param('postId', ParseUUIDPipe) postId: string,
   ) {
     const result = await this.postSavedService.removeSavedPost(user.id, postId);
     return result.affected === 0 ? 'OK' : 'Created';

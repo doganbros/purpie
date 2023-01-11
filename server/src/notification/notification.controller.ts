@@ -41,9 +41,9 @@ export class NotificationController {
     @Query(
       'notificationIds',
       new DefaultValuePipe('-1'),
-      new ParseArrayPipe({ items: Number, separator: ',' }),
+      new ParseArrayPipe({ items: String, separator: ',' }),
     )
-    notificationIds: Array<number>,
+    notificationIds: Array<string>,
   ) {
     const result = await this.notificationService.markNotificationsAsViewed(
       user.id,
@@ -67,7 +67,7 @@ export class NotificationController {
   ) {
     const result = await this.notificationService.markNotificationsAsRead(
       user.id,
-      notificationId ? Number.parseInt(notificationId, 10) : undefined,
+      notificationId || undefined,
     );
     return result.affected ? 'Created' : 'OK';
   }

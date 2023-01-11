@@ -11,14 +11,14 @@ export class ChatMessageDto {
 
   createdOn: Date;
 
-  to: number;
+  to: string;
 
   parent?: ChatMessageDto;
 
   medium: 'direct' | 'channel' | 'post';
 
   createdBy: {
-    id: number;
+    id: string;
     displayPhoto?: string;
     fullName?: string;
     userName?: string;

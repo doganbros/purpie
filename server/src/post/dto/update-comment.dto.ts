@@ -9,5 +9,5 @@ export class UpdatePostCommentDto {
 
   @ApiProperty()
   @IsInt()
-  commentId: number;
+  commentId: string;
 }

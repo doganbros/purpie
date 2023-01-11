@@ -18,8 +18,8 @@ export const getUserMeetingConfig = (): Promise<UserMeetingConfig> => {
 
 export const getUserSuggestionsForMeeting = (
   name: string,
-  excludeIds: Array<number> = [],
-  channelId?: number | null
+  excludeIds: Array<string> = [],
+  channelId?: string | null
 ): Promise<PaginatedResponse<User>> => {
   const params: Record<string, any> = { name, limit: 6 };
 

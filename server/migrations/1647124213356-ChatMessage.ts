@@ -59,11 +59,11 @@ export class ChatMessage1647124213356 implements MigrationInterface {
           },
           {
             name: 'to',
-            type: 'int',
+            type: 'varchar',
           },
           {
             name: 'createdById',
-            type: 'int',
+            type: 'uuid',
           },
         ],
       }),

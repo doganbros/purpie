@@ -21,7 +21,7 @@ export class MeetingFields1629646520286 implements MigrationInterface {
           },
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'meetingSlug',

@@ -1,4 +1,4 @@
-import { IsInt, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreatePostFolderDto {
@@ -10,7 +10,7 @@ export class CreatePostFolderDto {
     required: false,
     description: 'This is the first post that will be added to the folder',
   })
-  @IsInt()
+  @IsUUID()
   @IsOptional()
-  postId: number;
+  postId: string;
 }

@@ -30,5 +30,5 @@ export class Client extends RecordEntity {
   createdBy: User;
 
   @Column({ nullable: true })
-  createdById: number;
+  createdById: string;
 }

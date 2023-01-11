@@ -11,7 +11,7 @@ import ChannelUserListItem from '../../../components/utils/channel/ChannelUserLi
 import { listChannelUsersAction } from '../../../store/actions/channel.action';
 
 interface ChannelMembersProps {
-  channelId: number;
+  channelId: string;
 }
 
 const ChannelMembers: FC<ChannelMembersProps> = ({ channelId }) => {

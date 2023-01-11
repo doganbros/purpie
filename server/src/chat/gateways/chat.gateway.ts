@@ -15,7 +15,7 @@ import { ErrorTypes } from '../../../types/ErrorTypes';
 
 interface SocketWithTokenPayload extends Socket {
   user: {
-    id: number;
+    id: string;
   };
 }
 
@@ -52,7 +52,7 @@ export class ChatGateway {
     @MessageBody()
     payload: {
       identifier: string;
-      to: number;
+      to: string;
       medium: 'direct' | 'channel' | 'post';
     },
   ) {
@@ -96,10 +96,14 @@ export class ChatGateway {
   @SubscribeMessage('join_post')
   async joinPost(
     @ConnectedSocket() socket: SocketWithTokenPayload,
-    @MessageBody() postId: number,
+    @MessageBody() postId: string,
   ) {
     const roomName = this.chatService.getRoomName(postId, 'post');
-    const post = await this.postService.getOnePost(socket.user.id, postId);
+    const post = await this.postService.getOnePost(
+      socket.user.id,
+      postId,
+      null,
+    );
 
     if (!post) throw new WsException(ErrorTypes.POST_NOT_FOUND);
 
@@ -125,7 +129,7 @@ export class ChatGateway {
   @SubscribeMessage('leave_post')
   async leavePost(
     @ConnectedSocket() socket: SocketWithTokenPayload,
-    @MessageBody() postId: number,
+    @MessageBody() postId: string,
   ) {
     const roomName = this.chatService.getRoomName(postId, 'post');
 
@@ -149,7 +153,7 @@ export class ChatGateway {
     @ConnectedSocket() socket: SocketWithTokenPayload,
     @MessageBody()
     payload: {
-      to: number;
+      to: string;
       user: Record<string, any>;
       medium: 'direct' | 'post' | 'channel';
     },
@@ -173,7 +177,7 @@ export class ChatGateway {
   @SubscribeMessage('send_presence')
   async announcePresenceToContact(
     @ConnectedSocket() socket: SocketWithTokenPayload,
-    @MessageBody() to: number,
+    @MessageBody() to: string,
   ) {
     const roomName = this.chatService.getRoomName(to);
     if (!socket.rooms.has(roomName))

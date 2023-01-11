@@ -8,16 +8,16 @@ export const listFolders = (): Promise<Folder[]> =>
   http.get('/post/folder/list').then((res) => res.data);
 
 export const addFolderItem = (
-  folderId: number,
-  postId: number
+  folderId: string,
+  postId: string
 ): Promise<FolderItem> =>
   http
     .post('/post/folder/item/create', { folderId, postId })
     .then((res) => res.data);
 
 export const removeFolderItem = (
-  folderId: number,
-  postId: number
+  folderId: string,
+  postId: string
 ): Promise<void> =>
   http
     .post('/post/folder/item/remove', { folderId, postId })

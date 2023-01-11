@@ -16,7 +16,7 @@ export class MeetingLog1630864840485 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
             isNullable: true,
           },
           {

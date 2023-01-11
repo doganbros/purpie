@@ -13,7 +13,7 @@ export class ChildCategories1627488789233 implements MigrationInterface {
       'invitation',
       new TableColumn({
         name: 'createdById',
-        type: 'int',
+        type: 'uuid',
         isNullable: true,
       }),
     );

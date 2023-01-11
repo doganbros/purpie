@@ -10,7 +10,7 @@ dayjs.extend(relativeTime);
 
 interface SavedVideoItemProps {
   post: Post;
-  onClickPlay: (id: number) => any;
+  onClickPlay: (id: string) => any;
 }
 
 const SavedVideoItem: FC<SavedVideoItemProps> = ({ post, onClickPlay }) => {

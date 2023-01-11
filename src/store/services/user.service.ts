@@ -30,7 +30,7 @@ export const listContacts = ({
 export const getUserProfile = (userName?: string): Promise<User> =>
   http.get(`/user/profile/${userName || ''}`).then((res) => res.data);
 
-export const removeContact = (contactId: number): Promise<string> =>
+export const removeContact = (contactId: string): Promise<string> =>
   http.delete(`/user/contact/remove/${contactId}`).then((res) => res.data);
 
 export const listInvitations = (params: {

@@ -512,7 +512,7 @@
     "noZone": "You don't seem to have a zone that you can edit",
     "zone": "Zone",
     "cancel": "Cancel",
-    "submit": "Submit",
+    "submit": "SUBMIT",
     "selectZone": "Select Zone",
     "selectChannel": "Select Channel",
     "changesSaved": "Changes saved successfully",
@@ -522,7 +522,9 @@
     "zoneSubdomainPlaceholder": "Change zone subdomain",
     "zoneDescriptionPlaceholder": "Change zone description",
     "channelNamePlaceholder": "Change channel name",
-    "channelDescriptionPlaceholder": "Change channel description"
+    "channelDescriptionPlaceholder": "Change channel description",
+    "chooseProfilePicture": "Choose Profile Picture",
+    "browse":"Browse"
   },
   "ContactsToFollow": {
     "title": "People to add",

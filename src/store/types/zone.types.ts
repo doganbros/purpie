@@ -45,7 +45,7 @@ import { User } from './auth.types';
 import { UtilActionParams } from './util.types';
 
 export interface ZoneBasic {
-  id: number;
+  id: string;
   name: string;
   subdomain: string;
   public: boolean;
@@ -70,7 +70,7 @@ export interface ZoneRole {
 }
 
 export interface UserZoneListItem {
-  id: number | null;
+  id: string | null;
   createdOn: Date | null;
   zoneRole: Partial<ZoneRole>;
   zone: ZoneListItem;
@@ -85,14 +85,14 @@ export interface CreateZonePayload {
   subdomain: string;
   description: string;
   public?: boolean;
-  categoryId: number;
+  categoryId: string;
 }
 
 export interface UpdateZonePayload {
   name: string;
   description: string;
   subdomain: string;
-  id: number;
+  id: string;
   public: boolean;
 }
 
@@ -187,7 +187,7 @@ export type ZoneActionParams =
     }
   | {
       type: typeof JOIN_ZONE_REQUESTED;
-      payload: number;
+      payload: string;
     }
   | {
       type:
@@ -202,7 +202,7 @@ export type ZoneActionParams =
   | {
       type: typeof UPDATE_ZONE_PHOTO_SUCCESS;
       payload: string;
-      zoneId: number;
+      zoneId: string;
     };
 
 export interface ZoneDispatch {
