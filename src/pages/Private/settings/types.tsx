@@ -3,7 +3,6 @@ import { ReactNode } from 'react';
 export interface SettingFormItem {
   key: string;
   title: string;
-  description: string;
   value?: string;
   component: ReactNode;
 }
