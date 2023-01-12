@@ -14,6 +14,16 @@ import { useResponsive } from '../../hooks/useResponsive';
 import LogoHorizontalColor from '../../assets/purpie-logo/logo-horizontal-color.svg';
 import LogoHorizontalWhite from '../../assets/purpie-logo/logo-horizontal-white.svg';
 import AuthFormButton from '../auth/AuthFormButton';
+import ExtendedBox from '../utils/ExtendedBox';
+import { AnchorLink } from '../utils/AnchorLink';
+
+const footerLinks = [
+  { label: 'Help', to: '/' },
+  { label: 'About Us', to: '/' },
+  { label: 'Terms of Service', to: '/' },
+  { label: 'Privacy Policy', to: '/' },
+  { label: 'Cookie Policy', to: '/' },
+];
 
 interface Props {
   title: string;
@@ -100,8 +110,28 @@ const AuthLayout: React.FC<Props> = ({
                   </>
                 )}
               </Box>
+              <ExtendedBox
+                width={size === 'medium' ? '55%' : '60%'}
+                position="absolute"
+                bottom="35px"
+                margin="0 auto"
+                justify="center"
+                gap="medium"
+                direction="row"
+              >
+                {footerLinks.map(({ label, to }) => (
+                  <AnchorLink
+                    key={to}
+                    weight="normal"
+                    size="small"
+                    label={label}
+                    to={to}
+                  />
+                ))}
+              </ExtendedBox>
             </Box>
           ) : null}
+
           <Box basis={formWidth[size]} margin="0" style={{ zIndex: 2 }}>
             <Card
               elevation="indigo"
