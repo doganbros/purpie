@@ -32,6 +32,7 @@ const { REACT_APP_CLIENT_HOST = '' } = process.env;
           '\\.',
         )}$`,
       ),
+      'https://meet.purpie.io',
       'http://localhost:3000',
       'http://octopus.localhost:3000',
     ],
