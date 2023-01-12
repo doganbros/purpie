@@ -41,7 +41,7 @@ export class CreateMeetingDto {
   endDate?: Date;
 
   @ApiProperty()
-  @IsInt()
+  @IsString()
   @IsOptional()
   channelId?: string;
 

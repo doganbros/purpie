@@ -133,10 +133,9 @@ export class PostService {
       .getOne();
   }
 
-  async dropPostVideosByUser(userId: string, identity: string | number) {
+  async dropPostVideosByUser(userId: string, postId: string) {
     const filter: Record<string, any> = { createdById: userId };
-    if (typeof identity === 'string') filter.slug = identity;
-    else filter.id = identity;
+    filter.id = postId;
 
     const post = await this.postRepository.findOne({ where: filter });
 
