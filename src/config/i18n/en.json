@@ -85,7 +85,7 @@
     "send": "SEND"
   },
   "InitializeUser": {
-    "title": "Initialize User - Octopus",
+    "title": "Initialize User - Purpie",
     "formTitle": "Welcome to Purpie!",
     "formSubTitle": "Sign up with an account to continue",
     "createAccount": "CREATE ACCOUNT"
@@ -103,7 +103,7 @@
   },
   "VerifyUserEmailInfo": {
     "title": "Email Confirmation",
-    "formSubTitle": "<0>Verify your email to finish signing up for Octopus.</0><1></1><2>Please check your email box.</2>",
+    "formSubTitle": "<0>Verify your email to finish signing up for Purpie.</0><1></1><2>Please check your email box.</2>",
     "resendLink": "Resend mail verification link?",
     "resend": "RESEND",
     "goToSignIn": "GO TO SIGN IN"
