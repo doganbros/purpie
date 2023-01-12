@@ -23,7 +23,7 @@ interface SocketWithTokenPayload extends Socket {
 
 const { REACT_APP_CLIENT_HOST = '' } = process.env;
 
-@WebSocketGateway(8081, {
+@WebSocketGateway({
   cors: {
     origin: [
       new RegExp(
