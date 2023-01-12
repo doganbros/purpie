@@ -159,11 +159,11 @@ export const authenticateWithThirdPartyCodeAction = (
 
 export const logoutAction = (): AuthAction => {
   return async (dispatch) => {
+    navigateToSubdomain();
     await AuthService.logOut();
     dispatch({
       type: LOGOUT,
     });
-    navigateToSubdomain();
   };
 };
 
@@ -236,7 +236,7 @@ export const resetPasswordAction = (body: ResetPasswordPayload): AuthAction => {
   };
 };
 export const resendMailVerificationTokenAction = (
-  userId: number
+  userId: string
 ): AuthAction => {
   return async (dispatch) => {
     dispatch({
@@ -304,8 +304,7 @@ export const updateProfileInfoAction = (
   };
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const updateProfilePhotoAction = (profilePhoto: any): AuthAction => {
+export const updateProfilePhotoAction = (profilePhoto: File): AuthAction => {
   return async (dispatch) => {
     dispatch({
       type: UPDATE_PROFILE_PHOTO_REQUESTED,

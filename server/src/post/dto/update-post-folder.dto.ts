@@ -1,10 +1,10 @@
-import { IsInt, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdatePostFolderDto {
   @ApiProperty()
-  @IsInt()
-  folderId: number;
+  @IsUUID()
+  folderId: string;
 
   @ApiProperty({ required: false })
   @IsString()

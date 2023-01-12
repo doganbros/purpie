@@ -63,8 +63,8 @@ export class MeetingService {
   ) {}
 
   async validateUserChannel(
-    userId: number,
-    channelId: number,
+    userId: string,
+    channelId: string,
   ): Promise<UserChannel> {
     const userChannel = await this.userChannelRepository.findOne({
       where: { channelId, userId },
@@ -82,7 +82,7 @@ export class MeetingService {
     return verifyJWT(token, JITSI_SECRET);
   }
 
-  async getMeetingConfig(userId: number, createMeetingInfo: CreateMeetingDto) {
+  async getMeetingConfig(userId: string, createMeetingInfo: CreateMeetingDto) {
     const meetingConfig = (await this.getCurrentUserConfig(userId)) || {
       jitsiConfig: baseMeetingConfig,
       privacyConfig: {},
@@ -105,6 +105,10 @@ export class MeetingService {
         false,
       record:
         createMeetingInfo.record ?? meetingConfig.privacyConfig.record ?? false,
+      joinLinkExpiryAsHours:
+        createMeetingInfo.joinLinkExpiryAsHours ??
+        meetingConfig.privacyConfig.joinLinkExpiryAsHours ??
+        24,
     };
 
     return meetingConfig;
@@ -135,7 +139,7 @@ export class MeetingService {
     );
   }
 
-  async createMeetingTags(meetingId: number, description?: string) {
+  async createMeetingTags(meetingId: string, description?: string) {
     const tags = parsePostTags(description);
 
     if (tags?.length) {
@@ -154,11 +158,13 @@ export class MeetingService {
     user: UserProfile,
     meeting: Post,
     moderator = false,
+    tokenExpiry: number,
   ) {
     const meetingToken = await this.generateMeetingToken(
       meeting,
       user,
       moderator,
+      tokenExpiry,
     );
 
     const context = {
@@ -187,7 +193,7 @@ export class MeetingService {
     return meetingToken;
   }
 
-  currentUserMeetingBaseValidator(userId: number, slug: string) {
+  currentUserMeetingBaseValidator(userId: string, slug: string) {
     return this.postRepository
       .createQueryBuilder('meeting')
       .addSelect('meeting.config')
@@ -215,7 +221,7 @@ export class MeetingService {
       );
   }
 
-  async currentUserRecordingValidator(userId: number, slug: string) {
+  async currentUserRecordingValidator(userId: string, slug: string) {
     const result = await this.currentUserMeetingBaseValidator(
       userId,
       slug,
@@ -243,7 +249,7 @@ export class MeetingService {
       .paginate(query);
   }
 
-  currentUserJoinMeetingValidator(userId: number, slug: string) {
+  currentUserJoinMeetingValidator(userId: string, slug: string) {
     return this.currentUserMeetingBaseValidator(userId, slug)
       .andWhere(
         new Brackets((qb) => {
@@ -263,7 +269,7 @@ export class MeetingService {
       .getOne();
   }
 
-  async getCurrentUserConfig(userId: number) {
+  async getCurrentUserConfig(userId: string) {
     return this.userRepository
       .findOne({
         where: { id: userId },
@@ -272,7 +278,7 @@ export class MeetingService {
       .then((result) => result?.userMeetingConfig);
   }
 
-  async saveCurrentUserMeetingConfig(userId: number, config: MeetingConfig) {
+  async saveCurrentUserMeetingConfig(userId: string, config: MeetingConfig) {
     return this.userRepository.update(userId, { userMeetingConfig: config });
   }
 
@@ -297,7 +303,11 @@ export class MeetingService {
     meeting: Post,
     user: UserProfile,
     moderator: boolean,
+    tokenExpiry: number,
   ): Promise<string> {
+    const now = new Date();
+    const exp = Math.floor(now.setHours(now.getHours() + tokenExpiry) / 1000);
+
     const payload = {
       context: {
         user: {
@@ -313,10 +323,9 @@ export class MeetingService {
         group: 'a122-123-456-789',
       },
       moderator,
-      exp: 1696284052,
+      exp,
       aud: JWT_APP_ID,
       iss: JWT_APP_ID,
-      nbf: 1596197652,
       room: meeting.slug,
       sub: new URL(JITSI_DOMAIN).hostname,
     };
@@ -343,7 +352,7 @@ export class MeetingService {
   }
 
   async getMeetingLogs(
-    userId: number,
+    userId: string,
     meetingSlug: string,
     query: PaginationQuery,
   ) {

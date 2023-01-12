@@ -19,11 +19,11 @@ export class LikesAndComments1634720919941 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'postId',
-            type: 'int',
+            type: 'uuid',
           },
         ],
         uniques: [
@@ -61,11 +61,11 @@ export class LikesAndComments1634720919941 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'postId',
-            type: 'int',
+            type: 'uuid',
           },
         ],
         uniques: [
@@ -104,11 +104,11 @@ export class LikesAndComments1634720919941 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'postId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'comment',
@@ -116,7 +116,7 @@ export class LikesAndComments1634720919941 implements MigrationInterface {
           },
           {
             name: 'parentId',
-            type: 'int',
+            type: 'uuid',
             isNullable: true,
           },
           {

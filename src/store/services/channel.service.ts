@@ -21,6 +21,9 @@ export const createChannel = (
 export const getUserChannels = (): Promise<PaginatedResponse<any>> =>
   http.get('/user-channel/list').then((res) => res.data);
 
+export const getUserChannelsAll = (): Promise<PaginatedResponse<any>> =>
+  http.get('/user-channel/list/all').then((res) => res.data);
+
 export const getUserChannelsByZoneId = (
   zoneId: number
 ): Promise<PaginatedResponse<any>> =>
@@ -29,7 +32,7 @@ export const getUserChannelsByZoneId = (
 export const getUserChannelById = (id: number): Promise<any> =>
   http.get(`/user-channel/detail/${id}`).then((res) => res.data);
 
-export const joinChannel = (id: number): Promise<any> =>
+export const joinChannel = (id: string): Promise<any> =>
   http.post(`/channel/join/${id}`).then((res) => res.data);
 
 export const updateChannel = (
@@ -47,16 +50,15 @@ export const searchChannel = (
   http.get(`/channel/search`, { params }).then((res) => res.data);
 
 export const updateChannelPhoto = (
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  photoFile: any,
-  channelId: number
+  photoFile: File,
+  channelId: string
 ): Promise<any> =>
   http
     .put(`channel/${channelId}/display-photo`, serialize(photoFile))
     .then((res) => res.data);
 
 export const updateChannelInfo = (
-  channelId: number,
+  channelId: string,
   params: ChannelBasic
 ): Promise<any> =>
   http.put(`channel/update/${channelId}`, params).then((res) => res.data);
@@ -70,7 +72,7 @@ export const updateChannelPermissions = (
     .then((res) => res.data);
 
 export const listChannelUsers = (
-  channelId: number,
+  channelId: string,
   limit?: number,
   skip?: number
 ): Promise<any> =>

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt } from 'class-validator';
+import { IsInt, IsUUID } from 'class-validator';
 
 export class VideoViewStats {
   @ApiProperty()
@@ -11,6 +11,6 @@ export class VideoViewStats {
   endedAt: number;
 
   @ApiProperty()
-  @IsInt()
-  postId: number;
+  @IsUUID()
+  postId: string;
 }

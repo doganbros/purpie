@@ -10,7 +10,7 @@ export class ChatMessageAttachment extends RecordEntity {
   chatMessage: ChatMessage;
 
   @Column()
-  chatMessageId: number;
+  chatMessageId: string;
 
   @Column()
   name: string;
@@ -23,5 +23,5 @@ export class ChatMessageAttachment extends RecordEntity {
   createdBy: User;
 
   @Column({ nullable: true })
-  createdById: number;
+  createdById: string;
 }

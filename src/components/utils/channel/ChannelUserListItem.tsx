@@ -5,7 +5,7 @@ import EllipsesOverflowText from '../EllipsesOverflowText';
 import { UserAvatar } from '../Avatars/UserAvatar';
 
 interface ChannelUserListItemProps {
-  id: number;
+  id: string;
   name: string;
   userName: string;
   displayPhoto?: string;

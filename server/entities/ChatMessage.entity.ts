@@ -19,7 +19,7 @@ export class ChatMessage extends RecordEntity {
   medium: 'direct' | 'channel' | 'post';
 
   @Column()
-  to: number;
+  to: string;
 
   @Column({ type: 'text' })
   message: string;
@@ -47,5 +47,5 @@ export class ChatMessage extends RecordEntity {
   createdBy: User;
 
   @Column({ nullable: true })
-  createdById: number;
+  createdById: string;
 }

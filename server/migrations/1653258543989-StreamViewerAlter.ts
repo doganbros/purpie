@@ -30,11 +30,11 @@ export class StreamViewerAlter1653258543989 implements MigrationInterface {
           },
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'postId',
-            type: 'int',
+            type: 'uuid',
           },
         ],
         uniques: [

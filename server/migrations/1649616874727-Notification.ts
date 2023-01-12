@@ -15,11 +15,11 @@ export class Notification1649616874727 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'postId',
-            type: 'int',
+            type: 'uuid',
             isNullable: true,
           },
           {
@@ -29,7 +29,7 @@ export class Notification1649616874727 implements MigrationInterface {
           },
           {
             name: 'createdById',
-            type: 'int',
+            type: 'uuid',
             isNullable: true,
           },
           {

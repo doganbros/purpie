@@ -22,7 +22,7 @@ export class PostFolder1668969892227 implements MigrationInterface {
           },
           {
             name: 'createdById',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'public',
@@ -51,11 +51,11 @@ export class PostFolder1668969892227 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'folderId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'postId',
-            type: 'int',
+            type: 'uuid',
           },
         ],
         uniques: [

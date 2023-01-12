@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import videojs from 'video.js';
-import { Box, Button, Text } from 'grommet';
+import { Box, Button, Layer, Text } from 'grommet';
 import {
   AddCircle,
   Chat as ChatIcon,
@@ -33,6 +33,7 @@ import ChannelBadge from '../../../components/utils/channel/ChannelBadge';
 import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
 import UserBadge from '../../../components/utils/UserBadge';
 import Highlight from '../../../components/utils/Highlight';
+import { setSelectedChannelAction } from '../../../store/actions/channel.action';
 import {
   getTimezoneTimeFromUTC,
   matchDescriptionTags,
@@ -41,6 +42,7 @@ import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated
 import { DELAY_TIME } from '../../../helpers/constants';
 import useDelayTime from '../../../hooks/useDelayTime';
 import { AddToFolderDrop } from '../../../layers/saved-video/folder/AddToFolderDrop';
+import { useResponsive } from '../../../hooks/useResponsive';
 
 interface RouteParams {
   id: string;
@@ -55,6 +57,7 @@ const Video: FC = () => {
   const [liveStreamCount, setLiveStreamCount] = useState(0);
   const dispatch = useDispatch();
   const {
+    channel: { userChannels },
     post: {
       postDetail: { data, loading },
     },
@@ -65,6 +68,11 @@ const Video: FC = () => {
   const previousTime = useRef(0);
   const currentTime = useRef(0);
   const startedFrom = useRef(0);
+  const userChannelsFiltered = userChannels.data.filter(
+    (c) => c.channel.id === data?.channel?.id
+  )[0];
+
+  const size = useResponsive();
 
   const player = useRef<videojs.Player | null>(null);
 
@@ -73,7 +81,7 @@ const Video: FC = () => {
   const maybeSendViewStat = () => {
     if (previousTime.current > startedFrom.current) {
       postViewStats(
-        +params.id,
+        params.id,
         startedFrom.current * DECISECOND,
         (player.current?.ended()
           ? player.current.duration()
@@ -101,20 +109,58 @@ const Video: FC = () => {
     });
 
     player.current?.on('firstplay', () => {
-      postViewStats(+params.id, 0, 0);
+      postViewStats(params.id, 0, 0);
     });
   };
 
   const chatComponent = useMemo(
     () =>
       data ? (
-        <Chat medium="post" id={+params.id} handleTypingEvent canAddFile />
+        <Chat medium="post" id={params.id} handleTypingEvent canAddFile />
       ) : null,
     [data, params.id]
   );
 
+  const renderVideoSettingsResponsive = () => {
+    if (size === 'small' && showSettings) {
+      return (
+        <Layer>
+          <VideoSettings
+            setShowSettings={setShowSettings}
+            setShowDeleteConfirmation={setShowDeleteConfirmation}
+          />
+        </Layer>
+      );
+    }
+    return true;
+  };
+
+  const renderChatResponsive = () => {
+    if (size === 'small') {
+      return (
+        <Box
+          width={{ max: '100%' }}
+          height="500px"
+          background="white"
+          round="large"
+          pad={{ bottom: 'medium' }}
+          elevation="indigo"
+        >
+          {chatComponent}
+        </Box>
+      );
+    }
+    return true;
+  };
+
+  const handleSelectChannel = () => {
+    if (data?.channel) {
+      dispatch(setSelectedChannelAction(userChannelsFiltered));
+    }
+  };
+
   useEffect(() => {
-    dispatch(getPostDetailAction(+params.id));
+    dispatch(getPostDetailAction(params.id));
   }, [params.id]);
 
   useEffect(() => {
@@ -122,13 +168,13 @@ const Video: FC = () => {
   }, [data]);
 
   useEffect(() => {
-    if (data && +params.id === data.id && data.streaming) {
+    if (data && params.id === data.id && data.streaming) {
       const handleCountChange = ({
         counter,
         postId,
       }: {
         counter: number;
-        postId: number;
+        postId: string;
       }) => {
         if (postId === data.id) setLiveStreamCount(counter);
       };
@@ -170,6 +216,7 @@ const Video: FC = () => {
         )
       }
     >
+      {renderVideoSettingsResponsive()}
       {delay || loading || !data ? (
         <Box height="100vh" justify="center" align="center">
           <PurpieLogoAnimated width={100} height={100} color="brand" />
@@ -197,9 +244,15 @@ const Video: FC = () => {
                     />
                   )}
                   {data?.channel?.name && (
-                    <ChannelBadge name={data.channel.name} url="/" />
+                    <Box onClick={handleSelectChannel}>
+                      <ChannelBadge name={data.channel.name} url="/" />
+                    </Box>
                   )}
-                  <UserBadge url="/" fullName={data?.createdBy?.fullName} />
+
+                  <UserBadge
+                    url={`/user/${data?.createdBy?.userName}`}
+                    fullName={data?.createdBy?.fullName}
+                  />
                 </Box>
               )) || <Box />}
               <Box
@@ -265,6 +318,7 @@ const Video: FC = () => {
                     )}
                   </Text>
                 )}
+
                 <Box direction="row" gap="medium">
                   <Box direction="row" gap="xsmall" align="center">
                     <Button
@@ -327,8 +381,9 @@ const Video: FC = () => {
               text={data.description}
             />
           )}
+          {renderChatResponsive()}
           <RecommendedVideos />
-          <CommentList postId={+params.id} />
+          <CommentList postId={params.id} />
           {showDeleteConfirmation && (
             <ConfirmDialog
               onConfirm={() => {

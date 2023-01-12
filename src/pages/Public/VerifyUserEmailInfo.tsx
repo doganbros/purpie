@@ -26,7 +26,7 @@ const VerifyUserEmailInfo: FC = () => {
   const { userId } = useParams<Params>();
 
   const submitResendMailVerificationToken = () =>
-    dispatch(resendMailVerificationTokenAction(Number.parseInt(userId, 10)));
+    dispatch(resendMailVerificationTokenAction(userId));
 
   return (
     <AuthLayout

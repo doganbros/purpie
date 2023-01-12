@@ -1,9 +1,10 @@
 export const recordEntityColumns = [
   {
     name: 'id',
-    type: 'int',
+    type: 'uuid',
     isPrimary: true,
-    isGenerated: true,
+    isUnique: true,
+    default: 'uuid_generate_v4()',
   },
   {
     name: 'createdOn',

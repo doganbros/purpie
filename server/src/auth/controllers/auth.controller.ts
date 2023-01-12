@@ -8,7 +8,7 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Put,
   Req,
@@ -260,7 +260,7 @@ export class AuthController {
     schema: errorResponseDoc(404, 'User not found', 'USER_NOT_FOUND'),
   })
   async resendMailVerificationToken(
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('userId', ParseUUIDPipe) userId: string,
   ) {
     const userInfo = await this.authService.verifyResendMailVerificationToken(
       userId,

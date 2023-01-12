@@ -2,15 +2,13 @@ import {
   BadRequestException,
   Body,
   Controller,
-  DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
   HttpStatus,
   NotFoundException,
   Param,
-  ParseArrayPipe,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Put,
   Query,
@@ -233,7 +231,7 @@ export class UserController {
   @IsAuthenticated()
   unblockUser(
     @CurrentUser() user: UserTokenPayload,
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('userId', ParseUUIDPipe) userId: string,
   ) {
     return this.userService.unBlockUser(user.id, userId);
   }
@@ -260,12 +258,8 @@ export class UserController {
   async searchUsers(
     @CurrentUser() user: UserTokenPayload,
     @Query() query: SearchUsersQuery,
-    @Query(
-      'excludeIds',
-      new DefaultValuePipe('-1'),
-      new ParseArrayPipe({ items: Number, separator: ',' }),
-    )
-    excludeIds: Array<number>,
+    @Query('excludeIds')
+    excludeIds: Array<string>,
   ) {
     if (!query.name.trim())
       return emptyPaginatedResponse(query.limit, query.skip);
@@ -534,7 +528,7 @@ export class UserController {
   @IsAuthenticated()
   setFeaturedPost(
     @CurrentUser() user: UserTokenPayload,
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param('postId', ParseUUIDPipe) postId: string,
   ) {
     return this.userService.setFeaturedPost(user.id, postId);
   }

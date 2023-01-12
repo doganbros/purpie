@@ -11,7 +11,7 @@ import ChannelUserListItem from '../../../components/utils/channel/ChannelUserLi
 import { listChannelUsersAction } from '../../../store/actions/channel.action';
 
 interface ChannelMembersProps {
-  channelId: number;
+  channelId: string;
 }
 
 const ChannelMembers: FC<ChannelMembersProps> = ({ channelId }) => {
@@ -57,7 +57,7 @@ const ChannelMembers: FC<ChannelMembersProps> = ({ channelId }) => {
           <Text size="small">{t('ChannelMembers.noMembersFound')}</Text>
         ) : (
           channelUsers?.data
-            .slice(0, displayCount)
+            ?.slice(0, displayCount)
             .map((c) => (
               <ChannelUserListItem
                 key={c.id}

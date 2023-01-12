@@ -97,6 +97,8 @@ class PrivacyConfig {
   liveStream?: boolean;
 
   record?: boolean;
+
+  joinLinkExpiryAsHours?: number;
 }
 
 export class MeetingConfig {

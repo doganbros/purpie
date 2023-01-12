@@ -118,7 +118,6 @@ const PersonalSettings: () => SettingsData | null = () => {
       {
         key: 'username',
         title: t('settings.username'),
-        description: t('settings.changeUsername'),
         value: user?.userName,
         component: (
           <Box
@@ -147,7 +146,6 @@ const PersonalSettings: () => SettingsData | null = () => {
       {
         key: 'fullName',
         title: t('settings.fullName'),
-        description: t('settings.changeName'),
         value: user?.fullName,
         component: (
           <Box
@@ -176,7 +174,6 @@ const PersonalSettings: () => SettingsData | null = () => {
       {
         key: 'pasword',
         title: t('settings.passwordChange'),
-        description: t('settings.changePassword'),
         component: (
           <Box gap="small">
             <Form onSubmit={handleSubmitPassword} id="passwordForm">

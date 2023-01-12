@@ -7,7 +7,7 @@ export interface ChatAttachment {
   originalFileName: string;
 }
 export interface ChatMessage {
-  id?: number;
+  id?: string;
   identifier: string | number;
   parentIdentifier?: string | null;
   attachments?: Array<ChatAttachment>;
@@ -16,12 +16,12 @@ export interface ChatMessage {
   edited: boolean;
   deleted: boolean;
   systemMessage: boolean;
-  to: number;
+  to: string;
   roomName: string;
   parent?: ChatMessage;
   createdOn: Date;
   createdBy: {
-    id: number;
+    id: string;
     displayPhoto?: string;
     fullName: string;
     userName?: string;

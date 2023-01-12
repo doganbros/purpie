@@ -26,7 +26,7 @@ export class AuthChanges1633783711421 implements MigrationInterface {
           },
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'createdOn',

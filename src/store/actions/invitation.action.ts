@@ -90,7 +90,7 @@ export const createContactInvitation = (email: string): InvitationAction => {
 };
 
 export const createChannelInvitationAction = (
-  channelId: number,
+  channelId: string,
   user: User
 ): InvitationAction => {
   return async (dispatch) => {
@@ -117,7 +117,7 @@ export const createChannelInvitationAction = (
 };
 
 export const createZoneInvitationAction = (
-  zoneId: number,
+  zoneId: string,
   user: User
 ): InvitationAction => {
   return async (dispatch) => {

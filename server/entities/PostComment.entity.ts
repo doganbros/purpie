@@ -10,14 +10,14 @@ export class PostComment extends RecordEntity {
   user: User;
 
   @Column()
-  userId: number;
+  userId: string;
 
   @ManyToOne(() => Post, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'postId' })
   post: Post;
 
   @Column()
-  postId: number;
+  postId: string;
 
   @Column()
   comment: string;
@@ -27,7 +27,7 @@ export class PostComment extends RecordEntity {
   parent?: PostComment;
 
   @Column({ nullable: true, type: 'int' })
-  parentId: number | null;
+  parentId: string | null;
 
   @Column({ default: false })
   edited: boolean;

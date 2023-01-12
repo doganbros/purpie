@@ -5,7 +5,6 @@ import {
   CreateChannelPayload,
   UserChannelListItem,
   UserChannelPermissionList,
-  // eslint-disable-next-line import/named
 } from '../types/channel.types';
 import {
   CLOSE_CREATE_CHANNEL_LAYER,
@@ -63,7 +62,27 @@ export const getUserChannelsAction = (): ChannelAction => {
   };
 };
 
-export const joinChannelAction = (id: number): ChannelAction => {
+export const getUserChannelsAllAction = (): ChannelAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: GET_USER_CHANNELS_REQUESTED,
+    });
+    try {
+      const payload = (await ChannelService.getUserChannelsAll()) as any;
+      dispatch({
+        type: GET_USER_CHANNELS_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: GET_USER_CHANNELS_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const joinChannelAction = (id: string): ChannelAction => {
   return async (dispatch) => {
     dispatch({
       type: JOIN_CHANNEL_REQUESTED,
@@ -173,7 +192,7 @@ export const searchChannelAction = (
 
 export const updateChannelPhoto = (
   profilePhoto: File,
-  channelId: number
+  channelId: string
 ): ChannelAction => {
   return async (dispatch) => {
     dispatch({
@@ -200,7 +219,7 @@ export const updateChannelPhoto = (
 };
 
 export const updateChannelInfoAction = (
-  channelId: number,
+  channelId: string,
   params: ChannelBasic
 ): ChannelAction => {
   return async (dispatch) => {
@@ -245,7 +264,7 @@ export const updateChannelPermissionsAction = (
 };
 
 export const listChannelUsersAction = (
-  channelId: number,
+  channelId: string,
   limit: number,
   skip: number
 ): ChannelAction => {

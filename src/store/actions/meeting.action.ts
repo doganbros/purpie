@@ -105,8 +105,8 @@ export const getUserMeetingConfigAction = (): MeetingAction => {
 
 export const getUserSuggestionsForMeetingAction = (
   name: string,
-  excludeIds?: Array<number>,
-  channelId?: number | null
+  excludeIds?: Array<string>,
+  channelId?: string | null
 ): MeetingAction => {
   return async (dispatch) => {
     MeetingService.getUserSuggestionsForMeeting(
@@ -183,7 +183,7 @@ export const addUserToInvitationsAction = (
 });
 
 export const removeUserFromInvitationsAction = (
-  id: number
+  id: string
 ): MeetingActionParams => ({
   type: REMOVE_USER_FROM_INVITATION,
   payload: id,

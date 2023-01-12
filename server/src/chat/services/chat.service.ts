@@ -52,7 +52,7 @@ export class ChatService {
       .then((v) => v.map((r) => r.channelId));
   }
 
-  fetchUserContactUserIds(userId: number) {
+  fetchUserContactUserIds(userId: string) {
     return this.contactRepository
       .find({
         where: { userId },
@@ -95,7 +95,7 @@ export class ChatService {
     });
   }
 
-  removeChatMessage(identifier: string, userId: number) {
+  removeChatMessage(identifier: string, userId: string) {
     return this.chatMessageRepository
       .delete({ identifier, createdById: userId })
       .then((v) => !!v.affected);
@@ -105,7 +105,7 @@ export class ChatService {
     return this.chatMessageAttachmentRepo.create(payload).save();
   }
 
-  async removeChatMessageAttachment(name: string, createdById: number) {
+  async removeChatMessageAttachment(name: string, createdById: string) {
     const result = await this.chatMessageAttachmentRepo.delete({
       name,
       createdById,
@@ -121,13 +121,13 @@ export class ChatService {
   }
 
   async getChatMessages(
-    userId: number,
+    userId: string,
     medium: string,
-    id: number,
+    id: string,
     query: ChatMessageListQuery,
   ) {
     if (medium === 'post') {
-      const post = await this.postService.getOnePost(userId, id, false);
+      const post = await this.postService.getOnePost(userId, id, null, false);
       if (!post)
         throw new ForbiddenException(
           ErrorTypes.NOT_AUTHORIZED,
@@ -208,7 +208,7 @@ export class ChatService {
   }
 
   async saveChatMessage(
-    userId: number,
+    userId: string,
     payload: ChatMessageDto,
     isEdit: boolean,
   ) {
@@ -256,7 +256,7 @@ export class ChatService {
     return chatMessageId;
   }
 
-  async addCurrentStreamViewer(userId: number, postId: number) {
+  async addCurrentStreamViewer(userId: string, postId: string) {
     return this.currentStreamViewerRepository
       .create({
         postId,
@@ -269,19 +269,19 @@ export class ChatService {
       });
   }
 
-  async removeCurrentStreamViewer(userId: number, postId: number) {
+  async removeCurrentStreamViewer(userId: string, postId: string) {
     return this.currentStreamViewerRepository.delete({
       postId,
       userId,
     });
   }
 
-  async getTotalNumberOfStreamViewers(postId: number) {
+  async getTotalNumberOfStreamViewers(postId: string) {
     return this.currentStreamViewerRepository.count({ postId });
   }
 
   async getChatAttachments(
-    userId: number,
+    userId: string,
     id: number,
     medium: 'direct' | 'channel' | 'post',
     query: PaginationQuery,
@@ -313,7 +313,7 @@ export class ChatService {
       .paginate(query);
   }
 
-  getRoomName(id: number, medium: 'direct' | 'channel' | 'post' = 'direct') {
+  getRoomName(id: string, medium: 'direct' | 'channel' | 'post' = 'direct') {
     return `${medium}_${id}`;
   }
 }

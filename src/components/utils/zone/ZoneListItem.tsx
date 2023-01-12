@@ -8,7 +8,7 @@ import EllipsesOverflowText from '../EllipsesOverflowText';
 import { ZoneAvatar } from '../Avatars/ZoneAvatar';
 
 interface ZoneListItemProps {
-  id: number;
+  id: string;
   name: string;
   channelCount: number;
   memberCount: number;

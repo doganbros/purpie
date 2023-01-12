@@ -15,7 +15,7 @@ export class NotificationReferences1656937155083 implements MigrationInterface {
       notification,
       new TableColumn({
         name: 'postLikeId',
-        type: 'int',
+        type: 'uuid',
         isNullable: true,
       }),
     );
@@ -24,7 +24,7 @@ export class NotificationReferences1656937155083 implements MigrationInterface {
       notification,
       new TableColumn({
         name: 'postCommentLikeId',
-        type: 'int',
+        type: 'uuid',
         isNullable: true,
       }),
     );

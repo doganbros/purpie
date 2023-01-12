@@ -1,4 +1,9 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 import { recordEntityColumns } from './data/record-entity';
 
 export class BlockedUser1649409554918 implements MigrationInterface {
@@ -10,11 +15,11 @@ export class BlockedUser1649409554918 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'createdById',
-            type: 'int',
+            type: 'uuid',
           },
         ],
         uniques: [

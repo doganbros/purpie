@@ -52,7 +52,7 @@ export const getUserZonesAction = (): ZoneAction => {
   };
 };
 
-export const joinZoneAction = (id: number): ZoneAction => {
+export const joinZoneAction = (id: string): ZoneAction => {
   return async (dispatch) => {
     dispatch({
       type: JOIN_ZONE_REQUESTED,
@@ -133,9 +133,8 @@ export const searchZoneAction = (params: ZoneSearchParams): ZoneAction => {
 };
 
 export const updateZonePhotoAction = (
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   profilePhoto: File,
-  zoneId: number
+  zoneId: string
 ): ZoneAction => {
   return async (dispatch) => {
     dispatch({
@@ -159,7 +158,7 @@ export const updateZonePhotoAction = (
 };
 
 export const updateZoneInfoAction = (
-  zoneId: number,
+  zoneId: string,
   params: ZoneBasic
 ): ZoneAction => {
   return async (dispatch) => {

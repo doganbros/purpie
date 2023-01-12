@@ -24,5 +24,5 @@ export class PostReaction extends RecordEntity {
   post: Post;
 
   @Column({ unique: true })
-  postId: number;
+  postId: string;
 }

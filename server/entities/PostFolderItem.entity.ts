@@ -18,12 +18,12 @@ export class PostFolderItem extends RecordEntity {
   post: Post;
 
   @Column()
-  postId: number;
+  postId: string;
 
   @ManyToOne(() => PostFolder, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'folderId', referencedColumnName: 'id' })
   folder: PostFolder;
 
   @Column()
-  folderId: number;
+  folderId: string;
 }

@@ -44,7 +44,7 @@ export class VideoViews1643322253706 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'startedFrom',
@@ -56,7 +56,7 @@ export class VideoViews1643322253706 implements MigrationInterface {
           },
           {
             name: 'postId',
-            type: 'int',
+            type: 'uuid',
           },
         ],
       }),

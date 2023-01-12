@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, DropButton, Stack, Text, TextInput } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { CaretDownFill, CaretRightFill, Edit } from 'grommet-icons';
@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import ListButton from '../../../components/utils/ListButton';
 
 import {
+  getUserChannelsAllAction,
   updateChannelInfoAction,
   updateChannelPhoto,
 } from '../../../store/actions/channel.action';
@@ -14,6 +15,7 @@ import { UpdateChannelPayload } from '../../../store/types/channel.types';
 import AvatarUpload from './AvatarUpload';
 import { SettingsData } from './types';
 import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
+import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
 
 const ChannelSettings: () => SettingsData = () => {
   const {
@@ -29,7 +31,7 @@ const ChannelSettings: () => SettingsData = () => {
   const [channelPayload, setChannelPayload] = useState<UpdateChannelPayload>({
     name: '',
     description: '',
-    id: 1,
+    id: '',
     public: userChannels?.data[0]?.channel?.public,
   });
 
@@ -46,6 +48,10 @@ const ChannelSettings: () => SettingsData = () => {
     channelPayload.description === selectedChannel?.description &&
     channelPayload.public === selectedChannel?.public;
 
+  useEffect(() => {
+    dispatch(getUserChannelsAllAction());
+  }, []);
+
   if (userChannels.data.length === 0) {
     return {
       id: 1,
@@ -56,7 +62,6 @@ const ChannelSettings: () => SettingsData = () => {
         {
           key: 'channelName',
           title: '',
-          description: '',
           value: 'value',
           component: (
             <Box
@@ -166,16 +171,24 @@ const ChannelSettings: () => SettingsData = () => {
               >
                 <Box>
                   <Text>{selectedChannel?.name}</Text>
-                  <Text color="status-disabled">
-                    {t('settings.in')}{' '}
-                    {
-                      userZones?.find(
-                        (userZone) =>
-                          userZone.zone.id === selectedChannel.zoneId
-                      )?.zone.name
-                    }{' '}
-                    {t('settings.zone')}
-                  </Text>
+                  <Box direction="row" gap="small" align="center">
+                    <ZoneBadge
+                      truncateWith={15}
+                      textProps={{ size: 'small' }}
+                      subdomain={
+                        userZones?.find(
+                          (userZone) =>
+                            userZone.zone.id === selectedChannel.zoneId
+                        )?.zone.subdomain
+                      }
+                      name={
+                        userZones?.find(
+                          (userZone) =>
+                            userZone.zone.id === selectedChannel.zoneId
+                        )?.zone.name
+                      }
+                    />
+                  </Box>
                 </Box>
                 <CaretDownFill />
               </Box>
@@ -212,7 +225,6 @@ const ChannelSettings: () => SettingsData = () => {
       {
         key: 'channelName',
         title: t('settings.channelName'),
-        description: t('settings.changeChannelName'),
         value: 'value',
         component: (
           <Box
@@ -225,6 +237,7 @@ const ChannelSettings: () => SettingsData = () => {
             pad="xxsmall"
           >
             <TextInput
+              placeholder={t('settings.channelNamePlaceholder')}
               value={channelPayload.name}
               plain
               focusIndicator={false}
@@ -241,7 +254,6 @@ const ChannelSettings: () => SettingsData = () => {
       {
         key: 'channelTitle',
         title: t('settings.channelDescription'),
-        description: t('settings.changeChannelDescription'),
         value: 'value',
         component: (
           <Box
@@ -254,6 +266,7 @@ const ChannelSettings: () => SettingsData = () => {
             pad="xxsmall"
           >
             <TextInput
+              placeholder={t('settings.channelDescriptionPlaceholder')}
               value={channelPayload.description}
               plain
               focusIndicator={false}

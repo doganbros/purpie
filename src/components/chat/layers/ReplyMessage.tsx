@@ -10,7 +10,7 @@ interface Props {
   message: ChatMessage;
   onDismiss: () => void;
   name?: string;
-  to: number;
+  to: string;
   user: User;
   onSubmit: (message: Partial<ChatMessage>) => void;
 }

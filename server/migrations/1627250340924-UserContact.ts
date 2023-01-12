@@ -6,7 +6,6 @@ import {
 } from 'typeorm';
 import { recordEntityColumns } from './data/record-entity';
 
-
 export class UserContact1627250340924 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
@@ -16,11 +15,11 @@ export class UserContact1627250340924 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'contactUserId',
-            type: 'int',
+            type: 'uuid',
           },
         ],
         uniques: [

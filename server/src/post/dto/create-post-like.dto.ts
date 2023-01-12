@@ -1,10 +1,10 @@
-import { IsInt, IsOptional, IsIn } from 'class-validator';
+import { IsIn, IsOptional, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreatePostLikeDto {
   @ApiProperty()
-  @IsInt()
-  postId: number;
+  @IsUUID()
+  postId: string;
 
   @ApiProperty({
     required: false,

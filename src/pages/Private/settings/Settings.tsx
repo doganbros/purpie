@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Accordion, AccordionPanel, Avatar, Box, Text } from 'grommet';
-import { CaretRightFill, Home } from 'grommet-icons';
+import { CaretRightFill } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { nanoid } from 'nanoid';
@@ -50,14 +50,10 @@ const Settings: FC = () => {
             const settingItemLabel = settingItem.title
               .replace(/ /g, '')
               .toLowerCase();
-            const settingItemDescription = settingItem.description
-              .replace(/ /g, '')
-              .toLowerCase();
 
             if (
               settingItemKey.includes(search) ||
-              settingItemLabel.includes(search) ||
-              settingItemDescription.includes(search)
+              settingItemLabel.includes(search)
             ) {
               menuItemsResult.push(settingItem);
             }
@@ -93,9 +89,6 @@ const Settings: FC = () => {
           {!selectedItem.isEmpty && selectedItem.saveButton}
         </Box>
         {selectedItem?.items?.map<React.ReactNode>((setting) => {
-          const descriptionParts = setting.description
-            .split(new RegExp(`(${searchText})`, 'gi'))
-            .map((p) => ({ part: p, id: nanoid() }));
           const titleParts = setting.title
             .split(new RegExp(`(${searchText})`, 'gi'))
             .map((p) => ({ part: p, id: nanoid() }));
@@ -111,17 +104,6 @@ const Settings: FC = () => {
               <Box width="medium" direction="column">
                 <Text size="medium" weight="bold">
                   {titleParts.map(({ part, id }) =>
-                    part.toLowerCase() !== searchText.toLowerCase() ? (
-                      `${part}`
-                    ) : (
-                      <Text key={id} weight="bold">
-                        {part}
-                      </Text>
-                    )
-                  )}
-                </Text>
-                <Text>
-                  {descriptionParts.map(({ part, id }) =>
                     part.toLowerCase() !== searchText.toLowerCase() ? (
                       `${part}`
                     ) : (
@@ -222,19 +204,6 @@ const Settings: FC = () => {
                 <Divider color="status-disabled-light" />
               </React.Fragment>
             ))}
-          </Box>
-          <Box
-            direction="row"
-            align="center"
-            gap="small"
-            onClick={() => history.push('/')}
-            pad={{ bottom: 'xxsmall' }}
-          >
-            <Home color="brand" size="large" fontWeight="bold" />
-
-            <Text color="brand" weight="bold">
-              Home Page
-            </Text>
           </Box>
         </Box>
         <Box justify="center" fill="horizontal" align="center">

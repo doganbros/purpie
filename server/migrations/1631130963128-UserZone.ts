@@ -13,7 +13,7 @@ export class UserZone1631130963128 implements MigrationInterface {
       'user_channel',
       new TableColumn({
         name: 'userZoneId',
-        type: 'int',
+        type: 'uuid',
         isNullable: true,
       }),
     );
@@ -37,6 +37,8 @@ export class UserZone1631130963128 implements MigrationInterface {
         'channel.zoneId',
       ])
       .innerJoin('user_channel.channel', 'channel')
+      .addGroupBy('channel.id')
+      .addGroupBy('user_channel.id')
       .getMany();
 
     for (const userChannel of userChannels) {

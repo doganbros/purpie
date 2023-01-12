@@ -34,7 +34,7 @@ const ZoneSettings: () => SettingsData | null = () => {
     name: '',
     description: '',
     subdomain: '',
-    id: userZones?.[0]?.zone?.id || 0,
+    id: userZones?.[0]?.zone?.id || '',
     public: userZones?.[0]?.zone?.public || false,
   });
 
@@ -48,7 +48,6 @@ const ZoneSettings: () => SettingsData | null = () => {
         {
           key: 'zoneName',
           title: '',
-          description: '',
           value: 'value',
           component: (
             <Box
@@ -107,7 +106,7 @@ const ZoneSettings: () => SettingsData | null = () => {
               pad="5px"
             >
               <ZoneAvatar
-                id={selectedZone?.id || 1}
+                id={selectedZone?.id || ''}
                 name={selectedZone?.name}
                 src={selectedZone?.displayPhoto}
               />
@@ -183,7 +182,7 @@ const ZoneSettings: () => SettingsData | null = () => {
         {showAvatarUpload && !(zoneId === null) && (
           <AvatarUpload
             onSubmit={(file: any) => {
-              dispatch(updateZonePhotoAction(file, zoneId || 1));
+              dispatch(updateZonePhotoAction(file, zoneId!));
               setShowAvatarUpload(false);
             }}
             onDismiss={() => {
@@ -199,7 +198,6 @@ const ZoneSettings: () => SettingsData | null = () => {
       {
         key: 'zoneName',
         title: t('settings.zoneName'),
-        description: t('settings.changeZoneName'),
         value: 'value',
         component: (
           <Box
@@ -212,6 +210,7 @@ const ZoneSettings: () => SettingsData | null = () => {
             pad="xxsmall"
           >
             <TextInput
+              placeholder={t('settings.zoneNamePlaceholder')}
               value={zonePayload.name}
               plain
               focusIndicator={false}
@@ -228,7 +227,6 @@ const ZoneSettings: () => SettingsData | null = () => {
       {
         key: 'zoneTitle',
         title: t('settings.zoneSubdomain'),
-        description: t('settings.changeZoneSubdomain'),
         value: 'value',
         component: (
           <Box
@@ -241,6 +239,7 @@ const ZoneSettings: () => SettingsData | null = () => {
             pad="xxsmall"
           >
             <TextInput
+              placeholder={t('settings.zoneSubdomainPlaceholder')}
               value={zonePayload.subdomain}
               plain
               focusIndicator={false}
@@ -257,7 +256,6 @@ const ZoneSettings: () => SettingsData | null = () => {
       {
         key: 'zoneDescription',
         title: t('settings.zoneDescription'),
-        description: t('settings.changeZoneDescription'),
         value: 'value',
         component: (
           <Box
@@ -270,6 +268,7 @@ const ZoneSettings: () => SettingsData | null = () => {
             pad="xxsmall"
           >
             <TextInput
+              placeholder={t('settings.zoneDescriptionPlaceholder')}
               value={zonePayload.description}
               plain
               focusIndicator={false}

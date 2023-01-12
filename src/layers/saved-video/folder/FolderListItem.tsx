@@ -10,11 +10,11 @@ import {
 } from '../../../store/actions/folder.action';
 
 interface Props {
-  id: number;
+  id: string;
   name: string;
   videoCount: number;
   selected: boolean;
-  postId: number;
+  postId: string;
 }
 
 export const FolderListItem: FC<Props> = ({

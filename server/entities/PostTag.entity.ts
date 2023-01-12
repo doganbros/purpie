@@ -21,5 +21,5 @@ export class PostTag extends BaseEntity {
   post: Post;
 
   @Column()
-  postId: number;
+  postId: string;
 }

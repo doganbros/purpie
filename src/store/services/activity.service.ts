@@ -39,10 +39,10 @@ export const getNotifications = (
 export const getNotificationCount = (): Promise<NotificationCount> =>
   http.get('/notification/count').then((res) => res.data);
 
-export const viewNotifications = (notificationIds: number[]): Promise<string> =>
+export const viewNotifications = (notificationIds: string[]): Promise<string> =>
   http
     .post('/notification/view', null, { params: { notificationIds } })
     .then((res) => res.data);
 
-export const readNotification = (notificationId: number): Promise<string> =>
+export const readNotification = (notificationId: string): Promise<string> =>
   http.post(`/notification/read/${notificationId}`).then((res) => res.data);

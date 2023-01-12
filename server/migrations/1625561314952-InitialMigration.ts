@@ -7,18 +7,20 @@ import {
 } from 'typeorm';
 import { recordEntityColumns } from './data/record-entity';
 
-
 export class InitialMigration1625561314952 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
+
     await queryRunner.createTable(
       new Table({
         name: 'user_zone_permission',
         columns: [
           {
             name: 'id',
-            type: 'int',
+            type: 'uuid',
             isPrimary: true,
-            isGenerated: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
           },
           {
             name: 'canCreateChannel',
@@ -42,15 +44,15 @@ export class InitialMigration1625561314952 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'zoneId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'userZonePermissionId',
-            type: 'int',
+            type: 'uuid',
             isUnique: true,
           },
         ],
@@ -104,11 +106,11 @@ export class InitialMigration1625561314952 implements MigrationInterface {
           },
           {
             name: 'createdById',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'adminId',
-            type: 'int',
+            type: 'uuid',
           },
         ],
       }),
@@ -174,7 +176,7 @@ export class InitialMigration1625561314952 implements MigrationInterface {
         columns: [
           {
             name: 'id',
-            type: 'int',
+            type: 'uuid',
             isPrimary: true,
             isGenerated: true,
           },
@@ -200,16 +202,11 @@ export class InitialMigration1625561314952 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'channelId',
-            type: 'int',
-          },
-          {
-            name: 'userChannelPermissionId',
-            isUnique: true,
-            type: 'int',
+            type: 'uuid',
           },
         ],
       }),
@@ -247,15 +244,15 @@ export class InitialMigration1625561314952 implements MigrationInterface {
           },
           {
             name: 'zoneId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'createdById',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'adminId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'channelMeetingConfig',
@@ -297,20 +294,20 @@ export class InitialMigration1625561314952 implements MigrationInterface {
           },
           {
             name: 'createdById',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'adminId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'zoneId',
-            type: 'int',
+            type: 'uuid',
             isNullable: true,
           },
           {
             name: 'channelId',
-            type: 'int',
+            type: 'uuid',
             isNullable: true,
           },
         ],
@@ -325,16 +322,16 @@ export class InitialMigration1625561314952 implements MigrationInterface {
           ...recordEntityColumns,
           {
             name: 'userId',
-            type: 'int',
+            type: 'uuid',
           },
           {
             name: 'channelId',
-            type: 'int',
+            type: 'uuid',
             isNullable: true,
           },
           {
             name: 'zoneId',
-            type: 'int',
+            type: 'uuid',
             isNullable: true,
           },
         ],
@@ -407,15 +404,6 @@ export class InitialMigration1625561314952 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'channel',
         onDelete: 'CASCADE',
-      }),
-    );
-    await queryRunner.createForeignKey(
-      'user_channel',
-      new TableForeignKey({
-        columnNames: ['userChannelPermissionId'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'user_channel_permission',
-        onDelete: 'RESTRICT',
       }),
     );
     await queryRunner.createForeignKey(

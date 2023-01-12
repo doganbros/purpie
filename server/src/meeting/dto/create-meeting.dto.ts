@@ -41,9 +41,9 @@ export class CreateMeetingDto {
   endDate?: Date;
 
   @ApiProperty()
-  @IsInt()
+  @IsString()
   @IsOptional()
-  channelId?: number;
+  channelId?: string;
 
   @ApiProperty()
   @ValidateIf((o) => {
@@ -97,4 +97,9 @@ export class CreateMeetingDto {
   @IsNotEmpty()
   @IsIn(timeZones, { message: 'Invalid timezone option specified' })
   timeZone?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsInt()
+  joinLinkExpiryAsHours?: number;
 }
