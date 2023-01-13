@@ -123,11 +123,10 @@ const ZoneSettings: () => SettingsData | null = () => {
           dropProps={{
             responsive: false,
             stretch: false,
-            overflow: { vertical: 'scroll' },
           }}
           dropAlign={{ left: 'right', top: 'top' }}
           dropContent={
-            <Box>
+            <Box width={{ min: '250px' }} overflow="auto">
               {userZones?.map((item, index) => (
                 <ListButton
                   label={item.zone.name}
