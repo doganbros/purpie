@@ -127,37 +127,50 @@ const ChannelSettings: () => SettingsData = () => {
             onOpen={() => setIsDropOpen(true)}
             onClose={() => setIsDropOpen(false)}
             dropAlign={{ left: 'right', top: 'top' }}
-            dropProps={{
-              responsive: false,
-              stretch: false,
-              overflow: { vertical: 'scroll' },
-            }}
+            fill="vertical"
             dropContent={
-              <Box width={{ min: '250px' }}>
-                {userChannels.data.map((item, index) => (
-                  <ListButton
-                    key={item.channel.id}
-                    label={item.channel.name}
-                    onClick={() => {
-                      setChannelPayload({
-                        name: item.channel.name,
-                        id: item.channel.id,
-                        description: item.channel.description,
-                        public: item.channel.public,
-                      });
-                      setSelectedUserChannelIndex(index);
-                      setShowChannelSelector(false);
-                      setIsDropOpen(false);
-                    }}
-                    leftIcon={
-                      <ChannelAvatar
-                        id={item.channel.id}
-                        name={item.channel.name}
-                        src={item.channel.displayPhoto}
-                      />
-                    }
-                    selected={selectedChannel.name === item.channel.name}
-                  />
+              <Box width={{ min: '250px' }} overflow="scroll">
+                {userZones?.map((zone) => (
+                  <Box key={zone.zone.id} flex={{ shrink: 0 }}>
+                    <Box
+                      margin={{ vertical: 'xsmall', left: 'small' }}
+                      style={{ pointerEvents: 'none' }}
+                      border={{ side: 'bottom', color: 'light-2' }}
+                      pad={{ bottom: 'small' }}
+                    >
+                      <ZoneBadge name={zone.zone.name} />
+                    </Box>
+                    {userChannels.data.map(
+                      (item, index) =>
+                        item.channel.zoneId === zone.zone.id && (
+                          <ListButton
+                            key={item.channel.id}
+                            label={item.channel.name}
+                            onClick={() => {
+                              setChannelPayload({
+                                name: item.channel.name,
+                                id: item.channel.id,
+                                description: item.channel.description,
+                                public: item.channel.public,
+                              });
+                              setSelectedUserChannelIndex(index);
+                              setShowChannelSelector(false);
+                              setIsDropOpen(false);
+                            }}
+                            leftIcon={
+                              <ChannelAvatar
+                                id={item.channel.id}
+                                name={item.channel.name}
+                                src={item.channel.displayPhoto}
+                              />
+                            }
+                            selected={
+                              selectedChannel.name === item.channel.name
+                            }
+                          />
+                        )
+                    )}
+                  </Box>
                 ))}
               </Box>
             }
