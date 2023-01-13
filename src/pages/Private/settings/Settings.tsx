@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 import React, { FC, useEffect, useState } from 'react';
 import { Accordion, AccordionPanel, Avatar, Box, Text } from 'grommet';
-import { CaretRightFill } from 'grommet-icons';
+import { CaretRightFill, Previous } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { nanoid } from 'nanoid';
@@ -172,6 +173,16 @@ const Settings: FC = () => {
       <Box direction="row" pad={{ horizontal: 'medium', bottom: 'medium' }}>
         <Box justify="between">
           <Box>
+            <Box
+              direction="row"
+              gap="small"
+              margin={{ top: '40px' }}
+              onClick={() => history.goBack()}
+              focusIndicator={false}
+            >
+              <Previous size="24px" color="brand" />
+              <Text> {t('common.back')}</Text>
+            </Box>
             <Box pad={{ horizontal: 'small', top: 'medium', bottom: 'small' }}>
               <Text weight="bold" color="brand">
                 {t('settings.settings')}
