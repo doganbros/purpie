@@ -127,7 +127,7 @@ const ZoneSettings: () => SettingsData | null = () => {
           }}
           dropAlign={{ left: 'right', top: 'top' }}
           dropContent={
-            <Box>
+            <Box width={{ min: '250px' }}>
               {userZones?.map((item, index) => (
                 <ListButton
                   label={item.zone.name}

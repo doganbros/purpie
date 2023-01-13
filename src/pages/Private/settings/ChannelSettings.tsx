@@ -133,7 +133,7 @@ const ChannelSettings: () => SettingsData = () => {
               overflow: { vertical: 'scroll' },
             }}
             dropContent={
-              <Box>
+              <Box width={{ min: '250px' }}>
                 {userChannels.data.map((item, index) => (
                   <ListButton
                     key={item.channel.id}
