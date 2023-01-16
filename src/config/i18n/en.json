@@ -554,5 +554,8 @@
     "verificationEmailSent":"Your email verification link has successfully been sent to your email adress",
     "meetingCreated":"New meeting with the id {{meetingId}} has been created successfully",
     "newFolderCreated":"New folder with the name {{folderName}} has been created successfully"
+  },
+  "StaticPage": {
+    "title": ""
   }
 }
