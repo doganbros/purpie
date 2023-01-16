@@ -21,6 +21,7 @@ const InitialsAvatar: FC<InitialsAvatarProps> = ({
     <Avatar
       round={roundSize || 'full'}
       background={{ color: background }}
+      flex={{ shrink: 0 }}
       {...avatarProps}
     >
       <Text color={foreground} {...textProps} weight="normal">
