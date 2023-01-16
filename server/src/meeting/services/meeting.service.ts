@@ -451,6 +451,14 @@ export class MeetingService {
       return {
         title: meeting.title,
         description: meeting.description,
+        user: {
+          fullName: meeting.createdBy.fullName,
+          email: meeting.createdBy.email,
+          userName: meeting.createdBy.userName,
+          photoURL: meeting.createdBy.displayPhoto
+            ? `${REACT_APP_SERVER_HOST}/v1/user/display-photo/${meeting.createdBy.displayPhoto}`
+            : null,
+        },
         type: 'channel',
         channel: {
           name: meeting.channel.name,
