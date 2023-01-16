@@ -59,9 +59,63 @@ const Video: FC = () => {
   const {
     channel: { userChannels },
     post: {
-      postDetail: { data, loading },
+      postDetail: { loading },
     },
   } = useSelector((state: AppState) => state);
+  const data = {
+    id: '7ebf28ea-5516-4fe7-b4c6-52571532264e',
+    createdOn: '2023-01-16T22:52:07.504Z',
+    updatedOn: '2023-01-16T22:52:16.803Z',
+    title: 'ATATata',
+    description: null,
+    slug: 'pbs-wb1-8zi',
+    startDate: '2023-01-16T13:52:07.498Z',
+    endDate: '2023-01-16T15:52:07.499Z',
+    conferenceStartDate: '2023-01-16T19:52:11.504Z',
+    conferenceEndDate: null,
+    timeZone: 'Europe/Istanbul',
+    type: 'meeting',
+    createdById: '4a416c3d-9c60-46be-9616-385ff39516c0',
+    channelId: '4d21894c-f7a1-4413-ad4b-7de81b1c4815',
+    streaming: true,
+    public: true,
+    liveStream: true,
+    record: false,
+    videoName: null,
+    postReactionId: '9e079335-a15b-4557-9bdf-fa208256489f',
+    allowDislike: true,
+    allowReaction: true,
+    allowComment: true,
+    liked: false,
+    saved: false,
+    disliked: false,
+    createdBy: {
+      id: '4a416c3d-9c60-46be-9616-385ff39516c0',
+      fullName: 'Bruce Wayne',
+      userName: 'testing1',
+      email: 'bruce@wayneenterprise.com',
+      displayPhoto: '81131468-3fef-4860-96cd-cf021daa8a46.png',
+    },
+    postReaction: {
+      likesCount: 0,
+      dislikesCount: 0,
+      commentsCount: 0,
+      viewsCount: 0,
+      liveStreamViewersCount: 0,
+    },
+    channel: {
+      id: '4d21894c-f7a1-4413-ad4b-7de81b1c4815',
+      name: 'Wayne Industries',
+      description: null,
+      public: true,
+      zone: {
+        id: '9c65eac1-2a38-4042-b8bc-d3a8a97ce156',
+        name: 'Batman Beyond',
+        subdomain: 'batmanbeyond',
+        public: true,
+      },
+    },
+  };
   const history = useHistory();
   const [showSettings, setShowSettings] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -295,16 +349,9 @@ const Video: FC = () => {
               <Box direction="row" align="center" justify="between">
                 {data.streaming ? (
                   <Text>
-                    {
-                      (t(
-                        `Video.${
-                          liveStreamCount === 1
-                            ? 'userWatching'
-                            : 'usersWatching'
-                        }`
-                      ),
-                      { count: liveStreamCount })
-                    }
+                    {liveStreamCount <= 1
+                      ? t('Video.userWatching', { count: liveStreamCount })
+                      : t('Video.usersWatching', { count: liveStreamCount })}
                   </Text>
                 ) : (
                   <Text color="status-disabled">
@@ -378,7 +425,7 @@ const Video: FC = () => {
               renderHighlight={({ match }) => (
                 <Text color="brand">{match}</Text>
               )}
-              text={data.description}
+              text={data.description!}
             />
           )}
           {renderChatResponsive()}
