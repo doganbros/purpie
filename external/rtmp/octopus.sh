@@ -76,15 +76,19 @@ send_event() {
   fi
   SEND_EVENT_RETURN_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
   if [[ $RESPONSE == OK || $RESPONSE == Created ]]; then
-    echo "$DATE - Event successfully sent to Octopus with response: $SEND_EVENT_RETURN_CODE" >>/tmp/octopus-rtmp.log
-  else
-    if [[ $NUM_SEND_EVENT_TRIES -lt $MAX_EVENT_TRIES ]]; then
+    echo "$DATE - Event successfully sent to Octopus with response: $RESPONSE" >>/tmp/octopus-rtmp.log
+else
+    if [[ $NUMBER_OF_TRIES -lt $MAX_EVENT_TRIES ]]
+     then
       NUMBER_OF_TRIES=$((NUMBER_OF_TRIES+1))
-      echo "$DATE - Error while sending event. Retuned code: ${SEND_EVENT_RETURN_CODE}. Num of tries: $NUM_SEND_EVENT_TRIES." >>/tmp/octopus-rtmp.log
-      auth
-      send_event      
+      echo "$DATE - Error while sending event. Retuned code: ${SEND_EVENT_RETURN_CODE}. Response is $RESPONSE. Num of tries: $NUMBER_OF_TRIES." >> /tmp/octopus-rtmp.log
+      if [[ $SEND_EVENT_RETURN_CODE == 401 ]]
+       then
+        auth
+      fi
+      send_event
     else
-      echo "$DATE - Error while sending event after trying $NUM_SEND_EVENT_TRIES times. Retuned code: ${SEND_EVENT_RETURN_CODE}" >>/tmp/octopus-rtmp.log
+      echo "$DATE - Error while sending event after trying $NUMBER_OF_TRIES times. Retuned code: ${SEND_EVENT_RETURN_CODE}" >> /tmp/octopus-rtmp.log
     fi
   fi
 }
