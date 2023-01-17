@@ -4,7 +4,6 @@ import { Edit, Hide, View } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
-import { SettingsData } from './types';
 import {
   updatePasswordAction,
   updateProfileInfoAction,
@@ -15,8 +14,9 @@ import { UserAvatar } from '../../../components/utils/Avatars/UserAvatar';
 import { validators } from '../../../helpers/validators';
 import { UpdatePasswordPayload } from '../../../store/types/auth.types';
 import { FormSubmitEvent } from '../../../models/form-submit-event';
+import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 
-const PersonalSettings: () => SettingsData | null = () => {
+const PersonalSettings: () => Menu | null = () => {
   const {
     auth: { user },
   } = useSelector((state: AppState) => state);

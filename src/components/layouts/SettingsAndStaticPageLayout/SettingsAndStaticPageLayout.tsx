@@ -5,43 +5,34 @@ import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { nanoid } from 'nanoid';
 import LogoWhite from '../../../assets/purpie-logo/logo-white.svg';
+import Divider from '../PrivatePageLayout/ZoneSelector/Divider';
+import { useDebouncer } from '../../../hooks/useDebouncer';
+import { Menu, MenuItem } from './types';
 import './Style.scss';
-import { useTitle } from '../../hooks/useTitle';
-import { useDebouncer } from '../../hooks/useDebouncer';
-import {
-  PageData,
-  PageItem,
-} from '../../layers/settings-and-static-pages/types';
-import SearchBar from '../../layers/settings-and-static-pages/SearchBar';
-import Divider from '../utils/Divider';
+import SearchBar from './SearchBar';
 
 interface SettingsAndStaticPageLayoutProps {
-  menuList: PageData[];
+  pageTitle: string;
+  menuList: Menu[];
 }
 
 const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
+  pageTitle,
   menuList,
 }) => {
-  const { t } = useTranslation();
-  useTitle(t('settings.documentTitle'));
   const history = useHistory();
-  const debouncer = useDebouncer();
-
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [searchText, setSearchText] = useState<string>('');
   const [searchTextValue, setSearchTextValue] = useState<string>('');
 
-  useEffect(() => {
-    debouncer(() => setSearchText(searchTextValue), 300);
-    if (!searchTextValue) {
-      setActiveAccordionIndex(0);
-    }
-  }, [searchTextValue]);
+  const { t } = useTranslation();
+
+  const debouncer = useDebouncer();
 
   const getSearchResults = () => {
     if (menuList.length > 0) {
-      const result: PageData[] = [];
+      const result: Menu[] = [];
       menuList.forEach((menuItem) => {
         const menuItemKey = menuItem.key.replace(/ /g, '').toLowerCase();
         const menuItemLabel = menuItem.label.replace(/ /g, '').toLowerCase();
@@ -49,20 +40,13 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
         if (menuItemKey.includes(search) || menuItemLabel.includes(search)) {
           result.push(menuItem);
         } else {
-          const menuItemsResult: PageItem[] = [];
-          menuItem?.items?.forEach((settingItem) => {
-            const settingItemKey = settingItem.key
-              .replace(/ /g, '')
-              .toLowerCase();
-            const settingItemLabel = settingItem.title
-              .replace(/ /g, '')
-              .toLowerCase();
+          const menuItemsResult: MenuItem[] = [];
+          menuItem?.items?.forEach((item) => {
+            const itemKey = item.key.replace(/ /g, '').toLowerCase();
+            const itemLabel = item.title.replace(/ /g, '').toLowerCase();
 
-            if (
-              settingItemKey.includes(search) ||
-              settingItemLabel.includes(search)
-            ) {
-              menuItemsResult.push(settingItem);
+            if (itemKey.includes(search) || itemLabel.includes(search)) {
+              menuItemsResult.push(item);
             }
           });
           if (menuItemsResult.length > 0) {
@@ -76,26 +60,33 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
     return [];
   };
 
-  const renderSettingCategory = (selectedItem: PageData) => {
+  useEffect(() => {
+    debouncer(() => setSearchText(searchTextValue), 300);
+    if (!searchTextValue) {
+      setActiveAccordionIndex(0);
+    }
+  }, [searchTextValue]);
+
+  const renderContentCategory = (selectedMenu: Menu) => {
     return (
       <Box flex="grow" pad={{ horizontal: 'small' }} gap="medium">
-        {searchText.length === 0 && (
+        {!selectedMenu.labelNotVisible && searchText.length === 0 && (
           <Box>
-            <Text size="xlarge">{selectedItem.label}</Text>
+            <Text size="xlarge">{selectedMenu.label}</Text>
           </Box>
         )}
         <Box direction="row" justify="between">
-          {selectedItem.avatarWidget}
-          {!selectedItem.isEmpty && selectedItem.saveButton}
+          {selectedMenu.avatarWidget}
+          {!selectedMenu.isEmpty && selectedMenu.saveButton}
         </Box>
-        {selectedItem?.items?.map<React.ReactNode>((setting) => {
-          const titleParts = setting.title
+        {selectedMenu?.items?.map<React.ReactNode>((menuItem) => {
+          const titleParts = menuItem.title
             .split(new RegExp(`(${searchText})`, 'gi'))
             .map((p) => ({ part: p, id: nanoid() }));
 
           return (
             <Box
-              key={setting.key}
+              key={menuItem.key}
               direction="column"
               flex="grow"
               justify="start"
@@ -114,7 +105,7 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
                   )}
                 </Text>
               </Box>
-              <Box>{setting.component && setting.component}</Box>
+              <Box>{menuItem.component && menuItem.component}</Box>
             </Box>
           );
         })}
@@ -122,7 +113,7 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
     );
   };
 
-  const renderSettings = () => {
+  const renderContent = () => {
     if (searchText?.length > 0) {
       const selectedItems = getSearchResults();
       if (selectedItems.length === 0) {
@@ -136,14 +127,14 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
           {selectedItems.map((item) => (
             <AccordionPanel label={item.label} key={item.key}>
               <Box pad={{ vertical: 'small' }}>
-                {renderSettingCategory(item)}
+                {renderContentCategory(item)}
               </Box>
             </AccordionPanel>
           ))}
         </Accordion>
       );
     }
-    return renderSettingCategory(menuList[selectedIndex]);
+    return renderContentCategory(menuList[selectedIndex]);
   };
 
   return (
@@ -184,7 +175,7 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
             </Box>
             <Box pad={{ horizontal: 'small', top: 'medium', bottom: 'small' }}>
               <Text weight="bold" color="brand">
-                {t('settings.settings')}
+                {pageTitle}
               </Text>
             </Box>
             {menuList.map((menuItem, index) => (
@@ -224,9 +215,9 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
             overflow="auto"
             fill="horizontal"
             width={{ max: '1440px' }}
-            className="settings-container"
+            className="settings-and-static-page-container"
           >
-            {renderSettings()}
+            {renderContent()}
           </Box>
         </Box>
       </Box>

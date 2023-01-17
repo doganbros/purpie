@@ -6,15 +6,15 @@ import { useTranslation } from 'react-i18next';
 import ListButton from '../../../components/utils/ListButton';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { UpdateZonePayload } from '../../../store/types/zone.types';
-import { SettingsData } from './types';
 import {
   updateZoneInfoAction,
   updateZonePhotoAction,
 } from '../../../store/actions/zone.action';
 import AvatarUpload from './AvatarUpload';
 import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
+import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 
-const ZoneSettings: () => SettingsData | null = () => {
+const ZoneSettings: () => Menu | null = () => {
   const {
     zone: {
       getUserZones: { userZones },
