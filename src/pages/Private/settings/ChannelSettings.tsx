@@ -16,6 +16,7 @@ import AvatarUpload from './AvatarUpload';
 import { SettingsData } from './types';
 import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
 import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
+import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
 
 const ChannelSettings: () => SettingsData = () => {
   const {
@@ -129,21 +130,37 @@ const ChannelSettings: () => SettingsData = () => {
             dropAlign={{ left: 'right', top: 'top' }}
             fill="vertical"
             dropContent={
-              <Box width={{ min: '250px' }} overflow="scroll">
+              <Box width={{ min: '250px' }} overflow="auto">
                 {userZones?.map((zone) => (
-                  <Box key={zone.zone.id} flex={{ shrink: 0 }}>
-                    <Box
-                      margin={{ vertical: 'xsmall', left: 'small' }}
-                      style={{ pointerEvents: 'none' }}
-                      border={{ side: 'bottom', color: 'light-2' }}
-                      pad={{ bottom: 'small' }}
-                    >
-                      <ZoneBadge name={zone.zone.name} />
-                    </Box>
+                  <Box
+                    key={zone.zone.id}
+                    flex={{ shrink: 0 }}
+                    border={{ side: 'bottom', color: 'light-2' }}
+                  >
+                    {userChannels.data.filter(
+                      (id) => id.channel.zoneId === zone.zone.id
+                    ).length > 0 && (
+                      <Box
+                        style={{ pointerEvents: 'none' }}
+                        pad="small"
+                        gap="small"
+                        direction="row"
+                        align="center"
+                        alignContent="center"
+                      >
+                        <ZoneAvatar id={zone.zone.id} name={zone.zone.name} />
+                        <Text size="small">{zone.zone.name}</Text>
+                      </Box>
+                    )}
                     {userChannels.data.map(
                       (item, index) =>
                         item.channel.zoneId === zone.zone.id && (
                           <ListButton
+                            pad={{
+                              vertical: 'xsmall',
+                              left: 'medium',
+                              right: 'small',
+                            }}
                             key={item.channel.id}
                             label={item.channel.name}
                             onClick={() => {

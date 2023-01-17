@@ -62,6 +62,7 @@ const Video: FC = () => {
       postDetail: { data, loading },
     },
   } = useSelector((state: AppState) => state);
+
   const history = useHistory();
   const [showSettings, setShowSettings] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -295,16 +296,9 @@ const Video: FC = () => {
               <Box direction="row" align="center" justify="between">
                 {data.streaming ? (
                   <Text>
-                    {
-                      (t(
-                        `Video.${
-                          liveStreamCount === 1
-                            ? 'userWatching'
-                            : 'usersWatching'
-                        }`
-                      ),
-                      { count: liveStreamCount })
-                    }
+                    {liveStreamCount <= 1
+                      ? t('Video.userWatching', { count: liveStreamCount })
+                      : t('Video.usersWatching', { count: liveStreamCount })}
                   </Text>
                 ) : (
                   <Text color="status-disabled">
@@ -378,7 +372,7 @@ const Video: FC = () => {
               renderHighlight={({ match }) => (
                 <Text color="brand">{match}</Text>
               )}
-              text={data.description}
+              text={data.description!}
             />
           )}
           {renderChatResponsive()}
