@@ -1,4 +1,4 @@
-import { Box, Image, Layer, Text } from 'grommet';
+import { Box, Image, Layer, Text, TextProps } from 'grommet';
 import React, { FC } from 'react';
 import ConfirmIcon from '../../assets/confirm-icon.svg';
 
@@ -8,6 +8,7 @@ interface ConfirmDialogProps {
   message?: string;
   confirmButtonText?: string;
   cancelButtonText?: string;
+  textProps?: TextProps;
 }
 
 const ConfirmDialog: FC<ConfirmDialogProps> = ({
@@ -16,11 +17,12 @@ const ConfirmDialog: FC<ConfirmDialogProps> = ({
   message = 'Are you sure?',
   confirmButtonText = 'Confirm',
   cancelButtonText = 'Cancel',
+  textProps,
 }) => (
   <Layer responsive={false} onClickOutside={onDismiss}>
     <Box pad="medium" gap="medium" width="350px" align="center">
       <Image src={ConfirmIcon} />
-      <Text weight="bold" textAlign="center">
+      <Text weight="bold" textAlign="center" {...textProps}>
         {message}
       </Text>
       <Box fill="horizontal" direction="row" justify="between" gap="medium">

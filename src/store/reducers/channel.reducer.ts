@@ -17,6 +17,7 @@ import {
   SET_SELECTED_CHANNEL,
   UNSET_SELECTED_CHANNEL,
   UPDATE_CHANNEL_PHOTO_SUCCESS,
+  DELETE_CHANNEL_SUCCESS,
 } from '../constants/channel.constants';
 import { ChannelActionParams, ChannelState } from '../types/channel.types';
 
@@ -198,6 +199,18 @@ const channelReducer = (
           error: action.payload,
         },
       };
+    case DELETE_CHANNEL_SUCCESS:
+      return {
+        ...state,
+        userChannels: {
+          data: state.userChannels.data.filter(
+            (item) => item.id !== action.payload
+          ),
+          loading: false,
+          error: null,
+        },
+      };
+
     default:
       return state;
   }
