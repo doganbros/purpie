@@ -7,12 +7,14 @@ import ListButton from '../../../components/utils/ListButton';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { UpdateZonePayload } from '../../../store/types/zone.types';
 import {
+  deleteZoneAction,
   updateZoneInfoAction,
   updateZonePhotoAction,
 } from '../../../store/actions/zone.action';
 import AvatarUpload from './AvatarUpload';
 import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
+import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 
 const ZoneSettings: () => Menu | null = () => {
   const {
@@ -24,7 +26,7 @@ const ZoneSettings: () => Menu | null = () => {
 
   const [selectedUserZoneIndex, setSelectedUserZoneIndex] = useState(0);
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
-
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
   const { t } = useTranslation();
 
   const [showZoneSelector, setShowZoneSelector] = useState(true);
@@ -69,6 +71,7 @@ const ZoneSettings: () => Menu | null = () => {
 
   const selectedZone = userZones?.[selectedUserZoneIndex]?.zone;
   const zoneId = selectedZone?.id;
+  const canDelete = userZones?.[selectedUserZoneIndex]?.zoneRole.canDelete;
 
   const isFormInitialState =
     zonePayload.name === selectedZone?.name &&
@@ -92,6 +95,34 @@ const ZoneSettings: () => Menu | null = () => {
         primary
         label={t('settings.save')}
         margin={{ vertical: 'medium' }}
+      />
+    ),
+    deleteButton: (
+      <Button
+        onClick={() => {
+          if (!(zoneId === null || zoneId === undefined)) {
+            setShowDeletePopup(true);
+          }
+        }}
+        primary
+        color="red"
+        label={t('common.delete')}
+        margin={{ vertical: 'medium' }}
+      />
+    ),
+    deletePopup: showDeletePopup && (
+      <ConfirmDialog
+        message={`${`${t('settings.deleteMessage')} 
+   ${'\n'}
+        ${selectedZone?.name}`} zone?`}
+        onConfirm={() => {
+          if (!(zoneId === null || zoneId === undefined)) {
+            dispatch(deleteZoneAction(zoneId));
+          }
+          setShowDeletePopup(false);
+        }}
+        onDismiss={() => setShowDeletePopup(false)}
+        textProps={{ wordBreak: 'break-word' }}
       />
     ),
     avatarWidget: (
@@ -283,6 +314,7 @@ const ZoneSettings: () => Menu | null = () => {
       },
     ],
     isEmpty: showZoneSelector,
+    canDelete,
   };
 };
 

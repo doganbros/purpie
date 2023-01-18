@@ -77,7 +77,13 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
         )}
         <Box direction="row" justify="between">
           {selectedMenu.avatarWidget}
-          {!selectedMenu.isEmpty && selectedMenu.saveButton}
+          {selectedMenu.deletePopup}
+          <Box direction="row" gap="small">
+            {!selectedMenu.isEmpty &&
+              selectedMenu.canDelete &&
+              selectedMenu.deleteButton}
+            {!selectedMenu.isEmpty && selectedMenu.saveButton}
+          </Box>
         </Box>
         {selectedMenu?.items?.map<React.ReactNode>((menuItem) => {
           const titleParts = menuItem.title

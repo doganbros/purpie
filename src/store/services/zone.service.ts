@@ -35,7 +35,7 @@ export const updateZone = (
 export const deleteUserZone = (userZoneId: number): Promise<any> =>
   http.delete(`/user-zone/remove/${userZoneId}`).then((res) => res.data);
 
-export const deleteZone = (zoneId: number): Promise<any> =>
+export const deleteZone = (zoneId: string): Promise<any> =>
   http.delete(`/zone/remove/${zoneId}`).then((res) => res.data);
 
 export const searchZone = (

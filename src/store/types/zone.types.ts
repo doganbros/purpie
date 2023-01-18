@@ -37,6 +37,7 @@ import {
   UPDATE_ZONE_PHOTO_FAILED,
   UPDATE_ZONE_PERMISSIONS_SUCCESS,
   UPDATE_ZONE_INFO_SUCCESS,
+  DELETE_ZONE_SUCCESS,
 } from '../constants/zone.constants';
 
 import { PaginatedResponse } from '../../models/paginated-response';
@@ -202,6 +203,10 @@ export type ZoneActionParams =
   | {
       type: typeof UPDATE_ZONE_PHOTO_SUCCESS;
       payload: string;
+      zoneId: string;
+    }
+  | {
+      type: typeof DELETE_ZONE_SUCCESS;
       zoneId: string;
     };
 

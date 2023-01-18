@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import ListButton from '../../../components/utils/ListButton';
 
 import {
+  deleteChannelAction,
   getUserChannelsAllAction,
   updateChannelInfoAction,
   updateChannelPhoto,
@@ -15,6 +16,7 @@ import { UpdateChannelPayload } from '../../../store/types/channel.types';
 import AvatarUpload from './AvatarUpload';
 import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
 import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
+import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 
@@ -29,6 +31,7 @@ const ChannelSettings: () => Menu = () => {
 
   const [selectedUserChannelIndex, setSelectedUserChannelIndex] = useState(0);
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [channelPayload, setChannelPayload] = useState<UpdateChannelPayload>({
     name: '',
     description: '',
@@ -42,6 +45,8 @@ const ChannelSettings: () => Menu = () => {
   const [showChannelSelector, setShowChannelSelector] = useState(true);
 
   const selectedChannel = userChannels.data[selectedUserChannelIndex]?.channel;
+  const canDelete =
+    userChannels.data[selectedUserChannelIndex]?.channelRole?.canDelete;
   const channelId = selectedChannel?.id;
 
   const isFormInitialState =
@@ -97,6 +102,19 @@ const ChannelSettings: () => Menu = () => {
         }}
         primary
         label={t('settings.save')}
+        margin={{ vertical: 'medium' }}
+      />
+    ),
+    deleteButton: (
+      <Button
+        onClick={() => {
+          if (!(channelId === null || channelId === undefined)) {
+            setShowDeletePopup(true);
+          }
+        }}
+        primary
+        color="red"
+        label={t('common.delete')}
         margin={{ vertical: 'medium' }}
       />
     ),
@@ -182,7 +200,7 @@ const ChannelSettings: () => Menu = () => {
                               />
                             }
                             selected={
-                              selectedChannel.name === item.channel.name
+                              selectedChannel?.name === item.channel.name
                             }
                           />
                         )
@@ -231,7 +249,7 @@ const ChannelSettings: () => Menu = () => {
                 align="center"
               >
                 <Text>{t('settings.selectChannel')}</Text>
-                <CaretRightFill color="brand" />{' '}
+                <CaretRightFill color="brand" />
               </Box>
             )}
           </DropButton>
@@ -250,6 +268,21 @@ const ChannelSettings: () => Menu = () => {
           />
         )}
       </>
+    ),
+    deletePopup: showDeletePopup && (
+      <ConfirmDialog
+        message={`${`${t('settings.deleteMessage')} ${
+          selectedChannel?.name
+        }`} channel?`}
+        onConfirm={() => {
+          if (!(channelId === null || channelId === undefined)) {
+            dispatch(deleteChannelAction(channelId));
+          }
+          setShowDeletePopup(false);
+        }}
+        onDismiss={() => setShowDeletePopup(false)}
+        textProps={{ wordBreak: 'break-word' }}
+      />
     ),
     items: [
       {
@@ -312,6 +345,7 @@ const ChannelSettings: () => Menu = () => {
       },
     ],
     isEmpty: showChannelSelector,
+    canDelete,
   };
 };
 

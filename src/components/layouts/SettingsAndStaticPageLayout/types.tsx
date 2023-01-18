@@ -17,4 +17,7 @@ export interface Menu {
   saveButton?: ReactNode;
   avatarWidget?: ReactNode;
   isEmpty?: boolean;
+  canDelete?: boolean;
+  deleteButton?: ReactNode;
+  deletePopup?: ReactNode;
 }

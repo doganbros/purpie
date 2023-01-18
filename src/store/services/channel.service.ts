@@ -79,3 +79,6 @@ export const listChannelUsers = (
   http
     .get(`channel/users/list/${channelId}`, { params: { limit, skip } })
     .then((res) => res.data);
+
+export const deleteChannel = (channelId: string): Promise<any> =>
+  http.delete(`channel/remove/${channelId}`).then((res) => res.data);
