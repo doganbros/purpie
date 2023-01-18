@@ -10,7 +10,7 @@ import Faq from './Faq';
 
 const StaticPage: FC = () => {
   const { t } = useTranslation();
-  useTitle(t('settings.documentTitle'));
+  useTitle(t('StaticPage.title'));
 
   const data: Menu[] = [
     AboutUs(),
@@ -19,7 +19,12 @@ const StaticPage: FC = () => {
     Faq(),
   ].filter((v): v is Menu => v !== null);
 
-  return <SettingsAndStaticPageLayout pageTitle="Support" menuList={data} />;
+  return (
+    <SettingsAndStaticPageLayout
+      pageTitle={t('StaticPage.support')}
+      menuList={data}
+    />
+  );
 };
 
 export default StaticPage;

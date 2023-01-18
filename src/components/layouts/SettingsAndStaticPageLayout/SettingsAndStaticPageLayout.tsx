@@ -117,7 +117,7 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
     if (searchText?.length > 0) {
       const selectedItems = getSearchResults();
       if (selectedItems.length === 0) {
-        return <Text>{t('settings.noSettings')}</Text>;
+        return <Text>{t('StaticPage.noSearch')}</Text>;
       }
       return (
         <Accordion

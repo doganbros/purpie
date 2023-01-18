@@ -168,7 +168,8 @@
     "createChannel": "Create Channel",
     "createZone": "Create Zone",
     "settings": "Settings",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "support": "Support"
   },
   "Sidebar": {
     "home": "Home",
@@ -507,7 +508,6 @@
     "zoneSubdomain": "Zone Subdomain",
     "zoneDescription": "Zone Description",
     "zoneVisibility": "Zone Visibility",
-    "noSettings": "Can't find related settings. You may be misspelled it.",
     "noChannel": "You don't seem to have a channel that you can edit",
     "noZone": "You don't seem to have a zone that you can edit",
     "zone": "Zone",
@@ -556,6 +556,8 @@
     "newFolderCreated":"New folder with the name {{folderName}} has been created successfully"
   },
   "StaticPage": {
-    "title": ""
+    "title": "Support - Purpie",
+    "support": "Support",
+    "noSearch": "Can't find related search. You may be misspelled it."
   }
 }

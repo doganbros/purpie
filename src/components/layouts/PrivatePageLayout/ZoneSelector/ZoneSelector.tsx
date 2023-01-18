@@ -123,6 +123,10 @@ const ZoneSelector: FC = () => {
                 onClick={() => history.push('/settings')}
                 rightIcon={<SettingsOption size="small" color="dark-1" />}
               />
+              <ListButton
+                label={t('ZoneSelector.support')}
+                onClick={() => history.push('/support')}
+              />
               <Divider margin={{ vertical: 'xxsmall' }} />
               <ListButton
                 onClick={() => dispatch(logoutAction())}
