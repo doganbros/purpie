@@ -524,7 +524,8 @@
     "channelNamePlaceholder": "Change channel name",
     "channelDescriptionPlaceholder": "Change channel description",
     "chooseProfilePicture": "Choose Profile Picture",
-    "browse":"Browse"
+    "browse":"Browse",
+    "deleteMessage":"Do you want to delete"
   },
   "ContactsToFollow": {
     "title": "People to add",
@@ -553,6 +554,8 @@
     "passwordResetSuccess":"Your password has been reset successfully",
     "verificationEmailSent":"Your email verification link has successfully been sent to your email adress",
     "meetingCreated":"New meeting with the id {{meetingId}} has been created successfully",
-    "newFolderCreated":"New folder with the name {{folderName}} has been created successfully"
+    "newFolderCreated":"New folder with the name {{folderName}} has been created successfully",
+    "channelDeleted":"Channel has been deleted successfully",
+    "zoneDeleted":"Zone has been deleted successfully"
   }
 }

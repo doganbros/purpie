@@ -87,7 +87,13 @@ const Settings: FC = () => {
         )}
         <Box direction="row" justify="between">
           {selectedItem.avatarWidget}
-          {!selectedItem.isEmpty && selectedItem.saveButton}
+          {selectedItem.deletePopup}
+          <Box direction="row" gap="small">
+            {!selectedItem.isEmpty &&
+              selectedItem.canDelete &&
+              selectedItem.deleteButton}
+            {!selectedItem.isEmpty && selectedItem.saveButton}
+          </Box>
         </Box>
         {selectedItem?.items?.map<React.ReactNode>((setting) => {
           const titleParts = setting.title

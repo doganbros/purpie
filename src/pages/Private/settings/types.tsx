@@ -16,6 +16,9 @@ export interface SettingsData {
   saveButton?: ReactNode;
   avatarWidget?: ReactNode;
   isEmpty?: boolean;
+  deleteButton?: ReactNode;
+  deletePopup?: ReactNode;
+  canDelete?: boolean;
 }
 
 export interface MediumType {

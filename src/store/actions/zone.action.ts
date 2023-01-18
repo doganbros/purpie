@@ -25,6 +25,7 @@ import {
   UPDATE_ZONE_INFO_REQUESTED,
   UPDATE_ZONE_INFO_SUCCESS,
   UPDATE_ZONE_INFO_FAILED,
+  DELETE_ZONE_SUCCESS,
 } from '../constants/zone.constants';
 
 import * as ZoneService from '../services/zone.service';
@@ -170,6 +171,24 @@ export const updateZoneInfoAction = (
       setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
       dispatch({
         type: UPDATE_ZONE_INFO_SUCCESS,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: UPDATE_ZONE_INFO_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const deleteZoneAction = (zoneId: string): ZoneAction => {
+  return async (dispatch) => {
+    try {
+      await ZoneService.deleteZone(zoneId);
+      setToastAction('ok', i18n.t('ToastMessages.zoneDeleted'))(dispatch);
+      dispatch({
+        type: DELETE_ZONE_SUCCESS,
+        zoneId,
       });
     } catch (err: any) {
       dispatch({

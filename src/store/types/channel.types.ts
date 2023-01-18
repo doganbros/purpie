@@ -3,6 +3,9 @@ import {
   CREATE_CHANNEL_FAILED,
   CREATE_CHANNEL_REQUESTED,
   CREATE_CHANNEL_SUCCESS,
+  DELETE_CHANNEL_FAILED,
+  DELETE_CHANNEL_REQUESTED,
+  DELETE_CHANNEL_SUCCESS,
   GET_CHANNEL_USERS_FAILED,
   GET_CHANNEL_USERS_REQUESTED,
   GET_CHANNEL_USERS_SUCCESS,
@@ -131,6 +134,10 @@ export type ChannelActionParams =
       payload: UserChannelListItem[];
     }
   | {
+      type: typeof DELETE_CHANNEL_SUCCESS;
+      payload: string;
+    }
+  | {
       type: typeof SEARCH_CHANNEL_REQUESTED;
       payload: ChannelSearchParams;
     }
@@ -163,7 +170,8 @@ export type ChannelActionParams =
         | typeof UPDATE_CHANNEL_PERMISSIONS_REQUESTED
         | typeof UPDATE_CHANNEL_INFO_SUCCESS
         | typeof UPDATE_CHANNEL_PERMISSIONS_SUCCESS
-        | typeof GET_CHANNEL_USERS_REQUESTED;
+        | typeof GET_CHANNEL_USERS_REQUESTED
+        | typeof DELETE_CHANNEL_REQUESTED;
     }
   | {
       type: typeof UPDATE_CHANNEL_PHOTO_SUCCESS;
@@ -183,7 +191,8 @@ export type ChannelActionParams =
         | typeof UPDATE_CHANNEL_PHOTO_FAILED
         | typeof UPDATE_CHANNEL_INFO_FAILED
         | typeof UPDATE_CHANNEL_PERMISSIONS_FAILED
-        | typeof GET_CHANNEL_USERS_FAILED;
+        | typeof GET_CHANNEL_USERS_FAILED
+        | typeof DELETE_CHANNEL_FAILED;
       payload: ResponseError;
     };
 
