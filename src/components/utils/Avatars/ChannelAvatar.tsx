@@ -21,6 +21,7 @@ export const ChannelAvatar: FC<ChannelAvatarProps> = ({
       alignSelf="center"
       round="full"
       src={`${apiURL}/channel/display-photo/${src}`}
+      flex={{ shrink: 0 }}
     />
   ) : (
     <InitialsAvatar id={id} value={name} textProps={textProps} />
