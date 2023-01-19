@@ -17,7 +17,6 @@ import VerifyUserEmail from './pages/Public/VerifyUserEmail';
 import VerifyUserEmailInfo from './pages/Public/VerifyUserEmailInfo';
 import ComingSoon from './pages/Private/ComingSoon';
 import JoinPage from './pages/Public/JoinPage';
-import StaticPage from './pages/Public/static/StaticPage';
 
 interface AppRoute {
   id: string;
@@ -134,11 +133,5 @@ export const privateRoutes: Array<AppRoute> = [
     path: '/messages',
     component: ComingSoon,
     description: 'User views and write a message',
-  },
-  {
-    id: nanoid(),
-    path: '/support',
-    component: StaticPage,
-    description: 'Static Pages',
   },
 ];

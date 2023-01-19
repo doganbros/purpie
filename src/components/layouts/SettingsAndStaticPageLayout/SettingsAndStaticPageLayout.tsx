@@ -14,11 +14,13 @@ import SearchBar from './SearchBar';
 interface SettingsAndStaticPageLayoutProps {
   pageTitle: string;
   menuList: Menu[];
+  pageUrl?: string;
 }
 
 const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
   pageTitle,
   menuList,
+  pageUrl,
 }) => {
   const history = useHistory();
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0);
@@ -59,6 +61,11 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
     }
     return [];
   };
+
+  useEffect(() => {
+    const activePageIndex = menuList.findIndex((m) => m.url === pageUrl);
+    if (activePageIndex !== -1) setSelectedIndex(activePageIndex);
+  }, [pageUrl]);
 
   useEffect(() => {
     debouncer(() => setSearchText(searchTextValue), 300);
