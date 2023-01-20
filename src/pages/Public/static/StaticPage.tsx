@@ -1,28 +1,37 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import ChannelSettings from './ChannelSettings';
-import PersonalSettings from './PersonalSettings';
-import ZoneSettings from './ZoneSettings';
+import { useParams } from 'react-router-dom';
 import { useTitle } from '../../../hooks/useTitle';
 import SettingsAndStaticPageLayout from '../../../components/layouts/SettingsAndStaticPageLayout/SettingsAndStaticPageLayout';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
+import AboutUs from './AboutUs';
+import PrivacyPolicy from './PrivacyPolicy';
+import TermsAndConditions from './TermsAndConditions';
+import Faq from './Faq';
 
-const Settings: FC = () => {
+interface Params {
+  page: string;
+}
+
+const StaticPage: FC = () => {
   const { t } = useTranslation();
-  useTitle(t('settings.documentTitle'));
+  useTitle(t('StaticPage.title'));
+  const { page } = useParams<Params>();
 
   const data: Menu[] = [
-    PersonalSettings(),
-    ChannelSettings(),
-    ZoneSettings(),
+    AboutUs(),
+    PrivacyPolicy(),
+    TermsAndConditions(),
+    Faq(),
   ].filter((v): v is Menu => v !== null);
 
   return (
     <SettingsAndStaticPageLayout
-      pageTitle={t('settings.settings')}
+      pageTitle={t('StaticPage.support')}
       menuList={data}
+      pageUrl={page}
     />
   );
 };
 
-export default Settings;
+export default StaticPage;

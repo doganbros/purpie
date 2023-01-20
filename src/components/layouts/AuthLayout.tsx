@@ -18,11 +18,10 @@ import ExtendedBox from '../utils/ExtendedBox';
 import { AnchorLink } from '../utils/AnchorLink';
 
 const footerLinks = [
-  { label: 'Help', to: '/' },
-  { label: 'About Us', to: '/' },
-  { label: 'Terms of Service', to: '/' },
-  { label: 'Privacy Policy', to: '/' },
-  { label: 'Cookie Policy', to: '/' },
+  { label: 'About Us', to: '/support/about-us' },
+  { label: 'Privacy Policy', to: '/support/privacy-policy' },
+  { label: 'Terms & Services', to: '/support/terms-and-conditions' },
+  { label: 'FAQ', to: '/support/faq' },
 ];
 
 interface Props {

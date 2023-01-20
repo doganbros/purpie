@@ -1,27 +1,23 @@
 import { ReactNode } from 'react';
 
-export interface SettingFormItem {
+export interface MenuItem {
   key: string;
   title: string;
   value?: string;
   component: ReactNode;
 }
 
-export interface SettingsData {
+export interface Menu {
   id: number;
   key: string;
   label: string;
+  labelNotVisible?: boolean;
   url: string;
-  items?: SettingFormItem[];
+  items?: MenuItem[];
   saveButton?: ReactNode;
   avatarWidget?: ReactNode;
   isEmpty?: boolean;
+  canDelete?: boolean;
   deleteButton?: ReactNode;
   deletePopup?: ReactNode;
-  canDelete?: boolean;
-}
-
-export interface MediumType {
-  name: 'user' | 'channel' | 'zone';
-  id: number;
 }

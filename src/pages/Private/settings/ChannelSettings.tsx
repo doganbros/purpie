@@ -14,13 +14,13 @@ import {
 import { AppState } from '../../../store/reducers/root.reducer';
 import { UpdateChannelPayload } from '../../../store/types/channel.types';
 import AvatarUpload from './AvatarUpload';
-import { SettingsData } from './types';
 import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
 import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
 import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
+import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 
-const ChannelSettings: () => SettingsData = () => {
+const ChannelSettings: () => Menu = () => {
   const {
     channel: { userChannels },
     zone: {
