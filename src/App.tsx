@@ -21,6 +21,7 @@ import { getUserChannelsAction } from './store/actions/channel.action';
 import { DELAY_TIME } from './helpers/constants';
 import useDelayTime from './hooks/useDelayTime';
 import { listFolderAction } from './store/actions/folder.action';
+import StaticPage from './pages/Public/static/StaticPage';
 
 const App: FC = () => {
   const dispatch = useDispatch();
@@ -80,6 +81,10 @@ const App: FC = () => {
                   component={component}
                 />
               ))}
+              <Route
+                path={['/support', '/support/:page']}
+                component={StaticPage}
+              />
               <Route exact path="/initialize-user" component={InitializeUser} />
               <Route exact path="*" component={NotFound} />
             </Switch>
