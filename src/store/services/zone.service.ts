@@ -56,3 +56,6 @@ export const updateZoneInfo = (
   params: ZoneBasic
 ): Promise<any> =>
   http.put(`zone/update/${zoneId}`, params).then((res) => res.data);
+
+export const leaveZone = (zoneId: string): Promise<any> =>
+  http.delete(`/user-zone/remove/${zoneId}`).then((res) => res.data);

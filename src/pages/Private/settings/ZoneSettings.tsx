@@ -8,6 +8,7 @@ import { AppState } from '../../../store/reducers/root.reducer';
 import { UpdateZonePayload } from '../../../store/types/zone.types';
 import {
   deleteZoneAction,
+  leaveZoneAction,
   updateZoneInfoAction,
   updateZonePhotoAction,
 } from '../../../store/actions/zone.action';
@@ -18,6 +19,7 @@ import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 
 const ZoneSettings: () => Menu | null = () => {
   const {
+    auth: { user },
     zone: {
       getUserZones: { userZones },
     },
@@ -27,6 +29,7 @@ const ZoneSettings: () => Menu | null = () => {
   const [selectedUserZoneIndex, setSelectedUserZoneIndex] = useState(0);
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [showLeavePopup, setShowLeavePopup] = useState(false);
   const { t } = useTranslation();
 
   const [showZoneSelector, setShowZoneSelector] = useState(true);
@@ -39,6 +42,11 @@ const ZoneSettings: () => Menu | null = () => {
     id: userZones?.[0]?.zone?.id || '',
     public: userZones?.[0]?.zone?.public || false,
   });
+
+  const showLeaveButton =
+    user?.id !== userZones?.[selectedUserZoneIndex]?.zone?.createdBy?.id;
+
+  const isOwner = !showLeaveButton ? t('settings.owner') : t('settings.member');
 
   if (userZones?.length === 0) {
     return {
@@ -125,6 +133,34 @@ const ZoneSettings: () => Menu | null = () => {
         textProps={{ wordBreak: 'break-word' }}
       />
     ),
+    leaveButton: (
+      <Button
+        onClick={() => {
+          if (!(zoneId === null || zoneId === undefined)) {
+            setShowLeavePopup(true);
+          }
+        }}
+        secondary
+        color="red"
+        label={t('common.leave')}
+        margin={{ vertical: 'medium' }}
+      />
+    ),
+    leavePopup: showLeavePopup && (
+      <ConfirmDialog
+        message={`${`${t('settings.zoneLeaveMessage')}
+        ${'\n'}
+        ${selectedZone?.name}`} zone?`}
+        onConfirm={() => {
+          if (!(zoneId === null || zoneId === undefined)) {
+            dispatch(leaveZoneAction(zoneId));
+          }
+          setShowLeavePopup(false);
+        }}
+        onDismiss={() => setShowLeavePopup(false)}
+        textProps={{ wordBreak: 'break-word' }}
+      />
+    ),
     avatarWidget: (
       <Box direction="row" gap="small" align="center">
         {!showZoneSelector && (
@@ -161,6 +197,11 @@ const ZoneSettings: () => Menu | null = () => {
               {userZones?.map((item, index) => (
                 <ListButton
                   label={item.zone.name}
+                  subLabel={
+                    item.zone.createdBy?.id === user?.id
+                      ? t('settings.owner')
+                      : t('settings.member')
+                  }
                   key={item.zone.id}
                   onClick={() => {
                     setZonePayload({
@@ -191,7 +232,7 @@ const ZoneSettings: () => Menu | null = () => {
             <Box direction="row" align="center">
               <Box>
                 <Text>{selectedZone?.name}</Text>
-                <Text color="status-disabled">{selectedZone?.subdomain}</Text>
+                <Text color="status-disabled">{isOwner}</Text>
               </Box>
               <CaretDownFill />
             </Box>
@@ -315,6 +356,7 @@ const ZoneSettings: () => Menu | null = () => {
     ],
     isEmpty: showZoneSelector,
     canDelete,
+    showLeaveButton,
   };
 };
 

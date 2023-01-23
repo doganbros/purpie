@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Accordion, AccordionPanel, Avatar, Box, Text } from 'grommet';
-import { CaretRightFill, Previous } from 'grommet-icons';
+import { CaretLeftFill, CaretRightFill } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { nanoid } from 'nanoid';
@@ -78,7 +78,11 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
         <Box direction="row" justify="between">
           {selectedMenu.avatarWidget}
           {selectedMenu.deletePopup}
+          {selectedMenu.leavePopup}
           <Box direction="row" gap="small">
+            {!selectedMenu.isEmpty &&
+              selectedMenu.showLeaveButton &&
+              selectedMenu.leaveButton}
             {!selectedMenu.isEmpty &&
               selectedMenu.canDelete &&
               selectedMenu.deleteButton}
@@ -94,7 +98,7 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
             <Box
               key={menuItem.key}
               direction="column"
-              flex="grow"
+              flex="shrink"
               justify="start"
               gap="small"
             >
@@ -172,17 +176,17 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
             <Box
               direction="row"
               gap="small"
-              margin={{ top: '40px' }}
+              margin={{ top: '30px' }}
               onClick={() => history.goBack()}
               focusIndicator={false}
+              align="center"
+              pad={{ bottom: 'small' }}
             >
-              <Previous size="24px" color="brand" />
+              <CaretLeftFill size="36px" color="brand" />
               <Text> {t('common.back')}</Text>
             </Box>
-            <Box pad={{ horizontal: 'small', top: 'medium', bottom: 'small' }}>
-              <Text weight="bold" color="brand">
-                {pageTitle}
-              </Text>
+            <Box pad={{ horizontal: 'small', vertical: 'large' }}>
+              <Text weight="bold">{pageTitle}</Text>
             </Box>
             {menuList.map((menuItem, index) => (
               <React.Fragment key={menuItem.key}>

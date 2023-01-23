@@ -38,6 +38,9 @@ import {
   DELETE_CHANNEL_REQUESTED,
   DELETE_CHANNEL_SUCCESS,
   DELETE_CHANNEL_FAILED,
+  UNFOLLOW_CHANNEL_REQUESTED,
+  UNFOLLOW_CHANNEL_SUCCESS,
+  UNFOLLOW_CHANNEL_FAILED,
 } from '../constants/channel.constants';
 import * as ChannelService from '../services/channel.service';
 
@@ -310,6 +313,28 @@ export const deleteChannelAction = (channelId: string): ChannelAction => {
     } catch (err: any) {
       dispatch({
         type: DELETE_CHANNEL_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const unfollowChannelAction = (channelId: string): ChannelAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: UNFOLLOW_CHANNEL_REQUESTED,
+    });
+    try {
+      await ChannelService.unfollowChannel(channelId);
+      dispatch({
+        type: UNFOLLOW_CHANNEL_SUCCESS,
+        payload: channelId,
+      });
+      setToastAction('ok', i18n.t('ToastMessages.channelUnfollowed'))(dispatch);
+      getUserChannelsAction()(dispatch);
+    } catch (err: any) {
+      dispatch({
+        type: UNFOLLOW_CHANNEL_FAILED,
         payload: err?.response?.data,
       });
     }

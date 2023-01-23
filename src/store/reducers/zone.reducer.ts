@@ -21,6 +21,7 @@ import {
   UPDATE_ZONE_PHOTO_SUCCESS,
   SET_CURRENT_USER_ZONE,
   DELETE_ZONE_SUCCESS,
+  LEAVE_ZONE_SUCCESS,
 } from '../constants/zone.constants';
 import { ZoneActionParams, ZoneState } from '../types/zone.types';
 
@@ -236,6 +237,19 @@ const zoneReducer = (
       };
     }
     case DELETE_ZONE_SUCCESS: {
+      const modifiedData = state?.getUserZones?.userZones?.filter(
+        (item) => item.zone.id !== action.zoneId
+      );
+      return {
+        ...state,
+        getUserZones: {
+          userZones: modifiedData,
+          loading: false,
+          error: null,
+        },
+      };
+    }
+    case LEAVE_ZONE_SUCCESS: {
       const modifiedData = state?.getUserZones?.userZones?.filter(
         (item) => item.zone.id !== action.zoneId
       );

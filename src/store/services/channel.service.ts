@@ -82,3 +82,6 @@ export const listChannelUsers = (
 
 export const deleteChannel = (channelId: string): Promise<any> =>
   http.delete(`channel/remove/${channelId}`).then((res) => res.data);
+
+export const unfollowChannel = (channelId: string): Promise<any> =>
+  http.delete(`user-channel/remove/${channelId}`).then((res) => res.data);
