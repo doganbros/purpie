@@ -218,7 +218,7 @@ export class UserService {
       .paginate(query);
   }
 
-  getContactInvitationByIdAndInviteeId(id: number, inviteeId: string) {
+  getContactInvitationByIdAndInviteeId(id: string, inviteeId: string) {
     return this.invitationRepository
       .createQueryBuilder('invitation')
       .innerJoin('invitation.createdBy', 'inviter')
@@ -277,11 +277,14 @@ export class UserService {
       .paginate(query);
   }
 
-  async removeContactInvitation(id: number) {
+  async removeContactInvitation(id: string) {
     return this.invitationRepository.delete(id);
   }
 
-  listContacts(identity: number | string, query: PaginationQuery) {
+  listContacts(
+    identity: { userName?: string; userId?: string },
+    query: PaginationQuery,
+  ) {
     const baseQuery = this.contactRepository
       .createQueryBuilder('contact')
       .select([
@@ -295,17 +298,17 @@ export class UserService {
       ])
       .innerJoin('contact.contactUser', 'contactUser');
 
-    if (typeof identity === 'number')
-      baseQuery.where('contact.userId = :identity', { identity });
+    if (identity.userId)
+      baseQuery.where('contact.userId = :userId', { userId: identity.userId });
     else
       baseQuery
         .innerJoin('contact.user', 'user')
-        .where('user.userName = :identity', { identity });
+        .where('user.userName = :userName', { userName: identity.userName });
 
     return baseQuery.paginate(query);
   }
 
-  async deleteContact(userId: string, id: number) {
+  async deleteContact(userId: string, id: string) {
     return this.contactRepository
       .createQueryBuilder()
       .delete()

@@ -336,7 +336,7 @@
   },
   "EmptyContact": {
     "title": "DON'T HAVE ANY CONTACT",
-    "description": "You don't seem to have a contact. Let's find a contact",
+    "description": "You don't seem to have a contact yet. You may search for people.",
     "findContact": "Find Contact"
   },
   "SelectedUser": {
