@@ -1,4 +1,4 @@
-import { IsIn, IsInt, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsIn, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ContactInvitationResponseDto {
