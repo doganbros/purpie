@@ -55,7 +55,7 @@ const ContactsToFollow: FC = () => {
               <Button
                 primary
                 onClick={() => {
-                  dispatch(createContactInvitation(''));
+                  dispatch(createContactInvitation(user.email));
                 }}
                 label={t('ContactsToFollow.add')}
                 size="small"

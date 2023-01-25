@@ -58,6 +58,6 @@ import { PostSavedController } from './controllers/post-saved.controller';
     PostLikeService,
     PostSavedService,
   ],
-  exports: [PostService],
+  exports: [PostService, FolderService],
 })
 export class PostModule {}
