@@ -18,7 +18,7 @@ import ExtendedBox from '../utils/ExtendedBox';
 import { AnchorLink } from '../utils/AnchorLink';
 
 const footerLinks = [
-  { label: 'About Us', to: '/support/about-us' },
+  { label: 'About', to: '/support/about-us' },
   { label: 'Privacy Policy', to: '/support/privacy-policy' },
   { label: 'Terms & Services', to: '/support/terms-and-conditions' },
   { label: 'FAQ', to: '/support/faq' },
