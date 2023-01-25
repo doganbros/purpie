@@ -331,6 +331,7 @@ export const unfollowChannelAction = (channelId: string): ChannelAction => {
         payload: channelId,
       });
       setToastAction('ok', i18n.t('ToastMessages.channelUnfollowed'))(dispatch);
+      unsetSelectedChannelAction()(dispatch);
       getUserChannelsAction()(dispatch);
     } catch (err: any) {
       dispatch({

@@ -209,9 +209,10 @@ export type ZoneActionParams =
       zoneId: string;
     }
   | {
-      type: typeof DELETE_ZONE_SUCCESS | typeof LEAVE_ZONE_SUCCESS;
+      type: typeof DELETE_ZONE_SUCCESS;
       zoneId: string;
-    };
+    }
+  | { type: typeof LEAVE_ZONE_SUCCESS; leaveZoneId: string };
 
 export interface ZoneDispatch {
   (dispatch: ZoneActionParams | UtilActionParams): void;

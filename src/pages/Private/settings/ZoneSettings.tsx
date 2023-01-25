@@ -48,6 +48,8 @@ const ZoneSettings: () => Menu | null = () => {
 
   const isOwner = !showLeaveButton ? t('settings.owner') : t('settings.member');
 
+  const leaveZoneId = userZones?.[selectedUserZoneIndex]?.id;
+
   if (userZones?.length === 0) {
     return {
       id: 2,
@@ -152,8 +154,8 @@ const ZoneSettings: () => Menu | null = () => {
         ${'\n'}
         ${selectedZone?.name}`} zone?`}
         onConfirm={() => {
-          if (!(zoneId === null || zoneId === undefined)) {
-            dispatch(leaveZoneAction(zoneId));
+          if (!(leaveZoneId === null || leaveZoneId === undefined)) {
+            dispatch(leaveZoneAction(leaveZoneId));
           }
           setShowLeavePopup(false);
         }}
@@ -261,6 +263,8 @@ const ZoneSettings: () => Menu | null = () => {
             }}
             type="zone"
             src={selectedZone?.displayPhoto}
+            id={selectedZone?.id || ''}
+            name={selectedZone?.name}
           />
         )}
       </Box>

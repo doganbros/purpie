@@ -251,7 +251,7 @@ const zoneReducer = (
     }
     case LEAVE_ZONE_SUCCESS: {
       const modifiedData = state?.getUserZones?.userZones?.filter(
-        (item) => item.zone.id !== action.zoneId
+        (item) => item.id !== action.leaveZoneId
       );
       return {
         ...state,

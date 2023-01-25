@@ -201,14 +201,14 @@ export const deleteZoneAction = (zoneId: string): ZoneAction => {
   };
 };
 
-export const leaveZoneAction = (zoneId: string): ZoneAction => {
+export const leaveZoneAction = (leaveZoneId: string): ZoneAction => {
   return async (dispatch) => {
     try {
-      await ZoneService.leaveZone(zoneId);
+      await ZoneService.leaveZone(leaveZoneId);
       setToastAction('ok', i18n.t('ToastMessages.zoneLeft'))(dispatch);
       dispatch({
         type: LEAVE_ZONE_SUCCESS,
-        zoneId,
+        leaveZoneId,
       });
     } catch (err: any) {
       dispatch({

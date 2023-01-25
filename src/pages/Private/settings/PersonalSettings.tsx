@@ -110,6 +110,8 @@ const PersonalSettings: () => Menu | null = () => {
             }}
             type="user"
             src={user?.displayPhoto}
+            id={user?.id}
+            name={user?.fullName}
           />
         )}
       </>
