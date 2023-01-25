@@ -97,4 +97,19 @@ export class UserZoneController {
     await currentUserZone.remove();
     return 'OK';
   }
+
+  @Delete('remove/:zoneId')
+  @ApiOkResponse({
+    schema: { type: 'string', example: 'OK' },
+  })
+  @ApiParam({
+    name: 'zoneId',
+    description: 'Zone Id',
+  })
+  @HttpCode(HttpStatus.OK)
+  @UserZoneRole()
+  async deleteUserZoneByZoneId(@CurrentUserZone() currentUserZone: UserZone) {
+    await currentUserZone.remove();
+    return 'OK';
+  }
 }
