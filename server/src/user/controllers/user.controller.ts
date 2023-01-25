@@ -178,7 +178,7 @@ export class UserController {
     @CurrentUser() user: UserTokenPayload,
     @Query() paginatedQuery: PaginationQuery,
   ) {
-    return this.userService.listContacts(user.id, paginatedQuery);
+    return this.userService.listContacts({ userId: user.id }, paginatedQuery);
   }
 
   @Get('/contact/list/:userName')
@@ -191,7 +191,7 @@ export class UserController {
     @Param('userName') userName: string,
     @Query() paginatedQuery: PaginationQuery,
   ) {
-    return this.userService.listContacts(userName, paginatedQuery);
+    return this.userService.listContacts({ userName }, paginatedQuery);
   }
 
   @Delete('/contact/remove/:contactId')

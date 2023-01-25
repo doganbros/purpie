@@ -12,5 +12,5 @@ export class CreatePostFolderDto {
   })
   @IsUUID()
   @IsOptional()
-  postId: string;
+  postId: string | null;
 }

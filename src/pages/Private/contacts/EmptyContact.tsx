@@ -1,18 +1,16 @@
-import { Box, Button, Image, Text } from 'grommet';
+import { Box, Image, Text } from 'grommet';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import EmptyContactImage from '../../../assets/contact/empty-contact.svg';
+import SearchBar from '../../../components/utils/SearchBar';
+import { SearchScope } from '../../../models/utils';
 
-interface Props {
-  onFindContact: () => void;
-}
-
-const EmptyContact: FC<Props> = ({ onFindContact }) => {
+const EmptyContact: FC = () => {
   const { t } = useTranslation();
 
   return (
-    <Box>
-      <Box margin={{ top: 'xlarge' }} alignSelf="center">
+    <Box height="100vh" justify="center" width="100%">
+      <Box alignSelf="center">
         <Image src={EmptyContactImage} />
       </Box>
       <Box margin={{ top: 'large' }} align="center">
@@ -25,18 +23,18 @@ const EmptyContact: FC<Props> = ({ onFindContact }) => {
         >
           {t('EmptyContact.title')}
         </Text>
-        <Box width={{ max: '440px' }}>
+        <Box width={{ max: '460px' }}>
           <Text size="small" textAlign="center" color="status-disabled">
             {t('EmptyContact.description')}
           </Text>
         </Box>
       </Box>
-      <Box margin="medium" width="fit-content" alignSelf="center">
-        <Button primary size="small" onClick={onFindContact}>
-          <Box pad={{ horizontal: 'large', vertical: 'small' }}>
-            <Text textAlign="center">{t('EmptyContact.findContact')}</Text>
-          </Box>
-        </Button>
+      <Box
+        margin="medium"
+        alignSelf="center"
+        width={{ width: '100%', max: '320px' }}
+      >
+        <SearchBar scope={SearchScope.profile} />
       </Box>
     </Box>
   );
