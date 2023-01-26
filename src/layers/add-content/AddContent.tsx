@@ -4,8 +4,10 @@ import {
   CirclePlay,
   Close,
   Group,
-  Schedules,
+  SchedulePlay,
+  ServicePlay,
   ShareOption,
+  Workshop,
 } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -72,7 +74,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
     },
     {
       id: 3,
-      icon: <Schedules {...iconProps} />,
+      icon: <SchedulePlay {...iconProps} />,
       title: t('AddContent.planMeeting'),
       description: t('AddContent.planMeetingDescription'),
       onClick: () => {
@@ -80,19 +82,36 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
         onDismiss();
       },
     },
+    {
+      id: 4,
+      icon: <ServicePlay {...iconProps} />,
+      title: t('AddContent.multiStream'),
+      description: t('AddContent.multiStreamDescription'),
+      onClick: () => {},
+    },
+    {
+      id: 5,
+      icon: <Workshop {...iconProps} />,
+      title: t('AddContent.webinar'),
+      description: t('AddContent.webinarDescription'),
+      onClick: () => {},
+    },
   ];
 
   return (
     <Layer onClickOutside={onDismiss}>
       <Box
-        width={size !== 'small' ? '720px' : undefined}
-        height={size !== 'small' ? '505px' : undefined}
+        width={size !== 'small' ? '700px' : undefined}
         round={size !== 'small' ? '20px' : undefined}
         fill={size === 'small'}
         background="white"
-        gap="medium"
       >
-        <Box direction="row" justify="between" align="start" pad="medium">
+        <Box
+          direction="row"
+          justify="between"
+          align="start"
+          pad={{ vertical: 'small', horizontal: 'medium' }}
+        >
           <Box pad="xsmall">
             <Text size="large" weight="bold">
               {t('AddContent.title')}
@@ -108,10 +127,13 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
           height="min-content"
           overflow="auto"
           wrap
-          pad="medium"
+          pad={{ vertical: 'small', horizontal: 'medium' }}
         >
           {buttonProps.map(({ id, icon, title, description, onClick }) => (
-            <Box key={id} margin={{ right: 'small', bottom: 'small' }}>
+            <Box
+              key={id}
+              margin={{ right: id % 4 === 3 ? '0' : 'small', bottom: 'small' }}
+            >
               <AddContentButton
                 icon={icon}
                 title={title}

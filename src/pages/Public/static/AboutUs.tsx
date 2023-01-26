@@ -6,13 +6,13 @@ const AboutUs: () => Menu | null = () => {
   return {
     id: 0,
     key: 'aboutUs',
-    label: 'About Us',
+    label: 'About',
     labelNotVisible: true,
     url: 'about-us',
     items: [
       {
         key: 'about-us-content',
-        title: 'About Us',
+        title: 'About',
         component: (
           <Box
             border={{ size: 'xsmall', color: 'status-disabled-light' }}

@@ -193,13 +193,17 @@
   "AddContent": {
     "title": "Take Your Pick",
     "meet": "Meet!",
-    "meetDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
+    "meetDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing.",
     "stream": "Stream!",
-    "streamDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
+    "streamDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing.",
     "shareVideo": "Share a Video",
-    "shareVideoDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
-    "planMeeting": "Plan a Meeting",
-    "planMeetingDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt."
+    "shareVideoDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing.",
+    "planMeeting": "Custom Meet",
+    "planMeetingDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing.",
+    "multiStream": "Multi Stream",
+    "multiStreamDescription": "Coming Soon",
+    "webinar": "Webinar",
+    "webinarDescription": "Coming Soon"
   },
   "validators": {
     "requiredMsg": "{{field}} is required",
