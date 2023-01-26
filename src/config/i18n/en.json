@@ -47,7 +47,9 @@
     "save": "Save",
     "exclusiveContacts": "Exclusive to contacts",
     "close": "CLOSE",
-    "send": "Send"
+    "send": "Send",
+    "unfollow": "Unfollow",
+    "leave": "Leave"
   },
   "Login": {
     "title": "Login",
@@ -484,8 +486,8 @@
   },
   "settings": {
     "personalSettings": "Personal Settings",
-    "channelSettings": "Channel Settings",
-    "zoneSettings": "Zone Settings",
+    "channelSettings": "Channels",
+    "zoneSettings": "Zones",
     "settings": "Settings",
     "search": "Search",
     "username": "Username",
@@ -529,7 +531,11 @@
     "channelDescriptionPlaceholder": "Change channel description",
     "chooseProfilePicture": "Choose Profile Picture",
     "browse":"Browse",
-    "deleteMessage":"Do you want to delete"
+    "deleteMessage":"Are you sure you want to delete",
+    "channelUnfollowMessage":"Are you sure you want to unfollow",
+    "zoneLeaveMessage":"Are you sure you want to leave",
+    "owner":"Owner",
+    "member":"Member"
   },
   "ContactsToFollow": {
     "title": "People to add",
@@ -560,7 +566,9 @@
     "meetingCreated":"New meeting with the id {{meetingId}} has been created successfully",
     "newFolderCreated":"New folder with the name {{folderName}} has been created successfully",
     "channelDeleted":"Channel has been deleted successfully",
-    "zoneDeleted":"Zone has been deleted successfully"
+    "zoneDeleted":"Zone has been deleted successfully",
+    "channelUnfollowed":"You have unfollowed the channel successfully",
+    "zoneLeft":"You have left the zone successfully"
   },
   "StaticPage": {
     "title": "Support - Purpie",

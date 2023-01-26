@@ -26,6 +26,8 @@ import {
   UPDATE_ZONE_INFO_SUCCESS,
   UPDATE_ZONE_INFO_FAILED,
   DELETE_ZONE_SUCCESS,
+  LEAVE_ZONE_SUCCESS,
+  LEAVE_ZONE_FAILED,
 } from '../constants/zone.constants';
 
 import * as ZoneService from '../services/zone.service';
@@ -193,6 +195,24 @@ export const deleteZoneAction = (zoneId: string): ZoneAction => {
     } catch (err: any) {
       dispatch({
         type: UPDATE_ZONE_INFO_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const leaveZoneAction = (leaveZoneId: string): ZoneAction => {
+  return async (dispatch) => {
+    try {
+      await ZoneService.leaveZone(leaveZoneId);
+      setToastAction('ok', i18n.t('ToastMessages.zoneLeft'))(dispatch);
+      dispatch({
+        type: LEAVE_ZONE_SUCCESS,
+        leaveZoneId,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: LEAVE_ZONE_FAILED,
         payload: err?.response?.data,
       });
     }

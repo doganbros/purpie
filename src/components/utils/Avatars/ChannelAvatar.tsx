@@ -8,12 +8,14 @@ interface ChannelAvatarProps {
   src?: string;
   id: string;
   textProps?: TextExtendedProps;
+  size?: string;
 }
 
 export const ChannelAvatar: FC<ChannelAvatarProps> = ({
   name,
   src,
   id,
+  size,
   ...textProps
 }) =>
   src ? (
@@ -22,7 +24,13 @@ export const ChannelAvatar: FC<ChannelAvatarProps> = ({
       round="full"
       src={`${apiURL}/channel/display-photo/${src}`}
       flex={{ shrink: 0 }}
+      size={size || 'medium'}
     />
   ) : (
-    <InitialsAvatar id={id} value={name} textProps={textProps} />
+    <InitialsAvatar
+      id={id}
+      value={name}
+      textProps={textProps}
+      size={size || 'medium'}
+    />
   );

@@ -20,4 +20,7 @@ export interface Menu {
   canDelete?: boolean;
   deleteButton?: ReactNode;
   deletePopup?: ReactNode;
+  showLeaveButton?: boolean;
+  leaveButton?: ReactNode;
+  leavePopup?: ReactNode;
 }

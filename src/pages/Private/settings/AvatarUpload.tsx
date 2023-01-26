@@ -14,12 +14,15 @@ import { useTranslation } from 'react-i18next';
 import { Close } from 'grommet-icons';
 import { apiURL } from '../../../config/http';
 import { theme } from '../../../config/app-config';
+import InitialsAvatar from '../../../components/utils/Avatars/InitialsAvatar';
 
 interface AvatarUploadProps {
   onSubmit: any | ((arg0: File) => void);
   onDismiss: () => void;
   src?: string;
   type?: string;
+  id?: string;
+  name?: string;
 }
 
 const AvatarUpload: FC<AvatarUploadProps> = ({
@@ -27,9 +30,30 @@ const AvatarUpload: FC<AvatarUploadProps> = ({
   onDismiss,
   src,
   type,
+  id,
+  name,
 }) => {
   const [imgSrc, setImgSrc] = useState<string>();
   const { t } = useTranslation();
+
+  const renderAvatar = () => {
+    if (src) {
+      return (
+        <Image fit="cover" src={`${apiURL}/${type}/display-photo/${src}`} />
+      );
+    }
+    return (
+      <Box flex="grow" justify="center" align="center">
+        <InitialsAvatar
+          size="276px"
+          id={id || '1'}
+          value={name || 'Channel'}
+          textProps={{ size: '120px' }}
+          roundSize={type === 'zone' ? 'medium' : 'full'}
+        />
+      </Box>
+    );
+  };
 
   return (
     <ThemeContext.Extend
@@ -41,6 +65,7 @@ const AvatarUpload: FC<AvatarUploadProps> = ({
           },
           round: true,
         },
+
         fileInput: {
           border: {
             size: '1px',
@@ -48,6 +73,11 @@ const AvatarUpload: FC<AvatarUploadProps> = ({
           },
           message: {
             size: 'small',
+          },
+        },
+        anchor: {
+          extend: {
+            fontSize: '14px',
           },
         },
       }}
@@ -59,7 +89,10 @@ const AvatarUpload: FC<AvatarUploadProps> = ({
             <Close color="brand" size="18px" onClick={onDismiss} />
           </Box>
 
-          <Box margin={{ horizontal: 'small', bottom: 'small' }}>
+          <Box
+            margin={{ horizontal: 'small', bottom: 'small' }}
+            width={{ min: '276px', max: '276px' }}
+          >
             <Form
               onSubmit={({ value }: any) => {
                 onSubmit({ photoFile: value.photoFile[0] });
@@ -70,19 +103,10 @@ const AvatarUpload: FC<AvatarUploadProps> = ({
                 height={{ min: '276px', max: '276px' }}
                 alignSelf="center"
                 margin={{ bottom: 'small' }}
-                round="20px"
+                round={type === 'zone' ? '20px' : 'full'}
                 overflow="hidden"
               >
-                {imgSrc ? (
-                  <Image fit="cover" src={imgSrc} />
-                ) : (
-                  src !== null && (
-                    <Image
-                      fit="cover"
-                      src={`${apiURL}/${type}/display-photo/${src}`}
-                    />
-                  )
-                )}
+                {imgSrc ? <Image fit="cover" src={imgSrc} /> : renderAvatar()}
               </Box>
 
               <FormField name="photoFile" htmlFor="file-input">
