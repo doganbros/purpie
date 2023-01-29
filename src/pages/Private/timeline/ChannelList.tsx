@@ -14,6 +14,7 @@ import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
 interface ChannelListProps {
   handleWaiting?: () => void;
 }
+
 const ChannelList: FC<ChannelListProps> = ({
   handleWaiting,
 }: ChannelListProps) => {
@@ -79,9 +80,8 @@ const ChannelList: FC<ChannelListProps> = ({
                     ? 'light-1'
                     : 'dark'
                 }
-              >
-                {c.channel.name}
-              </EllipsesOverflowText>
+                text={c.channel.name}
+              />
             </Box>
           ))
         ))}

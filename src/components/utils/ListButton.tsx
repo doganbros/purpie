@@ -58,19 +58,17 @@ const ListButton: FC<ListButtonProps> = ({
               weight={selected ? 'bold' : 0}
               size="xsmall"
               color={setTextColor()}
+              text={label}
               {...textProps}
-            >
-              {label}
-            </EllipsesOverflowText>
+            />
             <EllipsesOverflowText
               maxWidth="195px"
               weight={selected ? 'bold' : 0}
               size="xsmall"
               color="status-disabled"
+              text={subLabel}
               {...textProps}
-            >
-              {subLabel}
-            </EllipsesOverflowText>
+            />
           </Box>
         </Box>
 

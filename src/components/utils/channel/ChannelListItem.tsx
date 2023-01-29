@@ -39,9 +39,8 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
             lineClamp={1}
             size="small"
             weight="bold"
-          >
-            {name}
-          </EllipsesOverflowText>
+            text={name}
+          />
           <Text size="xsmall" color="status-disabled">
             {zoneSubdomain}
           </Text>
