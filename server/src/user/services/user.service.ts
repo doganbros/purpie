@@ -337,8 +337,10 @@ export class UserService {
         return subQuery
           .select('count(*) > 0', 'userCount')
           .from(Contact, 'contact')
-          .where('contact.contactUserId = user.id')
-          .andWhere('contact.userId = :currentUserId', { currentUserId });
+          .where('contact.userId = user.id')
+          .andWhere('contact.contactUserId = :currentUserId', {
+            currentUserId,
+          });
       }, 'isInContact')
       .addSelect((subQuery) => {
         return subQuery
