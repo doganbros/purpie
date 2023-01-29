@@ -540,7 +540,8 @@
   "ContactsToFollow": {
     "title": "People to add",
     "add": "Add",
-    "noContactsFound": "No contacts found!"
+    "noContactsFound": "No contacts found!",
+    "remove":"Remove"
   },
   "NotificationListItem": {
     "post": "<user>{{userName}}</user> has started new <post>post</post>.",

@@ -1,4 +1,5 @@
-import { Box, Form, FormField, InfiniteScroll, Text } from 'grommet';
+/* eslint-disable no-unused-vars */
+import { Box, Button, Form, FormField, InfiniteScroll, Text } from 'grommet';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
@@ -17,6 +18,7 @@ import ZonesToJoin from '../timeline/ZonesToJoin';
 import FilterWrapper from './FilterWrapper';
 import SearchInput from './SearchInput';
 import Switch from '../../../components/utils/Switch';
+import { createContactInvitation } from '../../../store/actions/invitation.action';
 
 const ProfileSearch: FC = () => {
   const { value } = useParams<SearchParams>();
@@ -65,8 +67,20 @@ const ProfileSearch: FC = () => {
           <Box
             margin={{ vertical: 'xsmall' }}
             onClick={() => history.push(`/user/${item.userName}`)}
+            direction="row"
+            align="center"
+            justify="between"
           >
             <UserSearchItem user={item} />
+
+            <Button
+              primary
+              label={t('ContactsToFollow.add')}
+              onClick={(e) => {
+                e.stopPropagation();
+                dispatch(createContactInvitation(item?.email));
+              }}
+            />
           </Box>
         )}
       </InfiniteScroll>
@@ -79,7 +93,7 @@ const ProfileSearch: FC = () => {
       topComponent={<SearchInput />}
       rightComponent={
         <Box pad="medium" gap="medium">
-          <FilterWrapper>
+          {/* <FilterWrapper>
             <Form value={options} onChange={setOptions}>
               <FormField name="userContacts">
                 <Switch
@@ -89,7 +103,7 @@ const ProfileSearch: FC = () => {
               </FormField>
             </Form>
           </FilterWrapper>
-          <Divider />
+          <Divider /> */}
           <ChannelsToFollow />
           <Divider />
           <ZonesToJoin />

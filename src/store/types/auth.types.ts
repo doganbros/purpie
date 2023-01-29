@@ -71,6 +71,7 @@ export interface UserBasic {
 export interface User extends UserBasic {
   userRole?: UserRole;
   fullName: string;
+  isInContact?: boolean;
 }
 
 export interface AuthState {
