@@ -24,10 +24,7 @@ import { UpdateProfileDto } from '../dto/update-profile.dto';
 import { UpdateUserPermission } from '../dto/update-permissions.dto';
 import { SystemUserListQuery } from '../dto/system-user-list.query';
 import { ErrorTypes } from '../../../types/ErrorTypes';
-import {
-  UserBasicWithToken,
-  UserTokenPayload,
-} from '../../auth/interfaces/user.interface';
+import { UserTokenPayload } from '../../auth/interfaces/user.interface';
 import { MailService } from '../../mail/mail.service';
 
 const { REACT_APP_CLIENT_HOST = '' } = process.env;
@@ -168,27 +165,21 @@ export class UserService {
         'You have already been invited by this user already',
       );
 
-    const result = this.invitationRepository
+    const result = await this.invitationRepository
       .create({
         createdById: user.id,
         email,
       })
       .save();
-    const userInfo = await this.authService.verifyResendMailVerificationToken(
-      user.id,
-    );
 
-    await this.sendContactInvitationMail(userInfo);
+    await this.sendContactInvitationMail(email, result.createdBy.fullName);
     return result;
   }
 
-  sendContactInvitationMail({
-    user: { fullName, email },
-    token,
-  }: UserBasicWithToken) {
+  sendContactInvitationMail(email: string, fullName: string) {
     const context = {
       fullName,
-      link: `${REACT_APP_CLIENT_HOST}/invitation-response/${token}`,
+      link: `${REACT_APP_CLIENT_HOST}`,
     };
     return this.mailService.sendMailByView(
       email,

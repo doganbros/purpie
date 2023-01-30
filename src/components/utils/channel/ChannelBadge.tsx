@@ -1,14 +1,21 @@
 import React, { FC } from 'react';
-import { Text, TextExtendedProps, ThemeContext } from 'grommet';
+import { TextExtendedProps, ThemeContext } from 'grommet';
 import { AnchorLink } from '../AnchorNavLink';
+import EllipsesOverflowText from '../EllipsesOverflowText';
 
 interface ChannelBadgeProps {
   name?: string;
   url: string;
   textProps?: TextExtendedProps;
+  truncateWith?: string;
 }
 
-const ChannelBadge: FC<ChannelBadgeProps> = ({ name, url, textProps }) => {
+const ChannelBadge: FC<ChannelBadgeProps> = ({
+  name,
+  url,
+  textProps,
+  truncateWith,
+}) => {
   return (
     <ThemeContext.Extend
       value={{
@@ -19,7 +26,17 @@ const ChannelBadge: FC<ChannelBadgeProps> = ({ name, url, textProps }) => {
         },
       }}
     >
-      <AnchorLink to={url} label={<Text {...textProps}>◉ {name}</Text>} />
+      <AnchorLink
+        to={url}
+        label={
+          <EllipsesOverflowText
+            maxWidth={truncateWith || '180px'}
+            text={`◉ ${name}`}
+            lineClamp={1}
+            {...textProps}
+          />
+        }
+      />
     </ThemeContext.Extend>
   );
 };

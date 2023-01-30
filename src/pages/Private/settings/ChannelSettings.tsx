@@ -20,6 +20,7 @@ import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
 import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
+import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
 
 const ChannelSettings: () => Menu = () => {
   const {
@@ -248,10 +249,13 @@ const ChannelSettings: () => Menu = () => {
                 align="center"
               >
                 <Box>
-                  <Text>{selectedChannel?.name}</Text>
+                  <EllipsesOverflowText
+                    maxWidth="280px"
+                    lineClamp={1}
+                    text={selectedChannel?.name}
+                  />
                   <Box direction="row" gap="small" align="center">
                     <ZoneBadge
-                      truncateWith={15}
                       textProps={{ size: 'small' }}
                       subdomain={
                         userZones?.find(

@@ -174,16 +174,17 @@ const ZoneSelector: FC = () => {
               )}
               <Box align="center">
                 <EllipsesOverflowText
-                  maxWidth="111px"
+                  maxWidth="92px"
                   textAlign="center"
                   weight="bold"
                   size="xsmall"
                   color="white"
-                >
-                  {selectedUserZone
-                    ? selectedUserZone.zone.name
-                    : user?.fullName}
-                </EllipsesOverflowText>
+                  text={
+                    selectedUserZone
+                      ? selectedUserZone.zone.name
+                      : user?.fullName
+                  }
+                />
               </Box>
             </ExtendedBox>
           </Box>

@@ -65,9 +65,8 @@ export const FolderListItem: FC<Props> = ({
           lineClamp={1}
           size="small"
           weight={500}
-        >
-          {name}
-        </EllipsesOverflowText>
+          text={name}
+        />
         <Text size="xsmall" color="status-disabled">
           {videoCount} videos
         </Text>
