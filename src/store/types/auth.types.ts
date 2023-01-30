@@ -66,6 +66,7 @@ export interface UserBasic {
   userName: string;
   email: string;
   displayPhoto?: string;
+  contactUserId?: string | null;
 }
 
 export interface User extends UserBasic {

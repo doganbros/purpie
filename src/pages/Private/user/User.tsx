@@ -137,8 +137,8 @@ const User: FC = () => {
           }}
           onConfirm={() => {
             setShowRemoveDialog(false);
-            if (detail?.user?.id) {
-              dispatch(removeContactAction(detail.user.id));
+            if (detail?.user?.contactUserId) {
+              dispatch(removeContactAction(detail.user.contactUserId));
             }
           }}
           confirmButtonText={t('common.remove')}

@@ -14,8 +14,6 @@ interface HeaderProps {
 const Header: FC<HeaderProps> = ({ user, handleShowRemoveDialog }) => {
   const dispatch = useDispatch();
 
-  console.log(user);
-
   const AddOrRemoveButton = () => {
     if (user?.isInContact) {
       return (

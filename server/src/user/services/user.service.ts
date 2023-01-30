@@ -81,12 +81,21 @@ export class UserService {
       .createQueryBuilder('user')
       .setParameter('searchTerm', tsqueryParam(query.name))
       .select([
-        'user.id',
-        'user.fullName',
-        'user.email',
-        'user.userName',
-        'user.displayPhoto',
+        'user.id as "id"',
+        'user.fullName as "fullName"',
+        'user.email as "email"',
+        'user.userName as "userName"',
+        'user.displayPhoto as displayPhoto',
       ])
+      .addSelect((subQuery) => {
+        return subQuery
+          .select('contact.id', 'contactUserId')
+          .from(Contact, 'contact')
+          .where('contact.userId = user.id')
+          .andWhere('contact.contactUserId = :currentUserId', {
+            currentUserId: '904fc1b2-a1b3-4c17-81c3-89ecf948c8c3',
+          });
+      }, 'contactUserId')
       .addSelect(
         `ts_rank(user.search_document, to_tsquery('simple', :searchTerm))`,
         'search_rank',
@@ -101,7 +110,7 @@ export class UserService {
   }
 
   async searchUsers(excludeUserIds: Array<string>, query: SearchUsersQuery) {
-    return this.userBaseSelect(excludeUserIds, query).paginate(query);
+    return this.userBaseSelect(excludeUserIds, query).paginateRaw(query);
   }
 
   async searchInUserContacts(
@@ -312,7 +321,7 @@ export class UserService {
     return this.contactRepository
       .createQueryBuilder()
       .delete()
-      .where('userId = :userId AND id = :id', {
+      .where('contactUserId = :userId AND id = :id', {
         userId,
         id,
       })
@@ -344,6 +353,15 @@ export class UserService {
       }, 'isInContact')
       .addSelect((subQuery) => {
         return subQuery
+          .select('contact.id', 'contactUserId')
+          .from(Contact, 'contact')
+          .where('contact.userId = user.id')
+          .andWhere('contact.contactUserId = :currentUserId', {
+            currentUserId,
+          });
+      }, 'contactUserId')
+      .addSelect((subQuery) => {
+        return subQuery
           .select('count(*) > 0', 'blockedCount')
           .from(BlockedUser, 'blocked_user')
           .where('blocked_user.userId = :currentUserId', { currentUserId })
@@ -368,6 +386,7 @@ export class UserService {
       displayPhoto: result.user_displayPhoto,
       email: result.user_email,
       isInContact: result.isInContact,
+      contactUserId: result.contactUserId,
     };
   }
 
