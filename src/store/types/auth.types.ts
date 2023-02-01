@@ -66,11 +66,13 @@ export interface UserBasic {
   userName: string;
   email: string;
   displayPhoto?: string;
+  contactUserId?: string | null;
 }
 
 export interface User extends UserBasic {
   userRole?: UserRole;
   fullName: string;
+  isInContact?: boolean;
 }
 
 export interface AuthState {
