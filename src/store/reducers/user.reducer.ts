@@ -169,6 +169,18 @@ const userReducer = (
             error: null,
           },
         },
+        detail: {
+          ...state.detail,
+          user: state.detail.user
+            ? {
+                ...state.detail.user,
+                contactUserId: null,
+                isInContact: false,
+              }
+            : null,
+          loading: false,
+          error: null,
+        },
       };
     }
     case GET_USER_DETAIL_REQUESTED: {
@@ -197,6 +209,7 @@ const userReducer = (
         },
       };
     }
+
     case LIST_USER_PUBLIC_CHANNELS_REQUESTED:
       return {
         ...state,
