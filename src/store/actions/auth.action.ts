@@ -159,7 +159,7 @@ export const authenticateWithThirdPartyCodeAction = (
 
 export const logoutAction = (): AuthAction => {
   return async (dispatch) => {
-    navigateToSubdomain();
+    await navigateToSubdomain();
     await AuthService.logOut();
     dispatch({
       type: LOGOUT,
