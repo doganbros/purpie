@@ -10,7 +10,8 @@ Also, give us more detail about version of the Purpie you are using and developm
 
 ## Contributor License Agreement
 
-The Purpie projects are licensed under the [Apache License 2.0](https://github.com/jitsi/jitsi-meet/blob/master/LICENSE)
+The Purpie projects are licensed under
+the [Apache License 2.0](https://github.com/doganbros/purpie/blob/develop/LICENSE)
 so you need to sign our Apache-based contributor license agreement as either a [corporation](https://jitsi.org/ccla) or
 an [individual](https://jitsi.org/icla) to
 continue making these projects available under an Open Source license. If you do not accept this agreement then sadly,
@@ -43,19 +44,9 @@ we cannot accept your contribution.
 
 ### Naming
 
-* All names CamelCase format in the Purpie.
+* Util function names camelCase, file names kebab-case and react file and component names PascalCase format in the
+  Purpie.
 
 * The names of global constants (including ES6 module-global constants) should
   be written in uppercase with underscores to separate words. For example,
   `BACKGROUND_COLOR`.
-
-* The underscore character at the beginning of a name signals that the
-  respective variable, function, property is non-public i.e. private, protected,
-  or internal.
-
-### Avoiding bundle bloat
-
-When adding a new feature it's possible that it triggers a build failure due to the increased bundle size. We have
-safeguards inplace to avoid bundles growing disproportionatelly. While there are legit reasons for increasing the
-limits, please analyze the bundle first to make sure no unintended dependencies have been included, causing the increase
-in size.
