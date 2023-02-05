@@ -8,7 +8,7 @@ const {
   S3_ACCESS_KEY_ID = '',
   S3_SECRET_ACCESS_KEY = '',
   S3_REGION = '',
-  S3_VIDEO_BUCKET_NAME = '',
+  S3_BUCKET_NAME = '',
   S3_ENDPOINT_URL,
   NODE_ENV,
 } = process.env;
@@ -46,7 +46,7 @@ export const s3HeadObject = promisify(
 export const s3Storage = (dir: string) =>
   multerS3({
     s3,
-    bucket: S3_VIDEO_BUCKET_NAME,
+    bucket: S3_BUCKET_NAME,
     acl: 'authenticated-read',
     contentType: multerS3.AUTO_CONTENT_TYPE,
     key: (_, file, cb) =>

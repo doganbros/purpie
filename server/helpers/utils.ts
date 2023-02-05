@@ -1,4 +1,5 @@
 import dotEnv from 'dotenv';
+import dotEnvExpand from 'dotenv-expand';
 import { stringify } from 'querystring';
 import crypto from 'crypto';
 import path from 'path';
@@ -10,7 +11,8 @@ import { BrowserType } from '../types/BrowserType';
 export const loadEnv = (defaultPath?: string) => {
   const envPath =
     defaultPath ?? path.resolve(__dirname, '..', '..', '..', '.env');
-  dotEnv.config({ path: envPath });
+  const myEnv = dotEnv.config({ path: envPath });
+  dotEnvExpand.expand(myEnv);
   return envPath;
 };
 

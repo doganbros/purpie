@@ -1,6 +1,6 @@
 local octopusBaseUrl = os.getenv("OCTOPUS_URL")
-local octopusApiKey = os.getenv("OCTOPUS_API_KEY")
-local octopusApiSecret = os.getenv("OCTOPUS_API_SECRET")
+local octopusApiKey = os.getenv("PURPIE_API_KEY")
+local octopusApiSecret = os.getenv("PURPIE_API_SECRET")
 local allowedURLS = os.getenv("ALLOWED_URLS")
 local storage = module:open_store()
 

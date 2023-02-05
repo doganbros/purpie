@@ -11,8 +11,8 @@ export class UtilService {
   ) {}
 
   async onModuleInit() {
-    const clientApiKey = process.env.OCTOPUS_API_KEY;
-    const clientApiSecret = process.env.OCTOPUS_API_SECRET;
+    const clientApiKey = process.env.PURPIE_API_KEY;
+    const clientApiSecret = process.env.PURPIE_API_SECRET;
 
     if (clientApiKey && clientApiSecret) {
       const existingClient = await this.clientRepository.findOne({

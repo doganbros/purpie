@@ -63,7 +63,7 @@ import { UpdateChannelPermission } from '../dto/update-channel-permission.dto';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { UserChannelService } from '../services/user-channel.service';
 
-const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
+const { S3_PROFILE_PHOTO_DIR = '', S3_BUCKET_NAME = '' } = process.env;
 
 @Controller({ path: 'channel', version: '1' })
 @ApiTags('channel')
@@ -456,7 +456,7 @@ export class ChannelController {
   ) {
     try {
       const creds = {
-        Bucket: S3_VIDEO_BUCKET_NAME,
+        Bucket: S3_BUCKET_NAME,
         Key: `${S3_PROFILE_PHOTO_DIR}/channel-dp/${fileName}`,
       };
       const head = await s3HeadObject(creds);
