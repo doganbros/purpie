@@ -2,7 +2,7 @@
 
 DATE="$(date)"
 source /home/finalize/token.txt
-source /home/finalize/octopus-finalize.conf
+source /home/finalize/purpie-finalize.conf
 # AWS credentials
 AWS_ACCESS_KEY=$AWS_ACCESS_KEY
 AWS_SECRET_KEY=$AWS_SECRET_KEY
@@ -49,16 +49,16 @@ upload() {
 
 auth() {
   echo "$DATE - Authentication token expired. Attempting to use Refresh Token." >>/home/finalize/finalize.log
-  RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"refreshToken": "'"$REFRESH_TOKEN"'"}' ${OCTOPUS_URL}auth/client/refresh-token)
+  RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"refreshToken": "'"$REFRESH_TOKEN"'"}' ${PURPIE_URL}auth/client/refresh-token)
   AUTH_RETURN_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
   if [[ ${AUTH_RETURN_CODE} == 200 ]]; then
     echo "Auth token successfully renewed" >>/home/finalize/finalize.log
   elif [[ ${AUTH_RETURN_CODE} == 401 || ${AUTH_RETURN_CODE} == 403 || ${AUTH_RETURN_CODE} == 400 ]]; then
-    echo "$DATE - Refresh Token has expired. Re-authing to Octopus..." >>/home/finalize/finalize.log
-    RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"apiKey": "'"$API_KEY"'", "apiSecret": "'"$API_SECRET"'"}' ${OCTOPUS_URL}auth/client/login)
+    echo "$DATE - Refresh Token has expired. Re-authing to Purpie..." >>/home/finalize/finalize.log
+    RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"apiKey": "'"$API_KEY"'", "apiSecret": "'"$API_SECRET"'"}' ${PU_URL}auth/client/login)
     LOGIN_RETURN_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
     if [[ ${LOGIN_RETURN_CODE} == 200 ]]; then
-      echo "Successfully logged into Octopus" >>/home/finalize/finalize.log
+      echo "Successfully logged into Purpie" >>/home/finalize/finalize.log
     else
       echo "$DATE - Error while re-auth. Returned: $LOGIN_RETURN_CODE" >>/home/finalize/finalize.log  
     fi
@@ -77,13 +77,13 @@ auth() {
 
 send_event() {
   HEADER="Bearer $AUTH_TOKEN"
-  echo "$DATE - Sending event to Octopus. Payload data is id: $FOLDER_NAME fileName: $RECORDINGS" >>/home/finalize/finalize.log
-  RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -H "Authorization: $HEADER" -d '{"id": "'"$FOLDER_NAME"'", "type": "meeting-recording", "fileName": "'"$RECORDINGS"'"}' ${OCTOPUS_URL}video/client/feedback)
+  echo "$DATE - Sending event to Purpie. Payload data is id: $FOLDER_NAME fileName: $RECORDINGS" >>/home/finalize/finalize.log
+  RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -H "Authorization: $HEADER" -d '{"id": "'"$FOLDER_NAME"'", "type": "meeting-recording", "fileName": "'"$RECORDINGS"'"}' ${PURPIE_URL}video/client/feedback)
   echo "$DATE - Got send event response : $RESPONSE" >>/home/finalize/finalize.log
   SEND_EVENT_RETURN_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
-  #TO DO: UPDATE OCTOPUS BACKEND TO SUCCESS AND FAIL AND UPDATE HERE ACCORDINGLY
+  #TO DO: UPDATE PURPIE BACKEND TO SUCCESS AND FAIL AND UPDATE HERE ACCORDINGLY
   if [[ $RESPONSE == OK || $RESPONSE == Created ]]; then
-    echo "$DATE - Event successfully sent to Octopus with response: $SEND_EVENT_RETURN_CODE" >>/home/finalize/finalize.log
+    echo "$DATE - Event successfully sent to Purpie with response: $SEND_EVENT_RETURN_CODE" >>/home/finalize/finalize.log
   else
     if [[ $NUM_SEND_EVENT_TRIES -lt $MAX_SEND_EVENT_TRIES ]]; then
       NUMBER_OF_TRIES=$((NUMBER_OF_TRIES+1))
