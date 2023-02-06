@@ -120,12 +120,12 @@ on your local development environment.
 
 ## Development Test Meeting
 
-We provide https://meet.octopus.io as a server that handles all meetings for development. Currently every developer must
+We provide https://meet.purpie.io as a server that handles all meetings for development. Currently every developer must
 connect to this server in order to test how meeting is created, video is streamed etc. Since there is only one server,
 there is a need to identify each development environment while making requests to server in order to create a meeting.
 To set up your local environment to support this flow, follow the steps below.
 
-- Set up your jitsi domain env variable to point to the jitsi server (`JITSI_DOMAIN=https://meet.octopus.io`).
+- Set up your jitsi domain env variable to point to the jitsi server (`JITSI_DOMAIN=https://meet.purpie.io`).
 - Set up a local tunnel to your localhost so that the server can make the request to you. Use the
   command `npx localtunnel --port 8000 --subdomain yourpreferredsubdomain` where `yourpreferredsubdomain` would be a
   unique address that will be used to identify you local server later.
@@ -135,15 +135,15 @@ To set up your local environment to support this flow, follow the steps below.
   set already. If you don't have these already, contact the purpie channel for that.
 - Add the environment variable `REACT_APP_STREAMING_URL=https://ingress.purpie.io:8080/hls` so that streaming works
   correctly.
-- You are all set! You can now create, record and stream a meeting using the https://meet.octopus.io server.
+- You are all set! You can now create, record and stream a meeting using the https://meet.purpie.io server.
 
 ## Development Streaming
 
-To stream meetings using the https://meet.octopus.io server, follow the instructions below:
+To stream meetings using the https://meet.purpie.io server, follow the instructions below:
 
 - Create a meeting
 - Click on the three dots, and on start live stream
-- A window will appear, enter `rtmp://meet.octopus.io/live/<meeting-slug>?uid=1` as a live stream key. (
+- A window will appear, enter `rtmp://meet.purpie.io/live/<meeting-slug>?uid=1` as a live stream key. (
   Replace `<meeting-slug>` with the real meeting slug).
 - The stream should start in few minutes
 
