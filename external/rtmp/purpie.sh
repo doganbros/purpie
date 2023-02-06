@@ -2,7 +2,7 @@
 
 DATE="$(date)"
 source token.txt
-source environ.txt
+source purpie-sh.conf
 EVENT_TYPE=$1
 TEMP_ID=$2
 USER_ID=$(cut -d "=" -f2- <<<$TEMP_ID)
