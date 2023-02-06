@@ -197,12 +197,12 @@ services:
       - XMPP_INTERNAL_MUC_MODULES
       - XMPP_RECORDER_DOMAIN
       - OCTOPUS_URL
-      - OCTOPUS_API_KEY
-      - OCTOPUS_API_SECRET
+      - PURPIE_API_KEY
+      - PURPIE_API_SECRET
       - AWS_ACCESS_KEY=${S3_ACCESS_KEY_ID}
       - AWS_ACCESS_SECRET=${S3_SECRET_ACCESS_KEY}
       - AWS_DEFAULT_REGION=${S3_REGION}
-      - S3_BUCKET_NAME=${S3_VIDEO_BUCKET_NAME}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
     networks:
       meet.jitsi:
         aliases:
@@ -340,12 +340,12 @@ services:
       - ENABLE_RECORDING
       - XMPP_TRUST_ALL_CERTS
       - OCTOPUS_URL
-      - OCTOPUS_API_KEY
-      - OCTOPUS_API_SECRET
+      - PURPIE_API_KEY
+      - PURPIE_API_SECRET
       - AWS_ACCESS_KEY=${S3_ACCESS_KEY_ID}
       - AWS_SECRET_KEY=${S3_SECRET_ACCESS_KEY}
       - AWS_DEFAULT_REGION=${S3_REGION}
-      - S3_BUCKET_NAME=${S3_VIDEO_BUCKET_NAME}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
     depends_on:
       - prosody
       - jicofo
@@ -363,12 +363,12 @@ services:
       - ./docker/ssl:/etc/nginx/ssl
     environment:
       - OCTOPUS_URL
-      - OCTOPUS_API_KEY
-      - OCTOPUS_API_SECRET
+      - PURPIE_API_KEY
+      - PURPIE_API_SECRET
       - AWS_ACCESS_KEY=${S3_ACCESS_KEY_ID}
       - AWS_ACCESS_SECRET=${S3_SECRET_ACCESS_KEY}
       - AWS_DEFAULT_REGION=${S3_REGION}
-      - S3_BUCKET_NAME=${S3_VIDEO_BUCKET_NAME}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
     networks:
       meet.jitsi:
 

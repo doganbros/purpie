@@ -31,8 +31,8 @@ import { ErrorTypes } from '../../../types/ErrorTypes';
 
 const {
   S3_VIDEO_POST_DIR = '',
-  S3_VIDEO_BUCKET_NAME = '',
-  S3_VIDEO_MEETING_RECORDING_DIR = '',
+  S3_BUCKET_NAME = '',
+  S3_MEETING_RECORDING_DIR = '',
 } = process.env;
 
 @Controller({ version: '1', path: 'post' })
@@ -63,10 +63,10 @@ export class PostController {
         );
 
       const creds = {
-        Bucket: S3_VIDEO_BUCKET_NAME,
+        Bucket: S3_BUCKET_NAME,
         Key:
           postVideo.post.type === 'meeting'
-            ? `${S3_VIDEO_MEETING_RECORDING_DIR}${slug}/${postVideo.fileName}`
+            ? `${S3_MEETING_RECORDING_DIR}${slug}/${postVideo.fileName}`
             : `${S3_VIDEO_POST_DIR}${postVideo.fileName}`,
       };
       const head = await s3HeadObject(creds);
