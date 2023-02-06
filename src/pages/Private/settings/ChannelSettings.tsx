@@ -300,6 +300,7 @@ const ChannelSettings: () => Menu = () => {
             type="channel"
             src={selectedChannel?.displayPhoto}
             id={selectedChannel?.id}
+            name={selectedChannel?.name}
           />
         )}
       </>

@@ -48,7 +48,7 @@ const ZoneSettings: () => Menu | null = () => {
 
   const isOwner = !showLeaveButton ? t('settings.owner') : t('settings.member');
 
-  const leaveZoneId = userZones?.[selectedUserZoneIndex]?.id;
+  const userZoneId = userZones?.[selectedUserZoneIndex]?.id;
 
   if (userZones?.length === 0) {
     return {
@@ -154,8 +154,8 @@ const ZoneSettings: () => Menu | null = () => {
         ${'\n'}
         ${selectedZone?.name}`} zone?`}
         onConfirm={() => {
-          if (!(leaveZoneId === null || leaveZoneId === undefined)) {
-            dispatch(leaveZoneAction(leaveZoneId));
+          if (!(userZoneId === null || userZoneId === undefined)) {
+            dispatch(leaveZoneAction(userZoneId));
           }
           setShowLeavePopup(false);
         }}
@@ -252,10 +252,10 @@ const ZoneSettings: () => Menu | null = () => {
             </Box>
           )}
         </DropButton>
-        {showAvatarUpload && !(zoneId === null) && (
+        {showAvatarUpload && !(userZoneId === null) && (
           <AvatarUpload
             onSubmit={(file: any) => {
-              dispatch(updateZonePhotoAction(file, zoneId!));
+              dispatch(updateZonePhotoAction(file, userZoneId!));
               setShowAvatarUpload(false);
             }}
             onDismiss={() => {
