@@ -16,9 +16,16 @@ const isValidSubDomain =
 
 export const appSubdomain = isValidSubDomain ? subdomain : null;
 
-export const navigateToSubdomain = (sub?: string): void => {
-  if (sub) {
-    clientHostUrl.hostname = sub.concat('.', clientHostUrl.hostname);
-  }
-  window.location.href = clientHostUrl.href;
+export const navigateToSubdomain = (sub?: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (sub) {
+        clientHostUrl.hostname = sub.concat('.', clientHostUrl.hostname);
+      }
+      window.location.href = clientHostUrl.href;
+      resolve();
+    } catch (error) {
+      reject(error);
+    }
+  });
 };

@@ -35,7 +35,7 @@ then
 fi
 
 
-echo "API_KEY: $OCTOPUS_API_KEY, URL=$OCTOPUS_URL" >> /tmp/octopus-rtmp.log
+echo "API_KEY: $PURPIE_API_KEY, URL=$OCTOPUS_URL" >> /tmp/octopus-rtmp.log
 
 
 upload() {
@@ -62,7 +62,7 @@ auth() {
     echo "$DATE - Auth token successfully renewed" >> /tmp/octopus-rtmp.log
   elif [[ ${AUTH_STATUS_CODE} == 401 || ${AUTH_STATUS_CODE} == 403 || ${AUTH_STATUS_CODE} == 400 ]]; then
     echo "$DATE - Refresh Token has expired. Re-authing to Octopus..." >> /tmp/octopus-rtmp.log
-    RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"apiKey": "'"$OCTOPUS_API_KEY"'", "apiSecret": "'"$OCTOPUS_API_SECRET"'"}' -k ${OCTOPUS_URL}/v1/auth/client/login)
+    RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"apiKey": "'"$PURPIE_API_KEY"'", "apiSecret": "'"$PURPIE_API_SECRET"'"}' -k ${OCTOPUS_URL}/v1/auth/client/login)
     LOGIN_RETURN_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
     if [[ ${LOGIN_RETURN_CODE} == 200 ]]; then
       echo "$DATE - Successfully logged into Octopus" >> /tmp/octopus-rtmp.log

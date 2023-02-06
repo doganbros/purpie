@@ -26,9 +26,9 @@ import { ErrorTypes } from '../../../types/ErrorTypes';
 import { PostFolder } from '../../../entities/PostFolder.entity';
 
 const {
-  S3_VIDEO_BUCKET_NAME = '',
+  S3_BUCKET_NAME = '',
   S3_VIDEO_POST_DIR = '',
-  S3_VIDEO_MEETING_RECORDING_DIR = '',
+  S3_MEETING_RECORDING_DIR = '',
 } = process.env;
 
 @Injectable()
@@ -149,12 +149,12 @@ export class PostService {
     for (const postVideo of postVideos) {
       const location =
         post.type === 'meeting'
-          ? `${S3_VIDEO_MEETING_RECORDING_DIR}${post.slug}/${postVideo.fileName}`
+          ? `${S3_MEETING_RECORDING_DIR}${post.slug}/${postVideo.fileName}`
           : `${S3_VIDEO_POST_DIR}${postVideo.fileName}`;
 
       deleteObject({
         Key: location,
-        Bucket: S3_VIDEO_BUCKET_NAME,
+        Bucket: S3_BUCKET_NAME,
       });
       await this.postVideoRepository.delete({ id: postVideo.id });
     }
@@ -185,12 +185,12 @@ export class PostService {
 
     const location =
       post.type === 'meeting'
-        ? `${S3_VIDEO_MEETING_RECORDING_DIR}${post.slug}/${videoName}`
+        ? `${S3_MEETING_RECORDING_DIR}${post.slug}/${videoName}`
         : `${S3_VIDEO_POST_DIR}${videoName}`;
 
     deleteObject({
       Key: location,
-      Bucket: S3_VIDEO_BUCKET_NAME,
+      Bucket: S3_BUCKET_NAME,
     });
 
     if (post.videoName === videoName) {

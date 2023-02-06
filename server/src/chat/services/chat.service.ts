@@ -22,8 +22,8 @@ import { ErrorTypes } from '../../../types/ErrorTypes';
 const {
   AUTH_TOKEN_SECRET = '',
   AUTH_TOKEN_SECRET_REFRESH = '',
-  S3_VIDEO_BUCKET_NAME = '',
-  S3_CHAT_MESSAGE_DIR = '',
+  S3_BUCKET_NAME = '',
+  S3_CHAT_ATTACHMENTS_DIR = '',
 } = process.env;
 
 @Injectable()
@@ -112,10 +112,10 @@ export class ChatService {
     });
 
     if (result.affected) {
-      const location = `${S3_CHAT_MESSAGE_DIR}/${name}`;
+      const location = `${S3_CHAT_ATTACHMENTS_DIR}/${name}`;
       await deleteObject({
         Key: location,
-        Bucket: S3_VIDEO_BUCKET_NAME,
+        Bucket: S3_BUCKET_NAME,
       });
     }
   }

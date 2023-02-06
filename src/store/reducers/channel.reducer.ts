@@ -157,7 +157,7 @@ const channelReducer = (
       };
     case UPDATE_CHANNEL_PHOTO_SUCCESS: {
       const test = state.userChannels.data.map((item) =>
-        item.id === action.channelId
+        item.channel.id === action.channelId
           ? {
               ...item,
               channel: { ...item.channel, displayPhoto: action.payload },

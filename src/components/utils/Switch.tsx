@@ -1,4 +1,4 @@
-import { Box, BoxProps, CheckBox, Text } from 'grommet';
+import { Box, BoxProps, CheckBox, Text, TextProps } from 'grommet';
 import React, { FC, useEffect, useState } from 'react';
 
 interface Props extends BoxProps {
@@ -8,6 +8,7 @@ interface Props extends BoxProps {
   name?: string;
   disabled?: boolean;
   onChange?: (value: boolean) => void;
+  textProps?: TextProps;
 }
 
 const Switch: FC<Props> = ({
@@ -17,6 +18,7 @@ const Switch: FC<Props> = ({
   name,
   disabled,
   defaultValue,
+  textProps,
   ...otherProps
 }) => {
   const [currentValue, setCurrentValue] = useState(
@@ -43,7 +45,7 @@ const Switch: FC<Props> = ({
       {...otherProps}
     >
       {label && (
-        <Text size="small" color="dark-6">
+        <Text size="small" color="dark-6" {...textProps}>
           {label}
         </Text>
       )}

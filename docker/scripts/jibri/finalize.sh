@@ -62,7 +62,7 @@ auth() {
     echo "Auth token successfully renewed"
   elif [[ ${AUTH_RETURN_CODE} == 401 || ${AUTH_RETURN_CODE} == 403 || ${AUTH_RETURN_CODE} == 400 ]]; then
     echo "$DATE - Refresh Token has expired. Re-authing to Octopus..."
-    RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"apiKey": "'"$OCTOPUS_API_KEY"'", "apiSecret": "'"$OCTOPUS_API_SECRET"'"}' ${OCTOPUS_URL}/v1/auth/client/login)
+    RESPONSE=$(curl --silent -X POST -H "Content-Type: application/json" -d '{"apiKey": "'"PURPIE_API_KEY"'", "apiSecret": "'"$PURPIE_API_SECRET"'"}' ${OCTOPUS_URL}/v1/auth/client/login)
     LOGIN_RETURN_CODE=$(echo ${RESPONSE} | jq -r '.statusCode')
     if [[ ${LOGIN_RETURN_CODE} == 200 ]]; then
       echo "Successfully logged into Octopus"

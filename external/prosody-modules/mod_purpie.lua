@@ -1,6 +1,6 @@
-local octopusBaseUrl = module:get_option_string("octopusAPIBaseUrl");
-local octopusApiKey = module:get_option_string("octopusApiKey");
-local octopusApiSecret = module:get_option_string("octopusApiSecret");
+local purpieBaseUrl = module:get_option_string("purpieAPIBaseUrl");
+local purpieApiKey = module:get_option_string("purpieApiKey");
+local purpieApiSecret = module:get_option_string("purpieApiSecret");
 --local allowedURLS = os.getenv("ALLOWED_URLS")
 local storage = module:open_store()
 
@@ -16,7 +16,7 @@ local api_headers = module:get_option("api_headers");
 local api_retry_count = tonumber(module:get_option("api_retry_count", 3));
 local api_retry_delay = tonumber(module:get_option("api_retry_delay", 1));
 
-module:log("info", "Loading Octopus module")
+module:log("info", "Loading Purpie module")
 
 -- Option for user to control HTTP response codes that will result in a retry.
 -- Defaults to returning true on any 5XX code or 0
@@ -53,7 +53,7 @@ function get_url(meetingName)
         -- end
     end
 
-    return octopusBaseUrl
+    return purpieBaseUrl
 end
 
 function render_url(meetingName, suffix)
@@ -89,7 +89,7 @@ local function async_http_request(url, options, callback, timeout_callback, retr
             -- If not authorized
             if (response_code == 401) then
                 module:log("warn", "(%d) Unauthorized error will try to refresh tokens and retry", response_code);
-                authenticate_octopus(options["roomName"], function()
+                authenticate_purpie(options["roomName"], function()
                     async_http_request(url, options, callback, timeout_callback, retries)
                 end)
             end
@@ -119,8 +119,8 @@ end
 
 function getTokensFromLogin(roomName, cb)
     body = {}
-    body["apiKey"] = octopusApiKey
-    body["apiSecret"] = octopusApiSecret
+    body["apiKey"] = purpieApiKey
+    body["apiSecret"] = purpieApiSecret
 
     async_http_request(render_url(roomName, URL_AUTH), {
         headers = http_headers,
@@ -147,7 +147,7 @@ function getTokensFromLogin(roomName, cb)
 
 end
 
-function authenticate_octopus(roomName, cb)
+function authenticate_purpie(roomName, cb)
     local body = {}
 
     body["refreshToken"] = storage:get("refreshToken")

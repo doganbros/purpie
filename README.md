@@ -63,8 +63,21 @@ yarn install
 ## Set environment variables into .env file:
 
 ```bash
-cp .env.example .env # Then make changes to the boilerplate provided
+cp .env.example .env
 ```
+
+Then make changes to the boilerplate provided with your variables. The base configuration variables for Purpie is
+listed below;
+
+`SERVER_PORT=8000`
+
+`PORT=3000`
+
+`HOST=purpie.localhost`
+
+`PURPIE_API_KEY=YOUR_PURPIE_API_KEY`
+
+`PURPIE_API_SECRET=YOUR_PURPIE_API_SECRET`
 
 ## Create Postgres database
 
