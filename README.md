@@ -63,7 +63,7 @@ cp .env.example .env
 ```
 
 Then make changes to the boilerplate provided with your variables. The base configuration variables for Purpie is
-listing below.
+listed below;
 
 `SERVER_PORT=8000`
 
