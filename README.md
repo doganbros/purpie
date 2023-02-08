@@ -13,7 +13,7 @@ Purpie is an open-source platform that brings together many different solutions,
 
 ## Roadmap
 
-You can find our short term and long term goals for Purpie project in [ Roadmap](https://docs.purpie.org/en/latest/08.roadmap.html).
+You can find our short term and long term goals for Purpie project in [ Roadmap](https://docs.purpie.org/en/latest/08.road_map.html).
 ## Setup
 
 You have two options to setup Purpie. 
