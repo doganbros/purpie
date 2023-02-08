@@ -1,9 +1,9 @@
 {
-  "name": "octopus",
+  "name": "purpie",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://github.com/doganbros/octopus.git",
-  "license": "MIT",
+  "repository": "https://github.com/doganbros/purpie.git",
+  "license": "Apache-2.0",
   "private": true,
   "dependencies": {
     "@nestjs/common": "^8.0.4",
