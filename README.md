@@ -11,7 +11,7 @@
 
 Purpie is an open-source platform that brings together many different solutions, to create a space focused on video-oriented communication and content sharing
 
-## Roadmap
+## Roadmap
 
 You can find our short term and long term goals for Purpie project in [ Roadmap](https://docs.purpie.org/en/latest/08.roadmap.html).
 ## Setup
