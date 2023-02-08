@@ -1,4 +1,4 @@
-name: Octopus Lint And Test
+name: Purpie Lint And Test
 
 on:
   push:
