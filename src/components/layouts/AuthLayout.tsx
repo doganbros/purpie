@@ -14,7 +14,6 @@ import { useResponsive } from '../../hooks/useResponsive';
 import LogoHorizontalColor from '../../assets/purpie-logo/logo-horizontal-color.svg';
 import LogoHorizontalWhite from '../../assets/purpie-logo/logo-horizontal-white.svg';
 import AuthFormButton from '../auth/AuthFormButton';
-import ExtendedBox from '../utils/ExtendedBox';
 import { AnchorLink } from '../utils/AnchorLink';
 
 const footerLinks = [
@@ -86,12 +85,13 @@ const AuthLayout: React.FC<Props> = ({
           {size !== 'small' ? (
             <Box
               basis={size === 'medium' ? '55%' : '60%'}
-              height="100%"
+              height="100vh"
               alignSelf="center"
-              margin="0"
+              justify="center"
             >
-              <Box basis="70%">{background}</Box>
-              <Box basis="25%" align="center">
+              <Box flex="grow" />
+              <Box>{background}</Box>
+              <Box align="center">
                 {callToAction && (
                   <>
                     <Text size="16px" margin={{ bottom: '14px', top: '20px' }}>
@@ -109,14 +109,13 @@ const AuthLayout: React.FC<Props> = ({
                   </>
                 )}
               </Box>
-              <ExtendedBox
-                width={size === 'medium' ? '55%' : '60%'}
-                position="absolute"
-                bottom="35px"
-                margin="0 auto"
-                justify="center"
+              <Box
                 gap="medium"
                 direction="row"
+                justify="center"
+                align="end"
+                flex="grow"
+                pad={{ bottom: 'medium' }}
               >
                 {footerLinks.map(({ label, to }) => (
                   <AnchorLink
@@ -127,7 +126,7 @@ const AuthLayout: React.FC<Props> = ({
                     to={to}
                   />
                 ))}
-              </ExtendedBox>
+              </Box>
             </Box>
           ) : null}
 
@@ -137,7 +136,7 @@ const AuthLayout: React.FC<Props> = ({
               background={theme.dark ? 'dark-2' : 'white'}
               round={{ corner: 'left', size: 'large' }}
               width="100%"
-              height="100%"
+              height="100vh"
               align="center"
               overflow="auto"
             >
