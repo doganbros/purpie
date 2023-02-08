@@ -115,6 +115,7 @@ const AuthLayout: React.FC<Props> = ({
                 justify="center"
                 align="end"
                 flex="grow"
+                pad={{ bottom: 'medium' }}
               >
                 {footerLinks.map(({ label, to }) => (
                   <AnchorLink
