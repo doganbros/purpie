@@ -194,18 +194,18 @@
   },
   "AddContent": {
     "title": "Take Your Pick",
-    "meet": "Meet!",
-    "meetDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing.",
-    "stream": "Stream!",
-    "streamDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing.",
+    "meeting": "Meeting!",
+    "meetingDescription": "Quickly start a meeting and make it work as you go!",
+    "stream": "Stream",
+    "streamDescription": "Stream your content through Purpie for other users to watch.",
     "shareVideo": "Share a Video",
-    "shareVideoDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing.",
-    "planMeeting": "Custom Meet",
-    "planMeetingDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing.",
-    "multiStream": "Multi Stream",
-    "multiStreamDescription": "Coming Soon",
+    "shareVideoDescription": "Upload a video from your device to Purpie.",
+    "customMeeting": "Custom Meeting",
+    "customMeetingDescription": "Roll up your sleeves and plan a meeting, from when it starts and who's invited to what functions are available.",
+    "streamingStudio": "Streaming Studio",
+    "streamingStudioDescription": "Create a meeting and stream it through multiple channels at once both in and out of Purpie.",
     "webinar": "Webinar",
-    "webinarDescription": "Coming Soon"
+    "webinarDescription": "Create a large meeting that follows the format of a seminar with speakers and attendees."
   },
   "validators": {
     "requiredMsg": "{{field}} is required",
