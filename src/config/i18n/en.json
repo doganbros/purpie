@@ -363,12 +363,12 @@
     "post": "post",
     "posts": "posts"
   },
-  "UserFriends": {
-    "title": "Friends",
-    "noFriendsFound": "No friends found"
+  "UserContacts": {
+    "title": "Contacts",
+    "noContactsFound": "No contacts found"
   },
   "UserPublicChannels": {
-    "title": "Channels Subscribed To",
+    "title": "Channels Followed To",
     "noChannelsFound": "No channels found"
   },
   "UserPublicZones": {

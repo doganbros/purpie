@@ -7,6 +7,7 @@ import { listUserPublicChannelsAction } from '../../../store/actions/user.action
 import { AppState } from '../../../store/reducers/root.reducer';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
+import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
 
 const UserPublicChannels: FC<{ userName: string }> = ({ userName }) => {
   const dispatch = useDispatch();
@@ -22,7 +23,7 @@ const UserPublicChannels: FC<{ userName: string }> = ({ userName }) => {
   return (
     <Box gap="medium">
       <Text size="large" color="brand" weight="bold">
-        {t('UserFriends.title')}
+        {t('UserPublicChannels.title')}
       </Text>
       {publicChannels.loading && (
         <PurpieLogoAnimated width={50} height={50} color="brand" />
@@ -40,7 +41,11 @@ const UserPublicChannels: FC<{ userName: string }> = ({ userName }) => {
                   src={channel.displayPhoto}
                 />
                 <Box align="center">
-                  <Text size="small">{channel.name}</Text>
+                  <EllipsesOverflowText
+                    textAlign="center"
+                    size="small"
+                    text={channel.name}
+                  />
                 </Box>
               </Box>
             ))}

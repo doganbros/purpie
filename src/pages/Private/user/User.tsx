@@ -1,4 +1,4 @@
-import { Box, Grid, Layer, Text } from 'grommet';
+import { Box, Layer, Text } from 'grommet';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import PostListItem from '../../../components/post/PostListItem';
 import Divider from '../../../components/utils/Divider';
-import GradientScroll from '../../../components/utils/GradientScroll';
 import { getFeaturedPostAction } from '../../../store/actions/post.action';
 import {
   getUserDetailAction,
@@ -14,9 +13,8 @@ import {
 } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import Header from './Header';
-import { userData } from './mock-data';
 import { UserSummary } from './UserSummary';
-import UserFriends from './UserFriends';
+import UserContacts from './UserContacts';
 import UserPublicChannels from './UserPublicChannels';
 import UserPublicZones from './UserPublicZones';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
@@ -93,41 +91,10 @@ const User: FC = () => {
             />
           )}
 
-          <Divider />
-          <UserFriends userName={params.userName} />
+          <UserContacts userName={params.userName} />
           <Divider />
           <UserPublicChannels userName={params.userName} />
           <UserPublicZones userName={params.userName} />
-          <Text size="large" color="brand" weight="bold">
-            {t('User.sharedLists')}
-          </Text>
-          {userData.sharedLists.map((list) => (
-            <Box key={list.id} gap="medium">
-              <Box>
-                <Text weight="bold" size="large">
-                  {list.name}
-                </Text>
-                <Text>
-                  {list.posts.length}{' '}
-                  {list.posts.length < 2 ? t('User.post') : t('User.posts')}
-                </Text>
-              </Box>
-              <GradientScroll>
-                <Grid
-                  columns={{ count: list.posts.length, size: 'large' }}
-                  gap="small"
-                >
-                  {list.posts.map((p) => (
-                    <PostListItem
-                      key={p.id}
-                      post={p}
-                      onClickPlay={() => history.push(`video/${p.id}`)}
-                    />
-                  ))}
-                </Grid>
-              </GradientScroll>
-            </Box>
-          ))}
         </Box>
       )}
       {showRemoveDialog && (
