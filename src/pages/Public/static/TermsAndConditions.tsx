@@ -1,8 +1,12 @@
 import React from 'react';
-import { Box, Text } from 'grommet';
+import { Anchor, Box } from 'grommet';
+import { Trans } from 'react-i18next';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
+import StaticText from './StaticText';
+import StaticTitle from './StaticTitle';
+import StaticList from './StaticList';
 
-const PrivacyPolicy: () => Menu | null = () => {
+const TermsAndConditions: () => Menu | null = () => {
   return {
     id: 0,
     key: 'terms-and-conditions',
@@ -18,92 +22,104 @@ const PrivacyPolicy: () => Menu | null = () => {
             border={{ size: 'xsmall', color: 'status-disabled-light' }}
             round="small"
             pad="medium"
+            gap="small"
           >
-            <Text color="dark" size="medium" weight="normal">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Orci
-              ac auctor augue mauris augue. Nec dui nunc mattis enim ut tellus.
-              Scelerisque purus semper eget duis at tellus at urna condimentum.
-              Mauris pharetra et ultrices neque ornare aenean euismod. In
-              egestas erat imperdiet sed euismod. Pellentesque sit amet
-              porttitor eget. Egestas quis ipsum suspendisse ultrices gravida
-              dictum. Eget gravida cum sociis natoque penatibus et magnis dis.
-              Ac felis donec et odio pellentesque. Ac ut consequat semper
-              viverra nam libero justo laoreet.
-            </Text>
-            <br />
-            <Text color="dark" size="medium" weight="normal">
-              Luctus accumsan tortor posuere ac ut consequat semper. Porttitor
-              leo a diam sollicitudin tempor. Hac habitasse platea dictumst
-              vestibulum rhoncus. Aliquet risus feugiat in ante metus. Vitae
-              auctor eu augue ut lectus. In dictum non consectetur a erat nam.
-              Sed blandit libero volutpat sed cras. Tempor orci eu lobortis
-              elementum nibh tellus molestie nunc. Quam vulputate dignissim
-              suspendisse in est ante. Massa id neque aliquam vestibulum morbi.
-              Pellentesque habitant morbi tristique senectus. Neque sodales ut
-              etiam sit amet. Eget aliquet nibh praesent tristique magna sit
-              amet purus gravida. Nisi vitae suscipit tellus mauris a diam
-              maecenas sed. Dictum varius duis at consectetur lorem donec massa
-              sapien. Feugiat sed lectus vestibulum mattis ullamcorper velit sed
-              ullamcorper. Integer enim neque volutpat ac tincidunt vitae
-              semper. Montes nascetur ridiculus mus mauris vitae ultricies leo
-              integer malesuada.
-            </Text>
-            <br />
-            <Text color="dark" size="medium" weight="normal">
-              Urna et pharetra pharetra massa massa ultricies mi. Sit amet
-              facilisis magna etiam. Hac habitasse platea dictumst quisque.
-              Venenatis cras sed felis eget velit aliquet sagittis id. Urna nec
-              tincidunt praesent semper. Quam id leo in vitae. Nisl tincidunt
-              eget nullam non nisi est sit. Vulputate eu scelerisque felis
-              imperdiet proin. Leo in vitae turpis massa sed elementum tempus.
-              Sed ullamcorper morbi tincidunt ornare massa eget. Aliquet
-              sagittis id consectetur purus.
-            </Text>
-            <br />
-            <Text color="dark" size="medium" weight="normal">
-              Urna et pharetra pharetra massa massa ultricies mi. Sit amet
-              facilisis magna etiam. Hac habitasse platea dictumst quisque.
-              Venenatis cras sed felis eget velit aliquet sagittis id. Urna nec
-              tincidunt praesent semper. Quam id leo in vitae. Nisl tincidunt
-              eget nullam non nisi est sit. Vulputate eu scelerisque felis
-              imperdiet proin. Leo in vitae turpis massa sed elementum tempus.
-              Sed ullamcorper morbi tincidunt ornare massa eget. Aliquet
-              sagittis id consectetur purus.
-            </Text>
-            <br />
-            <Text color="dark" size="medium" weight="normal">
-              Urna et pharetra pharetra massa massa ultricies mi. Sit amet
-              facilisis magna etiam. Hac habitasse platea dictumst quisque.
-              Venenatis cras sed felis eget velit aliquet sagittis id. Urna nec
-              tincidunt praesent semper. Quam id leo in vitae. Nisl tincidunt
-              eget nullam non nisi est sit. Vulputate eu scelerisque felis
-              imperdiet proin. Leo in vitae turpis massa sed elementum tempus.
-              Sed ullamcorper morbi tincidunt ornare massa eget. Aliquet
-              sagittis id consectetur purus.
-            </Text>
-            <br />
-            <Text color="dark" size="medium" weight="normal">
-              Urna et pharetra pharetra massa massa ultricies mi. Sit amet
-              facilisis magna etiam. Hac habitasse platea dictumst quisque.
-              Venenatis cras sed felis eget velit aliquet sagittis id. Urna nec
-              tincidunt praesent semper. Quam id leo in vitae. Nisl tincidunt
-              eget nullam non nisi est sit. Vulputate eu scelerisque felis
-              imperdiet proin. Leo in vitae turpis massa sed elementum tempus.
-              Sed ullamcorper morbi tincidunt ornare massa eget. Aliquet
-              sagittis id consectetur purus.
-            </Text>
-            <br />
-            <Text color="dark" size="medium" weight="normal">
-              Urna et pharetra pharetra massa massa ultricies mi. Sit amet
-              facilisis magna etiam. Hac habitasse platea dictumst quisque.
-              Venenatis cras sed felis eget velit aliquet sagittis id. Urna nec
-              tincidunt praesent semper. Quam id leo in vitae. Nisl tincidunt
-              eget nullam non nisi est sit. Vulputate eu scelerisque felis
-              imperdiet proin. Leo in vitae turpis massa sed elementum tempus.
-              Sed ullamcorper morbi tincidunt ornare massa eget. Aliquet
-              sagittis id consectetur purus.
-            </Text>
+            <StaticText tKey="TermsAndConditions.text1" />
+            <StaticText
+              tKey={
+                <Trans i18nKey="TermsAndConditions.text2">
+                  <Anchor href="https://purpie.io" target="_blank" />
+                </Trans>
+              }
+            />
+            <StaticText tKey="TermsAndConditions.text3" />
+            <StaticText tKey="TermsAndConditions.text4" />
+            <StaticTitle tKey="TermsAndConditions.title1" />
+            <StaticText tKey="TermsAndConditions.description11" />
+            <StaticText tKey="TermsAndConditions.description12" />
+            <StaticTitle tKey="TermsAndConditions.title2" />
+            <StaticText tKey="TermsAndConditions.description21" />
+            <StaticText tKey="TermsAndConditions.description22" />
+            <StaticList
+              tKeys={[
+                'TermsAndConditions.description22ListItem1',
+                'TermsAndConditions.description22ListItem2',
+                'TermsAndConditions.description22ListItem3',
+                'TermsAndConditions.description22ListItem4',
+              ]}
+            />
+            <StaticText tKey="TermsAndConditions.description23" />
+            <StaticText tKey="TermsAndConditions.description24" />
+            <StaticText tKey="TermsAndConditions.description25" />
+            <StaticText tKey="TermsAndConditions.description26" />
+            <StaticList
+              tKeys={[
+                'TermsAndConditions.description26ListItem1',
+                'TermsAndConditions.description26ListItem2',
+                'TermsAndConditions.description26ListItem3',
+                'TermsAndConditions.description26ListItem4',
+              ]}
+            />
+            <StaticText tKey="TermsAndConditions.description27" />
+            <StaticTitle tKey="TermsAndConditions.title3" />
+            <StaticText tKey="TermsAndConditions.description31" />
+            <StaticList
+              tKeys={[
+                'TermsAndConditions.description31ListItem1',
+                'TermsAndConditions.description31ListItem2',
+                'TermsAndConditions.description31ListItem3',
+                'TermsAndConditions.description31ListItem4',
+                'TermsAndConditions.description31ListItem5',
+              ]}
+            />
+            <StaticText tKey="TermsAndConditions.description32" />
+            <StaticText tKey="TermsAndConditions.description33" />
+            <StaticList
+              tKeys={[
+                'TermsAndConditions.description33ListItem1',
+                'TermsAndConditions.description33ListItem2',
+                'TermsAndConditions.description33ListItem3',
+                'TermsAndConditions.description33ListItem4',
+                'TermsAndConditions.description33ListItem5',
+                'TermsAndConditions.description33ListItem6',
+                'TermsAndConditions.description33ListItem7',
+              ]}
+            />
+            <StaticText tKey="TermsAndConditions.description34" />
+            <StaticText tKey="TermsAndConditions.description35" />
+            <StaticText tKey="TermsAndConditions.description36" />
+            <StaticText tKey="TermsAndConditions.description37" />
+            <StaticList
+              tKeys={[
+                'TermsAndConditions.description37ListItem1',
+                'TermsAndConditions.description37ListItem2',
+                'TermsAndConditions.description37ListItem3',
+              ]}
+            />
+            <StaticText tKey="TermsAndConditions.description38" />
+            <StaticTitle tKey="TermsAndConditions.title4" />
+            <StaticText tKey="TermsAndConditions.description4" />
+            <StaticTitle tKey="TermsAndConditions.title5" />
+            <StaticText tKey="TermsAndConditions.description5" />
+            <StaticTitle tKey="TermsAndConditions.title6" />
+            <StaticText tKey="TermsAndConditions.description6" />
+            <StaticTitle tKey="TermsAndConditions.title7" />
+            <StaticText tKey="TermsAndConditions.description7" />
+            <StaticTitle tKey="TermsAndConditions.title8" />
+            <StaticText tKey="TermsAndConditions.description81" />
+            <StaticText tKey="TermsAndConditions.description82" />
+            <StaticTitle tKey="TermsAndConditions.title9" />
+            <StaticText tKey="TermsAndConditions.description91" />
+            <StaticList
+              tKeys={[
+                'TermsAndConditions.description91ListItem1',
+                'TermsAndConditions.description91ListItem2',
+                'TermsAndConditions.description91ListItem3',
+                'TermsAndConditions.description91ListItem4',
+              ]}
+            />
+            <StaticText tKey="TermsAndConditions.description92" />
+            <StaticText tKey="TermsAndConditions.description93" />
           </Box>
         ),
       },
@@ -111,4 +127,4 @@ const PrivacyPolicy: () => Menu | null = () => {
   };
 };
 
-export default PrivacyPolicy;
+export default TermsAndConditions;

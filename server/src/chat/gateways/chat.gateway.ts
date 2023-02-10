@@ -31,7 +31,7 @@ const { REACT_APP_CLIENT_HOST = '' } = process.env;
         )}$`,
       ),
       'http://localhost:3000',
-      'http://octopus.localhost:3000',
+      'http://purpie.localhost:3000',
     ],
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',

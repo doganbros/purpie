@@ -1,10 +1,39 @@
 import React, { useState } from 'react';
-import { Accordion, AccordionPanel, Box, Text } from 'grommet';
+import { Accordion, AccordionPanel, Anchor, Box } from 'grommet';
+import { Trans, useTranslation } from 'react-i18next';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
+import StaticText from './StaticText';
+import StaticTitle from './StaticTitle';
+import StaticList from './StaticList';
 
 const Faq: () => Menu | null = () => {
+  const { t } = useTranslation();
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0);
 
+  const accordion = (
+    titleTKey: string,
+    textTKey: string | string[],
+    listItemTKeys?: string[]
+  ) => (
+    <AccordionPanel
+      label={
+        <Box pad={{ vertical: 'small' }}>
+          <StaticTitle tKey={t(titleTKey)} />
+        </Box>
+      }
+      key={titleTKey}
+    >
+      <Box gap="small" pad={{ vertical: 'small' }}>
+        {typeof textTKey === 'string' ? (
+          <StaticText tKey={textTKey} />
+        ) : (
+          textTKey.map((key) => <StaticText key={key} tKey={key} />)
+        )}
+
+        {listItemTKeys && <StaticList tKeys={listItemTKeys} />}
+      </Box>
+    </AccordionPanel>
+  );
   return {
     id: 0,
     key: 'faq',
@@ -25,72 +54,46 @@ const Faq: () => Menu | null = () => {
               activeIndex={activeAccordionIndex}
               onActive={(i) => setActiveAccordionIndex(i[0])}
             >
-              <AccordionPanel label="Lorem ipsum dolor sit amet" key={1}>
-                <Box pad={{ vertical: 'small' }}>
-                  <Text color="dark" size="medium" weight="normal">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Orci ac auctor augue mauris augue. Nec dui nunc
-                    mattis enim ut tellus. Scelerisque purus semper eget duis at
-                    tellus at urna condimentum. Mauris pharetra et ultrices
-                    neque ornare aenean euismod. In egestas erat imperdiet sed
-                    euismod. Pellentesque sit amet porttitor eget. Egestas quis
-                    ipsum suspendisse ultrices gravida dictum. Eget gravida cum
-                    sociis natoque penatibus et magnis dis. Ac felis donec et
-                    odio pellentesque. Ac ut consequat semper viverra nam libero
-                    justo laoreet.
-                  </Text>
-                </Box>
-              </AccordionPanel>
-              <AccordionPanel label="Lorem ipsum dolor sit amet" key={2}>
-                <Box pad={{ vertical: 'small' }}>
-                  <Text color="dark" size="medium" weight="normal">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Orci ac auctor augue mauris augue. Nec dui nunc
-                    mattis enim ut tellus. Scelerisque purus semper eget duis at
-                    tellus at urna condimentum. Mauris pharetra et ultrices
-                    neque ornare aenean euismod. In egestas erat imperdiet sed
-                    euismod. Pellentesque sit amet porttitor eget. Egestas quis
-                    ipsum suspendisse ultrices gravida dictum. Eget gravida cum
-                    sociis natoque penatibus et magnis dis. Ac felis donec et
-                    odio pellentesque. Ac ut consequat semper viverra nam libero
-                    justo laoreet.
-                  </Text>
-                </Box>
-              </AccordionPanel>
-              <AccordionPanel label="Lorem ipsum dolor sit amet" key={3}>
-                <Box pad={{ vertical: 'small' }}>
-                  <Text color="dark" size="medium" weight="normal">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Orci ac auctor augue mauris augue. Nec dui nunc
-                    mattis enim ut tellus. Scelerisque purus semper eget duis at
-                    tellus at urna condimentum. Mauris pharetra et ultrices
-                    neque ornare aenean euismod. In egestas erat imperdiet sed
-                    euismod. Pellentesque sit amet porttitor eget. Egestas quis
-                    ipsum suspendisse ultrices gravida dictum. Eget gravida cum
-                    sociis natoque penatibus et magnis dis. Ac felis donec et
-                    odio pellentesque. Ac ut consequat semper viverra nam libero
-                    justo laoreet.
-                  </Text>
-                </Box>
-              </AccordionPanel>
-              <AccordionPanel label="Lorem ipsum dolor sit amet" key={4}>
-                <Box pad={{ vertical: 'small' }}>
-                  <Text color="dark" size="medium" weight="normal">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Orci ac auctor augue mauris augue. Nec dui nunc
-                    mattis enim ut tellus. Scelerisque purus semper eget duis at
-                    tellus at urna condimentum. Mauris pharetra et ultrices
-                    neque ornare aenean euismod. In egestas erat imperdiet sed
-                    euismod. Pellentesque sit amet porttitor eget. Egestas quis
-                    ipsum suspendisse ultrices gravida dictum. Eget gravida cum
-                    sociis natoque penatibus et magnis dis. Ac felis donec et
-                    odio pellentesque. Ac ut consequat semper viverra nam libero
-                    justo laoreet.
-                  </Text>
+              {accordion('Faq.q1', 'Faq.a1', [
+                'Faq.a1ListItem1',
+                'Faq.a1ListItem2',
+                'Faq.a1ListItem3',
+                'Faq.a1ListItem4',
+                'Faq.a1ListItem5',
+                'Faq.a1ListItem6',
+              ])}
+              {accordion('Faq.q2', 'Faq.a2', [
+                'Faq.a2ListItem1',
+                'Faq.a2ListItem2',
+                'Faq.a2ListItem3',
+                'Faq.a2ListItem4',
+                'Faq.a2ListItem5',
+                'Faq.a2ListItem6',
+              ])}
+              {accordion('Faq.q3', 'Faq.a3')}
+              {accordion('Faq.q4', ['Faq.a41', 'Faq.a42'])}
+              {accordion('Faq.q5', 'Faq.a5')}
+              {accordion('Faq.q6', 'Faq.a6')}
+              <AccordionPanel
+                label={
+                  <Box pad={{ vertical: 'small' }}>
+                    <StaticTitle tKey={t('Faq.q7')} />
+                  </Box>
+                }
+                key="Faq.q7"
+              >
+                <Box gap="small" pad={{ vertical: 'small' }}>
+                  <StaticText
+                    tKey={
+                      <Trans i18nKey="Faq.a7">
+                        <Anchor
+                          href="https://community.purpie.org/"
+                          target="_blank"
+                        />
+                        <Anchor href="https://purpie.org" target="_blank" />
+                      </Trans>
+                    }
+                  />
                 </Box>
               </AccordionPanel>
             </Accordion>
