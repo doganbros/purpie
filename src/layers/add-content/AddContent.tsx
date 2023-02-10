@@ -46,8 +46,8 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
     {
       id: 0,
       icon: <Group {...iconProps} />,
-      title: t('AddContent.meet'),
-      description: t('AddContent.meetDescription'),
+      title: t('AddContent.meeting'),
+      description: t('AddContent.meetingDescription'),
       onClick: () => {
         const meeting: CreateMeetingPayload = { public: true };
         if (selectedChannel) meeting.channelId = selectedChannel.channel.id;
@@ -75,8 +75,8 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
     {
       id: 3,
       icon: <SchedulePlay {...iconProps} />,
-      title: t('AddContent.planMeeting'),
-      description: t('AddContent.planMeetingDescription'),
+      title: t('AddContent.customMeeting'),
+      description: t('AddContent.customMeetingDescription'),
       onClick: () => {
         dispatch(openPlanCreateMeetingLayerAction);
         onDismiss();
@@ -85,8 +85,8 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
     {
       id: 4,
       icon: <ServicePlay {...iconProps} />,
-      title: t('AddContent.multiStream'),
-      description: t('AddContent.multiStreamDescription'),
+      title: t('AddContent.streamingStudio'),
+      description: t('AddContent.streamingStudioDescription'),
       onClick: () => {},
     },
     {
@@ -110,7 +110,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
           direction="row"
           justify="between"
           align="start"
-          pad={{ vertical: 'small', horizontal: 'medium' }}
+          pad={{ top: 'medium', horizontal: 'medium' }}
         >
           <Box pad="xsmall">
             <Text size="large" weight="bold">
@@ -127,12 +127,15 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
           height="min-content"
           overflow="auto"
           wrap
-          pad={{ vertical: 'small', horizontal: 'medium' }}
+          pad="medium"
         >
           {buttonProps.map(({ id, icon, title, description, onClick }) => (
             <Box
               key={id}
-              margin={{ right: id % 4 === 3 ? '0' : 'small', bottom: 'small' }}
+              margin={{
+                right: id === 2 || id === 5 ? '0' : 'medium',
+                bottom: id > 2 ? '0' : 'medium',
+              }}
             >
               <AddContentButton
                 icon={icon}
