@@ -7,8 +7,9 @@ import { listContactsAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 import { UserAvatar } from '../../../components/utils/Avatars/UserAvatar';
+import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
 
-const UserFriends: FC<{ userName: string }> = ({ userName }) => {
+const UserContacts: FC<{ userName: string }> = ({ userName }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const {
@@ -22,7 +23,7 @@ const UserFriends: FC<{ userName: string }> = ({ userName }) => {
   return (
     <Box gap="medium">
       <Text size="large" color="brand" weight="bold">
-        {t('UserFriends.title')}
+        {t('UserContacts.title')}
       </Text>
       <GradientScroll>
         <Box direction="row" gap="medium">
@@ -30,7 +31,7 @@ const UserFriends: FC<{ userName: string }> = ({ userName }) => {
             <PurpieLogoAnimated width={50} height={50} color="brand" />
           )}
           {!contacts.loading && contacts.data.length === 0 ? (
-            <Text size="small">{t('UserFriends.noFriendsFound')}</Text>
+            <Text size="small">{t('UserContacts.noContactsFound')}</Text>
           ) : (
             contacts.data.map((contact) => (
               <Box key={contact.id} gap="small" align="center">
@@ -40,12 +41,18 @@ const UserFriends: FC<{ userName: string }> = ({ userName }) => {
                   src={contact.contactUser.displayPhoto}
                 />
                 <Box align="center">
-                  <Text size="small" weight="bold">
-                    {contact.contactUser.fullName}
-                  </Text>
-                  <Text size="small" color="status-disabled">
-                    @{contact.contactUser.userName}
-                  </Text>
+                  <EllipsesOverflowText
+                    textAlign="center"
+                    size="small"
+                    text={contact.contactUser.fullName}
+                    weight="bold"
+                  />
+                  <EllipsesOverflowText
+                    textAlign="center"
+                    size="small"
+                    text={`@${contact.contactUser.userName}`}
+                    color="status-disabled"
+                  />
                 </Box>
               </Box>
             ))
@@ -56,4 +63,4 @@ const UserFriends: FC<{ userName: string }> = ({ userName }) => {
   );
 };
 
-export default UserFriends;
+export default UserContacts;
