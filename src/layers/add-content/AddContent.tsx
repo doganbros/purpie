@@ -1,5 +1,5 @@
 import React, { FC, useContext } from 'react';
-import { Box, Button, Layer, ResponsiveContext, Text } from 'grommet';
+import { Box, Button, Grid, Layer, ResponsiveContext, Text } from 'grommet';
 import {
   CirclePlay,
   Close,
@@ -110,7 +110,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
           direction="row"
           justify="between"
           align="start"
-          pad={{ top: 'medium', horizontal: 'medium' }}
+          pad={{ horizontal: 'medium', top: 'medium' }}
         >
           <Box pad="xsmall">
             <Text size="large" weight="bold">
@@ -121,31 +121,23 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
             <Close color="brand" />
           </Button>
         </Box>
-        <Box
-          direction="row"
-          justify={size === 'small' ? 'center' : 'start'}
-          height="min-content"
-          overflow="auto"
-          wrap
+        <Grid
+          height="100%"
           pad="medium"
+          columns={size === 'small' ? 'full' : '1/3'}
+          gap={{ column: 'medium', row: 'medium' }}
+          style={{ overflow: 'auto' }}
         >
           {buttonProps.map(({ id, icon, title, description, onClick }) => (
-            <Box
+            <AddContentButton
               key={id}
-              margin={{
-                right: id === 2 || id === 5 ? '0' : 'medium',
-                bottom: id > 2 ? '0' : 'medium',
-              }}
-            >
-              <AddContentButton
-                icon={icon}
-                title={title}
-                description={description}
-                onClick={onClick}
-              />
-            </Box>
+              icon={icon}
+              title={title}
+              description={description}
+              onClick={onClick}
+            />
           ))}
-        </Box>
+        </Grid>
       </Box>
     </Layer>
   );

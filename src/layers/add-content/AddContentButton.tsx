@@ -23,7 +23,6 @@ const AddContentButton: FC<AddContentButtonProps> = ({
         pad="small"
         gap="small"
         align="center"
-        width="201px"
         height="201px"
         round="small"
         transition="all 0.1s"
