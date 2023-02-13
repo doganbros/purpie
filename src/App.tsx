@@ -82,7 +82,7 @@ const App: FC = () => {
                 />
               ))}
               <Route
-                path={['/support', '/support/:page']}
+                path={['/support/:page', '/support']}
                 component={StaticPage}
               />
               <Route exact path="/initialize-user" component={InitializeUser} />

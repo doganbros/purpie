@@ -120,6 +120,8 @@ const TermsAndConditions: () => Menu | null = () => {
             />
             <StaticText tKey="TermsAndConditions.description92" />
             <StaticText tKey="TermsAndConditions.description93" />
+            <StaticTitle tKey="TermsAndConditions.title10" />
+            <StaticText tKey="TermsAndConditions.description10" />
           </Box>
         ),
       },

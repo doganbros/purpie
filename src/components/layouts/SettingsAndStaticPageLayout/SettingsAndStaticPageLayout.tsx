@@ -23,6 +23,7 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
   pageUrl,
 }) => {
   const history = useHistory();
+
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [searchText, setSearchText] = useState<string>('');
@@ -202,6 +203,7 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
                   onClick={() => {
                     setSelectedIndex(index);
                     setSearchTextValue('');
+                    history.push(`/support/${menuItem.url}`);
                   }}
                   pad="small"
                   justify="between"
