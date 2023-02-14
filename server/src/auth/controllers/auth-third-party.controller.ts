@@ -131,7 +131,7 @@ export class AuthThirdPartyController {
         code,
       );
       const userInfo = await this.authThirdPartyService.getFacebookUserInfo(
-        accessToken,
+        accessToken.access_token,
       );
 
       user = await this.authService.getUserByEmail(userInfo.email);

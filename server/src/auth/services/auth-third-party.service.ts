@@ -43,7 +43,7 @@ export class AuthThirdPartyService {
     }).then((res) => res.data);
   }
 
-  getFacebookAuthAccessToken(code: string): Promise<string> {
+  getFacebookAuthAccessToken(code: string): Promise<any> {
     return axios({
       url: `https://graph.facebook.com/v4.0/oauth/access_token`,
       method: 'get',
@@ -56,7 +56,7 @@ export class AuthThirdPartyService {
     }).then((res) => res.data);
   }
 
-  getFacebookUserInfo(accessToken: string): Promise<Record<string, any>> {
+  getFacebookUserInfo(access_token: string): Promise<Record<string, any>> {
     return axios({
       url: 'https://graph.facebook.com/me',
       method: 'get',
@@ -64,7 +64,7 @@ export class AuthThirdPartyService {
         fields: ['id', 'email', 'first_name', 'last_name', 'middle_name'].join(
           ',',
         ),
-        accessToken,
+        access_token,
       },
     }).then((res) => res.data);
   }
