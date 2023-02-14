@@ -291,14 +291,19 @@ export class PostService {
                 .where('post.type = :meetingType', { meetingType: 'meeting' })
                 .andWhere(
                   new Brackets((qbii) => {
-                    qbii
-                      .where('post.conferenceEndDate is null')
-                      .orWhere('post.conferenceEndDate is not null')
-                      .andWhere(
-                        new Brackets((qbiii) => {
-                          qbiii.where('post.liveStream').orWhere('post.record');
-                        }),
-                      );
+                    qbii.where('post.conferenceEndDate is null').orWhere(
+                      new Brackets((qbiii) => {
+                        qbiii
+                          .where('post.conferenceStartDate is not null')
+                          .andWhere(
+                            new Brackets((qbiiii) => {
+                              qbiiii
+                                .where('post.liveStream')
+                                .orWhere('post.record');
+                            }),
+                          );
+                      }),
+                    );
                   }),
                 );
             }),
