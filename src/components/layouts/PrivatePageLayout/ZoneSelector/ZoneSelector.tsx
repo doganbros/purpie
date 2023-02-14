@@ -129,7 +129,9 @@ const ZoneSelector: FC = () => {
               />
               <Divider margin={{ vertical: 'xxsmall' }} />
               <ListButton
-                onClick={() => dispatch(logoutAction())}
+                onClick={() =>
+                  dispatch(logoutAction(selectedUserZone !== null))
+                }
                 label={t('ZoneSelector.signOut')}
               />
             </Box>
