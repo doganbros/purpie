@@ -297,7 +297,7 @@ export class ZoneController {
   ) {
     const fileName = file.key.replace(`${S3_PROFILE_PHOTO_DIR}/zone-dp/`, '');
 
-    await this.zoneService.changeDisplayPhoto(userZoneId, fileName);
+    await this.zoneService.changeDisplayPhoto(userZone.zone.id, fileName);
 
     return fileName;
   }

@@ -220,7 +220,7 @@ const zoneReducer = (
       };
     case UPDATE_ZONE_PHOTO_SUCCESS: {
       const modifiedData = state?.getUserZones?.userZones?.map((item) =>
-        item.id === action.zoneId
+        item.id === action.userZoneId
           ? {
               ...item,
               zone: { ...item.zone, displayPhoto: action.payload },
@@ -229,6 +229,15 @@ const zoneReducer = (
       );
       return {
         ...state,
+        selectedUserZone: state.selectedUserZone
+          ? {
+              ...state.selectedUserZone,
+              zone: {
+                ...state.selectedUserZone.zone,
+                displayPhoto: action.payload,
+              },
+            }
+          : null,
         getUserZones: {
           userZones: modifiedData,
           loading: false,
