@@ -16,7 +16,7 @@ const isValidSubDomain =
 
 export const appSubdomain = isValidSubDomain ? subdomain : null;
 
-export const navigateToSubdomain = (sub?: string) => {
+export const navigateToSubdomain = (sub?: string): void => {
   if (sub) {
     clientHostUrl.hostname = sub.concat('.', clientHostUrl.hostname);
   }
