@@ -203,7 +203,6 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
                   onClick={() => {
                     setSelectedIndex(index);
                     setSearchTextValue('');
-                    history.push(`/support/${menuItem.url}`);
                   }}
                   pad="small"
                   justify="between"
