@@ -1,8 +1,10 @@
-# <p align="center">Purpie</p>
-
 
 <p align="center">
-<img src="https://github.com/doganbros/purpie/blob/develop/src/assets/mail/welcome-image.png" width="900" />
+<img src="https://github.com/doganbros/purpie/blob/Readme-Add-Images/src/assets/readme/Welcome_Purpie.png" width="900" />
+</p>
+
+<p align="center">
+<img src="https://github.com/doganbros/purpie/blob/Readme-Add-Images/src/assets/readme/Purpie_ScreenShot.png" width="900" />
 </p>
 
 <hr/>
