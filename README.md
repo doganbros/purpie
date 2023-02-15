@@ -1,7 +1,4 @@
 
-<p align="center">
-<img src="src/assets/readme/Welcome_Purpie.png" width="900" />
-</p>
 
 <p align="center">
 <img src="src/assets/readme/Purpie_ScreenShot.png" width="900" />
