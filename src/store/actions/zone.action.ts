@@ -137,19 +137,22 @@ export const searchZoneAction = (params: ZoneSearchParams): ZoneAction => {
 
 export const updateZonePhotoAction = (
   profilePhoto: File,
-  zoneId: string
+  userZoneId: string
 ): ZoneAction => {
   return async (dispatch) => {
     dispatch({
       type: UPDATE_ZONE_PHOTO_REQUESTED,
     });
     try {
-      const payload = await ZoneService.updateZonePhoto(profilePhoto, zoneId);
+      const payload = await ZoneService.updateZonePhoto(
+        profilePhoto,
+        userZoneId
+      );
       setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
       dispatch({
         type: UPDATE_ZONE_PHOTO_SUCCESS,
         payload,
-        zoneId,
+        userZoneId,
       });
     } catch (err: any) {
       dispatch({

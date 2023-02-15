@@ -293,11 +293,10 @@ export class ZoneController {
   async changeDisplayPhoto(
     @CurrentUserZone() userZone: UserZone,
     @UploadedFile() file: Express.MulterS3.File,
-    @Param('userZoneId', ParseUUIDPipe) userZoneId: string,
   ) {
     const fileName = file.key.replace(`${S3_PROFILE_PHOTO_DIR}/zone-dp/`, '');
 
-    await this.zoneService.changeDisplayPhoto(userZoneId, fileName);
+    await this.zoneService.changeDisplayPhoto(userZone.zone.id, fileName);
 
     return fileName;
   }

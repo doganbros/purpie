@@ -206,7 +206,7 @@ export type ZoneActionParams =
   | {
       type: typeof UPDATE_ZONE_PHOTO_SUCCESS;
       payload: string;
-      zoneId: string;
+      userZoneId: string;
     }
   | {
       type: typeof DELETE_ZONE_SUCCESS;

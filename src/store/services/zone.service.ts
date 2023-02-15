@@ -45,10 +45,10 @@ export const searchZone = (
 
 export const updateZonePhoto = (
   photoFile: File,
-  zoneId: string
+  userZoneId: string
 ): Promise<any> =>
   http
-    .put(`zone/${zoneId}/display-photo`, serialize(photoFile))
+    .put(`zone/${userZoneId}/display-photo`, serialize(photoFile))
     .then((res) => res.data);
 
 export const updateZoneInfo = (
