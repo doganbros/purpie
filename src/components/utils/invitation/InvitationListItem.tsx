@@ -86,7 +86,7 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
             >
               <Text size="xsmall" weight={500}>
                 {invitation.response === InvitationResponseType.ACCEPT
-                  ? t('common.joined')
+                  ? t('common.accepted')
                   : t('common.ignored')}
               </Text>
             </Box>
@@ -106,7 +106,7 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
                 align="center"
               >
                 <Text size="xsmall" weight={500}>
-                  {t('common.join')}
+                  {t('common.accept')}
                 </Text>
               </Box>
             </Button>
