@@ -21,6 +21,7 @@ const ZoneSettings: () => Menu | null = () => {
   const {
     auth: { user },
     zone: {
+      selectedUserZone,
       getUserZones: { userZones },
     },
   } = useSelector((state: AppState) => state);
@@ -82,6 +83,8 @@ const ZoneSettings: () => Menu | null = () => {
   const selectedZone = userZones?.[selectedUserZoneIndex]?.zone;
   const zoneId = selectedZone?.id;
   const canDelete = userZones?.[selectedUserZoneIndex]?.zoneRole.canDelete;
+  const isInThisZone =
+    userZones?.[selectedUserZoneIndex]?.id === selectedUserZone?.id;
 
   const isFormInitialState =
     zonePayload.name === selectedZone?.name &&
@@ -127,7 +130,7 @@ const ZoneSettings: () => Menu | null = () => {
         ${selectedZone?.name}`} zone?`}
         onConfirm={() => {
           if (!(zoneId === null || zoneId === undefined)) {
-            dispatch(deleteZoneAction(zoneId));
+            dispatch(deleteZoneAction(zoneId, isInThisZone));
           }
           setShowDeletePopup(false);
         }}

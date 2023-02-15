@@ -33,6 +33,7 @@ import {
 import * as ZoneService from '../services/zone.service';
 import { setToastAction } from './util.action';
 import i18n from '../../config/i18n/i18n-config';
+import { navigateToSubdomain } from '../../helpers/app-subdomain';
 
 export const getUserZonesAction = (): ZoneAction => {
   return async (dispatch) => {
@@ -186,11 +187,17 @@ export const updateZoneInfoAction = (
   };
 };
 
-export const deleteZoneAction = (zoneId: string): ZoneAction => {
+export const deleteZoneAction = (
+  zoneId: string,
+  isInThisZone: boolean
+): ZoneAction => {
   return async (dispatch) => {
     try {
       await ZoneService.deleteZone(zoneId);
       setToastAction('ok', i18n.t('ToastMessages.zoneDeleted'))(dispatch);
+      if (isInThisZone) {
+        navigateToSubdomain();
+      }
       dispatch({
         type: DELETE_ZONE_SUCCESS,
         zoneId,
