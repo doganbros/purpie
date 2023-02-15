@@ -49,7 +49,9 @@
     "close": "CLOSE",
     "send": "Send",
     "unfollow": "Unfollow",
-    "leave": "Leave"
+    "leave": "Leave",
+    "accept": "Accept",
+    "accepted": "Accepted"
   },
   "Login": {
     "title": "Login",

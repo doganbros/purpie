@@ -294,14 +294,8 @@ export class PostService {
                     qbii.where('post.conferenceEndDate is null').orWhere(
                       new Brackets((qbiii) => {
                         qbiii
-                          .where('post.conferenceStartDate is not null')
-                          .andWhere(
-                            new Brackets((qbiiii) => {
-                              qbiiii
-                                .where('post.liveStream')
-                                .orWhere('post.record');
-                            }),
-                          );
+                          .where('post.conferenceEndDate is not null')
+                          .andWhere('post.record');
                       }),
                     );
                   }),
