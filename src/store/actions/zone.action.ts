@@ -194,8 +194,10 @@ export const deleteZoneAction = (
   return async (dispatch) => {
     try {
       await ZoneService.deleteZone(zoneId);
-      setToastAction('ok', i18n.t('ToastMessages.zoneDeleted'))(dispatch);
+      await setToastAction('ok', i18n.t('ToastMessages.zoneDeleted'))(dispatch);
       if (isInThisZone) {
+        // for show toast message before redirect to home page
+        await new Promise((r) => setTimeout(r, 1000));
         navigateToSubdomain();
       }
       dispatch({
