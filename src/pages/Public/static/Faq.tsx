@@ -43,7 +43,7 @@ const Faq: () => Menu | null = () => {
     items: [
       {
         key: 'faq-content',
-        title: 'Faq',
+        title: 'FAQ',
         component: (
           <Box
             border={{ size: 'xsmall', color: 'status-disabled-light' }}
