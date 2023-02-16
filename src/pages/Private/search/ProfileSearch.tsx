@@ -43,7 +43,6 @@ const ProfileSearch: FC = () => {
     getSearchResults();
   }, [value]);
 
-  console.log(results);
   const renderResults = () => {
     if (results.data.length === 0) {
       return <Text>{t('common.nothingFound')}</Text>;
