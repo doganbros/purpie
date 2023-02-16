@@ -181,7 +181,11 @@ export class UserService {
       })
       .save();
 
-    await this.sendContactInvitationMail(email, result.createdBy.fullName);
+    const createByUser = await this.userRepository.findOne({
+      where: { id: user.id },
+      select: ['fullName'],
+    });
+    await this.sendContactInvitationMail(email, createByUser!.fullName);
     return result;
   }
 
@@ -308,13 +312,14 @@ export class UserService {
     return baseQuery.paginate(query);
   }
 
-  async deleteContact(userId: string, id: string) {
+  async deleteContact(currentUserId: string, userId: string) {
+    console.log(currentUserId, ' ', userId);
     return this.contactRepository
       .createQueryBuilder()
       .delete()
-      .where('contactUserId = :userId AND id = :id', {
+      .where('userId = :currentUserId AND contactUserId = :userId', {
+        currentUserId,
         userId,
-        id,
       })
       .execute();
   }
@@ -337,10 +342,10 @@ export class UserService {
         return subQuery
           .select('count(*) > 0', 'userCount')
           .from(Contact, 'contact')
-          .where('contact.userId = user.id')
-          .andWhere('contact.contactUserId = :currentUserId', {
+          .where('contact.userId = :currentUserId', {
             currentUserId,
-          });
+          })
+          .andWhere('contact.contactUserId = user.id');
       }, 'isInContact')
       .addSelect((subQuery) => {
         return subQuery

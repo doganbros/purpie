@@ -104,9 +104,7 @@ const User: FC = () => {
           }}
           onConfirm={() => {
             setShowRemoveDialog(false);
-            if (detail?.user?.contactUserId) {
-              dispatch(removeContactAction(detail.user.contactUserId));
-            }
+            dispatch(removeContactAction(detail.user!.id));
           }}
           confirmButtonText={t('common.remove')}
           message={t('SelectedUser.removeConfirmMsg', {

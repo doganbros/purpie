@@ -89,6 +89,7 @@ const Timeline: FC = () => {
         if (selectedChannel) request.channelId = selectedChannel.channel.id;
         else if (selectedUserZone) request.zoneId = selectedUserZone.zone.id;
         request.streaming = activeTab === 2;
+        request.following = activeTab === 1;
 
         dispatch(getFeedListAction(request));
         break;
