@@ -32,6 +32,7 @@ const User: FC = () => {
   const {
     user: { detail },
     post: { featuredPost },
+    auth: { user },
   } = useSelector((state: AppState) => state);
   const history = useHistory();
 
@@ -54,6 +55,7 @@ const User: FC = () => {
       topComponent={
         detail.user && (
           <Header
+            currentUserId={user!.id}
             user={detail.user}
             handleShowRemoveDialog={handleShowRemoveDialog}
           />

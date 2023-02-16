@@ -265,6 +265,7 @@ export class UserController {
       return emptyPaginatedResponse(query.limit, query.skip);
     if (query.channelId) {
       const users = await this.userService.searchInChannels(
+        user.id,
         query.channelId,
         excludeIds,
         query,
@@ -279,7 +280,11 @@ export class UserController {
       );
       return users;
     }
-    const users = await this.userService.searchUsers(excludeIds, query);
+    const users = await this.userService.searchUsers(
+      user.id,
+      excludeIds,
+      query,
+    );
     return users;
   }
 

@@ -26,6 +26,7 @@ const ProfileSearch: FC = () => {
     user: {
       search: { results },
     },
+    auth: { user },
   } = useSelector((state: AppState) => state);
 
   const getSearchResults = (skip?: number) => {
@@ -42,6 +43,7 @@ const ProfileSearch: FC = () => {
     getSearchResults();
   }, [value]);
 
+  console.log(results);
   const renderResults = () => {
     if (results.data.length === 0) {
       return <Text>{t('common.nothingFound')}</Text>;
@@ -64,18 +66,19 @@ const ProfileSearch: FC = () => {
           >
             <UserSearchItem user={item} />
 
-            {item.contactUserId ? (
-              <Button plain disabled label={t('ContactsToFollow.added')} />
-            ) : (
-              <Button
-                primary
-                label={t('ContactsToFollow.add')}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  dispatch(createContactInvitation(item?.email));
-                }}
-              />
-            )}
+            {user?.id !== item.id &&
+              (item.contactUserId ? (
+                <Button plain disabled label={t('ContactsToFollow.added')} />
+              ) : (
+                <Button
+                  primary
+                  label={t('ContactsToFollow.add')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dispatch(createContactInvitation(item?.email));
+                  }}
+                />
+              ))}
           </Box>
         )}
       </InfiniteScroll>
