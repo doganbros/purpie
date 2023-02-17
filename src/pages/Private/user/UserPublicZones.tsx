@@ -31,7 +31,12 @@ const UserPublicZones: FC<{ userName: string }> = ({ userName }) => {
         <GradientScroll>
           <Box direction="row" gap="medium">
             {publicZones.data.map(({ zone }) => (
-              <Box key={zone.id} gap="small" align="center">
+              <Box
+                key={zone.id}
+                gap="small"
+                align="center"
+                width={{ min: '102px' }}
+              >
                 <InitialsAvatar id={zone.id} value={zone.name} round="small" />
                 <Box align="center">
                   <EllipsesOverflowText

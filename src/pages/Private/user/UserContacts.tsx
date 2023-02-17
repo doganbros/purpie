@@ -34,7 +34,12 @@ const UserContacts: FC<{ userName: string }> = ({ userName }) => {
             <Text size="small">{t('UserContacts.noContactsFound')}</Text>
           ) : (
             contacts.data.map((contact) => (
-              <Box key={contact.id} gap="small" align="center">
+              <Box
+                key={contact.id}
+                gap="small"
+                align="center"
+                width={{ min: '102px' }}
+              >
                 <UserAvatar
                   id={contact.id}
                   name={contact.contactUser.fullName}
