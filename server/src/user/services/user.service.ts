@@ -78,7 +78,6 @@ export class UserService {
     excludeUserIds: Array<string>,
     query: SearchUsersQuery,
   ) {
-    console.log('userId: ', userId);
     const result = this.userRepository
       .createQueryBuilder('user')
       .setParameter('searchTerm', tsqueryParam(query.name))
@@ -325,7 +324,6 @@ export class UserService {
   }
 
   async deleteContact(currentUserId: string, userId: string) {
-    console.log(currentUserId, ' ', userId);
     return this.contactRepository
       .createQueryBuilder()
       .delete()
