@@ -34,7 +34,12 @@ const UserPublicChannels: FC<{ userName: string }> = ({ userName }) => {
         <GradientScroll>
           <Box direction="row" gap="medium">
             {publicChannels.data.map(({ channel }) => (
-              <Box key={channel.id} gap="small" align="center">
+              <Box
+                key={channel.id}
+                gap="small"
+                align="center"
+                width={{ min: '102px' }}
+              >
                 <ChannelAvatar
                   id={channel.id}
                   name={channel.name}
