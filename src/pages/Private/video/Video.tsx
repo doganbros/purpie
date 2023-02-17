@@ -61,6 +61,7 @@ const Video: FC = () => {
     post: {
       postDetail: { data, loading },
     },
+    auth: { user },
   } = useSelector((state: AppState) => state);
 
   const history = useHistory();
@@ -256,13 +257,15 @@ const Video: FC = () => {
                   />
                 </Box>
               )) || <Box />}
-              <Box
-                onClick={() => setShowSettings((previous) => !previous)}
-                focusIndicator={false}
-                pad={{ vertical: 'small' }}
-              >
-                <SettingsOption size="medium" color="brand" />
-              </Box>
+              {data?.createdBy?.id === user?.id && (
+                <Box
+                  onClick={() => setShowSettings((previous) => !previous)}
+                  focusIndicator={false}
+                  pad={{ vertical: 'small' }}
+                >
+                  <SettingsOption size="medium" color="brand" />
+                </Box>
+              )}
             </Box>
             <Box margin={{ top: 'small' }} gap="medium">
               <VideoJs
