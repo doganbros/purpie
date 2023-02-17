@@ -73,7 +73,11 @@ export class UserService {
     return true;
   }
 
-  userBaseSelect(excludeUserIds: Array<string>, query: SearchUsersQuery) {
+  userBaseSelect(
+    userId: string,
+    excludeUserIds: Array<string>,
+    query: SearchUsersQuery,
+  ) {
     const result = this.userRepository
       .createQueryBuilder('user')
       .setParameter('searchTerm', tsqueryParam(query.name))
@@ -88,10 +92,10 @@ export class UserService {
         return subQuery
           .select('contact.id', 'contactUserId')
           .from(Contact, 'contact')
-          .where('contact.userId = user.id')
-          .andWhere('contact.contactUserId = :currentUserId', {
-            currentUserId: '904fc1b2-a1b3-4c17-81c3-89ecf948c8c3',
-          });
+          .where('contact.userId = :currentUserId', {
+            currentUserId: userId,
+          })
+          .andWhere('contact.contactUserId = user.id');
       }, 'contactUserId')
       .addSelect(
         `ts_rank(user.search_document, to_tsquery('simple', :searchTerm))`,
@@ -106,8 +110,14 @@ export class UserService {
     return result;
   }
 
-  async searchUsers(excludeUserIds: Array<string>, query: SearchUsersQuery) {
-    return this.userBaseSelect(excludeUserIds, query).paginateRaw(query);
+  async searchUsers(
+    userId: string,
+    excludeUserIds: Array<string>,
+    query: SearchUsersQuery,
+  ) {
+    return this.userBaseSelect(userId, excludeUserIds, query).paginateRaw(
+      query,
+    );
   }
 
   async searchInUserContacts(
@@ -115,18 +125,19 @@ export class UserService {
     excludeUserIds: Array<string>,
     query: SearchUsersQuery,
   ) {
-    return this.userBaseSelect(excludeUserIds, query)
+    return this.userBaseSelect(userId, excludeUserIds, query)
       .innerJoin(Contact, 'contact', 'contact.userId = :userId', { userId })
       .andWhere('user.id = contact.contactUserId')
       .paginate(query);
   }
 
   async searchInChannels(
+    userId: string,
     channelId: number,
     excludeUserIds: Array<string>,
     query: SearchUsersQuery,
   ) {
-    return this.userBaseSelect(excludeUserIds, query)
+    return this.userBaseSelect(userId, excludeUserIds, query)
       .innerJoin(
         UserChannel,
         'user_channel',
@@ -181,7 +192,11 @@ export class UserService {
       })
       .save();
 
-    await this.sendContactInvitationMail(email, result.createdBy.fullName);
+    const createByUser = await this.userRepository.findOne({
+      where: { id: user.id },
+      select: ['fullName'],
+    });
+    await this.sendContactInvitationMail(email, createByUser!.fullName);
     return result;
   }
 
@@ -308,13 +323,13 @@ export class UserService {
     return baseQuery.paginate(query);
   }
 
-  async deleteContact(userId: string, id: string) {
+  async deleteContact(currentUserId: string, userId: string) {
     return this.contactRepository
       .createQueryBuilder()
       .delete()
-      .where('contactUserId = :userId AND id = :id', {
+      .where('userId = :currentUserId AND contactUserId = :userId', {
+        currentUserId,
         userId,
-        id,
       })
       .execute();
   }
@@ -337,10 +352,10 @@ export class UserService {
         return subQuery
           .select('count(*) > 0', 'userCount')
           .from(Contact, 'contact')
-          .where('contact.userId = user.id')
-          .andWhere('contact.contactUserId = :currentUserId', {
+          .where('contact.userId = :currentUserId', {
             currentUserId,
-          });
+          })
+          .andWhere('contact.contactUserId = user.id');
       }, 'isInContact')
       .addSelect((subQuery) => {
         return subQuery

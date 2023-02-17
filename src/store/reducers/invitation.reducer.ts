@@ -94,11 +94,18 @@ const invitationReducer = (
         },
       };
     case GET_INVITATION_RESPONSE_SUCCESS: {
-      const index = state.invitations.data.findIndex(
-        (invitation) => invitation.id === action.payload.id
-      );
-      const newInvitations = [...state.invitations.data];
-      newInvitations[index].response = action.payload.response;
+      let newInvitations = [...state.invitations.data];
+
+      if (action.payload.response === 'reject') {
+        newInvitations = newInvitations.filter(
+          (i) => i.id !== action.payload.id
+        );
+      } else {
+        const index = state.invitations.data.findIndex(
+          (invitation) => invitation.id === action.payload.id
+        );
+        newInvitations[index].response = action.payload.response;
+      }
 
       return {
         ...state,

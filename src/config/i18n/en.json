@@ -22,10 +22,9 @@
     "reply": "Reply",
     "following": "Following",
     "follow": "Follow",
+    "reject": "Reject",
     "join": "Join",
-    "ignore": "Ignore",
     "joined": "Joined",
-    "ignored": "Ignored",
     "search": "Search",
     "zone": "Zone",
     "channel": "Channel",
@@ -137,7 +136,7 @@
     "title": "Invitations",
     "zoneInvitationMessage": "{{fullName}} invited you to {{zone}} zone.",
     "channelInvitationMessage": "{{fullName}} invited you to {{channel}} channel.",
-    "contactInvitationMessage": "{{fullName}} wants to invite you as a contact."
+    "contactInvitationMessage": "{{fullName}} invited you as a contact."
   },
   "ZonesToJoin": {
     "title": "Zones to join",

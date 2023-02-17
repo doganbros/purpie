@@ -160,7 +160,7 @@ const userReducer = (
         contacts: {
           ...state.contacts,
           data: state.contacts.data.filter(
-            (c) => c.id !== action.payload.contactId
+            (c) => c.contactUser.id !== action.payload.contactId
           ),
           selected: {
             contactId: null,

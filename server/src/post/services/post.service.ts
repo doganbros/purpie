@@ -546,6 +546,10 @@ export class PostService {
           channelId: query.channelId,
         })
         .paginate(query);
+    if (query.following && booleanValue(query.following))
+      return this.getUserFeedSelection(userId, query, false, false).paginate(
+        query,
+      );
 
     return this.getUserFeedSelection(userId, query, true, true).paginate(query);
   }

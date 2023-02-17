@@ -107,7 +107,7 @@ export const verifyUserEmailAction = (body: VerifyEmailPayload): AuthAction => {
       const payload = await AuthService.verifyUserEmail(body);
       setToastAction(
         'ok',
-        i18n.t('ToastsMessages.emailVerified', { email: payload.email })
+        i18n.t('ToastMessages.emailVerified', { email: payload.email })
       )(dispatch);
       appHistory.replace('/login');
       dispatch({

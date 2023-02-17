@@ -8,30 +8,34 @@ import { User } from '../../../store/types/auth.types';
 
 interface HeaderProps {
   user: User;
+  currentUserId: string;
   handleShowRemoveDialog: () => void;
 }
 
-const Header: FC<HeaderProps> = ({ user, handleShowRemoveDialog }) => {
+const Header: FC<HeaderProps> = ({
+  user,
+  currentUserId,
+  handleShowRemoveDialog,
+}) => {
   const dispatch = useDispatch();
 
   const AddOrRemoveButton = () => {
-    if (user?.isInContact) {
-      return (
+    if (currentUserId !== user.id)
+      return user.isInContact ? (
         <Button
           primary
           color="red"
           label={t('ContactsToFollow.remove')}
           onClick={handleShowRemoveDialog}
         />
+      ) : (
+        <Button
+          primary
+          label={t('ContactsToFollow.add')}
+          onClick={() => dispatch(createContactInvitation(user?.email))}
+        />
       );
-    }
-    return (
-      <Button
-        primary
-        label={t('ContactsToFollow.add')}
-        onClick={() => dispatch(createContactInvitation(user?.email))}
-      />
-    );
+    return null;
   };
 
   return (
