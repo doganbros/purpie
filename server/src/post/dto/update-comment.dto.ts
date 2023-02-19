@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdatePostCommentDto {
@@ -8,6 +8,6 @@ export class UpdatePostCommentDto {
   comment: string;
 
   @ApiProperty()
-  @IsInt()
+  @IsUUID()
   commentId: string;
 }

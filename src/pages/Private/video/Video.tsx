@@ -322,8 +322,17 @@ const Video: FC = () => {
                       plain
                       onClick={() =>
                         data.liked
-                          ? dispatch(removePostLikeAction({ postId: data.id }))
-                          : dispatch(createPostLikeAction({ postId: data.id }))
+                          ? dispatch(
+                              removePostLikeAction({
+                                postId: data.id,
+                              })
+                            )
+                          : dispatch(
+                              createPostLikeAction({
+                                postId: data.id,
+                                type: 'like',
+                              })
+                            )
                       }
                       icon={
                         data.liked ? (
@@ -338,8 +347,36 @@ const Video: FC = () => {
                     </Text>
                   </Box>
                   <Box direction="row" gap="xsmall" align="center">
-                    <Dislike color="status-disabled" size="17px" />
-                    <Text color="status-disabled">{t('Video.dislike')}</Text>
+                    <Button
+                      plain
+                      gap="xsmall"
+                      onClick={() =>
+                        data?.disliked
+                          ? dispatch(
+                              removePostLikeAction({
+                                postId: data.id,
+                              })
+                            )
+                          : dispatch(
+                              createPostLikeAction({
+                                postId: data.id,
+                                type: 'dislike',
+                              })
+                            )
+                      }
+                      icon={
+                        data.disliked ? (
+                          <Dislike color="brand" size="17px" />
+                        ) : (
+                          <Dislike color="status-disabled" size="17px" />
+                        )
+                      }
+                      label={
+                        <Text color="status-disabled">
+                          {t('Video.dislike')}
+                        </Text>
+                      }
+                    />
                   </Box>
                   <Box direction="row" gap="xsmall" align="center">
                     <ShareOption color="status-disabled" size="19px" />
