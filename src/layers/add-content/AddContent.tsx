@@ -60,7 +60,15 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
       icon: <CirclePlay {...iconProps} />,
       title: t('AddContent.stream'),
       description: t('AddContent.streamDescription'),
-      onClick: () => {},
+      onClick: () => {
+        const meeting: CreateMeetingPayload = {
+          public: true,
+          liveStream: true,
+        };
+        if (selectedChannel) meeting.channelId = selectedChannel.channel.id;
+        if (!submitting) dispatch(createMeetingAction(meeting));
+        onDismiss();
+      },
     },
     {
       id: 2,
