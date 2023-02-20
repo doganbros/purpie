@@ -108,11 +108,6 @@ export interface AuthState {
     authenticating: boolean;
     error: ResponseError | null;
   };
-  loginWithFacebook: {
-    buttonLoading: boolean;
-    authenticating: boolean;
-    error: ResponseError | null;
-  };
   forgotPassword: {
     loading: boolean;
     error: ResponseError | null;

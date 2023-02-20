@@ -61,8 +61,6 @@ export class UserBasic {
   email: string;
 
   googleId?: string;
-
-  facebookId?: string;
 }
 
 export class UserBasicWithToken {
