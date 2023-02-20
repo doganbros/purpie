@@ -96,6 +96,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
       title: t('AddContent.streamingStudio'),
       description: t('AddContent.streamingStudioDescription'),
       onClick: () => {},
+      soonBanner: true,
     },
     {
       id: 5,
@@ -103,6 +104,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
       title: t('AddContent.webinar'),
       description: t('AddContent.webinarDescription'),
       onClick: () => {},
+      soonBanner: true,
     },
   ];
 
@@ -136,15 +138,18 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
           gap={{ column: 'medium', row: 'medium' }}
           style={{ overflow: 'auto' }}
         >
-          {buttonProps.map(({ id, icon, title, description, onClick }) => (
-            <AddContentButton
-              key={id}
-              icon={icon}
-              title={title}
-              description={description}
-              onClick={onClick}
-            />
-          ))}
+          {buttonProps.map(
+            ({ id, icon, title, description, soonBanner, onClick }) => (
+              <AddContentButton
+                key={id}
+                icon={icon}
+                title={title}
+                soonBanner={soonBanner}
+                description={description}
+                onClick={onClick}
+              />
+            )
+          )}
         </Grid>
       </Box>
     </Layer>
