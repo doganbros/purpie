@@ -24,6 +24,7 @@ import { appSubdomain } from '../../helpers/app-subdomain';
 import { useResponsive } from '../../hooks/useResponsive';
 import PlanMeetingTheme from './custom-theme';
 import Switch from '../../components/utils/Switch';
+import { MEETING_JOIN_LINK_EXPIRE_TIME_HOURS } from '../../helpers/constants';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -74,6 +75,7 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
         liveStream,
         record,
         timeZone: dayjs.tz.guess(),
+        joinLinkExpiryAsHours: MEETING_JOIN_LINK_EXPIRE_TIME_HOURS,
       };
 
       dispatch(setInitialMeetingFormAction(initialPayload));

@@ -7,6 +7,7 @@ import { setMeetingFormFieldAction } from '../../../store/actions/meeting.action
 import { AppState } from '../../../store/reducers/root.reducer';
 import { baseMeetingConfig } from '../../../store/static/base-meeting-config';
 import Switch from '../../../components/utils/Switch';
+import ExpirationTime from './components/ExpirationTime';
 
 const MeetingConfiguration: FC = () => {
   const {
@@ -87,6 +88,7 @@ const MeetingConfiguration: FC = () => {
               />
             ))}
         </Grid>
+        <ExpirationTime />
       </SectionContainer>
     </Box>
   );
