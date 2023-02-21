@@ -25,7 +25,6 @@ import { VideoUploadClientFeedbackDto } from '../dto/video-upload-client-feedbac
 import { User } from '../../../entities/User.entity';
 import { PostReaction } from '../../../entities/PostReaction.entity';
 import { ErrorTypes } from '../../../types/ErrorTypes';
-import { defaultPrivacyConfig } from '../../../entities/data/default-privacy-config';
 import { defaultPostSettings } from '../../../entities/data/default-post-settings';
 
 const { S3_VIDEO_POST_DIR = '' } = process.env;
