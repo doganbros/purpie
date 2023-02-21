@@ -72,7 +72,7 @@ export class UserChannelService {
         'user_channel.channelId = channel.id and user_channel.userId = :userId',
         { userId },
       )
-      .leftJoinAndSelect(
+      .innerJoinAndSelect(
         'user_channel.channelRole',
         'channel_role',
         'channel_role.roleCode = user_channel.channelRoleCode AND channel_role.channelId = channel.id',
@@ -94,10 +94,10 @@ export class UserChannelService {
             'user_channel.id is not null',
           );
         }),
-      )
-      .getRawMany();
-
-    return records.map((record) => ({
+      );
+    console.log(await records.getSql());
+    const a = await records.getRawMany();
+    return a.map((record) => ({
       id: record.user_channel_id,
       createdOn: record.user_channel_createdOn,
       channel: {
