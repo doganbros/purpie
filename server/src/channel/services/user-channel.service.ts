@@ -94,10 +94,10 @@ export class UserChannelService {
             'user_channel.id is not null',
           );
         }),
-      );
-    console.log(await records.getSql());
-    const a = await records.getRawMany();
-    return a.map((record) => ({
+      )
+      .getRawMany();
+
+    return records.map((record) => ({
       id: record.user_channel_id,
       createdOn: record.user_channel_createdOn,
       channel: {
