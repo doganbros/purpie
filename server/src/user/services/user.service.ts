@@ -86,7 +86,7 @@ export class UserService {
         'user.fullName as "fullName"',
         'user.email as "email"',
         'user.userName as "userName"',
-        'user.displayPhoto as displayPhoto',
+        'user.displayPhoto as "displayPhoto"',
       ])
       .addSelect((subQuery) => {
         return subQuery
