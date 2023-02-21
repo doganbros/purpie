@@ -1,6 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { User } from '../entities/User.entity';
 import { MeetingConfig } from '../types/Meeting';
+import { defaultPrivacyConfig } from '../entities/data/default-privacy-config';
 
 export class UserConfigTokenExpiryTime1676840006886
   implements MigrationInterface {
@@ -15,7 +16,7 @@ export class UserConfigTokenExpiryTime1676840006886
         jitsiConfig: oldConfig.jitsiConfig,
         privacyConfig: {
           ...oldConfig.privacyConfig,
-          joinLinkExpiryAsHours: 24,
+          joinLinkExpiryAsHours: defaultPrivacyConfig.joinLinkExpiryAsHours,
         },
       };
       await queryRunner.manager.update(

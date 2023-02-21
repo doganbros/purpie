@@ -89,6 +89,7 @@ export interface Post {
     viewsCount: number;
   };
   newlyCreated?: boolean;
+  allowDislike?: boolean;
 }
 
 export interface PostComment {
