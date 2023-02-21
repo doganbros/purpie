@@ -31,7 +31,6 @@ export const SidebarButton: FC<Props> = ({
           corner: 'right',
           size: 'medium',
         },
-        margin: { horizontal: '40px' },
         background: {
           color: 'brand-alt',
         },
