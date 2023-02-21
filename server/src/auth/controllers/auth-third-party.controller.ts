@@ -144,7 +144,7 @@ export class AuthThirdPartyController {
       } else {
         user = await this.authThirdPartyService.registerUserByThirdParty({
           fullName: `${userInfo.first_name}${
-            userInfo.middle_name ? ` ${userInfo.middle_name} ` : ''
+            userInfo.middle_name ? ` ${userInfo.middle_name} ` : ' '
           }${userInfo.last_name}`,
           email: userInfo.email,
           facebookId: userInfo.id,
