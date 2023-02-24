@@ -74,6 +74,7 @@ const ZoneSelector: FC = () => {
                     selected={selectedUserZone?.zone.id === z.zone.id}
                     onClick={() => {
                       navigateToSubdomain(z.zone.subdomain);
+                      setOpen(false);
                     }}
                     leftIcon={
                       <Box width={{ min: '24px' }} height="24px">
