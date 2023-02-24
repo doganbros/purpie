@@ -268,12 +268,14 @@ const authReducer = (
           loading: false,
         },
       };
-    case LOGOUT:
+    case LOGOUT: {
+      localStorage.removeItem('persist:root'); // remove all persisted data from localStorage for redux
       return {
         ...state,
         isAuthenticated: false,
         user: null,
       };
+    }
     case INITIALIZE_USER_REQUESTED:
       return {
         ...state,
