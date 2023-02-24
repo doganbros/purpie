@@ -6,30 +6,26 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { setMeetingFormFieldAction } from '../../../../store/actions/meeting.action';
 import { AppState } from '../../../../store/reducers/root.reducer';
-import { MEETING_JOIN_LINK_EXPIRE_TIME_HOURS } from '../../../../helpers/constants';
 
 const ExpirationTime: FC = () => {
   const dispatch = useDispatch();
   const {
     meeting: {
-      createMeeting: {
-        form: { payload: formPayload },
-      },
+      userMeetingConfig: { config },
     },
   } = useSelector((state: AppState) => state);
   const { t } = useTranslation();
-  const [expirationTime, setExpirationTime] = useState(
-    formPayload?.joinLinkExpiryAsHours || MEETING_JOIN_LINK_EXPIRE_TIME_HOURS
-  );
-  const handleExpirationTime = (value: number) => {
-    setExpirationTime(value);
+
+  const joinLinkExpiryAsHours = config?.privacyConfig?.joinLinkExpiryAsHours;
+  const [expirationTime, setExpirationTime] = useState('');
+  const handleExpirationTime = (value: any) => {
     dispatch(
       setMeetingFormFieldAction({
         joinLinkExpiryAsHours: value,
       })
     );
   };
-  const [value, setValue] = useState('');
+
   return (
     <Box
       direction="row"
@@ -43,17 +39,20 @@ const ExpirationTime: FC = () => {
       <Box width="150px" height="xxxsmall">
         <Select
           options={[
-            { label: '1 Hour', value: 1 },
-            { label: '3 Hours', value: 3 },
-            { label: '6 Hours', value: 6 },
-            { label: '12 Hours', value: 12 },
-            { label: '24 Hours', value: 24 },
-            { label: '48 Hours', value: 48 },
+            { label: `${1} ${t('common.hour')}`, value: 1 },
+            { label: `${3} ${t('common.hours')}`, value: 3 },
+            { label: `${6} ${t('common.hours')}`, value: 6 },
+            { label: `${12} ${t('common.hours')}`, value: 12 },
+            { label: `${24} ${t('common.hours')}`, value: 24 },
+            { label: `${48} ${t('common.hours')}`, value: 48 },
           ]}
-          value={value}
+          value={expirationTime}
           valueKey={{ key: 'value', reduce: true }}
-          onChange={({ value: nextValue }) => setValue(nextValue)}
-          placeholder="24 Hours"
+          onChange={({ value: joinLinkExpirationTime }) => {
+            handleExpirationTime(joinLinkExpirationTime);
+            setExpirationTime(joinLinkExpirationTime);
+          }}
+          placeholder={`${joinLinkExpiryAsHours} ${t('common.hours')}`}
           labelKey="label"
         />
       </Box>

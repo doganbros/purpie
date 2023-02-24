@@ -50,7 +50,9 @@
     "unfollow": "Unfollow",
     "leave": "Leave",
     "accept": "Accept",
-    "accepted": "Accepted"
+    "accepted": "Accepted",
+    "hour":"Hour",
+    "hours":"Hours"
   },
   "Login": {
     "title": "Login",

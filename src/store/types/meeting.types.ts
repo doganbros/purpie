@@ -67,6 +67,8 @@ interface MeetingPrivacyConfig {
   liveStream: boolean;
 
   record: boolean;
+
+  joinLinkExpiryAsHours: number;
 }
 
 export interface UserMeetingConfig {
