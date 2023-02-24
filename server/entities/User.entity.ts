@@ -46,9 +46,6 @@ export class User extends RecordEntity {
   googleId: string;
 
   @Column({ nullable: true })
-  facebookId: string;
-
-  @Column({ nullable: true })
   forgotPasswordToken: string;
 
   @Column({ nullable: true })

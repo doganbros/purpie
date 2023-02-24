@@ -254,10 +254,14 @@ export class AuthService {
     user.mailVerificationToken = await hash(token);
 
     const savedUser = await user.save();
-    await this.postFolderService.createFolder(savedUser.id, {
-      title: 'Bookmarks',
-      postId: null,
-    });
+    const userPostFolders = await this.postFolderService.getUserPostFolders(
+      savedUser.id,
+    );
+    if (userPostFolders.length === 0)
+      await this.postFolderService.createFolder(savedUser.id, {
+        title: 'Bookmarks',
+        postId: null,
+      });
 
     return {
       user: userInfo,
