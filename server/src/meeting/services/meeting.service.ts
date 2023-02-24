@@ -107,8 +107,7 @@ export class MeetingService {
         createMeetingInfo.record ?? meetingConfig.privacyConfig.record ?? false,
       joinLinkExpiryAsHours:
         createMeetingInfo.joinLinkExpiryAsHours ??
-        meetingConfig.privacyConfig.joinLinkExpiryAsHours ??
-        24,
+        meetingConfig.privacyConfig.joinLinkExpiryAsHours,
     };
 
     return meetingConfig;

@@ -18,6 +18,7 @@ import { UserRole } from './UserRole.entity';
 import { Contact } from './Contact.entity';
 import { baseMeetingConfig } from './data/base-meeting-config';
 import { defaultPostSettings } from './data/default-post-settings';
+import { defaultPrivacyConfig } from './data/default-privacy-config';
 
 @Entity()
 export class User extends RecordEntity {
@@ -55,11 +56,7 @@ export class User extends RecordEntity {
     type: 'simple-json',
     default: {
       jitsiConfig: baseMeetingConfig,
-      privacyConfig: {
-        public: true,
-        record: false,
-        liveStream: false,
-      },
+      privacyConfig: defaultPrivacyConfig,
     } as MeetingConfig,
   })
   userMeetingConfig: MeetingConfig;

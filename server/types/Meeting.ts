@@ -91,7 +91,7 @@ export class JitsiConfig {
   audioLevelsInterval?: number;
 }
 
-class PrivacyConfig {
+export class PrivacyConfig {
   public?: boolean;
 
   liveStream?: boolean;
