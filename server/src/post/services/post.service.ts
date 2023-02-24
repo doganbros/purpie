@@ -63,6 +63,7 @@ export class PostService {
         'post.public',
         'post.allowReaction',
         'post.allowComment',
+        'post.allowDislike',
       ])
       .leftJoin('post.channel', 'channel')
       .leftJoin('channel.zone', 'zone')

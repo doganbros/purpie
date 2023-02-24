@@ -23,11 +23,7 @@ import { AuthThirdPartyService } from '../services/auth-third-party.service';
 import { AuthService } from '../services/auth.service';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 
-const {
-  GOOGLE_OAUTH_CLIENT_ID = '',
-  FACEBOOK_OAUTH_CLIENT_ID = '',
-  REACT_APP_CLIENT_HOST = '',
-} = process.env;
+const { GOOGLE_OAUTH_CLIENT_ID = '', REACT_APP_CLIENT_HOST = '' } = process.env;
 
 @Controller({ path: 'auth/third-party', version: '1' })
 @ApiTags('auth-third-party')
@@ -64,20 +60,6 @@ export class AuthThirdPartyController {
 
       return res.redirect(
         `https://accounts.google.com/o/oauth2/v2/auth?${stringifiedQuery}`,
-      );
-    }
-
-    if (name === 'facebook') {
-      const stringifiedQuery = stringifyQuery({
-        client_id: FACEBOOK_OAUTH_CLIENT_ID,
-        redirect_uri: `${REACT_APP_CLIENT_HOST}/auth/facebook`,
-        scope: ['email', 'public_profile'].join(','),
-        response_type: 'code',
-        auth_type: 'rerequest',
-      });
-
-      return res.redirect(
-        `https://www.facebook.com/v4.0/dialog/oauth?${stringifiedQuery}`,
       );
     }
 
@@ -124,30 +106,6 @@ export class AuthThirdPartyController {
           fullName: `${userInfo.given_name} ${userInfo.family_name}`,
           email: userInfo.email,
           googleId: userInfo.id,
-        });
-      }
-    } else if (name === 'facebook') {
-      const accessToken = await this.authThirdPartyService.getFacebookAuthAccessToken(
-        code,
-      );
-      const userInfo = await this.authThirdPartyService.getFacebookUserInfo(
-        accessToken.access_token,
-      );
-
-      user = await this.authService.getUserByEmail(userInfo.email);
-
-      if (user) {
-        if (!user.facebookId) {
-          user.facebookId = userInfo.id;
-          user = await user.save();
-        }
-      } else {
-        user = await this.authThirdPartyService.registerUserByThirdParty({
-          fullName: `${userInfo.first_name}${
-            userInfo.middle_name ? ` ${userInfo.middle_name} ` : ''
-          }${userInfo.last_name}`,
-          email: userInfo.email,
-          facebookId: userInfo.id,
         });
       }
     }

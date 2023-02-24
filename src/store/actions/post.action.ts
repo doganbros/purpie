@@ -174,6 +174,7 @@ export const closeCreateVideoLayerAction = (): PostAction => {
 
 export const createPostLikeAction = (payload: {
   postId: string;
+  type: 'like' | 'dislike';
 }): PostAction => {
   return async (dispatch) => {
     dispatch({
@@ -181,9 +182,10 @@ export const createPostLikeAction = (payload: {
       payload,
     });
     try {
-      await PostService.createPostLike(payload.postId);
+      await PostService.createPostLike(payload);
       dispatch({
         type: CREATE_POST_LIKE_SUCCESS,
+        payload,
       });
     } catch (err: any) {
       dispatch({

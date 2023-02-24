@@ -30,6 +30,19 @@ export class PostLikeService {
     return postLike;
   }
 
+  async updatePostLike(like: PostLike, positive: boolean) {
+    await this.postLikeRepository.update(
+      { id: like.id },
+      {
+        positive,
+      },
+    );
+  }
+
+  async getPostLike(userId: string, postId: string) {
+    return this.postLikeRepository.findOne({ userId, postId });
+  }
+
   getPostLikes(postId: string, query: PostLikeQuery) {
     const baseQuery = this.postLikeRepository
       .createQueryBuilder('postLike')

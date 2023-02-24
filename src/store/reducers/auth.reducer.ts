@@ -66,11 +66,6 @@ const initialState: AuthState = {
     loading: false,
     error: null,
   },
-  loginWithFacebook: {
-    buttonLoading: false,
-    authenticating: false,
-    error: null,
-  },
   loginWithGoogle: {
     buttonLoading: false,
     authenticating: false,
@@ -89,14 +84,6 @@ const authReducer = (
           ...state,
           loginWithGoogle: {
             ...state.loginWithGoogle,
-            buttonLoading: true,
-          },
-        };
-      if (action.payload === 'facebook')
-        return {
-          ...state,
-          loginWithFacebook: {
-            ...state.loginWithFacebook,
             buttonLoading: true,
           },
         };
@@ -281,12 +268,14 @@ const authReducer = (
           loading: false,
         },
       };
-    case LOGOUT:
+    case LOGOUT: {
+      localStorage.removeItem('persist:root'); // remove all persisted data from localStorage for redux
       return {
         ...state,
         isAuthenticated: false,
         user: null,
       };
+    }
     case INITIALIZE_USER_REQUESTED:
       return {
         ...state,

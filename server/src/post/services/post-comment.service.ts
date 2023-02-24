@@ -79,6 +79,7 @@ export class PostCommentService {
         'user.fullName',
         'user.userName',
         'user.email',
+        'user.displayPhoto',
       ])
       .addSelect(
         (sq) =>

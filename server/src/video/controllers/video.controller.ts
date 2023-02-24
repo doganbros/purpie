@@ -25,6 +25,7 @@ import { VideoUploadClientFeedbackDto } from '../dto/video-upload-client-feedbac
 import { User } from '../../../entities/User.entity';
 import { PostReaction } from '../../../entities/PostReaction.entity';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { defaultPostSettings } from '../../../entities/data/default-post-settings';
 
 const { S3_VIDEO_POST_DIR = '' } = process.env;
 
@@ -79,9 +80,10 @@ export class VideoController {
         .replace(path.extname(file.originalname), ''),
       videoName: file.key.replace(S3_VIDEO_POST_DIR, ''),
       createdById: user.id,
-      allowComment: videoInfo.allowComment || true,
-      allowDislike: videoInfo.allowDislike || true,
-      allowReaction: videoInfo.allowReaction || true,
+      allowComment: videoInfo.allowComment || defaultPostSettings.allowComment,
+      allowDislike: videoInfo.allowDislike || defaultPostSettings.allowDislike,
+      allowReaction:
+        videoInfo.allowReaction || defaultPostSettings.allowReaction,
     };
 
     const { public: publicVideo, channelId } = videoInfo;

@@ -1,5 +1,5 @@
 import { Box, Form, Image, Text } from 'grommet';
-import { FacebookOption, Google } from 'grommet-icons';
+import { Google } from 'grommet-icons';
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -21,7 +21,6 @@ const JoinPage: FC = () => {
   const {
     login: { loading },
     loginWithGoogle: { buttonLoading: googleAuthBtnLoading },
-    loginWithFacebook: { buttonLoading: facebookAuthBtnLoading },
   } = useSelector((state: AppState) => state.auth);
 
   return (
@@ -90,15 +89,6 @@ const JoinPage: FC = () => {
               onClick={() => dispatch(getThirdPartyUrlAction('google'))}
               icon={<Google color="plain" size="28px" />}
               margin={{ bottom: 'small' }}
-            />
-
-            <AuthFormButton
-              label={<span />}
-              color={theme.global?.colors?.['grayish-blue']}
-              backgroundColor={theme.global?.colors?.['grayish-blue']}
-              disabled={facebookAuthBtnLoading}
-              onClick={() => dispatch(getThirdPartyUrlAction('facebook'))}
-              icon={<FacebookOption color="white" size="28px" />}
             />
           </Box>
           <Box>
