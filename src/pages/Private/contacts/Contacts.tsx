@@ -18,6 +18,7 @@ import Divider from '../../../components/utils/Divider';
 import EmptyContact from './EmptyContact';
 import ContactsToFollow from './ContactsToFollow';
 import InviteToPurpie from './InviteToPurpie';
+import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 const Contacts: FC = () => {
   const dispatch = useDispatch();
@@ -65,12 +66,6 @@ const Contacts: FC = () => {
     );
   };
 
-  const renderEmpty = (isEmpty: boolean) => {
-    return isEmpty ? (
-      <EmptyContact onFindContact={() => setVisibleInvitationDrop(true)} />
-    ) : null;
-  };
-
   useEffect(() => {
     getContacts();
   }, []);
@@ -80,13 +75,10 @@ const Contacts: FC = () => {
       title={t('common.contacts')}
       rightComponent={
         contacts.selected.contactId ? (
-          <SelectedUser
-            user={contacts.selected.user}
-            contactId={contacts.selected.contactId}
-          />
+          <SelectedUser user={contacts.selected.user} />
         ) : (
           <Box pad="medium" gap="medium">
-            <SearchBar />
+            {!contacts.loading && contacts.data.length > 0 && <SearchBar />}
             <InvitationList />
             <Divider />
             <InviteToPurpie
@@ -99,12 +91,17 @@ const Contacts: FC = () => {
         )
       }
     >
-      <Box pad={{ vertical: 'medium' }} gap="medium">
-        <Box direction="row" justify="between" align="center">
-          <Text weight="bold">{t('common.contacts')}</Text>
-          {searchContact()}
-        </Box>
-        {contacts.data.length > 0 ? (
+      {contacts.loading && (
+        <PurpieLogoAnimated width={50} height={50} color="brand" />
+      )}
+      {!contacts?.loading && contacts?.data?.length === 0 ? (
+        <EmptyContact />
+      ) : (
+        <Box pad={{ vertical: 'medium' }} gap="medium">
+          <Box direction="row" justify="between" align="center">
+            <Text weight="bold">{t('common.contacts')}</Text>
+            {searchContact()}
+          </Box>
           <InfiniteScroll
             items={contacts.data.filter(
               (contact) =>
@@ -124,10 +121,8 @@ const Contacts: FC = () => {
               />
             )}
           </InfiniteScroll>
-        ) : (
-          renderEmpty(contacts?.data?.length > 0)
-        )}
-      </Box>
+        </Box>
+      )}
     </PrivatePageLayout>
   );
 };

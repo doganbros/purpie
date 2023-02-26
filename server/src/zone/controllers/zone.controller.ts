@@ -59,7 +59,7 @@ import { UpdateZonePermission } from '../dto/update-zone-permission.dto';
 import { UserZoneService } from '../services/user-zone.service';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 
-const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
+const { S3_PROFILE_PHOTO_DIR = '', S3_BUCKET_NAME = '' } = process.env;
 @Controller({ version: '1', path: 'zone' })
 @ApiTags('zone')
 export class ZoneController {
@@ -293,11 +293,10 @@ export class ZoneController {
   async changeDisplayPhoto(
     @CurrentUserZone() userZone: UserZone,
     @UploadedFile() file: Express.MulterS3.File,
-    @Param('userZoneId', ParseUUIDPipe) userZoneId: string,
   ) {
     const fileName = file.key.replace(`${S3_PROFILE_PHOTO_DIR}/zone-dp/`, '');
 
-    await this.zoneService.changeDisplayPhoto(userZoneId, fileName);
+    await this.zoneService.changeDisplayPhoto(userZone.zone.id, fileName);
 
     return fileName;
   }
@@ -309,7 +308,7 @@ export class ZoneController {
   ) {
     try {
       const creds = {
-        Bucket: S3_VIDEO_BUCKET_NAME,
+        Bucket: S3_BUCKET_NAME,
         Key: `${S3_PROFILE_PHOTO_DIR}/zone-dp/${fileName}`,
       };
       const head = await s3HeadObject(creds);

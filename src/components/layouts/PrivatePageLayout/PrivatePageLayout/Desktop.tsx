@@ -55,7 +55,7 @@ const Desktop: FC<Props> = ({
             <ZoneSelector />
           </Box>
         </Box>
-        <Box margin={{ vertical: 'large' }}>
+        <Box margin={{ vertical: 'large' }} width="100%">
           <Sidebar />
         </Box>
       </ExtendedBox>

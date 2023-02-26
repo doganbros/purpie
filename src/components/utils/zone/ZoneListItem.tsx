@@ -43,9 +43,8 @@ const ZoneListItem: FC<ZoneListItemProps> = ({
             lineClamp={1}
             size="small"
             weight="bold"
-          >
-            {name}
-          </EllipsesOverflowText>
+            text={name}
+          />
           <Text size="xsmall" color="status-disabled">
             {t('ZoneListItem.channelCount', { count: channelCount })}
           </Text>

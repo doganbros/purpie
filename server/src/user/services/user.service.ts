@@ -24,10 +24,7 @@ import { UpdateProfileDto } from '../dto/update-profile.dto';
 import { UpdateUserPermission } from '../dto/update-permissions.dto';
 import { SystemUserListQuery } from '../dto/system-user-list.query';
 import { ErrorTypes } from '../../../types/ErrorTypes';
-import {
-  UserBasicWithToken,
-  UserTokenPayload,
-} from '../../auth/interfaces/user.interface';
+import { UserTokenPayload } from '../../auth/interfaces/user.interface';
 import { MailService } from '../../mail/mail.service';
 
 const { REACT_APP_CLIENT_HOST = '' } = process.env;
@@ -76,17 +73,30 @@ export class UserService {
     return true;
   }
 
-  userBaseSelect(excludeUserIds: Array<string>, query: SearchUsersQuery) {
+  userBaseSelect(
+    userId: string,
+    excludeUserIds: Array<string>,
+    query: SearchUsersQuery,
+  ) {
     const result = this.userRepository
       .createQueryBuilder('user')
       .setParameter('searchTerm', tsqueryParam(query.name))
       .select([
-        'user.id',
-        'user.fullName',
-        'user.email',
-        'user.userName',
-        'user.displayPhoto',
+        'user.id as "id"',
+        'user.fullName as "fullName"',
+        'user.email as "email"',
+        'user.userName as "userName"',
+        'user.displayPhoto as "displayPhoto"',
       ])
+      .addSelect((subQuery) => {
+        return subQuery
+          .select('contact.id', 'contactUserId')
+          .from(Contact, 'contact')
+          .where('contact.userId = :currentUserId', {
+            currentUserId: userId,
+          })
+          .andWhere('contact.contactUserId = user.id');
+      }, 'contactUserId')
       .addSelect(
         `ts_rank(user.search_document, to_tsquery('simple', :searchTerm))`,
         'search_rank',
@@ -100,8 +110,14 @@ export class UserService {
     return result;
   }
 
-  async searchUsers(excludeUserIds: Array<string>, query: SearchUsersQuery) {
-    return this.userBaseSelect(excludeUserIds, query).paginate(query);
+  async searchUsers(
+    userId: string,
+    excludeUserIds: Array<string>,
+    query: SearchUsersQuery,
+  ) {
+    return this.userBaseSelect(userId, excludeUserIds, query).paginateRaw(
+      query,
+    );
   }
 
   async searchInUserContacts(
@@ -109,18 +125,19 @@ export class UserService {
     excludeUserIds: Array<string>,
     query: SearchUsersQuery,
   ) {
-    return this.userBaseSelect(excludeUserIds, query)
+    return this.userBaseSelect(userId, excludeUserIds, query)
       .innerJoin(Contact, 'contact', 'contact.userId = :userId', { userId })
       .andWhere('user.id = contact.contactUserId')
       .paginate(query);
   }
 
   async searchInChannels(
+    userId: string,
     channelId: number,
     excludeUserIds: Array<string>,
     query: SearchUsersQuery,
   ) {
-    return this.userBaseSelect(excludeUserIds, query)
+    return this.userBaseSelect(userId, excludeUserIds, query)
       .innerJoin(
         UserChannel,
         'user_channel',
@@ -168,27 +185,25 @@ export class UserService {
         'You have already been invited by this user already',
       );
 
-    const result = this.invitationRepository
+    const result = await this.invitationRepository
       .create({
         createdById: user.id,
         email,
       })
       .save();
-    const userInfo = await this.authService.verifyResendMailVerificationToken(
-      user.id,
-    );
 
-    await this.sendContactInvitationMail(userInfo);
+    const createByUser = await this.userRepository.findOne({
+      where: { id: user.id },
+      select: ['fullName'],
+    });
+    await this.sendContactInvitationMail(email, createByUser!.fullName);
     return result;
   }
 
-  sendContactInvitationMail({
-    user: { fullName, email },
-    token,
-  }: UserBasicWithToken) {
+  sendContactInvitationMail(email: string, fullName: string) {
     const context = {
       fullName,
-      link: `${REACT_APP_CLIENT_HOST}/invitation-response/${token}`,
+      link: `${REACT_APP_CLIENT_HOST}`,
     };
     return this.mailService.sendMailByView(
       email,
@@ -218,7 +233,7 @@ export class UserService {
       .paginate(query);
   }
 
-  getContactInvitationByIdAndInviteeId(id: number, inviteeId: string) {
+  getContactInvitationByIdAndInviteeId(id: string, inviteeId: string) {
     return this.invitationRepository
       .createQueryBuilder('invitation')
       .innerJoin('invitation.createdBy', 'inviter')
@@ -277,11 +292,14 @@ export class UserService {
       .paginate(query);
   }
 
-  async removeContactInvitation(id: number) {
+  async removeContactInvitation(id: string) {
     return this.invitationRepository.delete(id);
   }
 
-  listContacts(identity: number | string, query: PaginationQuery) {
+  listContacts(
+    identity: { userName?: string; userId?: string },
+    query: PaginationQuery,
+  ) {
     const baseQuery = this.contactRepository
       .createQueryBuilder('contact')
       .select([
@@ -295,23 +313,23 @@ export class UserService {
       ])
       .innerJoin('contact.contactUser', 'contactUser');
 
-    if (typeof identity === 'number')
-      baseQuery.where('contact.userId = :identity', { identity });
+    if (identity.userId)
+      baseQuery.where('contact.userId = :userId', { userId: identity.userId });
     else
       baseQuery
         .innerJoin('contact.user', 'user')
-        .where('user.userName = :identity', { identity });
+        .where('user.userName = :userName', { userName: identity.userName });
 
     return baseQuery.paginate(query);
   }
 
-  async deleteContact(userId: string, id: number) {
+  async deleteContact(currentUserId: string, userId: string) {
     return this.contactRepository
       .createQueryBuilder()
       .delete()
-      .where('userId = :userId AND id = :id', {
+      .where('userId = :currentUserId AND contactUserId = :userId', {
+        currentUserId,
         userId,
-        id,
       })
       .execute();
   }
@@ -334,9 +352,20 @@ export class UserService {
         return subQuery
           .select('count(*) > 0', 'userCount')
           .from(Contact, 'contact')
-          .where('contact.contactUserId = user.id')
-          .andWhere('contact.userId = :currentUserId', { currentUserId });
+          .where('contact.userId = :currentUserId', {
+            currentUserId,
+          })
+          .andWhere('contact.contactUserId = user.id');
       }, 'isInContact')
+      .addSelect((subQuery) => {
+        return subQuery
+          .select('contact.id', 'contactUserId')
+          .from(Contact, 'contact')
+          .where('contact.userId = user.id')
+          .andWhere('contact.contactUserId = :currentUserId', {
+            currentUserId,
+          });
+      }, 'contactUserId')
       .addSelect((subQuery) => {
         return subQuery
           .select('count(*) > 0', 'blockedCount')
@@ -363,6 +392,7 @@ export class UserService {
       displayPhoto: result.user_displayPhoto,
       email: result.user_email,
       isInContact: result.isInContact,
+      contactUserId: result.contactUserId,
     };
   }
 

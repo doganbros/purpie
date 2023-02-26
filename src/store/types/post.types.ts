@@ -70,6 +70,7 @@ export interface Post {
   description: string;
   id: string;
   liked: boolean;
+  disliked: boolean;
   liveStream: boolean;
   public: boolean;
   record: boolean;
@@ -88,6 +89,7 @@ export interface Post {
     viewsCount: number;
   };
   newlyCreated?: boolean;
+  allowDislike?: boolean;
 }
 
 export interface PostComment {
@@ -206,12 +208,18 @@ export type PostActionParams =
   | {
       type:
         | typeof POST_DETAIL_REQUESTED
-        | typeof CREATE_POST_LIKE_REQUESTED
-        | typeof REMOVE_POST_LIKE_REQUESTED
         | typeof REMOVE_POST_REQUESTED
-        | typeof REMOVE_POST_SUCCESS;
+        | typeof REMOVE_POST_SUCCESS
+        | typeof REMOVE_POST_LIKE_REQUESTED;
       payload: {
         postId: string;
+      };
+    }
+  | {
+      type: typeof CREATE_POST_LIKE_REQUESTED | typeof CREATE_POST_LIKE_SUCCESS;
+      payload: {
+        postId: string;
+        type: 'like' | 'dislike';
       };
     }
   | {
@@ -307,7 +315,6 @@ export type PostActionParams =
       type:
         | typeof OPEN_CREATE_VIDEO_LAYER
         | typeof CLOSE_CREATE_VIDEO_LAYER
-        | typeof CREATE_POST_LIKE_SUCCESS
         | typeof REMOVE_POST_LIKE_SUCCESS;
     }
   | {

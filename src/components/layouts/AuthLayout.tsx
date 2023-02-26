@@ -14,6 +14,14 @@ import { useResponsive } from '../../hooks/useResponsive';
 import LogoHorizontalColor from '../../assets/purpie-logo/logo-horizontal-color.svg';
 import LogoHorizontalWhite from '../../assets/purpie-logo/logo-horizontal-white.svg';
 import AuthFormButton from '../auth/AuthFormButton';
+import { AnchorLink } from '../utils/AnchorLink';
+
+const footerLinks = [
+  { label: 'About', to: '/support/about-us' },
+  { label: 'Privacy Policy', to: '/support/privacy-policy' },
+  { label: 'Terms & Services', to: '/support/terms-and-conditions' },
+  { label: 'FAQ', to: '/support/faq' },
+];
 
 interface Props {
   title: string;
@@ -77,12 +85,13 @@ const AuthLayout: React.FC<Props> = ({
           {size !== 'small' ? (
             <Box
               basis={size === 'medium' ? '55%' : '60%'}
-              height="100%"
+              height="100vh"
               alignSelf="center"
-              margin="0"
+              justify="center"
             >
-              <Box basis="70%">{background}</Box>
-              <Box basis="25%" align="center">
+              <Box flex="grow" />
+              <Box>{background}</Box>
+              <Box align="center">
                 {callToAction && (
                   <>
                     <Text size="16px" margin={{ bottom: '14px', top: '20px' }}>
@@ -100,15 +109,34 @@ const AuthLayout: React.FC<Props> = ({
                   </>
                 )}
               </Box>
+              <Box
+                gap="medium"
+                direction="row"
+                justify="center"
+                align="end"
+                flex="grow"
+                pad={{ bottom: 'medium' }}
+              >
+                {footerLinks.map(({ label, to }) => (
+                  <AnchorLink
+                    key={to}
+                    weight="normal"
+                    size="small"
+                    label={label}
+                    to={to}
+                  />
+                ))}
+              </Box>
             </Box>
           ) : null}
+
           <Box basis={formWidth[size]} margin="0" style={{ zIndex: 2 }}>
             <Card
               elevation="indigo"
               background={theme.dark ? 'dark-2' : 'white'}
               round={{ corner: 'left', size: 'large' }}
               width="100%"
-              height="100%"
+              height="100vh"
               align="center"
               overflow="auto"
             >

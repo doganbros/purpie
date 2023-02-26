@@ -85,9 +85,7 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
               align="center"
             >
               <Text size="xsmall" weight={500}>
-                {invitation.response === InvitationResponseType.ACCEPT
-                  ? t('common.joined')
-                  : t('common.ignored')}
+                {t('common.accepted')}
               </Text>
             </Box>
           </Button>
@@ -106,7 +104,7 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
                 align="center"
               >
                 <Text size="xsmall" weight={500}>
-                  {t('common.join')}
+                  {t('common.accept')}
                 </Text>
               </Box>
             </Button>
@@ -119,7 +117,7 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
             >
               <Box pad={{ vertical: 'xsmall' }} direction="row" align="center">
                 <Text size="xsmall" color="brand" weight={500}>
-                  {t('common.ignore')}
+                  {t('common.reject')}
                 </Text>
               </Box>
             </Button>

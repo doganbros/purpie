@@ -160,7 +160,7 @@ const userReducer = (
         contacts: {
           ...state.contacts,
           data: state.contacts.data.filter(
-            (c) => c.id !== action.payload.contactId
+            (c) => c.contactUser.id !== action.payload.contactId
           ),
           selected: {
             contactId: null,
@@ -168,6 +168,18 @@ const userReducer = (
             loading: false,
             error: null,
           },
+        },
+        detail: {
+          ...state.detail,
+          user: state.detail.user
+            ? {
+                ...state.detail.user,
+                contactUserId: null,
+                isInContact: false,
+              }
+            : null,
+          loading: false,
+          error: null,
         },
       };
     }
@@ -197,6 +209,7 @@ const userReducer = (
         },
       };
     }
+
     case LIST_USER_PUBLIC_CHANNELS_REQUESTED:
       return {
         ...state,

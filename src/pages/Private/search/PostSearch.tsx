@@ -1,5 +1,13 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Box, Form, FormField, Grid, InfiniteScroll, Text } from 'grommet';
+import {
+  Box,
+  Form,
+  FormField,
+  Grid,
+  InfiniteScroll,
+  Text,
+  ThemeContext,
+} from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +26,7 @@ import SearchInput from './SearchInput';
 import { searchPostAction } from '../../../store/actions/post.action';
 import { SearchParams } from '../../../models/utils';
 import Switch from '../../../components/utils/Switch';
+import { theme } from '../../../config/app-config';
 
 const PostSearch: FC = () => {
   const { value } = useParams<SearchParams>();
@@ -83,16 +92,39 @@ const PostSearch: FC = () => {
       topComponent={<SearchInput />}
       rightComponent={
         <Box pad="medium" gap="medium">
-          <FilterWrapper>
-            <Form value={options} onChange={setOptions}>
-              <FormField name="following">
-                <Switch label={t('common.following')} name="following" />
-              </FormField>
-              <FormField name="streaming">
-                <Switch label={t('common.streaming')} name="streaming" />
-              </FormField>
-            </Form>
-          </FilterWrapper>
+          <ThemeContext.Extend
+            value={{
+              ...theme,
+              formField: {
+                ...theme?.formField,
+                border: {
+                  side: 'all',
+                  color: 'transparent',
+                },
+              },
+            }}
+          >
+            <FilterWrapper>
+              <Form value={options} onChange={setOptions}>
+                <FormField name="following">
+                  <Switch
+                    label={t('common.following')}
+                    name="following"
+                    textProps={{ color: 'dark' }}
+                    pad={{ vertical: '3px' }}
+                  />
+                </FormField>
+                <FormField name="streaming">
+                  <Switch
+                    label={t('common.streaming')}
+                    name="streaming"
+                    textProps={{ color: 'dark' }}
+                    pad={{ vertical: '3px' }}
+                  />
+                </FormField>
+              </Form>
+            </FilterWrapper>
+          </ThemeContext.Extend>
           <Divider />
           <ChannelsToFollow />
           <Divider />

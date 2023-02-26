@@ -34,6 +34,8 @@ import {
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { BrowserType } from '../../../types/BrowserType';
+import { PostFolder } from '../../../entities/PostFolder.entity';
+import { FolderService } from '../../post/services/folder.service';
 
 const {
   AUTH_TOKEN_SECRET = '',
@@ -50,11 +52,13 @@ const {
 export class AuthService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(PostFolder)
     @InjectRepository(UserRole)
     private userRoleRepository: Repository<UserRole>,
     @InjectRepository(UserRefreshToken)
     private userRefreshTokenRepository: Repository<UserRefreshToken>,
     private mailService: MailService,
+    private postFolderService: FolderService,
   ) {}
 
   async generateLoginToken(
@@ -227,7 +231,7 @@ export class AuthService {
   }: RegisterUserDto): Promise<UserBasicWithToken> {
     const password = await bcrypt.hash(unhashedPassword, 10);
 
-    const user = this.userRepository.create({
+    const user = await this.userRepository.create({
       fullName,
       email,
       password,
@@ -249,7 +253,16 @@ export class AuthService {
 
     user.mailVerificationToken = await hash(token);
 
-    await user.save();
+    const savedUser = await user.save();
+    const userPostFolders = await this.postFolderService.getUserPostFolders(
+      savedUser.id,
+    );
+    if (userPostFolders.length === 0)
+      await this.postFolderService.createFolder(savedUser.id, {
+        title: 'Bookmarks',
+        postId: null,
+      });
+
     return {
       user: userInfo,
       token,

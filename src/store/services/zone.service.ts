@@ -35,7 +35,7 @@ export const updateZone = (
 export const deleteUserZone = (userZoneId: number): Promise<any> =>
   http.delete(`/user-zone/remove/${userZoneId}`).then((res) => res.data);
 
-export const deleteZone = (zoneId: number): Promise<any> =>
+export const deleteZone = (zoneId: string): Promise<any> =>
   http.delete(`/zone/remove/${zoneId}`).then((res) => res.data);
 
 export const searchZone = (
@@ -45,10 +45,10 @@ export const searchZone = (
 
 export const updateZonePhoto = (
   photoFile: File,
-  zoneId: string
+  userZoneId: string
 ): Promise<any> =>
   http
-    .put(`zone/${zoneId}/display-photo`, serialize(photoFile))
+    .put(`zone/${userZoneId}/display-photo`, serialize(photoFile))
     .then((res) => res.data);
 
 export const updateZoneInfo = (
@@ -56,3 +56,6 @@ export const updateZoneInfo = (
   params: ZoneBasic
 ): Promise<any> =>
   http.put(`zone/update/${zoneId}`, params).then((res) => res.data);
+
+export const leaveZone = (zoneId: string): Promise<any> =>
+  http.delete(`/user-zone/remove/${zoneId}`).then((res) => res.data);

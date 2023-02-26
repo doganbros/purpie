@@ -6,17 +6,22 @@ import { useTranslation } from 'react-i18next';
 import ListButton from '../../../components/utils/ListButton';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { UpdateZonePayload } from '../../../store/types/zone.types';
-import { SettingsData } from './types';
 import {
+  deleteZoneAction,
+  leaveZoneAction,
   updateZoneInfoAction,
   updateZonePhotoAction,
 } from '../../../store/actions/zone.action';
 import AvatarUpload from './AvatarUpload';
 import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
+import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
+import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 
-const ZoneSettings: () => SettingsData | null = () => {
+const ZoneSettings: () => Menu | null = () => {
   const {
+    auth: { user },
     zone: {
+      selectedUserZone,
       getUserZones: { userZones },
     },
   } = useSelector((state: AppState) => state);
@@ -24,7 +29,8 @@ const ZoneSettings: () => SettingsData | null = () => {
 
   const [selectedUserZoneIndex, setSelectedUserZoneIndex] = useState(0);
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
-
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [showLeavePopup, setShowLeavePopup] = useState(false);
   const { t } = useTranslation();
 
   const [showZoneSelector, setShowZoneSelector] = useState(true);
@@ -37,6 +43,13 @@ const ZoneSettings: () => SettingsData | null = () => {
     id: userZones?.[0]?.zone?.id || '',
     public: userZones?.[0]?.zone?.public || false,
   });
+
+  const showLeaveButton =
+    user?.id !== userZones?.[selectedUserZoneIndex]?.zone?.createdBy?.id;
+
+  const isOwner = !showLeaveButton ? t('settings.owner') : t('settings.member');
+
+  const userZoneId = userZones?.[selectedUserZoneIndex]?.id;
 
   if (userZones?.length === 0) {
     return {
@@ -69,6 +82,9 @@ const ZoneSettings: () => SettingsData | null = () => {
 
   const selectedZone = userZones?.[selectedUserZoneIndex]?.zone;
   const zoneId = selectedZone?.id;
+  const canDelete = userZones?.[selectedUserZoneIndex]?.zoneRole.canDelete;
+  const isInThisZone =
+    userZones?.[selectedUserZoneIndex]?.id === selectedUserZone?.id;
 
   const isFormInitialState =
     zonePayload.name === selectedZone?.name &&
@@ -92,6 +108,62 @@ const ZoneSettings: () => SettingsData | null = () => {
         primary
         label={t('settings.save')}
         margin={{ vertical: 'medium' }}
+      />
+    ),
+    deleteButton: (
+      <Button
+        onClick={() => {
+          if (!(zoneId === null || zoneId === undefined)) {
+            setShowDeletePopup(true);
+          }
+        }}
+        primary
+        color="red"
+        label={t('common.delete')}
+        margin={{ vertical: 'medium' }}
+      />
+    ),
+    deletePopup: showDeletePopup && (
+      <ConfirmDialog
+        message={`${`${t('settings.deleteMessage')} 
+   ${'\n'}
+        ${selectedZone?.name}`} zone?`}
+        onConfirm={() => {
+          if (!(zoneId === null || zoneId === undefined)) {
+            dispatch(deleteZoneAction(zoneId, isInThisZone));
+          }
+          setShowDeletePopup(false);
+        }}
+        onDismiss={() => setShowDeletePopup(false)}
+        textProps={{ wordBreak: 'break-word' }}
+      />
+    ),
+    leaveButton: (
+      <Button
+        onClick={() => {
+          if (!(zoneId === null || zoneId === undefined)) {
+            setShowLeavePopup(true);
+          }
+        }}
+        secondary
+        color="red"
+        label={t('common.leave')}
+        margin={{ vertical: 'medium' }}
+      />
+    ),
+    leavePopup: showLeavePopup && (
+      <ConfirmDialog
+        message={`${`${t('settings.zoneLeaveMessage')}
+        ${'\n'}
+        ${selectedZone?.name}`} zone?`}
+        onConfirm={() => {
+          if (!(userZoneId === null || userZoneId === undefined)) {
+            dispatch(leaveZoneAction(userZoneId));
+          }
+          setShowLeavePopup(false);
+        }}
+        onDismiss={() => setShowLeavePopup(false)}
+        textProps={{ wordBreak: 'break-word' }}
       />
     ),
     avatarWidget: (
@@ -123,14 +195,18 @@ const ZoneSettings: () => SettingsData | null = () => {
           dropProps={{
             responsive: false,
             stretch: false,
-            overflow: { vertical: 'scroll' },
           }}
           dropAlign={{ left: 'right', top: 'top' }}
           dropContent={
-            <Box>
+            <Box width={{ min: '250px' }} overflow="auto">
               {userZones?.map((item, index) => (
                 <ListButton
                   label={item.zone.name}
+                  subLabel={
+                    item.zone.createdBy?.id === user?.id
+                      ? t('settings.owner')
+                      : t('settings.member')
+                  }
                   key={item.zone.id}
                   onClick={() => {
                     setZonePayload({
@@ -161,7 +237,7 @@ const ZoneSettings: () => SettingsData | null = () => {
             <Box direction="row" align="center">
               <Box>
                 <Text>{selectedZone?.name}</Text>
-                <Text color="status-disabled">{selectedZone?.subdomain}</Text>
+                <Text color="status-disabled">{isOwner}</Text>
               </Box>
               <CaretDownFill />
             </Box>
@@ -179,10 +255,10 @@ const ZoneSettings: () => SettingsData | null = () => {
             </Box>
           )}
         </DropButton>
-        {showAvatarUpload && !(zoneId === null) && (
+        {showAvatarUpload && !(userZoneId === null) && (
           <AvatarUpload
             onSubmit={(file: any) => {
-              dispatch(updateZonePhotoAction(file, zoneId!));
+              dispatch(updateZonePhotoAction(file, userZoneId!));
               setShowAvatarUpload(false);
             }}
             onDismiss={() => {
@@ -190,6 +266,8 @@ const ZoneSettings: () => SettingsData | null = () => {
             }}
             type="zone"
             src={selectedZone?.displayPhoto}
+            id={selectedZone?.id || ''}
+            name={selectedZone?.name}
           />
         )}
       </Box>
@@ -284,6 +362,8 @@ const ZoneSettings: () => SettingsData | null = () => {
       },
     ],
     isEmpty: showZoneSelector,
+    canDelete,
+    showLeaveButton,
   };
 };
 

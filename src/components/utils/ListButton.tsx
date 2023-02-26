@@ -4,6 +4,7 @@ import EllipsesOverflowText from './EllipsesOverflowText';
 
 interface ListButtonProps extends BoxExtendedProps {
   label?: string;
+  subLabel?: string;
   rightIcon?: ReactNode;
   leftIcon?: ReactNode;
   selected?: boolean;
@@ -13,6 +14,7 @@ interface ListButtonProps extends BoxExtendedProps {
 
 const ListButton: FC<ListButtonProps> = ({
   label,
+  subLabel,
   rightIcon,
   leftIcon,
   selected,
@@ -49,16 +51,25 @@ const ListButton: FC<ListButtonProps> = ({
       <Box fill direction="row" align="center" justify="between">
         <Box direction="row" align="center" gap="small">
           {leftIcon}
-
-          <EllipsesOverflowText
-            maxWidth="195px"
-            weight={selected ? 'bold' : 0}
-            size="xsmall"
-            color={setTextColor()}
-            {...textProps}
-          >
-            {label}
-          </EllipsesOverflowText>
+          <Box>
+            {' '}
+            <EllipsesOverflowText
+              maxWidth="195px"
+              weight={selected ? 'bold' : 0}
+              size="xsmall"
+              color={setTextColor()}
+              text={label}
+              {...textProps}
+            />
+            <EllipsesOverflowText
+              maxWidth="195px"
+              weight={selected ? 'bold' : 0}
+              size="xsmall"
+              color="status-disabled"
+              text={subLabel}
+              {...textProps}
+            />
+          </Box>
         </Box>
 
         {rightIcon}

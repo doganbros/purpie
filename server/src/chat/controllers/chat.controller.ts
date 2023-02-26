@@ -23,7 +23,7 @@ import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
 import { ChatMessageListQuery } from '../dto/chat-message-list.dto';
 import { ChatService } from '../services/chat.service';
 
-const { S3_VIDEO_BUCKET_NAME = '', S3_CHAT_MESSAGE_DIR = '' } = process.env;
+const { S3_BUCKET_NAME = '', S3_CHAT_ATTACHMENTS_DIR = '' } = process.env;
 
 @ApiTags('chat')
 @Controller({ version: '1', path: 'chat' })
@@ -56,8 +56,8 @@ export class ChatController {
   @IsAuthenticated()
   async getChatAttachment(@Param('name') name: string, @Res() res: Response) {
     const creds = {
-      Bucket: S3_VIDEO_BUCKET_NAME,
-      Key: `${S3_CHAT_MESSAGE_DIR}${name}`,
+      Bucket: S3_BUCKET_NAME,
+      Key: `${S3_CHAT_ATTACHMENTS_DIR}${name}`,
     };
 
     try {
@@ -88,7 +88,7 @@ export class ChatController {
   })
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: s3Storage(S3_CHAT_MESSAGE_DIR),
+      storage: s3Storage(S3_CHAT_ATTACHMENTS_DIR),
       limits: {
         fileSize: 5e7, // 50MB,
       },
@@ -96,7 +96,7 @@ export class ChatController {
   )
   addChatAttachment(@UploadedFile() file: Express.MulterS3.File) {
     const payload: Partial<ChatMessageAttachment> = {
-      name: file.key.replace(S3_CHAT_MESSAGE_DIR, ''),
+      name: file.key.replace(S3_CHAT_ATTACHMENTS_DIR, ''),
       originalFileName: file.originalname,
     };
 

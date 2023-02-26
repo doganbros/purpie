@@ -6,19 +6,25 @@ import { useTranslation } from 'react-i18next';
 import ListButton from '../../../components/utils/ListButton';
 
 import {
+  deleteChannelAction,
   getUserChannelsAllAction,
+  unfollowChannelAction,
   updateChannelInfoAction,
   updateChannelPhoto,
 } from '../../../store/actions/channel.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { UpdateChannelPayload } from '../../../store/types/channel.types';
 import AvatarUpload from './AvatarUpload';
-import { SettingsData } from './types';
 import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
 import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
+import ConfirmDialog from '../../../components/utils/ConfirmDialog';
+import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
+import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
+import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
 
-const ChannelSettings: () => SettingsData = () => {
+const ChannelSettings: () => Menu = () => {
   const {
+    auth: { user },
     channel: { userChannels },
     zone: {
       getUserZones: { userZones },
@@ -28,6 +34,8 @@ const ChannelSettings: () => SettingsData = () => {
 
   const [selectedUserChannelIndex, setSelectedUserChannelIndex] = useState(0);
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [showLeavePopup, setShowLeavePopup] = useState(false);
   const [channelPayload, setChannelPayload] = useState<UpdateChannelPayload>({
     name: '',
     description: '',
@@ -41,7 +49,11 @@ const ChannelSettings: () => SettingsData = () => {
   const [showChannelSelector, setShowChannelSelector] = useState(true);
 
   const selectedChannel = userChannels.data[selectedUserChannelIndex]?.channel;
+  const canDelete =
+    userChannels.data[selectedUserChannelIndex]?.channelRole?.canDelete;
   const channelId = selectedChannel?.id;
+
+  const showLeaveButton = user?.id !== selectedChannel?.createdBy?.id;
 
   const isFormInitialState =
     channelPayload.name === selectedChannel?.name &&
@@ -99,6 +111,32 @@ const ChannelSettings: () => SettingsData = () => {
         margin={{ vertical: 'medium' }}
       />
     ),
+    deleteButton: (
+      <Button
+        onClick={() => {
+          if (!(channelId === null || channelId === undefined)) {
+            setShowDeletePopup(true);
+          }
+        }}
+        primary
+        color="red"
+        label={t('common.delete')}
+        margin={{ vertical: 'medium' }}
+      />
+    ),
+    leaveButton: (
+      <Button
+        onClick={() => {
+          if (!(channelId === null || channelId === undefined)) {
+            setShowLeavePopup(true);
+          }
+        }}
+        secondary
+        color="red"
+        label={t('common.unfollow')}
+        margin={{ vertical: 'medium' }}
+      />
+    ),
     avatarWidget: (
       <>
         <Box width="medium" direction="row" gap="small" align="center">
@@ -127,37 +165,78 @@ const ChannelSettings: () => SettingsData = () => {
             onOpen={() => setIsDropOpen(true)}
             onClose={() => setIsDropOpen(false)}
             dropAlign={{ left: 'right', top: 'top' }}
-            dropProps={{
-              responsive: false,
-              stretch: false,
-              overflow: { vertical: 'scroll' },
-            }}
+            fill="vertical"
             dropContent={
-              <Box>
-                {userChannels.data.map((item, index) => (
-                  <ListButton
-                    key={item.channel.id}
-                    label={item.channel.name}
-                    onClick={() => {
-                      setChannelPayload({
-                        name: item.channel.name,
-                        id: item.channel.id,
-                        description: item.channel.description,
-                        public: item.channel.public,
-                      });
-                      setSelectedUserChannelIndex(index);
-                      setShowChannelSelector(false);
-                      setIsDropOpen(false);
-                    }}
-                    leftIcon={
-                      <ChannelAvatar
-                        id={item.channel.id}
-                        name={item.channel.name}
-                        src={item.channel.displayPhoto}
-                      />
-                    }
-                    selected={selectedChannel.name === item.channel.name}
-                  />
+              <Box width={{ min: '250px' }} overflow="auto">
+                {userZones?.map((zone) => (
+                  <Box
+                    key={zone.zone.id}
+                    flex={{ shrink: 0 }}
+                    border={{ side: 'bottom', color: 'light-2' }}
+                  >
+                    {userChannels.data.filter(
+                      (id) => id.channel.zoneId === zone.zone.id
+                    ).length > 0 && (
+                      <Box
+                        style={{ pointerEvents: 'none' }}
+                        pad="small"
+                        gap="small"
+                        direction="row"
+                        align="center"
+                        alignContent="center"
+                      >
+                        <ZoneAvatar
+                          id={zone.zone.id}
+                          name={zone.zone.name}
+                          size="40px"
+                        />
+                        <Text size="small">{zone.zone.name}</Text>
+                      </Box>
+                    )}
+                    {userChannels.data.map(
+                      (item, index) =>
+                        item.channel.zoneId === zone.zone.id && (
+                          <ListButton
+                            pad={{
+                              vertical: 'xsmall',
+                              left: 'medium',
+                              right: 'small',
+                            }}
+                            key={item.channel.id}
+                            label={item.channel.name}
+                            subLabel={
+                              user?.id !== item.channel?.createdBy?.id
+                                ? 'Member'
+                                : 'Owner'
+                            }
+                            onClick={() => {
+                              setChannelPayload({
+                                name: item.channel.name,
+                                id: item.channel.id,
+                                description: item.channel.description,
+                                public: item.channel.public,
+                              });
+                              setSelectedUserChannelIndex(index);
+                              setShowChannelSelector(false);
+                              setIsDropOpen(false);
+                            }}
+                            leftIcon={
+                              <Box pad={{ vertical: '4px', left: 'small' }}>
+                                <ChannelAvatar
+                                  id={item.channel.id}
+                                  name={item.channel.name}
+                                  src={item.channel.displayPhoto}
+                                  size="40px"
+                                />
+                              </Box>
+                            }
+                            selected={
+                              selectedChannel?.name === item.channel.name
+                            }
+                          />
+                        )
+                    )}
+                  </Box>
                 ))}
               </Box>
             }
@@ -170,21 +249,24 @@ const ChannelSettings: () => SettingsData = () => {
                 align="center"
               >
                 <Box>
-                  <Text>{selectedChannel?.name}</Text>
+                  <EllipsesOverflowText
+                    maxWidth="280px"
+                    lineClamp={1}
+                    text={selectedChannel?.name}
+                  />
                   <Box direction="row" gap="small" align="center">
                     <ZoneBadge
-                      truncateWith={15}
                       textProps={{ size: 'small' }}
                       subdomain={
                         userZones?.find(
                           (userZone) =>
-                            userZone.zone.id === selectedChannel.zoneId
+                            userZone.zone.id === selectedChannel?.zoneId
                         )?.zone.subdomain
                       }
                       name={
                         userZones?.find(
                           (userZone) =>
-                            userZone.zone.id === selectedChannel.zoneId
+                            userZone.zone.id === selectedChannel?.zoneId
                         )?.zone.name
                       }
                     />
@@ -201,7 +283,7 @@ const ChannelSettings: () => SettingsData = () => {
                 align="center"
               >
                 <Text>{t('settings.selectChannel')}</Text>
-                <CaretRightFill color="brand" />{' '}
+                <CaretRightFill color="brand" />
               </Box>
             )}
           </DropButton>
@@ -217,9 +299,42 @@ const ChannelSettings: () => SettingsData = () => {
             }}
             type="channel"
             src={selectedChannel?.displayPhoto}
+            id={selectedChannel?.id}
+            name={selectedChannel?.name}
           />
         )}
       </>
+    ),
+    deletePopup: showDeletePopup && (
+      <ConfirmDialog
+        message={`${`${t('settings.deleteMessage')} ${
+          selectedChannel?.name
+        }`} channel?`}
+        onConfirm={() => {
+          if (!(channelId === null || channelId === undefined)) {
+            dispatch(deleteChannelAction(channelId));
+          }
+          setShowDeletePopup(false);
+        }}
+        onDismiss={() => setShowDeletePopup(false)}
+        textProps={{ wordBreak: 'break-word' }}
+      />
+    ),
+    leavePopup: showLeavePopup && (
+      <ConfirmDialog
+        message={`${`${t('settings.channelUnfollowMessage')} ${
+          selectedChannel?.name
+        }`} channel?`}
+        onConfirm={() => {
+          if (!(channelId === null || channelId === undefined)) {
+            dispatch(unfollowChannelAction(channelId));
+          }
+          setShowLeavePopup(false);
+          setSelectedUserChannelIndex(0);
+        }}
+        onDismiss={() => setShowLeavePopup(false)}
+        textProps={{ wordBreak: 'break-word' }}
+      />
     ),
     items: [
       {
@@ -282,6 +397,8 @@ const ChannelSettings: () => SettingsData = () => {
       },
     ],
     isEmpty: showChannelSelector,
+    canDelete,
+    showLeaveButton,
   };
 };
 

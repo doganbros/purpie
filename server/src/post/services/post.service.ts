@@ -26,9 +26,9 @@ import { ErrorTypes } from '../../../types/ErrorTypes';
 import { PostFolder } from '../../../entities/PostFolder.entity';
 
 const {
-  S3_VIDEO_BUCKET_NAME = '',
+  S3_BUCKET_NAME = '',
   S3_VIDEO_POST_DIR = '',
-  S3_VIDEO_MEETING_RECORDING_DIR = '',
+  S3_MEETING_RECORDING_DIR = '',
 } = process.env;
 
 @Injectable()
@@ -63,6 +63,7 @@ export class PostService {
         'post.public',
         'post.allowReaction',
         'post.allowComment',
+        'post.allowDislike',
       ])
       .leftJoin('post.channel', 'channel')
       .leftJoin('channel.zone', 'zone')
@@ -149,12 +150,12 @@ export class PostService {
     for (const postVideo of postVideos) {
       const location =
         post.type === 'meeting'
-          ? `${S3_VIDEO_MEETING_RECORDING_DIR}${post.slug}/${postVideo.fileName}`
+          ? `${S3_MEETING_RECORDING_DIR}${post.slug}/${postVideo.fileName}`
           : `${S3_VIDEO_POST_DIR}${postVideo.fileName}`;
 
       deleteObject({
         Key: location,
-        Bucket: S3_VIDEO_BUCKET_NAME,
+        Bucket: S3_BUCKET_NAME,
       });
       await this.postVideoRepository.delete({ id: postVideo.id });
     }
@@ -185,12 +186,12 @@ export class PostService {
 
     const location =
       post.type === 'meeting'
-        ? `${S3_VIDEO_MEETING_RECORDING_DIR}${post.slug}/${videoName}`
+        ? `${S3_MEETING_RECORDING_DIR}${post.slug}/${videoName}`
         : `${S3_VIDEO_POST_DIR}${videoName}`;
 
     deleteObject({
       Key: location,
-      Bucket: S3_VIDEO_BUCKET_NAME,
+      Bucket: S3_BUCKET_NAME,
     });
 
     if (post.videoName === videoName) {
@@ -291,14 +292,13 @@ export class PostService {
                 .where('post.type = :meetingType', { meetingType: 'meeting' })
                 .andWhere(
                   new Brackets((qbii) => {
-                    qbii
-                      .where('post.conferenceEndDate is null')
-                      .orWhere('post.conferenceEndDate is not null')
-                      .andWhere(
-                        new Brackets((qbiii) => {
-                          qbiii.where('post.liveStream').orWhere('post.record');
-                        }),
-                      );
+                    qbii.where('post.conferenceEndDate is null').orWhere(
+                      new Brackets((qbiii) => {
+                        qbiii
+                          .where('post.conferenceEndDate is not null')
+                          .andWhere('post.record');
+                      }),
+                    );
                   }),
                 );
             }),
@@ -547,6 +547,10 @@ export class PostService {
           channelId: query.channelId,
         })
         .paginate(query);
+    if (query.following && booleanValue(query.following))
+      return this.getUserFeedSelection(userId, query, false, false).paginate(
+        query,
+      );
 
     return this.getUserFeedSelection(userId, query, true, true).paginate(query);
   }

@@ -37,6 +37,9 @@ import {
   UPDATE_ZONE_PHOTO_FAILED,
   UPDATE_ZONE_PERMISSIONS_SUCCESS,
   UPDATE_ZONE_INFO_SUCCESS,
+  DELETE_ZONE_SUCCESS,
+  LEAVE_ZONE_FAILED,
+  LEAVE_ZONE_SUCCESS,
 } from '../constants/zone.constants';
 
 import { PaginatedResponse } from '../../models/paginated-response';
@@ -170,7 +173,8 @@ export type ZoneActionParams =
         | typeof JOIN_ZONE_FAILED
         | typeof UPDATE_ZONE_PHOTO_FAILED
         | typeof UPDATE_ZONE_INFO_FAILED
-        | typeof UPDATE_ZONE_PERMISSIONS_FAILED;
+        | typeof UPDATE_ZONE_PERMISSIONS_FAILED
+        | typeof LEAVE_ZONE_FAILED;
       payload: ResponseError;
     }
   | {
@@ -202,8 +206,13 @@ export type ZoneActionParams =
   | {
       type: typeof UPDATE_ZONE_PHOTO_SUCCESS;
       payload: string;
+      userZoneId: string;
+    }
+  | {
+      type: typeof DELETE_ZONE_SUCCESS;
       zoneId: string;
-    };
+    }
+  | { type: typeof LEAVE_ZONE_SUCCESS; leaveZoneId: string };
 
 export interface ZoneDispatch {
   (dispatch: ZoneActionParams | UtilActionParams): void;

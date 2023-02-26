@@ -66,11 +66,13 @@ export interface UserBasic {
   userName: string;
   email: string;
   displayPhoto?: string;
+  contactUserId?: string | null;
 }
 
 export interface User extends UserBasic {
   userRole?: UserRole;
   fullName: string;
+  isInContact?: boolean;
 }
 
 export interface AuthState {
@@ -102,11 +104,6 @@ export interface AuthState {
     error: ResponseError | null;
   };
   loginWithGoogle: {
-    buttonLoading: boolean;
-    authenticating: boolean;
-    error: ResponseError | null;
-  };
-  loginWithFacebook: {
     buttonLoading: boolean;
     authenticating: boolean;
     error: ResponseError | null;

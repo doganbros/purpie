@@ -62,7 +62,7 @@ import { CreateBlockedUserDto } from '../dto/create-blocked-user.dto';
 import { UserEvent } from '../listeners/user.event';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 
-const { S3_PROFILE_PHOTO_DIR = '', S3_VIDEO_BUCKET_NAME = '' } = process.env;
+const { S3_PROFILE_PHOTO_DIR = '', S3_BUCKET_NAME = '' } = process.env;
 
 @Controller({ path: 'user', version: '1' })
 @ApiTags('user')
@@ -178,7 +178,7 @@ export class UserController {
     @CurrentUser() user: UserTokenPayload,
     @Query() paginatedQuery: PaginationQuery,
   ) {
-    return this.userService.listContacts(user.id, paginatedQuery);
+    return this.userService.listContacts({ userId: user.id }, paginatedQuery);
   }
 
   @Get('/contact/list/:userName')
@@ -191,7 +191,7 @@ export class UserController {
     @Param('userName') userName: string,
     @Query() paginatedQuery: PaginationQuery,
   ) {
-    return this.userService.listContacts(userName, paginatedQuery);
+    return this.userService.listContacts({ userName }, paginatedQuery);
   }
 
   @Delete('/contact/remove/:contactId')
@@ -265,6 +265,7 @@ export class UserController {
       return emptyPaginatedResponse(query.limit, query.skip);
     if (query.channelId) {
       const users = await this.userService.searchInChannels(
+        user.id,
         query.channelId,
         excludeIds,
         query,
@@ -279,7 +280,11 @@ export class UserController {
       );
       return users;
     }
-    const users = await this.userService.searchUsers(excludeIds, query);
+    const users = await this.userService.searchUsers(
+      user.id,
+      excludeIds,
+      query,
+    );
     return users;
   }
 
@@ -479,7 +484,7 @@ export class UserController {
 
     await deleteObject({
       Key: `${S3_PROFILE_PHOTO_DIR}/user-dp/${userProfile.displayPhoto}`,
-      Bucket: S3_VIDEO_BUCKET_NAME,
+      Bucket: S3_BUCKET_NAME,
     });
   }
 
@@ -490,7 +495,7 @@ export class UserController {
   ) {
     try {
       const creds = {
-        Bucket: S3_VIDEO_BUCKET_NAME,
+        Bucket: S3_BUCKET_NAME,
         Key: `${S3_PROFILE_PHOTO_DIR}/user-dp/${fileName}`,
       };
       const head = await s3HeadObject(creds);

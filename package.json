@@ -1,9 +1,9 @@
 {
-  "name": "octopus",
+  "name": "purpie",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://github.com/doganbros/octopus.git",
-  "license": "MIT",
+  "repository": "https://github.com/doganbros/purpie.git",
+  "license": "Apache-2.0",
   "private": true,
   "dependencies": {
     "@nestjs/common": "^8.0.4",
@@ -28,6 +28,7 @@
     "cors": "^2.8.5",
     "dayjs": "^1.10.6",
     "dotenv": "^10.0.0",
+    "dotenv-expand": "^10.0.0",
     "emoji-mart": "^3.0.1",
     "express": "^4.17.1",
     "express-handlebars": "^5.3.2",

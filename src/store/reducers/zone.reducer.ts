@@ -20,6 +20,8 @@ import {
   SEARCH_ZONE_SUCCESS,
   UPDATE_ZONE_PHOTO_SUCCESS,
   SET_CURRENT_USER_ZONE,
+  DELETE_ZONE_SUCCESS,
+  LEAVE_ZONE_SUCCESS,
 } from '../constants/zone.constants';
 import { ZoneActionParams, ZoneState } from '../types/zone.types';
 
@@ -218,12 +220,34 @@ const zoneReducer = (
       };
     case UPDATE_ZONE_PHOTO_SUCCESS: {
       const modifiedData = state?.getUserZones?.userZones?.map((item) =>
-        item.id === action.zoneId
+        item.id === action.userZoneId
           ? {
               ...item,
               zone: { ...item.zone, displayPhoto: action.payload },
             }
           : item
+      );
+      return {
+        ...state,
+        selectedUserZone: state.selectedUserZone
+          ? {
+              ...state.selectedUserZone,
+              zone: {
+                ...state.selectedUserZone.zone,
+                displayPhoto: action.payload,
+              },
+            }
+          : null,
+        getUserZones: {
+          userZones: modifiedData,
+          loading: false,
+          error: null,
+        },
+      };
+    }
+    case DELETE_ZONE_SUCCESS: {
+      const modifiedData = state?.getUserZones?.userZones?.filter(
+        (item) => item.zone.id !== action.zoneId
       );
       return {
         ...state,
@@ -234,6 +258,20 @@ const zoneReducer = (
         },
       };
     }
+    case LEAVE_ZONE_SUCCESS: {
+      const modifiedData = state?.getUserZones?.userZones?.filter(
+        (item) => item.id !== action.leaveZoneId
+      );
+      return {
+        ...state,
+        getUserZones: {
+          userZones: modifiedData,
+          loading: false,
+          error: null,
+        },
+      };
+    }
+
     default:
       return state;
   }

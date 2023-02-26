@@ -29,6 +29,7 @@ export const ZoneAvatar: FC<AvatarItemProps> = ({
       src={`${apiURL}/zone/display-photo/${src}`}
       background="red"
       size={size || 'medium'}
+      flex={{ shrink: 0 }}
     />
   ) : (
     <InitialsAvatar

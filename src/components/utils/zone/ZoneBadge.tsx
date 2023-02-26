@@ -1,12 +1,13 @@
 import React, { FC } from 'react';
-import { Anchor, Text, TextExtendedProps, ThemeContext } from 'grommet';
+import { Anchor, TextExtendedProps, ThemeContext } from 'grommet';
 import { navigateToSubdomain } from '../../../helpers/app-subdomain';
+import EllipsesOverflowText from '../EllipsesOverflowText';
 
 interface ZoneBadgeProps {
   name?: string;
   subdomain?: string;
   textProps?: TextExtendedProps;
-  truncateWith?: number;
+  truncateWith?: string;
 }
 const ZoneBadge: FC<ZoneBadgeProps> = ({
   name,
@@ -27,16 +28,12 @@ const ZoneBadge: FC<ZoneBadgeProps> = ({
       <Anchor
         onClick={() => navigateToSubdomain(subdomain)}
         label={
-          truncateWith ? (
-            <Text {...textProps}>
-              ▣{' '}
-              {name && name?.length > truncateWith
-                ? `${name?.slice(0, truncateWith)}.`
-                : name}
-            </Text>
-          ) : (
-            <Text {...textProps}>▣ {name}</Text>
-          )
+          <EllipsesOverflowText
+            maxWidth={truncateWith || '210px'}
+            text={`▣ ${name}`}
+            lineClamp={1}
+            {...textProps}
+          />
         }
       />
     </ThemeContext.Extend>

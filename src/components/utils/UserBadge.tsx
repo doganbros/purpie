@@ -1,14 +1,21 @@
 import React, { FC } from 'react';
-import { Text, TextExtendedProps, ThemeContext } from 'grommet';
+import { TextExtendedProps, ThemeContext } from 'grommet';
 import { AnchorLink } from './AnchorLink';
+import EllipsesOverflowText from './EllipsesOverflowText';
 
 interface UserBadgeProps {
   fullName?: string;
   url: string;
   textProps?: TextExtendedProps;
+  truncateWith?: string;
 }
 
-const UserBadge: FC<UserBadgeProps> = ({ fullName, url, textProps }) => {
+const UserBadge: FC<UserBadgeProps> = ({
+  fullName,
+  url,
+  textProps,
+  truncateWith,
+}) => {
   return (
     <ThemeContext.Extend
       value={{
@@ -19,7 +26,17 @@ const UserBadge: FC<UserBadgeProps> = ({ fullName, url, textProps }) => {
         },
       }}
     >
-      <AnchorLink to={url} label={<Text {...textProps}>@ {fullName}</Text>} />
+      <AnchorLink
+        to={url}
+        label={
+          <EllipsesOverflowText
+            maxWidth={truncateWith || '180px'}
+            text={`@${fullName}`}
+            lineClamp={1}
+            {...textProps}
+          />
+        }
+      />
     </ThemeContext.Extend>
   );
 };

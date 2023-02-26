@@ -23,7 +23,7 @@ interface SocketWithTokenPayload extends Socket {
 
 const { REACT_APP_CLIENT_HOST = '' } = process.env;
 
-@WebSocketGateway(8081, {
+@WebSocketGateway({
   cors: {
     origin: [
       new RegExp(
@@ -34,7 +34,7 @@ const { REACT_APP_CLIENT_HOST = '' } = process.env;
       ),
       'https://meet.purpie.io',
       'http://localhost:3000',
-      'http://octopus.localhost:3000',
+      'http://purpie.localhost:3000',
     ],
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',

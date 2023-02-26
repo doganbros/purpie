@@ -17,6 +17,8 @@ import {
   SET_SELECTED_CHANNEL,
   UNSET_SELECTED_CHANNEL,
   UPDATE_CHANNEL_PHOTO_SUCCESS,
+  DELETE_CHANNEL_SUCCESS,
+  UNFOLLOW_CHANNEL_SUCCESS,
 } from '../constants/channel.constants';
 import { ChannelActionParams, ChannelState } from '../types/channel.types';
 
@@ -155,7 +157,7 @@ const channelReducer = (
       };
     case UPDATE_CHANNEL_PHOTO_SUCCESS: {
       const test = state.userChannels.data.map((item) =>
-        item.id === action.channelId
+        item.channel.id === action.channelId
           ? {
               ...item,
               channel: { ...item.channel, displayPhoto: action.payload },
@@ -198,6 +200,34 @@ const channelReducer = (
           error: action.payload,
         },
       };
+    case DELETE_CHANNEL_SUCCESS:
+      return {
+        ...state,
+        userChannels: {
+          data: state.userChannels.data.filter(
+            (item) => item.channel.id !== action.payload
+          ),
+          loading: false,
+          error: null,
+        },
+        selectedChannel:
+          state.selectedChannel &&
+          state.selectedChannel.channel.id === action.payload
+            ? null
+            : state.selectedChannel,
+      };
+    case UNFOLLOW_CHANNEL_SUCCESS:
+      return {
+        ...state,
+        userChannels: {
+          data: state.userChannels.data.filter(
+            (item) => item.channel.id !== action.payload
+          ),
+          loading: false,
+          error: null,
+        },
+      };
+
     default:
       return state;
   }

@@ -16,7 +16,6 @@ import ExtendedBox from '../../../utils/ExtendedBox';
 import ZoneDropTheme from './ZoneDropTheme';
 import { UserAvatar } from '../../../utils/Avatars/UserAvatar';
 import { ZoneAvatar } from '../../../utils/Avatars/ZoneAvatar';
-import { theme } from '../../../../config/app-config';
 
 const ZoneSelector: FC = () => {
   const { t } = useTranslation();
@@ -31,6 +30,7 @@ const ZoneSelector: FC = () => {
   const history = useHistory();
   const size = useContext(ResponsiveContext);
   const [open, setOpen] = useState(false);
+  const [hover, setHover] = useState(false);
 
   const createChannelButtonDisabled = userZones?.length === 0;
   return (
@@ -74,6 +74,7 @@ const ZoneSelector: FC = () => {
                     selected={selectedUserZone?.zone.id === z.zone.id}
                     onClick={() => {
                       navigateToSubdomain(z.zone.subdomain);
+                      setOpen(false);
                     }}
                     leftIcon={
                       <Box width={{ min: '24px' }} height="24px">
@@ -123,9 +124,15 @@ const ZoneSelector: FC = () => {
                 onClick={() => history.push('/settings')}
                 rightIcon={<SettingsOption size="small" color="dark-1" />}
               />
+              <ListButton
+                label={t('ZoneSelector.support')}
+                onClick={() => history.push('/support')}
+              />
               <Divider margin={{ vertical: 'xxsmall' }} />
               <ListButton
-                onClick={() => dispatch(logoutAction())}
+                onClick={() =>
+                  dispatch(logoutAction(selectedUserZone !== null))
+                }
                 label={t('ZoneSelector.signOut')}
               />
             </Box>
@@ -139,18 +146,19 @@ const ZoneSelector: FC = () => {
         >
           <Box fill="horizontal">
             <ExtendedBox
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
               fill="horizontal"
               align="center"
               justify="around"
               gap="small"
-              background={`linear-gradient(133.92deg, ${theme.global?.colors?.brand} 0%, #7d4cdb 98.18%)`}
+              background="rgba(125 76 219)"
               round="16px"
-              border={{ size: '1.2px', color: 'white' }}
               pad={{
                 horizontal: 'small',
                 vertical: size === 'small' ? 'medium' : 'small',
               }}
-              boxShadow="inset 0px 0px 15px 0.6px rgba(255, 255, 255, 0.2)"
+              boxShadow={`#3d138b${hover || open ? '99' : '66'} 0 0 10px 0`}
             >
               {selectedUserZone ? (
                 <ZoneAvatar
@@ -169,16 +177,17 @@ const ZoneSelector: FC = () => {
               )}
               <Box align="center">
                 <EllipsesOverflowText
-                  maxWidth="111px"
+                  maxWidth="92px"
                   textAlign="center"
                   weight="bold"
                   size="xsmall"
                   color="white"
-                >
-                  {selectedUserZone
-                    ? selectedUserZone.zone.name
-                    : user?.fullName}
-                </EllipsesOverflowText>
+                  text={
+                    selectedUserZone
+                      ? selectedUserZone.zone.name
+                      : user?.fullName
+                  }
+                />
               </Box>
             </ExtendedBox>
           </Box>

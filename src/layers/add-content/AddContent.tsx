@@ -1,11 +1,13 @@
 import React, { FC, useContext } from 'react';
-import { Box, Button, Layer, ResponsiveContext, Text } from 'grommet';
+import { Box, Button, Grid, Layer, ResponsiveContext, Text } from 'grommet';
 import {
   CirclePlay,
   Close,
   Group,
-  Schedules,
+  SchedulePlay,
+  ServicePlay,
   ShareOption,
+  Workshop,
 } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -44,8 +46,8 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
     {
       id: 0,
       icon: <Group {...iconProps} />,
-      title: t('AddContent.meet'),
-      description: t('AddContent.meetDescription'),
+      title: t('AddContent.meeting'),
+      description: t('AddContent.meetingDescription'),
       onClick: () => {
         const meeting: CreateMeetingPayload = { public: true };
         if (selectedChannel) meeting.channelId = selectedChannel.channel.id;
@@ -58,7 +60,15 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
       icon: <CirclePlay {...iconProps} />,
       title: t('AddContent.stream'),
       description: t('AddContent.streamDescription'),
-      onClick: () => {},
+      onClick: () => {
+        const meeting: CreateMeetingPayload = {
+          public: true,
+          liveStream: true,
+        };
+        if (selectedChannel) meeting.channelId = selectedChannel.channel.id;
+        if (!submitting) dispatch(createMeetingAction(meeting));
+        onDismiss();
+      },
     },
     {
       id: 2,
@@ -72,27 +82,46 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
     },
     {
       id: 3,
-      icon: <Schedules {...iconProps} />,
-      title: t('AddContent.planMeeting'),
-      description: t('AddContent.planMeetingDescription'),
+      icon: <SchedulePlay {...iconProps} />,
+      title: t('AddContent.customMeeting'),
+      description: t('AddContent.customMeetingDescription'),
       onClick: () => {
         dispatch(openPlanCreateMeetingLayerAction);
         onDismiss();
       },
+    },
+    {
+      id: 4,
+      icon: <ServicePlay {...iconProps} />,
+      title: t('AddContent.streamingStudio'),
+      description: t('AddContent.streamingStudioDescription'),
+      onClick: () => {},
+      soonBanner: true,
+    },
+    {
+      id: 5,
+      icon: <Workshop {...iconProps} />,
+      title: t('AddContent.webinar'),
+      description: t('AddContent.webinarDescription'),
+      onClick: () => {},
+      soonBanner: true,
     },
   ];
 
   return (
     <Layer onClickOutside={onDismiss}>
       <Box
-        width={size !== 'small' ? '720px' : undefined}
-        height={size !== 'small' ? '505px' : undefined}
+        width={size !== 'small' ? '700px' : undefined}
         round={size !== 'small' ? '20px' : undefined}
         fill={size === 'small'}
         background="white"
-        gap="medium"
       >
-        <Box direction="row" justify="between" align="start" pad="medium">
+        <Box
+          direction="row"
+          justify="between"
+          align="start"
+          pad={{ horizontal: 'medium', top: 'medium' }}
+        >
           <Box pad="xsmall">
             <Text size="large" weight="bold">
               {t('AddContent.title')}
@@ -102,25 +131,26 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
             <Close color="brand" />
           </Button>
         </Box>
-        <Box
-          direction="row"
-          justify={size === 'small' ? 'center' : 'start'}
-          height="min-content"
-          overflow="auto"
-          wrap
+        <Grid
+          height="100%"
           pad="medium"
+          columns={size === 'small' ? 'full' : '1/3'}
+          gap={{ column: 'medium', row: 'medium' }}
+          style={{ overflow: 'auto' }}
         >
-          {buttonProps.map(({ id, icon, title, description, onClick }) => (
-            <Box key={id} margin={{ right: 'small', bottom: 'small' }}>
+          {buttonProps.map(
+            ({ id, icon, title, description, soonBanner, onClick }) => (
               <AddContentButton
+                key={id}
                 icon={icon}
                 title={title}
+                soonBanner={soonBanner}
                 description={description}
                 onClick={onClick}
               />
-            </Box>
-          ))}
-        </Box>
+            )
+          )}
+        </Grid>
       </Box>
     </Layer>
   );

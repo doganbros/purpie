@@ -88,14 +88,20 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
             width={`${leftComponentWidth}px`}
             pad={{
               vertical: 'large',
-              horizontal: 'medium',
             }}
             fill="vertical"
             background="brand-alt"
             justify="between"
           >
-            <ZoneSelector />
-            <Box pad={{ bottom: 'large' }}>
+            <Box
+              pad={{
+                horizontal: 'medium',
+              }}
+            >
+              <ZoneSelector />
+            </Box>
+
+            <Box pad={{ bottom: 'large' }} width="100%">
               <Sidebar />
             </Box>
           </Box>

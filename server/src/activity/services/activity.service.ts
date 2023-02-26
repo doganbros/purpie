@@ -9,6 +9,7 @@ import { Brackets, getManager, IsNull, Repository } from 'typeorm';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { Contact } from '../../../entities/Contact.entity';
 import { User } from '../../../entities/User.entity';
+import { Invitation } from '../../../entities/Invitation.entity';
 
 @Injectable()
 export class ActivityService {
@@ -127,6 +128,15 @@ export class ActivityService {
             .where(`directContact.userId = '${userId}'`)
             .getQuery()}`,
       )
+      .andWhere(
+        (qb) =>
+          `user.email NOT IN ${qb
+            .subQuery()
+            .select('invitation.email')
+            .from(Invitation, 'invitation')
+            .where(`invitation.createdById = '${userId}'`)
+            .getQuery()}`,
+      )
       .getSql();
 
     const baseQuery2 = this.userRepository
@@ -151,6 +161,15 @@ export class ActivityService {
             .select('directContact.contactUserId')
             .from(Contact, 'directContact')
             .where(`directContact.userId = '${userId}'`)
+            .getQuery()}`,
+      )
+      .andWhere(
+        (qb) =>
+          `user.email NOT IN ${qb
+            .subQuery()
+            .select('invitation.email')
+            .from(Invitation, 'invitation')
+            .where(`invitation.createdById = '${userId}'`)
             .getQuery()}`,
       )
       .getSql();

@@ -6,6 +6,7 @@ import GradientScroll from '../../../components/utils/GradientScroll';
 import { listUserPublicZonesAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import InitialsAvatar from '../../../components/utils/Avatars/InitialsAvatar';
+import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
 
 const UserPublicZones: FC<{ userName: string }> = ({ userName }) => {
   const dispatch = useDispatch();
@@ -30,13 +31,25 @@ const UserPublicZones: FC<{ userName: string }> = ({ userName }) => {
         <GradientScroll>
           <Box direction="row" gap="medium">
             {publicZones.data.map(({ zone }) => (
-              <Box key={zone.id} gap="small" align="center">
+              <Box
+                key={zone.id}
+                gap="small"
+                align="center"
+                width={{ min: '102px' }}
+              >
                 <InitialsAvatar id={zone.id} value={zone.name} round="small" />
                 <Box align="center">
-                  <Text size="small">{zone.name}</Text>
-                  <Text size="small" color="status-disabled">
-                    {zone.subdomain}
-                  </Text>
+                  <EllipsesOverflowText
+                    textAlign="center"
+                    size="small"
+                    text={zone.name}
+                  />
+                  <EllipsesOverflowText
+                    textAlign="center"
+                    size="small"
+                    text={zone.subdomain}
+                    color="status-disabled"
+                  />
                 </Box>
               </Box>
             ))}
