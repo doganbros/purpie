@@ -267,7 +267,11 @@ const Video: FC = () => {
                 </Box>
               )}
             </Box>
-            <Box margin={{ top: 'small' }} gap="medium">
+            <Box
+              margin={{ top: 'small' }}
+              gap="medium"
+              width={{ max: '1620px' }}
+            >
               <VideoJs
                 getPlayer={(p) => {
                   player.current = p;
@@ -296,6 +300,7 @@ const Video: FC = () => {
                   ],
                 }}
               />
+
               <Box direction="row" align="center" justify="between">
                 {data.streaming ? (
                   <Text>
