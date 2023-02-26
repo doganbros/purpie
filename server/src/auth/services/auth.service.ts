@@ -264,7 +264,7 @@ export class AuthService {
       });
 
     return {
-      user: userInfo,
+      user,
       token,
     };
   }
