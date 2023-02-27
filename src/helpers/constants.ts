@@ -12,4 +12,3 @@ export const paginationInitialState = {
 export const USER_NAME_CONSTRAINT = /^[a-zA-Z0-9_]{4,16}$/;
 
 export const DELAY_TIME = 1000;
-export const MEETING_JOIN_LINK_EXPIRE_TIME_HOURS = 24;
