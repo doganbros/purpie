@@ -4,6 +4,7 @@ import axios from 'axios';
 import { User } from 'entities/User.entity';
 import { Repository } from 'typeorm';
 import { UserBasic } from '../interfaces/user.interface';
+import { AuthService } from './auth.service';
 
 const {
   GOOGLE_OAUTH_CLIENT_SECRET = '',
@@ -15,6 +16,7 @@ const {
 export class AuthThirdPartyService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    private authService: AuthService,
   ) {}
 
   getGoogleAuthAccessToken(code: string): Promise<string> {
@@ -42,14 +44,13 @@ export class AuthThirdPartyService {
   }
 
   async registerUserByThirdParty({ fullName, email, googleId }: UserBasic) {
-    return this.userRepository
-      .create({
-        fullName,
-        email,
-        googleId,
-        userRoleCode: 'NORMAL',
-        emailConfirmed: true,
-      })
-      .save();
+    const user = this.userRepository.create({
+      fullName,
+      email,
+      googleId,
+      userRoleCode: 'NORMAL',
+    });
+
+    return this.authService.setMailVerificationToken(user);
   }
 }

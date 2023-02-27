@@ -101,34 +101,33 @@ export class AuthThirdPartyController {
           user.googleId = userInfo.id;
           user = await user.save();
         }
-      } else {
-        user = await this.authThirdPartyService.registerUserByThirdParty({
-          fullName: `${userInfo.given_name} ${userInfo.family_name}`,
-          email: userInfo.email,
-          googleId: userInfo.id,
-        });
-      }
-    }
-    if (user) {
-      const userPayload: UserProfile = {
-        id: user.id,
-        fullName: user.fullName,
-        email: user.email,
-        userName: user.userName,
-        userRole: {
-          ...user.userRole,
-        },
-      };
-
-      await this.authService.setAccessTokens(
-        {
+        const userPayload: UserProfile = {
           id: user.id,
-        },
-        res,
-        req,
-      );
+          fullName: user.fullName,
+          email: user.email,
+          userName: user.userName,
+          userRole: {
+            ...user.userRole,
+          },
+        };
+        await this.authService.setAccessTokens(
+          {
+            id: user.id,
+          },
+          res,
+          req,
+        );
 
-      return userPayload;
+        return userPayload;
+      }
+      const {
+        token,
+      } = await this.authThirdPartyService.registerUserByThirdParty({
+        fullName: `${userInfo.given_name} ${userInfo.family_name}`,
+        email: userInfo.email,
+        googleId: userInfo.id,
+      });
+      res.redirect(`${REACT_APP_CLIENT_HOST}/verify-email/${token}`);
     }
 
     throw new InternalServerErrorException(
