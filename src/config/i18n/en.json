@@ -556,7 +556,7 @@
     "post_comment_reply": "<user>{{userName}}</user> has replied your <post>post</post> comment.",
     "post_comment_mention": "<user>{{userName}}</user> has mentioned your <post>post</post> comment.",
     "contact_request_accepted": "<user>{{userName}}</user> has accepted your contact request.",
-    "contact_request_received": "<user>{{userName}}</user> has want to add you as a contact."
+    "contact_request_received": "<user>{{userName}}</user> wants to add you as a contact."
   },
   "ChannelMembers": {
     "title": "Members",
