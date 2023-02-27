@@ -56,6 +56,7 @@ export interface CreateMeetingPayload {
   liveStream?: boolean;
   invitationIds?: Array<string>;
   timeZone?: string;
+  joinLinkExpiryAsHours?: number;
 }
 
 export type UpdateMeetingPayload = Partial<CreateMeetingPayload>;
@@ -66,6 +67,8 @@ interface MeetingPrivacyConfig {
   liveStream: boolean;
 
   record: boolean;
+
+  joinLinkExpiryAsHours: number;
 }
 
 export interface UserMeetingConfig {

@@ -74,6 +74,8 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
         liveStream,
         record,
         timeZone: dayjs.tz.guess(),
+        joinLinkExpiryAsHours:
+          userMeetingConfig?.config?.privacyConfig?.joinLinkExpiryAsHours || 24,
       };
 
       dispatch(setInitialMeetingFormAction(initialPayload));

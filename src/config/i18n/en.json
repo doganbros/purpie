@@ -50,7 +50,9 @@
     "unfollow": "Unfollow",
     "leave": "Leave",
     "accept": "Accept",
-    "accepted": "Accepted"
+    "accepted": "Accepted",
+    "hour":"Hour",
+    "hours":"Hours"
   },
   "Login": {
     "title": "Login",
@@ -306,7 +308,8 @@
     "disableRemoteMute": "Disable Remote Mute",
     "hideConferenceSubject": "Hide Conference Subject",
     "hideConferenceTimer": "Hide Conference Timer",
-    "hideParticipantsStats": "Hide Participants Stats"
+    "hideParticipantsStats": "Hide Participants Stats",
+    "meetingLinkExpires":"Invite meeting link expires after meeting start"
   },
   "MeetingDetails": {
     "meetingName": "Meeting Name",
