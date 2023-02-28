@@ -8,6 +8,7 @@ import { Post } from '../../store/types/post.types';
 import { FavoriteFill } from '../utils/CustomIcons';
 import { getTimezoneTimeFromUTC } from '../../helpers/utils';
 import { UserAvatar } from '../utils/Avatars/UserAvatar';
+import * as MeetingService from '../../store/services/meeting.service';
 
 interface PostGridItemProps {
   post: Post;
@@ -16,6 +17,12 @@ interface PostGridItemProps {
 
 const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
   const [hover, setHover] = useState(false);
+
+  const getJoinLink = async () => {
+    const meetingLink = await MeetingService.getMeetingJoinLink(post.slug);
+    window.open(meetingLink, '_blank');
+  };
+
   return (
     <Stack
       onMouseEnter={() => setHover(true)}
@@ -97,37 +104,49 @@ const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
             </Box>
           </Box>
         </Box>
-        {hover && (post.streaming || post.liveStream) && (
-          <>
-            <ExtendedBox position="absolute" top="64px" left="56px">
-              <Box direction="row" align="center" gap="xsmall">
-                <Box
-                  background="accent-4"
-                  round="small"
-                  pad={{ vertical: 'xsmall', horizontal: 'small' }}
-                >
-                  <Add color="black" size="medium" />
-                </Box>
-                <Text size="large" color="white" weight="bolder">
-                  Join
-                </Text>
+        {hover && (post.liveStream || post.streaming) && (
+          <ExtendedBox position="absolute" top="64px" left="56px">
+            <Box
+              direction="row"
+              align="center"
+              gap="xsmall"
+              onClick={getJoinLink}
+            >
+              <Box
+                background="accent-4"
+                round="small"
+                pad={{ vertical: 'xsmall', horizontal: 'small' }}
+              >
+                <Add color="black" size="medium" />
               </Box>
-            </ExtendedBox>
-            <ExtendedBox position="absolute" top="64px" right="56px">
-              <Box direction="row" align="center" gap="xsmall">
-                <Box
-                  background="white"
-                  round="small"
-                  pad={{ vertical: 'xsmall', horizontal: 'small' }}
-                >
-                  <Play color="black" size="medium" />
-                </Box>
-                <Text size="large" color="white" weight="bolder">
-                  Watch
-                </Text>
+              <Text size="large" color="white" weight="bolder">
+                Join
+              </Text>
+            </Box>
+          </ExtendedBox>
+        )}
+        {hover && post.liveStream && (
+          <ExtendedBox position="absolute" top="64px" right="56px">
+            <Box
+              direction="row"
+              align="center"
+              gap="xsmall"
+              onClick={() => {
+                onClickPlay(post.id);
+              }}
+            >
+              <Box
+                background="white"
+                round="small"
+                pad={{ vertical: 'xsmall', horizontal: 'small' }}
+              >
+                <Play color="black" size="medium" />
               </Box>
-            </ExtendedBox>
-          </>
+              <Text size="large" color="white" weight="bolder">
+                Watch
+              </Text>
+            </Box>
+          </ExtendedBox>
         )}
       </Box>
       {hover && (
