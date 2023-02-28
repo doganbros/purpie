@@ -30,6 +30,7 @@ const SelectedUser: FC<SelectedUserProps> = ({ user }) => {
           userName={user.userName}
           fullName={user.fullName}
           email={user.email}
+          displayPhoto={user.displayPhoto}
         />
         <>
           <Button

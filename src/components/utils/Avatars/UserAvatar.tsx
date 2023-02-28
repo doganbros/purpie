@@ -9,6 +9,7 @@ interface AvatarItemProps {
   id: string;
   textProps?: TextExtendedProps;
   size?: string;
+  round?: string;
 }
 
 export const UserAvatar: FC<AvatarItemProps> = ({
@@ -16,12 +17,13 @@ export const UserAvatar: FC<AvatarItemProps> = ({
   src,
   id,
   size,
-  ...textProps
+  textProps,
+  round,
 }) =>
   src ? (
     <Avatar
       alignSelf="center"
-      round="full"
+      round={round || 'full'}
       src={`${apiURL}/user/display-photo/${src}`}
       size={size || 'medium'}
     />
@@ -30,6 +32,7 @@ export const UserAvatar: FC<AvatarItemProps> = ({
       id={id}
       value={name}
       textProps={textProps}
+      round={round}
       size={size || 'medium'}
     />
   );
