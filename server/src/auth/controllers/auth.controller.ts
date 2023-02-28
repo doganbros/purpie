@@ -393,14 +393,10 @@ export class AuthController {
     @CurrentUserProfile() userProfile: UserProfile,
     @Headers('app-subdomain') subdomain: string,
   ) {
-    try {
-      if (subdomain) {
-        await this.authService.subdomainValidity(subdomain, userProfile.id);
-      }
-
-      return userProfile;
-    } catch (err) {
-      console.log(err);
+    if (subdomain) {
+      await this.authService.subdomainValidity(subdomain, userProfile.id);
     }
+
+    return userProfile;
   }
 }
