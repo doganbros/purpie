@@ -15,7 +15,6 @@ import {
   FORGOT_PASSWORD_REQUESTED,
   THIRD_PARTY_URL_REQUESTED,
   LOGIN_FAILED,
-  THIRD_PARTY_AUTH_WITH_CODE_SUCCESS,
   VERIFY_USER_EMAIL_FAILED,
   VERIFY_USER_EMAIL_SUCCESS,
   RESEND_MAIL_VERIFICATION_TOKEN_REQUESTED,
@@ -88,13 +87,6 @@ const authReducer = (
           },
         };
       return state;
-
-    case THIRD_PARTY_AUTH_WITH_CODE_SUCCESS:
-      return {
-        ...state,
-        isAuthenticated: true,
-        user: action.payload,
-      };
 
     case LOGIN_REQUESTED:
       return {
