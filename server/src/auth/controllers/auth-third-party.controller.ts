@@ -127,7 +127,7 @@ export class AuthThirdPartyController {
         email: userInfo.email,
         googleId: userInfo.id,
       });
-      res.redirect(`${REACT_APP_CLIENT_HOST}/verify-email/${token}`);
+      return token;
     }
 
     throw new InternalServerErrorException(
