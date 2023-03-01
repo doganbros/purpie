@@ -292,10 +292,10 @@ export class PostService {
                 .where('post.type = :meetingType', { meetingType: 'meeting' })
                 .andWhere(
                   new Brackets((qbii) => {
-                    qbii.where('post.conferenceEndDate is null').orWhere(
+                    qbii.where('post.streaming').orWhere(
                       new Brackets((qbiii) => {
                         qbiii
-                          .where('post.conferenceEndDate is not null')
+                          .where('post.streaming = false')
                           .andWhere('post.record');
                       }),
                     );

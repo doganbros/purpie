@@ -16,6 +16,10 @@ export const getUserMeetingConfig = (): Promise<UserMeetingConfig> => {
   return http.get('/meeting/config/user').then((res) => res.data);
 };
 
+export const getMeetingJoinLink = (slug: string): Promise<string> => {
+  return http.get(`/meeting/join-link/${slug}`).then((res) => res.data);
+};
+
 export const getUserSuggestionsForMeeting = (
   name: string,
   excludeIds: Array<string> = [],

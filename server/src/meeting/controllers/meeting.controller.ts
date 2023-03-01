@@ -48,6 +48,7 @@ import { User } from '../../../entities/User.entity';
 import { PostReaction } from '../../../entities/PostReaction.entity';
 import { UserChannel } from '../../../entities/UserChannel.entity';
 import { defaultPostSettings } from '../../../entities/data/default-post-settings';
+import { defaultPrivacyConfig } from '../../../entities/data/default-privacy-config';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -188,6 +189,58 @@ export class MeetingController {
     }
 
     return { meeting };
+  }
+
+  @Get('join-link/:slug')
+  @ApiNotFoundResponse({
+    description: "Error thrown is meeting doesn't exist",
+    schema: errorResponseDoc(404, 'Meeting not found', 'MEETING_NOT_FOUND'),
+  })
+  @ApiBadRequestResponse({
+    description:
+      "Error thrown when meeting's start date is less than now or meeting has already ended",
+    schema: {
+      anyOf: [
+        errorResponseDoc(404, 'Meeting not started yet', 'MEETING_NOT_STARTED'),
+        errorResponseDoc(
+          404,
+          'Meeting has already ended',
+          'MEETING_ALREADY_ENDED',
+        ),
+      ],
+    },
+  })
+  @IsAuthenticated([], { injectUserProfile: true })
+  async getMeetingJoinLink(
+    @CurrentUserProfile() user: UserProfile,
+    @Param('slug') slug: string,
+  ) {
+    const meeting = await this.meetingService.currentUserJoinMeetingValidator(
+      user.id,
+      slug,
+    );
+    if (!meeting)
+      throw new NotFoundException('Meeting not found', 'MEETING_NOT_FOUND');
+
+    if (meeting.conferenceEndDate) {
+      throw new BadRequestException(
+        'Meeting has already ended',
+        'MEETING_ALREADY_ENDED',
+      );
+    }
+
+    const userConfig = await this.meetingService.getCurrentUserConfig(user.id);
+
+    const meetingToken = await this.meetingService.generateMeetingToken(
+      meeting,
+      user,
+      meeting.createdById === user.id,
+      userConfig
+        ? userConfig.privacyConfig.joinLinkExpiryAsHours!
+        : defaultPrivacyConfig.joinLinkExpiryAsHours!,
+    );
+
+    return this.meetingService.generateMeetingUrl(meeting, meetingToken);
   }
 
   @Get('join/:token')
