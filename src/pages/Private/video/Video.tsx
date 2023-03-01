@@ -224,7 +224,13 @@ const Video: FC = () => {
           <PurpieLogoAnimated width={100} height={100} color="brand" />
         </Box>
       ) : (
-        <Box gap="large" pad={{ vertical: 'medium' }}>
+        <Box
+          gap="large"
+          pad={{ vertical: 'medium' }}
+          width={{ max: '1620px' }}
+          alignSelf="center"
+          fill
+        >
           <Box>
             <Box justify="between" direction="row">
               <Box>
