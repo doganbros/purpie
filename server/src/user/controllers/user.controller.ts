@@ -119,7 +119,7 @@ export class UserController {
     @CurrentUser() user: UserTokenPayload,
     @Body() { email }: CreateContactDto,
   ) {
-    const contactInvitation = await this.userService.createNewContactInvitation(
+    const invitationInviteeUserId = await this.userService.createNewContactInvitation(
       email,
       user,
     );
@@ -129,7 +129,7 @@ export class UserController {
       email,
     });
 
-    return contactInvitation.id;
+    return invitationInviteeUserId;
   }
 
   @Get('/contact/invitation/list')
