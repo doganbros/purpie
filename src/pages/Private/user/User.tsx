@@ -69,6 +69,7 @@ const User: FC = () => {
               userName={detail.user.userName}
               fullName={detail.user.fullName}
               email={detail.user.email}
+              displayPhoto={detail.user.displayPhoto}
             />
           </Box>
         )
