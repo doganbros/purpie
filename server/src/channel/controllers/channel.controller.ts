@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   HttpCode,
   HttpStatus,
   NotFoundException,
@@ -450,6 +451,7 @@ export class ChannelController {
   }
 
   @Get('display-photo/:fileName')
+  @Header('Cache-Control', 'max-age=3600')
   async viewProfilePhoto(
     @Res() res: Response,
     @Param('fileName') fileName: string,
