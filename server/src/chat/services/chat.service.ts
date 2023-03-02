@@ -10,7 +10,7 @@ import { Socket } from 'socket.io';
 import { Brackets, Repository } from 'typeorm';
 import cookie from 'cookie';
 import { WsException } from '@nestjs/websockets';
-import { verifyJWT } from 'helpers/jwt';
+import { getJWTCookieKeys, verifyJWT } from 'helpers/jwt';
 import { pick } from 'lodash';
 import { AuthService } from 'src/auth/services/auth.service';
 import { ChatMessage } from 'entities/ChatMessage.entity';
@@ -68,8 +68,9 @@ export class ChatService {
 
     const cookies = cookie.parse(socketCookie!);
 
-    const token = cookies.PURPIE_ACCESS_TOKEN;
-    const refreshToken = cookies.PURPIE_REFRESH_ACCESS_TOKEN;
+    const { accessTokenKey, refreshAccessTokenKey } = getJWTCookieKeys();
+    const token = cookies[accessTokenKey];
+    const refreshToken = cookies[refreshAccessTokenKey];
 
     if (!token) {
       throw new WsException(ErrorTypes.NOT_AUTHORIZED);

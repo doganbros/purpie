@@ -14,7 +14,7 @@ import { UserRole } from 'entities/UserRole.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
 import { Request, Response } from 'express';
-import { generateJWT } from 'helpers/jwt';
+import { generateJWT, getJWTCookieKeys } from 'helpers/jwt';
 import { compareHash, detectBrowser, hash } from 'helpers/utils';
 import { nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
@@ -133,14 +133,15 @@ export class AuthService {
     const userAgent = req.headers['user-agent'];
     const isSafariBrowser = detectBrowser(userAgent!) === BrowserType.SAFARI;
 
-    res.cookie('PURPIE_ACCESS_TOKEN', accessToken, {
+    const { accessTokenKey, refreshAccessTokenKey } = getJWTCookieKeys();
+    res.cookie(accessTokenKey, accessToken, {
       expires: dayjs().add(30, 'days').toDate(),
       domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
       secure: !(isDevelopment && isSafariBrowser),
       sameSite: isDevelopment ? 'none' : 'lax',
     });
-    res.cookie('PURPIE_REFRESH_ACCESS_TOKEN', refreshToken, {
+    res.cookie(refreshAccessTokenKey, refreshToken, {
       expires: dayjs().add(30, 'days').toDate(),
       domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
@@ -158,14 +159,15 @@ export class AuthService {
     const userAgent = req.headers['user-agent'];
     const isSafariBrowser = detectBrowser(userAgent!) === BrowserType.SAFARI;
 
-    res.clearCookie('PURPIE_ACCESS_TOKEN', {
+    const { accessTokenKey, refreshAccessTokenKey } = getJWTCookieKeys();
+    res.clearCookie(accessTokenKey, {
       expires: dayjs().add(30, 'days').toDate(),
       domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
       secure: !(isDevelopment && isSafariBrowser),
       sameSite: isDevelopment ? 'none' : 'lax',
     });
-    res.clearCookie('PURPIE_REFRESH_ACCESS_TOKEN', {
+    res.clearCookie(refreshAccessTokenKey, {
       expires: dayjs().add(30, 'days').toDate(),
       domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,

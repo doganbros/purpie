@@ -6,6 +6,7 @@ import { REMOVE_TOAST } from '../store/constants/util.constants';
 import { store } from '../store/store';
 
 export const {
+  NODE_ENV = 'development',
   REACT_APP_API_VERSION = 'v1',
   REACT_APP_SERVER_HOST = 'http://localhost:8000',
 } = process.env;
@@ -41,7 +42,7 @@ axios.interceptors.response.use(
       if (
         error &&
         error?.response.status === 401 &&
-        !getCookie('PURPIE_REFRESH_ACCESS_TOKEN')
+        !getCookie(`PURPIE_${NODE_ENV.toUpperCase()}_REFRESH_ACCESS_TOKEN`)
       ) {
         if (error?.response?.data?.message === 'MUST_VERIFY_EMAIL')
           return Promise.reject(error);
