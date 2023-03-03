@@ -39,7 +39,7 @@ import {
   matchDescriptionTags,
 } from '../../../helpers/utils';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
-import { DELAY_TIME } from '../../../helpers/constants';
+import { DELAY_TIME, VIDEO_SCREEN_MAX_WIDTH } from '../../../helpers/constants';
 import useDelayTime from '../../../hooks/useDelayTime';
 import { AddToFolderDrop } from '../../../layers/saved-video/folder/AddToFolderDrop';
 import { useResponsive } from '../../../hooks/useResponsive';
@@ -227,7 +227,7 @@ const Video: FC = () => {
         <Box
           gap="large"
           pad={{ vertical: 'medium' }}
-          width={{ max: '1620px' }}
+          width={{ max: `${VIDEO_SCREEN_MAX_WIDTH}px` }}
           alignSelf="center"
           fill
         >

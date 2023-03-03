@@ -7,6 +7,8 @@ import GradientScroll from '../../../utils/GradientScroll';
 import Divider from '../../../utils/Divider';
 import ZoneSelector from '../ZoneSelector/ZoneSelector';
 import { navigateToSubdomain } from '../../../../helpers/app-subdomain';
+import { MarginLeftToCenter } from '../../../../helpers/utils';
+import { MAIN_WIDTH } from '../../../../helpers/constants';
 
 interface Props {
   topComponent?: React.ReactNode;
@@ -23,6 +25,10 @@ const Desktop: FC<Props> = ({
   const leftComponentWidth = 135;
   const topComponentHeight = 140;
   const rightComponentWidth = 400;
+  const marginLeftToCenter = MarginLeftToCenter(
+    leftComponentWidth,
+    rightComponent ? rightComponentWidth : 0
+  );
 
   return (
     <Box width="100vw" height="100vh" elevation="xlarge" round="large">
@@ -71,13 +77,14 @@ const Desktop: FC<Props> = ({
       <ExtendedBox
         position="absolute"
         top="0"
-        left={`${leftComponentWidth}px`}
+        left={`${leftComponentWidth + marginLeftToCenter}px`}
         right={`${rightComponent ? rightComponentWidth : 0}px`}
         minHeight="100vh"
         pad={{
           top: `${topComponent ? topComponentHeight : 0}px`,
           horizontal: 'large',
         }}
+        maxWidth={`${MAIN_WIDTH}px`}
       >
         {children}
         {topComponent && (

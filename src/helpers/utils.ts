@@ -5,6 +5,8 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import colorPair from '../styles/color-pairs.json';
 import { ResponseError } from '../models/response-error';
+import useWindowDimensions from '../hooks/useWindowDimensions';
+import { MAIN_WIDTH } from './constants';
 
 export const errorResponseMessage = (error?: ResponseError): string => {
   if (!error) return '';
@@ -97,4 +99,17 @@ export const getTimezoneTimeFromUTC = (date: string | Date): Dayjs => {
 
   const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return dayjs.tz(date, currentTimezone);
+};
+
+export const MarginLeftToCenter = (
+  leftComponentWidth: number,
+  rightComponentTrueWidth: number
+): number => {
+  const { width } = useWindowDimensions();
+  let marginLeft = 0;
+  if (width > MAIN_WIDTH + leftComponentWidth + rightComponentTrueWidth) {
+    marginLeft =
+      (width - MAIN_WIDTH - leftComponentWidth - rightComponentTrueWidth) / 2;
+  }
+  return marginLeft;
 };
