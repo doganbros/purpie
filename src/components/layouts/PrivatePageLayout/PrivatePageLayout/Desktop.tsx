@@ -79,7 +79,9 @@ const Desktop: FC<Props> = ({
           horizontal: 'large',
         }}
       >
-        {children}
+        <Box fill alignSelf="center" width={{ max: '1800px' }}>
+          {children}
+        </Box>
         {topComponent && (
           <ExtendedBox
             position="fixed"
