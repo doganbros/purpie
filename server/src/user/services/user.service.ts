@@ -185,7 +185,7 @@ export class UserService {
         'You have already been invited by this user already',
       );
 
-    const result = await this.invitationRepository
+    const invitation = await this.invitationRepository
       .create({
         createdById: user.id,
         email,
@@ -197,7 +197,10 @@ export class UserService {
       select: ['fullName'],
     });
     await this.sendContactInvitationMail(email, createByUser!.fullName);
-    return result;
+    const inviteeUser = await this.userRepository.findOne({
+      where: { email: invitation.email },
+    });
+    return inviteeUser?.id;
   }
 
   sendContactInvitationMail(email: string, fullName: string) {
