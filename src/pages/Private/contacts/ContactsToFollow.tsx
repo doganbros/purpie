@@ -14,11 +14,16 @@ const ContactsToFollow: FC = () => {
     activity: {
       contactSuggestions: { data, loading },
     },
+    invitation: { invitedContacts },
   } = useSelector((state: AppState) => state);
 
   useEffect(() => {
     dispatch(getContactSuggestionsAction());
   }, []);
+
+  const filteredContactSuggestData = data.filter(
+    (user) => invitedContacts?.userIds?.includes(user?.userId) === false
+  );
 
   return (
     <Box gap="small">
@@ -27,41 +32,45 @@ const ContactsToFollow: FC = () => {
       </Text>
       {loading && <Text size="small">{t('common.loading')}</Text>}
       {!loading &&
-        (data.length === 0 ? (
+        (filteredContactSuggestData.length === 0 ? (
           <Text size="small">{t('ContactsToFollow.noContactsFound')}</Text>
         ) : (
-          data.map((user) => (
-            <Box
-              direction="row"
-              justify="between"
-              align="center"
-              key={`contactsToFollow-${user.userId}`}
-            >
-              <Box direction="row" align="center" gap="small">
-                <UserAvatar
-                  id={user.userId}
-                  name={user.fullName}
-                  src={user.displayPhoto}
-                />
-                <Box>
-                  <Text size="small" weight={500} color="dark">
-                    {user.fullName}
-                  </Text>
-                  <Text size="xsmall" color="status-disabled">
-                    {user.userName}
-                  </Text>
+          filteredContactSuggestData
+            .filter(
+              (user) => invitedContacts.userIds.includes(user.userId) === false
+            )
+            .map((user) => (
+              <Box
+                direction="row"
+                justify="between"
+                align="center"
+                key={`contactsToFollow-${user.userId}`}
+              >
+                <Box direction="row" align="center" gap="small">
+                  <UserAvatar
+                    id={user.userId}
+                    name={user.fullName}
+                    src={user.displayPhoto}
+                  />
+                  <Box>
+                    <Text size="small" weight={500} color="dark">
+                      {user.fullName}
+                    </Text>
+                    <Text size="xsmall" color="status-disabled">
+                      {user.userName}
+                    </Text>
+                  </Box>
                 </Box>
+                <Button
+                  primary
+                  onClick={() => {
+                    dispatch(createContactInvitation(user.email));
+                  }}
+                  label={t('ContactsToFollow.add')}
+                  size="small"
+                />
               </Box>
-              <Button
-                primary
-                onClick={() => {
-                  dispatch(createContactInvitation(user.email));
-                }}
-                label={t('ContactsToFollow.add')}
-                size="small"
-              />
-            </Box>
-          ))
+            ))
         ))}
     </Box>
   );
