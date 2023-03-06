@@ -43,7 +43,11 @@ const sidebarBtns = [
   },
 ];
 
-const Sidebar: FC = () => {
+interface Props {
+  handleClick?: () => void;
+}
+
+const Sidebar: FC<Props> = ({ handleClick }) => {
   const dispatch = useDispatch();
   const size = useContext(ResponsiveContext);
   const { t } = useTranslation();
@@ -101,7 +105,12 @@ const Sidebar: FC = () => {
       ) : null}
 
       {sidebarBtns.map(({ titleKey, ...v }) => (
-        <SidebarButton key={titleKey} title={t(`Sidebar.${titleKey}`)} {...v} />
+        <SidebarButton
+          key={titleKey}
+          title={t(`Sidebar.${titleKey}`)}
+          handleClick={handleClick}
+          {...v}
+        />
       ))}
     </Box>
   );
