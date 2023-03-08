@@ -102,7 +102,7 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
             </Box>
 
             <Box pad={{ bottom: 'large' }} width="100%">
-              <Sidebar />
+              <Sidebar handleClick={() => setShowLeftSidebar(false)} />
             </Box>
           </Box>
         </Layer>

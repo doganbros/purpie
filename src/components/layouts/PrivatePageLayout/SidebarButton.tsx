@@ -8,10 +8,12 @@ interface Props {
   title: string;
   path: string;
   icon: Icon;
+  handleClick?: () => void;
 }
 
 export const SidebarButton: FC<Props> = ({
   title,
+  handleClick,
   path,
   icon: IconComponent,
 }) => {
@@ -37,7 +39,13 @@ export const SidebarButton: FC<Props> = ({
         align: { left: 'right' },
       }}
     >
-      <Button onClick={() => history.push(path)} plain>
+      <Button
+        onClick={() => {
+          history.push(path);
+          if (handleClick) handleClick();
+        }}
+        plain
+      >
         {({ hover }: any) => (
           <ExtendedBox
             opacity={location.pathname === path ? '1' : '0.5'}
