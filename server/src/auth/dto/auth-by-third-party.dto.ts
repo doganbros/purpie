@@ -6,4 +6,8 @@ export class AuthByThirdPartyDto {
   @IsNotEmpty()
   @IsString()
   code: string;
+
+  @ApiProperty()
+  @IsString()
+  user: string;
 }
