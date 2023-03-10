@@ -1,5 +1,5 @@
 import { Box, Form, FormField, Image, Text, TextInput } from 'grommet';
-import { Google } from 'grommet-icons';
+import { Apple, Google } from 'grommet-icons';
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -133,6 +133,14 @@ const Login: FC = () => {
               disabled={googleAuthBtnLoading}
               onClick={() => dispatch(getThirdPartyUrlAction('google'))}
               icon={<Google color="plain" size="28px" />}
+              margin={{ bottom: 'small' }}
+            />
+            <AuthFormButton
+              label={<span />}
+              color={theme.global?.colors?.['dark-1']}
+              backgroundColor={theme.global?.colors?.['dark-1']}
+              onClick={() => dispatch(getThirdPartyUrlAction('apple'))}
+              icon={<Apple color="white" size="28px" />}
               margin={{ bottom: 'small' }}
             />
           </Box>
