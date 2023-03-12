@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AuthByThirdPartyDto {
@@ -9,5 +9,6 @@ export class AuthByThirdPartyDto {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   user: string;
 }
