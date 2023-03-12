@@ -26,6 +26,7 @@ import { SystemUserListQuery } from '../dto/system-user-list.query';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { UserTokenPayload } from '../../auth/interfaces/user.interface';
 import { MailService } from '../../mail/mail.service';
+import { PostLike } from '../../../entities/PostLike.entity';
 
 const { REACT_APP_CLIENT_HOST = '' } = process.env;
 
@@ -100,6 +101,15 @@ export class UserService {
       .addSelect(
         `ts_rank(user.search_document, to_tsquery('simple', :searchTerm))`,
         'search_rank',
+      )
+      .addSelect(
+        (sq) =>
+          sq
+            .select('count(*) > 0')
+            .from(Invitation, 'user_invitation')
+            .where('user_invitation.createdById = :userId', { userId })
+            .andWhere('user_invitation.email = user.email', {}),
+        'invited',
       )
       .where(`user.search_document @@ to_tsquery('simple', :searchTerm)`);
     if (excludeUserIds)
@@ -360,6 +370,17 @@ export class UserService {
           })
           .andWhere('contact.contactUserId = user.id');
       }, 'isInContact')
+      .addSelect(
+        (sq) =>
+          sq
+            .select('count(*) > 0')
+            .from(Invitation, 'user_invitation')
+            .where('user_invitation.createdById = :userId', {
+              userId: currentUserId,
+            })
+            .andWhere('user_invitation.email = user.email', {}),
+        'invited',
+      )
       .addSelect((subQuery) => {
         return subQuery
           .select('contact.id', 'contactUserId')
@@ -396,6 +417,7 @@ export class UserService {
       email: result.user_email,
       isInContact: result.isInContact,
       contactUserId: result.contactUserId,
+      invited: result.invited,
     };
   }
 

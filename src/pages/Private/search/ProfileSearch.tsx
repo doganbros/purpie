@@ -26,6 +26,7 @@ const ProfileSearch: FC = () => {
     user: {
       search: { results },
     },
+    invitation: { invitedContacts },
     auth: { user },
   } = useSelector((state: AppState) => state);
 
@@ -43,6 +44,29 @@ const ProfileSearch: FC = () => {
     getSearchResults();
   }, [value]);
 
+  const getActionButton = (item: UserBasic) => {
+    if (user?.id !== item.id) {
+      if (item.contactUserId)
+        return <Button plain disabled label={t('ContactsToFollow.added')} />;
+      if (
+        item.invited ||
+        invitedContacts.userIds.some((userId) => userId === item.id)
+      )
+        return <Button plain disabled label={t('ContactsToFollow.invited')} />;
+      return (
+        <Button
+          primary
+          label={t('ContactsToFollow.add')}
+          onClick={(e) => {
+            e.stopPropagation();
+            dispatch(createContactInvitation(item?.email));
+          }}
+        />
+      );
+    }
+    return null;
+  };
+
   const renderResults = () => {
     if (results.data.length === 0) {
       return <Text>{t('common.nothingFound')}</Text>;
@@ -57,6 +81,7 @@ const ProfileSearch: FC = () => {
       >
         {(item: UserBasic) => (
           <Box
+            key={item.id}
             margin={{ vertical: 'xsmall' }}
             onClick={() => history.push(`/user/${item.userName}`)}
             direction="row"
@@ -64,20 +89,7 @@ const ProfileSearch: FC = () => {
             justify="between"
           >
             <UserSearchItem user={item} />
-
-            {user?.id !== item.id &&
-              (item.contactUserId ? (
-                <Button plain disabled label={t('ContactsToFollow.added')} />
-              ) : (
-                <Button
-                  primary
-                  label={t('ContactsToFollow.add')}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    dispatch(createContactInvitation(item?.email));
-                  }}
-                />
-              ))}
+            {getActionButton(item)}
           </Box>
         )}
       </InfiniteScroll>
