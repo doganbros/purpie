@@ -10,31 +10,38 @@ interface HeaderProps {
   user: User;
   currentUserId: string;
   handleShowRemoveDialog: () => void;
+  isUserInvited: boolean;
 }
 
 const Header: FC<HeaderProps> = ({
   user,
   currentUserId,
   handleShowRemoveDialog,
+  isUserInvited,
 }) => {
   const dispatch = useDispatch();
 
   const AddOrRemoveButton = () => {
-    if (currentUserId !== user.id)
-      return user.isInContact ? (
-        <Button
-          primary
-          color="red"
-          label={t('ContactsToFollow.remove')}
-          onClick={handleShowRemoveDialog}
-        />
-      ) : (
+    if (currentUserId !== user.id) {
+      if (user.isInContact)
+        return (
+          <Button
+            primary
+            color="red"
+            label={t('ContactsToFollow.remove')}
+            onClick={handleShowRemoveDialog}
+          />
+        );
+      if (isUserInvited)
+        return <Button plain disabled label={t('ContactsToFollow.invited')} />;
+      return (
         <Button
           primary
           label={t('ContactsToFollow.add')}
           onClick={() => dispatch(createContactInvitation(user?.email))}
         />
       );
+    }
     return null;
   };
 

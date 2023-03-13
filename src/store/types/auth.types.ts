@@ -67,6 +67,7 @@ export interface UserBasic {
   email: string;
   displayPhoto?: string;
   contactUserId?: string | null;
+  invited?: boolean;
 }
 
 export interface User extends UserBasic {
