@@ -178,7 +178,7 @@ export class AuthThirdPartyController {
         fullName: `${userInfo.name.firstName} ${userInfo.name.lastName}`,
         email: userInfo.email,
       });
-      return token;
+      return res.redirect(`${REACT_APP_CLIENT_HOST}/verify-email/${token}`);
     }
 
     throw new InternalServerErrorException(
