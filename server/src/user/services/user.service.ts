@@ -26,7 +26,6 @@ import { SystemUserListQuery } from '../dto/system-user-list.query';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { UserTokenPayload } from '../../auth/interfaces/user.interface';
 import { MailService } from '../../mail/mail.service';
-import { PostLike } from '../../../entities/PostLike.entity';
 
 const { REACT_APP_CLIENT_HOST = '' } = process.env;
 
