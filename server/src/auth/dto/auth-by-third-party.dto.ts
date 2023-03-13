@@ -11,4 +11,9 @@ export class AuthByThirdPartyDto {
   @IsString()
   @IsOptional()
   user: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  id_token: string;
 }
