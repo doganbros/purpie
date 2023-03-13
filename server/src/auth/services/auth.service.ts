@@ -255,7 +255,15 @@ export class AuthService {
 
     user.mailVerificationToken = await hash(token);
 
-    const savedUser = await user.save();
+    let savedUser;
+    try {
+      savedUser = await user.save();
+    } catch (error) {
+      throw new BadRequestException(
+        ErrorTypes.USER_ALREADY_REGISTERED,
+        `The user with ${user.email} email already registered`,
+      );
+    }
     const userPostFolders = await this.postFolderService.getUserPostFolders(
       savedUser.id,
     );

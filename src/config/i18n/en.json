@@ -433,6 +433,7 @@
     "NOT_VALID": "Not Valid",
     "NOT_IMPLEMENTED": "Not Implemented",
     "INITIAL_USER_SPECIFIED": "Initial user has been specified already.",
+    "USER_ALREADY_REGISTERED": "Specified email address already registered!",
     "INITIAL_USER_REQUIRED": "You need to set the initial super admin user.",
     "THIRD_PARTY_AUTH_ERROR": "Something went wrong while authenticating third party auth option",
     "NOT_SIGNED_IN": "You not authorized to use this route",

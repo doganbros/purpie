@@ -287,11 +287,11 @@ export class AuthController {
   async resetPasswordRequest(@Body() payload: ResetPasswordRequestDto) {
     const user = await this.authService.getUserByEmail(payload.email);
 
-    if (!user) return payload.email;
-    // throw new NotFoundException(
-    //   `User with the email '${payload.email}' doesn't exist`,
-    //   'USER_NOT_FOUND',
-    // );
+    if (!user)
+      throw new NotFoundException(
+        ErrorTypes.USER_NOT_FOUND,
+        `User with the email '${payload.email}' doesn't exist`,
+      );
 
     const token = await this.authService.generateResetPasswordToken(
       payload.email,
@@ -349,7 +349,7 @@ export class AuthController {
 
     user.forgotPasswordToken = null!;
 
-    user.save();
+    await user.save();
 
     return 'OK';
   }
