@@ -16,6 +16,7 @@ import {
 import { Request, Response } from 'express';
 import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { User } from 'entities/User.entity';
+import jwt from 'jsonwebtoken';
 import { AuthByThirdPartyDto } from '../dto/auth-by-third-party.dto';
 import { ThirdPartyLoginParams } from '../dto/third-party-login.params';
 import { UserProfile } from '../interfaces/user.interface';
@@ -71,7 +72,7 @@ export class AuthThirdPartyController {
       const stringifiedQuery = stringifyQuery({
         client_id: APPLE_CLIENT_ID,
         redirect_uri: APPLE_REDIRECT_URI,
-        response_type: 'code',
+        response_type: 'code id_token',
         state: 'purpie-apple-auth-state',
         scope: 'email name',
         response_mode: 'form_post',
@@ -145,13 +146,17 @@ export class AuthThirdPartyController {
         email: userInfo.email,
         googleId: userInfo.id,
       });
-      return token;
+      return res.redirect(`${REACT_APP_CLIENT_HOST}/verify-email/${token}`);
     }
     if (name === 'apple') {
-      const userInfo = JSON.parse(body.user);
+      let userInfo;
+      if (body.user) userInfo = JSON.parse(body.user);
+      else if (body.id_token) {
+        const idTokePayload: any = jwt.decode(body.id_token);
+        userInfo = { email: idTokePayload?.email.toLowerCase() };
+      }
 
       user = await this.authService.getUserByEmail(userInfo.email);
-
       if (user) {
         const userPayload: UserProfile = {
           id: user.id,

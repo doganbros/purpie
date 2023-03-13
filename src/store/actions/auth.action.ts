@@ -22,6 +22,9 @@ import {
   RESET_PASSWORD_FAILED,
   RESET_PASSWORD_REQUESTED,
   RESET_PASSWORD_SUCCESS,
+  THIRD_PARTY_AUTH_WITH_CODE_FAILED,
+  THIRD_PARTY_AUTH_WITH_CODE_REQUESTED,
+  THIRD_PARTY_AUTH_WITH_CODE_SUCCESS,
   UPDATE_PASSWORD_FAILED,
   UPDATE_PASSWORD_REQUESTED,
   UPDATE_PASSWORD_SUCCESS,
@@ -49,7 +52,7 @@ import {
 } from '../types/auth.types';
 import { setToastAction } from './util.action';
 
-const { REACT_APP_SERVER_HOST, REACT_APP_CLIENT_HOST } = process.env;
+const { REACT_APP_SERVER_HOST } = process.env;
 
 export const loginAction = (user: LoginPayload): AuthAction => {
   return async (dispatch) => {
@@ -130,9 +133,27 @@ export const authenticateWithThirdPartyCodeAction = (
   name: string,
   code: string
 ): AuthAction => {
-  return async () => {
-    const token = await AuthService.authenticateWithThirdPartyCode(name, code);
-    window.location.href = `${REACT_APP_CLIENT_HOST}/verify-email/${token}`;
+  return async (dispatch) => {
+    dispatch({
+      type: THIRD_PARTY_AUTH_WITH_CODE_REQUESTED,
+    });
+
+    try {
+      const payload = await AuthService.authenticateWithThirdPartyCode(
+        name,
+        code
+      );
+      dispatch({
+        type: THIRD_PARTY_AUTH_WITH_CODE_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: THIRD_PARTY_AUTH_WITH_CODE_FAILED,
+        payload: err?.response?.data,
+      });
+      appHistory.replace('/login');
+    }
   };
 };
 
