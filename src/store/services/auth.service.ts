@@ -53,7 +53,7 @@ export const completeProfile = async ({
   userName,
 }: CompleteProfilePayload): Promise<any> => {
   return http
-    .post('/auth/third-party/complete-profile', { token, userName })
+    .post('/auth/third-party/profile/complete', { token, userName })
     .then((res) => res.data);
 };
 

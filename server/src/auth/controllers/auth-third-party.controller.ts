@@ -191,9 +191,10 @@ export class AuthThirdPartyController {
       if (body.user) userInfo = JSON.parse(body.user);
       else if (body.id_token) {
         const idTokePayload: any = jwt.decode(body.id_token);
-        userInfo = { email: idTokePayload?.email.toLowerCase() };
+        userInfo = { email: idTokePayload?.email };
       }
 
+      res.setHeader('Access-Control-Allow-Origin', '*');
       user = await this.authService.getUserByEmail(userInfo.email);
       if (user) {
         const stringifiedQuery = stringifyQuery({
@@ -207,7 +208,7 @@ export class AuthThirdPartyController {
         token,
       } = await this.authThirdPartyService.registerUserByThirdParty({
         fullName: `${userInfo.name.firstName} ${userInfo.name.lastName}`,
-        email: userInfo.email,
+        email: userInfo.email.toLowerCase(),
       });
       return res.redirect(`${REACT_APP_CLIENT_HOST}/complete-profile/${token}`);
     }

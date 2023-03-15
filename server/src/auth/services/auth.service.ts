@@ -26,7 +26,6 @@ import {
 import { InitializeUserDto } from '../dto/initialize-user.dto';
 import { RegisterUserDto } from '../dto/register-user.dto';
 import {
-  UserBasic,
   UserBasicWithToken,
   UserProfile,
   UserTokenPayload,
