@@ -247,7 +247,7 @@ export class AuthController {
     @Body() { token, userName }: VerifyEmailDto,
   ) {
     const user = await this.authService.verifyUserEmail(email, userName, token);
-    return user;
+    return { fullName: user.fullName, email: user.email };
   }
 
   @Post('resend-mail-verification-token/:userId')

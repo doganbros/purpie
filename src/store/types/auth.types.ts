@@ -38,6 +38,9 @@ import {
   UPDATE_PASSWORD_REQUESTED,
   UPDATE_PASSWORD_SUCCESS,
   UPDATE_PASSWORD_FAILED,
+  COMPLETE_PROFILE_REQUESTED,
+  COMPLETE_PROFILE_SUCCESS,
+  COMPLETE_PROFILE_FAILED,
 } from '../constants/auth.constants';
 import { ResponseError } from '../../models/response-error';
 
@@ -139,6 +142,11 @@ export interface VerifyEmailPayload {
   userName: string;
 }
 
+export interface CompleteProfilePayload {
+  token: string;
+  userName: string;
+}
+
 export interface UpdateProfileInfoPayload {
   userName: string;
   fullName: string;
@@ -156,6 +164,7 @@ export type AuthActionParams =
         | typeof LOGIN_REQUESTED
         | typeof MUST_SET_INITIAL_USER
         | typeof VERIFY_USER_EMAIL_REQUESTED
+        | typeof COMPLETE_PROFILE_REQUESTED
         | typeof REGISTER_REQUESTED
         | typeof RESEND_MAIL_VERIFICATION_TOKEN_REQUESTED
         | typeof FORGOT_PASSWORD_REQUESTED
@@ -182,6 +191,7 @@ export type AuthActionParams =
         | typeof LOGIN_SUCCESS
         | typeof REGISTER_SUCCESS
         | typeof VERIFY_USER_EMAIL_SUCCESS
+        | typeof COMPLETE_PROFILE_SUCCESS
         | typeof THIRD_PARTY_AUTH_WITH_CODE_SUCCESS
         | typeof USER_RETRIEVED_SUCCESS
         | typeof INITIALIZE_USER_SUCCESS;
@@ -201,6 +211,7 @@ export type AuthActionParams =
         | typeof REGISTER_FAILED
         | typeof RESET_PASSWORD_FAILED
         | typeof VERIFY_USER_EMAIL_FAILED
+        | typeof COMPLETE_PROFILE_FAILED
         | typeof THIRD_PARTY_URL_FAILED
         | typeof THIRD_PARTY_AUTH_WITH_CODE_FAILED
         | typeof RESEND_MAIL_VERIFICATION_TOKEN_FAILED

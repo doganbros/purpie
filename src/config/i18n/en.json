@@ -106,6 +106,12 @@
     "userNameNotAvailable": "Username \"{{userName}}\" is not available",
     "userNameAvailable": "Username \"{{userName}}\" is available"
   },
+  "CompleteThirdPartyAuth": {
+    "title": "Complete Profile",
+    "formSubTitle": "Please create a username to continue complete profile process.",
+    "userNameNotAvailable": "Username \"{{userName}}\" is not available",
+    "userNameAvailable": "Username \"{{userName}}\" is available"
+  },
   "VerifyUserEmailInfo": {
     "title": "Email Confirmation",
     "formSubTitle": "<0>Verify your email to finish signing up for Purpie.</0><1></1><2>Please check your email box.</2>",

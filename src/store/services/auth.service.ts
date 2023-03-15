@@ -9,6 +9,7 @@ import {
   VerifyEmailPayload,
   UpdateProfileInfoPayload,
   UpdatePasswordPayload,
+  CompleteProfilePayload,
 } from '../types/auth.types';
 
 export const login = async (user: LoginPayload): Promise<User> =>
@@ -47,6 +48,15 @@ export const verifyUserEmail = async ({
     .then((res) => res.data);
 };
 
+export const completeProfile = async ({
+  token,
+  userName,
+}: CompleteProfilePayload): Promise<any> => {
+  return http
+    .post('/auth/third-party/complete-profile', { token, userName })
+    .then((res) => res.data);
+};
+
 export const resendMailVerificationToken = async (
   userId: string
 ): Promise<any> => {
@@ -72,7 +82,7 @@ export const userNameExistsCheck = (
 export const authenticateWithThirdPartyCode = async (
   name: string,
   code: string
-): Promise<User> =>
+): Promise<User | string> =>
   http.post(`/auth/third-party/${name}`, { code }).then((res) => res.data);
 
 export const initializeUser = (user: RegisterPayload): Promise<User> =>

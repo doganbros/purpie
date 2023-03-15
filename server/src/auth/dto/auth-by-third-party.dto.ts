@@ -15,5 +15,10 @@ export class AuthByThirdPartyDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
+  userProfile: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
   id_token: string;
 }
