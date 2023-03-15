@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { verifyJWT } from 'helpers/jwt';
+import { getJWTCookieKeys, verifyJWT } from 'helpers/jwt';
 import { pick } from 'lodash';
 import { AuthService } from '../services/auth.service';
 import { UserPermissionOptions } from '../interfaces/user.interface';
@@ -29,8 +29,9 @@ export class AuthGuard implements CanActivate {
       context.getHandler(),
     );
 
-    const token = req.cookies.PURPIE_ACCESS_TOKEN;
-    const refreshToken = req.cookies.PURPIE_REFRESH_ACCESS_TOKEN;
+    const { accessTokenKey, refreshAccessTokenKey } = getJWTCookieKeys();
+    const token = req.cookies[accessTokenKey];
+    const refreshToken = req.cookies[refreshAccessTokenKey];
 
     if (!token) {
       const systemUserCount = await this.authService.systemUserCount();

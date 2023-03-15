@@ -27,6 +27,7 @@ import {
   INITIALIZE_USER_FAILED,
   UPDATE_PROFILE_PHOTO_SUCCESS,
   UPDATE_PROFILE_INFO_SUCCESS,
+  COMPLETE_PROFILE_SUCCESS,
 } from '../constants/auth.constants';
 import { AuthActionParams, AuthState } from '../types/auth.types';
 
@@ -66,11 +67,6 @@ const initialState: AuthState = {
     loading: false,
     error: null,
   },
-  loginWithFacebook: {
-    buttonLoading: false,
-    authenticating: false,
-    error: null,
-  },
   loginWithGoogle: {
     buttonLoading: false,
     authenticating: false,
@@ -92,23 +88,19 @@ const authReducer = (
             buttonLoading: true,
           },
         };
-      if (action.payload === 'facebook')
-        return {
-          ...state,
-          loginWithFacebook: {
-            ...state.loginWithFacebook,
-            buttonLoading: true,
-          },
-        };
       return state;
-
     case THIRD_PARTY_AUTH_WITH_CODE_SUCCESS:
       return {
         ...state,
         isAuthenticated: true,
         user: action.payload,
       };
-
+    case COMPLETE_PROFILE_SUCCESS:
+      return {
+        ...state,
+        isAuthenticated: true,
+        user: action.payload,
+      };
     case LOGIN_REQUESTED:
       return {
         ...state,
@@ -281,12 +273,14 @@ const authReducer = (
           loading: false,
         },
       };
-    case LOGOUT:
+    case LOGOUT: {
+      localStorage.removeItem('persist:root'); // remove all persisted data from localStorage for redux
       return {
         ...state,
         isAuthenticated: false,
         user: null,
       };
+    }
     case INITIALIZE_USER_REQUESTED:
       return {
         ...state,

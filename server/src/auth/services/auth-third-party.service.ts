@@ -4,12 +4,11 @@ import axios from 'axios';
 import { User } from 'entities/User.entity';
 import { Repository } from 'typeorm';
 import { UserBasic } from '../interfaces/user.interface';
+import { AuthService } from './auth.service';
 
 const {
   GOOGLE_OAUTH_CLIENT_SECRET = '',
   GOOGLE_OAUTH_CLIENT_ID = '',
-  FACEBOOK_OAUTH_CLIENT_ID = '',
-  FACEBOOK_OAUTH_CLIENT_SECRET = '',
   REACT_APP_CLIENT_HOST = '',
 } = process.env;
 
@@ -17,6 +16,7 @@ const {
 export class AuthThirdPartyService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    private authService: AuthService,
   ) {}
 
   getGoogleAuthAccessToken(code: string): Promise<string> {
@@ -43,47 +43,14 @@ export class AuthThirdPartyService {
     }).then((res) => res.data);
   }
 
-  getFacebookAuthAccessToken(code: string): Promise<any> {
-    return axios({
-      url: `https://graph.facebook.com/v4.0/oauth/access_token`,
-      method: 'get',
-      params: {
-        client_id: FACEBOOK_OAUTH_CLIENT_ID,
-        client_secret: FACEBOOK_OAUTH_CLIENT_SECRET,
-        redirect_uri: `${REACT_APP_CLIENT_HOST}/auth/facebook`,
-        code,
-      },
-    }).then((res) => res.data);
-  }
+  async registerUserByThirdParty({ fullName, email, googleId }: UserBasic) {
+    const user = this.userRepository.create({
+      fullName,
+      email,
+      googleId,
+      userRoleCode: 'NORMAL',
+    });
 
-  getFacebookUserInfo(access_token: string): Promise<Record<string, any>> {
-    return axios({
-      url: 'https://graph.facebook.com/me',
-      method: 'get',
-      params: {
-        fields: ['id', 'email', 'first_name', 'last_name', 'middle_name'].join(
-          ',',
-        ),
-        access_token,
-      },
-    }).then((res) => res.data);
-  }
-
-  async registerUserByThirdParty({
-    fullName,
-    email,
-    googleId,
-    facebookId,
-  }: UserBasic) {
-    return this.userRepository
-      .create({
-        fullName,
-        email,
-        googleId,
-        facebookId,
-        userRoleCode: 'NORMAL',
-        emailConfirmed: true,
-      })
-      .save();
+    return this.authService.setMailVerificationToken(user);
   }
 }

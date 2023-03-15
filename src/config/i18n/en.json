@@ -22,10 +22,9 @@
     "reply": "Reply",
     "following": "Following",
     "follow": "Follow",
+    "reject": "Reject",
     "join": "Join",
-    "ignore": "Ignore",
     "joined": "Joined",
-    "ignored": "Ignored",
     "search": "Search",
     "zone": "Zone",
     "channel": "Channel",
@@ -51,7 +50,9 @@
     "unfollow": "Unfollow",
     "leave": "Leave",
     "accept": "Accept",
-    "accepted": "Accepted"
+    "accepted": "Accepted",
+    "hour":"Hour",
+    "hours":"Hours"
   },
   "Login": {
     "title": "Login",
@@ -105,6 +106,12 @@
     "userNameNotAvailable": "Username \"{{userName}}\" is not available",
     "userNameAvailable": "Username \"{{userName}}\" is available"
   },
+  "CompleteThirdPartyAuth": {
+    "title": "Complete Profile",
+    "formSubTitle": "Please create a username to continue complete profile process.",
+    "userNameNotAvailable": "Username \"{{userName}}\" is not available",
+    "userNameAvailable": "Username \"{{userName}}\" is available"
+  },
   "VerifyUserEmailInfo": {
     "title": "Email Confirmation",
     "formSubTitle": "<0>Verify your email to finish signing up for Purpie.</0><1></1><2>Please check your email box.</2>",
@@ -137,7 +144,7 @@
     "title": "Invitations",
     "zoneInvitationMessage": "{{fullName}} invited you to {{zone}} zone.",
     "channelInvitationMessage": "{{fullName}} invited you to {{channel}} channel.",
-    "contactInvitationMessage": "{{fullName}} wants to invite you as a contact."
+    "contactInvitationMessage": "{{fullName}} invited you as a contact."
   },
   "ZonesToJoin": {
     "title": "Zones to join",
@@ -307,7 +314,8 @@
     "disableRemoteMute": "Disable Remote Mute",
     "hideConferenceSubject": "Hide Conference Subject",
     "hideConferenceTimer": "Hide Conference Timer",
-    "hideParticipantsStats": "Hide Participants Stats"
+    "hideParticipantsStats": "Hide Participants Stats",
+    "meetingLinkExpires":"Invite meeting link expires after meeting start"
   },
   "MeetingDetails": {
     "meetingName": "Meeting Name",
@@ -370,11 +378,11 @@
     "noContactsFound": "No contacts found"
   },
   "UserPublicChannels": {
-    "title": "Channels Followed To",
+    "title": "Channels followed",
     "noChannelsFound": "No channels found"
   },
   "UserPublicZones": {
-    "title": "Zones Joined To",
+    "title": "Zones joined",
     "noZonesFound": "No zones found"
   },
   "CommentBase": {
@@ -431,6 +439,7 @@
     "NOT_VALID": "Not Valid",
     "NOT_IMPLEMENTED": "Not Implemented",
     "INITIAL_USER_SPECIFIED": "Initial user has been specified already.",
+    "USER_ALREADY_REGISTERED": "Specified email address already registered!",
     "INITIAL_USER_REQUIRED": "You need to set the initial super admin user.",
     "THIRD_PARTY_AUTH_ERROR": "Something went wrong while authenticating third party auth option",
     "NOT_SIGNED_IN": "You not authorized to use this route",
@@ -543,6 +552,7 @@
     "title": "People to add",
     "add": "Add",
     "added": "Added",
+    "invited": "Invited",
     "noContactsFound": "No contacts found!",
     "remove": "Remove"
   },
@@ -554,7 +564,7 @@
     "post_comment_reply": "<user>{{userName}}</user> has replied your <post>post</post> comment.",
     "post_comment_mention": "<user>{{userName}}</user> has mentioned your <post>post</post> comment.",
     "contact_request_accepted": "<user>{{userName}}</user> has accepted your contact request.",
-    "contact_request_received": "<user>{{userName}}</user> has want to add you as a contact."
+    "contact_request_received": "<user>{{userName}}</user> wants to add you as a contact."
   },
   "ChannelMembers": {
     "title": "Members",

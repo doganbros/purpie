@@ -57,7 +57,7 @@ You have two options to setup Purpie.
 
 ## Developer Guide
 
-You can find the developer guide in [Developer Guide](https://docs.purpie.org/en/latest/09.developer_guideline.html)
+You can find the developer guide in [Developer Guide](https://docs.purpie.org/en/latest/09.developer_guide.html)
 ## Contributing Guideline
 
 We are open to, and grateful for, any contributions made by the community. You can visit our [Contributing Guideline](https://docs.purpie.org/en/latest/10.contribution.html) to learn how to contribute to the project.

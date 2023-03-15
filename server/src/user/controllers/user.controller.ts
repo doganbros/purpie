@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   HttpCode,
   HttpStatus,
   NotFoundException,
@@ -119,7 +120,7 @@ export class UserController {
     @CurrentUser() user: UserTokenPayload,
     @Body() { email }: CreateContactDto,
   ) {
-    const contactInvitation = await this.userService.createNewContactInvitation(
+    const invitationInviteeUserId = await this.userService.createNewContactInvitation(
       email,
       user,
     );
@@ -129,7 +130,7 @@ export class UserController {
       email,
     });
 
-    return contactInvitation.id;
+    return invitationInviteeUserId;
   }
 
   @Get('/contact/invitation/list')
@@ -265,6 +266,7 @@ export class UserController {
       return emptyPaginatedResponse(query.limit, query.skip);
     if (query.channelId) {
       const users = await this.userService.searchInChannels(
+        user.id,
         query.channelId,
         excludeIds,
         query,
@@ -279,7 +281,11 @@ export class UserController {
       );
       return users;
     }
-    const users = await this.userService.searchUsers(excludeIds, query);
+    const users = await this.userService.searchUsers(
+      user.id,
+      excludeIds,
+      query,
+    );
     return users;
   }
 
@@ -484,6 +490,7 @@ export class UserController {
   }
 
   @Get('display-photo/:fileName')
+  @Header('Cache-Control', 'max-age=3600')
   async viewProfilePhoto(
     @Res() res: Response,
     @Param('fileName') fileName: string,

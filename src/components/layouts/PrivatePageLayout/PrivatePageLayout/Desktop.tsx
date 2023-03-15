@@ -55,7 +55,7 @@ const Desktop: FC<Props> = ({
             <ZoneSelector />
           </Box>
         </Box>
-        <Box margin={{ vertical: 'large' }}>
+        <Box margin={{ vertical: 'large' }} width="100%">
           <Sidebar />
         </Box>
       </ExtendedBox>
@@ -79,7 +79,9 @@ const Desktop: FC<Props> = ({
           horizontal: 'large',
         }}
       >
-        {children}
+        <Box fill alignSelf="center" width={{ max: '1800px' }}>
+          {children}
+        </Box>
         {topComponent && (
           <ExtendedBox
             position="fixed"

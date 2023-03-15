@@ -1,5 +1,7 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
 
+const { NODE_ENV = 'development' } = process.env;
+
 export const generateJWT = (
   payload: Record<string, any>,
   secret: string,
@@ -25,4 +27,14 @@ export const verifyJWT = (
       return res(payload);
     });
   });
+};
+
+export const getJWTCookieKeys = (): {
+  accessTokenKey: string;
+  refreshAccessTokenKey: string;
+} => {
+  return {
+    accessTokenKey: `PURPIE_${NODE_ENV.toUpperCase()}_ACCESS_TOKEN`,
+    refreshAccessTokenKey: `PURPIE_${NODE_ENV.toUpperCase()}_REFRESH_ACCESS_TOKEN`,
+  };
 };

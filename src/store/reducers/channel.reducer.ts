@@ -210,6 +210,11 @@ const channelReducer = (
           loading: false,
           error: null,
         },
+        selectedChannel:
+          state.selectedChannel &&
+          state.selectedChannel.channel.id === action.payload
+            ? null
+            : state.selectedChannel,
       };
     case UNFOLLOW_CHANNEL_SUCCESS:
       return {

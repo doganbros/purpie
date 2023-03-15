@@ -61,6 +61,7 @@ const Video: FC = () => {
     post: {
       postDetail: { data, loading },
     },
+    auth: { user },
   } = useSelector((state: AppState) => state);
 
   const history = useHistory();
@@ -223,7 +224,13 @@ const Video: FC = () => {
           <PurpieLogoAnimated width={100} height={100} color="brand" />
         </Box>
       ) : (
-        <Box gap="large" pad={{ vertical: 'medium' }}>
+        <Box
+          gap="large"
+          pad={{ vertical: 'medium' }}
+          width={{ max: '1620px' }}
+          alignSelf="center"
+          fill
+        >
           <Box>
             <Box justify="between" direction="row">
               <Box>
@@ -256,15 +263,21 @@ const Video: FC = () => {
                   />
                 </Box>
               )) || <Box />}
-              <Box
-                onClick={() => setShowSettings((previous) => !previous)}
-                focusIndicator={false}
-                pad={{ vertical: 'small' }}
-              >
-                <SettingsOption size="medium" color="brand" />
-              </Box>
+              {data?.createdBy?.id === user?.id && (
+                <Box
+                  onClick={() => setShowSettings((previous) => !previous)}
+                  focusIndicator={false}
+                  pad={{ vertical: 'small' }}
+                >
+                  <SettingsOption size="medium" color="brand" />
+                </Box>
+              )}
             </Box>
-            <Box margin={{ top: 'small' }} gap="medium">
+            <Box
+              margin={{ top: 'small' }}
+              gap="medium"
+              width={{ max: '1620px' }}
+            >
               <VideoJs
                 getPlayer={(p) => {
                   player.current = p;
@@ -293,6 +306,7 @@ const Video: FC = () => {
                   ],
                 }}
               />
+
               <Box direction="row" align="center" justify="between">
                 {data.streaming ? (
                   <Text>
@@ -319,8 +333,17 @@ const Video: FC = () => {
                       plain
                       onClick={() =>
                         data.liked
-                          ? dispatch(removePostLikeAction({ postId: data.id }))
-                          : dispatch(createPostLikeAction({ postId: data.id }))
+                          ? dispatch(
+                              removePostLikeAction({
+                                postId: data.id,
+                              })
+                            )
+                          : dispatch(
+                              createPostLikeAction({
+                                postId: data.id,
+                                type: 'like',
+                              })
+                            )
                       }
                       icon={
                         data.liked ? (
@@ -334,10 +357,40 @@ const Video: FC = () => {
                       {data.postReaction.likesCount}
                     </Text>
                   </Box>
-                  <Box direction="row" gap="xsmall" align="center">
-                    <Dislike color="status-disabled" size="17px" />
-                    <Text color="status-disabled">{t('Video.dislike')}</Text>
-                  </Box>
+                  {data.allowDislike && (
+                    <Box direction="row" gap="xsmall" align="center">
+                      <Button
+                        plain
+                        gap="xsmall"
+                        onClick={() =>
+                          data?.disliked
+                            ? dispatch(
+                                removePostLikeAction({
+                                  postId: data.id,
+                                })
+                              )
+                            : dispatch(
+                                createPostLikeAction({
+                                  postId: data.id,
+                                  type: 'dislike',
+                                })
+                              )
+                        }
+                        icon={
+                          data.disliked ? (
+                            <Dislike color="brand" size="17px" />
+                          ) : (
+                            <Dislike color="status-disabled" size="17px" />
+                          )
+                        }
+                        label={
+                          <Text color="status-disabled">
+                            {t('Video.dislike')}
+                          </Text>
+                        }
+                      />
+                    </Box>
+                  )}
                   <Box direction="row" gap="xsmall" align="center">
                     <ShareOption color="status-disabled" size="19px" />
                     <Text color="status-disabled">{t('common.share')}</Text>

@@ -17,6 +17,7 @@ import VerifyUserEmail from './pages/Public/VerifyUserEmail';
 import VerifyUserEmailInfo from './pages/Public/VerifyUserEmailInfo';
 import ComingSoon from './pages/Private/ComingSoon';
 import JoinPage from './pages/Public/JoinPage';
+import CompleteThirdPartyAuth from './pages/Public/CompleteThirdPartyAuth';
 
 interface AppRoute {
   id: string;
@@ -58,6 +59,12 @@ export const publicRoutes: Array<AppRoute> = [
     path: '/auth/:name',
     component: ThirdPartyAuth,
     description: 'User Authenticates with third party',
+  },
+  {
+    id: nanoid(),
+    path: '/complete-profile/:token',
+    component: CompleteThirdPartyAuth,
+    description: 'User Complete Authentication with third party',
   },
   {
     id: nanoid(),

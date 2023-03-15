@@ -75,10 +75,7 @@ const Contacts: FC = () => {
       title={t('common.contacts')}
       rightComponent={
         contacts.selected.contactId ? (
-          <SelectedUser
-            user={contacts.selected.user}
-            contactId={contacts.selected.contactId}
-          />
+          <SelectedUser user={contacts.selected.user} />
         ) : (
           <Box pad="medium" gap="medium">
             {!contacts.loading && contacts.data.length > 0 && <SearchBar />}

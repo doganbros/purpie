@@ -14,7 +14,7 @@ import { UserRole } from 'entities/UserRole.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
 import { Request, Response } from 'express';
-import { generateJWT } from 'helpers/jwt';
+import { generateJWT, getJWTCookieKeys } from 'helpers/jwt';
 import { compareHash, detectBrowser, hash } from 'helpers/utils';
 import { nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
@@ -26,7 +26,6 @@ import {
 import { InitializeUserDto } from '../dto/initialize-user.dto';
 import { RegisterUserDto } from '../dto/register-user.dto';
 import {
-  UserBasic,
   UserBasicWithToken,
   UserProfile,
   UserTokenPayload,
@@ -133,14 +132,15 @@ export class AuthService {
     const userAgent = req.headers['user-agent'];
     const isSafariBrowser = detectBrowser(userAgent!) === BrowserType.SAFARI;
 
-    res.cookie('PURPIE_ACCESS_TOKEN', accessToken, {
+    const { accessTokenKey, refreshAccessTokenKey } = getJWTCookieKeys();
+    res.cookie(accessTokenKey, accessToken, {
       expires: dayjs().add(30, 'days').toDate(),
       domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
       secure: !(isDevelopment && isSafariBrowser),
       sameSite: isDevelopment ? 'none' : 'lax',
     });
-    res.cookie('PURPIE_REFRESH_ACCESS_TOKEN', refreshToken, {
+    res.cookie(refreshAccessTokenKey, refreshToken, {
       expires: dayjs().add(30, 'days').toDate(),
       domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
@@ -158,14 +158,15 @@ export class AuthService {
     const userAgent = req.headers['user-agent'];
     const isSafariBrowser = detectBrowser(userAgent!) === BrowserType.SAFARI;
 
-    res.clearCookie('PURPIE_ACCESS_TOKEN', {
+    const { accessTokenKey, refreshAccessTokenKey } = getJWTCookieKeys();
+    res.clearCookie(accessTokenKey, {
       expires: dayjs().add(30, 'days').toDate(),
       domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
       secure: !(isDevelopment && isSafariBrowser),
       sameSite: isDevelopment ? 'none' : 'lax',
     });
-    res.clearCookie('PURPIE_REFRESH_ACCESS_TOKEN', {
+    res.clearCookie(refreshAccessTokenKey, {
       expires: dayjs().add(30, 'days').toDate(),
       domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
       httpOnly: true,
@@ -253,14 +254,26 @@ export class AuthService {
 
     user.mailVerificationToken = await hash(token);
 
-    const savedUser = await user.save();
-    await this.postFolderService.createFolder(savedUser.id, {
-      title: 'Bookmarks',
-      postId: null,
-    });
+    let savedUser;
+    try {
+      savedUser = await user.save();
+    } catch (error) {
+      throw new BadRequestException(
+        ErrorTypes.USER_ALREADY_REGISTERED,
+        `The user with ${user.email} email already registered`,
+      );
+    }
+    const userPostFolders = await this.postFolderService.getUserPostFolders(
+      savedUser.id,
+    );
+    if (userPostFolders.length === 0)
+      await this.postFolderService.createFolder(savedUser.id, {
+        title: 'Bookmarks',
+        postId: null,
+      });
 
     return {
-      user: userInfo,
+      user,
       token,
     };
   }
@@ -367,7 +380,7 @@ export class AuthService {
     email: string,
     userName: string,
     token: string,
-  ): Promise<UserBasic> {
+  ): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
         email,
@@ -389,10 +402,7 @@ export class AuthService {
     user.userName = userName;
     await user.save();
 
-    return {
-      fullName: user.fullName,
-      email: user.email,
-    };
+    return user;
   }
 
   async initializeUser(info: InitializeUserDto, res: Response, req: Request) {

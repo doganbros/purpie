@@ -47,6 +47,8 @@ import { ConferenceInfoResponse } from '../responses/conference-info.response';
 import { User } from '../../../entities/User.entity';
 import { PostReaction } from '../../../entities/PostReaction.entity';
 import { UserChannel } from '../../../entities/UserChannel.entity';
+import { defaultPostSettings } from '../../../entities/data/default-post-settings';
+import { defaultPrivacyConfig } from '../../../entities/data/default-privacy-config';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -85,8 +87,7 @@ export class MeetingController {
     const record = createMeetingInfo.record ?? privacyConfig.record;
     const tokenExpiry =
       createMeetingInfo.joinLinkExpiryAsHours ??
-      privacyConfig.joinLinkExpiryAsHours ??
-      24;
+      privacyConfig.joinLinkExpiryAsHours;
 
     const meetingPayload: Partial<PostEntity> = {
       title: createMeetingInfo.title || 'Untitled Meeting',
@@ -126,9 +127,12 @@ export class MeetingController {
     if (liveStream) meetingPayload.config.liveStreamingEnabled = true;
     if (record) meetingPayload.config.fileRecordingsEnabled = true;
     if (timeZone) meetingPayload.timeZone = timeZone;
-    meetingPayload.allowComment = createMeetingInfo.allowComment ?? true;
-    meetingPayload.allowDislike = createMeetingInfo.allowDislike ?? true;
-    meetingPayload.allowReaction = createMeetingInfo.allowReaction ?? true;
+    meetingPayload.allowComment =
+      createMeetingInfo.allowComment ?? defaultPostSettings.allowComment;
+    meetingPayload.allowDislike =
+      createMeetingInfo.allowDislike ?? defaultPostSettings.allowDislike;
+    meetingPayload.allowReaction =
+      createMeetingInfo.allowReaction ?? defaultPostSettings.allowReaction;
 
     const meeting = await this.meetingService.createNewMeeting(meetingPayload);
 
@@ -141,7 +145,7 @@ export class MeetingController {
       user,
       meeting,
       true,
-      tokenExpiry,
+      tokenExpiry!,
     );
 
     if (
@@ -153,7 +157,12 @@ export class MeetingController {
       );
 
       users.forEach((u) => {
-        this.meetingService.sendMeetingInfoMail(u, meeting, false, tokenExpiry);
+        this.meetingService.sendMeetingInfoMail(
+          u,
+          meeting,
+          false,
+          tokenExpiry!,
+        );
       });
     }
 
@@ -180,6 +189,58 @@ export class MeetingController {
     }
 
     return { meeting };
+  }
+
+  @Get('join-link/:slug')
+  @ApiNotFoundResponse({
+    description: "Error thrown is meeting doesn't exist",
+    schema: errorResponseDoc(404, 'Meeting not found', 'MEETING_NOT_FOUND'),
+  })
+  @ApiBadRequestResponse({
+    description:
+      "Error thrown when meeting's start date is less than now or meeting has already ended",
+    schema: {
+      anyOf: [
+        errorResponseDoc(404, 'Meeting not started yet', 'MEETING_NOT_STARTED'),
+        errorResponseDoc(
+          404,
+          'Meeting has already ended',
+          'MEETING_ALREADY_ENDED',
+        ),
+      ],
+    },
+  })
+  @IsAuthenticated([], { injectUserProfile: true })
+  async getMeetingJoinLink(
+    @CurrentUserProfile() user: UserProfile,
+    @Param('slug') slug: string,
+  ) {
+    const meeting = await this.meetingService.currentUserJoinMeetingValidator(
+      user.id,
+      slug,
+    );
+    if (!meeting)
+      throw new NotFoundException('Meeting not found', 'MEETING_NOT_FOUND');
+
+    if (meeting.conferenceEndDate) {
+      throw new BadRequestException(
+        'Meeting has already ended',
+        'MEETING_ALREADY_ENDED',
+      );
+    }
+
+    const userConfig = await this.meetingService.getCurrentUserConfig(user.id);
+
+    const meetingToken = await this.meetingService.generateMeetingToken(
+      meeting,
+      user,
+      meeting.createdById === user.id,
+      userConfig
+        ? userConfig.privacyConfig.joinLinkExpiryAsHours!
+        : defaultPrivacyConfig.joinLinkExpiryAsHours!,
+    );
+
+    return this.meetingService.generateMeetingUrl(meeting, meetingToken);
   }
 
   @Get('join/:token')

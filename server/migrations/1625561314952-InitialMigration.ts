@@ -151,11 +151,6 @@ export class InitialMigration1625561314952 implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: 'facebookId',
-            type: 'character varying',
-            isNullable: true,
-          },
-          {
             name: 'forgotPasswordToken',
             type: 'character varying',
             isNullable: true,

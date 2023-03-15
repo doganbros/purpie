@@ -62,16 +62,19 @@ export class PostLikeController {
         ErrorTypes.POST_REACTION_NOT_ALLOWED,
         `This post doesn't allow reactions`,
       );
-
     if (info.type === 'dislike' && !post.allowDislike)
       throw new ForbiddenException(
         ErrorTypes.POST_DISLIKE_NOT_ALLOWED,
         `This post doesn't allow dislikes`,
       );
 
-    const like = await this.postLikeService.createPostLike(user.id, info);
+    const like = await this.postLikeService.getPostLike(user.id, info.postId);
+    if (like) {
+      const positive = info.type !== 'dislike';
+      await this.postLikeService.updatePostLike(like, positive);
+    } else await this.postLikeService.createPostLike(user.id, info);
 
-    return like.id;
+    return like?.id;
   }
 
   @Get('list/:postId')

@@ -2,6 +2,9 @@ import i18n from '../../config/i18n/i18n-config';
 import { navigateToSubdomain } from '../../helpers/app-subdomain';
 import appHistory from '../../helpers/history';
 import {
+  COMPLETE_PROFILE_FAILED,
+  COMPLETE_PROFILE_REQUESTED,
+  COMPLETE_PROFILE_SUCCESS,
   FORGOT_PASSWORD_FAILED,
   FORGOT_PASSWORD_REQUESTED,
   FORGOT_PASSWORD_SUCCESS,
@@ -43,6 +46,7 @@ import {
 import * as AuthService from '../services/auth.service';
 import {
   AuthAction,
+  CompleteProfilePayload,
   LoginPayload,
   RegisterPayload,
   ResetPasswordPayload,
@@ -107,7 +111,7 @@ export const verifyUserEmailAction = (body: VerifyEmailPayload): AuthAction => {
       const payload = await AuthService.verifyUserEmail(body);
       setToastAction(
         'ok',
-        i18n.t('ToastsMessages.emailVerified', { email: payload.email })
+        i18n.t('ToastMessages.emailVerified', { email: payload.email })
       )(dispatch);
       appHistory.replace('/login');
       dispatch({
@@ -123,6 +127,29 @@ export const verifyUserEmailAction = (body: VerifyEmailPayload): AuthAction => {
   };
 };
 
+export const completeProfileAction = (
+  body: CompleteProfilePayload
+): AuthAction => {
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: COMPLETE_PROFILE_REQUESTED,
+      });
+      const payload = await AuthService.completeProfile(body);
+
+      dispatch({
+        type: COMPLETE_PROFILE_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: COMPLETE_PROFILE_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
 export const getThirdPartyUrlAction = (name: string): AuthAction => {
   return async () => {
     window.location.href = `${REACT_APP_SERVER_HOST}/v1/auth/third-party/${name}`;
@@ -131,7 +158,8 @@ export const getThirdPartyUrlAction = (name: string): AuthAction => {
 
 export const authenticateWithThirdPartyCodeAction = (
   name: string,
-  code: string
+  code: string | null,
+  email: string | null
 ): AuthAction => {
   return async (dispatch) => {
     dispatch({
@@ -141,12 +169,16 @@ export const authenticateWithThirdPartyCodeAction = (
     try {
       const payload = await AuthService.authenticateWithThirdPartyCode(
         name,
-        code
+        code,
+        email
       );
-      dispatch({
-        type: THIRD_PARTY_AUTH_WITH_CODE_SUCCESS,
-        payload,
-      });
+      if (typeof payload === 'string')
+        appHistory.replace(`/complete-profile/${payload}`);
+      else
+        dispatch({
+          type: THIRD_PARTY_AUTH_WITH_CODE_SUCCESS,
+          payload,
+        });
     } catch (err: any) {
       dispatch({
         type: THIRD_PARTY_AUTH_WITH_CODE_FAILED,

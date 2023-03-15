@@ -206,23 +206,35 @@ const postReducer = (
           showCreateVideoLayer: false,
         },
       };
-    case CREATE_POST_LIKE_SUCCESS:
+    case CREATE_POST_LIKE_SUCCESS: {
+      const postDetailData = state.postDetail.data;
+      if (postDetailData) {
+        if (action.payload.type === 'like') {
+          postDetailData.liked = true;
+          postDetailData.disliked = false;
+          postDetailData.postReaction = {
+            ...postDetailData?.postReaction,
+            likesCount: postDetailData.postReaction.likesCount + 1,
+          };
+        } else {
+          postDetailData.disliked = true;
+          postDetailData.postReaction = {
+            ...postDetailData?.postReaction,
+            likesCount: state.postDetail.data?.liked
+              ? postDetailData.postReaction.likesCount - 1
+              : postDetailData.postReaction.likesCount,
+          };
+          postDetailData.liked = false;
+        }
+      }
       return {
         ...state,
         postDetail: {
           ...state.postDetail,
-          data: state.postDetail.data
-            ? {
-                ...state.postDetail.data,
-                liked: true,
-                postReaction: {
-                  ...state.postDetail.data.postReaction,
-                  likesCount: state.postDetail.data.postReaction.likesCount + 1,
-                },
-              }
-            : state.postDetail.data,
+          data: postDetailData,
         },
       };
+    }
     case REMOVE_POST_LIKE_SUCCESS:
       return {
         ...state,
@@ -232,9 +244,12 @@ const postReducer = (
             ? {
                 ...state.postDetail.data,
                 liked: false,
+                disliked: false,
                 postReaction: {
                   ...state.postDetail.data.postReaction,
-                  likesCount: state.postDetail.data.postReaction.likesCount - 1,
+                  likesCount: state.postDetail.data.liked
+                    ? state.postDetail.data.postReaction.likesCount - 1
+                    : state.postDetail.data.postReaction.likesCount,
                 },
               }
             : state.postDetail.data,

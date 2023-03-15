@@ -56,6 +56,7 @@ export const createMeetingAction = (
               public: meeting.public!,
               liveStream: meeting.liveStream!,
               record: meeting.record!,
+              joinLinkExpiryAsHours: meeting.joinLinkExpiryAsHours!,
             },
           },
         });

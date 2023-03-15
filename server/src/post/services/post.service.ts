@@ -63,6 +63,7 @@ export class PostService {
         'post.public',
         'post.allowReaction',
         'post.allowComment',
+        'post.allowDislike',
       ])
       .leftJoin('post.channel', 'channel')
       .leftJoin('channel.zone', 'zone')
@@ -291,10 +292,10 @@ export class PostService {
                 .where('post.type = :meetingType', { meetingType: 'meeting' })
                 .andWhere(
                   new Brackets((qbii) => {
-                    qbii.where('post.conferenceEndDate is null').orWhere(
+                    qbii.where('post.streaming').orWhere(
                       new Brackets((qbiii) => {
                         qbiii
-                          .where('post.conferenceEndDate is not null')
+                          .where('post.streaming = false')
                           .andWhere('post.record');
                       }),
                     );
@@ -546,6 +547,10 @@ export class PostService {
           channelId: query.channelId,
         })
         .paginate(query);
+    if (query.following && booleanValue(query.following))
+      return this.getUserFeedSelection(userId, query, false, false).paginate(
+        query,
+      );
 
     return this.getUserFeedSelection(userId, query, true, true).paginate(query);
   }

@@ -14,9 +14,9 @@ const ThirdPartyAuth: FC = () => {
 
   useEffect(() => {
     const code = new URLSearchParams(window.location.search).get('code');
-
-    if (code) {
-      dispatch(authenticateWithThirdPartyCodeAction(name, code));
+    const email = new URLSearchParams(window.location.search).get('email');
+    if (code || email) {
+      dispatch(authenticateWithThirdPartyCodeAction(name, code, email));
     }
   }, []);
 

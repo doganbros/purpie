@@ -13,7 +13,7 @@ interface SelectedUserProps {
   contactId?: string;
 }
 
-const SelectedUser: FC<SelectedUserProps> = ({ user, contactId }) => {
+const SelectedUser: FC<SelectedUserProps> = ({ user }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
@@ -30,34 +30,33 @@ const SelectedUser: FC<SelectedUserProps> = ({ user, contactId }) => {
           userName={user.userName}
           fullName={user.fullName}
           email={user.email}
+          displayPhoto={user.displayPhoto}
         />
-        {contactId && (
-          <>
-            <Button
-              primary
-              onClick={() => setShowRemoveDialog(true)}
-              color="status-error"
-              alignSelf="center"
-              margin={{ vertical: 'medium' }}
-              label={t('SelectedUser.removeContact')}
+        <>
+          <Button
+            primary
+            onClick={() => setShowRemoveDialog(true)}
+            color="status-error"
+            alignSelf="center"
+            margin={{ vertical: 'medium' }}
+            label={t('SelectedUser.removeContact')}
+          />
+          {showRemoveDialog && (
+            <ConfirmDialog
+              onDismiss={() => {
+                setShowRemoveDialog(false);
+              }}
+              onConfirm={() => {
+                setShowRemoveDialog(false);
+                dispatch(removeContactAction(user.id));
+              }}
+              confirmButtonText={t('common.remove')}
+              message={t('SelectedUser.removeConfirmMsg', {
+                fullName: user.fullName,
+              })}
             />
-            {showRemoveDialog && (
-              <ConfirmDialog
-                onDismiss={() => {
-                  setShowRemoveDialog(false);
-                }}
-                onConfirm={() => {
-                  setShowRemoveDialog(false);
-                  dispatch(removeContactAction(contactId));
-                }}
-                confirmButtonText={t('common.remove')}
-                message={t('SelectedUser.removeConfirmMsg', {
-                  fullName: user.fullName,
-                })}
-              />
-            )}
-          </>
-        )}
+          )}
+        </>
       </Box>
     </>
   );

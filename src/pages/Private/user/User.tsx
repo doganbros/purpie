@@ -32,6 +32,8 @@ const User: FC = () => {
   const {
     user: { detail },
     post: { featuredPost },
+    auth: { user },
+    invitation: { invitedContacts },
   } = useSelector((state: AppState) => state);
   const history = useHistory();
 
@@ -54,7 +56,14 @@ const User: FC = () => {
       topComponent={
         detail.user && (
           <Header
+            currentUserId={user!.id}
             user={detail.user}
+            isUserInvited={
+              detail.user.invited ||
+              invitedContacts.userIds.some(
+                (userId) => userId === detail.user?.id
+              )
+            }
             handleShowRemoveDialog={handleShowRemoveDialog}
           />
         )
@@ -67,6 +76,7 @@ const User: FC = () => {
               userName={detail.user.userName}
               fullName={detail.user.fullName}
               email={detail.user.email}
+              displayPhoto={detail.user.displayPhoto}
             />
           </Box>
         )
@@ -104,9 +114,7 @@ const User: FC = () => {
           }}
           onConfirm={() => {
             setShowRemoveDialog(false);
-            if (detail?.user?.contactUserId) {
-              dispatch(removeContactAction(detail.user.contactUserId));
-            }
+            dispatch(removeContactAction(detail.user!.id));
           }}
           confirmButtonText={t('common.remove')}
           message={t('SelectedUser.removeConfirmMsg', {
