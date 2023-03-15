@@ -33,6 +33,7 @@ const User: FC = () => {
     user: { detail },
     post: { featuredPost },
     auth: { user },
+    invitation: { invitedContacts },
   } = useSelector((state: AppState) => state);
   const history = useHistory();
 
@@ -57,6 +58,12 @@ const User: FC = () => {
           <Header
             currentUserId={user!.id}
             user={detail.user}
+            isUserInvited={
+              detail.user.invited ||
+              invitedContacts.userIds.some(
+                (userId) => userId === detail.user?.id
+              )
+            }
             handleShowRemoveDialog={handleShowRemoveDialog}
           />
         )

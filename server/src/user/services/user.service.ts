@@ -101,6 +101,15 @@ export class UserService {
         `ts_rank(user.search_document, to_tsquery('simple', :searchTerm))`,
         'search_rank',
       )
+      .addSelect(
+        (sq) =>
+          sq
+            .select('count(*) > 0')
+            .from(Invitation, 'user_invitation')
+            .where('user_invitation.createdById = :userId', { userId })
+            .andWhere('user_invitation.email = user.email', {}),
+        'invited',
+      )
       .where(`user.search_document @@ to_tsquery('simple', :searchTerm)`);
     if (excludeUserIds)
       result.andWhere('user.id not IN (:...excludeUserIds)', {
@@ -360,6 +369,17 @@ export class UserService {
           })
           .andWhere('contact.contactUserId = user.id');
       }, 'isInContact')
+      .addSelect(
+        (sq) =>
+          sq
+            .select('count(*) > 0')
+            .from(Invitation, 'user_invitation')
+            .where('user_invitation.createdById = :userId', {
+              userId: currentUserId,
+            })
+            .andWhere('user_invitation.email = user.email', {}),
+        'invited',
+      )
       .addSelect((subQuery) => {
         return subQuery
           .select('contact.id', 'contactUserId')
@@ -396,6 +416,7 @@ export class UserService {
       email: result.user_email,
       isInContact: result.isInContact,
       contactUserId: result.contactUserId,
+      invited: result.invited,
     };
   }
 
