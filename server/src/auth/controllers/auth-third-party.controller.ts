@@ -166,32 +166,31 @@ export class AuthThirdPartyController {
     if (name === 'apple') {
       if (body.email) {
         user = await this.authService.getUserByEmail(body.email);
-        if (user) {
-          const userPayload: UserProfile = {
-            id: user.id,
-            fullName: user.fullName,
-            email: user.email,
-            userName: user.userName,
-            userRole: {
-              ...user.userRole,
-            },
-          };
-          await this.authService.setAccessTokens(
-            {
-              id: userPayload.id,
-            },
-            res,
-            req,
-          );
 
-          return userPayload;
-        }
+        const userPayload: UserProfile = {
+          id: user!.id,
+          fullName: user!.fullName,
+          email: user!.email,
+          userName: user!.userName,
+          userRole: {
+            ...user!.userRole,
+          },
+        };
+        await this.authService.setAccessTokens(
+          {
+            id: userPayload.id,
+          },
+          res,
+          req,
+        );
+
+        return userPayload;
       }
       let userInfo;
       if (body.user) userInfo = JSON.parse(body.user);
       else if (body.id_token) {
-        const idTokePayload: any = jwt.decode(body.id_token);
-        userInfo = { email: idTokePayload?.email };
+        const idTokenPayload: any = jwt.decode(body.id_token);
+        userInfo = { email: idTokenPayload?.email.toLowerCase() };
       }
 
       res.setHeader('Access-Control-Allow-Origin', '*');
@@ -251,7 +250,7 @@ export class AuthThirdPartyController {
     )
     { email }: UserBasic,
     @Body() { token, userName }: CompleteProfileDto,
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
     @Req() req: Request,
   ) {
     const user = await this.authService.verifyUserEmail(email, userName, token);
