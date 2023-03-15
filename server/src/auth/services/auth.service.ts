@@ -26,7 +26,6 @@ import {
 import { InitializeUserDto } from '../dto/initialize-user.dto';
 import { RegisterUserDto } from '../dto/register-user.dto';
 import {
-  UserBasic,
   UserBasicWithToken,
   UserProfile,
   UserTokenPayload,
@@ -381,7 +380,7 @@ export class AuthService {
     email: string,
     userName: string,
     token: string,
-  ): Promise<UserBasic> {
+  ): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
         email,
@@ -403,10 +402,7 @@ export class AuthService {
     user.userName = userName;
     await user.save();
 
-    return {
-      fullName: user.fullName,
-      email: user.email,
-    };
+    return user;
   }
 
   async initializeUser(info: InitializeUserDto, res: Response, req: Request) {

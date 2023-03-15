@@ -14,21 +14,35 @@ import {
   Res,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { User } from 'entities/User.entity';
 import jwt from 'jsonwebtoken';
 import { AuthByThirdPartyDto } from '../dto/auth-by-third-party.dto';
 import { ThirdPartyLoginParams } from '../dto/third-party-login.params';
-import { UserProfile } from '../interfaces/user.interface';
+import { UserBasic, UserProfile } from '../interfaces/user.interface';
 import { AuthThirdPartyService } from '../services/auth-third-party.service';
 import { AuthService } from '../services/auth.service';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { ValidationBadRequest } from '../../utils/decorators/validation-bad-request.decorator';
+import { errorResponseDoc } from '../../../helpers/error-response-doc';
+import { ParseTokenPipe } from '../pipes/parse-token.pipe';
+import { MAIL_VERIFICATION_TYPE } from '../constants/auth.constants';
+import { CompleteProfileDto } from '../dto/complete-profile.dto';
 
 const {
   GOOGLE_OAUTH_CLIENT_ID = '',
   REACT_APP_CLIENT_HOST = '',
   APPLE_CLIENT_ID,
   APPLE_REDIRECT_URI,
+  VERIFICATION_TOKEN_SECRET = '',
 } = process.env;
 
 @Controller({ path: 'auth/third-party', version: '1' })
@@ -105,6 +119,7 @@ export class AuthThirdPartyController {
     @Req() req: Request,
   ) {
     let user: User | undefined;
+
     if (name === 'google') {
       const accessToken = await this.authThirdPartyService.getGoogleAuthAccessToken(
         body.code,
@@ -146,49 +161,118 @@ export class AuthThirdPartyController {
         email: userInfo.email,
         googleId: userInfo.id,
       });
-      return res.redirect(`${REACT_APP_CLIENT_HOST}/verify-email/${token}`);
+      return token;
     }
     if (name === 'apple') {
+      if (body.email) {
+        user = await this.authService.getUserByEmail(body.email);
+        if (user) {
+          const userPayload: UserProfile = {
+            id: user.id,
+            fullName: user.fullName,
+            email: user.email,
+            userName: user.userName,
+            userRole: {
+              ...user.userRole,
+            },
+          };
+          await this.authService.setAccessTokens(
+            {
+              id: userPayload.id,
+            },
+            res,
+            req,
+          );
+
+          return userPayload;
+        }
+      }
       let userInfo;
       if (body.user) userInfo = JSON.parse(body.user);
       else if (body.id_token) {
         const idTokePayload: any = jwt.decode(body.id_token);
-        userInfo = { email: idTokePayload?.email.toLowerCase() };
+        userInfo = { email: idTokePayload?.email };
       }
 
+      res.setHeader('Access-Control-Allow-Origin', '*');
       user = await this.authService.getUserByEmail(userInfo.email);
       if (user) {
-        const userPayload: UserProfile = {
-          id: user.id,
-          fullName: user.fullName,
+        const stringifiedQuery = stringifyQuery({
           email: user.email,
-          userName: user.userName,
-          userRole: {
-            ...user.userRole,
-          },
-        };
-        await this.authService.setAccessTokens(
-          {
-            id: user.id,
-          },
-          res,
-          req,
+        });
+        return res.redirect(
+          `${REACT_APP_CLIENT_HOST}/auth/apple?${stringifiedQuery}`,
         );
-
-        return userPayload;
       }
       const {
         token,
       } = await this.authThirdPartyService.registerUserByThirdParty({
         fullName: `${userInfo.name.firstName} ${userInfo.name.lastName}`,
-        email: userInfo.email,
+        email: userInfo.email.toLowerCase(),
       });
-      return res.redirect(`${REACT_APP_CLIENT_HOST}/verify-email/${token}`);
+      return res.redirect(`${REACT_APP_CLIENT_HOST}/complete-profile/${token}`);
     }
 
     throw new InternalServerErrorException(
       ErrorTypes.THIRD_PARTY_AUTH_ERROR,
       `Something went wrong while authenticating using ${name}`,
     );
+  }
+
+  @Post('/profile/complete')
+  @ValidationBadRequest()
+  @ApiNotFoundResponse({
+    description: 'Error thrown when user is not found',
+    schema: errorResponseDoc(404, 'User not found', 'USER_NOT_FOUND'),
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Error thrown when jwt used to verify the email is invalid',
+    schema: errorResponseDoc(
+      404,
+      'Email verification token is invalid',
+      'INVALID_JWT',
+    ),
+  })
+  @ApiCreatedResponse({
+    type: UserProfile,
+    description: `User verifies email received from inbox. `,
+  })
+  @ApiBody({
+    type: CompleteProfileDto,
+  })
+  async verifyUserEmail(
+    @Body(
+      'token',
+      new ParseTokenPipe(
+        VERIFICATION_TOKEN_SECRET,
+        'Profile verification token is invalid',
+        (payload) => payload.verificationType === MAIL_VERIFICATION_TYPE,
+      ),
+    )
+    { email }: UserBasic,
+    @Body() { token, userName }: CompleteProfileDto,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
+    const user = await this.authService.verifyUserEmail(email, userName, token);
+
+    const userPayload: UserProfile = {
+      id: user.id,
+      fullName: user.fullName,
+      email: user.email,
+      userName: user.userName,
+      userRole: {
+        ...user.userRole,
+      },
+    };
+    await this.authService.setAccessTokens(
+      {
+        id: user.id,
+      },
+      res,
+      req,
+    );
+
+    return userPayload;
   }
 }

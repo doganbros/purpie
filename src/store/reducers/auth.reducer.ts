@@ -27,6 +27,7 @@ import {
   INITIALIZE_USER_FAILED,
   UPDATE_PROFILE_PHOTO_SUCCESS,
   UPDATE_PROFILE_INFO_SUCCESS,
+  COMPLETE_PROFILE_SUCCESS,
 } from '../constants/auth.constants';
 import { AuthActionParams, AuthState } from '../types/auth.types';
 
@@ -89,6 +90,12 @@ const authReducer = (
         };
       return state;
     case THIRD_PARTY_AUTH_WITH_CODE_SUCCESS:
+      return {
+        ...state,
+        isAuthenticated: true,
+        user: action.payload,
+      };
+    case COMPLETE_PROFILE_SUCCESS:
       return {
         ...state,
         isAuthenticated: true,
