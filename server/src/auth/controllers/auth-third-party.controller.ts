@@ -164,7 +164,6 @@ export class AuthThirdPartyController {
       return token;
     }
     if (name === 'apple') {
-      console.log('REQUEST BODY: ', body);
       if (body.email) {
         user = await this.authService.getUserByEmail(body.email);
 
