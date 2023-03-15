@@ -173,7 +173,7 @@ export const authenticateWithThirdPartyCodeAction = (
         email
       );
       if (typeof payload === 'string')
-        appHistory.replace(`/auth/complete/${payload}`);
+        appHistory.replace(`/complete-profile/${payload}`);
       else
         dispatch({
           type: THIRD_PARTY_AUTH_WITH_CODE_SUCCESS,

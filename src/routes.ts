@@ -62,7 +62,7 @@ export const publicRoutes: Array<AppRoute> = [
   },
   {
     id: nanoid(),
-    path: '/auth/complete/:name',
+    path: '/complete-profile/:token',
     component: CompleteThirdPartyAuth,
     description: 'User Complete Authentication with third party',
   },

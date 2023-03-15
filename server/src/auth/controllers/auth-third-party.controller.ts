@@ -33,7 +33,6 @@ import { AuthService } from '../services/auth.service';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { ValidationBadRequest } from '../../utils/decorators/validation-bad-request.decorator';
 import { errorResponseDoc } from '../../../helpers/error-response-doc';
-import { VerifyEmailDto } from '../dto/verify-email.dto';
 import { ParseTokenPipe } from '../pipes/parse-token.pipe';
 import { MAIL_VERIFICATION_TYPE } from '../constants/auth.constants';
 import { CompleteProfileDto } from '../dto/complete-profile.dto';
@@ -120,7 +119,7 @@ export class AuthThirdPartyController {
     @Req() req: Request,
   ) {
     let user: User | undefined;
-    res.setHeader('Access-Control-Allow-Origin', '*');
+
     if (name === 'google') {
       const accessToken = await this.authThirdPartyService.getGoogleAuthAccessToken(
         body.code,
@@ -210,7 +209,7 @@ export class AuthThirdPartyController {
         fullName: `${userInfo.name.firstName} ${userInfo.name.lastName}`,
         email: userInfo.email,
       });
-      return res.redirect(`${REACT_APP_CLIENT_HOST}/auth/complete/${token}`);
+      return res.redirect(`${REACT_APP_CLIENT_HOST}/complete-profile/${token}`);
     }
 
     throw new InternalServerErrorException(
@@ -219,7 +218,7 @@ export class AuthThirdPartyController {
     );
   }
 
-  @Post('/complete-profile')
+  @Post('/profile/complete')
   @ValidationBadRequest()
   @ApiNotFoundResponse({
     description: 'Error thrown when user is not found',
@@ -250,7 +249,7 @@ export class AuthThirdPartyController {
       ),
     )
     { email }: UserBasic,
-    @Body() { token, userName }: VerifyEmailDto,
+    @Body() { token, userName }: CompleteProfileDto,
     @Res() res: Response,
     @Req() req: Request,
   ) {
