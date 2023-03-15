@@ -190,8 +190,8 @@ export class AuthThirdPartyController {
       let userInfo;
       if (body.user) userInfo = JSON.parse(body.user);
       else if (body.id_token) {
-        const idTokePayload: any = jwt.decode(body.id_token);
-        userInfo = { email: idTokePayload?.email };
+        const idTokenPayload: any = jwt.decode(body.id_token);
+        userInfo = { email: idTokenPayload?.email.toLowerCase() };
       }
 
       res.setHeader('Access-Control-Allow-Origin', '*');
