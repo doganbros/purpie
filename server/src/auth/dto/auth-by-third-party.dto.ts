@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class AuthByThirdPartyDto {
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   code: string;
 
@@ -15,7 +15,7 @@ export class AuthByThirdPartyDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  userProfile: string;
+  email: string;
 
   @ApiProperty()
   @IsString()

@@ -81,9 +81,12 @@ export const userNameExistsCheck = (
 
 export const authenticateWithThirdPartyCode = async (
   name: string,
-  code: string
+  code: string | null,
+  email: string | null
 ): Promise<User | string> =>
-  http.post(`/auth/third-party/${name}`, { code }).then((res) => res.data);
+  http
+    .post(`/auth/third-party/${name}`, code ? { code } : { email })
+    .then((res) => res.data);
 
 export const initializeUser = (user: RegisterPayload): Promise<User> =>
   http.post('auth/initial-user', user).then((res) => res.data);

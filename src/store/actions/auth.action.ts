@@ -158,7 +158,8 @@ export const getThirdPartyUrlAction = (name: string): AuthAction => {
 
 export const authenticateWithThirdPartyCodeAction = (
   name: string,
-  code: string
+  code: string | null,
+  email: string | null
 ): AuthAction => {
   return async (dispatch) => {
     dispatch({
@@ -168,7 +169,8 @@ export const authenticateWithThirdPartyCodeAction = (
     try {
       const payload = await AuthService.authenticateWithThirdPartyCode(
         name,
-        code
+        code,
+        email
       );
       if (typeof payload === 'string')
         appHistory.replace(`/auth/complete/${payload}`);

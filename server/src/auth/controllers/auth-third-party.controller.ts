@@ -165,19 +165,29 @@ export class AuthThirdPartyController {
       return token;
     }
     if (name === 'apple') {
-      if (body.userProfile) {
-        const userPayload: UserProfile = JSON.parse(body.user);
-        await this.authService.setAccessTokens(
-          {
-            id: userPayload.id,
-          },
-          res,
-          req,
-        );
+      if (body.email) {
+        user = await this.authService.getUserByEmail(body.email);
+        if (user) {
+          const userPayload: UserProfile = {
+            id: user.id,
+            fullName: user.fullName,
+            email: user.email,
+            userName: user.userName,
+            userRole: {
+              ...user.userRole,
+            },
+          };
+          await this.authService.setAccessTokens(
+            {
+              id: userPayload.id,
+            },
+            res,
+            req,
+          );
 
-        return userPayload;
+          return userPayload;
+        }
       }
-
       let userInfo;
       if (body.user) userInfo = JSON.parse(body.user);
       else if (body.id_token) {
@@ -188,13 +198,10 @@ export class AuthThirdPartyController {
       user = await this.authService.getUserByEmail(userInfo.email);
       if (user) {
         const stringifiedQuery = stringifyQuery({
-          id: user.id,
-          fullName: user.fullName,
           email: user.email,
-          userName: user.userName,
         });
         return res.redirect(
-          `${REACT_APP_CLIENT_HOST}/auth/apple/${stringifiedQuery}`,
+          `${REACT_APP_CLIENT_HOST}/auth/apple?${stringifiedQuery}`,
         );
       }
       const {
