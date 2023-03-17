@@ -171,7 +171,6 @@ export type ChannelActionParams =
         | typeof UPDATE_CHANNEL_PHOTO_REQUESTED
         | typeof UPDATE_CHANNEL_INFO_REQUESTED
         | typeof UPDATE_CHANNEL_PERMISSIONS_REQUESTED
-        | typeof UPDATE_CHANNEL_INFO_SUCCESS
         | typeof UPDATE_CHANNEL_PERMISSIONS_SUCCESS
         | typeof GET_CHANNEL_USERS_REQUESTED
         | typeof DELETE_CHANNEL_REQUESTED
@@ -179,8 +178,14 @@ export type ChannelActionParams =
     }
   | {
       type: typeof UPDATE_CHANNEL_PHOTO_SUCCESS;
+
       payload: string;
       channelId: string;
+    }
+  | {
+      type: typeof UPDATE_CHANNEL_INFO_SUCCESS;
+      channelId: string;
+      payload: ChannelBasic;
     }
   | {
       type: typeof GET_CHANNEL_USERS_SUCCESS;
