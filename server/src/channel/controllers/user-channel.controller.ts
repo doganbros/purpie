@@ -1,9 +1,9 @@
 import {
+  BadRequestException,
   Controller,
-  Headers,
   Delete,
   Get,
-  BadRequestException,
+  Headers,
 } from '@nestjs/common';
 import { ApiHeader, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UserChannel } from 'entities/UserChannel.entity';
@@ -14,11 +14,6 @@ import { CurrentUserChannel } from '../decorators/current-user-channel.decorator
 import { UserChannelRole } from '../decorators/user-channel-role.decorator';
 import { UserChannelListResponse } from '../responses/user-channel.response';
 import { UserChannelService } from '../services/user-channel.service';
-import { ChannelRole } from '../../../entities/ChannelRole.entity';
-import {
-  ChannelRoleCode,
-  ChannelRoleCodeValues,
-} from '../../../types/RoleCodes';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 
 @Controller({ path: 'user-channel', version: '1' })
