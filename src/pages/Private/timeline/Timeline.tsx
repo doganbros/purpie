@@ -170,7 +170,7 @@ const Timeline: FC = () => {
       rightComponent={
         <Box pad="medium" gap="medium">
           <SearchBar />
-          {selectedChannel ? (
+          {selectedChannel && selectedChannel.id && (
             <Box gap="medium">
               <InviteToChannel channel={selectedChannel} />
               <InviteToZone
@@ -179,9 +179,8 @@ const Timeline: FC = () => {
                 )}
               />
             </Box>
-          ) : (
-            <InvitationList />
           )}
+          {!selectedChannel && <InvitationList />}
           {selectedChannel && (
             <ChannelMembers channelId={selectedChannel.channel.id} />
           )}

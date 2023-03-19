@@ -301,7 +301,6 @@ export class ChannelController {
     description: 'User lists channel users',
     type: User,
   })
-  @UserChannelRole(['canManageRole'])
   channelUserList(
     @Query() query: SystemUserListQuery,
     @Param('channelId', ParseUUIDPipe) channelId: string,
