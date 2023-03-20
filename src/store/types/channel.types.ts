@@ -43,7 +43,7 @@ import { ZoneActionParams } from './zone.types';
 export interface ChannelBasic {
   id: string;
   name: string;
-  description: string;
+  description: string | null;
   public: boolean;
   zone?: {
     id: string;
@@ -126,7 +126,7 @@ export interface CreateChannelPayload {
 
 export interface UpdateChannelPayload {
   name: string;
-  description: string;
+  description: string | null;
   id: string;
   public: boolean;
 }
@@ -171,7 +171,6 @@ export type ChannelActionParams =
         | typeof UPDATE_CHANNEL_PHOTO_REQUESTED
         | typeof UPDATE_CHANNEL_INFO_REQUESTED
         | typeof UPDATE_CHANNEL_PERMISSIONS_REQUESTED
-        | typeof UPDATE_CHANNEL_INFO_SUCCESS
         | typeof UPDATE_CHANNEL_PERMISSIONS_SUCCESS
         | typeof GET_CHANNEL_USERS_REQUESTED
         | typeof DELETE_CHANNEL_REQUESTED
@@ -179,8 +178,14 @@ export type ChannelActionParams =
     }
   | {
       type: typeof UPDATE_CHANNEL_PHOTO_SUCCESS;
+
       payload: string;
       channelId: string;
+    }
+  | {
+      type: typeof UPDATE_CHANNEL_INFO_SUCCESS;
+      channelId: string;
+      payload: ChannelBasic;
     }
   | {
       type: typeof GET_CHANNEL_USERS_SUCCESS;

@@ -42,6 +42,27 @@ const ChannelSettings: () => Menu = () => {
     id: '',
     public: userChannels?.data[0]?.channel?.public,
   });
+  const [isFormClicked, setIsFormClicked] = useState(false);
+
+  const handleLeaveChannelForm = () => {
+    if (selectedUserChannelIndex === 0) {
+      setSelectedUserChannelIndex(0);
+      return setChannelPayload({
+        name: userChannels?.data[1]?.channel?.name || '',
+        description: userChannels?.data[1]?.channel?.description || null,
+        id: userChannels?.data[1]?.channel?.id || '',
+        public: userChannels?.data[1]?.channel?.public,
+      });
+    }
+
+    setSelectedUserChannelIndex(0);
+    return setChannelPayload({
+      name: userChannels?.data[0]?.channel?.name || '',
+      description: userChannels?.data[0]?.channel?.description || null,
+      id: userChannels?.data[0]?.channel?.id || '',
+      public: userChannels?.data[0]?.channel?.public,
+    });
+  };
 
   const [isDropOpen, setIsDropOpen] = useState(false);
   const { t } = useTranslation();
@@ -55,10 +76,16 @@ const ChannelSettings: () => Menu = () => {
 
   const showLeaveButton = user?.id !== selectedChannel?.createdBy?.id;
 
-  const isFormInitialState =
-    channelPayload.name === selectedChannel?.name &&
-    channelPayload.description === selectedChannel?.description &&
-    channelPayload.public === selectedChannel?.public;
+  const isFormInitialState = () => {
+    if (isFormClicked) {
+      return (
+        channelPayload.name === selectedChannel?.name &&
+        channelPayload.description === selectedChannel?.description &&
+        channelPayload.public === selectedChannel?.public
+      );
+    }
+    return true;
+  };
 
   useEffect(() => {
     dispatch(getUserChannelsAllAction());
@@ -100,7 +127,7 @@ const ChannelSettings: () => Menu = () => {
     url: 'channel',
     saveButton: (
       <Button
-        disabled={isFormInitialState}
+        disabled={isFormInitialState()}
         onClick={() => {
           if (!(channelId === null || channelId === undefined)) {
             dispatch(updateChannelInfoAction(channelId, channelPayload));
@@ -315,6 +342,7 @@ const ChannelSettings: () => Menu = () => {
             dispatch(deleteChannelAction(channelId));
           }
           setShowDeletePopup(false);
+          handleLeaveChannelForm();
         }}
         onDismiss={() => setShowDeletePopup(false)}
         textProps={{ wordBreak: 'break-word' }}
@@ -330,7 +358,7 @@ const ChannelSettings: () => Menu = () => {
             dispatch(unfollowChannelAction(channelId));
           }
           setShowLeavePopup(false);
-          setSelectedUserChannelIndex(0);
+          handleLeaveChannelForm();
         }}
         onDismiss={() => setShowLeavePopup(false)}
         textProps={{ wordBreak: 'break-word' }}
@@ -356,12 +384,13 @@ const ChannelSettings: () => Menu = () => {
               value={channelPayload.name}
               plain
               focusIndicator={false}
-              onChange={(event) =>
+              onChange={(event) => {
+                setIsFormClicked(true);
                 setChannelPayload({
                   ...channelPayload,
                   name: event.target.value,
-                })
-              }
+                });
+              }}
             />
           </Box>
         ),
@@ -382,15 +411,16 @@ const ChannelSettings: () => Menu = () => {
           >
             <TextInput
               placeholder={t('settings.channelDescriptionPlaceholder')}
-              value={channelPayload.description}
+              value={channelPayload.description || ''}
               plain
               focusIndicator={false}
-              onChange={(event) =>
+              onChange={(event) => {
+                setIsFormClicked(true);
                 setChannelPayload({
                   ...channelPayload,
                   description: event.target.value,
-                })
-              }
+                });
+              }}
             />
           </Box>
         ),
