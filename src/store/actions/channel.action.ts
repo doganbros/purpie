@@ -237,6 +237,8 @@ export const updateChannelInfoAction = (
       setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
       dispatch({
         type: UPDATE_CHANNEL_INFO_SUCCESS,
+        channelId,
+        payload: params,
       });
     } catch (err: any) {
       dispatch({
@@ -332,7 +334,6 @@ export const unfollowChannelAction = (channelId: string): ChannelAction => {
       });
       setToastAction('ok', i18n.t('ToastMessages.channelUnfollowed'))(dispatch);
       unsetSelectedChannelAction()(dispatch);
-      getUserChannelsAction()(dispatch);
     } catch (err: any) {
       dispatch({
         type: UNFOLLOW_CHANNEL_FAILED,

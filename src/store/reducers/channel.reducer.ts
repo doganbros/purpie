@@ -19,6 +19,7 @@ import {
   UPDATE_CHANNEL_PHOTO_SUCCESS,
   DELETE_CHANNEL_SUCCESS,
   UNFOLLOW_CHANNEL_SUCCESS,
+  UPDATE_CHANNEL_INFO_SUCCESS,
 } from '../constants/channel.constants';
 import { ChannelActionParams, ChannelState } from '../types/channel.types';
 
@@ -225,6 +226,26 @@ const channelReducer = (
           ),
           loading: false,
           error: null,
+        },
+      };
+    case UPDATE_CHANNEL_INFO_SUCCESS:
+      return {
+        ...state,
+
+        userChannels: {
+          ...state.userChannels,
+          data: state.userChannels.data.map((item) =>
+            item.channel.id === action.payload.id
+              ? {
+                  ...item,
+                  channel: {
+                    ...item.channel,
+                    name: action.payload.name,
+                    description: action.payload.description,
+                  },
+                }
+              : item
+          ),
         },
       };
 
