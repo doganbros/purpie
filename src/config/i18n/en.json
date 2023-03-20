@@ -477,6 +477,7 @@
     "CANT_UNBLOCK_YOURSELF": "You cannot unblock yourself",
     "CHANNEL_NOT_FOUND": "Channel Not Found!",
     "ZONE_NOT_FOUND": "Zone Not Found!",
+    "ZONE_SUBDOMAIN_ALREADY_EXIST": "The requested zone subdomain already exist.",
     "INVITATION_NOT_FOUND": "Invitation Not Found!",
     "USER_PAYLOAD_REQUIRED": "User payload must be retrieved before using this guard.",
     "USER_ALREADY_INVITED_TO_CHANNEL": "The specified user has already been invited to this channel.",
