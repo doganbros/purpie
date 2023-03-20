@@ -84,17 +84,18 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
           </Box>
         </Box>
         {invitation.response ? (
-          <Button reverse>
-            <Box
-              pad={{ vertical: 'xsmall', horizontal: 'medium' }}
-              direction="row"
-              align="center"
-            >
-              <Text size="xsmall" weight={500}>
-                {t('common.accepted')}
-              </Text>
-            </Box>
-          </Button>
+          <Button
+            primary={false}
+            disabled
+            label={
+              <Box>
+                <Text size="xsmall" weight={500}>
+                  {t('common.accepted')}
+                </Text>
+              </Box>
+            }
+            size="small"
+          />
         ) : (
           <Box direction="row" gap="xsmall">
             <Button
