@@ -1,4 +1,10 @@
-import { Controller, Headers, Delete, Get } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Delete,
+  Get,
+  Headers,
+} from '@nestjs/common';
 import { ApiHeader, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
@@ -8,6 +14,7 @@ import { CurrentUserChannel } from '../decorators/current-user-channel.decorator
 import { UserChannelRole } from '../decorators/user-channel-role.decorator';
 import { UserChannelListResponse } from '../responses/user-channel.response';
 import { UserChannelService } from '../services/user-channel.service';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 @Controller({ path: 'user-channel', version: '1' })
 @ApiTags('user-channel')
@@ -58,6 +65,14 @@ export class UserChannelController {
   async deleteUserChannelById(
     @CurrentUserChannel() currentUserChannel: UserChannel,
   ) {
+    if (
+      currentUserChannel.channelRole.roleCode === 'SUPER_ADMIN' ||
+      currentUserChannel.channelRole.roleCode === 'ADMIN'
+    )
+      throw new BadRequestException(
+        ErrorTypes.ADMIN_CANT_UNFOLLOW_CHANNEL,
+        'Channel admin can not unfollow the channel',
+      );
     await currentUserChannel.remove();
     return 'OK';
   }
