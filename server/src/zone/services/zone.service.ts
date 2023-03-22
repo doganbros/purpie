@@ -40,6 +40,14 @@ export class ZoneService {
   ) {}
 
   async createZone(userId: string, createZoneInfo: CreateZoneDto) {
+    if (
+      await this.zoneRepository.findOne({ subdomain: createZoneInfo.subdomain })
+    ) {
+      throw new BadRequestException(
+        ErrorTypes.ZONE_SUBDOMAIN_ALREADY_EXIST,
+        'The zone with requested subdomain already exist.',
+      );
+    }
     const userZone = await this.userZoneRepository
       .create({
         userId,
