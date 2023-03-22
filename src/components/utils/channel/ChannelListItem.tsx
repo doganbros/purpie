@@ -27,7 +27,7 @@ const ChannelListItem: FC<ChannelListItemProps> = ({
   } = useSelector((state: AppState) => state);
 
   const isFollowing =
-    userChannels.data.filter((c) => c.channel.id === id && c.id !== null)
+    userChannels.data.filter((c) => c.channel.id === id && c?.id !== null)
       .length > 0;
 
   return (

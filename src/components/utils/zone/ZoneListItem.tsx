@@ -31,7 +31,8 @@ const ZoneListItem: FC<ZoneListItemProps> = ({
   } = useSelector((state: AppState) => state);
 
   const isJoined =
-    !!userZones && userZones.filter((z) => z.zone.id === id).length > 0;
+    !!userZones &&
+    userZones.filter((z) => z.zone.id === id && z?.id !== null).length > 0;
 
   return (
     <Box direction="row" justify="between" align="center">
