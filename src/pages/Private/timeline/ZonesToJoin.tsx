@@ -23,6 +23,8 @@ const ZonesToJoin: FC = () => {
   }, []);
 
   const [displayCount, setDisplayCount] = useState(SUGGESTION_AMOUNT_LESS);
+  if (!zoneSuggestions.loading && zoneSuggestions.data.length === 0)
+    return null;
   return (
     <Box gap="small">
       <Box direction="row" align="center" justify="between">

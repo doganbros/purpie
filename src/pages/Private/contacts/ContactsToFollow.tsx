@@ -21,6 +21,8 @@ const ContactsToFollow: FC = () => {
     dispatch(getContactSuggestionsAction());
   }, []);
 
+  if (data?.length === 0 && !loading) return null;
+
   return (
     <Box gap="small">
       <Text size="small" weight={500} color="dark">

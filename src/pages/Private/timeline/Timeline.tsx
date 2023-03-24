@@ -73,7 +73,9 @@ const Timeline: FC = () => {
       selectedUserZone,
       getUserZones: { userZones },
     },
+    activity: { zoneSuggestions, channelSuggestions },
     channel: { selectedChannel },
+    invitation: { invitations },
   } = useSelector((state: AppState) => state);
 
   const [showAddContent, setShowAddContent] = useState(false);
@@ -181,14 +183,20 @@ const Timeline: FC = () => {
             </Box>
           )}
           {!selectedChannel && <InvitationList />}
+          {!selectedChannel &&
+            !invitations.loading &&
+            invitations.data.length !== 0 && <Divider />}
           {selectedChannel && (
             <ChannelMembers channelId={selectedChannel.channel.id} />
           )}
-          <Divider />
+          {selectedChannel && <Divider />}
           <ChannelsToFollow />
-          <Divider />
+          {!channelSuggestions.loading &&
+            channelSuggestions.data.length !== 0 && <Divider />}
           <ZonesToJoin />
-          <Divider />
+          {!zoneSuggestions.loading && zoneSuggestions.data.length !== 0 && (
+            <Divider />
+          )}
           <Notifications />
         </Box>
       }

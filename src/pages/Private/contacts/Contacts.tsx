@@ -28,6 +28,10 @@ const Contacts: FC = () => {
 
   const {
     user: { contacts },
+    invitation: { invitations },
+    activity: {
+      contactSuggestions: { data, loading },
+    },
   } = useSelector((state: AppState) => state);
 
   const getContacts = (skip?: number) => {
@@ -80,12 +84,14 @@ const Contacts: FC = () => {
           <Box pad="medium" gap="medium">
             {!contacts.loading && contacts.data.length > 0 && <SearchBar />}
             <InvitationList />
-            <Divider />
+            {!invitations.loading && invitations.data.length !== 0 && (
+              <Divider />
+            )}
             <InviteToPurpie
               isVisibleDrop={isVisibleInvitationDrop}
               setVisibleDrop={setVisibleInvitationDrop}
             />
-            <Divider />
+            {data?.length !== 0 && !loading && <Divider />}
             <ContactsToFollow />
           </Box>
         )

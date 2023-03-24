@@ -21,6 +21,10 @@ const ChannelsToFollow: FC = () => {
   useEffect(() => {
     dispatch(getChannelSuggestionsAction(SUGGESTION_AMOUNT_MORE, 0));
   }, []);
+
+  if (!channelSuggestions.loading && channelSuggestions.data.length === 0)
+    return null;
+
   return (
     <Box gap="small">
       <Box direction="row" align="center" justify="between">
