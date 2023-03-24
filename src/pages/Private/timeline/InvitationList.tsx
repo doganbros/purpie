@@ -34,6 +34,8 @@ const InvitationList: FC = () => {
     displayCount === INVITATION_AMOUNT_LESS
       ? invitations.data.slice(0, displayCount)
       : invitations.data;
+
+  if (!invitations.loading && invitations.data.length === 0) return null;
   return (
     <Box gap="xsmall">
       <Box direction="row" align="center" justify="between">
