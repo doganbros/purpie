@@ -1,5 +1,14 @@
-import React, { useState } from 'react';
-import { Box, Button, Form, FormField, Stack, Text, TextInput } from 'grommet';
+import React, { useContext, useState } from 'react';
+import {
+  Box,
+  Button,
+  Form,
+  FormField,
+  ResponsiveContext,
+  Stack,
+  Text,
+  TextInput,
+} from 'grommet';
 import { Edit, Hide, View } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +30,8 @@ const PersonalSettings: () => Menu | null = () => {
     auth: { user },
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
+  const size = useContext(ResponsiveContext);
+
   const [userPayload, setUserPayload] = useState({
     userName: user?.userName || '',
     fullName: user?.fullName || '',
@@ -329,7 +340,7 @@ const PersonalSettings: () => Menu | null = () => {
         onClick={handleSaveChanges}
         primary
         label={t('settings.save')}
-        margin={{ vertical: 'medium' }}
+        margin={{ vertical: size === 'small' ? 'small' : 'medium' }}
         type="submit"
         form="passwordForm"
       />

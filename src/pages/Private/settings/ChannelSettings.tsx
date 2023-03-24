@@ -1,5 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Button, DropButton, Stack, Text, TextInput } from 'grommet';
+import React, { useContext, useEffect, useState } from 'react';
+import {
+  Box,
+  Button,
+  DropButton,
+  ResponsiveContext,
+  Stack,
+  Text,
+  TextInput,
+} from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { CaretDownFill, CaretRightFill, Edit } from 'grommet-icons';
 import { useTranslation } from 'react-i18next';
@@ -31,6 +39,7 @@ const ChannelSettings: () => Menu = () => {
     },
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
+  const size = useContext(ResponsiveContext);
 
   const [selectedUserChannelIndex, setSelectedUserChannelIndex] = useState(0);
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
@@ -164,7 +173,11 @@ const ChannelSettings: () => Menu = () => {
             open={isDropOpen}
             onOpen={() => setIsDropOpen(true)}
             onClose={() => setIsDropOpen(false)}
-            dropAlign={{ left: 'right', top: 'top' }}
+            dropAlign={
+              size === 'small'
+                ? { left: 'left', top: 'bottom' }
+                : { left: 'right', top: 'top' }
+            }
             fill="vertical"
             dropContent={
               <Box width={{ min: '250px' }} overflow="auto">
