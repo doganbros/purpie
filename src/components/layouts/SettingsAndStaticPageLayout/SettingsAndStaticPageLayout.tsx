@@ -1,6 +1,13 @@
-import React, { FC, useEffect, useState } from 'react';
-import { Accordion, AccordionPanel, Avatar, Box, Text } from 'grommet';
-import { CaretLeftFill, CaretRightFill } from 'grommet-icons';
+import React, { FC, useContext, useEffect, useState } from 'react';
+import {
+  Accordion,
+  AccordionPanel,
+  Avatar,
+  Box,
+  ResponsiveContext,
+  Text,
+} from 'grommet';
+import { CaretLeftFill, CaretRightFill, Previous } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { nanoid } from 'nanoid';
@@ -23,6 +30,7 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
   pageUrl,
 }) => {
   const history = useHistory();
+  const size = useContext(ResponsiveContext);
 
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -78,12 +86,14 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
   const renderContentCategory = (selectedMenu: Menu) => {
     return (
       <Box flex="grow" pad={{ horizontal: 'small' }} gap="medium">
-        {!selectedMenu.labelNotVisible && searchText.length === 0 && (
-          <Box>
-            <Text size="xlarge">{selectedMenu.label}</Text>
-          </Box>
-        )}
-        <Box direction="row" justify="between">
+        {!selectedMenu.labelNotVisible &&
+          searchText.length === 0 &&
+          size !== 'small' && (
+            <Box>
+              <Text size="xlarge">{selectedMenu.label}</Text>
+            </Box>
+          )}
+        <Box direction={size === 'small' ? 'column' : 'row'} justify="between">
           {selectedMenu.avatarWidget}
           {selectedMenu.deletePopup}
           {selectedMenu.leavePopup}
@@ -110,19 +120,21 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
               justify="start"
               gap="small"
             >
-              <Box width="medium" direction="column">
-                <Text size="medium" weight="bold">
-                  {titleParts.map(({ part, id }) =>
-                    part.toLowerCase() !== searchText.toLowerCase() ? (
-                      `${part}`
-                    ) : (
-                      <Text key={id} weight="bold">
-                        {part}
-                      </Text>
-                    )
-                  )}
-                </Text>
-              </Box>
+              {size !== 'small' && (
+                <Box width="medium" direction="column">
+                  <Text size="medium" weight="bold">
+                    {titleParts.map(({ part, id }) =>
+                      part.toLowerCase() !== searchText.toLowerCase() ? (
+                        `${part}`
+                      ) : (
+                        <Text key={id} weight="bold">
+                          {part}
+                        </Text>
+                      )
+                    )}
+                  </Text>
+                </Box>
+              )}
               <Box>{menuItem.component && menuItem.component}</Box>
             </Box>
           );
@@ -132,7 +144,7 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
   };
 
   const renderContent = () => {
-    if (searchText?.length > 0) {
+    if (searchText?.length > 0 || size === 'small') {
       const selectedItems = getSearchResults();
       if (selectedItems.length === 0) {
         return <Text>{t('StaticPage.noSearch')}</Text>;
@@ -162,7 +174,7 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
           onClick={() => history.push('/')}
           width="300px"
           align="start"
-          justify="start"
+          justify="center"
           focusIndicator={false}
         >
           <Avatar round="0" src={LogoWhite} />
@@ -178,58 +190,76 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
           </Box>
         </Box>
       </Box>
-      <Box direction="row" pad={{ horizontal: 'medium', bottom: 'medium' }}>
-        <Box justify="between">
-          <Box>
-            <Box
-              direction="row"
-              gap="small"
-              margin={{ top: '30px' }}
-              onClick={() => history.goBack()}
-              focusIndicator={false}
-              align="center"
-              pad={{ bottom: 'small' }}
-            >
-              <CaretLeftFill size="36px" color="brand" />
-              <Text> {t('common.back')}</Text>
-            </Box>
-            <Box pad={{ horizontal: 'small', vertical: 'large' }}>
-              <Text weight="bold">{pageTitle}</Text>
-            </Box>
-            {menuList.map((menuItem, index) => (
-              <React.Fragment key={menuItem.key}>
-                <Box
-                  focusIndicator={false}
-                  onClick={() => {
-                    setSelectedIndex(index);
-                    setSearchTextValue('');
-                  }}
-                  pad="small"
-                  justify="between"
-                  direction="row"
-                  width="300px"
-                >
-                  <Text
-                    weight={
-                      index === selectedIndex && searchText === ''
-                        ? 'bold'
-                        : 'normal'
-                    }
+      <Box
+        direction={size === 'small' ? 'column' : 'row'}
+        pad={{ horizontal: 'medium', bottom: 'medium' }}
+      >
+        {size !== 'small' ? (
+          <Box justify="between">
+            <Box>
+              <Box
+                direction="row"
+                gap="small"
+                margin={{ top: '30px' }}
+                onClick={() => history.goBack()}
+                focusIndicator={false}
+                align="center"
+                pad={{ bottom: 'small' }}
+              >
+                <CaretLeftFill size="36px" color="brand" />
+                <Text> {t('common.back')}</Text>
+              </Box>
+              <Box pad={{ horizontal: 'small', vertical: 'large' }}>
+                <Text weight="bold">{pageTitle}</Text>
+              </Box>
+              {menuList.map((menuItem, index) => (
+                <React.Fragment key={menuItem.key}>
+                  <Box
+                    focusIndicator={false}
+                    onClick={() => {
+                      setSelectedIndex(index);
+                      setSearchTextValue('');
+                    }}
+                    pad="small"
+                    justify="between"
+                    direction="row"
+                    width="300px"
                   >
-                    {menuItem.label}
-                  </Text>
-                  <CaretRightFill color="brand" />
-                </Box>
-                <Divider color="status-disabled-light" />
-              </React.Fragment>
-            ))}
+                    <Text
+                      weight={
+                        index === selectedIndex && searchText === ''
+                          ? 'bold'
+                          : 'normal'
+                      }
+                    >
+                      {menuItem.label}
+                    </Text>
+                    <CaretRightFill color="brand" />
+                  </Box>
+                  <Divider color="status-disabled-light" />
+                </React.Fragment>
+              ))}
+            </Box>
           </Box>
-        </Box>
+        ) : (
+          <Box
+            direction="row"
+            gap="small"
+            margin={{ top: 'large' }}
+            onClick={() => history.goBack()}
+            focusIndicator={false}
+            align="center"
+            pad={{ bottom: 'small' }}
+          >
+            <Previous size="24px" color="brand" />
+            <Text> {t('common.back')}</Text>
+          </Box>
+        )}
         <Box justify="center" fill="horizontal" align="center">
           <Box
             flex="grow"
             round="medium"
-            pad="medium"
+            pad={size === 'small' ? '0' : 'medium'}
             overflow="auto"
             fill="horizontal"
             width={{ max: '1440px' }}
