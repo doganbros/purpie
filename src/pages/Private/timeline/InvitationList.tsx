@@ -61,7 +61,7 @@ const InvitationList: FC = () => {
         )}
       </Box>
       {invitations.loading && data.length === 0 && (
-        <PurpieLogoAnimated width={50} height={50} color="brand" />
+        <PurpieLogoAnimated width={50} height={50} color="#9060EB" />
       )}
       {!invitations.loading && data.length === 0 && (
         <Text size="small">{t('Invitations.noInvitations')}</Text>

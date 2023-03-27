@@ -51,7 +51,7 @@ const ZonesToJoin: FC = () => {
       </Box>
 
       {zoneSuggestions.loading && (
-        <PurpieLogoAnimated width={50} height={50} color="brand" />
+        <PurpieLogoAnimated width={50} height={50} color="#9060EB" />
       )}
 
       {!zoneSuggestions.loading &&

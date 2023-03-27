@@ -22,7 +22,7 @@ export const FolderList: FC<FolderListProps> = ({
   return (
     <ExtendedBox gap="xsmall" overflow={{ vertical: 'auto' }} maxHeight="225px">
       {folderList.loading && (
-        <PurpieLogoAnimated width={50} height={50} color="brand" />
+        <PurpieLogoAnimated width={50} height={50} color="#9060EB" />
       )}
       {!folderList.loading && folderList.data.length === 0 ? (
         <Text size="small">No folder found!</Text>

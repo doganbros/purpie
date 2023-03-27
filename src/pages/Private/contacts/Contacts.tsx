@@ -98,7 +98,7 @@ const Contacts: FC = () => {
       }
     >
       {contacts.loading && (
-        <PurpieLogoAnimated width={50} height={50} color="brand" />
+        <PurpieLogoAnimated width={50} height={50} color="#9060EB" />
       )}
       {!contacts?.loading && contacts?.data?.length === 0 ? (
         <EmptyContact />

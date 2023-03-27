@@ -310,7 +310,7 @@ const Chat: React.FC<Props> = ({
   if (!messages)
     return (
       <Box justify="center" align="center" height="large">
-        <PurpieLogoAnimated width={70} height={70} color="brand" />
+        <PurpieLogoAnimated width={70} height={70} color="#9060EB" />
       </Box>
     );
 
@@ -376,7 +376,7 @@ const Chat: React.FC<Props> = ({
               hasMore={hasMore}
               next={fetchMessages}
               loader={
-                <PurpieLogoAnimated width={50} height={50} color="brand" />
+                <PurpieLogoAnimated width={50} height={50} color="#9060EB" />
               }
               scrollableTarget={containerId}
             >
