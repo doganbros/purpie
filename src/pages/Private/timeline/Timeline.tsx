@@ -129,14 +129,16 @@ const Timeline: FC = () => {
       delay
     )
       return (
-        <Box
-          justify="center"
-          align="center"
-          alignSelf="center"
-          height="medium"
-          pad={{ top: 'large' }}
-        >
-          <PurpieLogoAnimated width={100} height={100} color="#9060EB" />
+        <Box height="100vh">
+          <Box
+            justify="center"
+            align="center"
+            alignSelf="center"
+            height="medium"
+            pad={{ top: 'large' }}
+          >
+            <PurpieLogoAnimated width={100} height={100} color="#9060EB" />
+          </Box>
         </Box>
       );
 
