@@ -51,8 +51,8 @@
     "leave": "Leave",
     "accept": "Accept",
     "accepted": "Accepted",
-    "hour":"Hour",
-    "hours":"Hours"
+    "hour": "Hour",
+    "hours": "Hours"
   },
   "Login": {
     "title": "Login",
@@ -315,7 +315,7 @@
     "hideConferenceSubject": "Hide Conference Subject",
     "hideConferenceTimer": "Hide Conference Timer",
     "hideParticipantsStats": "Hide Participants Stats",
-    "meetingLinkExpires":"Invite meeting link expires after meeting start"
+    "meetingLinkExpires": "Invite meeting link expires after meeting start"
   },
   "MeetingDetails": {
     "meetingName": "Meeting Name",
@@ -722,5 +722,24 @@
     "a6": "You can find more info on a quick install here. If you want a more advanced guide, you can find a way to set your Purpie of from scratch here.",
     "q7": "Is there a community for Purpie?",
     "a7": "Yes! Purple supports a burgeoning community in <0>community.purpie.org</0>. Also, don’t forget to check out our website, <1>purpie.org</1>."
+  },
+  "Permissions": {
+    "OWNER": "Owner",
+    "MODERATOR": "Moderator",
+    "USER": "User"
+  },
+  "ChannelPermissionAction": {
+    "canInvite": "Create invitation for new people",
+    "canDelete": "Delete channel",
+    "canEdit": "Update channel",
+    "canManageRole": "Manage channel roles"
+  },
+  "ZonePermissionAction": {
+    "canCreateChannel": "Create new channel for zone",
+    "canInvite": "Create invitation for new people",
+    "canDelete": "Delete channel",
+    "canEdit": "Update channel",
+    "canManageRole": "Manage zone roles"
   }
+
 }
