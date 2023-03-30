@@ -1,6 +1,5 @@
 import { IsInt, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { CommaSeparatedIds } from 'src/utils/decorators/comma-separated-ids.decorator';
 import { Type } from 'class-transformer';
 import { PaginationQuery } from 'types/PaginationQuery';
 
