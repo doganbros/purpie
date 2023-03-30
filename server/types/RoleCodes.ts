@@ -12,3 +12,15 @@ export type ZoneRoleCode = typeof ZoneRoleCodeValues[number];
 export type ChannelRoleCode = typeof ChannelRoleCodeValues[number];
 export type UserRoleCode = typeof UserRoleCodeValues[number];
 export type ClientRoleCode = typeof ClientRoleCodeValues[number];
+
+export enum ZoneRole {
+  OWNER = 'OWNER',
+  MODERATOR = 'MODERATOR',
+  USER = 'USER',
+}
+
+export enum ChannelRole {
+  OWNER = 'OWNER',
+  MODERATOR = 'MODERATOR',
+  USER = 'USER',
+}

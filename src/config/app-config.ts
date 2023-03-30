@@ -56,7 +56,6 @@ export const theme: typeof grommet = deepMerge(base, {
         color: 'accent-1',
       },
     },
-    size: '18px',
   },
   layer: {
     border: {

@@ -26,6 +26,7 @@ import { PostModule } from './post/post.module';
 import { ChatModule } from './chat/chat.module';
 import { NotificationModule } from './notification/notification.module';
 import { ResponseCodeMiddleware } from './utils/middlewares/response-code.middleware';
+import { PermissionModule } from './permission/permission.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { ResponseCodeMiddleware } from './utils/middlewares/response-code.middle
     PostModule,
     ChatModule,
     NotificationModule,
+    PermissionModule,
   ],
   providers: [
     {
