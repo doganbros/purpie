@@ -9,6 +9,7 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
+  ParseArrayPipe,
   ParseUUIDPipe,
   Post,
   Put,
@@ -259,8 +260,11 @@ export class UserController {
   async searchUsers(
     @CurrentUser() user: UserTokenPayload,
     @Query() query: SearchUsersQuery,
-    @Query('excludeIds')
-    excludeIds: Array<string>,
+    @Query(
+      'excludeIds',
+      new ParseArrayPipe({ items: String, optional: true, separator: ',' }),
+    )
+    excludeIds: string[],
   ) {
     if (!query.name.trim())
       return emptyPaginatedResponse(query.limit, query.skip);
