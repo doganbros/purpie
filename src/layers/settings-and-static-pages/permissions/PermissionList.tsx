@@ -25,13 +25,13 @@ const PermissionList: FC<PermissionListProps> = ({
   const roles = Object.values(RoleCode);
   return (
     <Box
-      gap="medium"
+      gap="small"
       elevation="peach"
       direction="column"
       justify="between"
       align="center"
       round="small"
-      pad="medium"
+      pad="small"
     >
       {Object.keys(actions).map((action) => (
         <Box

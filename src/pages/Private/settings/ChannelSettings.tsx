@@ -29,8 +29,40 @@ import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
+import RoleHeader from '../../../layers/settings-and-static-pages/permissions/RoleHeader';
+import PermissionList from '../../../layers/settings-and-static-pages/permissions/PermissionList';
+import {
+  PermissionActions,
+  RoleCode,
+} from '../../../layers/settings-and-static-pages/types';
 
 const ChannelSettings: () => Menu = () => {
+  const [channelPermissions, setChannelPermissions] = useState<
+    PermissionActions[]
+  >([
+    {
+      roleCode: RoleCode.OWNER,
+      canInvite: true,
+      canDelete: true,
+      canEdit: true,
+      canManageRole: true,
+    },
+    {
+      roleCode: RoleCode.MODERATOR,
+      canInvite: true,
+      canDelete: false,
+      canEdit: true,
+      canManageRole: false,
+    },
+    {
+      roleCode: RoleCode.USER,
+      canInvite: true,
+      canDelete: false,
+      canEdit: false,
+      canManageRole: false,
+    },
+  ]);
+
   const {
     auth: { user },
     channel: { userChannels },
@@ -72,6 +104,21 @@ const ChannelSettings: () => Menu = () => {
   useEffect(() => {
     dispatch(getUserChannelsAllAction());
   }, []);
+
+  const handeChannelPermissionChange = (
+    role: RoleCode,
+    action: keyof PermissionActions,
+    checked: boolean
+  ) => {
+    const tempPermissions: PermissionActions[] = [...channelPermissions];
+    const permissionIndex = tempPermissions.findIndex(
+      (p) => p.roleCode === role
+    );
+    if (permissionIndex !== -1) {
+      tempPermissions[permissionIndex][action] = checked;
+      setChannelPermissions(tempPermissions);
+    }
+  };
 
   if (userChannels.data.length === 0) {
     return {
@@ -404,6 +451,31 @@ const ChannelSettings: () => Menu = () => {
                   description: event.target.value,
                 })
               }
+            />
+          </Box>
+        ),
+      },
+      {
+        key: 'channelManagement',
+        title: '',
+        value: 'value',
+        component: (
+          <Box>
+            <Box
+              direction="row"
+              align="center"
+              justify="between"
+              pad={{ bottom: 'small' }}
+            >
+              <Text size="medium" weight="bold">
+                Permissions
+              </Text>
+              <RoleHeader />
+            </Box>
+            <PermissionList
+              type="Channel"
+              permissions={channelPermissions}
+              handePermissionChange={handeChannelPermissionChange}
             />
           </Box>
         ),

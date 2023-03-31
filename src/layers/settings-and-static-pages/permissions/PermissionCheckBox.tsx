@@ -14,9 +14,9 @@ const PermissionCheckBox: FC<PermissionCheckBoxProps> = ({
   return (
     <ThemeContext.Extend
       value={{
-        button: {
+        checkBox: {
           ...theme.checkBox,
-          size: '18px',
+          size: '16px',
         },
       }}
     >

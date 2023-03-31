@@ -8,11 +8,7 @@ const RoleHeader: FC = () => {
 
   const roles = Object.values(RoleCode);
   return (
-    <Box
-      direction="row"
-      justify="end"
-      pad={{ bottom: 'small', right: 'medium' }}
-    >
+    <Box direction="row" justify="end" pad={{ right: 'small' }}>
       {roles.map((role, index) => (
         <Box
           key={role}

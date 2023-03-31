@@ -24,8 +24,41 @@ import AvatarUpload from './AvatarUpload';
 import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 import ConfirmDialog from '../../../components/utils/ConfirmDialog';
+import {
+  PermissionActions,
+  RoleCode,
+} from '../../../layers/settings-and-static-pages/types';
+import RoleHeader from '../../../layers/settings-and-static-pages/permissions/RoleHeader';
+import PermissionList from '../../../layers/settings-and-static-pages/permissions/PermissionList';
 
 const ZoneSettings: () => Menu | null = () => {
+  const [zonePermissions, setZonePermissions] = useState<PermissionActions[]>([
+    {
+      roleCode: RoleCode.OWNER,
+      canCreateChannel: true,
+      canInvite: true,
+      canDelete: true,
+      canEdit: true,
+      canManageRole: true,
+    },
+    {
+      roleCode: RoleCode.MODERATOR,
+      canCreateChannel: true,
+      canInvite: true,
+      canDelete: false,
+      canEdit: true,
+      canManageRole: false,
+    },
+    {
+      roleCode: RoleCode.USER,
+      canCreateChannel: false,
+      canInvite: true,
+      canDelete: false,
+      canEdit: false,
+      canManageRole: false,
+    },
+  ]);
+
   const {
     auth: { user },
     zone: {
@@ -59,6 +92,21 @@ const ZoneSettings: () => Menu | null = () => {
   const isOwner = !showLeaveButton ? t('settings.owner') : t('settings.member');
 
   const userZoneId = userZones?.[selectedUserZoneIndex]?.id;
+
+  const handeZonePermissionChange = (
+    role: RoleCode,
+    action: keyof PermissionActions,
+    checked: boolean
+  ) => {
+    const tempPermissions: PermissionActions[] = [...zonePermissions];
+    const permissionIndex = tempPermissions.findIndex(
+      (p) => p.roleCode === role
+    );
+    if (permissionIndex !== -1) {
+      tempPermissions[permissionIndex][action] = checked;
+      setZonePermissions(tempPermissions);
+    }
+  };
 
   if (userZones?.length === 0) {
     return {
@@ -369,6 +417,31 @@ const ZoneSettings: () => Menu | null = () => {
                   description: event.target.value,
                 })
               }
+            />
+          </Box>
+        ),
+      },
+      {
+        key: 'zoneManagement',
+        title: '',
+        value: 'value',
+        component: (
+          <Box>
+            <Box
+              direction="row"
+              align="center"
+              justify="between"
+              pad={{ bottom: 'small' }}
+            >
+              <Text size="medium" weight="bold">
+                Permissions
+              </Text>
+              <RoleHeader />
+            </Box>
+            <PermissionList
+              type="Zone"
+              permissions={zonePermissions}
+              handePermissionChange={handeZonePermissionChange}
             />
           </Box>
         ),
