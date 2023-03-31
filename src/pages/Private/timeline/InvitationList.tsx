@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { Box, Button, InfiniteScroll, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -21,10 +21,6 @@ const InvitationList: FC = () => {
     invitation: { invitations },
   } = useSelector((state: AppState) => state);
   const [displayCount, setDisplayCount] = useState(INVITATION_AMOUNT_LESS);
-
-  useEffect(() => {
-    getInvitations();
-  }, []);
 
   const getInvitations = (skip?: number) => {
     dispatch(getInvitationListAction(INVITATION_AMOUNT_MORE, skip));

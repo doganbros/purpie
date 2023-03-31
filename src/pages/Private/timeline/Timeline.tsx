@@ -27,11 +27,23 @@ import { LoadingState } from '../../../models/utils';
 import InvitationList from './InvitationList';
 import i18n from '../../../config/i18n/i18n-config';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
-import { DELAY_TIME } from '../../../helpers/constants';
+import {
+  DELAY_TIME,
+  INVITATION_AMOUNT_MORE,
+  SUGGESTION_AMOUNT_MORE,
+} from '../../../helpers/constants';
 import useWaitTime from '../../../hooks/useDelayTime';
 import InviteToChannel from './InviteToChannel';
 import InviteToZone from './InviteToZone';
 import ChannelMembers from './ChannelMembers';
+import { getInvitationListAction } from '../../../store/actions/invitation.action';
+import { listChannelUsersAction } from '../../../store/actions/channel.action';
+import {
+  getChannelSuggestionsAction,
+  getNotificationCountAction,
+  getNotificationsAction,
+  getZoneSuggestionsAction,
+} from '../../../store/actions/activity.action';
 
 const tabs = [
   {
@@ -63,6 +75,7 @@ const Timeline: FC = () => {
   const { t } = useTranslation();
 
   const { delay, setDelay } = useWaitTime(DELAY_TIME);
+  const { delay: loading } = useWaitTime(DELAY_TIME);
 
   const handleWaiting = () => {
     setDelay(true);
@@ -121,6 +134,32 @@ const Timeline: FC = () => {
     setHasNewlyCreatedFeed(false);
   }, [activeTab, selectedChannel]);
 
+  const getSideComponentsLoadingState = () => {
+    return (
+      invitations?.loading ||
+      channelSuggestions?.loading ||
+      zoneSuggestions?.loading ||
+      loading
+    );
+  };
+
+  useEffect(() => {
+    dispatch(getInvitationListAction(INVITATION_AMOUNT_MORE));
+    dispatch(getChannelSuggestionsAction(SUGGESTION_AMOUNT_MORE, 0));
+    if (selectedChannel) {
+      dispatch(
+        listChannelUsersAction(
+          selectedChannel.channel.id,
+          SUGGESTION_AMOUNT_MORE,
+          0
+        )
+      );
+    }
+    dispatch(getZoneSuggestionsAction(SUGGESTION_AMOUNT_MORE, 0));
+    dispatch(getNotificationCountAction());
+    dispatch(getNotificationsAction(INVITATION_AMOUNT_MORE, 0, 'all'));
+  }, []);
+
   const getTimelineContent = () => {
     if (
       [LoadingState.loading, LoadingState.pending].includes(
@@ -172,35 +211,41 @@ const Timeline: FC = () => {
     <PrivatePageLayout
       title={t('Timeline.title')}
       rightComponent={
-        <Box pad="medium" gap="medium">
-          <SearchBar />
-          {selectedChannel && selectedChannel.id && (
-            <Box gap="medium">
-              <InviteToChannel channel={selectedChannel} />
-              <InviteToZone
-                zone={userZones?.find(
-                  (z) => z.zone.id === selectedChannel?.channel.zoneId
-                )}
-              />
-            </Box>
-          )}
-          {!selectedChannel && <InvitationList />}
-          {!selectedChannel &&
-            !invitations.loading &&
-            invitations.data.length !== 0 && <Divider />}
-          {selectedChannel && (
-            <ChannelMembers channelId={selectedChannel.channel.id} />
-          )}
-          {selectedChannel && <Divider />}
-          <ChannelsToFollow />
-          {!channelSuggestions.loading &&
-            channelSuggestions.data.length !== 0 && <Divider />}
-          <ZonesToJoin />
-          {!zoneSuggestions.loading && zoneSuggestions.data.length !== 0 && (
-            <Divider />
-          )}
-          <Notifications />
-        </Box>
+        getSideComponentsLoadingState() ? (
+          <Box width="100%" height="100vh" justify="center" align="center">
+            <PurpieLogoAnimated width={100} height={100} color="#9060EB" />
+          </Box>
+        ) : (
+          <Box pad="medium" gap="medium">
+            <SearchBar />
+            {selectedChannel && selectedChannel.id && (
+              <Box gap="medium">
+                <InviteToChannel channel={selectedChannel} />
+                <InviteToZone
+                  zone={userZones?.find(
+                    (z) => z.zone.id === selectedChannel?.channel.zoneId
+                  )}
+                />
+              </Box>
+            )}
+            {!selectedChannel && <InvitationList />}
+            {!selectedChannel &&
+              !invitations.loading &&
+              invitations.data.length !== 0 && <Divider />}
+            {selectedChannel && (
+              <ChannelMembers channelId={selectedChannel.channel.id} />
+            )}
+            {selectedChannel && <Divider />}
+            <ChannelsToFollow />
+            {!channelSuggestions.loading &&
+              channelSuggestions.data.length !== 0 && <Divider />}
+            <ZonesToJoin />
+            {!zoneSuggestions.loading && zoneSuggestions.data.length !== 0 && (
+              <Divider />
+            )}
+            <Notifications />
+          </Box>
+        )
       }
       topComponent={<ChannelList handleWaiting={handleWaiting} />}
     >
