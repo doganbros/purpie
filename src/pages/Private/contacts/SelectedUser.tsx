@@ -20,7 +20,7 @@ const SelectedUser: FC<SelectedUserProps> = ({ user }) => {
 
   return !user ? (
     <Box pad="large" justify="center" align="center">
-      <PurpieLogoAnimated width={50} height={50} color="brand" />
+      <PurpieLogoAnimated width={50} height={50} color="#9060EB" />
     </Box>
   ) : (
     <>

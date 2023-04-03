@@ -19,6 +19,8 @@ import EmptyContact from './EmptyContact';
 import ContactsToFollow from './ContactsToFollow';
 import InviteToPurpie from './InviteToPurpie';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
+import useDelayTime from '../../../hooks/useDelayTime';
+import { DELAY_TIME } from '../../../helpers/constants';
 
 const Contacts: FC = () => {
   const dispatch = useDispatch();
@@ -37,6 +39,7 @@ const Contacts: FC = () => {
   const getContacts = (skip?: number) => {
     dispatch(listContactsAction({ skip }));
   };
+  const { delay } = useDelayTime(DELAY_TIME);
 
   const selectContact = (contact: ContactUser) => {
     dispatch(
@@ -69,6 +72,35 @@ const Contacts: FC = () => {
       </Box>
     );
   };
+  const getSideComponentsLoadingState = () => {
+    return invitations.loading || contacts.loading || delay;
+  };
+  const renderSideBar = () => {
+    if (contacts.selected.contactId) {
+      return <SelectedUser user={contacts.selected.user} />;
+    }
+    if (getSideComponentsLoadingState()) {
+      return (
+        <Box width="100%" height="100vh" justify="center" align="center">
+          <PurpieLogoAnimated width={100} height={100} color="#9060EB" />
+        </Box>
+      );
+    }
+
+    return (
+      <Box pad="medium" gap="medium">
+        {!contacts.loading && contacts.data.length > 0 && <SearchBar />}
+        <InvitationList />
+        {!invitations.loading && invitations.data.length !== 0 && <Divider />}
+        <InviteToPurpie
+          isVisibleDrop={isVisibleInvitationDrop}
+          setVisibleDrop={setVisibleInvitationDrop}
+        />
+        {data?.length !== 0 && !loading && <Divider />}
+        <ContactsToFollow />
+      </Box>
+    );
+  };
 
   useEffect(() => {
     getContacts();
@@ -77,28 +109,10 @@ const Contacts: FC = () => {
   return (
     <PrivatePageLayout
       title={t('common.contacts')}
-      rightComponent={
-        contacts.selected.contactId ? (
-          <SelectedUser user={contacts.selected.user} />
-        ) : (
-          <Box pad="medium" gap="medium">
-            {!contacts.loading && contacts.data.length > 0 && <SearchBar />}
-            <InvitationList />
-            {!invitations.loading && invitations.data.length !== 0 && (
-              <Divider />
-            )}
-            <InviteToPurpie
-              isVisibleDrop={isVisibleInvitationDrop}
-              setVisibleDrop={setVisibleInvitationDrop}
-            />
-            {data?.length !== 0 && !loading && <Divider />}
-            <ContactsToFollow />
-          </Box>
-        )
-      }
+      rightComponent={renderSideBar()}
     >
       {contacts.loading && (
-        <PurpieLogoAnimated width={50} height={50} color="brand" />
+        <PurpieLogoAnimated width={50} height={50} color="#9060EB" />
       )}
       {!contacts?.loading && contacts?.data?.length === 0 ? (
         <EmptyContact />

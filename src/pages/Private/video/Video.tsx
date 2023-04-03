@@ -221,7 +221,7 @@ const Video: FC = () => {
       {renderVideoSettingsResponsive()}
       {delay || loading || !data ? (
         <Box height="100vh" justify="center" align="center">
-          <PurpieLogoAnimated width={100} height={100} color="brand" />
+          <PurpieLogoAnimated width={100} height={100} color="#9060EB" />
         </Box>
       ) : (
         <Box
