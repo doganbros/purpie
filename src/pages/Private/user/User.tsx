@@ -84,12 +84,12 @@ const User: FC = () => {
     >
       {detail.loading || !detail.user ? (
         <Layer responsive={false} plain>
-          <PurpieLogoAnimated width={50} height={50} color="brand" />
+          <PurpieLogoAnimated width={50} height={50} color="#9060EB" />
         </Layer>
       ) : (
         <Box gap="medium" pad={{ vertical: 'medium' }}>
           {featuredPost.loading && (
-            <PurpieLogoAnimated width={50} height={50} color="brand" />
+            <PurpieLogoAnimated width={50} height={50} color="#9060EB" />
           )}
           {!featuredPost.loading && featuredPost.data && (
             <Text size="small">{t('User.noPinnedPost')}</Text>

@@ -1,6 +1,6 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { Box, Button, Text } from 'grommet';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
 import ZoneListItem from '../../../components/utils/zone/ZoneListItem';
@@ -8,19 +8,14 @@ import {
   SUGGESTION_AMOUNT_LESS,
   SUGGESTION_AMOUNT_MORE,
 } from '../../../helpers/constants';
-import { getZoneSuggestionsAction } from '../../../store/actions/activity.action';
+
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 const ZonesToJoin: FC = () => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
   const {
     activity: { zoneSuggestions },
   } = useSelector((state: AppState) => state);
-
-  useEffect(() => {
-    dispatch(getZoneSuggestionsAction(SUGGESTION_AMOUNT_MORE, 0));
-  }, []);
 
   const [displayCount, setDisplayCount] = useState(SUGGESTION_AMOUNT_LESS);
   if (!zoneSuggestions.loading && zoneSuggestions.data.length === 0)
@@ -51,7 +46,7 @@ const ZonesToJoin: FC = () => {
       </Box>
 
       {zoneSuggestions.loading && (
-        <PurpieLogoAnimated width={50} height={50} color="brand" />
+        <PurpieLogoAnimated width={50} height={50} color="#9060EB" />
       )}
 
       {!zoneSuggestions.loading &&

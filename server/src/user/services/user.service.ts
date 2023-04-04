@@ -142,7 +142,7 @@ export class UserService {
 
   async searchInChannels(
     userId: string,
-    channelId: number,
+    channelId: string,
     excludeUserIds: Array<string>,
     query: SearchUsersQuery,
   ) {
