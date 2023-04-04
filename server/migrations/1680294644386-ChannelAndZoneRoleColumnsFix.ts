@@ -2,6 +2,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 import { ChannelRole } from '../entities/ChannelRole.entity';
 import { ChannelRoleCode, ZoneRoleCode } from '../types/RoleCodes';
 import { ZoneRole } from '../entities/ZoneRole.entity';
+import { UserZone } from '../entities/UserZone.entity';
 
 export class ChannelAndZoneRoleColumnsFix1680294644386
   implements MigrationInterface {
@@ -42,6 +43,22 @@ export class ChannelAndZoneRoleColumnsFix1680294644386
       if (newRole)
         await queryRunner.manager.update(ZoneRole, { id: role.id }, newRole);
       else await queryRunner.manager.delete(ZoneRole, { id: role.id });
+    }
+    const userZones = await queryRunner.manager.find(UserZone);
+
+    for (const userZone of userZones) {
+      let newUserZone;
+      if (userZone.zoneRoleCode.toString() === 'SUPER_ADMIN')
+        newUserZone = { zoneRoleCode: ZoneRoleCode.OWNER };
+      else if (userZone.zoneRoleCode.toString() === 'NORMAL')
+        newUserZone = { zoneRoleCode: ZoneRoleCode.USER };
+
+      if (newUserZone)
+        await queryRunner.manager.update(
+          UserZone,
+          { id: userZone.id },
+          newUserZone,
+        );
     }
   }
 

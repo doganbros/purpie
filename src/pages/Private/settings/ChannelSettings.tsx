@@ -214,11 +214,9 @@ const ChannelSettings: () => Menu = () => {
                             }}
                             key={item.channel.id}
                             label={item.channel.name}
-                            subLabel={
-                              user?.id !== item.channel?.createdBy?.id
-                                ? 'Member'
-                                : 'Owner'
-                            }
+                            subLabel={t(
+                              `Permissions.${item.channelRole.roleCode}`
+                            )}
                             onClick={() => {
                               setChannelPayload({
                                 name: item.channel.name,
@@ -413,7 +411,7 @@ const ChannelSettings: () => Menu = () => {
   };
   if (selectedUserChannel && selectedUserChannel.channelRole?.canManageRole) {
     result.items.push({
-      key: 'channelManagement',
+      key: 'channelPermissions',
       title: '',
       value: 'value',
       component: <ChannelPermissions userChannel={selectedUserChannel} />,

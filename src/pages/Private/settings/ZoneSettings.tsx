@@ -200,11 +200,7 @@ const ZoneSettings: () => Menu | null = () => {
               {userZones?.map((item) => (
                 <ListButton
                   label={item.zone.name}
-                  subLabel={
-                    item.zone.createdBy?.id === user?.id
-                      ? t('settings.owner')
-                      : t('settings.member')
-                  }
+                  subLabel={t(`Permissions.${item.zoneRole.roleCode}`)}
                   key={item.zone.id}
                   onClick={() => {
                     setZonePayload({
@@ -370,7 +366,7 @@ const ZoneSettings: () => Menu | null = () => {
 
   if (selectedZone && selectedZone.zoneRole.canManageRole)
     result.items.push({
-      key: 'zoneManagement',
+      key: 'zonePermissions',
       title: '',
       value: 'value',
       component: <ZonePermissions userZone={selectedZone} />,

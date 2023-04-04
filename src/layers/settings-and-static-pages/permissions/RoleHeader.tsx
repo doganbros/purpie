@@ -12,7 +12,7 @@ const RoleHeader: FC = () => {
       {roles.map((role, index) => (
         <Box
           key={role}
-          pad={index === roles.length - 1 ? 'none' : { right: '90px' }}
+          pad={index === roles.length - 1 ? 'none' : { right: '30px' }}
         >
           <Text size="small" color="light-turquoise">
             {t(`Permissions.${role}`)}
