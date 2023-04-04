@@ -15,6 +15,7 @@ import { UserChannelRole } from '../decorators/user-channel-role.decorator';
 import { UserChannelListResponse } from '../responses/user-channel.response';
 import { UserChannelService } from '../services/user-channel.service';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { ChannelRoleCode } from '../../../types/RoleCodes';
 
 @Controller({ path: 'user-channel', version: '1' })
 @ApiTags('user-channel')
@@ -65,13 +66,10 @@ export class UserChannelController {
   async deleteUserChannelById(
     @CurrentUserChannel() currentUserChannel: UserChannel,
   ) {
-    if (
-      currentUserChannel.channelRole.roleCode === 'SUPER_ADMIN' ||
-      currentUserChannel.channelRole.roleCode === 'ADMIN'
-    )
+    if (currentUserChannel.channelRole.roleCode === ChannelRoleCode.OWNER)
       throw new BadRequestException(
-        ErrorTypes.ADMIN_CANT_UNFOLLOW_CHANNEL,
-        'Channel admin can not unfollow the channel',
+        ErrorTypes.OWNER_CANT_UNFOLLOW_CHANNEL,
+        'Channel owner can not unfollow the channel',
       );
     await currentUserChannel.remove();
     return 'OK';

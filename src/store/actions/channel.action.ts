@@ -41,6 +41,9 @@ import {
   UNFOLLOW_CHANNEL_REQUESTED,
   UNFOLLOW_CHANNEL_SUCCESS,
   UNFOLLOW_CHANNEL_FAILED,
+  GET_CHANNEL_ROLES_REQUESTED,
+  GET_CHANNEL_ROLES_SUCCESS,
+  GET_CHANNEL_ROLES_FAILED,
 } from '../constants/channel.constants';
 import * as ChannelService from '../services/channel.service';
 
@@ -250,7 +253,7 @@ export const updateChannelInfoAction = (
 };
 
 export const updateChannelPermissionsAction = (
-  channelId: number,
+  channelId: string,
   params: UserChannelPermissionList
 ): ChannelAction => {
   return async (dispatch) => {
@@ -261,6 +264,7 @@ export const updateChannelPermissionsAction = (
       await ChannelService.updateChannelPermissions(channelId, params);
       dispatch({
         type: UPDATE_CHANNEL_PERMISSIONS_SUCCESS,
+        payload: params,
       });
     } catch (err: any) {
       dispatch({
@@ -337,6 +341,26 @@ export const unfollowChannelAction = (channelId: string): ChannelAction => {
     } catch (err: any) {
       dispatch({
         type: UNFOLLOW_CHANNEL_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const getChannelRolesAction = (channelId: string): ChannelAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: GET_CHANNEL_ROLES_REQUESTED,
+    });
+    try {
+      const payload = await ChannelService.listChannelRoles(channelId);
+      dispatch({
+        type: GET_CHANNEL_ROLES_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: GET_CHANNEL_ROLES_FAILED,
         payload: err?.response?.data,
       });
     }

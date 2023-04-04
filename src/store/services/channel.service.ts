@@ -2,6 +2,7 @@ import { serialize } from 'object-to-formdata';
 import {
   ChannelBasic,
   ChannelListItem,
+  ChannelRole,
   ChannelSearchParams,
   CreateChannelPayload,
   UserChannelPermissionList,
@@ -64,7 +65,7 @@ export const updateChannelInfo = (
   http.put(`channel/update/${channelId}`, params).then((res) => res.data);
 
 export const updateChannelPermissions = (
-  channelId: number,
+  channelId: string,
   params: UserChannelPermissionList
 ): Promise<any> =>
   http
@@ -85,3 +86,6 @@ export const deleteChannel = (channelId: string): Promise<any> =>
 
 export const unfollowChannel = (channelId: string): Promise<any> =>
   http.delete(`user-channel/remove/${channelId}`).then((res) => res.data);
+
+export const listChannelRoles = (channelId: string): Promise<ChannelRole[]> =>
+  http.get(`channel/role/list/${channelId}`).then((res) => res.data);

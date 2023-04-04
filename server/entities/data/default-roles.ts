@@ -1,4 +1,4 @@
-import { ChannelRole, ZoneRole } from '../../types/RoleCodes';
+import { ChannelRoleCode, ZoneRoleCode } from '../../types/RoleCodes';
 
 export const defaultZoneRoles = [
   {
@@ -83,21 +83,21 @@ export const defaultChannelRoles = [
 
 export const baseChannelRoles = [
   {
-    roleCode: ChannelRole.OWNER,
+    roleCode: ChannelRoleCode.OWNER,
     canInvite: true,
     canDelete: true,
     canEdit: true,
     canManageRole: true,
   },
   {
-    roleCode: ChannelRole.MODERATOR,
+    roleCode: ChannelRoleCode.MODERATOR,
     canInvite: true,
     canDelete: false,
     canEdit: true,
     canManageRole: false,
   },
   {
-    roleCode: ChannelRole.USER,
+    roleCode: ChannelRoleCode.USER,
     canInvite: true,
     canDelete: false,
     canEdit: false,
@@ -107,7 +107,7 @@ export const baseChannelRoles = [
 
 export const baseZoneRoles = [
   {
-    roleCode: ZoneRole.OWNER,
+    roleCode: ZoneRoleCode.OWNER,
     canCreateChannel: true,
     canInvite: true,
     canDelete: true,
@@ -115,7 +115,7 @@ export const baseZoneRoles = [
     canManageRole: true,
   },
   {
-    roleCode: ZoneRole.MODERATOR,
+    roleCode: ZoneRoleCode.MODERATOR,
     canCreateChannel: true,
     canInvite: true,
     canDelete: false,
@@ -123,7 +123,7 @@ export const baseZoneRoles = [
     canManageRole: false,
   },
   {
-    roleCode: ZoneRole.USER,
+    roleCode: ZoneRoleCode.USER,
     canCreateChannel: false,
     canInvite: true,
     canDelete: false,

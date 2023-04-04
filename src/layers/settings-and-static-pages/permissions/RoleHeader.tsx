@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
 import { Box, Text } from 'grommet';
 import { useTranslation } from 'react-i18next';
-import { RoleCode } from '../types';
+import { ChannelRoleCode } from '../../../store/types/channel.types';
 
 const RoleHeader: FC = () => {
   const { t } = useTranslation();
 
-  const roles = Object.values(RoleCode);
+  const roles = Object.values(ChannelRoleCode);
   return (
     <Box direction="row" justify="end" pad={{ right: 'small' }}>
       {roles.map((role, index) => (

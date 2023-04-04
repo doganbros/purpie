@@ -1,7 +1,8 @@
 import {
-  ZoneBasic,
   CreateZonePayload,
   ZoneAction,
+  ZoneBasic,
+  ZoneRole,
   ZoneSearchParams,
 } from '../types/zone.types';
 import {
@@ -9,31 +10,38 @@ import {
   CREATE_ZONE_FAILED,
   CREATE_ZONE_REQUESTED,
   CREATE_ZONE_SUCCESS,
+  DELETE_ZONE_SUCCESS,
   GET_USER_ZONES_FAILED,
   GET_USER_ZONES_REQUESTED,
   GET_USER_ZONES_SUCCESS,
+  GET_ZONE_ROLES_FAILED,
+  GET_ZONE_ROLES_REQUESTED,
+  GET_ZONE_ROLES_SUCCESS,
   JOIN_ZONE_FAILED,
   JOIN_ZONE_REQUESTED,
   JOIN_ZONE_SUCCESS,
+  LEAVE_ZONE_FAILED,
+  LEAVE_ZONE_SUCCESS,
   OPEN_CREATE_ZONE_LAYER,
   SEARCH_ZONE_FAILED,
   SEARCH_ZONE_REQUESTED,
   SEARCH_ZONE_SUCCESS,
-  UPDATE_ZONE_PHOTO_SUCCESS,
-  UPDATE_ZONE_PHOTO_REQUESTED,
-  UPDATE_ZONE_PHOTO_FAILED,
+  UPDATE_ZONE_INFO_FAILED,
   UPDATE_ZONE_INFO_REQUESTED,
   UPDATE_ZONE_INFO_SUCCESS,
-  UPDATE_ZONE_INFO_FAILED,
-  DELETE_ZONE_SUCCESS,
-  LEAVE_ZONE_SUCCESS,
-  LEAVE_ZONE_FAILED,
+  UPDATE_ZONE_PERMISSIONS_FAILED,
+  UPDATE_ZONE_PERMISSIONS_REQUESTED,
+  UPDATE_ZONE_PERMISSIONS_SUCCESS,
+  UPDATE_ZONE_PHOTO_FAILED,
+  UPDATE_ZONE_PHOTO_REQUESTED,
+  UPDATE_ZONE_PHOTO_SUCCESS,
 } from '../constants/zone.constants';
 
 import * as ZoneService from '../services/zone.service';
 import { setToastAction } from './util.action';
 import i18n from '../../config/i18n/i18n-config';
 import { navigateToSubdomain } from '../../helpers/app-subdomain';
+import { ChannelAction } from '../types/channel.types';
 
 export const getUserZonesAction = (): ZoneAction => {
   return async (dispatch) => {
@@ -225,6 +233,49 @@ export const leaveZoneAction = (leaveZoneId: string): ZoneAction => {
     } catch (err: any) {
       dispatch({
         type: LEAVE_ZONE_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const getZoneRolesAction = (zoneId: string): ZoneAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: GET_ZONE_ROLES_REQUESTED,
+    });
+    try {
+      const payload: ZoneRole[] = await ZoneService.listZoneRoles(zoneId);
+      dispatch({
+        type: GET_ZONE_ROLES_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: GET_ZONE_ROLES_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const updateZonePermissionsAction = (
+  zoneId: string,
+  params: ZoneRole
+): ChannelAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: UPDATE_ZONE_PERMISSIONS_REQUESTED,
+    });
+    try {
+      await ZoneService.updateZonePermissions(zoneId, params);
+      dispatch({
+        type: UPDATE_ZONE_PERMISSIONS_SUCCESS,
+        payload: params,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: UPDATE_ZONE_PERMISSIONS_FAILED,
         payload: err?.response?.data,
       });
     }

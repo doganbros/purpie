@@ -3,6 +3,7 @@ import { CheckBox, ThemeContext } from 'grommet';
 import { theme } from '../../../config/app-config';
 
 interface PermissionCheckBoxProps {
+  disabled: boolean;
   checked: boolean;
   handleChange: (checked: boolean) => void;
 }
@@ -10,6 +11,7 @@ interface PermissionCheckBoxProps {
 const PermissionCheckBox: FC<PermissionCheckBoxProps> = ({
   checked,
   handleChange,
+  disabled,
 }) => {
   return (
     <ThemeContext.Extend
@@ -21,6 +23,7 @@ const PermissionCheckBox: FC<PermissionCheckBoxProps> = ({
       }}
     >
       <CheckBox
+        disabled={disabled}
         checked={checked}
         onChange={({ target }) => handleChange(target.checked)}
       />

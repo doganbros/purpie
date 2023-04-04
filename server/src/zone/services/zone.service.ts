@@ -8,7 +8,7 @@ import { URL } from 'url';
 import { Brackets, Not, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Zone } from 'entities/Zone.entity';
-import { defaultZoneRoles } from 'entities/data/default-roles';
+import { baseZoneRoles } from 'entities/data/default-roles';
 import { tsqueryParam } from 'helpers/utils';
 import { SearchQuery } from 'types/SearchQuery';
 import { ZoneRole } from 'entities/ZoneRole.entity';
@@ -23,6 +23,7 @@ import { EditZoneDto } from '../dto/edit-zone.dto';
 import { UpdateUserZoneRoleDto } from '../dto/update-user-zone-role.dto';
 import { UpdateZonePermission } from '../dto/update-zone-permission.dto';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { ZoneRoleCode } from '../../../types/RoleCodes';
 
 const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
 
@@ -51,7 +52,7 @@ export class ZoneService {
     const userZone = await this.userZoneRepository
       .create({
         userId,
-        zoneRoleCode: 'SUPER_ADMIN',
+        zoneRoleCode: ZoneRoleCode.OWNER,
         zone: await this.zoneRepository
           .create({
             name: createZoneInfo.name,
@@ -65,7 +66,7 @@ export class ZoneService {
       .save();
 
     await this.zoneRoleRepository.insert(
-      defaultZoneRoles.map((v) => ({ ...v, zoneId: userZone.zone.id })),
+      baseZoneRoles.map((v) => ({ ...v, zoneId: userZone.zone.id })),
     );
 
     return userZone;
@@ -216,8 +217,8 @@ export class ZoneService {
     );
   }
 
-  listZoneRoles(zoneId: number) {
-    return this.zoneRoleRepository.find({ take: 30, where: { zoneId } });
+  listZoneRoles(zoneId: string) {
+    return this.zoneRoleRepository.find({ where: { zoneId } });
   }
 
   listZoneUsers(zoneId: number, query: SystemUserListQuery) {
@@ -297,7 +298,7 @@ export class ZoneService {
     return this.zoneRoleRepository.create({ ...info, zoneId }).save();
   }
 
-  async removeZoneRole(zoneId: string, roleCode: string) {
+  async removeZoneRole(zoneId: string, roleCode: ZoneRoleCode) {
     const existing = await this.userZoneRepository.count({
       where: { zoneRoleCode: roleCode, zoneId },
     });
@@ -309,19 +310,19 @@ export class ZoneService {
       );
 
     return this.zoneRoleRepository
-      .delete({ roleCode, isSystemRole: false, zoneId })
+      .delete({ roleCode, zoneId })
       .then((res) => res.affected);
   }
 
   async editZoneRolePermissions(
     zoneId: string,
-    roleCode: any,
+    roleCode: ZoneRoleCode,
     info: Partial<UpdateZonePermission>,
   ) {
-    if (roleCode === 'SUPER_ADMIN')
+    if (roleCode === ZoneRoleCode.OWNER)
       throw new ForbiddenException(
-        ErrorTypes.CHANGE_SUPER_ADMIN_PERMISSION,
-        "Super Admin Permissions can't be changed",
+        ErrorTypes.CHANGE_OWNER_PERMISSION,
+        "Zone Owner Permissions can't be changed",
       );
 
     const updates: Partial<UpdateZonePermission> = {};
