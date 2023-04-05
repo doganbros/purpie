@@ -1,6 +1,10 @@
 import { paginationInitialState } from '../../helpers/constants';
 import {
   CLOSE_CREATE_CHANNEL_LAYER,
+  DELETE_CHANNEL_SUCCESS,
+  GET_CHANNEL_ROLES_FAILED,
+  GET_CHANNEL_ROLES_REQUESTED,
+  GET_CHANNEL_ROLES_SUCCESS,
   GET_CHANNEL_USERS_FAILED,
   GET_CHANNEL_USERS_REQUESTED,
   GET_CHANNEL_USERS_SUCCESS,
@@ -15,11 +19,11 @@ import {
   SEARCH_CHANNEL_REQUESTED,
   SEARCH_CHANNEL_SUCCESS,
   SET_SELECTED_CHANNEL,
-  UNSET_SELECTED_CHANNEL,
-  UPDATE_CHANNEL_PHOTO_SUCCESS,
-  DELETE_CHANNEL_SUCCESS,
   UNFOLLOW_CHANNEL_SUCCESS,
+  UNSET_SELECTED_CHANNEL,
   UPDATE_CHANNEL_INFO_SUCCESS,
+  UPDATE_CHANNEL_PERMISSIONS_SUCCESS,
+  UPDATE_CHANNEL_PHOTO_SUCCESS,
 } from '../constants/channel.constants';
 import { ChannelActionParams, ChannelState } from '../types/channel.types';
 
@@ -44,6 +48,11 @@ const initialState: ChannelState = {
     ...paginationInitialState,
     loading: false,
     error: null,
+  },
+  channelRoles: {
+    loading: false,
+    error: null,
+    data: [],
   },
 };
 
@@ -248,6 +257,55 @@ const channelReducer = (
           ),
         },
       };
+    case GET_CHANNEL_ROLES_REQUESTED:
+      return {
+        ...state,
+        channelRoles: {
+          ...state.channelRoles,
+          loading: true,
+          error: null,
+        },
+      };
+    case GET_CHANNEL_ROLES_SUCCESS:
+      return {
+        ...state,
+        channelRoles: {
+          data: action.payload,
+          loading: false,
+          error: null,
+        },
+      };
+    case GET_CHANNEL_ROLES_FAILED:
+      return {
+        ...state,
+        channelRoles: {
+          ...state.channelRoles,
+          loading: false,
+          error: action.payload,
+        },
+      };
+
+    case UPDATE_CHANNEL_PERMISSIONS_SUCCESS: {
+      const updatedRoleIndex = state.channelRoles.data.findIndex(
+        (r) => r.roleCode === action.payload.roleCode
+      );
+      if (updatedRoleIndex === -1) return state;
+      const updatedRole = {
+        ...state.channelRoles.data[updatedRoleIndex],
+        ...action.payload,
+      };
+      return {
+        ...state,
+        channelRoles: {
+          ...state.channelRoles,
+          data: [
+            ...state.channelRoles.data.slice(0, updatedRoleIndex),
+            updatedRole,
+            ...state.channelRoles.data.slice(updatedRoleIndex + 1),
+          ],
+        },
+      };
+    }
 
     default:
       return state;

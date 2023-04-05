@@ -1,8 +1,4 @@
 import {
-  UPDATE_ZONE_PERMISSIONS_FAILED,
-  UPDATE_ZONE_PERMISSIONS_REQUESTED,
-  UPDATE_ZONE_INFO_REQUESTED,
-  UPDATE_ZONE_INFO_FAILED,
   CLOSE_CREATE_ZONE_LAYER,
   CREATE_ZONE_FAILED,
   CREATE_ZONE_REQUESTED,
@@ -11,6 +7,7 @@ import {
   DELETE_USER_ZONE_REQUESTED,
   DELETE_ZONE_FAILED,
   DELETE_ZONE_REQUESTED,
+  DELETE_ZONE_SUCCESS,
   GET_CURRENT_USER_ZONE_FAILED,
   GET_CURRENT_USER_ZONE_REQUESTED,
   GET_CURRENT_USER_ZONE_SUCCESS,
@@ -20,26 +17,32 @@ import {
   GET_USER_ZONES_FAILED,
   GET_USER_ZONES_REQUESTED,
   GET_USER_ZONES_SUCCESS,
+  GET_ZONE_ROLES_FAILED,
+  GET_ZONE_ROLES_REQUESTED,
+  GET_ZONE_ROLES_SUCCESS,
   INVITE_TO_ZONE_FAILED,
   INVITE_TO_ZONE_REQUESTED,
   JOIN_ZONE_FAILED,
   JOIN_ZONE_REQUESTED,
   JOIN_ZONE_SUCCESS,
+  LEAVE_ZONE_FAILED,
+  LEAVE_ZONE_SUCCESS,
   OPEN_CREATE_ZONE_LAYER,
   SEARCH_ZONE_FAILED,
   SEARCH_ZONE_REQUESTED,
   SEARCH_ZONE_SUCCESS,
   SET_CURRENT_USER_ZONE,
   UPDATE_ZONE_FAILED,
-  UPDATE_ZONE_REQUESTED,
-  UPDATE_ZONE_PHOTO_SUCCESS,
-  UPDATE_ZONE_PHOTO_REQUESTED,
-  UPDATE_ZONE_PHOTO_FAILED,
-  UPDATE_ZONE_PERMISSIONS_SUCCESS,
+  UPDATE_ZONE_INFO_FAILED,
+  UPDATE_ZONE_INFO_REQUESTED,
   UPDATE_ZONE_INFO_SUCCESS,
-  DELETE_ZONE_SUCCESS,
-  LEAVE_ZONE_FAILED,
-  LEAVE_ZONE_SUCCESS,
+  UPDATE_ZONE_PERMISSIONS_FAILED,
+  UPDATE_ZONE_PERMISSIONS_REQUESTED,
+  UPDATE_ZONE_PERMISSIONS_SUCCESS,
+  UPDATE_ZONE_PHOTO_FAILED,
+  UPDATE_ZONE_PHOTO_REQUESTED,
+  UPDATE_ZONE_PHOTO_SUCCESS,
+  UPDATE_ZONE_REQUESTED,
 } from '../constants/zone.constants';
 
 import { PaginatedResponse } from '../../models/paginated-response';
@@ -60,16 +63,21 @@ export interface ZoneListItem extends ZoneBasic {
   createdBy?: User;
 }
 
-export type ZoneRoleCode = 'SUPER_ADMIN' | 'ADMIN' | 'EDITOR' | 'NORMAL';
+export enum ZoneRoleCode {
+  OWNER = 'OWNER',
+  MODERATOR = 'MODERATOR',
+  USER = 'USER',
+}
 
 export interface ZoneRole {
-  roleCode: ZoneRoleCode;
-  roleName: string;
-  canCreateChannel: boolean;
-  canInvite: boolean;
-  canDelete: boolean;
-  canEdit: boolean;
-  canManageRole: boolean;
+  id?: number;
+  zoneId?: string;
+  roleCode?: ZoneRoleCode;
+  canCreateChannel?: boolean;
+  canInvite?: boolean;
+  canDelete?: boolean;
+  canEdit?: boolean;
+  canManageRole?: boolean;
 }
 
 export interface UserZoneListItem {
@@ -136,6 +144,11 @@ export interface ZoneState {
     loading: boolean;
     error: ResponseError | null;
   };
+  zoneRoles: {
+    loading: boolean;
+    data: ZoneRole[];
+    error: ResponseError | null;
+  };
 }
 
 export type ZoneActionParams =
@@ -149,6 +162,7 @@ export type ZoneActionParams =
         | typeof GET_CURRENT_USER_ZONE_REQUESTED
         | typeof INVITE_TO_ZONE_REQUESTED
         | typeof DELETE_ZONE_REQUESTED
+        | typeof GET_ZONE_ROLES_REQUESTED
         | typeof JOIN_ZONE_SUCCESS
         | typeof OPEN_CREATE_ZONE_LAYER
         | typeof CLOSE_CREATE_ZONE_LAYER
@@ -156,8 +170,7 @@ export type ZoneActionParams =
         | typeof UPDATE_ZONE_PHOTO_REQUESTED
         | typeof UPDATE_ZONE_INFO_REQUESTED
         | typeof UPDATE_ZONE_INFO_SUCCESS
-        | typeof UPDATE_ZONE_PERMISSIONS_REQUESTED
-        | typeof UPDATE_ZONE_PERMISSIONS_SUCCESS;
+        | typeof UPDATE_ZONE_PERMISSIONS_REQUESTED;
     }
   | {
       type:
@@ -174,12 +187,21 @@ export type ZoneActionParams =
         | typeof UPDATE_ZONE_PHOTO_FAILED
         | typeof UPDATE_ZONE_INFO_FAILED
         | typeof UPDATE_ZONE_PERMISSIONS_FAILED
-        | typeof LEAVE_ZONE_FAILED;
+        | typeof LEAVE_ZONE_FAILED
+        | typeof GET_ZONE_ROLES_FAILED;
       payload: ResponseError;
     }
   | {
       type: typeof GET_USER_ZONES_SUCCESS;
       payload: Array<UserZoneListItem>;
+    }
+  | {
+      type: typeof UPDATE_ZONE_PERMISSIONS_SUCCESS;
+      payload: ZoneRole;
+    }
+  | {
+      type: typeof GET_ZONE_ROLES_SUCCESS;
+      payload: ZoneRole[];
     }
   | {
       type: typeof SEARCH_ZONE_REQUESTED;

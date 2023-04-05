@@ -59,6 +59,7 @@ import { UpdateUserZoneRoleDto } from '../dto/update-user-zone-role.dto';
 import { UpdateZonePermission } from '../dto/update-zone-permission.dto';
 import { UserZoneService } from '../services/user-zone.service';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { ZoneRoleCode } from '../../../types/RoleCodes';
 
 const { S3_PROFILE_PHOTO_DIR = '', S3_BUCKET_NAME = '' } = process.env;
 @Controller({ version: '1', path: 'zone' })
@@ -337,7 +338,7 @@ export class ZoneController {
   })
   @ValidationBadRequest()
   @UserZoneRole(['canManageRole'])
-  listZoneRoles(@Param('zoneId', ParseIntPipe) zoneId: number) {
+  listZoneRoles(@Param('zoneId', ParseUUIDPipe) zoneId: string) {
     return this.zoneService.listZoneRoles(zoneId);
   }
 
@@ -386,7 +387,7 @@ export class ZoneController {
   @ValidationBadRequest()
   @UserZoneRole(['canManageRole'])
   async removeChannelRole(
-    @Param('roleCode') roleCode: string,
+    @Param('roleCode') roleCode: ZoneRoleCode,
     @Param('zoneId', ParseUUIDPipe) zoneId: string,
   ) {
     const result = await this.zoneService.removeZoneRole(zoneId, roleCode);

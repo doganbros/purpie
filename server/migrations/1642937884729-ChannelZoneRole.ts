@@ -1,9 +1,6 @@
 import { Channel } from 'entities/Channel.entity';
 import { ChannelRole } from 'entities/ChannelRole.entity';
-import {
-  defaultChannelRoles,
-  defaultZoneRoles,
-} from 'entities/data/default-roles';
+import { baseChannelRoles, baseZoneRoles } from 'entities/data/default-roles';
 import { Zone } from 'entities/Zone.entity';
 import { ZoneRole } from 'entities/ZoneRole.entity';
 import {
@@ -88,7 +85,7 @@ export class ChannelZoneRole1642937884729 implements MigrationInterface {
         .createQueryBuilder()
         .insert()
         .into(ZoneRole)
-        .values(defaultZoneRoles.map((v) => ({ ...v, zoneId: zone.id })))
+        .values(baseZoneRoles.map((v) => ({ ...v, zoneId: zone.id })))
         .execute();
     }
 
@@ -99,7 +96,7 @@ export class ChannelZoneRole1642937884729 implements MigrationInterface {
     for (const channel of channels) {
       await queryRunner.manager.insert(
         ChannelRole,
-        defaultChannelRoles.map((v) => ({ ...v, channelId: channel.id })),
+        baseChannelRoles.map((v) => ({ ...v, channelId: channel.id })),
       );
     }
 

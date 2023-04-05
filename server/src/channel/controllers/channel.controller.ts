@@ -63,6 +63,7 @@ import { UpdateChannelUserRoleDto } from '../dto/update-channel-user-role.dto';
 import { UpdateChannelPermission } from '../dto/update-channel-permission.dto';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { UserChannelService } from '../services/user-channel.service';
+import { ChannelRoleCode } from '../../../types/RoleCodes';
 
 const { S3_PROFILE_PHOTO_DIR = '', S3_BUCKET_NAME = '' } = process.env;
 
@@ -316,7 +317,7 @@ export class ChannelController {
   })
   @ValidationBadRequest()
   @UserChannelRole(['canManageRole'])
-  listChannelRoles(@Param('channelId', ParseIntPipe) channelId: number) {
+  listChannelRoles(@Param('channelId', ParseUUIDPipe) channelId: string) {
     return this.channelService.listChannelRoles(channelId);
   }
 
@@ -361,7 +362,7 @@ export class ChannelController {
   @ValidationBadRequest()
   @UserChannelRole(['canManageRole'])
   async removeChannelRole(
-    @Param('roleCode') roleCode: string,
+    @Param('roleCode') roleCode: ChannelRoleCode,
     @Param('channelId', ParseUUIDPipe) channelId: string,
   ) {
     const result = await this.channelService.removeChannelRole(

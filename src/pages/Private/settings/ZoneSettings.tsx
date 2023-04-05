@@ -13,7 +13,10 @@ import { CaretDownFill, CaretRightFill, Edit } from 'grommet-icons';
 import { useTranslation } from 'react-i18next';
 import ListButton from '../../../components/utils/ListButton';
 import { AppState } from '../../../store/reducers/root.reducer';
-import { UpdateZonePayload } from '../../../store/types/zone.types';
+import {
+  UpdateZonePayload,
+  UserZoneListItem,
+} from '../../../store/types/zone.types';
 import {
   deleteZoneAction,
   leaveZoneAction,
@@ -24,6 +27,7 @@ import AvatarUpload from './AvatarUpload';
 import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 import ConfirmDialog from '../../../components/utils/ConfirmDialog';
+import ZonePermissions from '../../../layers/settings-and-static-pages/permissions/ZonePermissions';
 
 const ZoneSettings: () => Menu | null = () => {
   const {
@@ -36,7 +40,9 @@ const ZoneSettings: () => Menu | null = () => {
   const dispatch = useDispatch();
   const size = useContext(ResponsiveContext);
 
-  const [selectedUserZoneIndex, setSelectedUserZoneIndex] = useState(0);
+  const [selectedZone, setSelectedZone] = useState<UserZoneListItem | null>(
+    null
+  );
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showLeavePopup, setShowLeavePopup] = useState(false);
@@ -52,13 +58,6 @@ const ZoneSettings: () => Menu | null = () => {
     id: userZones?.[0]?.zone?.id || '',
     public: userZones?.[0]?.zone?.public || false,
   });
-
-  const showLeaveButton =
-    user?.id !== userZones?.[selectedUserZoneIndex]?.zone?.createdBy?.id;
-
-  const isOwner = !showLeaveButton ? t('settings.owner') : t('settings.member');
-
-  const userZoneId = userZones?.[selectedUserZoneIndex]?.id;
 
   if (userZones?.length === 0) {
     return {
@@ -89,19 +88,13 @@ const ZoneSettings: () => Menu | null = () => {
     };
   }
 
-  const selectedZone = userZones?.[selectedUserZoneIndex]?.zone;
-  const zoneId = selectedZone?.id;
-  const canDelete = userZones?.[selectedUserZoneIndex]?.zoneRole.canDelete;
-  const isInThisZone =
-    userZones?.[selectedUserZoneIndex]?.id === selectedUserZone?.id;
-
   const isFormInitialState =
-    zonePayload.name === selectedZone?.name &&
-    zonePayload.description === selectedZone?.description &&
-    zonePayload.subdomain === selectedZone?.subdomain &&
-    zonePayload.public === selectedZone?.public;
+    zonePayload.name === selectedZone?.zone.name &&
+    zonePayload.description === selectedZone?.zone.description &&
+    zonePayload.subdomain === selectedZone?.zone.subdomain &&
+    zonePayload.public === selectedZone?.zone.public;
 
-  return {
+  const result = {
     id: 2,
     key: 'zone',
     label: t('settings.zoneSettings'),
@@ -109,11 +102,9 @@ const ZoneSettings: () => Menu | null = () => {
     saveButton: (
       <Button
         disabled={isFormInitialState}
-        onClick={() => {
-          if (!(zoneId === null || zoneId === undefined)) {
-            dispatch(updateZoneInfoAction(zoneId, zonePayload));
-          }
-        }}
+        onClick={() =>
+          dispatch(updateZoneInfoAction(selectedZone!.zone.id, zonePayload))
+        }
         primary
         label={t('settings.save')}
         margin={{ vertical: 'medium' }}
@@ -121,11 +112,7 @@ const ZoneSettings: () => Menu | null = () => {
     ),
     deleteButton: (
       <Button
-        onClick={() => {
-          if (!(zoneId === null || zoneId === undefined)) {
-            setShowDeletePopup(true);
-          }
-        }}
+        onClick={() => setShowDeletePopup(true)}
         primary
         color="red"
         label={t('common.delete')}
@@ -134,13 +121,17 @@ const ZoneSettings: () => Menu | null = () => {
     ),
     deletePopup: showDeletePopup && (
       <ConfirmDialog
-        message={`${`${t('settings.deleteMessage')} 
-   ${'\n'}
-        ${selectedZone?.name}`} zone?`}
+        message={`${t('settings.deleteMessage')} \n ${
+          selectedZone?.zone.name
+        } zone?`}
         onConfirm={() => {
-          if (!(zoneId === null || zoneId === undefined)) {
-            dispatch(deleteZoneAction(zoneId, isInThisZone));
-          }
+          dispatch(
+            deleteZoneAction(
+              selectedZone!.zone.id,
+              selectedZone?.zone.id === selectedUserZone?.zone.id
+            )
+          );
+
           setShowDeletePopup(false);
         }}
         onDismiss={() => setShowDeletePopup(false)}
@@ -149,11 +140,7 @@ const ZoneSettings: () => Menu | null = () => {
     ),
     leaveButton: (
       <Button
-        onClick={() => {
-          if (!(zoneId === null || zoneId === undefined)) {
-            setShowLeavePopup(true);
-          }
-        }}
+        onClick={() => setShowLeavePopup(true)}
         secondary
         color="red"
         label={t('common.leave')}
@@ -162,13 +149,11 @@ const ZoneSettings: () => Menu | null = () => {
     ),
     leavePopup: showLeavePopup && (
       <ConfirmDialog
-        message={`${`${t('settings.zoneLeaveMessage')}
-        ${'\n'}
-        ${selectedZone?.name}`} zone?`}
+        message={`${t('settings.zoneLeaveMessage')}\n${
+          selectedZone!.zone.name
+        } zone?`}
         onConfirm={() => {
-          if (!(userZoneId === null || userZoneId === undefined)) {
-            dispatch(leaveZoneAction(userZoneId));
-          }
+          dispatch(leaveZoneAction(selectedZone!.id!));
           setShowLeavePopup(false);
         }}
         onDismiss={() => setShowLeavePopup(false)}
@@ -187,9 +172,9 @@ const ZoneSettings: () => Menu | null = () => {
               pad="5px"
             >
               <ZoneAvatar
-                id={selectedZone?.id || ''}
-                name={selectedZone?.name}
-                src={selectedZone?.displayPhoto}
+                id={selectedZone!.zone.id}
+                name={selectedZone!.zone.name}
+                src={selectedZone!.zone.displayPhoto}
               />
             </Box>
             <Box background="focus" round pad="xsmall">
@@ -212,14 +197,10 @@ const ZoneSettings: () => Menu | null = () => {
           }
           dropContent={
             <Box width={{ min: '250px' }} overflow="auto">
-              {userZones?.map((item, index) => (
+              {userZones?.map((item) => (
                 <ListButton
                   label={item.zone.name}
-                  subLabel={
-                    item.zone.createdBy?.id === user?.id
-                      ? t('settings.owner')
-                      : t('settings.member')
-                  }
+                  subLabel={t(`Permissions.${item.zoneRole.roleCode}`)}
                   key={item.zone.id}
                   onClick={() => {
                     setZonePayload({
@@ -229,7 +210,7 @@ const ZoneSettings: () => Menu | null = () => {
                       public: item.zone.public,
                       description: item.zone.description,
                     });
-                    setSelectedUserZoneIndex(index);
+                    setSelectedZone(item);
                     setShowZoneSelector(false);
                     setIsDropOpen(false);
                   }}
@@ -249,8 +230,12 @@ const ZoneSettings: () => Menu | null = () => {
           {!showZoneSelector ? (
             <Box direction="row" align="center">
               <Box>
-                <Text>{selectedZone?.name}</Text>
-                <Text color="status-disabled">{isOwner}</Text>
+                <Text>{selectedZone?.zone.name}</Text>
+                <Text color="status-disabled">
+                  {user?.id === selectedZone?.zone.createdBy?.id
+                    ? t('settings.owner')
+                    : t('settings.member')}
+                </Text>
               </Box>
               <CaretDownFill />
             </Box>
@@ -268,19 +253,19 @@ const ZoneSettings: () => Menu | null = () => {
             </Box>
           )}
         </DropButton>
-        {showAvatarUpload && !(userZoneId === null) && (
+        {showAvatarUpload && (
           <AvatarUpload
             onSubmit={(file: any) => {
-              dispatch(updateZonePhotoAction(file, userZoneId!));
+              dispatch(updateZonePhotoAction(file, selectedZone!.id!));
               setShowAvatarUpload(false);
             }}
             onDismiss={() => {
               setShowAvatarUpload(false);
             }}
             type="zone"
-            src={selectedZone?.displayPhoto}
-            id={selectedZone?.id || ''}
-            name={selectedZone?.name}
+            src={selectedZone?.zone.displayPhoto}
+            id={selectedZone?.zone.id}
+            name={selectedZone?.zone.name}
           />
         )}
       </Box>
@@ -375,9 +360,18 @@ const ZoneSettings: () => Menu | null = () => {
       },
     ],
     isEmpty: showZoneSelector,
-    canDelete,
-    showLeaveButton,
+    canDelete: selectedZone?.zoneRole.canDelete,
+    showLeaveButton: user?.id !== selectedZone?.zone.createdBy?.id,
   };
+
+  if (selectedZone && selectedZone.zoneRole.canManageRole)
+    result.items.push({
+      key: 'zonePermissions',
+      title: '',
+      value: 'value',
+      component: <ZonePermissions userZone={selectedZone} />,
+    });
+  return result;
 };
 
 export default ZoneSettings;

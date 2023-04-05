@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Zone } from 'entities/Zone.entity';
 import { UserZone } from 'entities/UserZone.entity';
+import { ZoneRoleCode } from '../../../types/RoleCodes';
 
 @Injectable()
 export class UserZoneService {
@@ -17,7 +18,7 @@ export class UserZoneService {
     return this.userZoneRepository
       .create({
         userId,
-        zoneRoleCode: 'NORMAL',
+        zoneRoleCode: ZoneRoleCode.USER,
         zoneId,
       })
       .save();

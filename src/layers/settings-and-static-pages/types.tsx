@@ -25,3 +25,18 @@ export interface MediumType {
   name: 'user' | 'channel' | 'zone';
   id: number;
 }
+
+export enum RoleCode {
+  OWNER = 'OWNER',
+  MODERATOR = 'MODERATOR',
+  USER = 'USER',
+}
+
+export interface PermissionActions {
+  roleCode: RoleCode;
+  canCreateChannel?: any;
+  canInvite: any;
+  canDelete: any;
+  canEdit: any;
+  canManageRole: any;
+}

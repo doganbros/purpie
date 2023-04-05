@@ -7,6 +7,7 @@ import {
   UserZoneListItem,
   ZoneListItem,
   ZoneSearchParams,
+  ZoneRole,
 } from '../types/zone.types';
 import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
@@ -59,3 +60,12 @@ export const updateZoneInfo = (
 
 export const leaveZone = (zoneId: string): Promise<any> =>
   http.delete(`/user-zone/remove/${zoneId}`).then((res) => res.data);
+
+export const listZoneRoles = (zoneId: string): Promise<ZoneRole[]> =>
+  http.get(`/zone/role/list/${zoneId}`).then((res) => res.data);
+
+export const updateZonePermissions = (
+  zoneId: string,
+  params: ZoneRole
+): Promise<any> =>
+  http.put(`zone/permissions/update/${zoneId}`, params).then((res) => res.data);
