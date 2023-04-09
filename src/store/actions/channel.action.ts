@@ -5,6 +5,7 @@ import {
   CreateChannelPayload,
   UserChannelListItem,
   UserChannelPermissionList,
+  UpdateUserChannelRoleParams,
 } from '../types/channel.types';
 import {
   CLOSE_CREATE_CHANNEL_LAYER,
@@ -44,6 +45,9 @@ import {
   GET_CHANNEL_ROLES_REQUESTED,
   GET_CHANNEL_ROLES_SUCCESS,
   GET_CHANNEL_ROLES_FAILED,
+  UPDATE_USER_CHANNEL_ROLE_REQUESTED,
+  UPDATE_USER_CHANNEL_ROLE_SUCCESS,
+  UPDATE_USER_CHANNEL_ROLE_FAILED,
 } from '../constants/channel.constants';
 import * as ChannelService from '../services/channel.service';
 
@@ -361,6 +365,29 @@ export const getChannelRolesAction = (channelId: string): ChannelAction => {
     } catch (err: any) {
       dispatch({
         type: GET_CHANNEL_ROLES_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const updateUserChannelRoleAction = (
+  channelId: string,
+  params: UpdateUserChannelRoleParams
+): ChannelAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: UPDATE_USER_CHANNEL_ROLE_REQUESTED,
+    });
+    try {
+      await ChannelService.updateUserChannelRole(channelId, params);
+      dispatch({
+        type: UPDATE_USER_CHANNEL_ROLE_SUCCESS,
+        payload: params,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: UPDATE_USER_CHANNEL_ROLE_FAILED,
         payload: err?.response?.data,
       });
     }

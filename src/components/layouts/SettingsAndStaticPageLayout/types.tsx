@@ -4,6 +4,7 @@ export interface MenuItem {
   key: string;
   title: string;
   value?: string;
+  tabIndex?: number;
   component: ReactNode;
 }
 
@@ -23,4 +24,5 @@ export interface Menu {
   showLeaveButton?: boolean;
   leaveButton?: ReactNode;
   leavePopup?: ReactNode;
+  tabs?: { label: string; index: number }[];
 }

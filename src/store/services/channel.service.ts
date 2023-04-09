@@ -5,6 +5,7 @@ import {
   ChannelRole,
   ChannelSearchParams,
   CreateChannelPayload,
+  UpdateUserChannelRoleParams,
   UserChannelPermissionList,
 } from '../types/channel.types';
 
@@ -89,3 +90,9 @@ export const unfollowChannel = (channelId: string): Promise<any> =>
 
 export const listChannelRoles = (channelId: string): Promise<ChannelRole[]> =>
   http.get(`channel/role/list/${channelId}`).then((res) => res.data);
+
+export const updateUserChannelRole = (
+  channelId: string,
+  params: UpdateUserChannelRoleParams
+): Promise<ChannelRole[]> =>
+  http.put(`channel/role/change/${channelId}`, params).then((res) => res.data);
