@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { ChannelRoleCode } from 'types/RoleCodes';
 
