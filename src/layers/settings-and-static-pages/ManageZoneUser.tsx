@@ -13,57 +13,53 @@ import {
 import { Close } from 'grommet-icons';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import {
-  ChannelRoleCode,
-  ManageChannelPayload,
-} from '../../store/types/channel.types';
-import { updateUserChannelRoleAction } from '../../store/actions/channel.action';
+import { ManageChannelPayload } from '../../store/types/channel.types';
+import { ZoneRoleCode } from '../../store/types/zone.types';
+import { updateUserZoneRoleAction } from '../../store/actions/zone.action';
 import ConfirmDialog from '../../components/utils/ConfirmDialog';
 
-interface ManageChannelUserProps {
+interface ManageZoneUserProps {
   onDismiss: () => void;
-  defaultRoleCode: ChannelRoleCode;
-  channelId: string;
+  defaultRoleCode: ZoneRoleCode;
+  zoneId: string;
   userId: string;
 }
 
-const ManageChannelUser: FC<ManageChannelUserProps> = ({
+const ManageZoneUser: FC<ManageZoneUserProps> = ({
   onDismiss,
   defaultRoleCode,
-  channelId,
+  zoneId,
   userId,
 }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-
   const size = useContext(ResponsiveContext);
-  const [
-    newChannelRoleCode,
-    setNewChannelRoleCode,
-  ] = useState<ChannelRoleCode | null>(null);
+  const [newZoneRoleCode, setNewZoneRoleCode] = useState<ZoneRoleCode | null>(
+    null
+  );
 
-  function updateChannelRole() {
+  function updateZoneRole() {
     onDismiss();
 
-    if (newChannelRoleCode)
+    if (newZoneRoleCode)
       dispatch(
-        updateUserChannelRoleAction(channelId, {
+        updateUserZoneRoleAction(zoneId, {
           userId,
-          channelRoleCode: newChannelRoleCode,
+          zoneRoleCode: newZoneRoleCode,
         })
       );
   }
 
-  const roleCodes = Object.values(ChannelRoleCode);
+  const roleCodes = Object.values(ZoneRoleCode);
   return (
     <Layer onClickOutside={onDismiss}>
-      {newChannelRoleCode ? (
+      {newZoneRoleCode ? (
         <ConfirmDialog
-          message={t('ManageChannelUser.saveChannelChangesConfirm')}
+          message={t('ManageZoneUser.saveChannelChangesConfirm')}
           onConfirm={() => {
-            updateChannelRole();
+            updateZoneRole();
           }}
-          onDismiss={() => setNewChannelRoleCode(null)}
+          onDismiss={() => setNewZoneRoleCode(null)}
           textProps={{ wordBreak: 'break-word' }}
         />
       ) : (
@@ -77,7 +73,7 @@ const ManageChannelUser: FC<ManageChannelUserProps> = ({
         >
           <Box direction="row" justify="between" align="start">
             <Text size="large" weight="bold">
-              {t('ManageChannelUser.title')}
+              {t('ManageZoneUser.title')}
             </Text>
             <Button plain onClick={onDismiss}>
               <Close color="brand-alt" />
@@ -85,7 +81,7 @@ const ManageChannelUser: FC<ManageChannelUserProps> = ({
           </Box>
           <Form
             onSubmit={({ value }: FormExtendedEvent<ManageChannelPayload>) => {
-              setNewChannelRoleCode(value.roleCode as ChannelRoleCode);
+              setNewZoneRoleCode(value.roleCode as ZoneRoleCode);
             }}
           >
             <Box height={{ min: 'min-content' }}>
@@ -119,4 +115,4 @@ const ManageChannelUser: FC<ManageChannelUserProps> = ({
   );
 };
 
-export default ManageChannelUser;
+export default ManageZoneUser;

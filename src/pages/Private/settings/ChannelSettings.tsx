@@ -321,9 +321,9 @@ const ChannelSettings: () => Menu = () => {
     ),
     deletePopup: showDeletePopup && (
       <ConfirmDialog
-        message={`${`${t('settings.deleteMessage')} ${
+        message={`${t('settings.deleteMessage')} ${
           selectedUserChannel?.channel.name
-        }`} channel?`}
+        } channel?`}
         onConfirm={() => {
           dispatch(deleteChannelAction(selectedUserChannel!.channel.id));
           setShowDeletePopup(false);
@@ -334,9 +334,9 @@ const ChannelSettings: () => Menu = () => {
     ),
     leavePopup: showLeavePopup && (
       <ConfirmDialog
-        message={`${`${t('settings.channelUnfollowMessage')} ${
+        message={`${t('settings.channelUnfollowMessage')} ${
           selectedUserChannel?.channel.name
-        }`} channel?`}
+        } channel?`}
         onConfirm={() => {
           dispatch(unfollowChannelAction(selectedUserChannel!.channel.id));
           setShowLeavePopup(false);
@@ -346,7 +346,7 @@ const ChannelSettings: () => Menu = () => {
         textProps={{ wordBreak: 'break-word' }}
       />
     ),
-    tabs: [{ index: 1, label: 'General' }],
+    tabs: [{ index: 1, label: t('settings.general') }],
     items: [
       {
         key: 'channelName',
@@ -414,7 +414,7 @@ const ChannelSettings: () => Menu = () => {
     showLeaveButton: user?.id !== selectedUserChannel?.channel.createdBy?.id,
   };
   if (selectedUserChannel && selectedUserChannel.channelRole?.canManageRole) {
-    result.tabs.push({ index: 2, label: 'Permissions' });
+    result.tabs.push({ index: 2, label: t('settings.permissions') });
     result.items.push({
       key: 'channelPermissions',
       title: '',
@@ -422,7 +422,7 @@ const ChannelSettings: () => Menu = () => {
       tabIndex: 2,
       component: <ChannelPermissions userChannel={selectedUserChannel} />,
     });
-    result.tabs.push({ index: 3, label: 'Followers' });
+    result.tabs.push({ index: 3, label: t('settings.followers') });
     result.items.push({
       key: 'channelFollowers',
       title: '',

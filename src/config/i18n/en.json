@@ -494,7 +494,8 @@
     "INVALID_IMAGE_FORMAT": "Please upload a valid image format!",
     "INVALID_VIDEO_FORMAT": "Please upload a valid video format!",
     "CURRENT_PASSWORD_NOT_CORRECT": "Current password is not correct!",
-    "PASSWORDS_NOT_MATCH": "Passwords do not match!"
+    "PASSWORDS_NOT_MATCH": "Passwords do not match!",
+    "OWNER_NOT_EXIST": "The last owner cannot be deleted!"
   },
   "settings": {
     "personalSettings": "Personal Settings",
@@ -547,8 +548,26 @@
     "channelUnfollowMessage": "Are you sure you want to unfollow",
     "zoneLeaveMessage": "Are you sure you want to leave",
     "owner": "Owner",
-    "member": "Member"
+    "member": "Member",
+    "general": "General",
+    "permissions":"Permissions",
+    "members": "Members",
+    "followers": "Followers",
+    "userInfo": "User Info",
+    "role": "Role",
+    "followingDate": "Following Date",
+    "joinDate": "Join Date",
+    "action": "Action"
   },
+  "ManageChannelUser": {
+    "title": "Manage Channel Follower",
+    "saveChannelChangesConfirm": "Are you sure you want to save the changes on selected channel?"
+  },
+  "ManageZoneUser": {
+    "title": "Manage Zone Member",
+    "saveChannelChangesConfirm": "Are you sure you want to save the changes on selected zone?"
+  },
+
   "ContactsToFollow": {
     "title": "People to add",
     "add": "Add",

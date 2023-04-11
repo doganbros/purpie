@@ -28,6 +28,7 @@ import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 import ZonePermissions from '../../../layers/settings-and-static-pages/permissions/ZonePermissions';
+import ZoneUsers from '../../../layers/settings-and-static-pages/ZoneUsers';
 
 const ZoneSettings: () => Menu | null = () => {
   const {
@@ -270,11 +271,13 @@ const ZoneSettings: () => Menu | null = () => {
         )}
       </Box>
     ),
+    tabs: [{ index: 1, label: t('settings.general') }],
     items: [
       {
         key: 'zoneName',
         title: t('settings.zoneName'),
         value: 'value',
+        tabIndex: 1,
         component: (
           <Box
             direction="row"
@@ -304,6 +307,7 @@ const ZoneSettings: () => Menu | null = () => {
         key: 'zoneTitle',
         title: t('settings.zoneSubdomain'),
         value: 'value',
+        tabIndex: 1,
         component: (
           <Box
             direction="row"
@@ -333,6 +337,7 @@ const ZoneSettings: () => Menu | null = () => {
         key: 'zoneDescription',
         title: t('settings.zoneDescription'),
         value: 'value',
+        tabIndex: 1,
         component: (
           <Box
             direction="row"
@@ -364,13 +369,24 @@ const ZoneSettings: () => Menu | null = () => {
     showLeaveButton: user?.id !== selectedZone?.zone.createdBy?.id,
   };
 
-  if (selectedZone && selectedZone.zoneRole.canManageRole)
+  if (selectedZone && selectedZone.zoneRole.canManageRole) {
+    result.tabs.push({ index: 2, label: t('settings.permissions') });
     result.items.push({
       key: 'zonePermissions',
       title: '',
       value: 'value',
+      tabIndex: 2,
       component: <ZonePermissions userZone={selectedZone} />,
     });
+    result.tabs.push({ index: 3, label: t('settings.members') });
+    result.items.push({
+      key: 'zoneFollowers',
+      title: '',
+      value: 'value',
+      tabIndex: 3,
+      component: <ZoneUsers zoneId={selectedZone.zone.id} />,
+    });
+  }
   return result;
 };
 

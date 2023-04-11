@@ -1,5 +1,6 @@
 import {
   CreateZonePayload,
+  UpdateUserZoneRoleParams,
   ZoneAction,
   ZoneBasic,
   ZoneRole,
@@ -17,6 +18,9 @@ import {
   GET_ZONE_ROLES_FAILED,
   GET_ZONE_ROLES_REQUESTED,
   GET_ZONE_ROLES_SUCCESS,
+  GET_ZONE_USERS_FAILED,
+  GET_ZONE_USERS_REQUESTED,
+  GET_ZONE_USERS_SUCCESS,
   JOIN_ZONE_FAILED,
   JOIN_ZONE_REQUESTED,
   JOIN_ZONE_SUCCESS,
@@ -26,6 +30,9 @@ import {
   SEARCH_ZONE_FAILED,
   SEARCH_ZONE_REQUESTED,
   SEARCH_ZONE_SUCCESS,
+  UPDATE_USER_ZONE_ROLE_FAILED,
+  UPDATE_USER_ZONE_ROLE_REQUESTED,
+  UPDATE_USER_ZONE_ROLE_SUCCESS,
   UPDATE_ZONE_INFO_FAILED,
   UPDATE_ZONE_INFO_REQUESTED,
   UPDATE_ZONE_INFO_SUCCESS,
@@ -276,6 +283,53 @@ export const updateZonePermissionsAction = (
     } catch (err: any) {
       dispatch({
         type: UPDATE_ZONE_PERMISSIONS_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const listZoneUsersAction = (
+  zoneId: string,
+  limit: number,
+  skip: number
+): ZoneAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: GET_ZONE_USERS_REQUESTED,
+    });
+    try {
+      const payload = await ZoneService.listZoneUsers(zoneId, limit, skip);
+      dispatch({
+        type: GET_ZONE_USERS_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: GET_ZONE_USERS_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const updateUserZoneRoleAction = (
+  zoneId: string,
+  params: UpdateUserZoneRoleParams
+): ZoneAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: UPDATE_USER_ZONE_ROLE_REQUESTED,
+    });
+    try {
+      await ZoneService.updateUserZoneRole(zoneId, params);
+      dispatch({
+        type: UPDATE_USER_ZONE_ROLE_SUCCESS,
+        payload: params,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: UPDATE_USER_ZONE_ROLE_FAILED,
         payload: err?.response?.data,
       });
     }

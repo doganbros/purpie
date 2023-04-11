@@ -14,12 +14,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import { SettingsOption } from 'grommet-icons';
-import { listChannelUsersAction } from '../../store/actions/channel.action';
 import { AppState } from '../../store/reducers/root.reducer';
 import ChannelUserListItem from '../../components/utils/channel/ChannelUserListItem';
-import { ChannelRoleCode } from '../../store/types/channel.types';
-import ManageChannelUser from './ManageChannelUser';
 import { SUGGESTION_AMOUNT_MORE } from '../../helpers/constants';
+import { ZoneRoleCode } from '../../store/types/zone.types';
+import { listZoneUsersAction } from '../../store/actions/zone.action';
+import ManageZoneUser from './ManageZoneUser';
 import { useResponsive } from '../../hooks/useResponsive';
 import i18n from '../../config/i18n/i18n-config';
 
@@ -38,7 +38,7 @@ const COLUMNS = [
   },
   {
     property: 'createdOn',
-    label: i18n.t('settings.followingDate'),
+    label: i18n.t('settings.joinDate'),
   },
   {
     property: 'action',
@@ -46,31 +46,31 @@ const COLUMNS = [
   },
 ];
 
-interface ChannelUsersProps {
-  channelId: string;
+interface ZoneUsersProps {
+  zoneId: string;
 }
 
-const ChannelUsers: FC<ChannelUsersProps> = ({ channelId }) => {
+const ZoneUsers: FC<ZoneUsersProps> = ({ zoneId }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const {
-    channel: { channelUsers },
+    zone: { zoneUsers },
   } = useSelector((state: AppState) => state);
   const size = useResponsive();
 
   const [manageUserInfo, setManageUserInfo] = useState<{
-    role: ChannelRoleCode;
+    role: ZoneRoleCode;
     userId: string;
   } | null>(null);
 
   useEffect(() => {
-    getChannelUsers(0);
+    getZoneUsers(0);
   }, []);
 
-  function getChannelUsers(page: number) {
+  function getZoneUsers(page: number) {
     dispatch(
-      listChannelUsersAction(
-        channelId,
+      listZoneUsersAction(
+        zoneId,
         SUGGESTION_AMOUNT_MORE,
         page * SUGGESTION_AMOUNT_MORE
       )
@@ -78,7 +78,7 @@ const ChannelUsers: FC<ChannelUsersProps> = ({ channelId }) => {
   }
 
   const tableData = useMemo(() => {
-    return channelUsers.data.map(({ id, user, channelRole, createdOn }) => ({
+    return zoneUsers.data.map(({ id, user, zoneRole, createdOn }) => ({
       id,
       columns: [
         <ChannelUserListItem
@@ -89,11 +89,11 @@ const ChannelUsers: FC<ChannelUsersProps> = ({ channelId }) => {
           displayPhoto={user.displayPhoto}
         />,
         size !== 'small' ? user.email : undefined,
-        t(`Permissions.${channelRole.roleCode}`),
+        t(`Permissions.${zoneRole.roleCode}`),
         size !== 'small' ? dayjs(createdOn).format('DD/MM/YYYY') : undefined,
         <Button
           onClick={() =>
-            setManageUserInfo({ userId: user.id, role: channelRole.roleCode })
+            setManageUserInfo({ userId: user.id, role: zoneRole.roleCode! })
           }
           icon={<SettingsOption size="medium" color="grayish-blue" />}
           size="small"
@@ -101,7 +101,7 @@ const ChannelUsers: FC<ChannelUsersProps> = ({ channelId }) => {
         />,
       ],
     }));
-  }, [channelUsers, size]);
+  }, [zoneUsers, size]);
 
   const columns =
     size !== 'small'
@@ -158,20 +158,20 @@ const ChannelUsers: FC<ChannelUsersProps> = ({ channelId }) => {
             ))}
           </TableBody>
         </Table>
-        {channelUsers.skip / channelUsers.limit !== 0 && (
+        {zoneUsers.skip / zoneUsers.limit !== 0 && (
           <Pagination
             size="small"
             alignSelf="end"
-            numberItems={channelUsers.total}
-            page={channelUsers.skip / channelUsers.limit + 1}
+            numberItems={zoneUsers.total}
+            page={zoneUsers.skip / zoneUsers.limit + 1}
             step={SUGGESTION_AMOUNT_MORE}
-            onChange={({ page }) => getChannelUsers(page - 1)}
+            onChange={({ page }) => getZoneUsers(page - 1)}
           />
         )}
       </Box>
       {manageUserInfo && (
-        <ManageChannelUser
-          channelId={channelId}
+        <ManageZoneUser
+          zoneId={zoneId}
           userId={manageUserInfo.userId}
           defaultRoleCode={manageUserInfo.role}
           onDismiss={() => setManageUserInfo(null)}
@@ -181,4 +181,4 @@ const ChannelUsers: FC<ChannelUsersProps> = ({ channelId }) => {
   );
 };
 
-export default ChannelUsers;
+export default ZoneUsers;

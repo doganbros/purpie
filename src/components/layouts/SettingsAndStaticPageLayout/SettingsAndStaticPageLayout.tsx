@@ -159,24 +159,35 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
         </Box>
         {!searchText && selectedMenu.tabs && selectedMenu.tabs.length > 1 ? (
           <Box gap="medium">
-            <Box direction="row" gap="small">
+            <Box direction="row" gap="medium">
               {selectedMenu.tabs.map((tab) => (
                 <Button
                   key={`timelineTab-${tab.index}`}
                   onClick={() => {
                     setActiveTab(tab.index);
                   }}
-                  margin={{ right: 'small' }}
+                  plain
                 >
-                  <Text
-                    size="medium"
-                    weight={activeTab === tab.index ? 'bold' : 'normal'}
-                    color={
-                      activeTab === tab.index ? 'brand' : 'status-disabled'
-                    }
+                  <Box
+                    align="center"
+                    border={{
+                      side: 'bottom',
+                      size: 'small',
+                      color:
+                        activeTab === tab.index ? 'brand' : 'status-disabled',
+                    }}
+                    pad={{ horizontal: 'xsmall' }}
                   >
-                    {tab.label}
-                  </Text>
+                    <Text
+                      size="medium"
+                      weight="bold"
+                      color={
+                        activeTab === tab.index ? 'brand' : 'status-disabled'
+                      }
+                    >
+                      {tab.label}
+                    </Text>
+                  </Box>
                 </Button>
               ))}
             </Box>

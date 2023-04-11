@@ -94,5 +94,5 @@ export const listChannelRoles = (channelId: string): Promise<ChannelRole[]> =>
 export const updateUserChannelRole = (
   channelId: string,
   params: UpdateUserChannelRoleParams
-): Promise<ChannelRole[]> =>
+): Promise<string> =>
   http.put(`channel/role/change/${channelId}`, params).then((res) => res.data);
