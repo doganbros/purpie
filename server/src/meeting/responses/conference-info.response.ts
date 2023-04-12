@@ -10,6 +10,9 @@ class ConferenceInfoUser {
   @ApiProperty()
   userName: string;
 
+  @ApiProperty()
+  id: string;
+
   @ApiProperty({ nullable: true })
   photoURL: string | null;
 }
