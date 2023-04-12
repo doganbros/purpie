@@ -221,7 +221,7 @@ export class ZoneService {
     return this.zoneRoleRepository.find({ where: { zoneId } });
   }
 
-  listZoneUsers(zoneId: number, query: SystemUserListQuery) {
+  listZoneUsers(zoneId: string, query: SystemUserListQuery) {
     const baseQuery = this.userZoneRepository
       .createQueryBuilder('userZone')
       .select([
@@ -260,18 +260,18 @@ export class ZoneService {
 
   async changeUserZoneRole(zoneId: string, info: UpdateUserZoneRoleDto) {
     const { zoneRoleCode } = info;
-    if (zoneRoleCode !== 'SUPER_ADMIN') {
+    if (zoneRoleCode !== ZoneRoleCode.OWNER) {
       const remainingSuperAdminCount = await this.userZoneRepository.count({
         where: {
           userId: Not(info.userId),
           zoneId,
-          zoneRoleCode: 'SUPER_ADMIN',
+          zoneRoleCode: ZoneRoleCode.OWNER,
         },
       });
 
       if (remainingSuperAdminCount === 0)
         throw new ForbiddenException(
-          ErrorTypes.SUPER_ADMIN_NOT_EXIST,
+          ErrorTypes.OWNER_NOT_EXIST,
           'There must be at least one super admin',
         );
     }

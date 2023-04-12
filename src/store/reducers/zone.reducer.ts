@@ -15,6 +15,9 @@ import {
   GET_ZONE_ROLES_FAILED,
   GET_ZONE_ROLES_REQUESTED,
   GET_ZONE_ROLES_SUCCESS,
+  GET_ZONE_USERS_FAILED,
+  GET_ZONE_USERS_REQUESTED,
+  GET_ZONE_USERS_SUCCESS,
   JOIN_ZONE_FAILED,
   JOIN_ZONE_REQUESTED,
   JOIN_ZONE_SUCCESS,
@@ -24,6 +27,7 @@ import {
   SEARCH_ZONE_REQUESTED,
   SEARCH_ZONE_SUCCESS,
   SET_CURRENT_USER_ZONE,
+  UPDATE_USER_ZONE_ROLE_SUCCESS,
   UPDATE_ZONE_PERMISSIONS_SUCCESS,
   UPDATE_ZONE_PHOTO_SUCCESS,
 } from '../constants/zone.constants';
@@ -61,6 +65,11 @@ const initialState: ZoneState = {
   },
   zoneRoles: {
     data: [],
+    loading: false,
+    error: null,
+  },
+  zoneUsers: {
+    ...paginationInitialState,
     loading: false,
     error: null,
   },
@@ -324,6 +333,58 @@ const zoneReducer = (
             ...state.zoneRoles.data.slice(0, updatedRoleIndex),
             updatedRole,
             ...state.zoneRoles.data.slice(updatedRoleIndex + 1),
+          ],
+        },
+      };
+    }
+    case GET_ZONE_USERS_REQUESTED:
+      return {
+        ...state,
+        zoneUsers: {
+          ...state.zoneUsers,
+          loading: true,
+          error: null,
+        },
+      };
+    case GET_ZONE_USERS_SUCCESS:
+      return {
+        ...state,
+        zoneUsers: {
+          ...action.payload,
+          loading: false,
+          error: null,
+        },
+      };
+    case GET_ZONE_USERS_FAILED:
+      return {
+        ...state,
+        zoneUsers: {
+          ...state.zoneUsers,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case UPDATE_USER_ZONE_ROLE_SUCCESS: {
+      const updatedUserIndex = state.zoneUsers.data.findIndex(
+        (zoneUser) => zoneUser.user.id === action.payload.userId
+      );
+
+      if (updatedUserIndex === -1) return state;
+
+      const updatedUser = { ...state.zoneUsers.data[updatedUserIndex] };
+      updatedUser.zoneRole = {
+        ...updatedUser.zoneRole,
+        roleCode: action.payload.zoneRoleCode,
+      };
+
+      return {
+        ...state,
+        zoneUsers: {
+          ...state.zoneUsers,
+          data: [
+            ...state.zoneUsers.data.slice(0, updatedUserIndex),
+            updatedUser,
+            ...state.zoneUsers.data.slice(updatedUserIndex + 1),
           ],
         },
       };

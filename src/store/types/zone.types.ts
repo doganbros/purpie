@@ -20,6 +20,9 @@ import {
   GET_ZONE_ROLES_FAILED,
   GET_ZONE_ROLES_REQUESTED,
   GET_ZONE_ROLES_SUCCESS,
+  GET_ZONE_USERS_FAILED,
+  GET_ZONE_USERS_REQUESTED,
+  GET_ZONE_USERS_SUCCESS,
   INVITE_TO_ZONE_FAILED,
   INVITE_TO_ZONE_REQUESTED,
   JOIN_ZONE_FAILED,
@@ -32,6 +35,9 @@ import {
   SEARCH_ZONE_REQUESTED,
   SEARCH_ZONE_SUCCESS,
   SET_CURRENT_USER_ZONE,
+  UPDATE_USER_ZONE_ROLE_FAILED,
+  UPDATE_USER_ZONE_ROLE_REQUESTED,
+  UPDATE_USER_ZONE_ROLE_SUCCESS,
   UPDATE_ZONE_FAILED,
   UPDATE_ZONE_INFO_FAILED,
   UPDATE_ZONE_INFO_REQUESTED,
@@ -107,12 +113,24 @@ export interface UpdateZonePayload {
   public: boolean;
 }
 
+export interface UpdateUserZoneRoleParams {
+  userId: string;
+  zoneRoleCode: ZoneRoleCode;
+}
+
 export type ZoneDetail = Required<ZoneListItem>;
 
 export interface ZoneSearchParams {
   searchTerm: string;
   limit?: number;
   skip?: number;
+}
+
+export interface ZoneUser {
+  id: string;
+  createdOn: Date;
+  zoneRole: ZoneRole;
+  user: User;
 }
 
 export interface ZoneState {
@@ -149,6 +167,10 @@ export interface ZoneState {
     data: ZoneRole[];
     error: ResponseError | null;
   };
+  zoneUsers: PaginatedResponse<ZoneUser> & {
+    loading: boolean;
+    error: ResponseError | null;
+  };
 }
 
 export type ZoneActionParams =
@@ -170,7 +192,9 @@ export type ZoneActionParams =
         | typeof UPDATE_ZONE_PHOTO_REQUESTED
         | typeof UPDATE_ZONE_INFO_REQUESTED
         | typeof UPDATE_ZONE_INFO_SUCCESS
-        | typeof UPDATE_ZONE_PERMISSIONS_REQUESTED;
+        | typeof UPDATE_ZONE_PERMISSIONS_REQUESTED
+        | typeof GET_ZONE_USERS_REQUESTED
+        | typeof UPDATE_USER_ZONE_ROLE_REQUESTED;
     }
   | {
       type:
@@ -188,12 +212,22 @@ export type ZoneActionParams =
         | typeof UPDATE_ZONE_INFO_FAILED
         | typeof UPDATE_ZONE_PERMISSIONS_FAILED
         | typeof LEAVE_ZONE_FAILED
-        | typeof GET_ZONE_ROLES_FAILED;
+        | typeof GET_ZONE_ROLES_FAILED
+        | typeof UPDATE_USER_ZONE_ROLE_FAILED
+        | typeof GET_ZONE_USERS_FAILED;
       payload: ResponseError;
     }
   | {
       type: typeof GET_USER_ZONES_SUCCESS;
       payload: Array<UserZoneListItem>;
+    }
+  | {
+      type: typeof UPDATE_USER_ZONE_ROLE_SUCCESS;
+      payload: UpdateUserZoneRoleParams;
+    }
+  | {
+      type: typeof GET_ZONE_USERS_SUCCESS;
+      payload: PaginatedResponse<ZoneUser>;
     }
   | {
       type: typeof UPDATE_ZONE_PERMISSIONS_SUCCESS;

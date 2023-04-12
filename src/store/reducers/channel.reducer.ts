@@ -24,6 +24,7 @@ import {
   UPDATE_CHANNEL_INFO_SUCCESS,
   UPDATE_CHANNEL_PERMISSIONS_SUCCESS,
   UPDATE_CHANNEL_PHOTO_SUCCESS,
+  UPDATE_USER_CHANNEL_ROLE_SUCCESS,
 } from '../constants/channel.constants';
 import { ChannelActionParams, ChannelState } from '../types/channel.types';
 
@@ -302,6 +303,31 @@ const channelReducer = (
             ...state.channelRoles.data.slice(0, updatedRoleIndex),
             updatedRole,
             ...state.channelRoles.data.slice(updatedRoleIndex + 1),
+          ],
+        },
+      };
+    }
+    case UPDATE_USER_CHANNEL_ROLE_SUCCESS: {
+      const updatedUserIndex = state.channelUsers.data.findIndex(
+        (channelUser) => channelUser.user.id === action.payload.userId
+      );
+
+      if (updatedUserIndex === -1) return state;
+
+      const updatedUser = { ...state.channelUsers.data[updatedUserIndex] };
+      updatedUser.channelRole = {
+        ...updatedUser.channelRole,
+        roleCode: action.payload.channelRoleCode,
+      };
+
+      return {
+        ...state,
+        channelUsers: {
+          ...state.channelUsers,
+          data: [
+            ...state.channelUsers.data.slice(0, updatedUserIndex),
+            updatedUser,
+            ...state.channelUsers.data.slice(updatedUserIndex + 1),
           ],
         },
       };

@@ -66,18 +66,8 @@ const ChannelPermissions: FC<ChannelPermissionsProps> = ({ userChannel }) => {
     const { roleCode, ...actions } = channelPermissions[0];
     const roleCodes = Object.values(ChannelRoleCode);
     return (
-      <Box>
-        <Box
-          direction="row"
-          align="center"
-          justify="between"
-          pad={{ bottom: 'small' }}
-        >
-          <Text size="medium" weight="bold">
-            Permissions
-          </Text>
-          {size !== 'small' && <RoleHeader />}
-        </Box>
+      <Box gap="xsmall">
+        {size !== 'small' && <RoleHeader />}
 
         <Box
           gap={size === 'small' ? 'medium' : 'small'}

@@ -9,7 +9,6 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
-  ParseIntPipe,
   ParseUUIDPipe,
   Post,
   Put,
@@ -98,9 +97,9 @@ export class ZoneController {
     type: User,
   })
   @UserZoneRole(['canManageRole'])
-  channelUserList(
+  zoneUserList(
     @Query() query: SystemUserListQuery,
-    @Param('zoneId', ParseIntPipe) zoneId: number,
+    @Param('zoneId', ParseUUIDPipe) zoneId: string,
   ) {
     return this.zoneService.listZoneUsers(zoneId, query);
   }

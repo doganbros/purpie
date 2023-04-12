@@ -4,6 +4,7 @@ import {
   AccordionPanel,
   Avatar,
   Box,
+  Button,
   ResponsiveContext,
   Text,
 } from 'grommet';
@@ -32,6 +33,7 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
   const history = useHistory();
   const size = useContext(ResponsiveContext);
 
+  const [activeTab, setActiveTab] = useState(1);
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [searchText, setSearchText] = useState<string>('');
@@ -83,7 +85,55 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
     }
   }, [searchTextValue]);
 
+  const groupByTabIndex = (menuItems: MenuItem[]) => {
+    return menuItems.reduce((group: any, item) => {
+      if (item.tabIndex) {
+        const { tabIndex } = item;
+
+        // eslint-disable-next-line no-param-reassign
+        group[tabIndex] = group[tabIndex] ?? [];
+        group[tabIndex].push(item);
+        return group;
+      }
+      return {};
+    }, {});
+  };
+  const renderContentCategoryContent = (menuItem: MenuItem) => {
+    const titleParts = menuItem.title
+      .split(new RegExp(`(${searchText})`, 'gi'))
+      .map((p) => ({ part: p, id: nanoid() }));
+
+    return (
+      <Box
+        key={menuItem.key}
+        direction="column"
+        flex="shrink"
+        justify="start"
+        gap="small"
+      >
+        {size !== 'small' && titleParts.length > 0 && (
+          <Box width="medium" direction="column">
+            <Text size="medium" weight="bold">
+              {titleParts.map(({ part, id }) =>
+                part.toLowerCase() !== searchText.toLowerCase() ? (
+                  `${part}`
+                ) : (
+                  <Text key={id} weight="bold">
+                    {part}
+                  </Text>
+                )
+              )}
+            </Text>
+          </Box>
+        )}
+        <Box>{menuItem.component && menuItem.component}</Box>
+      </Box>
+    );
+  };
+
   const renderContentCategory = (selectedMenu: Menu) => {
+    const tabGroups = groupByTabIndex(selectedMenu.items!);
+
     return (
       <Box flex="grow" pad={{ horizontal: 'small' }} gap="medium">
         {!selectedMenu.labelNotVisible &&
@@ -107,38 +157,49 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
             {!selectedMenu.isEmpty && selectedMenu.saveButton}
           </Box>
         </Box>
-        {selectedMenu?.items?.map<React.ReactNode>((menuItem) => {
-          const titleParts = menuItem.title
-            .split(new RegExp(`(${searchText})`, 'gi'))
-            .map((p) => ({ part: p, id: nanoid() }));
-
-          return (
-            <Box
-              key={menuItem.key}
-              direction="column"
-              flex="shrink"
-              justify="start"
-              gap="small"
-            >
-              {size !== 'small' && (
-                <Box width="medium" direction="column">
-                  <Text size="medium" weight="bold">
-                    {titleParts.map(({ part, id }) =>
-                      part.toLowerCase() !== searchText.toLowerCase() ? (
-                        `${part}`
-                      ) : (
-                        <Text key={id} weight="bold">
-                          {part}
-                        </Text>
-                      )
-                    )}
-                  </Text>
-                </Box>
-              )}
-              <Box>{menuItem.component && menuItem.component}</Box>
+        {!searchText && selectedMenu.tabs && selectedMenu.tabs.length > 1 ? (
+          <Box gap="medium">
+            <Box direction="row" gap="medium">
+              {selectedMenu.tabs.map((tab) => (
+                <Button
+                  key={`timelineTab-${tab.index}`}
+                  onClick={() => {
+                    setActiveTab(tab.index);
+                  }}
+                  plain
+                >
+                  <Box
+                    align="center"
+                    border={{
+                      side: 'bottom',
+                      size: 'small',
+                      color:
+                        activeTab === tab.index ? 'brand' : 'status-disabled',
+                    }}
+                    pad={{ horizontal: 'xsmall' }}
+                  >
+                    <Text
+                      size="medium"
+                      weight="bold"
+                      color={
+                        activeTab === tab.index ? 'brand' : 'status-disabled'
+                      }
+                    >
+                      {tab.label}
+                    </Text>
+                  </Box>
+                </Button>
+              ))}
             </Box>
-          );
-        })}
+            {tabGroups[activeTab].map((menuItem: MenuItem) =>
+              renderContentCategoryContent(menuItem)
+            )}
+          </Box>
+        ) : (
+          selectedMenu?.items?.map<React.ReactNode>((menuItem) =>
+            renderContentCategoryContent(menuItem)
+          )
+        )}
       </Box>
     );
   };
