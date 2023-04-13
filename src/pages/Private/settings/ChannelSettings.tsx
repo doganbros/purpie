@@ -206,7 +206,10 @@ const ChannelSettings: () => Menu = () => {
                     )}
                     {userChannels.data.map(
                       (item) =>
-                        item.channel.zoneId === zone.zone.id && (
+                        item.channel.zoneId === zone.zone.id &&
+                        (item.channelRole.canEdit ||
+                          item.channelRole.canManageRole ||
+                          item.channelRole.canDelete) && (
                           <ListButton
                             pad={{
                               vertical: 'xsmall',
@@ -364,6 +367,7 @@ const ChannelSettings: () => Menu = () => {
             pad="xxsmall"
           >
             <TextInput
+              disabled={!selectedUserChannel?.channelRole.canEdit}
               placeholder={t('settings.channelNamePlaceholder')}
               value={channelPayload.name}
               plain
@@ -394,6 +398,7 @@ const ChannelSettings: () => Menu = () => {
             pad="xxsmall"
           >
             <TextInput
+              disabled={!selectedUserChannel?.channelRole.canEdit}
               placeholder={t('settings.channelDescriptionPlaceholder')}
               value={channelPayload.description}
               plain

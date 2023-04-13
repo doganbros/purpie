@@ -198,33 +198,38 @@ const ZoneSettings: () => Menu | null = () => {
           }
           dropContent={
             <Box width={{ min: '250px' }} overflow="auto">
-              {userZones?.map((item) => (
-                <ListButton
-                  label={item.zone.name}
-                  subLabel={t(`Permissions.${item.zoneRole.roleCode}`)}
-                  key={item.zone.id}
-                  onClick={() => {
-                    setZonePayload({
-                      name: item.zone.name,
-                      id: item.zone.id,
-                      subdomain: item.zone.subdomain,
-                      public: item.zone.public,
-                      description: item.zone.description,
-                    });
-                    setSelectedZone(item);
-                    setShowZoneSelector(false);
-                    setIsDropOpen(false);
-                  }}
-                  leftIcon={
-                    <ZoneAvatar
-                      id={item.zone.id}
-                      name={item.zone.name}
-                      src={item.zone.displayPhoto}
-                      outerCircle
+              {userZones?.map(
+                (item) =>
+                  (item.zoneRole.canEdit ||
+                    item.zoneRole.canManageRole ||
+                    item.zoneRole.canDelete) && (
+                    <ListButton
+                      label={item.zone.name}
+                      subLabel={t(`Permissions.${item.zoneRole.roleCode}`)}
+                      key={item.zone.id}
+                      onClick={() => {
+                        setZonePayload({
+                          name: item.zone.name,
+                          id: item.zone.id,
+                          subdomain: item.zone.subdomain,
+                          public: item.zone.public,
+                          description: item.zone.description,
+                        });
+                        setSelectedZone(item);
+                        setShowZoneSelector(false);
+                        setIsDropOpen(false);
+                      }}
+                      leftIcon={
+                        <ZoneAvatar
+                          id={item.zone.id}
+                          name={item.zone.name}
+                          src={item.zone.displayPhoto}
+                          outerCircle
+                        />
+                      }
                     />
-                  }
-                />
-              ))}
+                  )
+              )}
             </Box>
           }
         >
@@ -289,6 +294,7 @@ const ZoneSettings: () => Menu | null = () => {
             pad="xxsmall"
           >
             <TextInput
+              disabled={!selectedZone?.zoneRole.canEdit}
               placeholder={t('settings.zoneNamePlaceholder')}
               value={zonePayload.name}
               plain
@@ -319,6 +325,7 @@ const ZoneSettings: () => Menu | null = () => {
             pad="xxsmall"
           >
             <TextInput
+              disabled={!selectedZone?.zoneRole.canEdit}
               placeholder={t('settings.zoneSubdomainPlaceholder')}
               value={zonePayload.subdomain}
               plain
@@ -349,6 +356,7 @@ const ZoneSettings: () => Menu | null = () => {
             pad="xxsmall"
           >
             <TextInput
+              disabled={!selectedZone?.zoneRole.canEdit}
               placeholder={t('settings.zoneDescriptionPlaceholder')}
               value={zonePayload.description}
               plain
