@@ -454,6 +454,7 @@ export class MeetingService {
           fullName: meeting.createdBy.fullName,
           email: meeting.createdBy.email,
           userName: meeting.createdBy.userName,
+          id: meeting.createdBy.id,
           photoURL: meeting.createdBy.displayPhoto
             ? `${REACT_APP_SERVER_HOST}/v1/user/display-photo/${meeting.createdBy.displayPhoto}`
             : null,
@@ -487,6 +488,7 @@ export class MeetingService {
         fullName: meeting.createdBy.fullName,
         email: meeting.createdBy.email,
         userName: meeting.createdBy.userName,
+        id: meeting.createdBy.id,
         photoURL: meeting.createdBy.displayPhoto
           ? `${REACT_APP_SERVER_HOST}/v1/user/display-photo/${meeting.createdBy.displayPhoto}`
           : null,
