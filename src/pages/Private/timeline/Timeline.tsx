@@ -218,16 +218,18 @@ const Timeline: FC = () => {
         ) : (
           <Box pad="medium" gap="medium">
             <SearchBar />
-            {selectedChannel && selectedChannel.id && (
-              <Box gap="medium">
-                <InviteToChannel channel={selectedChannel} />
-                <InviteToZone
-                  zone={userZones?.find(
-                    (z) => z.zone.id === selectedChannel?.channel.zoneId
-                  )}
-                />
-              </Box>
-            )}
+            {selectedChannel &&
+              selectedChannel.id &&
+              selectedChannel.channelRole.canInvite && (
+                <Box gap="medium">
+                  <InviteToChannel channel={selectedChannel} />
+                  <InviteToZone
+                    zone={userZones?.find(
+                      (z) => z.zone.id === selectedChannel?.channel.zoneId
+                    )}
+                  />
+                </Box>
+              )}
             {!selectedChannel && <InvitationList />}
             {!selectedChannel &&
               !invitations.loading &&
