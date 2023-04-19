@@ -298,6 +298,13 @@ export class ChannelService {
     );
   }
 
+  async changeBackgroundPhoto(channelId: string, fileName: string) {
+    return this.channelRepository.update(
+      { id: channelId },
+      { backgroundPhoto: fileName },
+    );
+  }
+
   async validateInvitationResponse(invitationId: number, email: string) {
     return this.invitationRepository.findOne({
       where: {

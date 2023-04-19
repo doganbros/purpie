@@ -473,6 +473,87 @@ export class ChannelController {
     }
   }
 
+  @Put('/:userChannelId/background-photo')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        photoFile: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('photoFile', {
+      storage: s3Storage(`${S3_PROFILE_PHOTO_DIR}/channel-bg/`),
+      fileFilter(_: any, file, cb) {
+        const { mimetype } = file;
+
+        const isValid = [
+          'image/jpg',
+          'image/jpeg',
+          'image/png',
+          'image/bmp',
+          'image/svg+xml',
+        ].includes(mimetype);
+
+        if (!isValid)
+          return cb(
+            new BadRequestException(
+              ErrorTypes.INVALID_IMAGE_FORMAT,
+              'Please upload a valid photo format',
+            ),
+            false,
+          );
+
+        return cb(null, true);
+      },
+    }),
+  )
+  @IsAuthenticated()
+  @UserChannelRole(['canEdit'])
+  @ValidationBadRequest()
+  async changeBackgroundPhoto(
+    @CurrentUserChannel() userChannel: UserChannel,
+    @UploadedFile() file: Express.MulterS3.File,
+    @Param('userChannelId', ParseUUIDPipe) userChannelId: string,
+  ) {
+    const fileName = file.key.replace(
+      `${S3_PROFILE_PHOTO_DIR}/channel-bg/`,
+      '',
+    );
+
+    await this.channelService.changeBackgroundPhoto(userChannelId, fileName);
+
+    return fileName;
+  }
+
+  @Get('background-photo/:fileName')
+  @Header('Cache-Control', 'max-age=3600')
+  async viewBackgroundPhoto(
+    @Res() res: Response,
+    @Param('fileName') fileName: string,
+  ) {
+    try {
+      const creds = {
+        Bucket: S3_BUCKET_NAME,
+        Key: `${S3_PROFILE_PHOTO_DIR}/channel-bg/${fileName}`,
+      };
+      const head = await s3HeadObject(creds);
+      const objectStream = s3.getObject(creds).createReadStream();
+
+      res.setHeader('Content-Disposition', `filename=${fileName}`);
+      if (head.ContentType) res.setHeader('Content-Type', head.ContentType);
+
+      return objectStream.pipe(res);
+    } catch (err: any) {
+      return res.status(err.statusCode || 500).json(err);
+    }
+  }
+
   @Get('post-settings/:channelId')
   @UserChannelRole()
   @ApiOkResponse({

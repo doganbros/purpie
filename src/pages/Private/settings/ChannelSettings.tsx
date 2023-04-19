@@ -32,8 +32,8 @@ import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
-import ChannelUsers from '../../../layers/settings-and-static-pages/ChannelUsers';
 import ChannelPermissions from '../../../layers/settings-and-static-pages/permissions/ChannelPermissions';
+import ChannelUsers from '../../../layers/settings-and-static-pages/ChannelUsers';
 
 const ChannelSettings: () => Menu = () => {
   const {
