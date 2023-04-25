@@ -261,6 +261,15 @@ export class PostService {
             .andWhere('user_saved_post.userId = :currentUserId'),
         'post_saved',
       )
+      .addSelect(
+        (sq) =>
+          sq
+            .select('count(*) > 0')
+            .from(PostView, 'post_view')
+            .where('post_view.postId = post.id')
+            .andWhere('post_view.userId = :currentUserId'),
+        'post_viewed',
+      )
       .addSelect([
         'postReaction.likesCount',
         'postReaction.viewsCount',
