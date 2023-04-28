@@ -49,7 +49,7 @@ import { ZoneActionParams } from './zone.types';
 export interface ChannelBasic {
   id: string;
   name: string;
-  description: string;
+  description: string | null;
   public: boolean;
   zone?: {
     id: string;
@@ -164,7 +164,7 @@ export interface ManageChannelPayload {
 
 export interface UpdateChannelPayload {
   name: string;
-  description: string;
+  description: string | null;
   id: string;
   public: boolean;
 }
