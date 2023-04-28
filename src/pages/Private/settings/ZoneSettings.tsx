@@ -60,6 +60,16 @@ const ZoneSettings: () => Menu | null = () => {
     public: userZones?.[0]?.zone?.public || false,
   });
 
+  const handleZoneLeaveForm = () => {
+    return setZonePayload({
+      name: userZones?.[0]?.zone?.name || '',
+      description: userZones?.[0]?.zone?.description || null,
+      subdomain: userZones?.[0]?.zone?.subdomain || '',
+      id: userZones?.[0]?.zone?.id || '',
+      public: userZones?.[0]?.zone?.public || false,
+    });
+  };
+
   if (userZones?.length === 0) {
     return {
       id: 2,
@@ -134,6 +144,7 @@ const ZoneSettings: () => Menu | null = () => {
           );
 
           setShowDeletePopup(false);
+          handleZoneLeaveForm();
         }}
         onDismiss={() => setShowDeletePopup(false)}
         textProps={{ wordBreak: 'break-word' }}
@@ -156,6 +167,7 @@ const ZoneSettings: () => Menu | null = () => {
         onConfirm={() => {
           dispatch(leaveZoneAction(selectedZone!.id!));
           setShowLeavePopup(false);
+          handleZoneLeaveForm();
         }}
         onDismiss={() => setShowLeavePopup(false)}
         textProps={{ wordBreak: 'break-word' }}
@@ -358,7 +370,7 @@ const ZoneSettings: () => Menu | null = () => {
             <TextInput
               disabled={!selectedZone?.zoneRole.canEdit}
               placeholder={t('settings.zoneDescriptionPlaceholder')}
-              value={zonePayload.description}
+              value={zonePayload.description || ''}
               plain
               focusIndicator={false}
               onChange={(event) =>
