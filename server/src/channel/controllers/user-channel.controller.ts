@@ -66,7 +66,6 @@ export class UserChannelController {
   async deleteUserChannelById(
     @CurrentUserChannel() currentUserChannel: UserChannel,
   ) {
-    console.log(currentUserChannel);
     if (currentUserChannel.channelRole.roleCode === ChannelRoleCode.OWNER)
       throw new BadRequestException(
         ErrorTypes.OWNER_CANT_UNFOLLOW_CHANNEL,
