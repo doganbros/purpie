@@ -37,7 +37,7 @@ const ChannelList: FC<ChannelListProps> = ({
   return (
     <Box direction="row">
       {userChannelsFiltered.loading && (
-        <PurpieLogoAnimated width={50} height={50} color="brand" />
+        <PurpieLogoAnimated width={50} height={50} color="#9060EB" />
       )}
       {!userChannelsFiltered.loading &&
         (userChannelsFiltered.data.length === 0 ? (

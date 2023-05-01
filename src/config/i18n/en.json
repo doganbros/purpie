@@ -51,8 +51,8 @@
     "leave": "Leave",
     "accept": "Accept",
     "accepted": "Accepted",
-    "hour":"Hour",
-    "hours":"Hours"
+    "hour": "Hour",
+    "hours": "Hours"
   },
   "Login": {
     "title": "Login",
@@ -315,7 +315,7 @@
     "hideConferenceSubject": "Hide Conference Subject",
     "hideConferenceTimer": "Hide Conference Timer",
     "hideParticipantsStats": "Hide Participants Stats",
-    "meetingLinkExpires":"Invite meeting link expires after meeting start"
+    "meetingLinkExpires": "Invite meeting link expires after meeting start"
   },
   "MeetingDetails": {
     "meetingName": "Meeting Name",
@@ -477,6 +477,7 @@
     "CANT_UNBLOCK_YOURSELF": "You cannot unblock yourself",
     "CHANNEL_NOT_FOUND": "Channel Not Found!",
     "ZONE_NOT_FOUND": "Zone Not Found!",
+    "ZONE_SUBDOMAIN_ALREADY_EXIST": "The requested zone subdomain already exist.",
     "INVITATION_NOT_FOUND": "Invitation Not Found!",
     "USER_PAYLOAD_REQUIRED": "User payload must be retrieved before using this guard.",
     "USER_ALREADY_INVITED_TO_CHANNEL": "The specified user has already been invited to this channel.",
@@ -493,7 +494,8 @@
     "INVALID_IMAGE_FORMAT": "Please upload a valid image format!",
     "INVALID_VIDEO_FORMAT": "Please upload a valid video format!",
     "CURRENT_PASSWORD_NOT_CORRECT": "Current password is not correct!",
-    "PASSWORDS_NOT_MATCH": "Passwords do not match!"
+    "PASSWORDS_NOT_MATCH": "Passwords do not match!",
+    "OWNER_NOT_EXIST": "The last owner cannot be deleted!"
   },
   "settings": {
     "personalSettings": "Personal Settings",
@@ -546,8 +548,26 @@
     "channelUnfollowMessage": "Are you sure you want to unfollow",
     "zoneLeaveMessage": "Are you sure you want to leave",
     "owner": "Owner",
-    "member": "Member"
+    "member": "Member",
+    "general": "General",
+    "permissions":"Permissions",
+    "members": "Members",
+    "followers": "Followers",
+    "userInfo": "User Info",
+    "role": "Role",
+    "followingDate": "Following Date",
+    "joinDate": "Join Date",
+    "action": "Action"
   },
+  "ManageChannelUser": {
+    "title": "Manage Channel Follower",
+    "saveChannelChangesConfirm": "Are you sure you want to save the changes on selected channel?"
+  },
+  "ManageZoneUser": {
+    "title": "Manage Zone Member",
+    "saveChannelChangesConfirm": "Are you sure you want to save the changes on selected zone?"
+  },
+
   "ContactsToFollow": {
     "title": "People to add",
     "add": "Add",
@@ -721,5 +741,24 @@
     "a6": "You can find more info on a quick install here. If you want a more advanced guide, you can find a way to set your Purpie of from scratch here.",
     "q7": "Is there a community for Purpie?",
     "a7": "Yes! Purple supports a burgeoning community in <0>community.purpie.org</0>. Also, don’t forget to check out our website, <1>purpie.org</1>."
+  },
+  "Permissions": {
+    "OWNER": "Owner",
+    "MODERATOR": "Moderator",
+    "USER": "User"
+  },
+  "ChannelPermissionAction": {
+    "canInvite": "Create invitation for new people",
+    "canDelete": "Delete channel",
+    "canEdit": "Update channel",
+    "canManageRole": "Manage channel roles"
+  },
+  "ZonePermissionAction": {
+    "canCreateChannel": "Create new channel for zone",
+    "canInvite": "Create invitation for new people",
+    "canDelete": "Delete channel",
+    "canEdit": "Update channel",
+    "canManageRole": "Manage zone roles"
   }
+
 }

@@ -19,6 +19,7 @@ import { compareHash, detectBrowser, hash } from 'helpers/utils';
 import { nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
 import { Brackets, IsNull, Not, Repository } from 'typeorm';
+import { isUUID } from '@nestjs/common/utils/is-uuid';
 import {
   MAIL_VERIFICATION_TYPE,
   PASSWORD_VERIFICATION_TYPE,
@@ -278,7 +279,7 @@ export class AuthService {
     };
   }
 
-  async subdomainValidity(subdomain: string, identifier: number | string) {
+  async subdomainValidity(subdomain: string, identifier: string) {
     const baseQuery = this.userRepository
       .createQueryBuilder('user')
       .innerJoin(Zone, 'zone', 'zone.subdomain = :subdomain', { subdomain })
@@ -294,8 +295,7 @@ export class AuthService {
         }),
       );
 
-    if (typeof identifier === 'string' && !identifier.includes('@'))
-      baseQuery.andWhere('user.id = :identifier');
+    if (isUUID(identifier)) baseQuery.andWhere('user.id = :identifier');
     else {
       baseQuery.andWhere(
         new Brackets((qb) => {

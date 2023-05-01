@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from 'entities/Channel.entity';
 import { ChannelRole } from 'entities/ChannelRole.entity';
-import { defaultChannelRoles } from 'entities/data/default-roles';
+import { baseChannelRoles } from 'entities/data/default-roles';
 import { Invitation } from 'entities/Invitation.entity';
 import { User } from 'entities/User.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
@@ -28,6 +28,7 @@ import { SearchChannelQuery } from '../dto/search-channel.query';
 import { UpdateChannelPermission } from '../dto/update-channel-permission.dto';
 import { UpdateChannelUserRoleDto } from '../dto/update-channel-user-role.dto';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { ChannelRoleCode } from '../../../types/RoleCodes';
 
 const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
 
@@ -54,7 +55,7 @@ export class ChannelService {
       .create({
         userId,
         userZoneId,
-        channelRoleCode: 'SUPER_ADMIN',
+        channelRoleCode: ChannelRoleCode.OWNER,
         channel: await this.channelRepository
           .create({
             name: createChannelInfo.name,
@@ -68,7 +69,7 @@ export class ChannelService {
       .save();
 
     await this.channelRoleRepository.insert(
-      defaultChannelRoles.map((v) => ({
+      baseChannelRoles.map((v) => ({
         ...v,
         channelId: userChannel.channel.id,
       })),
@@ -224,7 +225,7 @@ export class ChannelService {
     return this.userChannelRepository
       .create({
         userId,
-        channelRoleCode: 'NORMAL',
+        channelRoleCode: ChannelRoleCode.USER,
         channelId,
         userZoneId,
       })
@@ -297,6 +298,13 @@ export class ChannelService {
     );
   }
 
+  async changeBackgroundPhoto(channelId: string, fileName: string) {
+    return this.channelRepository.update(
+      { id: channelId },
+      { backgroundPhoto: fileName },
+    );
+  }
+
   async validateInvitationResponse(invitationId: number, email: string) {
     return this.invitationRepository.findOne({
       where: {
@@ -318,8 +326,8 @@ export class ChannelService {
     );
   }
 
-  listChannelRoles(channelId: number) {
-    return this.channelRoleRepository.find({ take: 30, where: { channelId } });
+  listChannelRoles(channelId: string) {
+    return this.channelRoleRepository.find({ where: { channelId } });
   }
 
   listChannelUsers(channelId: string, query: SystemUserListQuery) {
@@ -359,19 +367,19 @@ export class ChannelService {
     info: UpdateChannelUserRoleDto,
   ) {
     const { channelRoleCode } = info;
-    if (channelRoleCode !== 'SUPER_ADMIN') {
-      const remainingSuperAdminCount = await this.userChannelRepository.count({
+    if (channelRoleCode !== ChannelRoleCode.OWNER) {
+      const remainingOwnerCount = await this.userChannelRepository.count({
         where: {
           channelId,
           userId: Not(info.userId),
-          channelRoleCode: 'SUPER_ADMIN',
+          channelRoleCode: ChannelRoleCode.OWNER,
         },
       });
 
-      if (remainingSuperAdminCount === 0)
+      if (remainingOwnerCount === 0)
         throw new ForbiddenException(
-          ErrorTypes.SUPER_ADMIN_NOT_EXIST,
-          'There must be at least one super admin',
+          ErrorTypes.OWNER_NOT_EXIST,
+          'There must be at least one channel owner',
         );
     }
 
@@ -397,7 +405,7 @@ export class ChannelService {
     return this.channelRoleRepository.create({ ...info, channelId }).save();
   }
 
-  async removeChannelRole(channelId: string, roleCode: any) {
+  async removeChannelRole(channelId: string, roleCode: ChannelRoleCode) {
     const existing = await this.userChannelRepository.count({
       where: { channelRoleCode: roleCode, channelId },
     });
@@ -409,19 +417,19 @@ export class ChannelService {
       );
 
     return this.channelRoleRepository
-      .delete({ roleCode, isSystemRole: false, channelId })
+      .delete({ roleCode, channelId })
       .then((res) => res.affected);
   }
 
   async editChannelRolePermissions(
     channelId: string,
-    roleCode: string,
+    roleCode: ChannelRoleCode,
     info: Partial<UpdateChannelPermission>,
   ) {
-    if (roleCode === 'SUPER_ADMIN')
+    if (roleCode === ChannelRoleCode.OWNER)
       throw new ForbiddenException(
-        ErrorTypes.CHANGE_SUPER_ADMIN_PERMISSION,
-        "Super Admin Permissions can't be changed",
+        ErrorTypes.CHANGE_OWNER_PERMISSION,
+        "Channel Owner Permissions can't be changed",
       );
 
     const updates: Partial<UpdateChannelPermission> = {};

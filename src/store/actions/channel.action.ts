@@ -5,6 +5,7 @@ import {
   CreateChannelPayload,
   UserChannelListItem,
   UserChannelPermissionList,
+  UpdateUserChannelRoleParams,
 } from '../types/channel.types';
 import {
   CLOSE_CREATE_CHANNEL_LAYER,
@@ -41,6 +42,12 @@ import {
   UNFOLLOW_CHANNEL_REQUESTED,
   UNFOLLOW_CHANNEL_SUCCESS,
   UNFOLLOW_CHANNEL_FAILED,
+  GET_CHANNEL_ROLES_REQUESTED,
+  GET_CHANNEL_ROLES_SUCCESS,
+  GET_CHANNEL_ROLES_FAILED,
+  UPDATE_USER_CHANNEL_ROLE_REQUESTED,
+  UPDATE_USER_CHANNEL_ROLE_SUCCESS,
+  UPDATE_USER_CHANNEL_ROLE_FAILED,
 } from '../constants/channel.constants';
 import * as ChannelService from '../services/channel.service';
 
@@ -250,7 +257,7 @@ export const updateChannelInfoAction = (
 };
 
 export const updateChannelPermissionsAction = (
-  channelId: number,
+  channelId: string,
   params: UserChannelPermissionList
 ): ChannelAction => {
   return async (dispatch) => {
@@ -261,6 +268,7 @@ export const updateChannelPermissionsAction = (
       await ChannelService.updateChannelPermissions(channelId, params);
       dispatch({
         type: UPDATE_CHANNEL_PERMISSIONS_SUCCESS,
+        payload: params,
       });
     } catch (err: any) {
       dispatch({
@@ -321,22 +329,65 @@ export const deleteChannelAction = (channelId: string): ChannelAction => {
   };
 };
 
-export const unfollowChannelAction = (channelId: string): ChannelAction => {
+export const unfollowChannelAction = (userChannelId: string): ChannelAction => {
   return async (dispatch) => {
     dispatch({
       type: UNFOLLOW_CHANNEL_REQUESTED,
     });
     try {
-      await ChannelService.unfollowChannel(channelId);
+      await ChannelService.unfollowChannel(userChannelId);
       dispatch({
         type: UNFOLLOW_CHANNEL_SUCCESS,
-        payload: channelId,
+        payload: userChannelId,
       });
       setToastAction('ok', i18n.t('ToastMessages.channelUnfollowed'))(dispatch);
       unsetSelectedChannelAction()(dispatch);
     } catch (err: any) {
       dispatch({
         type: UNFOLLOW_CHANNEL_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const getChannelRolesAction = (channelId: string): ChannelAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: GET_CHANNEL_ROLES_REQUESTED,
+    });
+    try {
+      const payload = await ChannelService.listChannelRoles(channelId);
+      dispatch({
+        type: GET_CHANNEL_ROLES_SUCCESS,
+        payload,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: GET_CHANNEL_ROLES_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const updateUserChannelRoleAction = (
+  channelId: string,
+  params: UpdateUserChannelRoleParams
+): ChannelAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: UPDATE_USER_CHANNEL_ROLE_REQUESTED,
+    });
+    try {
+      await ChannelService.updateUserChannelRole(channelId, params);
+      dispatch({
+        type: UPDATE_USER_CHANNEL_ROLE_SUCCESS,
+        payload: params,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: UPDATE_USER_CHANNEL_ROLE_FAILED,
         payload: err?.response?.data,
       });
     }

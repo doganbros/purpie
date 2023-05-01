@@ -42,6 +42,10 @@ const Notifications: FC = () => {
     displayCount === INVITATION_AMOUNT_LESS
       ? notification.data.slice(0, displayCount)
       : notification.data;
+
+  if (!notification?.loading && data.length === 0) {
+    return null;
+  }
   return (
     <Box gap="small">
       <Box direction="row" align="center" justify="between">

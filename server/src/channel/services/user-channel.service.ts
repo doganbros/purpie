@@ -51,6 +51,7 @@ export class UserChannelService {
         'channel.createdOn',
         'channel.name',
         'channel.displayPhoto',
+        'channel.backgroundPhoto',
         'channel.description',
         'channel.public',
         'channel.zoneId',
@@ -114,7 +115,7 @@ export class UserChannelService {
           email: record.createdBy_email,
         },
       },
-      chanelRole: {
+      channelRole: {
         roleCode: record.channel_role_roleCode,
         roleName: record.channel_role_roleName,
         canInvite: record.channel_role_canInvite,
@@ -145,6 +146,7 @@ export class UserChannelService {
         'channel.name',
         'channel.description',
         'channel.displayPhoto',
+        'channel.backgroundPhoto',
         'channel.public',
         'channel.zoneId',
         'createdBy.id',

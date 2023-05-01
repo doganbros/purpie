@@ -38,6 +38,9 @@ export class Channel extends RecordEntity {
   @Column({ nullable: true })
   displayPhoto: string;
 
+  @Column({ nullable: true })
+  backgroundPhoto: string;
+
   @ManyToOne(() => Zone, (zone) => zone.channels, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'zoneId' })
   zone: Zone;

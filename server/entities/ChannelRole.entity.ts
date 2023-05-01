@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { ChannelRoleCode } from '../types/RoleCodes';
 
 @Entity()
 export class ChannelRole extends BaseEntity {
@@ -9,18 +10,11 @@ export class ChannelRole extends BaseEntity {
 
   @ApiProperty()
   @Column()
-  roleCode: string;
+  roleCode: ChannelRoleCode;
 
   @ApiProperty()
   @Column()
   channelId: string;
-
-  @Column()
-  @ApiProperty()
-  roleName: string;
-
-  @Column({ default: false })
-  isSystemRole: boolean;
 
   @Column({ default: true })
   @ApiProperty()

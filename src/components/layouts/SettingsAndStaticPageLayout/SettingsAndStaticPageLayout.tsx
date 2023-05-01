@@ -1,6 +1,14 @@
-import React, { FC, useEffect, useState } from 'react';
-import { Accordion, AccordionPanel, Avatar, Box, Text } from 'grommet';
-import { CaretLeftFill, CaretRightFill } from 'grommet-icons';
+import React, { FC, useContext, useEffect, useState } from 'react';
+import {
+  Accordion,
+  AccordionPanel,
+  Avatar,
+  Box,
+  Button,
+  ResponsiveContext,
+  Text,
+} from 'grommet';
+import { CaretLeftFill, CaretRightFill, Previous } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { nanoid } from 'nanoid';
@@ -23,7 +31,9 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
   pageUrl,
 }) => {
   const history = useHistory();
+  const size = useContext(ResponsiveContext);
 
+  const [activeTab, setActiveTab] = useState(1);
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [searchText, setSearchText] = useState<string>('');
@@ -75,15 +85,65 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
     }
   }, [searchTextValue]);
 
-  const renderContentCategory = (selectedMenu: Menu) => {
+  const groupByTabIndex = (menuItems: MenuItem[]) => {
+    return menuItems.reduce((group: any, item) => {
+      if (item.tabIndex) {
+        const { tabIndex } = item;
+
+        // eslint-disable-next-line no-param-reassign
+        group[tabIndex] = group[tabIndex] ?? [];
+        group[tabIndex].push(item);
+        return group;
+      }
+      return {};
+    }, {});
+  };
+  const renderContentCategoryContent = (menuItem: MenuItem) => {
+    const titleParts = menuItem.title
+      .split(new RegExp(`(${searchText})`, 'gi'))
+      .map((p) => ({ part: p, id: nanoid() }));
+
     return (
-      <Box flex="grow" pad={{ horizontal: 'small' }} gap="medium">
-        {!selectedMenu.labelNotVisible && searchText.length === 0 && (
-          <Box>
-            <Text size="xlarge">{selectedMenu.label}</Text>
+      <Box
+        key={menuItem.key}
+        direction="column"
+        flex="shrink"
+        justify="start"
+        gap="small"
+      >
+        {size !== 'small' && titleParts.length > 0 && (
+          <Box width="medium" direction="column">
+            <Text size="medium" weight="bold">
+              {titleParts.map(({ part, id }) =>
+                part.toLowerCase() !== searchText.toLowerCase() ? (
+                  `${part}`
+                ) : (
+                  <Text key={id} weight="bold">
+                    {part}
+                  </Text>
+                )
+              )}
+            </Text>
           </Box>
         )}
-        <Box direction="row" justify="between">
+        <Box>{menuItem.component && menuItem.component}</Box>
+      </Box>
+    );
+  };
+
+  const renderContentCategory = (selectedMenu: Menu) => {
+    const tabGroups = groupByTabIndex(selectedMenu.items!);
+
+    return (
+      <Box flex="grow" pad={{ horizontal: 'small' }} gap="medium">
+        {!selectedMenu.labelNotVisible &&
+          searchText.length === 0 &&
+          size !== 'small' && (
+            <Box>
+              <Text size="xlarge">{selectedMenu.label}</Text>
+            </Box>
+          )}
+        <Box direction={size === 'small' ? 'column' : 'row'} justify="between">
           {selectedMenu.avatarWidget}
           {selectedMenu.deletePopup}
           {selectedMenu.leavePopup}
@@ -97,42 +157,55 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
             {!selectedMenu.isEmpty && selectedMenu.saveButton}
           </Box>
         </Box>
-        {selectedMenu?.items?.map<React.ReactNode>((menuItem) => {
-          const titleParts = menuItem.title
-            .split(new RegExp(`(${searchText})`, 'gi'))
-            .map((p) => ({ part: p, id: nanoid() }));
-
-          return (
-            <Box
-              key={menuItem.key}
-              direction="column"
-              flex="shrink"
-              justify="start"
-              gap="small"
-            >
-              <Box width="medium" direction="column">
-                <Text size="medium" weight="bold">
-                  {titleParts.map(({ part, id }) =>
-                    part.toLowerCase() !== searchText.toLowerCase() ? (
-                      `${part}`
-                    ) : (
-                      <Text key={id} weight="bold">
-                        {part}
-                      </Text>
-                    )
-                  )}
-                </Text>
-              </Box>
-              <Box>{menuItem.component && menuItem.component}</Box>
+        {!searchText && selectedMenu.tabs && selectedMenu.tabs.length > 1 ? (
+          <Box gap="medium">
+            <Box direction="row" gap="medium">
+              {selectedMenu.tabs.map((tab) => (
+                <Button
+                  key={`timelineTab-${tab.index}`}
+                  onClick={() => {
+                    setActiveTab(tab.index);
+                  }}
+                  plain
+                >
+                  <Box
+                    align="center"
+                    border={{
+                      side: 'bottom',
+                      size: 'small',
+                      color:
+                        activeTab === tab.index ? 'brand' : 'status-disabled',
+                    }}
+                    pad={{ horizontal: 'xsmall' }}
+                  >
+                    <Text
+                      size="medium"
+                      weight="bold"
+                      color={
+                        activeTab === tab.index ? 'brand' : 'status-disabled'
+                      }
+                    >
+                      {tab.label}
+                    </Text>
+                  </Box>
+                </Button>
+              ))}
             </Box>
-          );
-        })}
+            {tabGroups[activeTab].map((menuItem: MenuItem) =>
+              renderContentCategoryContent(menuItem)
+            )}
+          </Box>
+        ) : (
+          selectedMenu?.items?.map<React.ReactNode>((menuItem) =>
+            renderContentCategoryContent(menuItem)
+          )
+        )}
       </Box>
     );
   };
 
   const renderContent = () => {
-    if (searchText?.length > 0) {
+    if (searchText?.length > 0 || size === 'small') {
       const selectedItems = getSearchResults();
       if (selectedItems.length === 0) {
         return <Text>{t('StaticPage.noSearch')}</Text>;
@@ -162,7 +235,7 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
           onClick={() => history.push('/')}
           width="300px"
           align="start"
-          justify="start"
+          justify="center"
           focusIndicator={false}
         >
           <Avatar round="0" src={LogoWhite} />
@@ -178,58 +251,76 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
           </Box>
         </Box>
       </Box>
-      <Box direction="row" pad={{ horizontal: 'medium', bottom: 'medium' }}>
-        <Box justify="between">
-          <Box>
-            <Box
-              direction="row"
-              gap="small"
-              margin={{ top: '30px' }}
-              onClick={() => history.goBack()}
-              focusIndicator={false}
-              align="center"
-              pad={{ bottom: 'small' }}
-            >
-              <CaretLeftFill size="36px" color="brand" />
-              <Text> {t('common.back')}</Text>
-            </Box>
-            <Box pad={{ horizontal: 'small', vertical: 'large' }}>
-              <Text weight="bold">{pageTitle}</Text>
-            </Box>
-            {menuList.map((menuItem, index) => (
-              <React.Fragment key={menuItem.key}>
-                <Box
-                  focusIndicator={false}
-                  onClick={() => {
-                    setSelectedIndex(index);
-                    setSearchTextValue('');
-                  }}
-                  pad="small"
-                  justify="between"
-                  direction="row"
-                  width="300px"
-                >
-                  <Text
-                    weight={
-                      index === selectedIndex && searchText === ''
-                        ? 'bold'
-                        : 'normal'
-                    }
+      <Box
+        direction={size === 'small' ? 'column' : 'row'}
+        pad={{ horizontal: 'medium', bottom: 'medium' }}
+      >
+        {size !== 'small' ? (
+          <Box justify="between">
+            <Box>
+              <Box
+                direction="row"
+                gap="small"
+                margin={{ top: '30px' }}
+                onClick={() => history.goBack()}
+                focusIndicator={false}
+                align="center"
+                pad={{ bottom: 'small' }}
+              >
+                <CaretLeftFill size="36px" color="brand" />
+                <Text> {t('common.back')}</Text>
+              </Box>
+              <Box pad={{ horizontal: 'small', vertical: 'large' }}>
+                <Text weight="bold">{pageTitle}</Text>
+              </Box>
+              {menuList.map((menuItem, index) => (
+                <React.Fragment key={menuItem.key}>
+                  <Box
+                    focusIndicator={false}
+                    onClick={() => {
+                      setSelectedIndex(index);
+                      setSearchTextValue('');
+                    }}
+                    pad="small"
+                    justify="between"
+                    direction="row"
+                    width="300px"
                   >
-                    {menuItem.label}
-                  </Text>
-                  <CaretRightFill color="brand" />
-                </Box>
-                <Divider color="status-disabled-light" />
-              </React.Fragment>
-            ))}
+                    <Text
+                      weight={
+                        index === selectedIndex && searchText === ''
+                          ? 'bold'
+                          : 'normal'
+                      }
+                    >
+                      {menuItem.label}
+                    </Text>
+                    <CaretRightFill color="brand" />
+                  </Box>
+                  <Divider color="status-disabled-light" />
+                </React.Fragment>
+              ))}
+            </Box>
           </Box>
-        </Box>
+        ) : (
+          <Box
+            direction="row"
+            gap="small"
+            margin={{ top: 'large' }}
+            onClick={() => history.goBack()}
+            focusIndicator={false}
+            align="center"
+            pad={{ bottom: 'small' }}
+          >
+            <Previous size="24px" color="brand" />
+            <Text> {t('common.back')}</Text>
+          </Box>
+        )}
         <Box justify="center" fill="horizontal" align="center">
           <Box
             flex="grow"
             round="medium"
-            pad="medium"
+            pad={size === 'small' ? '0' : 'medium'}
             overflow="auto"
             fill="horizontal"
             width={{ max: '1440px' }}

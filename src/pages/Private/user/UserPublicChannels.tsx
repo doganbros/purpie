@@ -26,7 +26,7 @@ const UserPublicChannels: FC<{ userName: string }> = ({ userName }) => {
         {t('UserPublicChannels.title')}
       </Text>
       {publicChannels.loading && (
-        <PurpieLogoAnimated width={50} height={50} color="brand" />
+        <PurpieLogoAnimated width={50} height={50} color="#9060EB" />
       )}
       {!publicChannels.loading && publicChannels.data.length === 0 ? (
         <Text size="small">{t('UserPublicChannels.noChannelsFound')}</Text>

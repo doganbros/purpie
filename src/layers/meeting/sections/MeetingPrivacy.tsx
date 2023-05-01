@@ -99,6 +99,7 @@ const MeetingPrivacy: FC = () => {
               dispatch(
                 setMeetingFormFieldAction({
                   liveStream: v,
+                  record: false,
                 })
               );
             }}
@@ -110,6 +111,7 @@ const MeetingPrivacy: FC = () => {
             onChange={(v) => {
               dispatch(
                 setMeetingFormFieldAction({
+                  liveStream: false,
                   record: v,
                 })
               );

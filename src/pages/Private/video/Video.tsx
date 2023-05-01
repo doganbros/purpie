@@ -7,7 +7,6 @@ import {
   Dislike,
   Like,
   SettingsOption,
-  ShareOption,
 } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
@@ -43,6 +42,7 @@ import { DELAY_TIME } from '../../../helpers/constants';
 import useDelayTime from '../../../hooks/useDelayTime';
 import { AddToFolderDrop } from '../../../layers/saved-video/folder/AddToFolderDrop';
 import { useResponsive } from '../../../hooks/useResponsive';
+import ShareVideo from './ShareVideo';
 
 interface RouteParams {
   id: string;
@@ -221,7 +221,7 @@ const Video: FC = () => {
       {renderVideoSettingsResponsive()}
       {delay || loading || !data ? (
         <Box height="100vh" justify="center" align="center">
-          <PurpieLogoAnimated width={100} height={100} color="brand" />
+          <PurpieLogoAnimated width={100} height={100} color="#9060EB" />
         </Box>
       ) : (
         <Box
@@ -391,10 +391,7 @@ const Video: FC = () => {
                       />
                     </Box>
                   )}
-                  <Box direction="row" gap="xsmall" align="center">
-                    <ShareOption color="status-disabled" size="19px" />
-                    <Text color="status-disabled">{t('common.share')}</Text>
-                  </Box>
+                  <ShareVideo />
                   <AddToFolderDrop
                     postId={data.id}
                     dropLabels={(isActive) => (

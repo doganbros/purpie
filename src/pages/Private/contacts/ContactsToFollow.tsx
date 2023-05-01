@@ -21,9 +21,7 @@ const ContactsToFollow: FC = () => {
     dispatch(getContactSuggestionsAction());
   }, []);
 
-  const filteredContactSuggestData = data.filter(
-    (user) => invitedContacts?.userIds?.includes(user?.userId) === false
-  );
+  if (data?.length === 0 && !loading) return null;
 
   return (
     <Box gap="small">
@@ -32,14 +30,15 @@ const ContactsToFollow: FC = () => {
       </Text>
       {loading && <Text size="small">{t('common.loading')}</Text>}
       {!loading &&
-        (filteredContactSuggestData.length === 0 ? (
+        (data.length === 0 ? (
           <Text size="small">{t('ContactsToFollow.noContactsFound')}</Text>
         ) : (
-          filteredContactSuggestData
-            .filter(
-              (user) => invitedContacts.userIds.includes(user.userId) === false
-            )
-            .map((user) => (
+          data.map((user) => {
+            const isAdded =
+              invitedContacts.userIds.filter((c) => c === user.userId).length >
+              0;
+
+            return (
               <Box
                 direction="row"
                 justify="between"
@@ -62,15 +61,19 @@ const ContactsToFollow: FC = () => {
                   </Box>
                 </Box>
                 <Button
-                  primary
+                  primary={!isAdded}
                   onClick={() => {
                     dispatch(createContactInvitation(user.email));
                   }}
-                  label={t('ContactsToFollow.add')}
+                  disabled={isAdded}
+                  label={t(
+                    isAdded ? 'ContactsToFollow.added' : 'ContactsToFollow.add'
+                  )}
                   size="small"
                 />
               </Box>
-            ))
+            );
+          })
         ))}
     </Box>
   );

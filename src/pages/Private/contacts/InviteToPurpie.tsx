@@ -12,10 +12,9 @@ import { AddCircle, FormPrevious, ShareOption } from 'grommet-icons';
 import { nanoid } from 'nanoid';
 import React, { FC, useState } from 'react';
 import Divider from '../../../components/utils/Divider';
-import ExtendedBox from '../../../components/utils/ExtendedBox';
 import { validators } from '../../../helpers/validators';
 import { FormSubmitEvent } from '../../../models/form-submit-event';
-import SocialArray from './SocialArray';
+import SocialMediaIcons from './SocialMediaIcons';
 
 interface InvitationPurpieProps {
   isVisibleDrop: boolean;
@@ -143,9 +142,10 @@ const InviteToPurpie: FC<InvitationPurpieProps> = ({
           onEsc={() => setShow(false)}
           onClickOutside={() => setShow(false)}
         >
-          <ExtendedBox direction="row" justify="between" pad="medium">
-            <SocialArray />
-          </ExtendedBox>
+          <SocialMediaIcons
+            shareUrl="https://www.purpie.io/invite"
+            title="I am inviting you to join Purple."
+          />
           <Box
             direction="row"
             justify="between"

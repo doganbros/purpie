@@ -7,6 +7,7 @@ import { responseInvitationActions } from '../../../store/actions/invitation.act
 import { InvitationListItem as InvitationListItemType } from '../../../store/types/invitation.types';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { UserAvatar } from '../Avatars/UserAvatar';
+import EllipsesOverflowText from '../EllipsesOverflowText';
 
 interface InvitationListItemProps {
   invitation: InvitationListItemType;
@@ -69,26 +70,32 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
             src={invitation.createdBy.displayPhoto}
           />
           <Box>
-            <Text size="small" weight={500} color="dark">
-              {invitation.createdBy.fullName}
-            </Text>
+            <EllipsesOverflowText
+              lineClamp={1}
+              maxWidth="150px"
+              size="small"
+              color="dark"
+              weight={500}
+              text={invitation.createdBy.fullName}
+            />
             <Text size="10px" color="status-disabled">
               @{invitation.createdBy.userName}
             </Text>
           </Box>
         </Box>
         {invitation.response ? (
-          <Button reverse>
-            <Box
-              pad={{ vertical: 'xsmall', horizontal: 'medium' }}
-              direction="row"
-              align="center"
-            >
-              <Text size="xsmall" weight={500}>
-                {t('common.accepted')}
-              </Text>
-            </Box>
-          </Button>
+          <Button
+            primary={false}
+            disabled
+            label={
+              <Box>
+                <Text size="xsmall" weight={500}>
+                  {t('common.accepted')}
+                </Text>
+              </Box>
+            }
+            size="small"
+          />
         ) : (
           <Box direction="row" gap="xsmall">
             <Button

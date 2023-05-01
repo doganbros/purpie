@@ -84,7 +84,7 @@ const CreateChannel: FC<CreateChannelProps> = ({ onDismiss }) => {
                   name="zoneId"
                   options={
                     userZones
-                      ?.filter((z) => !!z.id)
+                      ?.filter((z) => !!z.id && z.zoneRole.canCreateChannel)
                       .map((z) => ({
                         name: z.zone.name,
                         cannotCreateChannel: !z.zoneRole.canCreateChannel,

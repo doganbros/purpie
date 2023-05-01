@@ -84,6 +84,6 @@ export class NotificationService {
     else if (query.type === 'unread')
       baseQuery.andWhere('notification.readOn IS NULL');
 
-    return baseQuery.paginate(query);
+    return baseQuery.orderBy('notification.createdOn', 'DESC').paginate(query);
   }
 }

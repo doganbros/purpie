@@ -6,6 +6,9 @@ import {
   DELETE_CHANNEL_FAILED,
   DELETE_CHANNEL_REQUESTED,
   DELETE_CHANNEL_SUCCESS,
+  GET_CHANNEL_ROLES_FAILED,
+  GET_CHANNEL_ROLES_REQUESTED,
+  GET_CHANNEL_ROLES_SUCCESS,
   GET_CHANNEL_USERS_FAILED,
   GET_CHANNEL_USERS_REQUESTED,
   GET_CHANNEL_USERS_SUCCESS,
@@ -33,6 +36,9 @@ import {
   UPDATE_CHANNEL_PHOTO_FAILED,
   UPDATE_CHANNEL_PHOTO_REQUESTED,
   UPDATE_CHANNEL_PHOTO_SUCCESS,
+  UPDATE_USER_CHANNEL_ROLE_FAILED,
+  UPDATE_USER_CHANNEL_ROLE_REQUESTED,
+  UPDATE_USER_CHANNEL_ROLE_SUCCESS,
 } from '../constants/channel.constants';
 import { PaginatedResponse } from '../../models/paginated-response';
 import { ResponseError } from '../../models/response-error';
@@ -68,15 +74,22 @@ export interface UserChannelListItem {
 }
 
 export interface UserChannelPermissionList {
-  canInvite: boolean;
-  canDelete: boolean;
-  canEdit: boolean;
-  canManageRole: boolean;
+  roleCode?: ChannelRoleCode;
+  canInvite?: boolean;
+  canDelete?: boolean;
+  canEdit?: boolean;
+  canManageRole?: boolean;
+}
+
+export interface UpdateUserChannelRoleParams {
+  userId: string;
+  channelRoleCode: ChannelRoleCode;
 }
 
 export interface ChannelUser {
   id: string;
   createdOn: Date;
+  channelRole: ChannelRole;
   user: User;
 }
 
@@ -92,6 +105,22 @@ export interface ChannelSearchParams extends ChannelSearchOptions {
   searchTerm: string;
   limit?: number;
   skip?: number;
+}
+
+export enum ChannelRoleCode {
+  OWNER = 'OWNER',
+  MODERATOR = 'MODERATOR',
+  USER = 'USER',
+}
+
+export interface ChannelRole {
+  id: number;
+  roleCode: ChannelRoleCode;
+  channelId: string;
+  canInvite: boolean;
+  canDelete: boolean;
+  canEdit: boolean;
+  canManageRole: boolean;
 }
 
 export interface ChannelState {
@@ -115,6 +144,11 @@ export interface ChannelState {
     loading: boolean;
     error: ResponseError | null;
   };
+  channelRoles: {
+    data: ChannelRole[];
+    loading: boolean;
+    error: ResponseError | null;
+  };
 }
 
 export interface CreateChannelPayload {
@@ -122,6 +156,10 @@ export interface CreateChannelPayload {
   topic: string;
   description: string;
   public: boolean;
+}
+
+export interface ManageChannelPayload {
+  roleCode: string;
 }
 
 export interface UpdateChannelPayload {
@@ -171,16 +209,25 @@ export type ChannelActionParams =
         | typeof UPDATE_CHANNEL_PHOTO_REQUESTED
         | typeof UPDATE_CHANNEL_INFO_REQUESTED
         | typeof UPDATE_CHANNEL_PERMISSIONS_REQUESTED
-        | typeof UPDATE_CHANNEL_PERMISSIONS_SUCCESS
         | typeof GET_CHANNEL_USERS_REQUESTED
         | typeof DELETE_CHANNEL_REQUESTED
-        | typeof UNFOLLOW_CHANNEL_REQUESTED;
+        | typeof GET_CHANNEL_ROLES_REQUESTED
+        | typeof UNFOLLOW_CHANNEL_REQUESTED
+        | typeof UPDATE_USER_CHANNEL_ROLE_REQUESTED;
     }
   | {
       type: typeof UPDATE_CHANNEL_PHOTO_SUCCESS;
 
       payload: string;
       channelId: string;
+    }
+  | {
+      type: typeof UPDATE_USER_CHANNEL_ROLE_SUCCESS;
+      payload: UpdateUserChannelRoleParams;
+    }
+  | {
+      type: typeof UPDATE_CHANNEL_PERMISSIONS_SUCCESS;
+      payload: UserChannelPermissionList;
     }
   | {
       type: typeof UPDATE_CHANNEL_INFO_SUCCESS;
@@ -190,6 +237,10 @@ export type ChannelActionParams =
   | {
       type: typeof GET_CHANNEL_USERS_SUCCESS;
       payload: PaginatedResponse<ChannelUser>;
+    }
+  | {
+      type: typeof GET_CHANNEL_ROLES_SUCCESS;
+      payload: ChannelRole[];
     }
   | {
       type:
@@ -202,7 +253,9 @@ export type ChannelActionParams =
         | typeof UPDATE_CHANNEL_PERMISSIONS_FAILED
         | typeof GET_CHANNEL_USERS_FAILED
         | typeof DELETE_CHANNEL_FAILED
-        | typeof UNFOLLOW_CHANNEL_FAILED;
+        | typeof UNFOLLOW_CHANNEL_FAILED
+        | typeof GET_CHANNEL_ROLES_FAILED
+        | typeof UPDATE_USER_CHANNEL_ROLE_FAILED;
       payload: ResponseError;
     };
 

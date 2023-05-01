@@ -1,5 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Button, DropButton, Stack, Text, TextInput } from 'grommet';
+import React, { useContext, useEffect, useState } from 'react';
+import {
+  Box,
+  Button,
+  DropButton,
+  ResponsiveContext,
+  Stack,
+  Text,
+  TextInput,
+} from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { CaretDownFill, CaretRightFill, Edit } from 'grommet-icons';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +21,10 @@ import {
   updateChannelPhoto,
 } from '../../../store/actions/channel.action';
 import { AppState } from '../../../store/reducers/root.reducer';
-import { UpdateChannelPayload } from '../../../store/types/channel.types';
+import {
+  UpdateChannelPayload,
+  UserChannelListItem,
+} from '../../../store/types/channel.types';
 import AvatarUpload from './AvatarUpload';
 import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
 import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
@@ -21,67 +32,49 @@ import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
+import ChannelPermissions from '../../../layers/settings-and-static-pages/permissions/ChannelPermissions';
+import ChannelUsers from '../../../layers/settings-and-static-pages/ChannelUsers';
+
+const initialChannelPayload = {
+  name: '',
+  description: '',
+  id: '',
+  public: false,
+};
 
 const ChannelSettings: () => Menu = () => {
   const {
-    auth: { user },
-    channel: { userChannels },
+    channel: { userChannels, selectedChannel },
     zone: {
       getUserZones: { userZones },
     },
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
+  const size = useContext(ResponsiveContext);
 
-  const [selectedUserChannelIndex, setSelectedUserChannelIndex] = useState(0);
+  const [
+    selectedUserChannel,
+    setSelectedUserChannel,
+  ] = useState<UserChannelListItem | null>(null);
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showLeavePopup, setShowLeavePopup] = useState(false);
-  const [channelPayload, setChannelPayload] = useState<UpdateChannelPayload>({
-    name: '',
-    description: '',
-    id: '',
-    public: userChannels?.data[0]?.channel?.public,
-  });
+  const [channelPayload, setChannelPayload] = useState<UpdateChannelPayload>(
+    initialChannelPayload
+  );
   const [isFormClicked, setIsFormClicked] = useState(false);
-
-  const handleLeaveChannelForm = () => {
-    if (selectedUserChannelIndex === 0) {
-      setSelectedUserChannelIndex(0);
-      return setChannelPayload({
-        name: userChannels?.data[1]?.channel?.name || '',
-        description: userChannels?.data[1]?.channel?.description || null,
-        id: userChannels?.data[1]?.channel?.id || '',
-        public: userChannels?.data[1]?.channel?.public,
-      });
-    }
-
-    setSelectedUserChannelIndex(0);
-    return setChannelPayload({
-      name: userChannels?.data[0]?.channel?.name || '',
-      description: userChannels?.data[0]?.channel?.description || null,
-      id: userChannels?.data[0]?.channel?.id || '',
-      public: userChannels?.data[0]?.channel?.public,
-    });
-  };
 
   const [isDropOpen, setIsDropOpen] = useState(false);
   const { t } = useTranslation();
 
   const [showChannelSelector, setShowChannelSelector] = useState(true);
 
-  const selectedChannel = userChannels.data[selectedUserChannelIndex]?.channel;
-  const canDelete =
-    userChannels.data[selectedUserChannelIndex]?.channelRole?.canDelete;
-  const channelId = selectedChannel?.id;
-
-  const showLeaveButton = user?.id !== selectedChannel?.createdBy?.id;
-
   const isFormInitialState = () => {
     if (isFormClicked) {
       return (
-        channelPayload.name === selectedChannel?.name &&
-        channelPayload.description === selectedChannel?.description &&
-        channelPayload.public === selectedChannel?.public
+        channelPayload.name === selectedChannel?.channel?.name &&
+        channelPayload.description === selectedChannel?.channel?.description &&
+        channelPayload.public === selectedChannel?.channel?.public
       );
     }
     return true;
@@ -120,7 +113,7 @@ const ChannelSettings: () => Menu = () => {
     };
   }
 
-  return {
+  const result = {
     id: 1,
     key: 'channel',
     label: t('settings.channelSettings'),
@@ -129,8 +122,13 @@ const ChannelSettings: () => Menu = () => {
       <Button
         disabled={isFormInitialState()}
         onClick={() => {
-          if (!(channelId === null || channelId === undefined)) {
-            dispatch(updateChannelInfoAction(channelId, channelPayload));
+          if (selectedUserChannel) {
+            dispatch(
+              updateChannelInfoAction(
+                selectedUserChannel.channel.id,
+                channelPayload
+              )
+            );
           }
         }}
         primary
@@ -140,11 +138,7 @@ const ChannelSettings: () => Menu = () => {
     ),
     deleteButton: (
       <Button
-        onClick={() => {
-          if (!(channelId === null || channelId === undefined)) {
-            setShowDeletePopup(true);
-          }
-        }}
+        onClick={() => setShowDeletePopup(true)}
         primary
         color="red"
         label={t('common.delete')}
@@ -153,11 +147,7 @@ const ChannelSettings: () => Menu = () => {
     ),
     leaveButton: (
       <Button
-        onClick={() => {
-          if (!(channelId === null || channelId === undefined)) {
-            setShowLeavePopup(true);
-          }
-        }}
+        onClick={() => setShowLeavePopup(true)}
         secondary
         color="red"
         label={t('common.unfollow')}
@@ -167,7 +157,7 @@ const ChannelSettings: () => Menu = () => {
     avatarWidget: (
       <>
         <Box width="medium" direction="row" gap="small" align="center">
-          {!showChannelSelector && (
+          {selectedUserChannel && (
             <Stack anchor="top-right" onClick={() => setShowAvatarUpload(true)}>
               <Box
                 round="full"
@@ -177,9 +167,9 @@ const ChannelSettings: () => Menu = () => {
                 pad="5px"
               >
                 <ChannelAvatar
-                  id={selectedChannel?.id}
-                  name={selectedChannel?.name}
-                  src={selectedChannel?.displayPhoto}
+                  id={selectedUserChannel?.channel.id}
+                  name={selectedUserChannel?.channel.name}
+                  src={selectedUserChannel?.channel.displayPhoto}
                 />
               </Box>
               <Box background="focus" round pad="xsmall">
@@ -191,7 +181,11 @@ const ChannelSettings: () => Menu = () => {
             open={isDropOpen}
             onOpen={() => setIsDropOpen(true)}
             onClose={() => setIsDropOpen(false)}
-            dropAlign={{ left: 'right', top: 'top' }}
+            dropAlign={
+              size === 'small'
+                ? { left: 'left', top: 'bottom' }
+                : { left: 'right', top: 'top' }
+            }
             fill="vertical"
             dropContent={
               <Box width={{ min: '250px' }} overflow="auto">
@@ -221,7 +215,7 @@ const ChannelSettings: () => Menu = () => {
                       </Box>
                     )}
                     {userChannels.data.map(
-                      (item, index) =>
+                      (item) =>
                         item.channel.zoneId === zone.zone.id && (
                           <ListButton
                             pad={{
@@ -231,11 +225,9 @@ const ChannelSettings: () => Menu = () => {
                             }}
                             key={item.channel.id}
                             label={item.channel.name}
-                            subLabel={
-                              user?.id !== item.channel?.createdBy?.id
-                                ? 'Member'
-                                : 'Owner'
-                            }
+                            subLabel={t(
+                              `Permissions.${item.channelRole.roleCode}`
+                            )}
                             onClick={() => {
                               setChannelPayload({
                                 name: item.channel.name,
@@ -243,7 +235,7 @@ const ChannelSettings: () => Menu = () => {
                                 description: item.channel.description,
                                 public: item.channel.public,
                               });
-                              setSelectedUserChannelIndex(index);
+                              setSelectedUserChannel(item);
                               setShowChannelSelector(false);
                               setIsDropOpen(false);
                             }}
@@ -258,7 +250,8 @@ const ChannelSettings: () => Menu = () => {
                               </Box>
                             }
                             selected={
-                              selectedChannel?.name === item.channel.name
+                              selectedUserChannel?.channel.name ===
+                              item.channel.name
                             }
                           />
                         )
@@ -268,7 +261,7 @@ const ChannelSettings: () => Menu = () => {
               </Box>
             }
           >
-            {!showChannelSelector ? (
+            {selectedUserChannel ? (
               <Box
                 onClick={() => setIsDropOpen(true)}
                 direction="row"
@@ -279,7 +272,7 @@ const ChannelSettings: () => Menu = () => {
                   <EllipsesOverflowText
                     maxWidth="280px"
                     lineClamp={1}
-                    text={selectedChannel?.name}
+                    text={selectedUserChannel?.channel.name}
                   />
                   <Box direction="row" gap="small" align="center">
                     <ZoneBadge
@@ -287,13 +280,15 @@ const ChannelSettings: () => Menu = () => {
                       subdomain={
                         userZones?.find(
                           (userZone) =>
-                            userZone.zone.id === selectedChannel?.zoneId
+                            userZone.zone.id ===
+                            selectedUserChannel?.channel.zoneId
                         )?.zone.subdomain
                       }
                       name={
                         userZones?.find(
                           (userZone) =>
-                            userZone.zone.id === selectedChannel?.zoneId
+                            userZone.zone.id ===
+                            selectedUserChannel?.channel.zoneId
                         )?.zone.name
                       }
                     />
@@ -315,34 +310,36 @@ const ChannelSettings: () => Menu = () => {
             )}
           </DropButton>
         </Box>
-        {showAvatarUpload && !(channelId === null || channelId === undefined) && (
+        {showAvatarUpload && (
           <AvatarUpload
             onSubmit={(file: any) => {
-              dispatch(updateChannelPhoto(file, channelId));
+              dispatch(
+                updateChannelPhoto(file, selectedUserChannel!.channel.id)
+              );
               setShowAvatarUpload(false);
             }}
             onDismiss={() => {
               setShowAvatarUpload(false);
             }}
             type="channel"
-            src={selectedChannel?.displayPhoto}
-            id={selectedChannel?.id}
-            name={selectedChannel?.name}
+            src={selectedUserChannel?.channel.displayPhoto}
+            id={selectedUserChannel?.channel.id}
+            name={selectedUserChannel?.channel.name}
           />
         )}
       </>
     ),
     deletePopup: showDeletePopup && (
       <ConfirmDialog
-        message={`${`${t('settings.deleteMessage')} ${
-          selectedChannel?.name
-        }`} channel?`}
+        message={`${t('settings.deleteMessage')} ${
+          selectedUserChannel?.channel.name
+        } channel?`}
         onConfirm={() => {
-          if (!(channelId === null || channelId === undefined)) {
-            dispatch(deleteChannelAction(channelId));
-          }
+          dispatch(deleteChannelAction(selectedUserChannel!.channel.id));
           setShowDeletePopup(false);
-          handleLeaveChannelForm();
+          setSelectedUserChannel(null);
+          setShowChannelSelector(true);
+          setChannelPayload(initialChannelPayload);
         }}
         onDismiss={() => setShowDeletePopup(false)}
         textProps={{ wordBreak: 'break-word' }}
@@ -350,25 +347,27 @@ const ChannelSettings: () => Menu = () => {
     ),
     leavePopup: showLeavePopup && (
       <ConfirmDialog
-        message={`${`${t('settings.channelUnfollowMessage')} ${
-          selectedChannel?.name
-        }`} channel?`}
+        message={`${t('settings.channelUnfollowMessage')} ${
+          selectedUserChannel?.channel.name
+        } channel?`}
         onConfirm={() => {
-          if (!(channelId === null || channelId === undefined)) {
-            dispatch(unfollowChannelAction(channelId));
-          }
+          dispatch(unfollowChannelAction(selectedUserChannel!.id!));
           setShowLeavePopup(false);
-          handleLeaveChannelForm();
+          setSelectedUserChannel(null);
+          setShowChannelSelector(true);
+          setChannelPayload(initialChannelPayload);
         }}
         onDismiss={() => setShowLeavePopup(false)}
         textProps={{ wordBreak: 'break-word' }}
       />
     ),
+    tabs: [{ index: 1, label: t('settings.general') }],
     items: [
       {
         key: 'channelName',
         title: t('settings.channelName'),
         value: 'value',
+        tabIndex: 1,
         component: (
           <Box
             direction="row"
@@ -380,6 +379,7 @@ const ChannelSettings: () => Menu = () => {
             pad="xxsmall"
           >
             <TextInput
+              disabled={!selectedUserChannel?.channelRole.canEdit}
               placeholder={t('settings.channelNamePlaceholder')}
               value={channelPayload.name}
               plain
@@ -399,6 +399,7 @@ const ChannelSettings: () => Menu = () => {
         key: 'channelTitle',
         title: t('settings.channelDescription'),
         value: 'value',
+        tabIndex: 1,
         component: (
           <Box
             direction="row"
@@ -410,6 +411,7 @@ const ChannelSettings: () => Menu = () => {
             pad="xxsmall"
           >
             <TextInput
+              disabled={!selectedUserChannel?.channelRole.canEdit}
               placeholder={t('settings.channelDescriptionPlaceholder')}
               value={channelPayload.description || ''}
               plain
@@ -427,9 +429,29 @@ const ChannelSettings: () => Menu = () => {
       },
     ],
     isEmpty: showChannelSelector,
-    canDelete,
-    showLeaveButton,
+    canDelete: selectedUserChannel?.channelRole.canDelete,
+    showLeaveButton: !selectedUserChannel?.channelRole.canDelete,
   };
+  if (selectedUserChannel && selectedUserChannel.channelRole?.canManageRole) {
+    result.tabs.push({ index: 2, label: t('settings.permissions') });
+    result.items.push({
+      key: 'channelPermissions',
+      title: '',
+      value: 'value',
+      tabIndex: 2,
+      component: <ChannelPermissions userChannel={selectedUserChannel} />,
+    });
+    result.tabs.push({ index: 3, label: t('settings.followers') });
+    result.items.push({
+      key: 'channelFollowers',
+      title: '',
+      value: 'value',
+      tabIndex: 3,
+      component: <ChannelUsers channelId={selectedUserChannel.channel.id} />,
+    });
+  }
+
+  return result;
 };
 
 export default ChannelSettings;

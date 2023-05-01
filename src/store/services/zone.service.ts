@@ -1,12 +1,15 @@
 import { serialize } from 'object-to-formdata';
 import {
-  ZoneBasic,
   CreateZonePayload,
+  UpdateUserZoneRoleParams,
   UpdateZonePayload,
   UserZoneDetail,
   UserZoneListItem,
+  ZoneBasic,
   ZoneListItem,
+  ZoneRole,
   ZoneSearchParams,
+  ZoneUser,
 } from '../types/zone.types';
 import { http } from '../../config/http';
 import { PaginatedResponse } from '../../models/paginated-response';
@@ -59,3 +62,27 @@ export const updateZoneInfo = (
 
 export const leaveZone = (zoneId: string): Promise<any> =>
   http.delete(`/user-zone/remove/${zoneId}`).then((res) => res.data);
+
+export const listZoneRoles = (zoneId: string): Promise<ZoneRole[]> =>
+  http.get(`/zone/role/list/${zoneId}`).then((res) => res.data);
+
+export const updateZonePermissions = (
+  zoneId: string,
+  params: ZoneRole
+): Promise<any> =>
+  http.put(`zone/permissions/update/${zoneId}`, params).then((res) => res.data);
+
+export const listZoneUsers = (
+  zoneId: string,
+  limit?: number,
+  skip?: number
+): Promise<PaginatedResponse<ZoneUser>> =>
+  http
+    .get(`zone/users/list/${zoneId}`, { params: { limit, skip } })
+    .then((res) => res.data);
+
+export const updateUserZoneRole = (
+  zoneId: string,
+  params: UpdateUserZoneRoleParams
+): Promise<string> =>
+  http.put(`zone/role/change/${zoneId}`, params).then((res) => res.data);

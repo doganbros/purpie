@@ -2,6 +2,7 @@ import { appSubdomain } from '../../helpers/app-subdomain';
 import { paginationInitialState } from '../../helpers/constants';
 import {
   CLOSE_CREATE_ZONE_LAYER,
+  DELETE_ZONE_SUCCESS,
   GET_CURRENT_USER_ZONE_FAILED,
   GET_CURRENT_USER_ZONE_REQUESTED,
   GET_CURRENT_USER_ZONE_SUCCESS,
@@ -11,17 +12,24 @@ import {
   GET_USER_ZONES_FAILED,
   GET_USER_ZONES_REQUESTED,
   GET_USER_ZONES_SUCCESS,
+  GET_ZONE_ROLES_FAILED,
+  GET_ZONE_ROLES_REQUESTED,
+  GET_ZONE_ROLES_SUCCESS,
+  GET_ZONE_USERS_FAILED,
+  GET_ZONE_USERS_REQUESTED,
+  GET_ZONE_USERS_SUCCESS,
   JOIN_ZONE_FAILED,
   JOIN_ZONE_REQUESTED,
   JOIN_ZONE_SUCCESS,
+  LEAVE_ZONE_SUCCESS,
   OPEN_CREATE_ZONE_LAYER,
   SEARCH_ZONE_FAILED,
   SEARCH_ZONE_REQUESTED,
   SEARCH_ZONE_SUCCESS,
-  UPDATE_ZONE_PHOTO_SUCCESS,
   SET_CURRENT_USER_ZONE,
-  DELETE_ZONE_SUCCESS,
-  LEAVE_ZONE_SUCCESS,
+  UPDATE_USER_ZONE_ROLE_SUCCESS,
+  UPDATE_ZONE_PERMISSIONS_SUCCESS,
+  UPDATE_ZONE_PHOTO_SUCCESS,
 } from '../constants/zone.constants';
 import { ZoneActionParams, ZoneState } from '../types/zone.types';
 
@@ -52,6 +60,16 @@ const initialState: ZoneState = {
   },
   search: {
     results: paginationInitialState,
+    loading: false,
+    error: null,
+  },
+  zoneRoles: {
+    data: [],
+    loading: false,
+    error: null,
+  },
+  zoneUsers: {
+    ...paginationInitialState,
     loading: false,
     error: null,
   },
@@ -268,6 +286,106 @@ const zoneReducer = (
           userZones: modifiedData,
           loading: false,
           error: null,
+        },
+      };
+    }
+    case GET_ZONE_ROLES_REQUESTED:
+      return {
+        ...state,
+        zoneRoles: {
+          ...state.zoneRoles,
+          loading: true,
+          error: null,
+        },
+      };
+    case GET_ZONE_ROLES_SUCCESS:
+      return {
+        ...state,
+        zoneRoles: {
+          data: action.payload,
+          loading: false,
+          error: null,
+        },
+      };
+    case GET_ZONE_ROLES_FAILED:
+      return {
+        ...state,
+        zoneRoles: {
+          ...state.zoneRoles,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case UPDATE_ZONE_PERMISSIONS_SUCCESS: {
+      const updatedRoleIndex = state.zoneRoles.data.findIndex(
+        (r) => r.roleCode === action.payload.roleCode
+      );
+      if (updatedRoleIndex === -1) return state;
+      const updatedRole = {
+        ...state.zoneRoles.data[updatedRoleIndex],
+        ...action.payload,
+      };
+      return {
+        ...state,
+        zoneRoles: {
+          ...state.zoneRoles,
+          data: [
+            ...state.zoneRoles.data.slice(0, updatedRoleIndex),
+            updatedRole,
+            ...state.zoneRoles.data.slice(updatedRoleIndex + 1),
+          ],
+        },
+      };
+    }
+    case GET_ZONE_USERS_REQUESTED:
+      return {
+        ...state,
+        zoneUsers: {
+          ...state.zoneUsers,
+          loading: true,
+          error: null,
+        },
+      };
+    case GET_ZONE_USERS_SUCCESS:
+      return {
+        ...state,
+        zoneUsers: {
+          ...action.payload,
+          loading: false,
+          error: null,
+        },
+      };
+    case GET_ZONE_USERS_FAILED:
+      return {
+        ...state,
+        zoneUsers: {
+          ...state.zoneUsers,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case UPDATE_USER_ZONE_ROLE_SUCCESS: {
+      const updatedUserIndex = state.zoneUsers.data.findIndex(
+        (zoneUser) => zoneUser.user.id === action.payload.userId
+      );
+
+      if (updatedUserIndex === -1) return state;
+
+      const updatedUser = { ...state.zoneUsers.data[updatedUserIndex] };
+      updatedUser.zoneRole = {
+        ...updatedUser.zoneRole,
+        roleCode: action.payload.zoneRoleCode,
+      };
+
+      return {
+        ...state,
+        zoneUsers: {
+          ...state.zoneUsers,
+          data: [
+            ...state.zoneUsers.data.slice(0, updatedUserIndex),
+            updatedUser,
+            ...state.zoneUsers.data.slice(updatedUserIndex + 1),
+          ],
         },
       };
     }
