@@ -232,7 +232,7 @@ const channelReducer = (
         ...state,
         userChannels: {
           data: state.userChannels.data.filter(
-            (item) => item.channel.id !== action.payload
+            (item) => item.id !== action.payload
           ),
           loading: false,
           error: null,
