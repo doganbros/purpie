@@ -107,7 +107,7 @@ export interface CreateZonePayload {
 
 export interface UpdateZonePayload {
   name: string;
-  description: string;
+  description?: string | null;
   subdomain: string;
   id: string;
   public: boolean;

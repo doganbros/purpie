@@ -13,10 +13,11 @@ import {
 import { Close } from 'grommet-icons';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import { ManageChannelPayload } from '../../store/types/channel.types';
+
 import { ZoneRoleCode } from '../../store/types/zone.types';
 import { updateUserZoneRoleAction } from '../../store/actions/zone.action';
 import ConfirmDialog from '../../components/utils/ConfirmDialog';
+import { ManageChannelPayload } from '../../store/types/channel.types';
 
 interface ManageZoneUserProps {
   onDismiss: () => void;

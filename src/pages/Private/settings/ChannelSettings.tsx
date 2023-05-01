@@ -38,7 +38,7 @@ import ChannelUsers from '../../../layers/settings-and-static-pages/ChannelUsers
 const ChannelSettings: () => Menu = () => {
   const {
     auth: { user },
-    channel: { userChannels },
+    channel: { userChannels, selectedChannel },
     zone: {
       getUserZones: { userZones },
     },
@@ -59,16 +59,45 @@ const ChannelSettings: () => Menu = () => {
     id: '',
     public: userChannels?.data[0]?.channel?.public,
   });
+  const [isFormClicked, setIsFormClicked] = useState(false);
+
+  const [selectedUserChannelIndex, setSelectedUserChannelIndex] = useState(0);
+
+  const handleLeaveChannelForm = () => {
+    if (selectedUserChannelIndex === 0) {
+      setSelectedUserChannelIndex(0);
+      return setChannelPayload({
+        name: userChannels?.data[1]?.channel?.name || '',
+        description: userChannels?.data[1]?.channel?.description || null,
+        id: userChannels?.data[1]?.channel?.id || '',
+        public: userChannels?.data[1]?.channel?.public,
+      });
+    }
+
+    setSelectedUserChannelIndex(0);
+    return setChannelPayload({
+      name: userChannels?.data[0]?.channel?.name || '',
+      description: userChannels?.data[0]?.channel?.description || null,
+      id: userChannels?.data[0]?.channel?.id || '',
+      public: userChannels?.data[0]?.channel?.public,
+    });
+  };
 
   const [isDropOpen, setIsDropOpen] = useState(false);
   const { t } = useTranslation();
 
   const [showChannelSelector, setShowChannelSelector] = useState(true);
 
-  const isFormInitialState =
-    channelPayload.name === selectedUserChannel?.channel.name &&
-    channelPayload.description === selectedUserChannel?.channel.description &&
-    channelPayload.public === selectedUserChannel?.channel.public;
+  const isFormInitialState = () => {
+    if (isFormClicked) {
+      return (
+        channelPayload.name === selectedChannel?.channel?.name &&
+        channelPayload.description === selectedChannel?.channel?.description &&
+        channelPayload.public === selectedChannel?.channel?.public
+      );
+    }
+    return true;
+  };
 
   useEffect(() => {
     dispatch(getUserChannelsAllAction());
@@ -110,7 +139,7 @@ const ChannelSettings: () => Menu = () => {
     url: 'channel',
     saveButton: (
       <Button
-        disabled={isFormInitialState}
+        disabled={isFormInitialState()}
         onClick={() => {
           if (selectedUserChannel) {
             dispatch(
@@ -330,6 +359,7 @@ const ChannelSettings: () => Menu = () => {
         onConfirm={() => {
           dispatch(deleteChannelAction(selectedUserChannel!.channel.id));
           setShowDeletePopup(false);
+          handleLeaveChannelForm();
         }}
         onDismiss={() => setShowDeletePopup(false)}
         textProps={{ wordBreak: 'break-word' }}
@@ -343,7 +373,7 @@ const ChannelSettings: () => Menu = () => {
         onConfirm={() => {
           dispatch(unfollowChannelAction(selectedUserChannel!.channel.id));
           setShowLeavePopup(false);
-          setSelectedUserChannel(null);
+          handleLeaveChannelForm();
         }}
         onDismiss={() => setShowLeavePopup(false)}
         textProps={{ wordBreak: 'break-word' }}
@@ -372,12 +402,13 @@ const ChannelSettings: () => Menu = () => {
               value={channelPayload.name}
               plain
               focusIndicator={false}
-              onChange={(event) =>
+              onChange={(event) => {
+                setIsFormClicked(true);
                 setChannelPayload({
                   ...channelPayload,
                   name: event.target.value,
-                })
-              }
+                });
+              }}
             />
           </Box>
         ),
@@ -400,15 +431,16 @@ const ChannelSettings: () => Menu = () => {
             <TextInput
               disabled={!selectedUserChannel?.channelRole.canEdit}
               placeholder={t('settings.channelDescriptionPlaceholder')}
-              value={channelPayload.description}
+              value={channelPayload.description || ''}
               plain
               focusIndicator={false}
-              onChange={(event) =>
+              onChange={(event) => {
+                setIsFormClicked(true);
                 setChannelPayload({
                   ...channelPayload,
                   description: event.target.value,
-                })
-              }
+                });
+              }}
             />
           </Box>
         ),
