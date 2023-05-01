@@ -435,6 +435,12 @@
     "zones": "Zones",
     "login": "Login"
   },
+  "ZoneNotFound": {
+    "title": "Zone not found.",
+    "description": "It looks like you may have taken a wrong zone.",
+    "home": "Home",
+    "login": "Login"
+  },
   "ErrorTypes": {
     "NOT_VALID": "Not Valid",
     "NOT_IMPLEMENTED": "Not Implemented",
