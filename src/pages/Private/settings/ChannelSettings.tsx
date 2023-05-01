@@ -35,9 +35,15 @@ import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText
 import ChannelPermissions from '../../../layers/settings-and-static-pages/permissions/ChannelPermissions';
 import ChannelUsers from '../../../layers/settings-and-static-pages/ChannelUsers';
 
+const initialChannelPayload = {
+  name: '',
+  description: '',
+  id: '',
+  public: false,
+};
+
 const ChannelSettings: () => Menu = () => {
   const {
-    auth: { user },
     channel: { userChannels, selectedChannel },
     zone: {
       getUserZones: { userZones },
@@ -53,35 +59,10 @@ const ChannelSettings: () => Menu = () => {
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showLeavePopup, setShowLeavePopup] = useState(false);
-  const [channelPayload, setChannelPayload] = useState<UpdateChannelPayload>({
-    name: '',
-    description: '',
-    id: '',
-    public: userChannels?.data[0]?.channel?.public,
-  });
+  const [channelPayload, setChannelPayload] = useState<UpdateChannelPayload>(
+    initialChannelPayload
+  );
   const [isFormClicked, setIsFormClicked] = useState(false);
-
-  const [selectedUserChannelIndex, setSelectedUserChannelIndex] = useState(0);
-
-  const handleLeaveChannelForm = () => {
-    if (selectedUserChannelIndex === 0) {
-      setSelectedUserChannelIndex(0);
-      return setChannelPayload({
-        name: userChannels?.data[1]?.channel?.name || '',
-        description: userChannels?.data[1]?.channel?.description || null,
-        id: userChannels?.data[1]?.channel?.id || '',
-        public: userChannels?.data[1]?.channel?.public,
-      });
-    }
-
-    setSelectedUserChannelIndex(0);
-    return setChannelPayload({
-      name: userChannels?.data[0]?.channel?.name || '',
-      description: userChannels?.data[0]?.channel?.description || null,
-      id: userChannels?.data[0]?.channel?.id || '',
-      public: userChannels?.data[0]?.channel?.public,
-    });
-  };
 
   const [isDropOpen, setIsDropOpen] = useState(false);
   const { t } = useTranslation();
@@ -235,10 +216,7 @@ const ChannelSettings: () => Menu = () => {
                     )}
                     {userChannels.data.map(
                       (item) =>
-                        item.channel.zoneId === zone.zone.id &&
-                        (item.channelRole.canEdit ||
-                          item.channelRole.canManageRole ||
-                          item.channelRole.canDelete) && (
+                        item.channel.zoneId === zone.zone.id && (
                           <ListButton
                             pad={{
                               vertical: 'xsmall',
@@ -359,7 +337,9 @@ const ChannelSettings: () => Menu = () => {
         onConfirm={() => {
           dispatch(deleteChannelAction(selectedUserChannel!.channel.id));
           setShowDeletePopup(false);
-          handleLeaveChannelForm();
+          setSelectedUserChannel(null);
+          setShowChannelSelector(true);
+          setChannelPayload(initialChannelPayload);
         }}
         onDismiss={() => setShowDeletePopup(false)}
         textProps={{ wordBreak: 'break-word' }}
@@ -371,9 +351,11 @@ const ChannelSettings: () => Menu = () => {
           selectedUserChannel?.channel.name
         } channel?`}
         onConfirm={() => {
-          dispatch(unfollowChannelAction(selectedUserChannel!.channel.id));
+          dispatch(unfollowChannelAction(selectedUserChannel!.id!));
           setShowLeavePopup(false);
-          handleLeaveChannelForm();
+          setSelectedUserChannel(null);
+          setShowChannelSelector(true);
+          setChannelPayload(initialChannelPayload);
         }}
         onDismiss={() => setShowLeavePopup(false)}
         textProps={{ wordBreak: 'break-word' }}
@@ -448,7 +430,7 @@ const ChannelSettings: () => Menu = () => {
     ],
     isEmpty: showChannelSelector,
     canDelete: selectedUserChannel?.channelRole.canDelete,
-    showLeaveButton: user?.id !== selectedUserChannel?.channel.createdBy?.id,
+    showLeaveButton: !selectedUserChannel?.channelRole.canDelete,
   };
   if (selectedUserChannel && selectedUserChannel.channelRole?.canManageRole) {
     result.tabs.push({ index: 2, label: t('settings.permissions') });

@@ -31,7 +31,7 @@ export class UserChannelGuard implements CanActivate {
       );
 
     const { userChannelId, channelId } = req.params;
-
+    console.log(req.params);
     if (channelId) {
       req.userChannel = await this.userChannelService.getUserChannel(
         req.user.id,
@@ -43,7 +43,7 @@ export class UserChannelGuard implements CanActivate {
       req.userChannel = await this.userChannelService.getUserChannel(
         req.user.id,
         {
-          id: userChannelId,
+          userChannelId,
         },
       );
     }
