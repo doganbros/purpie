@@ -17,6 +17,7 @@ export class LoggerMiddleware implements NestMiddleware {
       verifyJWT(token, AUTH_TOKEN_SECRET).then((payload) => {
         this.userLogService.createLog({
           action: req.url,
+          channelId: req.query.channelId,
           payload: req.query,
           createdById: payload.id,
         });

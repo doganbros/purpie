@@ -12,6 +12,7 @@ import { Channel } from './Channel.entity';
 import { ChannelRole } from './ChannelRole.entity';
 import { User } from './User.entity';
 import { UserZone } from './UserZone.entity';
+import { VirtualColumn } from '../src/utils/decorators/virtual-column-decorator';
 
 @Entity('user_channel')
 @Unique(['userId', 'channelId', 'channelRoleCode'])
@@ -43,4 +44,7 @@ export class UserChannel extends RecordEntity {
 
   @Column()
   channelRoleCode: ChannelRoleCode;
+
+  @VirtualColumn()
+  unseenPostCount: string;
 }

@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { RecordEntity } from './base/RecordEntity';
 import { User } from './User.entity';
+import { Channel } from './Channel.entity';
 
 @Entity()
 export class UserLog extends RecordEntity {
@@ -9,6 +10,13 @@ export class UserLog extends RecordEntity {
 
   @Column()
   payload: string;
+
+  @ManyToOne(() => Channel, { nullable: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'channelId' })
+  channel: Channel;
+
+  @Column({ nullable: true })
+  channelId: string;
 
   @OneToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'createdById', referencedColumnName: 'id' })

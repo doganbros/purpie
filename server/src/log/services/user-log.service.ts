@@ -16,4 +16,14 @@ export class UserLogService {
     await this.userLogRepository.save(newLog);
     return newLog;
   }
+
+  async listChannelLogs(userId: string, channelId: string) {
+    return this.userLogRepository
+      .createQueryBuilder('log')
+      .where('log.channelId = :channelId', {
+        channelId,
+      })
+      .andWhere('log.createdById = :userId', { userId })
+      .orderBy('log.createdOn', 'DESC');
+  }
 }

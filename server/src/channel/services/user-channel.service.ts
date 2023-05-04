@@ -3,7 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from 'entities/Channel.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
-import { Brackets, Repository } from 'typeorm';
+import { Brackets, createQueryBuilder, Repository } from 'typeorm';
+import { PostComment } from '../../../entities/PostComment.entity';
+import { UserLog } from '../../../entities/UserLog.entity';
 
 @Injectable()
 export class UserChannelService {
@@ -12,6 +14,8 @@ export class UserChannelService {
     private userChannelRepository: Repository<UserChannel>,
     @InjectRepository(Channel)
     private channelRepository: Repository<Channel>,
+    @InjectRepository(UserLog)
+    private userLogRepository: Repository<UserLog>,
   ) {}
 
   async getUserChannel(userId: number, params: Record<string, any>) {
@@ -98,9 +102,14 @@ export class UserChannelService {
       )
       .getRawMany();
 
-    return records.map((record) => ({
+    return this.mapUserChannel(records);
+  }
+
+  mapUserChannel(records: any) {
+    return records.map((record: any) => ({
       id: record.user_channel_id,
       createdOn: record.user_channel_createdOn,
+      unseenPostCount: record.unseen_post,
       channel: {
         id: record.channel_id,
         createdOn: record.channel_createdOn,
@@ -136,7 +145,7 @@ export class UserChannelService {
   }
 
   async getUserAllChannels(userId: string) {
-    return this.userChannelRepository
+    const records = await this.userChannelRepository
       .createQueryBuilder('user_channel')
       .select([
         'user_channel.id',
@@ -162,11 +171,26 @@ export class UserChannelService {
         'channel_role',
         'channel_role.roleCode = user_channel.channelRoleCode AND channel_role.channelId = channel.id',
       )
+      .addSelect(
+        (sq) =>
+          sq
+            .select('cast(count(*) as int)')
+            .from(UserLog, 'userLog')
+            .where('userLog.channelId = channel.id')
+            .andWhere('userLog.createdById = :userId', { userId })
+            .andWhere(
+              'userLog.createdOn = (SELECT max(ul."createdOn") FROM user_log ul)',
+            )
+            .andWhere('userLog.createdOn < post.createdOn')
+            .groupBy('userLog.createdOn'),
+        'unseenPostCount',
+      )
       .where('user_channel.userId = :userId', { userId })
       .orderBy(
         '-(ps.commentsCount + ps.dislikesCount + ps.likesCount + ps.liveStreamViewersCount + ps.viewsCount)',
         'ASC',
-      )
-      .getMany();
+      );
+    console.log(await records.getSql());
+    return records.getMany();
   }
 }
