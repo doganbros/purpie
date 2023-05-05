@@ -35,10 +35,16 @@ import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText
 import ChannelPermissions from '../../../layers/settings-and-static-pages/permissions/ChannelPermissions';
 import ChannelUsers from '../../../layers/settings-and-static-pages/ChannelUsers';
 
+const initialChannelPayload = {
+  name: '',
+  description: '',
+  id: '',
+  public: false,
+};
+
 const ChannelSettings: () => Menu = () => {
   const {
-    auth: { user },
-    channel: { userChannels },
+    channel: { userChannels, selectedChannel },
     zone: {
       getUserZones: { userZones },
     },
@@ -53,22 +59,26 @@ const ChannelSettings: () => Menu = () => {
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showLeavePopup, setShowLeavePopup] = useState(false);
-  const [channelPayload, setChannelPayload] = useState<UpdateChannelPayload>({
-    name: '',
-    description: '',
-    id: '',
-    public: userChannels?.data[0]?.channel?.public,
-  });
+  const [channelPayload, setChannelPayload] = useState<UpdateChannelPayload>(
+    initialChannelPayload
+  );
+  const [isFormClicked, setIsFormClicked] = useState(false);
 
   const [isDropOpen, setIsDropOpen] = useState(false);
   const { t } = useTranslation();
 
   const [showChannelSelector, setShowChannelSelector] = useState(true);
 
-  const isFormInitialState =
-    channelPayload.name === selectedUserChannel?.channel.name &&
-    channelPayload.description === selectedUserChannel?.channel.description &&
-    channelPayload.public === selectedUserChannel?.channel.public;
+  const isFormInitialState = () => {
+    if (isFormClicked) {
+      return (
+        channelPayload.name === selectedChannel?.channel?.name &&
+        channelPayload.description === selectedChannel?.channel?.description &&
+        channelPayload.public === selectedChannel?.channel?.public
+      );
+    }
+    return true;
+  };
 
   useEffect(() => {
     dispatch(getUserChannelsAllAction());
@@ -110,7 +120,7 @@ const ChannelSettings: () => Menu = () => {
     url: 'channel',
     saveButton: (
       <Button
-        disabled={isFormInitialState}
+        disabled={isFormInitialState()}
         onClick={() => {
           if (selectedUserChannel) {
             dispatch(
@@ -206,10 +216,7 @@ const ChannelSettings: () => Menu = () => {
                     )}
                     {userChannels.data.map(
                       (item) =>
-                        item.channel.zoneId === zone.zone.id &&
-                        (item.channelRole.canEdit ||
-                          item.channelRole.canManageRole ||
-                          item.channelRole.canDelete) && (
+                        item.channel.zoneId === zone.zone.id && (
                           <ListButton
                             pad={{
                               vertical: 'xsmall',
@@ -330,6 +337,9 @@ const ChannelSettings: () => Menu = () => {
         onConfirm={() => {
           dispatch(deleteChannelAction(selectedUserChannel!.channel.id));
           setShowDeletePopup(false);
+          setSelectedUserChannel(null);
+          setShowChannelSelector(true);
+          setChannelPayload(initialChannelPayload);
         }}
         onDismiss={() => setShowDeletePopup(false)}
         textProps={{ wordBreak: 'break-word' }}
@@ -341,9 +351,11 @@ const ChannelSettings: () => Menu = () => {
           selectedUserChannel?.channel.name
         } channel?`}
         onConfirm={() => {
-          dispatch(unfollowChannelAction(selectedUserChannel!.channel.id));
+          dispatch(unfollowChannelAction(selectedUserChannel!.id!));
           setShowLeavePopup(false);
           setSelectedUserChannel(null);
+          setShowChannelSelector(true);
+          setChannelPayload(initialChannelPayload);
         }}
         onDismiss={() => setShowLeavePopup(false)}
         textProps={{ wordBreak: 'break-word' }}
@@ -372,12 +384,13 @@ const ChannelSettings: () => Menu = () => {
               value={channelPayload.name}
               plain
               focusIndicator={false}
-              onChange={(event) =>
+              onChange={(event) => {
+                setIsFormClicked(true);
                 setChannelPayload({
                   ...channelPayload,
                   name: event.target.value,
-                })
-              }
+                });
+              }}
             />
           </Box>
         ),
@@ -400,15 +413,16 @@ const ChannelSettings: () => Menu = () => {
             <TextInput
               disabled={!selectedUserChannel?.channelRole.canEdit}
               placeholder={t('settings.channelDescriptionPlaceholder')}
-              value={channelPayload.description}
+              value={channelPayload.description || ''}
               plain
               focusIndicator={false}
-              onChange={(event) =>
+              onChange={(event) => {
+                setIsFormClicked(true);
                 setChannelPayload({
                   ...channelPayload,
                   description: event.target.value,
-                })
-              }
+                });
+              }}
             />
           </Box>
         ),
@@ -416,7 +430,7 @@ const ChannelSettings: () => Menu = () => {
     ],
     isEmpty: showChannelSelector,
     canDelete: selectedUserChannel?.channelRole.canDelete,
-    showLeaveButton: user?.id !== selectedUserChannel?.channel.createdBy?.id,
+    showLeaveButton: !selectedUserChannel?.channelRole.canDelete,
   };
   if (selectedUserChannel && selectedUserChannel.channelRole?.canManageRole) {
     result.tabs.push({ index: 2, label: t('settings.permissions') });

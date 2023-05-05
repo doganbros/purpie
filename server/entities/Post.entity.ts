@@ -95,5 +95,8 @@ export class Post extends RecordEntity {
   saved: boolean;
 
   @Column({ select: false, nullable: true, insert: false, type: 'boolean' })
+  viewed: boolean;
+
+  @Column({ select: false, nullable: true, insert: false, type: 'boolean' })
   disliked: boolean;
 }

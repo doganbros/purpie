@@ -329,16 +329,16 @@ export const deleteChannelAction = (channelId: string): ChannelAction => {
   };
 };
 
-export const unfollowChannelAction = (channelId: string): ChannelAction => {
+export const unfollowChannelAction = (userChannelId: string): ChannelAction => {
   return async (dispatch) => {
     dispatch({
       type: UNFOLLOW_CHANNEL_REQUESTED,
     });
     try {
-      await ChannelService.unfollowChannel(channelId);
+      await ChannelService.unfollowChannel(userChannelId);
       dispatch({
         type: UNFOLLOW_CHANNEL_SUCCESS,
-        payload: channelId,
+        payload: userChannelId,
       });
       setToastAction('ok', i18n.t('ToastMessages.channelUnfollowed'))(dispatch);
       unsetSelectedChannelAction()(dispatch);
