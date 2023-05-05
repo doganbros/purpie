@@ -44,6 +44,9 @@ import {
   getNotificationsAction,
   getZoneSuggestionsAction,
 } from '../../../store/actions/activity.action';
+import ChannelShortInfo from './ChannelShortInfo';
+import ChannelBadge from '../../../components/utils/channel/ChannelBadge';
+import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
 
 const tabs = [
   {
@@ -53,18 +56,6 @@ const tabs = [
   {
     id: 1,
     name: i18n.t('common.following'),
-  },
-  {
-    id: 2,
-    name: i18n.t('Timeline.live'),
-  },
-  {
-    id: 3,
-    name: i18n.t('Timeline.newest'),
-  },
-  {
-    id: 4,
-    name: i18n.t('Timeline.popular'),
   },
 ];
 
@@ -99,22 +90,13 @@ const Timeline: FC = () => {
     const request: FeedPayload = { skip };
     switch (activeTab) {
       case 0:
-      case 1:
-      case 2:
-        if (selectedChannel) request.channelId = selectedChannel.channel.id;
-        else if (selectedUserZone) request.zoneId = selectedUserZone.zone.id;
-        request.streaming = activeTab === 2;
-        request.following = activeTab === 1;
-
         dispatch(getFeedListAction(request));
         break;
-      case 3:
-        dispatch(getFeedListAction({ skip, public: true, sortBy: 'time' }));
-        break;
-      case 4:
-        dispatch(
-          getFeedListAction({ skip, public: true, sortBy: 'popularity' })
-        );
+      case 1:
+        if (selectedChannel) request.channelId = selectedChannel.channel.id;
+        else if (selectedUserZone) request.zoneId = selectedUserZone.zone.id;
+        request.following = true;
+        dispatch(getFeedListAction(request));
         break;
       default:
         break;
@@ -216,36 +198,40 @@ const Timeline: FC = () => {
             <PurpieLogoAnimated width={100} height={100} color="#9060EB" />
           </Box>
         ) : (
-          <Box pad="medium" gap="medium">
-            <SearchBar />
-            {selectedChannel &&
-              selectedChannel.id &&
-              selectedChannel.channelRole.canInvite && (
-                <Box gap="medium">
-                  <InviteToChannel channel={selectedChannel} />
-                  <InviteToZone
-                    zone={userZones?.find(
-                      (z) => z.zone.id === selectedChannel?.channel.zoneId
-                    )}
-                  />
-                </Box>
+          <Box>
+            <Box pad="medium">
+              <SearchBar />
+            </Box>
+            {selectedChannel && <ChannelShortInfo />}
+            <Box pad="medium" gap="medium">
+              {selectedChannel &&
+                selectedChannel.id &&
+                selectedChannel.channelRole.canInvite && (
+                  <Box gap="medium">
+                    <InviteToChannel channel={selectedChannel} />
+                    <InviteToZone
+                      zone={userZones?.find(
+                        (z) => z.zone.id === selectedChannel?.channel.zoneId
+                      )}
+                    />
+                  </Box>
+                )}
+              {!selectedChannel && <InvitationList />}
+              {!selectedChannel &&
+                !invitations.loading &&
+                invitations.data.length !== 0 && <Divider />}
+              {selectedChannel && (
+                <ChannelMembers channelId={selectedChannel.channel.id} />
               )}
-            {!selectedChannel && <InvitationList />}
-            {!selectedChannel &&
-              !invitations.loading &&
-              invitations.data.length !== 0 && <Divider />}
-            {selectedChannel && (
-              <ChannelMembers channelId={selectedChannel.channel.id} />
-            )}
-            {selectedChannel && <Divider />}
-            <ChannelsToFollow />
-            {!channelSuggestions.loading &&
-              channelSuggestions.data.length !== 0 && <Divider />}
-            <ZonesToJoin />
-            {!zoneSuggestions.loading && zoneSuggestions.data.length !== 0 && (
-              <Divider />
-            )}
-            <Notifications />
+              {selectedChannel && <Divider />}
+              <ChannelsToFollow />
+              {!channelSuggestions.loading &&
+                channelSuggestions.data.length !== 0 && <Divider />}
+              <ZonesToJoin />
+              {!zoneSuggestions.loading &&
+                zoneSuggestions.data.length !== 0 && <Divider />}
+              <Notifications />
+            </Box>
           </Box>
         )
       }
@@ -256,26 +242,53 @@ const Timeline: FC = () => {
       )}
       <Box pad={{ vertical: 'medium' }} gap="medium">
         <Box direction="row" justify="between" align="center">
-          <Text weight="bold">Timeline</Text>
-          <Box direction="row" gap="small">
-            {tabs.map((tab) => (
-              <Button
-                key={`timelineTab${tab.id}`}
-                onClick={() => {
-                  setDelay(true);
-                  setActiveTab(tab.id);
-                }}
-              >
-                <Text
-                  size="small"
-                  weight={activeTab === tab.id ? 'bold' : 'normal'}
-                  color={activeTab === tab.id ? 'brand' : 'status-disabled'}
-                >
-                  {tab.name}
+          {(selectedChannel || selectedUserZone) && (
+            <Box direction="row" gap="small" align="center">
+              <Box direction="row" align="center" gap="xsmall">
+                <Text size="small" color="status-disabled">
+                  You are at{' '}
                 </Text>
-              </Button>
-            ))}
-          </Box>
+                {selectedUserZone && (
+                  <ZoneBadge
+                    truncateWith="230px"
+                    textProps={{ size: 'small', weight: 'bold' }}
+                    name={selectedUserZone?.zone.name}
+                    subdomain={selectedUserZone?.zone.subdomain}
+                  />
+                )}
+                {selectedChannel && (
+                  <ChannelBadge
+                    truncateWith="230px"
+                    textProps={{ size: 'small', weight: 'bold' }}
+                    url="/"
+                    name={selectedChannel?.channel.name}
+                  />
+                )}
+              </Box>
+            </Box>
+          )}
+
+          {!selectedChannel && !selectedUserZone && (
+            <Box direction="row" gap="small" justify="end" fill="horizontal">
+              {tabs.map((tab) => (
+                <Button
+                  key={`timelineTab${tab.id}`}
+                  onClick={() => {
+                    setDelay(true);
+                    setActiveTab(tab.id);
+                  }}
+                >
+                  <Text
+                    size="small"
+                    weight={activeTab === tab.id ? 'bold' : 'normal'}
+                    color={activeTab === tab.id ? 'brand' : 'status-disabled'}
+                  >
+                    {tab.name}
+                  </Text>
+                </Button>
+              ))}
+            </Box>
+          )}
         </Box>
         {getTimelineContent()}
       </Box>

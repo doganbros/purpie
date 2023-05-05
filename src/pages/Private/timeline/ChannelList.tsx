@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { FC } from 'react';
 import { Box, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,6 +11,8 @@ import {
 import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
+import UnselectedChannelListItem from './UnselectedChannelListItem';
+import SelectedChannelListItem from './SelectedChannelListItem';
 
 interface ChannelListProps {
   handleWaiting?: () => void;
@@ -22,7 +25,7 @@ const ChannelList: FC<ChannelListProps> = ({
   const { t } = useTranslation();
   const {
     channel: { selectedChannel, userChannels },
-    zone: { selectedUserZone },
+    zone: { selectedUserZone, getUserZones },
   } = useSelector((state: AppState) => state);
 
   const userChannelsFiltered: typeof userChannels = selectedUserZone
@@ -35,7 +38,7 @@ const ChannelList: FC<ChannelListProps> = ({
     : userChannels;
 
   return (
-    <Box direction="row">
+    <Box direction="row" gap="small">
       {userChannelsFiltered.loading && (
         <PurpieLogoAnimated width={50} height={50} color="#9060EB" />
       )}
@@ -47,43 +50,23 @@ const ChannelList: FC<ChannelListProps> = ({
             })}
           </Text>
         ) : (
-          userChannelsFiltered.data.map((c) => (
-            <Box
-              onClick={() => {
-                handleWaiting?.();
-                //   event.stopPropagation();
-                if (c.channel.id === selectedChannel?.channel.id)
-                  dispatch(unsetSelectedChannelAction());
-                else dispatch(setSelectedChannelAction(c));
-              }}
-              focusIndicator={false}
-              key={c.channel.id}
-              align="center"
-              flex={{ shrink: 0 }}
-              round="small"
-              pad="small"
-              width="110px"
-              background={
-                selectedChannel?.channel.id === c.channel.id ? 'brand' : ''
-              }
-            >
-              <ChannelAvatar
-                id={c.channel.id}
-                name={c.channel.name}
-                src={c.channel.displayPhoto}
+          userChannelsFiltered.data.map((c) =>
+            selectedChannel?.channel.id === c.channel.id ? (
+              <SelectedChannelListItem
+                key={c.channel.id}
+                c={c}
+                handleWaiting={handleWaiting}
+                zoneName="test"
               />
-              <EllipsesOverflowText
-                textAlign="center"
-                size="small"
-                color={
-                  c.channel.id === selectedChannel?.channel.id
-                    ? 'light-1'
-                    : 'dark'
-                }
-                text={c.channel.name}
+            ) : (
+              <UnselectedChannelListItem
+                key={c.channel.id}
+                c={c}
+                handleWaiting={handleWaiting}
+                zoneName="test"
               />
-            </Box>
-          ))
+            )
+          )
         ))}
     </Box>
   );

@@ -63,6 +63,7 @@ export interface ChannelListItem extends ChannelBasic {
   displayPhoto: string | undefined;
   createdBy?: User;
   zoneId: string;
+  backgroundPhoto?: string | undefined;
 }
 
 export interface UserChannelListItem {

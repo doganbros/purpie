@@ -98,3 +98,11 @@ export const getTimezoneTimeFromUTC = (date: string | Date): Dayjs => {
   const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return dayjs.tz(date, currentTimezone);
 };
+
+export interface RGB {
+  r: number;
+  g: number;
+  b: number;
+  width: number;
+  height: number;
+}
