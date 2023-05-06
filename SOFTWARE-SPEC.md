@@ -1,4 +1,4 @@
-# Octopus (Typescript React App - NestJS REST API with postgres using Node.js, Express and TypeORM)
+# Purpie (Typescript React App - NestJS REST API with postgres using Node.js, Express and TypeORM)
 
 # Frontend Features
 
@@ -56,38 +56,38 @@ This is a single page web application, that is it handles routing at the client-
 `HTML` is rarely used in this app. It is primarily used to setup the main index file that is responsible for loading the main javasript of the app. It loads the css and display the initial title of the app.
 
 
-### [TypeScript](https://www.typescriptlang.org/) 🏠🖥️ 
+### [TypeScript](https://www.typescriptlang.org/) 🏠🖥️
 
 This app uses no `Javascript` (Although it compiles to javascript). `Typescript` is the main programming language used on the server and for building the user interface.
 
 
 ## Frameworks and Libraries
 
-### [NestJS](https://nestjs.com/) 🖥️ 
+### [NestJS](https://nestjs.com/) 🖥️
 
 Nestjs is a progressive Node.js framework for building efficient, reliable and scalable server-side applications. It works well with typescript and follows the [SOLID](https://en.wikipedia.org/wiki/SOLID) principle
 
-### [TypeORM](https://typeorm.io/) 🖥️ 
+### [TypeORM](https://typeorm.io/) 🖥️
 
 TypeORM is a NodeJS database ORM that supports the latest JavaScript features and provide additional features that helps in developing any kind of application that uses databases - from small applications with a few tables to large scale enterprise applications with multiple databases. It works well with typescript.
 
-### [OpenAPI (Swagger)](https://docs.nestjs.com/openapi/introduction) 🖥️ 
+### [OpenAPI (Swagger)](https://docs.nestjs.com/openapi/introduction) 🖥️
 
-The OpenAPI specification is a language-agnostic definition format used to describe RESTful APIs. Nest 
+The OpenAPI specification is a language-agnostic definition format used to describe RESTful APIs. Nest
 provides a dedicated module which allows generating such a specification by leveraging decorators.
 
-### [Handlebars](https://handlebarsjs.com/) 🖥️ 
+### [Handlebars](https://handlebarsjs.com/) 🖥️
 
 Handlebars is used to render email templates before they are sent to clients.
 
-### [SendGrid](https://sendgrid.com/) 🖥️ 
+### [SendGrid](https://sendgrid.com/) 🖥️
 
 SendGrid is the main service used for sending emails.
 
-### [Class Validator](https://github.com/typestack/class-validator) 🖥️ 
+### [Class Validator](https://github.com/typestack/class-validator) 🖥️
 
 Allows use of decorator and non-decorator based validation. Internally uses validator.js to perform validation.
-### [Axios](https://axios-http.com/) 🏠🖥️ 
+### [Axios](https://axios-http.com/) 🏠🖥️
 
 `Axios` is a promise based HTTP client used in this app. All AJAX requests are handled with `axios`. Their interceptors really help to avoid redundancy in most part of the app.
 ### [SCSS](https://sass-lang.com/) 🏠
@@ -111,22 +111,22 @@ Grommet is a `React styled-component` library that helps in building responsive 
 
 `Redux` is a predictable state Container for Javascript (Typescript) Apps. This is the main state management library used in the app. Mostly states that are shared across multiple components of the app use redux. Also all network-related states are handled here. `react-redux` is the library that helps in binding redux to react. `redux-thunk` provides the redux middleware that helps the app to deal with asynchronous dispatches in redux actions.
 
-## Development Dependencies 
+## Development Dependencies
 
-### [Eslint](https://eslint.org/) 🏠🖥️ 
+### [Eslint](https://eslint.org/) 🏠🖥️
 
 `Eslint` statically analyzes the application code to quickly find problems. It helps in maintaining the usage of Airbnb coding style guide and the similarity of code written by different develops at a time. Run `yarn analyze` or `npm analyze` to let eslint analyze and report all errors made.  If you are using editors like vscode please install the eslint extension to help you in automatically detecting errors.
 
-### [Prettier](https://prettier.io/) 🏠🖥️ 
+### [Prettier](https://prettier.io/) 🏠🖥️
 
 `Prettier` is an opinionated code formatter that helps the app to format the code written to comform to the rules of eslint. Run `yarn format` or `npm format` to do a quick format of the entire app.
 
-### [Jest](https://jestjs.io/) 🏠🖥️ 
+### [Jest](https://jestjs.io/) 🏠🖥️
 
 Jest is a delightful JavaScript Testing Framework with a focus on simplicity.
 
 
-## NestJS 🖥️ 
+## NestJS 🖥️
 While using nestjs at the server-side, One must follow these guidelines.
 
 - NestJS pattern must be followed strictly. For example controllers should be used to handle only http requests, services must be used to generate data or communicate with the database, guards must be used for securing routes etc.
@@ -144,7 +144,7 @@ While using nestjs at the server-side, One must follow these guidelines.
 ```
 
 
-## TypeORM 🖥️ 
+## TypeORM 🖥️
 While using TypeORM at the server-side, One must follow these guidelines.
 
 - The models designed must be relational. That means you must use `OneToOne`, `ManyToOne`, `OneToMany` or `ManyToMany` relation when it is necessary.
@@ -207,7 +207,7 @@ This section introduces the main middlewares used in this application.
 This app interacts with a stateless http server. Authentication is realized by sending a [JSON Web Token](https://jwt.io/) (By the way this is one of my favorite technologies) to the server. The steps for authenticating users are listed below.
 
 
-1. When it is the first time the user is visiting the app or the returning user is not authenticated, React Router will redirect the user to the login page. 
+1. When it is the first time the user is visiting the app or the returning user is not authenticated, React Router will redirect the user to the login page.
 2. The User will either login or create a new account
 3. The app sends the authentication information to the server
 4. If the server successfully authenticates the user, a json web access token and its refresh token is created on the server and sent as an http only cookie to the client
@@ -220,7 +220,7 @@ This app interacts with a stateless http server. Authentication is realized by s
 ### Authentication persistence through subdomains
 
 Since this app allows users to create subdomains, it needs to persist authentication through the main domain and subdomains. This is one of the main reasons why cookies are been used. For cookies to persist authentication through domains and subdomains, the main domain parameter supplied while creating them must be valid. One of the rules for its validity is that it must have at least one dot. Due to this, localhost will not work. Read this [article](https://medium.com/@emilycoco/working-with-subdomains-locally-and-sharing-cookies-across-them-12b108cf5e43) to learn more.
-Even though developers can still use localhost but if another subdomain is visited, authentication would be required again. Developers can therefore set a different domain other than localhost in `/etc/host` ( or ` C:\Windows\System32\Drivers\etc\hosts` for windows) file. The domain recommended is octopus.localhost. This is because it allows all subdomains to see the cookie as well.
+Even though developers can still use localhost but if another subdomain is visited, authentication would be required again. Developers can therefore set a different domain other than localhost in `/etc/host` ( or ` C:\Windows\System32\Drivers\etc\hosts` for windows) file. The domain recommended is purpie.localhost. This is because it allows all subdomains to see the cookie as well.
 # Application Structure
 
 ```
@@ -321,11 +321,11 @@ Even though developers can still use localhost but if another subdomain is visit
 
 
 - `README.md`
-  
+
   This is the main readme file of the application
 
 - `SOFTWARE-SPEC.md`
-  
+
   This is the current document you are viewing
 
 - `package-lock.json`
@@ -358,7 +358,7 @@ Even though developers can still use localhost but if another subdomain is visit
         - `data`
 
             This directory hosts the default data used by some entities.
-    
+
     - `helpers`
 
         This directory hosts all the utilities functions of the application.
@@ -447,7 +447,7 @@ Even though developers can still use localhost but if another subdomain is visit
     - `App.tsx`
 
         This is the main component that loads the app routes and run initial scripts (eg. retrieving current user)
-    
+
     - `assets`
 
         This directory contains all the static assests used in the app
@@ -514,11 +514,11 @@ Even though developers can still use localhost but if another subdomain is visit
 
         - `constants`
 
-            All constants used in the store is declared in this directory. End all constants with `.constant.ts`.  This is to make all constants easier to search. 
+            All constants used in the store is declared in this directory. End all constants with `.constant.ts`.  This is to make all constants easier to search.
 
         - `reducers`
 
-            All reducers of the store are declared in this directory. Every reducer ends with `.reducer.ts`. This is to make all reducers easier to search. 
+            All reducers of the store are declared in this directory. Every reducer ends with `.reducer.ts`. This is to make all reducers easier to search.
 
         - `services`
 
@@ -536,14 +536,14 @@ Even though developers can still use localhost but if another subdomain is visit
         - `tsconfig.json`
 
             This is the file that contains the typescript configuration for the app. The configuration used in this app is strict
-            
+
 
     - `scripts`
-        
-        Server run and build commands are included in this folder files for installing requirements and ci cd auto deployment.  
+
+        Server run and build commands are included in this folder files for installing requirements and ci cd auto deployment.
 
     - `appspec.js`
 
         file contains scripts files calls for ci cd auto deployment into aws instance
 
-    
+

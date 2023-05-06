@@ -30,20 +30,29 @@ import ConfirmDialog from '../../../components/utils/ConfirmDialog';
 import ZonePermissions from '../../../layers/settings-and-static-pages/permissions/ZonePermissions';
 import ZoneUsers from '../../../layers/settings-and-static-pages/ZoneUsers';
 
+const initialZonePayload = {
+  name: '',
+  description: '',
+  subdomain: '',
+  id: '',
+  public: false,
+};
+
 const ZoneSettings: () => Menu | null = () => {
   const {
-    auth: { user },
     zone: {
       selectedUserZone,
       getUserZones: { userZones },
     },
   } = useSelector((state: AppState) => state);
+
   const dispatch = useDispatch();
   const size = useContext(ResponsiveContext);
 
   const [selectedZone, setSelectedZone] = useState<UserZoneListItem | null>(
     null
   );
+
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showLeavePopup, setShowLeavePopup] = useState(false);
@@ -52,23 +61,9 @@ const ZoneSettings: () => Menu | null = () => {
   const [showZoneSelector, setShowZoneSelector] = useState(true);
   const [isDropOpen, setIsDropOpen] = useState(false);
 
-  const [zonePayload, setZonePayload] = useState<UpdateZonePayload>({
-    name: '',
-    description: '',
-    subdomain: '',
-    id: userZones?.[0]?.zone?.id || '',
-    public: userZones?.[0]?.zone?.public || false,
-  });
-
-  const handleZoneLeaveForm = () => {
-    return setZonePayload({
-      name: userZones?.[0]?.zone?.name || '',
-      description: userZones?.[0]?.zone?.description || null,
-      subdomain: userZones?.[0]?.zone?.subdomain || '',
-      id: userZones?.[0]?.zone?.id || '',
-      public: userZones?.[0]?.zone?.public || false,
-    });
-  };
+  const [zonePayload, setZonePayload] = useState<UpdateZonePayload>(
+    initialZonePayload
+  );
 
   if (userZones?.length === 0) {
     return {
@@ -144,7 +139,9 @@ const ZoneSettings: () => Menu | null = () => {
           );
 
           setShowDeletePopup(false);
-          handleZoneLeaveForm();
+          setSelectedZone(null);
+          setShowZoneSelector(true);
+          setZonePayload(initialZonePayload);
         }}
         onDismiss={() => setShowDeletePopup(false)}
         textProps={{ wordBreak: 'break-word' }}
@@ -167,7 +164,9 @@ const ZoneSettings: () => Menu | null = () => {
         onConfirm={() => {
           dispatch(leaveZoneAction(selectedZone!.id!));
           setShowLeavePopup(false);
-          handleZoneLeaveForm();
+          setSelectedZone(null);
+          setShowZoneSelector(true);
+          setZonePayload(initialZonePayload);
         }}
         onDismiss={() => setShowLeavePopup(false)}
         textProps={{ wordBreak: 'break-word' }}
@@ -210,38 +209,33 @@ const ZoneSettings: () => Menu | null = () => {
           }
           dropContent={
             <Box width={{ min: '250px' }} overflow="auto">
-              {userZones?.map(
-                (item) =>
-                  (item.zoneRole.canEdit ||
-                    item.zoneRole.canManageRole ||
-                    item.zoneRole.canDelete) && (
-                    <ListButton
-                      label={item.zone.name}
-                      subLabel={t(`Permissions.${item.zoneRole.roleCode}`)}
-                      key={item.zone.id}
-                      onClick={() => {
-                        setZonePayload({
-                          name: item.zone.name,
-                          id: item.zone.id,
-                          subdomain: item.zone.subdomain,
-                          public: item.zone.public,
-                          description: item.zone.description,
-                        });
-                        setSelectedZone(item);
-                        setShowZoneSelector(false);
-                        setIsDropOpen(false);
-                      }}
-                      leftIcon={
-                        <ZoneAvatar
-                          id={item.zone.id}
-                          name={item.zone.name}
-                          src={item.zone.displayPhoto}
-                          outerCircle
-                        />
-                      }
+              {userZones?.map((item) => (
+                <ListButton
+                  label={item.zone.name}
+                  subLabel={t(`Permissions.${item.zoneRole.roleCode}`)}
+                  key={item.zone.id}
+                  onClick={() => {
+                    setZonePayload({
+                      name: item.zone.name,
+                      id: item.zone.id,
+                      subdomain: item.zone.subdomain,
+                      public: item.zone.public,
+                      description: item.zone.description,
+                    });
+                    setSelectedZone(item);
+                    setShowZoneSelector(false);
+                    setIsDropOpen(false);
+                  }}
+                  leftIcon={
+                    <ZoneAvatar
+                      id={item.zone.id}
+                      name={item.zone.name}
+                      src={item.zone.displayPhoto}
+                      outerCircle
                     />
-                  )
-              )}
+                  }
+                />
+              ))}
             </Box>
           }
         >
@@ -250,9 +244,7 @@ const ZoneSettings: () => Menu | null = () => {
               <Box>
                 <Text>{selectedZone?.zone.name}</Text>
                 <Text color="status-disabled">
-                  {user?.id === selectedZone?.zone.createdBy?.id
-                    ? t('settings.owner')
-                    : t('settings.member')}
+                  {t(`Permissions.${selectedZone?.zoneRole.roleCode}`)}
                 </Text>
               </Box>
               <CaretDownFill />
@@ -386,7 +378,7 @@ const ZoneSettings: () => Menu | null = () => {
     ],
     isEmpty: showZoneSelector,
     canDelete: selectedZone?.zoneRole.canDelete,
-    showLeaveButton: user?.id !== selectedZone?.zone.createdBy?.id,
+    showLeaveButton: !selectedZone?.zoneRole.canDelete,
   };
 
   if (selectedZone && selectedZone.zoneRole.canManageRole) {
