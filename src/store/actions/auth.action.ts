@@ -55,7 +55,11 @@ import {
 } from '../types/auth.types';
 import { setToastAction } from './util.action';
 
-const { REACT_APP_SERVER_HOST } = process.env;
+const {
+  REACT_APP_SERVER_HOST,
+  REACT_APP_CLIENT_HOST = 'http://localhost:3000',
+} = process.env;
+const clientHostUrl = new URL(REACT_APP_CLIENT_HOST);
 
 export const loginAction = (user: LoginPayload): AuthAction => {
   return async (dispatch) => {
@@ -73,6 +77,9 @@ export const loginAction = (user: LoginPayload): AuthAction => {
         type: LOGIN_FAILED,
         payload: err?.response?.data,
       });
+      if (err?.response?.data?.message === 'UNAUTHORIZED_SUBDOMAIN') {
+        window.location.href = `${clientHostUrl.href}zone-not-found`;
+      }
       if (err?.response?.data?.message === 'MUST_VERIFY_EMAIL') {
         appHistory.push(`/verify-email-info/${err?.response?.data.user.id}`);
       }
@@ -89,6 +96,9 @@ export const retrieveUserAction = (): AuthAction => {
         payload,
       });
     } catch (err: any) {
+      if (err?.response?.data?.message === 'UNAUTHORIZED_SUBDOMAIN') {
+        window.location.href = `${clientHostUrl.href}zone-not-found`;
+      }
       if (err?.response?.data?.message === 'INITIAL_USER_REQUIRED') {
         return dispatch({ type: MUST_SET_INITIAL_USER });
       }

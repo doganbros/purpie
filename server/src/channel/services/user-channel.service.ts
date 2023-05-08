@@ -124,7 +124,7 @@ export class UserChannelService {
           email: record.createdBy_email,
         },
       },
-      chanelRole: {
+      channelRole: {
         roleCode: record.channel_role_roleCode,
         roleName: record.channel_role_roleName,
         canInvite: record.channel_role_canInvite,
