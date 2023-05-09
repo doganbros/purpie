@@ -10,7 +10,6 @@ import { ChannelController } from './controllers/channel.controller';
 import { UserChannelController } from './controllers/user-channel.controller';
 import { ChannelService } from './services/channel.service';
 import { UserChannelService } from './services/user-channel.service';
-import { UserLogModule } from '../log/user-log.module';
 import { UserLog } from '../../entities/UserLog.entity';
 
 @Module({

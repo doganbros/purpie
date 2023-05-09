@@ -121,9 +121,7 @@ export class UserChannelService {
       userChannel.livePostCount = count.livePostCount;
     }
 
-    const a = this.mapUserChannel(userChannels);
-    console.log(a);
-    return a;
+    return this.mapUserChannel(userChannels);
   }
 
   mapUserChannel(records: any) {
