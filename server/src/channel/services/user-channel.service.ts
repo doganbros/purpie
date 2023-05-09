@@ -3,8 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from 'entities/Channel.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
-import { Brackets, createQueryBuilder, Repository } from 'typeorm';
-import { PostComment } from '../../../entities/PostComment.entity';
+import { Brackets, getManager, Repository } from 'typeorm';
 import { UserLog } from '../../../entities/UserLog.entity';
 
 @Injectable()
@@ -99,17 +98,38 @@ export class UserChannelService {
             'user_channel.id is not null',
           );
         }),
-      )
-      .getRawMany();
+      );
 
-    return this.mapUserChannel(records);
+    const userChannels = await records.getRawMany();
+    for (const userChannel of userChannels!) {
+      const channelCounts = await getManager()
+        .query(`SELECT unseenPost.count as "unseenPostCount", livePost.count as "livePostCount" 
+                        FROM (SELECT cast(count(*) as int)
+                        FROM "user_log" "user_log"
+                                 LEFT JOIN "post" "post" ON "post"."channelId" = "user_log"."channelId"
+                        WHERE "user_log"."channelId" = '${userChannel.channel_id}'
+                          AND "user_log"."createdById" = '${userId}'
+                          AND "user_log"."createdOn" = (SELECT max(ul."createdOn") FROM user_log ul WHERE "ul"."channelId" = '${userChannel.channel_id}')
+                          AND "user_log"."createdOn" < "post"."createdOn") as unseenPost,
+                       (SELECT cast(count(*) as int)
+                        FROM "post" "post"
+                        WHERE "post"."channelId" = '${userChannel.channel_id}'
+                          AND "post"."liveStream" = true) as livePost`);
+
+      const count = channelCounts[0];
+      userChannel.unseenPostCount = count.unseenPostCount;
+      userChannel.livePostCount = count.livePostCount;
+    }
+
+    const a = this.mapUserChannel(userChannels);
+    console.log(a);
+    return a;
   }
 
   mapUserChannel(records: any) {
     return records.map((record: any) => ({
       id: record.user_channel_id,
       createdOn: record.user_channel_createdOn,
-      unseenPostCount: record.unseen_post,
       channel: {
         id: record.channel_id,
         createdOn: record.channel_createdOn,
@@ -132,6 +152,8 @@ export class UserChannelService {
         canEdit: record.channel_role_canEdit,
         canManageRole: record.channel_role_canManageRole,
       },
+      unseenPostCount: record.unseenPostCount,
+      livePostCount: record.livePostCount,
     }));
   }
 
@@ -171,26 +193,33 @@ export class UserChannelService {
         'channel_role',
         'channel_role.roleCode = user_channel.channelRoleCode AND channel_role.channelId = channel.id',
       )
-      .addSelect(
-        (sq) =>
-          sq
-            .select('cast(count(*) as int)')
-            .from(UserLog, 'userLog')
-            .where('userLog.channelId = channel.id')
-            .andWhere('userLog.createdById = :userId', { userId })
-            .andWhere(
-              'userLog.createdOn = (SELECT max(ul."createdOn") FROM user_log ul)',
-            )
-            .andWhere('userLog.createdOn < post.createdOn')
-            .groupBy('userLog.createdOn'),
-        'unseenPostCount',
-      )
       .where('user_channel.userId = :userId', { userId })
       .orderBy(
         '-(ps.commentsCount + ps.dislikesCount + ps.likesCount + ps.liveStreamViewersCount + ps.viewsCount)',
         'ASC',
       );
-    console.log(await records.getSql());
-    return records.getMany();
+
+    const userChannels = await records.getMany();
+    for (const userChannel of userChannels!) {
+      const channelCounts = await getManager()
+        .query(`SELECT unseenPost.count as "unseenPostCount", livePost.count as "livePostCount" 
+                        FROM (SELECT cast(count(*) as int)
+                        FROM "user_log" "user_log"
+                                 LEFT JOIN "post" "post" ON "post"."channelId" = "user_log"."channelId"
+                        WHERE "user_log"."channelId" = '${userChannel.channel.id}'
+                          AND "user_log"."createdById" = '${userId}'
+                          AND "user_log"."createdOn" = (SELECT max(ul."createdOn") FROM user_log ul WHERE "ul"."channelId" = '${userChannel.channel.id}')
+                          AND "user_log"."createdOn" < "post"."createdOn") as unseenPost,
+                       (SELECT cast(count(*) as int)
+                        FROM "post" "post"
+                        WHERE "post"."channelId" = '${userChannel.channel.id}'
+                          AND "post"."liveStream" = true) as livePost`);
+
+      const count = channelCounts[0];
+      userChannel.unseenPostCount = count.unseenPostCount;
+      userChannel.livePostCount = count.livePostCount;
+    }
+
+    return userChannels;
   }
 }

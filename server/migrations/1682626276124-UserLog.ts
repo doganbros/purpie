@@ -21,7 +21,7 @@ export class UserLog1682626276124 implements MigrationInterface {
           {
             name: 'channelId',
             type: 'uuid',
-            isNullable: false,
+            isNullable: true,
           },
           {
             name: 'action',

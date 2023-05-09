@@ -47,4 +47,7 @@ export class UserChannel extends RecordEntity {
 
   @VirtualColumn()
   unseenPostCount: string;
+
+  @VirtualColumn()
+  livePostCount: string;
 }

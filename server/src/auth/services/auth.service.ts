@@ -267,7 +267,7 @@ export class AuthService {
     const userPostFolders = await this.postFolderService.getUserPostFolders(
       savedUser.id,
     );
-    if (userPostFolders.length === 0)
+    if (userPostFolders?.length === 0)
       await this.postFolderService.createFolder(savedUser.id, {
         title: 'Bookmarks',
         postId: null,
