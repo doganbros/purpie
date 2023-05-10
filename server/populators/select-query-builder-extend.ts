@@ -2,6 +2,7 @@ import { parseRawMany } from 'helpers/parseTypeOrmRaw';
 import { paginate } from 'helpers/utils';
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
 import { PaginationQuery, PaginationResponse } from 'types/PaginationQuery';
+import { VIRTUAL_COLUMN_KEY } from '../src/utils/decorators/virtual-column-decorator';
 
 declare module 'typeorm/query-builder/SelectQueryBuilder' {
   interface SelectQueryBuilder<Entity> {
@@ -24,6 +25,7 @@ declare module 'typeorm/query-builder/SelectQueryBuilder' {
     whereExists<T>(query: SelectQueryBuilder<T>): this;
     andWhereExists<T>(query: SelectQueryBuilder<T>): this;
     orWhereExists<T>(query: SelectQueryBuilder<T>): this;
+    getMany(this: SelectQueryBuilder<Entity>): Promise<Entity[] | undefined>;
   }
 
   // interface WhereExpression {
@@ -71,4 +73,21 @@ SelectQueryBuilder.prototype.paginateRaw = async function <Entity>(
   }
 
   return paginate<Record<string, any>>(result, query);
+};
+
+SelectQueryBuilder.prototype.getMany = async function () {
+  const { entities, raw } = await this.getRawAndEntities();
+
+  const items = entities.map((entity, index) => {
+    const metaInfo = Reflect.getMetadata(VIRTUAL_COLUMN_KEY, entity) ?? {};
+    const item = raw[index];
+
+    for (const [propertyKey, name] of Object.entries<string>(metaInfo)) {
+      entity[propertyKey] = item[name];
+    }
+
+    return entity;
+  });
+
+  return [...items];
 };

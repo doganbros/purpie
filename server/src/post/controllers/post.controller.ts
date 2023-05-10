@@ -28,6 +28,7 @@ import { ListPostFeedQuery } from '../dto/list-post-feed.query';
 import { EditPostDto } from '../dto/edit-post.dto';
 import { VideoViewStats } from '../dto/video-view-stats.dto';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { UserLogService } from '../../log/services/user-log.service';
 
 const {
   S3_VIDEO_POST_DIR = '',
@@ -38,7 +39,10 @@ const {
 @Controller({ version: '1', path: 'post' })
 @ApiTags('post')
 export class PostController {
-  constructor(private readonly postService: PostService) {}
+  constructor(
+    private readonly postService: PostService,
+    private readonly userLogService: UserLogService,
+  ) {}
 
   @Get('video/view/:slug/:fileName')
   @IsAuthenticated()
@@ -109,7 +113,7 @@ export class PostController {
     type: PublicPostFeedListResponse,
   })
   @IsAuthenticated()
-  getPostFeed(
+  async getPostFeed(
     @Query() query: ListPostFeedQuery,
     @CurrentUser() user: UserTokenPayload,
   ) {

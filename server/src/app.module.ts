@@ -26,6 +26,8 @@ import { PostModule } from './post/post.module';
 import { ChatModule } from './chat/chat.module';
 import { NotificationModule } from './notification/notification.module';
 import { ResponseCodeMiddleware } from './utils/middlewares/response-code.middleware';
+import { UserLogModule } from './log/user-log.module';
+import { LoggerMiddleware } from './utils/middlewares/logger.middleware';
 
 @Module({
   imports: [
@@ -51,6 +53,7 @@ import { ResponseCodeMiddleware } from './utils/middlewares/response-code.middle
     PostModule,
     ChatModule,
     NotificationModule,
+    UserLogModule,
   ],
   providers: [
     {
@@ -64,6 +67,11 @@ export class AppModule implements NestModule {
     consumer
       .apply(PaginationMiddleware)
       .forRoutes({ path: '*', method: RequestMethod.GET });
+
+    consumer.apply(LoggerMiddleware).forRoutes({
+      path: '*/post/list/feed*',
+      method: RequestMethod.GET,
+    });
 
     consumer
       .apply(ResponseCodeMiddleware)

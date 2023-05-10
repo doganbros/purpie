@@ -13,7 +13,12 @@ import {
 } from '../types/auth.types';
 
 export const login = async (user: LoginPayload): Promise<User> =>
-  http.post('/auth/login', user).then((res) => res.data);
+  http
+    .post('/auth/login', user, {
+      showErrorToast: (err) =>
+        err?.response?.data?.message !== 'UNAUTHORIZED_SUBDOMAIN',
+    })
+    .then((res) => res.data);
 
 export const retrieveUser = async (): Promise<User> =>
   http
@@ -22,7 +27,8 @@ export const retrieveUser = async (): Promise<User> =>
       {},
       {
         showErrorToast: (err) =>
-          err?.response?.data?.message !== 'INITIAL_USER_REQUIRED',
+          err?.response?.data?.message !== 'INITIAL_USER_REQUIRED' &&
+          err?.response?.data?.message !== 'UNAUTHORIZED_SUBDOMAIN',
       }
     )
     .then((res) => res.data);

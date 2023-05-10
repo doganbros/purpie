@@ -10,11 +10,18 @@ import { ChannelController } from './controllers/channel.controller';
 import { UserChannelController } from './controllers/user-channel.controller';
 import { ChannelService } from './services/channel.service';
 import { UserChannelService } from './services/user-channel.service';
+import { UserLog } from '../../entities/UserLog.entity';
 
 @Module({
   controllers: [ChannelController, UserChannelController],
   imports: [
-    TypeOrmModule.forFeature([UserChannel, Channel, Invitation, ChannelRole]),
+    TypeOrmModule.forFeature([
+      UserChannel,
+      Channel,
+      Invitation,
+      ChannelRole,
+      UserLog,
+    ]),
     MailModule,
     forwardRef(() => ZoneModule),
   ],

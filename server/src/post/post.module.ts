@@ -24,6 +24,7 @@ import { PostSavedService } from './services/post-saved.service';
 import { PostFolderController } from './controllers/post-folder.controller';
 import { PostLikeController } from './controllers/post-like.controller';
 import { PostSavedController } from './controllers/post-saved.controller';
+import { UserLogModule } from '../log/user-log.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { PostSavedController } from './controllers/post-saved.controller';
       PostFolder,
       PostFolderItem,
     ]),
+    UserLogModule,
   ],
   controllers: [
     PostController,

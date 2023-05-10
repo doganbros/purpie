@@ -41,7 +41,7 @@ export class UserZone1631130963128 implements MigrationInterface {
       .addGroupBy('user_channel.id')
       .getMany();
 
-    for (const userChannel of userChannels) {
+    for (const userChannel of userChannels!) {
       const userZone = await queryRunner.manager.findOne(UserZone, {
         where: {
           userId: userChannel.userId,
