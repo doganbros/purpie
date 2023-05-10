@@ -75,6 +75,8 @@ export interface UserChannelListItem {
   createdOn?: Date | null;
   channel: ChannelListItem;
   displayPhoto: string | null;
+  livePostCount: number;
+  unseenPostCount: number;
 }
 
 export interface UserChannelPermissionList {

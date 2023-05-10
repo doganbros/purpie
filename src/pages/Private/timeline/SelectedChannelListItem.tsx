@@ -26,6 +26,7 @@ const SelectedChannelListItem: FC<ChannelListItemProps> = ({
   const {
     channel: { selectedChannel },
   } = useSelector((state: AppState) => state);
+  console.log(c);
 
   return (
     <Box
@@ -94,7 +95,24 @@ const SelectedChannelListItem: FC<ChannelListItemProps> = ({
             // overflow="visible"
             basis="120%"
           >
-            <PulsatingCircles size="50px" color="#9060EB" />
+            {c.livePostCount === 0 && (
+              <PulsatingCircles size="50px" color="#9060EB" />
+            )}
+            {c.unseenPostCount > 0 && (
+              <Box
+                border={{ color: 'brand', size: '2px' }}
+                width="59px"
+                height="59px"
+                basis="120%"
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  borderRadius: '50%',
+                }}
+              />
+            )}
           </Box>
         </Box>
 
