@@ -95,7 +95,7 @@ const SelectedChannelListItem: FC<ChannelListItemProps> = ({
             // overflow="visible"
             basis="120%"
           >
-            {c.livePostCount === 0 && (
+            {c.livePostCount > 0 && (
               <PulsatingCircles size="50px" color="#9060EB" />
             )}
             {c.unseenPostCount > 0 && (
