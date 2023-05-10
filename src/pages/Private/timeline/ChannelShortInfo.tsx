@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { FC } from 'react';
 import { Box, Image, Text } from 'grommet';
 import { useSelector } from 'react-redux';
@@ -26,7 +25,6 @@ const ChannelShortInfo: FC = () => {
         {selectedChannel?.channel?.backgroundPhoto && (
           <Image
             src={`${apiURL}/channel/background-photo/${selectedChannel?.channel?.backgroundPhoto}`}
-            // src={testBackground2}
             width="100%"
             height="100%"
             fit="cover"

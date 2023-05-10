@@ -9,7 +9,7 @@ import {
   TextInput,
 } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
-import { CaretDownFill, CaretRightFill, Edit } from 'grommet-icons';
+import { Camera, CaretDownFill, CaretRightFill } from 'grommet-icons';
 import { useTranslation } from 'react-i18next';
 import ListButton from '../../../components/utils/ListButton';
 
@@ -17,6 +17,7 @@ import {
   deleteChannelAction,
   getUserChannelsAllAction,
   unfollowChannelAction,
+  updateChannelBackgroundPhotoAction,
   updateChannelInfoAction,
   updateChannelPhoto,
 } from '../../../store/actions/channel.action';
@@ -34,6 +35,7 @@ import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/ty
 import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
 import ChannelPermissions from '../../../layers/settings-and-static-pages/permissions/ChannelPermissions';
 import ChannelUsers from '../../../layers/settings-and-static-pages/ChannelUsers';
+import { apiURL } from '../../../config/http';
 
 const initialChannelPayload = {
   name: '',
@@ -51,12 +53,17 @@ const ChannelSettings: () => Menu = () => {
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
   const size = useContext(ResponsiveContext);
+  const WIDTH_HEIGHT = '385px';
 
   const [
     selectedUserChannel,
     setSelectedUserChannel,
   ] = useState<UserChannelListItem | null>(null);
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
+  const [showBackgroundPhotoUpload, setShowBackgroundPhotoUpload] = useState(
+    false
+  );
+
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showLeavePopup, setShowLeavePopup] = useState(false);
   const [channelPayload, setChannelPayload] = useState<UpdateChannelPayload>(
@@ -119,196 +126,240 @@ const ChannelSettings: () => Menu = () => {
     label: t('settings.channelSettings'),
     url: 'channel',
     saveButton: (
-      <Button
-        disabled={isFormInitialState()}
-        onClick={() => {
-          if (selectedUserChannel) {
-            dispatch(
-              updateChannelInfoAction(
-                selectedUserChannel.channel.id,
-                channelPayload
-              )
-            );
-          }
-        }}
-        primary
-        label={t('settings.save')}
-        margin={{ vertical: 'medium' }}
-      />
+      <Box height="small">
+        <Button
+          disabled={isFormInitialState()}
+          onClick={() => {
+            if (selectedUserChannel) {
+              dispatch(
+                updateChannelInfoAction(
+                  selectedUserChannel.channel.id,
+                  channelPayload
+                )
+              );
+            }
+          }}
+          primary
+          label={t('settings.save')}
+          margin={{ vertical: 'medium' }}
+        />
+      </Box>
     ),
     deleteButton: (
-      <Button
-        onClick={() => setShowDeletePopup(true)}
-        primary
-        color="red"
-        label={t('common.delete')}
-        margin={{ vertical: 'medium' }}
-      />
+      <Box height="small">
+        <Button
+          onClick={() => setShowDeletePopup(true)}
+          primary
+          color="red"
+          label={t('common.delete')}
+          margin={{ vertical: 'medium' }}
+        />
+      </Box>
     ),
     leaveButton: (
-      <Button
-        onClick={() => setShowLeavePopup(true)}
-        secondary
-        color="red"
-        label={t('common.unfollow')}
-        margin={{ vertical: 'medium' }}
-      />
+      <Box height="small">
+        <Button
+          onClick={() => setShowLeavePopup(true)}
+          secondary
+          color="red"
+          label={t('common.unfollow')}
+          margin={{ vertical: 'medium' }}
+        />
+      </Box>
     ),
     avatarWidget: (
       <>
-        <Box width="medium" direction="row" gap="small" align="center">
+        <Box
+          width={selectedUserChannel ? WIDTH_HEIGHT : undefined}
+          direction="row"
+          gap="small"
+          align="end"
+          background={{
+            image: `url(${apiURL}/channel/background-photo/${selectedUserChannel?.channel?.backgroundPhoto})`,
+            size: 'cover',
+            color: selectedUserChannel ? 'brand' : 'transparent',
+          }}
+          height={selectedUserChannel ? WIDTH_HEIGHT : undefined}
+          style={{ position: 'relative' }}
+          round="small"
+          pad={{ bottom: '50px' }}
+          margin={{ bottom: '-50px' }}
+        >
           {selectedUserChannel && (
-            <Stack anchor="top-right" onClick={() => setShowAvatarUpload(true)}>
-              <Box
-                round="full"
-                border={{ color: 'light-2', size: 'medium' }}
-                wrap
-                justify="center"
-                pad="5px"
-              >
-                <ChannelAvatar
-                  id={selectedUserChannel?.channel.id}
-                  name={selectedUserChannel?.channel.name}
-                  src={selectedUserChannel?.channel.displayPhoto}
-                />
-              </Box>
-              <Box background="focus" round pad="xsmall">
-                <Edit size="small" />
-              </Box>
-            </Stack>
+            <Box
+              width={WIDTH_HEIGHT}
+              height={WIDTH_HEIGHT}
+              background="linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1))"
+              style={{ position: 'absolute', top: 0 }}
+            />
           )}
-          <DropButton
-            open={isDropOpen}
-            onOpen={() => setIsDropOpen(true)}
-            onClose={() => setIsDropOpen(false)}
-            dropAlign={
-              size === 'small'
-                ? { left: 'left', top: 'bottom' }
-                : { left: 'right', top: 'top' }
-            }
-            fill="vertical"
-            dropContent={
-              <Box width={{ min: '250px' }} overflow="auto">
-                {userZones?.map((zone) => (
-                  <Box
-                    key={zone.zone.id}
-                    flex={{ shrink: 0 }}
-                    border={{ side: 'bottom', color: 'light-2' }}
-                  >
-                    {userChannels.data.filter(
-                      (id) => id.channel.zoneId === zone.zone.id
-                    ).length > 0 && (
-                      <Box
-                        style={{ pointerEvents: 'none' }}
-                        pad="small"
-                        gap="small"
-                        direction="row"
-                        align="center"
-                        alignContent="center"
-                      >
-                        <ZoneAvatar
-                          id={zone.zone.id}
-                          name={zone.zone.name}
-                          size="40px"
-                        />
-                        <Text size="small">{zone.zone.name}</Text>
-                      </Box>
-                    )}
-                    {userChannels.data.map(
-                      (item) =>
-                        item.channel.zoneId === zone.zone.id && (
-                          <ListButton
-                            pad={{
-                              vertical: 'xsmall',
-                              left: 'medium',
-                              right: 'small',
-                            }}
-                            key={item.channel.id}
-                            label={item.channel.name}
-                            subLabel={t(
-                              `Permissions.${item.channelRole.roleCode}`
-                            )}
-                            onClick={() => {
-                              setChannelPayload({
-                                name: item.channel.name,
-                                id: item.channel.id,
-                                description: item.channel.description,
-                                public: item.channel.public,
-                              });
-                              setSelectedUserChannel(item);
-                              setShowChannelSelector(false);
-                              setIsDropOpen(false);
-                            }}
-                            leftIcon={
-                              <Box pad={{ vertical: '4px', left: 'small' }}>
-                                <ChannelAvatar
-                                  id={item.channel.id}
-                                  name={item.channel.name}
-                                  src={item.channel.displayPhoto}
-                                  size="40px"
-                                />
-                              </Box>
-                            }
-                            selected={
-                              selectedUserChannel?.channel.name ===
-                              item.channel.name
-                            }
-                          />
-                        )
-                    )}
-                  </Box>
-                ))}
-              </Box>
-            }
-          >
-            {selectedUserChannel ? (
-              <Box
-                onClick={() => setIsDropOpen(true)}
-                direction="row"
-                gap="small"
-                align="center"
+          {selectedUserChannel && (
+            <Box
+              background="focus"
+              round
+              pad="xsmall"
+              style={{ position: 'absolute', top: '10px', right: '10px' }}
+              onClick={() => setShowBackgroundPhotoUpload(true)}
+            >
+              <Camera size="small" />
+            </Box>
+          )}
+          <Box direction="row" gap="small" style={{ zIndex: 1 }}>
+            {selectedUserChannel && (
+              <Stack
+                anchor="top-right"
+                onClick={() => setShowAvatarUpload(true)}
               >
-                <Box>
-                  <EllipsesOverflowText
-                    maxWidth="280px"
-                    lineClamp={1}
-                    text={selectedUserChannel?.channel.name}
+                <Box
+                  round="full"
+                  border={{ color: 'light-2', size: 'medium' }}
+                  wrap
+                  justify="center"
+                  pad="5px"
+                >
+                  <ChannelAvatar
+                    id={selectedUserChannel?.channel.id}
+                    name={selectedUserChannel?.channel.name}
+                    src={selectedUserChannel?.channel.displayPhoto}
                   />
-                  <Box direction="row" gap="small" align="center">
-                    <ZoneBadge
-                      textProps={{ size: 'small' }}
-                      subdomain={
-                        userZones?.find(
-                          (userZone) =>
-                            userZone.zone.id ===
-                            selectedUserChannel?.channel.zoneId
-                        )?.zone.subdomain
-                      }
-                      name={
-                        userZones?.find(
-                          (userZone) =>
-                            userZone.zone.id ===
-                            selectedUserChannel?.channel.zoneId
-                        )?.zone.name
-                      }
-                    />
-                  </Box>
                 </Box>
-                <CaretDownFill />
-              </Box>
-            ) : (
-              <Box
-                background="status-disabled-light"
-                pad="medium"
-                round="small"
-                direction="row"
-                align="center"
-              >
-                <Text>{t('settings.selectChannel')}</Text>
-                <CaretRightFill color="brand" />
-              </Box>
+                <Box background="focus" round pad="xsmall">
+                  <Camera size="small" />
+                </Box>
+              </Stack>
             )}
-          </DropButton>
+            <DropButton
+              open={isDropOpen}
+              onOpen={() => setIsDropOpen(true)}
+              onClose={() => setIsDropOpen(false)}
+              dropAlign={
+                size === 'small'
+                  ? { left: 'left', top: 'bottom' }
+                  : { left: 'right', top: 'top' }
+              }
+              dropContent={
+                <Box width={{ min: '250px' }} overflow="auto">
+                  {userZones?.map((zone) => (
+                    <Box
+                      key={zone.zone.id}
+                      flex={{ shrink: 0 }}
+                      border={{ side: 'bottom', color: 'light-2' }}
+                    >
+                      {userChannels.data.filter(
+                        (id) => id.channel.zoneId === zone.zone.id
+                      ).length > 0 && (
+                        <Box
+                          style={{ pointerEvents: 'none' }}
+                          pad="small"
+                          gap="small"
+                          direction="row"
+                          align="center"
+                          alignContent="center"
+                        >
+                          <ZoneAvatar
+                            id={zone.zone.id}
+                            name={zone.zone.name}
+                            size="40px"
+                          />
+                          <Text size="small">{zone.zone.name}</Text>
+                        </Box>
+                      )}
+                      {userChannels.data.map(
+                        (item) =>
+                          item.channel.zoneId === zone.zone.id && (
+                            <ListButton
+                              pad={{
+                                vertical: 'xsmall',
+                                left: 'medium',
+                                right: 'small',
+                              }}
+                              key={item.channel.id}
+                              label={item.channel.name}
+                              subLabel={t(
+                                `Permissions.${item.channelRole.roleCode}`
+                              )}
+                              onClick={() => {
+                                setChannelPayload({
+                                  name: item.channel.name,
+                                  id: item.channel.id,
+                                  description: item.channel.description,
+                                  public: item.channel.public,
+                                });
+                                setSelectedUserChannel(item);
+                                setShowChannelSelector(false);
+                                setIsDropOpen(false);
+                              }}
+                              leftIcon={
+                                <Box pad={{ vertical: '4px', left: 'small' }}>
+                                  <ChannelAvatar
+                                    id={item.channel.id}
+                                    name={item.channel.name}
+                                    src={item.channel.displayPhoto}
+                                    size="40px"
+                                  />
+                                </Box>
+                              }
+                              selected={
+                                selectedUserChannel?.channel.name ===
+                                item.channel.name
+                              }
+                            />
+                          )
+                      )}
+                    </Box>
+                  ))}
+                </Box>
+              }
+            >
+              {selectedUserChannel ? (
+                <Box
+                  onClick={() => setIsDropOpen(true)}
+                  direction="row"
+                  gap="small"
+                  align="center"
+                >
+                  <Box>
+                    <EllipsesOverflowText
+                      maxWidth="280px"
+                      lineClamp={1}
+                      text={selectedUserChannel?.channel.name}
+                    />
+                    <Box direction="row" gap="small" align="center">
+                      <ZoneBadge
+                        textProps={{ size: 'small' }}
+                        subdomain={
+                          userZones?.find(
+                            (userZone) =>
+                              userZone.zone.id ===
+                              selectedUserChannel?.channel.zoneId
+                          )?.zone.subdomain
+                        }
+                        name={
+                          userZones?.find(
+                            (userZone) =>
+                              userZone.zone.id ===
+                              selectedUserChannel?.channel.zoneId
+                          )?.zone.name
+                        }
+                      />
+                    </Box>
+                  </Box>
+                  <CaretDownFill />
+                </Box>
+              ) : (
+                <Box
+                  background="status-disabled-light"
+                  pad="medium"
+                  round="small"
+                  direction="row"
+                  align="center"
+                >
+                  <Text>{t('settings.selectChannel')}</Text>
+                  <CaretRightFill color="brand" />
+                </Box>
+              )}
+            </DropButton>
+          </Box>
         </Box>
         {showAvatarUpload && (
           <AvatarUpload
@@ -323,6 +374,28 @@ const ChannelSettings: () => Menu = () => {
             }}
             type="channel"
             src={selectedUserChannel?.channel.displayPhoto}
+            id={selectedUserChannel?.channel.id}
+            name={selectedUserChannel?.channel.name}
+          />
+        )}
+        {showBackgroundPhotoUpload && (
+          <AvatarUpload
+            onSubmit={(file: any) => {
+              if (selectedUserChannel && file && selectedUserChannel?.id) {
+                dispatch(
+                  updateChannelBackgroundPhotoAction(
+                    file,
+                    selectedUserChannel.id
+                  )
+                );
+                setShowBackgroundPhotoUpload(false);
+              }
+            }}
+            onDismiss={() => {
+              setShowBackgroundPhotoUpload(false);
+            }}
+            type="channel"
+            src={selectedUserChannel?.channel.backgroundPhoto}
             id={selectedUserChannel?.channel.id}
             name={selectedUserChannel?.channel.name}
           />
@@ -377,6 +450,7 @@ const ChannelSettings: () => Menu = () => {
             border={{ size: 'xsmall', color: 'brand' }}
             round="small"
             pad="xxsmall"
+            style={{ zIndex: 1 }}
           >
             <TextInput
               disabled={!selectedUserChannel?.channelRole.canEdit}

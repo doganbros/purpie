@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, Text, Image, DropButton } from 'grommet';
 import { unsetSelectedChannelAction } from '../../../store/actions/channel.action';
@@ -27,18 +26,6 @@ const SelectedChannelListItem: FC<ChannelListItemProps> = ({
   const {
     channel: { selectedChannel },
   } = useSelector((state: AppState) => state);
-
-  const [test, setTest] = useState(0);
-
-  useEffect(() => {
-    const testInterval = setInterval(() => {
-      setTest(test + 10);
-      if (test > 359) {
-        setTest(0);
-      }
-    }, 50);
-    return () => clearInterval(testInterval);
-  });
 
   return (
     <Box
@@ -91,7 +78,6 @@ const SelectedChannelListItem: FC<ChannelListItemProps> = ({
             id={c.channel.id}
             name={c.channel.name}
             src={c.channel.displayPhoto}
-            size="30px"
           />
 
           <Box
@@ -108,9 +94,7 @@ const SelectedChannelListItem: FC<ChannelListItemProps> = ({
             // overflow="visible"
             basis="120%"
           >
-            <PulsatingCircles size="50px" />
-            <PulsatingCircles delay="0.5s" size="50px" />
-            <PulsatingCircles delay="1s" size="50px" />
+            <PulsatingCircles size="50px" color="#9060EB" />
           </Box>
         </Box>
 

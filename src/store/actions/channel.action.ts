@@ -48,6 +48,9 @@ import {
   UPDATE_USER_CHANNEL_ROLE_REQUESTED,
   UPDATE_USER_CHANNEL_ROLE_SUCCESS,
   UPDATE_USER_CHANNEL_ROLE_FAILED,
+  UPDATE_CHANNEL_BACKGROUND_PHOTO_REQUESTED,
+  UPDATE_CHANNEL_BACKGROUND_PHOTO_SUCCESS,
+  UPDATE_CHANNEL_BACKGROUND_PHOTO_FAILED,
 } from '../constants/channel.constants';
 import * as ChannelService from '../services/channel.service';
 
@@ -225,6 +228,33 @@ export const updateChannelPhoto = (
     } catch (err: any) {
       dispatch({
         type: UPDATE_CHANNEL_PHOTO_FAILED,
+        payload: err?.response?.data,
+      });
+    }
+  };
+};
+export const updateChannelBackgroundPhotoAction = (
+  profilePhoto: File,
+  userChannelId: string
+): ChannelAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: UPDATE_CHANNEL_BACKGROUND_PHOTO_REQUESTED,
+    });
+    try {
+      const payload = await ChannelService.updateChannelBackgroundPhoto(
+        profilePhoto,
+        userChannelId
+      );
+      setToastAction('ok', i18n.t('settings.changesSaved'))(dispatch);
+      dispatch({
+        type: UPDATE_CHANNEL_BACKGROUND_PHOTO_SUCCESS,
+        payload,
+        userChannelId,
+      });
+    } catch (err: any) {
+      dispatch({
+        type: UPDATE_CHANNEL_BACKGROUND_PHOTO_FAILED,
         payload: err?.response?.data,
       });
     }

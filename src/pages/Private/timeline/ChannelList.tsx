@@ -1,18 +1,12 @@
-/* eslint-disable no-unused-vars */
 import React, { FC } from 'react';
 import { Box, Text } from 'grommet';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
-import {
-  setSelectedChannelAction,
-  unsetSelectedChannelAction,
-} from '../../../store/actions/channel.action';
-import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
-import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
 import UnselectedChannelListItem from './UnselectedChannelListItem';
 import SelectedChannelListItem from './SelectedChannelListItem';
+import { UserChannelListItem } from '../../../store/types/channel.types';
 
 interface ChannelListProps {
   handleWaiting?: () => void;
@@ -21,7 +15,6 @@ interface ChannelListProps {
 const ChannelList: FC<ChannelListProps> = ({
   handleWaiting,
 }: ChannelListProps) => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
   const {
     channel: { selectedChannel, userChannels },
@@ -36,6 +29,14 @@ const ChannelList: FC<ChannelListProps> = ({
         ),
       }
     : userChannels;
+  const getZoneName = (channelInfo: UserChannelListItem) => {
+    const { zoneId } = channelInfo.channel;
+    if (getUserZones?.userZones) {
+      return getUserZones.userZones.filter((zone) => zone.zone.id === zoneId)[0]
+        .zone.name;
+    }
+    return '';
+  };
 
   return (
     <Box direction="row" gap="small">
@@ -56,14 +57,14 @@ const ChannelList: FC<ChannelListProps> = ({
                 key={c.channel.id}
                 c={c}
                 handleWaiting={handleWaiting}
-                zoneName="test"
+                zoneName={getZoneName(c)}
               />
             ) : (
               <UnselectedChannelListItem
                 key={c.channel.id}
                 c={c}
                 handleWaiting={handleWaiting}
-                zoneName="test"
+                zoneName={getZoneName(c)}
               />
             )
           )
