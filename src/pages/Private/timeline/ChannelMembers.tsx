@@ -78,7 +78,6 @@ const ChannelMembers: FC<ChannelMembersProps> = ({ channelId }) => {
       )}
     </Box>
   );
-  return null;
 };
 
 export default ChannelMembers;

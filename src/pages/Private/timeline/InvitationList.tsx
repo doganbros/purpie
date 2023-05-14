@@ -1,9 +1,8 @@
 import React, { FC, useState } from 'react';
 import { Box, Button, InfiniteScroll, Text } from 'grommet';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
-import { getInvitationListAction } from '../../../store/actions/invitation.action';
 import {
   INVITATION_AMOUNT_LESS,
   INVITATION_AMOUNT_MORE,
@@ -15,16 +14,16 @@ import { InvitationListItem as InvitationListItemType } from '../../../store/typ
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 
 const InvitationList: FC = () => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
   const {
     invitation: { invitations },
   } = useSelector((state: AppState) => state);
   const [displayCount, setDisplayCount] = useState(INVITATION_AMOUNT_LESS);
 
-  const getInvitations = (skip?: number) => {
-    dispatch(getInvitationListAction(INVITATION_AMOUNT_MORE, skip));
-  };
+  // TODO - fix onMore function, it works infinitely
+  // const getInvitations = (skip?: number) => {
+  //   dispatch(getInvitationListAction(INVITATION_AMOUNT_MORE, skip));
+  // };
 
   const data =
     displayCount === INVITATION_AMOUNT_LESS
@@ -68,7 +67,7 @@ const InvitationList: FC = () => {
           step={6}
           items={data}
           onMore={() => {
-            getInvitations(invitations.data.length);
+            // getInvitations(invitations.data.length);
           }}
         >
           {(invitation: InvitationListItemType, index: number) => (
