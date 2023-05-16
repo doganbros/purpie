@@ -525,8 +525,10 @@ export class ChannelController {
       `${S3_PROFILE_PHOTO_DIR}/channel-bg/`,
       '',
     );
-
-    await this.channelService.changeBackgroundPhoto(userChannelId, fileName);
+    await this.channelService.changeBackgroundPhoto(
+      userChannel.channel.id,
+      fileName,
+    );
 
     return fileName;
   }
