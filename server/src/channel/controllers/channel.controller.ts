@@ -519,7 +519,6 @@ export class ChannelController {
   async changeBackgroundPhoto(
     @CurrentUserChannel() userChannel: UserChannel,
     @UploadedFile() file: Express.MulterS3.File,
-    @Param('userChannelId', ParseUUIDPipe) userChannelId: string,
   ) {
     const fileName = file.key.replace(
       `${S3_PROFILE_PHOTO_DIR}/channel-bg/`,
