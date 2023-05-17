@@ -9,7 +9,7 @@ import {
   Text,
 } from 'grommet';
 import { CaretLeftFill, CaretRightFill, Previous } from 'grommet-icons';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { nanoid } from 'nanoid';
 import LogoWhite from '../../../assets/purpie-logo/logo-white.svg';
@@ -25,6 +25,10 @@ interface SettingsAndStaticPageLayoutProps {
   pageUrl?: string;
 }
 
+interface LocationState {
+  selectedIndex: number;
+}
+
 const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
   pageTitle,
   menuList,
@@ -32,10 +36,16 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
 }) => {
   const history = useHistory();
   const size = useContext(ResponsiveContext);
+  const { state }: { state: LocationState } = useLocation();
+
+  const { selectedIndex: channelShortSelectedIndex } = (state ||
+    {}) as LocationState;
 
   const [activeTab, setActiveTab] = useState(1);
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0);
-  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [selectedIndex, setSelectedIndex] = useState<number>(
+    channelShortSelectedIndex || 0
+  );
   const [searchText, setSearchText] = useState<string>('');
   const [searchTextValue, setSearchTextValue] = useState<string>('');
 
@@ -148,7 +158,7 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
           {selectedMenu.avatarWidget}
           {selectedMenu.deletePopup}
           {selectedMenu.leavePopup}
-          <Box direction="row" gap="small">
+          <Box direction="row" gap="small" align="end">
             {!selectedMenu.isEmpty &&
               selectedMenu.showLeaveButton &&
               selectedMenu.leaveButton}

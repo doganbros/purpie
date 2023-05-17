@@ -1,15 +1,13 @@
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Button, Text, Image, DropButton } from 'grommet';
+import { Box } from 'grommet';
 import { unsetSelectedChannelAction } from '../../../store/actions/channel.action';
 import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
 import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
 import { UserChannelListItem } from '../../../store/types/channel.types';
 import { AppState } from '../../../store/reducers/root.reducer';
-import MoreIcon from '../../../assets/icons/more.svg';
-import ExtendedBox from '../../../components/utils/ExtendedBox';
 import { apiURL } from '../../../config/http';
-import PulsatingCircles from '../../../components/utils/PulsatingCircles';
+import PulsatingCircle from '../../../components/utils/PulsatingCircle';
 
 interface ChannelListItemProps {
   c: UserChannelListItem;
@@ -26,7 +24,6 @@ const SelectedChannelListItem: FC<ChannelListItemProps> = ({
   const {
     channel: { selectedChannel },
   } = useSelector((state: AppState) => state);
-  console.log(c);
 
   return (
     <Box
@@ -43,8 +40,6 @@ const SelectedChannelListItem: FC<ChannelListItemProps> = ({
       width="150px"
       direction="row"
       overflow="hidden"
-      // this is for centering items, triple dots holds 6px
-      pad={{ bottom: '6px' }}
       style={{ position: 'relative' }}
       background={{
         opacity: 0.6,
@@ -95,12 +90,12 @@ const SelectedChannelListItem: FC<ChannelListItemProps> = ({
             // overflow="visible"
             basis="120%"
           >
-            {c.livePostCount > 0 && (
-              <PulsatingCircles size="50px" color="#9060EB" />
+            {c.livePostCount > 1 && (
+              <PulsatingCircle size="50px" color="aqua" />
             )}
-            {c.unseenPostCount > 0 && (
+            {c.unseenPostCount > 0 && c.livePostCount === 0 && (
               <Box
-                border={{ color: 'brand', size: '2px' }}
+                border={{ color: 'aqua', size: '2px' }}
                 width="59px"
                 height="59px"
                 basis="120%"
@@ -133,28 +128,6 @@ const SelectedChannelListItem: FC<ChannelListItemProps> = ({
           />
         </Box>
       </Box>
-      <ExtendedBox position="relative" right="10px" top="10px">
-        <DropButton
-          onClick={(e) => e.stopPropagation()}
-          dropContent={
-            <Box>
-              <Button
-                label={
-                  <Text size="small" color="white">
-                    Unfollow
-                  </Text>
-                }
-                size="small"
-                primary
-              />
-            </Box>
-          }
-        >
-          <Box>
-            <Image src={MoreIcon} />
-          </Box>
-        </DropButton>
-      </ExtendedBox>
     </Box>
   );
 };

@@ -11,6 +11,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { Camera, CaretDownFill, CaretRightFill } from 'grommet-icons';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import ListButton from '../../../components/utils/ListButton';
 
 import {
@@ -44,6 +45,11 @@ const initialChannelPayload = {
   public: false,
 };
 
+interface LocationState {
+  selectedChannel: UserChannelListItem | null;
+  showChannelSelector: boolean;
+}
+
 const ChannelSettings: () => Menu = () => {
   const {
     channel: { userChannels, selectedChannel },
@@ -53,17 +59,24 @@ const ChannelSettings: () => Menu = () => {
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
   const size = useContext(ResponsiveContext);
-  const WIDTH_HEIGHT = '385px';
+  const WIDTH = '450px';
+  const HEIGHT = '249px';
+
+  const { state }: { state: LocationState } = useLocation();
+
+  const {
+    selectedChannel: channelShortSelected,
+    showChannelSelector: channelShowChannelSelector,
+  } = (state || {}) as LocationState;
 
   const [
     selectedUserChannel,
     setSelectedUserChannel,
-  ] = useState<UserChannelListItem | null>(null);
+  ] = useState<UserChannelListItem | null>(channelShortSelected || null);
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
   const [showBackgroundPhotoUpload, setShowBackgroundPhotoUpload] = useState(
     false
   );
-
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showLeavePopup, setShowLeavePopup] = useState(false);
   const [channelPayload, setChannelPayload] = useState<UpdateChannelPayload>(
@@ -74,7 +87,9 @@ const ChannelSettings: () => Menu = () => {
   const [isDropOpen, setIsDropOpen] = useState(false);
   const { t } = useTranslation();
 
-  const [showChannelSelector, setShowChannelSelector] = useState(true);
+  const [showChannelSelector, setShowChannelSelector] = useState(
+    channelShowChannelSelector ?? true
+  );
 
   const isFormInitialState = () => {
     if (isFormClicked) {
@@ -126,7 +141,7 @@ const ChannelSettings: () => Menu = () => {
     label: t('settings.channelSettings'),
     url: 'channel',
     saveButton: (
-      <Box height="small">
+      <Box height="small" justify="end" align="end">
         <Button
           disabled={isFormInitialState()}
           onClick={() => {
@@ -141,36 +156,33 @@ const ChannelSettings: () => Menu = () => {
           }}
           primary
           label={t('settings.save')}
-          margin={{ vertical: 'medium' }}
         />
       </Box>
     ),
     deleteButton: (
-      <Box height="small">
+      <Box height="small" justify="end" align="end">
         <Button
           onClick={() => setShowDeletePopup(true)}
           primary
           color="red"
           label={t('common.delete')}
-          margin={{ vertical: 'medium' }}
         />
       </Box>
     ),
     leaveButton: (
-      <Box height="small">
+      <Box height="small" justify="end" align="end">
         <Button
           onClick={() => setShowLeavePopup(true)}
           secondary
           color="red"
           label={t('common.unfollow')}
-          margin={{ vertical: 'medium' }}
         />
       </Box>
     ),
     avatarWidget: (
       <>
         <Box
-          width={selectedUserChannel ? WIDTH_HEIGHT : undefined}
+          width={selectedUserChannel ? WIDTH : undefined}
           direction="row"
           gap="small"
           align="end"
@@ -179,17 +191,16 @@ const ChannelSettings: () => Menu = () => {
             size: 'cover',
             color: selectedUserChannel ? 'brand' : 'transparent',
           }}
-          height={selectedUserChannel ? WIDTH_HEIGHT : undefined}
+          height={selectedUserChannel ? HEIGHT : undefined}
           style={{ position: 'relative' }}
           round="small"
-          pad={{ bottom: '50px' }}
-          margin={{ bottom: '-50px' }}
+          pad={{ bottom: '20px' }}
         >
           {selectedUserChannel && (
             <Box
-              width={WIDTH_HEIGHT}
-              height={WIDTH_HEIGHT}
-              background="linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1))"
+              width={WIDTH}
+              height={HEIGHT}
+              background="linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.99))"
               style={{ position: 'absolute', top: 0 }}
             />
           )}

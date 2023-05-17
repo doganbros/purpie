@@ -1,26 +1,29 @@
 import React, { FC } from 'react';
 import { Box, Image, Text } from 'grommet';
 import { useSelector } from 'react-redux';
+import { SettingsOption } from 'grommet-icons';
+import { useHistory } from 'react-router-dom';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { apiURL } from '../../../config/http';
-import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
 
 const ChannelShortInfo: FC = () => {
   const {
     channel: { selectedChannel },
   } = useSelector((state: AppState) => state);
 
-  const WIDTH_HEIGHT = '385px';
+  const history = useHistory();
+  const WIDTH = '385px';
+  const HEIGHT = '214px';
 
   return (
-    <Box margin={{ bottom: '-100px' }} style={{ zIndex: -1 }}>
+    <Box margin={{ bottom: '-60px' }} style={{ position: 'relative' }}>
       <Box
-        width={WIDTH_HEIGHT}
-        height={WIDTH_HEIGHT}
+        width={WIDTH}
+        height={HEIGHT}
         overflow="hidden"
-        style={{ position: 'relative' }}
+        style={{ position: 'relative', zIndex: -1 }}
         background="brand"
-        round={{ corner: 'top', size: 'large' }}
+        round={{ corner: 'top', size: 'small' }}
       >
         {selectedChannel?.channel?.backgroundPhoto && (
           <Image
@@ -31,29 +34,57 @@ const ChannelShortInfo: FC = () => {
           />
         )}
         <Box
-          width={WIDTH_HEIGHT}
-          height={WIDTH_HEIGHT}
-          background="linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1))"
+          width={WIDTH}
+          height={HEIGHT}
           style={{ position: 'absolute', top: 0 }}
-        />
-        <Box style={{ position: 'absolute', bottom: '100px', left: '20px' }}>
-          <Box direction="row" gap="xsmall" align="center">
-            <ChannelAvatar
-              id={selectedChannel?.channel?.id || '1'}
-              name={selectedChannel?.channel?.name}
-              src={selectedChannel?.channel?.displayPhoto}
-            />
-            <Text size="small" weight="bold">
-              {' '}
-              {selectedChannel?.channel.name}
-            </Text>
-          </Box>
-          {selectedChannel?.channel.description && (
-            <Box direction="row" gap="xsmall">
-              <Text size="small"> {selectedChannel?.channel.description}</Text>
-            </Box>
-          )}
+          justify="end"
+          align=""
+        >
+          <Box
+            width={WIDTH}
+            height={HEIGHT}
+            background="linear-gradient(to bottom, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 1))"
+          />
         </Box>
+      </Box>
+      <Box
+        style={{
+          position: 'absolute',
+          bottom: '50px',
+          left: '20px',
+        }}
+        width="100%"
+      >
+        <Box
+          direction="row"
+          gap="xsmall"
+          align="center"
+          pad={{ left: 'xxsmall' }}
+          width="90%"
+          justify="between"
+        >
+          <Text size="small" weight="bold">
+            {' '}
+            {selectedChannel?.channel.name}
+          </Text>
+
+          <Box
+            onClick={() =>
+              history.push('/settings', {
+                selectedChannel,
+                selectedIndex: 1,
+                showChannelSelector: false,
+              })
+            }
+          >
+            <SettingsOption color="brand" />
+          </Box>
+        </Box>
+        {selectedChannel?.channel.description && (
+          <Box direction="row" gap="xsmall">
+            <Text size="small"> {selectedChannel?.channel.description}</Text>
+          </Box>
+        )}
       </Box>
     </Box>
   );
