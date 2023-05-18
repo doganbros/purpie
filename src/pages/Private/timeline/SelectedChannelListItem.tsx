@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box } from 'grommet';
+import { FormLock } from 'grommet-icons';
 import { unsetSelectedChannelAction } from '../../../store/actions/channel.action';
 import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
 import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
@@ -8,6 +9,7 @@ import { UserChannelListItem } from '../../../store/types/channel.types';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { apiURL } from '../../../config/http';
 import PulsatingCircle from '../../../components/utils/PulsatingCircle';
+import imagePlaceholder from '../../../assets/banner-placeholder.jpg';
 
 interface ChannelListItemProps {
   c: UserChannelListItem;
@@ -43,10 +45,9 @@ const SelectedChannelListItem: FC<ChannelListItemProps> = ({
       style={{ position: 'relative' }}
       background={{
         opacity: 0.6,
-        image: `url(${apiURL}/channel/background-photo/${selectedChannel?.channel?.backgroundPhoto})`,
-        color: selectedChannel?.channel?.backgroundPhoto
-          ? 'transparent'
-          : '#d1bdf7',
+        image: selectedChannel?.channel?.backgroundPhoto
+          ? `url(${apiURL}/channel/background-photo/${selectedChannel?.channel?.backgroundPhoto})`
+          : `url(${imagePlaceholder})`,
       }}
     >
       <Box
@@ -112,13 +113,17 @@ const SelectedChannelListItem: FC<ChannelListItemProps> = ({
         </Box>
 
         <Box align="center" margin={{ top: '10px' }} style={{ zIndex: 1 }}>
-          <EllipsesOverflowText
-            textAlign="center"
-            size="small"
-            color="dark"
-            text={c.channel.name}
-            maxWidth="150px"
-          />
+          <Box direction="row" gap="xxxsmall" align="center">
+            {!c.channel.public && (
+              <FormLock color="status-disabled" size="16px" />
+            )}
+            <EllipsesOverflowText
+              textAlign="center"
+              size="small"
+              color="dark"
+              text={c.channel.name}
+            />
+          </Box>
           <EllipsesOverflowText
             textAlign="center"
             size="xsmall"

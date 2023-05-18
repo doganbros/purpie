@@ -78,18 +78,6 @@ const UnselectedChannelListItem: FC<ChannelListItemProps> = ({
             src={c.channel.displayPhoto}
           />
         </Box>
-        {!c.channel.public && (
-          <Box
-            width="20px"
-            height="20px"
-            background="brand"
-            round
-            justify="center"
-            align="center"
-          >
-            <FormLock color="white" size="16px" />
-          </Box>
-        )}
 
         {c.unseenPostCount > 0 && (
           <Box
@@ -116,12 +104,17 @@ const UnselectedChannelListItem: FC<ChannelListItemProps> = ({
         )}
       </Stack>
       <Box align="center">
-        <EllipsesOverflowText
-          textAlign="center"
-          size="small"
-          color="dark"
-          text={c.channel.name}
-        />
+        <Box direction="row" gap="xxxsmall" align="center">
+          {!c.channel.public && (
+            <FormLock color="status-disabled" size="16px" />
+          )}
+          <EllipsesOverflowText
+            textAlign="center"
+            size="small"
+            color="dark"
+            text={c.channel.name}
+          />
+        </Box>
         <EllipsesOverflowText
           textAlign="center"
           size="small"

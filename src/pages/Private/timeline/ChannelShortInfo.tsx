@@ -5,6 +5,7 @@ import { SettingsOption } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { apiURL } from '../../../config/http';
+import imagePlaceholder from '../../../assets/banner-placeholder.jpg';
 
 const ChannelShortInfo: FC = () => {
   const {
@@ -33,6 +34,14 @@ const ChannelShortInfo: FC = () => {
             fit="cover"
           />
         )}
+        {!selectedChannel?.channel?.backgroundPhoto && (
+          <Image
+            src={imagePlaceholder}
+            width="100%"
+            height="100%"
+            fit="cover"
+          />
+        )}
         <Box
           width={WIDTH}
           height={HEIGHT}
@@ -43,7 +52,7 @@ const ChannelShortInfo: FC = () => {
           <Box
             width={WIDTH}
             height={HEIGHT}
-            background="linear-gradient(to bottom, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 1))"
+            background="linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1))"
           />
         </Box>
       </Box>

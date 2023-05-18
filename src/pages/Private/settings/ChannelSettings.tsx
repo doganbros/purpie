@@ -37,6 +37,7 @@ import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText
 import ChannelPermissions from '../../../layers/settings-and-static-pages/permissions/ChannelPermissions';
 import ChannelUsers from '../../../layers/settings-and-static-pages/ChannelUsers';
 import { apiURL } from '../../../config/http';
+import imagePlaceholder from '../../../assets/banner-placeholder.jpg';
 
 const initialChannelPayload = {
   name: '',
@@ -100,6 +101,21 @@ const ChannelSettings: () => Menu = () => {
       );
     }
     return true;
+  };
+  const getBackgroundImageURL = () => {
+    const channel = selectedUserChannel?.channel;
+    const hasBackgroundPhoto = Boolean(channel?.backgroundPhoto);
+    const isChannelSelected = Boolean(selectedUserChannel);
+
+    if (hasBackgroundPhoto) {
+      return `url(${apiURL}/channel/background-photo/${channel?.backgroundPhoto})`;
+    }
+
+    if (!hasBackgroundPhoto && !isChannelSelected) {
+      return undefined;
+    }
+
+    return `url(${imagePlaceholder})`;
   };
 
   useEffect(() => {
@@ -187,9 +203,7 @@ const ChannelSettings: () => Menu = () => {
           gap="small"
           align="end"
           background={{
-            image: `url(${apiURL}/channel/background-photo/${selectedUserChannel?.channel?.backgroundPhoto})`,
-            size: 'cover',
-            color: selectedUserChannel ? 'brand' : 'transparent',
+            image: getBackgroundImageURL(),
           }}
           height={selectedUserChannel ? HEIGHT : undefined}
           style={{ position: 'relative' }}
