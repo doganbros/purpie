@@ -203,17 +203,6 @@ const Timeline: FC = () => {
               <SearchBar />
             </Box>
             {selectedChannel && <ChannelShortInfo />}
-            {/* <Box
-              margin={{ horizontal: 'small', top: 'medium' }}
-              style={{ zIndex: 1 }}
-              pad={{ horizontal: 'xsmall' }}
-            >
-              <Button
-                primary
-                onClick={() => console.log('test')}
-                label={t('common.follow')}
-              />
-            </Box> */}
             <Box pad="medium" gap="medium">
               {selectedChannel &&
                 selectedChannel.id &&
