@@ -9,6 +9,7 @@ interface ChannelUserListItemProps {
   name: string;
   userName: string;
   displayPhoto?: string;
+  channelRole?: string;
 }
 
 const ChannelUserListItem: FC<ChannelUserListItemProps> = ({
@@ -16,6 +17,7 @@ const ChannelUserListItem: FC<ChannelUserListItemProps> = ({
   name,
   userName,
   displayPhoto,
+  channelRole,
 }) => {
   const history = useHistory();
 
@@ -37,7 +39,7 @@ const ChannelUserListItem: FC<ChannelUserListItemProps> = ({
           text={name}
         />
         <Text size="xsmall" color="status-disabled">
-          {userName}
+          {userName} {channelRole && `(${channelRole})`}
         </Text>
       </Box>
     </Box>

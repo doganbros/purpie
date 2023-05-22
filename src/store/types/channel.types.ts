@@ -27,6 +27,9 @@ import {
   UNFOLLOW_CHANNEL_REQUESTED,
   UNFOLLOW_CHANNEL_SUCCESS,
   UNSET_SELECTED_CHANNEL,
+  UPDATE_CHANNEL_BACKGROUND_PHOTO_FAILED,
+  UPDATE_CHANNEL_BACKGROUND_PHOTO_REQUESTED,
+  UPDATE_CHANNEL_BACKGROUND_PHOTO_SUCCESS,
   UPDATE_CHANNEL_INFO_FAILED,
   UPDATE_CHANNEL_INFO_REQUESTED,
   UPDATE_CHANNEL_INFO_SUCCESS,
@@ -63,6 +66,7 @@ export interface ChannelListItem extends ChannelBasic {
   displayPhoto: string | undefined;
   createdBy?: User;
   zoneId: string;
+  backgroundPhoto?: string | undefined;
 }
 
 export interface UserChannelListItem {
@@ -71,6 +75,8 @@ export interface UserChannelListItem {
   createdOn?: Date | null;
   channel: ChannelListItem;
   displayPhoto: string | null;
+  livePostCount: number;
+  unseenPostCount: number;
 }
 
 export interface UserChannelPermissionList {
@@ -207,6 +213,7 @@ export type ChannelActionParams =
         | typeof CREATE_CHANNEL_SUCCESS
         | typeof UNSET_SELECTED_CHANNEL
         | typeof UPDATE_CHANNEL_PHOTO_REQUESTED
+        | typeof UPDATE_CHANNEL_BACKGROUND_PHOTO_REQUESTED
         | typeof UPDATE_CHANNEL_INFO_REQUESTED
         | typeof UPDATE_CHANNEL_PERMISSIONS_REQUESTED
         | typeof GET_CHANNEL_USERS_REQUESTED
@@ -220,6 +227,11 @@ export type ChannelActionParams =
 
       payload: string;
       channelId: string;
+    }
+  | {
+      type: typeof UPDATE_CHANNEL_BACKGROUND_PHOTO_SUCCESS;
+      payload: string;
+      userChannelId: string;
     }
   | {
       type: typeof UPDATE_USER_CHANNEL_ROLE_SUCCESS;
@@ -249,6 +261,7 @@ export type ChannelActionParams =
         | typeof CREATE_CHANNEL_FAILED
         | typeof SEARCH_CHANNEL_FAILED
         | typeof UPDATE_CHANNEL_PHOTO_FAILED
+        | typeof UPDATE_CHANNEL_BACKGROUND_PHOTO_FAILED
         | typeof UPDATE_CHANNEL_INFO_FAILED
         | typeof UPDATE_CHANNEL_PERMISSIONS_FAILED
         | typeof GET_CHANNEL_USERS_FAILED
