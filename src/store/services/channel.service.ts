@@ -59,6 +59,14 @@ export const updateChannelPhoto = (
     .put(`channel/${channelId}/display-photo`, serialize(photoFile))
     .then((res) => res.data);
 
+export const updateChannelBackgroundPhoto = (
+  photoFile: File,
+  userChannelId: string
+): Promise<any> =>
+  http
+    .put(`channel/${userChannelId}/background-photo`, serialize(photoFile))
+    .then((res) => res.data);
+
 export const updateChannelInfo = (
   channelId: string,
   params: ChannelBasic
