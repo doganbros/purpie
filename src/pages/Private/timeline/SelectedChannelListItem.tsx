@@ -42,7 +42,7 @@ const SelectedChannelListItem: FC<ChannelListItemProps> = ({
       width="150px"
       direction="row"
       overflow="hidden"
-      style={{ position: 'relative' }}
+      className="position--relative"
       background={{
         opacity: 0.6,
         image: selectedChannel?.channel?.backgroundPhoto
@@ -50,14 +50,7 @@ const SelectedChannelListItem: FC<ChannelListItemProps> = ({
           : `url(${imagePlaceholder})`,
       }}
     >
-      <Box
-        fill
-        style={{
-          backdropFilter: 'blur(20px)',
-          position: 'absolute',
-          zIndex: 0,
-        }}
-      />
+      <Box fill className="z-index--0 position--absolute backdrop-filter--20" />
 
       <Box
         height="100%"
@@ -80,15 +73,9 @@ const SelectedChannelListItem: FC<ChannelListItemProps> = ({
           <Box
             justify="center"
             align="center"
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-            }}
+            className="position--absolute position--center"
             width="60px"
             height="60px"
-            // overflow="visible"
             basis="120%"
           >
             {c.livePostCount > 1 && (
@@ -100,19 +87,13 @@ const SelectedChannelListItem: FC<ChannelListItemProps> = ({
                 width="59px"
                 height="59px"
                 basis="120%"
-                style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  borderRadius: '50%',
-                }}
+                className="position--absolute position--center"
               />
             )}
           </Box>
         </Box>
 
-        <Box align="center" margin={{ top: '10px' }} style={{ zIndex: 1 }}>
+        <Box align="center" margin={{ top: '10px' }} className="z-index--1">
           <Box direction="row" gap="xxxsmall" align="center">
             {!c.channel.public && (
               <FormLock color="status-disabled" size="16px" />

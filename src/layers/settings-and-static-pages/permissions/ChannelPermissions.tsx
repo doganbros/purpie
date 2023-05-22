@@ -15,6 +15,7 @@ import {
 } from '../../../store/types/channel.types';
 import RoleHeader from './RoleHeader';
 import PermissionCheckBox from './PermissionCheckBox';
+import './Style.scss';
 
 interface ChannelPermissionsProps {
   userChannel: UserChannelListItem;
@@ -66,7 +67,7 @@ const ChannelPermissions: FC<ChannelPermissionsProps> = ({ userChannel }) => {
     const { roleCode, ...actions } = channelPermissions[0];
     const roleCodes = Object.values(ChannelRoleCode);
     return (
-      <Box gap="xsmall" style={{ zIndex: 1 }}>
+      <Box gap="xsmall" className="z-index--1">
         {size !== 'small' && <RoleHeader />}
 
         <Box

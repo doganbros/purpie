@@ -38,6 +38,7 @@ import ChannelPermissions from '../../../layers/settings-and-static-pages/permis
 import ChannelUsers from '../../../layers/settings-and-static-pages/ChannelUsers';
 import { apiURL } from '../../../config/http';
 import imagePlaceholder from '../../../assets/banner-placeholder.jpg';
+import './Style.scss';
 
 const initialChannelPayload = {
   name: '',
@@ -206,7 +207,7 @@ const ChannelSettings: () => Menu = () => {
             image: getBackgroundImageURL(),
           }}
           height={selectedUserChannel ? HEIGHT : undefined}
-          style={{ position: 'relative' }}
+          className="position--relative"
           round="small"
           pad={{ bottom: '20px' }}
         >
@@ -215,7 +216,7 @@ const ChannelSettings: () => Menu = () => {
               width={WIDTH}
               height={HEIGHT}
               background="linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.99))"
-              style={{ position: 'absolute', top: 0 }}
+              className="position--absolute top--0"
             />
           )}
           {selectedUserChannel && (
@@ -223,13 +224,13 @@ const ChannelSettings: () => Menu = () => {
               background="focus"
               round
               pad="xsmall"
-              style={{ position: 'absolute', top: '10px', right: '10px' }}
+              className="position--absolute top-right"
               onClick={() => setShowBackgroundPhotoUpload(true)}
             >
               <Camera size="small" />
             </Box>
           )}
-          <Box direction="row" gap="small" style={{ zIndex: 1 }}>
+          <Box direction="row" gap="small" className="z-index--1">
             {selectedUserChannel && (
               <Stack
                 anchor="top-right"
@@ -274,7 +275,7 @@ const ChannelSettings: () => Menu = () => {
                         (id) => id.channel.zoneId === zone.zone.id
                       ).length > 0 && (
                         <Box
-                          style={{ pointerEvents: 'none' }}
+                          className="pointer-events--none"
                           pad="small"
                           gap="small"
                           direction="row"
@@ -475,7 +476,7 @@ const ChannelSettings: () => Menu = () => {
             border={{ size: 'xsmall', color: 'brand' }}
             round="small"
             pad="xxsmall"
-            style={{ zIndex: 1 }}
+            className="z-index--1"
           >
             <TextInput
               disabled={!selectedUserChannel?.channelRole.canEdit}

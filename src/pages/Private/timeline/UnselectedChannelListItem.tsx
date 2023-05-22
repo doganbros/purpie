@@ -7,6 +7,7 @@ import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
 import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
 import { UserChannelListItem } from '../../../store/types/channel.types';
 import PulsatingCircle from '../../../components/utils/PulsatingCircle';
+import './Style.scss';
 
 interface ChannelListItemProps {
   c: UserChannelListItem;
@@ -35,19 +36,14 @@ const UnselectedChannelListItem: FC<ChannelListItemProps> = ({
       pad="small"
       width="110px"
       hoverIndicator={{ elevation: 'indigoLight' }}
-      style={{ position: 'relative' }}
+      className="position--relative"
     >
       <Stack anchor="top-right">
         <Box>
           <Box
             justify="center"
             align="center"
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-            }}
+            className="position--absolute position--center"
             width="60px"
             height="60px"
             // overflow="visible"
@@ -62,13 +58,7 @@ const UnselectedChannelListItem: FC<ChannelListItemProps> = ({
                 width="59px"
                 height="59px"
                 basis="120%"
-                style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  borderRadius: '50%',
-                }}
+                className="position--absolute position--center"
               />
             )}
           </Box>

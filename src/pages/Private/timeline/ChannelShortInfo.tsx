@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { AppState } from '../../../store/reducers/root.reducer';
 import { apiURL } from '../../../config/http';
 import imagePlaceholder from '../../../assets/banner-placeholder.jpg';
+import './Style.scss';
 
 const ChannelShortInfo: FC = () => {
   const {
@@ -17,12 +18,12 @@ const ChannelShortInfo: FC = () => {
   const HEIGHT = '214px';
 
   return (
-    <Box margin={{ bottom: '-60px' }} style={{ position: 'relative' }}>
+    <Box margin={{ bottom: '-60px' }} className="position--relative">
       <Box
         width={WIDTH}
         height={HEIGHT}
         overflow="hidden"
-        style={{ position: 'relative', zIndex: -1 }}
+        className="position--relative z-index---1"
         background="brand"
         round={{ corner: 'top', size: 'small' }}
       >
@@ -45,7 +46,7 @@ const ChannelShortInfo: FC = () => {
         <Box
           width={WIDTH}
           height={HEIGHT}
-          style={{ position: 'absolute', top: 0 }}
+          className="position--absolute top--0"
           justify="end"
           align=""
         >
@@ -56,14 +57,7 @@ const ChannelShortInfo: FC = () => {
           />
         </Box>
       </Box>
-      <Box
-        style={{
-          position: 'absolute',
-          bottom: '50px',
-          left: '20px',
-        }}
-        width="100%"
-      >
+      <Box className="position--absolute bottom-left" width="100%">
         <Box
           direction="row"
           gap="xsmall"

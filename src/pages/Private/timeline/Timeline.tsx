@@ -246,7 +246,7 @@ const Timeline: FC = () => {
             <Box direction="row" gap="small" align="center">
               <Box direction="row" align="center" gap="xsmall">
                 <Text size="small" color="status-disabled">
-                  You are at{' '}
+                  {t('Timeline.youAreAt')}{' '}
                 </Text>
                 {selectedUserZone && (
                   <ZoneBadge

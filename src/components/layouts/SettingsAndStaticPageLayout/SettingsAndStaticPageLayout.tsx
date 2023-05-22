@@ -120,7 +120,7 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
         flex="shrink"
         justify="start"
         gap="small"
-        style={{ zIndex: 1 }}
+        className="z-index--1"
       >
         {size !== 'small' && titleParts.length > 0 && (
           <Box width="medium" direction="column">
@@ -169,7 +169,7 @@ const SettingsAndStaticPageLayout: FC<SettingsAndStaticPageLayoutProps> = ({
           </Box>
         </Box>
         {!searchText && selectedMenu.tabs && selectedMenu.tabs.length > 1 ? (
-          <Box gap="medium" style={{ zIndex: 1 }}>
+          <Box gap="medium" className="z-index--1">
             <Box direction="row" gap="medium">
               {selectedMenu.tabs.map((tab) => (
                 <Button
