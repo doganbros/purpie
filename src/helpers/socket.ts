@@ -30,6 +30,6 @@ export const initializeSocket = (): void => {
   });
 
   socket.on('socket_disconnected', (socketInfo: SocketInfo) => {
-    removeUserOnline(socketInfo.userId);
+    store.dispatch(removeUserOnline(socketInfo.userId));
   });
 };

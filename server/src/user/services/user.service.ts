@@ -781,4 +781,8 @@ export class UserService {
   async removeFeaturedPost(userId: string) {
     return this.featuredPostRepository.delete({ userId });
   }
+
+  async getUser(userId: string) {
+    return this.userRepository.findOne({ id: userId });
+  }
 }

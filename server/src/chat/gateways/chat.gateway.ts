@@ -12,6 +12,7 @@ import { PostService } from 'src/post/services/post.service';
 import { ChatMessageDto } from '../dto/chat-message.dto';
 import { ChatService } from '../services/chat.service';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { UserService } from '../../user/services/user.service';
 
 interface SocketWithTokenPayload extends Socket {
   user: {
@@ -44,6 +45,7 @@ export class ChatGateway {
   constructor(
     private chatService: ChatService,
     private postService: PostService,
+    private userService: UserService,
   ) {}
 
   @SubscribeMessage('delete_message')
@@ -114,7 +116,7 @@ export class ChatGateway {
       userId: socket.user.id,
     });
 
-    await this.chatService.addCurrentStreamViewer(socket.user.id, postId);
+    await this.chatService.addCurrentStreamViewer(socket.user.id);
     const currentStreamViewersCount = await this.chatService.getTotalNumberOfStreamViewers(
       postId,
     );
@@ -145,6 +147,30 @@ export class ChatGateway {
 
     socket.to(roomName).emit('stream_viewer_count_change', { counter, postId });
 
+    await socket.leave(roomName);
+  }
+
+  @SubscribeMessage('join_direct_user')
+  async joinDirectUser(
+    @ConnectedSocket() socket: SocketWithTokenPayload,
+    @MessageBody() userId: string,
+  ) {
+    await this.handleConnection(socket, userId);
+
+    return userId;
+  }
+
+  @SubscribeMessage('leave_direct_user')
+  async leaveDirectUser(
+    @ConnectedSocket() socket: SocketWithTokenPayload,
+    @MessageBody() userId: string,
+  ) {
+    const roomName = this.chatService.getRoomName(userId, 'direct');
+
+    socket.to(roomName).emit('user_left', {
+      socketId: socket.id,
+      userId: socket.user.id,
+    });
     await socket.leave(roomName);
   }
 
@@ -186,7 +212,7 @@ export class ChatGateway {
     socket.to(roomName).emit('presence', socket.user.id);
   }
 
-  async handleConnection(socket: SocketWithTokenPayload) {
+  async handleConnection(socket: SocketWithTokenPayload, userId: string) {
     try {
       const currentUser = await this.chatService.getCurrentUser(socket);
 
@@ -195,14 +221,22 @@ export class ChatGateway {
 
       socket.join(this.chatService.getRoomName(socket.user.id));
 
+      await this.chatService.updateMessageReadOn(
+        userId,
+        socket.user.id,
+        new Date(),
+      );
+
       const contactIds = await this.chatService.fetchUserContactUserIds(
         socket.user.id,
       );
 
       contactIds.forEach((contactId) => {
-        socket.join(this.chatService.getRoomName(contactId));
+        const contactRoomName = this.chatService.getRoomName(contactId);
+        socket.join(contactRoomName);
+
         socket
-          .to(this.chatService.getRoomName(contactId))
+          .to(contactRoomName)
           .emit('contact_user_connected', socket.user.id);
       });
 
