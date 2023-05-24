@@ -7,12 +7,12 @@ import {
   WsException,
 } from '@nestjs/websockets';
 import { nanoid } from 'nanoid/async';
-import { Socket, Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { PostService } from 'src/post/services/post.service';
 import { ChatMessageDto } from '../dto/chat-message.dto';
 import { ChatService } from '../services/chat.service';
 import { ErrorTypes } from '../../../types/ErrorTypes';
-import { UserService } from '../../user/services/user.service';
+import { UserLogService } from '../../log/services/user-log.service';
 
 interface SocketWithTokenPayload extends Socket {
   user: {
@@ -45,7 +45,7 @@ export class ChatGateway {
   constructor(
     private chatService: ChatService,
     private postService: PostService,
-    private userService: UserService,
+    private userLogService: UserLogService,
   ) {}
 
   @SubscribeMessage('delete_message')
@@ -116,7 +116,7 @@ export class ChatGateway {
       userId: socket.user.id,
     });
 
-    await this.chatService.addCurrentStreamViewer(socket.user.id);
+    await this.chatService.addCurrentStreamViewer(socket.user.id, postId);
     const currentStreamViewersCount = await this.chatService.getTotalNumberOfStreamViewers(
       postId,
     );
@@ -249,7 +249,7 @@ export class ChatGateway {
       // socket.join(this.chatService.getRoomName(channelId, 'channel'));
       // });
 
-      socket.on('disconnecting', () => this.handleDisconnecting(socket));
+      socket.on('disconnect', () => this.handleDisconnecting(socket));
       return null;
     } catch (err) {
       return null;
@@ -258,6 +258,8 @@ export class ChatGateway {
 
   async handleDisconnecting(socket: SocketWithTokenPayload) {
     try {
+      socket.removeAllListeners();
+      await this.userLogService.upsertUserOnlineDate(socket.user.id);
       const contactIds = await this.chatService.fetchUserContactUserIds(
         socket.user.id,
       );

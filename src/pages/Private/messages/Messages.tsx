@@ -1,7 +1,8 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Box } from 'grommet';
+import { Box, TextInput } from 'grommet';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { Search } from 'grommet-icons';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import { AppState } from '../../../store/reducers/root.reducer';
 import Divider from '../../../components/utils/Divider';
@@ -27,6 +28,7 @@ const Messages: FC = () => {
     unreadMessageCounts: [],
   });
   const [selectedContact, setSelectedContact] = useState<User | null>(null);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     getUnreadMessageCounts().then((res) =>
@@ -34,9 +36,32 @@ const Messages: FC = () => {
     );
   }, []);
 
+  const searchContact = () => {
+    return (
+      <Box
+        direction="row"
+        align="center"
+        border={{ color: 'light-4', size: 'small' }}
+        round="medium"
+        pad={{ horizontal: 'small' }}
+      >
+        <TextInput
+          plain
+          placeholder="Search in Conversations"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+          focusIndicator={false}
+        />
+
+        <Search />
+      </Box>
+    );
+  };
+
   return (
     <PrivatePageLayout
       title={data?.title || t('common.loading')}
+      topComponentWithoutPadTop
       topComponent={
         <SelectedUserHead
           user={selectedContact}
@@ -45,9 +70,10 @@ const Messages: FC = () => {
       }
       rightComponent={
         <Box pad="medium" gap="medium">
-          <Box>Search Conversation Input</Box>
+          {searchContact()}
           <Divider />
           <MessageContactList
+            searchText={search}
             chatInfo={chatInfo}
             selectedContact={selectedContact}
             setSelectedContact={(val) => {

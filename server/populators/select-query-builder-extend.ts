@@ -39,11 +39,22 @@ SelectQueryBuilder.prototype.paginate = async function <Entity>(
   this: SelectQueryBuilder<Entity>,
   query: PaginationQuery,
 ): Promise<PaginationResponse<Entity>> {
-  const result = await this.offset(query.skip)
+  const { entities, raw } = await this.offset(query.skip)
     .limit(query.limit)
-    .getManyAndCount();
+    .getRawAndEntities();
 
-  return paginate<Entity>(result, query);
+  const data = entities.map((entity: any, index) => {
+    const metaInfo = Reflect.getMetadata(VIRTUAL_COLUMN_KEY, entity) ?? {};
+    const item = raw[index];
+
+    for (const [propertyKey, name] of Object.entries<string>(metaInfo)) {
+      entity[propertyKey] = item[name];
+    }
+
+    return entity;
+  });
+
+  return paginate<Entity>([data, raw.length], query);
 };
 
 SelectQueryBuilder.prototype.paginateRaw = async function <Entity>(

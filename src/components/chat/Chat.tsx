@@ -59,7 +59,6 @@ const Chat: React.FC<Props> = ({
   chatInfo,
 }) => {
   const { t } = useTranslation();
-
   const [messages, setMessages] = useState<Array<ChatMessage> | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [typingUser, setTypingUser] = useState<User | null>(null);
@@ -282,6 +281,7 @@ const Chat: React.FC<Props> = ({
             ...chatInfo,
             typingUsers: [...chatInfo.typingUsers, payload.user as User],
           });
+
         typingTimerId.current = setTimeout(() => {
           if (chatInfo && setChatInfo)
             setChatInfo({
@@ -290,6 +290,7 @@ const Chat: React.FC<Props> = ({
                 (u) => u.id !== typingUser?.id
               ),
             });
+
           setTypingUser(null);
         }, 2000);
       }

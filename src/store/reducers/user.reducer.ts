@@ -16,6 +16,7 @@ import {
   SEARCH_PROFILE_SUCCESS,
   SELECT_CONTACT_REQUESTED,
   SELECT_CONTACT_SUCCESS,
+  UPDATE_CONTACT_LAST_ONLINE_DATE,
 } from '../constants/user.constants';
 import { paginationInitialState } from '../../helpers/constants';
 
@@ -123,6 +124,27 @@ const userReducer = (
             loading: false,
             error: null,
           },
+        },
+      };
+    }
+    case UPDATE_CONTACT_LAST_ONLINE_DATE: {
+      const contactIndex = state.contacts.data.findIndex(
+        (d) => d.contactUser.id === action.contactUserId
+      );
+      if (contactIndex === -1) return state;
+
+      const updatedContact = { ...state.contacts.data[contactIndex] };
+      updatedContact.lastOnlineDate = new Date();
+
+      return {
+        ...state,
+        contacts: {
+          ...state.contacts,
+          data: [
+            ...state.contacts.data.slice(0, contactIndex),
+            updatedContact,
+            ...state.contacts.data.slice(contactIndex + 1),
+          ],
         },
       };
     }

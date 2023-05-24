@@ -20,6 +20,7 @@ import {
   SELECT_CONTACT_FAILED,
   SELECT_CONTACT_REQUESTED,
   SELECT_CONTACT_SUCCESS,
+  UPDATE_CONTACT_LAST_ONLINE_DATE,
 } from '../constants/user.constants';
 import {
   getUserProfile,
@@ -77,6 +78,13 @@ export const listContactsAction = (params: {
     }
   };
 };
+
+export const updateContactLastOnlineDateAction = (
+  contactUserId: string
+): any => ({
+  type: UPDATE_CONTACT_LAST_ONLINE_DATE,
+  contactUserId,
+});
 
 export const selectContactAction = (params: {
   userName: string;

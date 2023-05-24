@@ -17,6 +17,35 @@ export class UserLogService {
     return newLog;
   }
 
+  async upsertUserOnlineDate(userId: string) {
+    const existedLog = await this.userLogRepository.findOne({
+      where: { action: 'lastOnlineDate', createdById: userId },
+    });
+    if (existedLog) {
+      const payload = { ...JSON.parse(existedLog.payload) };
+      payload.onlineCount++;
+      await this.userLogRepository.update(
+        { id: existedLog.id },
+        { payload, updatedOn: new Date() },
+      );
+    } else {
+      await this.createLog({
+        action: 'lastOnlineDate',
+        payload: JSON.stringify({ onlineCount: 1 }),
+        createdById: userId,
+        updatedOn: new Date(),
+      });
+    }
+  }
+
+  async getUserLastOnlineDate(userId: string) {
+    return this.userLogRepository
+      .createQueryBuilder('log')
+      .select('max(log.createdOn)')
+      .where('log.createdById = :userId', { userId })
+      .getOne();
+  }
+
   async listChannelLogs(userId: string, channelId: string) {
     return this.userLogRepository
       .createQueryBuilder('log')
