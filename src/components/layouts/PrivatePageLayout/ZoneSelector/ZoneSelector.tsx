@@ -13,9 +13,9 @@ import { logoutAction } from '../../../../store/actions/auth.action';
 import ListButton from '../../../utils/ListButton';
 import EllipsesOverflowText from '../../../utils/EllipsesOverflowText';
 import ExtendedBox from '../../../utils/ExtendedBox';
-import ZoneDropTheme from './ZoneDropTheme';
 import { UserAvatar } from '../../../utils/Avatars/UserAvatar';
 import { ZoneAvatar } from '../../../utils/Avatars/ZoneAvatar';
+import './Style.scss';
 
 const ZoneSelector: FC = () => {
   const { t } = useTranslation();
@@ -33,41 +33,51 @@ const ZoneSelector: FC = () => {
   const [hover, setHover] = useState(false);
 
   const createChannelButtonDisabled = userZones?.length === 0;
+
   return (
     <Box fill="horizontal" pad={{ horizontal: '16px' }}>
-      <ZoneDropTheme>
-        <DropButton
-          fill="horizontal"
-          plain
-          open={open}
-          onOpen={() => {
-            setOpen(true);
-          }}
-          onClose={() => {
-            setOpen(false);
-          }}
-          dropAlign={{ left: 'left', top: 'bottom' }}
-          dropContent={
-            <Box width={{ min: '210px' }}>
-              <ListButton
-                selected={!selectedUserZone}
-                onClick={() => {
-                  navigateToSubdomain();
-                }}
-                leftIcon={
-                  user && (
-                    <UserAvatar
-                      id={user.id}
-                      name={user.fullName}
-                      src={user.displayPhoto}
-                      size="small"
-                      textProps={{ size: 'xsmall', weight: 'normal' }}
-                    />
-                  )
-                }
-                label={user?.fullName}
-              />
-              <Divider margin="none" />
+      <DropButton
+        fill="horizontal"
+        plain
+        open={open}
+        onOpen={() => {
+          setOpen(true);
+        }}
+        onClose={() => {
+          setOpen(false);
+        }}
+        dropAlign={{ left: 'left', top: 'bottom' }}
+        dropContent={
+          <Box
+            width={{ min: '210px' }}
+            gap={size === 'small' ? 'medium' : 'xxsmall'}
+            background="white"
+            className="not-select--5"
+          >
+            <ListButton
+              selected={!selectedUserZone}
+              onClick={() => {
+                navigateToSubdomain();
+              }}
+              leftIcon={
+                user && (
+                  <UserAvatar
+                    id={user.id}
+                    name={user.fullName}
+                    src={user.displayPhoto}
+                    size="small"
+                    textProps={{ size: 'xsmall', weight: 'normal' }}
+                  />
+                )
+              }
+              label={user?.fullName}
+            />
+            <Divider margin="none" />
+            <Box
+              overflow="auto"
+              height={{ min: '180px', max: '180px' }}
+              className="font-weight--bold"
+            >
               {userZones &&
                 userZones.map((z) => (
                   <ListButton
@@ -89,108 +99,108 @@ const ZoneSelector: FC = () => {
                     }
                     key={z.zone.id}
                     label={z.zone.name}
+                    height={{ min: '40px' }}
+                    flex={{ shrink: 1 }}
                   />
                 ))}
-              <Divider margin={{ vertical: 'xxsmall' }} />
-              <ListButton
-                onClick={() => {
-                  if (!createChannelButtonDisabled) {
-                    setOpen(false);
-                    dispatch(openCreateChannelLayerAction());
+            </Box>
+            <Divider margin={{ vertical: 'xxsmall' }} />
+            <ListButton
+              onClick={() => {
+                if (!createChannelButtonDisabled) {
+                  setOpen(false);
+                  dispatch(openCreateChannelLayerAction());
+                }
+              }}
+              disabled={createChannelButtonDisabled}
+              label={t('ZoneSelector.createChannel')}
+              rightIcon={
+                <Add
+                  size="small"
+                  color={
+                    createChannelButtonDisabled ? 'status-disabled' : 'dark-1'
                   }
-                }}
-                disabled={createChannelButtonDisabled}
-                label={t('ZoneSelector.createChannel')}
-                rightIcon={
-                  <Add
-                    size="small"
-                    color={
-                      createChannelButtonDisabled ? 'status-disabled' : 'dark-1'
-                    }
-                  />
+                />
+              }
+            />
+            <ListButton
+              onClick={() => {
+                setOpen(false);
+                dispatch(openCreateZoneLayerAction());
+              }}
+              label={t('ZoneSelector.createZone')}
+              rightIcon={<Add size="small" color="dark-1" />}
+            />
+            <Divider margin={{ vertical: 'xxsmall' }} />
+            <ListButton
+              label={t('ZoneSelector.settings')}
+              onClick={() => history.push('/settings')}
+              rightIcon={<SettingsOption size="small" color="dark-1" />}
+            />
+            <ListButton
+              label={t('ZoneSelector.support')}
+              onClick={() => history.push('/support')}
+            />
+            <Divider margin={{ vertical: 'xxsmall' }} />
+            <ListButton
+              onClick={() => dispatch(logoutAction())}
+              label={t('ZoneSelector.signOut')}
+            />
+          </Box>
+        }
+        dropProps={{
+          margin: { vertical: 'small' },
+          elevation: 'medium',
+          round: 'small',
+          overflow: 'auto',
+        }}
+      >
+        <Box fill="horizontal">
+          <ExtendedBox
+            onMouseEnter={() => setHover(false)}
+            onMouseLeave={() => setHover(false)}
+            fill="horizontal"
+            align="center"
+            justify="around"
+            gap="small"
+            background="rgba(125 76 219)"
+            round="16px"
+            pad={{
+              horizontal: 'small',
+              vertical: size === 'small' ? 'medium' : 'small',
+            }}
+            boxShadow={`#3d138b${hover || open ? '99' : '66'} 0 0 10px 0`}
+          >
+            {selectedUserZone ? (
+              <ZoneAvatar
+                id={selectedUserZone.zone.id}
+                name={selectedUserZone.zone.name}
+                src={selectedUserZone.zone.displayPhoto}
+              />
+            ) : (
+              user && (
+                <UserAvatar
+                  id={user.id}
+                  name={user.fullName}
+                  src={user.displayPhoto}
+                />
+              )
+            )}
+            <Box align="center">
+              <EllipsesOverflowText
+                maxWidth={size === 'small' ? '75px' : '92px'}
+                textAlign="center"
+                weight="bold"
+                size="xsmall"
+                color="white"
+                text={
+                  selectedUserZone ? selectedUserZone.zone.name : user?.fullName
                 }
               />
-              <ListButton
-                onClick={() => {
-                  setOpen(false);
-                  dispatch(openCreateZoneLayerAction());
-                }}
-                label={t('ZoneSelector.createZone')}
-                rightIcon={<Add size="small" color="dark-1" />}
-              />
-              <Divider margin={{ vertical: 'xxsmall' }} />
-              <ListButton
-                label={t('ZoneSelector.settings')}
-                onClick={() => history.push('/settings')}
-                rightIcon={<SettingsOption size="small" color="dark-1" />}
-              />
-              <ListButton
-                label={t('ZoneSelector.support')}
-                onClick={() => history.push('/support')}
-              />
-              <Divider margin={{ vertical: 'xxsmall' }} />
-              <ListButton
-                onClick={() => dispatch(logoutAction())}
-                label={t('ZoneSelector.signOut')}
-              />
             </Box>
-          }
-          dropProps={{
-            margin: { vertical: 'small' },
-            elevation: 'medium',
-            round: 'small',
-            overflow: 'auto',
-          }}
-        >
-          <Box fill="horizontal">
-            <ExtendedBox
-              onMouseEnter={() => setHover(true)}
-              onMouseLeave={() => setHover(false)}
-              fill="horizontal"
-              align="center"
-              justify="around"
-              gap="small"
-              background="rgba(125 76 219)"
-              round="16px"
-              pad={{
-                horizontal: 'small',
-                vertical: size === 'small' ? 'medium' : 'small',
-              }}
-              boxShadow={`#3d138b${hover || open ? '99' : '66'} 0 0 10px 0`}
-            >
-              {selectedUserZone ? (
-                <ZoneAvatar
-                  id={selectedUserZone.zone.id}
-                  name={selectedUserZone.zone.name}
-                  src={selectedUserZone.zone.displayPhoto}
-                />
-              ) : (
-                user && (
-                  <UserAvatar
-                    id={user.id}
-                    name={user.fullName}
-                    src={user.displayPhoto}
-                  />
-                )
-              )}
-              <Box align="center">
-                <EllipsesOverflowText
-                  maxWidth="92px"
-                  textAlign="center"
-                  weight="bold"
-                  size="xsmall"
-                  color="white"
-                  text={
-                    selectedUserZone
-                      ? selectedUserZone.zone.name
-                      : user?.fullName
-                  }
-                />
-              </Box>
-            </ExtendedBox>
-          </Box>
-        </DropButton>
-      </ZoneDropTheme>
+          </ExtendedBox>
+        </Box>
+      </DropButton>
     </Box>
   );
 };
