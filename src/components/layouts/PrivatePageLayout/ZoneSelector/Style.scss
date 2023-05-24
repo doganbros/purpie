@@ -1,0 +1,4 @@
+.font-weight--bold>*:hover,
+.not-select--5>*:not(:nth-child(5)):hover {
+    font-weight: bold;
+}
