@@ -54,7 +54,6 @@ export class ChatController {
       result.push({ userId: contactId, count });
     }
 
-    console.log(result);
     return result;
   }
 
