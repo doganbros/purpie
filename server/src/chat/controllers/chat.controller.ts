@@ -41,6 +41,22 @@ export class ChatController {
     return this.chatService.getChatMessages(user.id, medium, id, query);
   }
 
+  @Get('message/unread/counts')
+  @IsAuthenticated()
+  async countUnreadMessages(@CurrentUser() user: UserTokenPayload) {
+    const result = [];
+    const contactIds = await this.chatService.fetchUserContactUserIds(user.id);
+    for (const contactId of contactIds) {
+      const count = await this.chatService.getUnreadMessageCounts(
+        user.id,
+        contactId,
+      );
+      result.push({ userId: contactId, count });
+    }
+
+    return result;
+  }
+
   @Get('list/attachments/:medium/:id')
   @IsAuthenticated()
   listChatAttachments(

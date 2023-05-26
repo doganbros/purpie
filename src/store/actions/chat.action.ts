@@ -4,12 +4,12 @@ import {
   RESET_CHAT_STATE,
 } from '../constants/chat.constants';
 
-export const addUserOnline = (user: number): any => ({
+export const addUserOnline = (user: string): any => ({
   type: ADD_USER_ONLINE,
   payload: user,
 });
 
-export const removeUserOnline = (user: number): any => ({
+export const removeUserOnline = (user: string): any => ({
   type: REMOVE_USER_ONLINE,
   payload: user,
 });

@@ -23,6 +23,7 @@ import {
   SELECT_CONTACT_FAILED,
   SELECT_CONTACT_REQUESTED,
   SELECT_CONTACT_SUCCESS,
+  UPDATE_CONTACT_LAST_ONLINE_DATE,
 } from '../constants/user.constants';
 import { UserChannelListItem } from './channel.types';
 import { UserZoneListItem } from './zone.types';
@@ -43,6 +44,7 @@ export interface ContactUser {
   id: string;
   createdOn: Date;
   contactUser: User;
+  lastOnlineDate: Date;
 }
 
 export interface UserState {
@@ -130,6 +132,10 @@ export type UserActionParams =
       payload: {
         contactId: string;
       };
+    }
+  | {
+      type: typeof UPDATE_CONTACT_LAST_ONLINE_DATE;
+      contactUserId: string;
     }
   | {
       type:

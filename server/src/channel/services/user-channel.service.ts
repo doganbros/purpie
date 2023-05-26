@@ -4,7 +4,6 @@ import { Channel } from 'entities/Channel.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Brackets, getManager, Repository } from 'typeorm';
-import { UserLog } from '../../../entities/UserLog.entity';
 
 @Injectable()
 export class UserChannelService {
@@ -13,8 +12,6 @@ export class UserChannelService {
     private userChannelRepository: Repository<UserChannel>,
     @InjectRepository(Channel)
     private channelRepository: Repository<Channel>,
-    @InjectRepository(UserLog)
-    private userLogRepository: Repository<UserLog>,
   ) {}
 
   async getUserChannel(userId: number, params: Record<string, any>) {

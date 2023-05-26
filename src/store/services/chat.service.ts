@@ -11,3 +11,7 @@ export const getChatMessages = (
   http
     .get(`/chat/list/messages/${medium}/${id}`, { params: { limit, lastDate } })
     .then((res) => res.data);
+
+export const getUnreadMessageCounts = (): Promise<
+  { userId: string; count: number }[]
+> => http.get(`/chat/message/unread/counts`).then((res) => res.data);

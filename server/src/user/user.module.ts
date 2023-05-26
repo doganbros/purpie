@@ -32,5 +32,6 @@ import { MailService } from '../mail/mail.service';
     AuthModule,
   ],
   providers: [UserService, UserListener, MailService],
+  exports: [UserService],
 })
 export class UserModule {}

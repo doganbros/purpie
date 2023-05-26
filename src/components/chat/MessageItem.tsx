@@ -17,6 +17,7 @@ import {
   UploadedImageContainer,
 } from './components/ChatComponentsStyle';
 import { UserAvatar } from '../utils/Avatars/UserAvatar';
+import ExtendedBox from '../utils/ExtendedBox';
 
 interface Props {
   message: ChatMessage;
@@ -102,11 +103,13 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
             round="small"
             elevation={ownMessage ? 'right' : 'left'}
           >
-            <Box
-              margin={{ [ownMessage ? 'right' : 'left']: '-15.5px' }}
-              pad="1px"
-              height="42px"
-              width="48px"
+            <ExtendedBox
+              pad={{
+                top: '1px',
+                bottom: '1px',
+                right: ownMessage ? "'-15.5px'" : '1px',
+                left: ownMessage ? "'-15.5px'" : '1px',
+              }}
               round="xlarge"
               border={{ color: 'status-disabled-light', size: 'small' }}
             >
@@ -119,7 +122,7 @@ const MessageItem: FC<Props> = ({ id, message, children, menuItems }) => {
                 name={message.createdBy.fullName}
                 src={message.createdBy.displayPhoto}
               />
-            </Box>
+            </ExtendedBox>
             <Box
               direction="column"
               justify="end"
