@@ -11,6 +11,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import dayjs from 'dayjs';
 import PrivatePageLayout from '../../../components/layouts/PrivatePageLayout/PrivatePageLayout';
 import {
   createPostLikeAction,
@@ -33,10 +34,7 @@ import ZoneBadge from '../../../components/utils/zone/ZoneBadge';
 import UserBadge from '../../../components/utils/UserBadge';
 import Highlight from '../../../components/utils/Highlight';
 import { setSelectedChannelAction } from '../../../store/actions/channel.action';
-import {
-  getTimezoneTimeFromUTC,
-  matchDescriptionTags,
-} from '../../../helpers/utils';
+import { matchDescriptionTags } from '../../../helpers/utils';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 import { DELAY_TIME } from '../../../helpers/constants';
 import useDelayTime from '../../../hooks/useDelayTime';
@@ -238,9 +236,7 @@ const Video: FC = () => {
                   {data.title}
                 </Text>
               </Box>
-              <Text weight="bold">
-                {getTimezoneTimeFromUTC(data.createdOn).fromNow()}
-              </Text>
+              <Text weight="bold">{dayjs(data.createdOn).fromNow()}</Text>
             </Box>
             <Box justify="between" align="center" direction="row">
               {(data?.type === 'video' && (
