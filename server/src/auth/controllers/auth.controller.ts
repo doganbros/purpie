@@ -397,6 +397,8 @@ export class AuthController {
       await this.authService.subdomainValidity(subdomain, userProfile.id);
     }
 
-    return userProfile;
+    // TODO get user membership from membership micro-service
+
+    return { ...userProfile, membership: 'BASIC' };
   }
 }

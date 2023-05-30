@@ -35,6 +35,9 @@ export class UserProfile {
     },
   })
   userRole: SoftEntity<UserRole>;
+
+  @ApiProperty()
+  membership?: string;
 }
 
 export interface UserTokenPayload {
