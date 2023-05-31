@@ -9,6 +9,7 @@ import { Post } from '../../store/types/post.types';
 import { FavoriteFill } from '../utils/CustomIcons';
 import { UserAvatar } from '../utils/Avatars/UserAvatar';
 import * as MeetingService from '../../store/services/meeting.service';
+import EllipsesOverflowText from '../utils/EllipsesOverflowText';
 
 interface PostGridItemProps {
   post: Post;
@@ -72,7 +73,14 @@ const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
                   src={post.createdBy.displayPhoto}
                 />
               </Box>
-              <Text color="status-disabled">{post.createdBy?.fullName}</Text>
+              <EllipsesOverflowText
+                maxWidth="140px"
+                textAlign="center"
+                weight="bold"
+                size="small"
+                color="status-disabled"
+                text={post.createdBy?.fullName}
+              />
             </Box>
             <Text color="status-disabled">
               {dayjs(post.createdOn).fromNow()}
