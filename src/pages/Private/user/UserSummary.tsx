@@ -19,7 +19,7 @@ export const UserSummary: FC<UserBasic> = ({
         id={id}
         name={fullName}
         src={displayPhoto}
-        size="355px"
+        size="330px"
         round="medium"
         textProps={{ size: '120px' }}
       />
