@@ -398,7 +398,6 @@ export class AuthController {
     }
 
     // TODO get user membership from membership micro-service
-
     return { ...userProfile, membership: 'BASIC' };
   }
 }
