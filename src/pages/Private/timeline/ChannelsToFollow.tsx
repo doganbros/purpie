@@ -18,7 +18,7 @@ const ChannelsToFollow: FC = () => {
   const [displayCount, setDisplayCount] = useState(SUGGESTION_AMOUNT_LESS);
 
   if (!channelSuggestions.loading && channelSuggestions.data.length === 0)
-    return null;
+    return <Box height="0" />;
 
   return (
     <Box gap="small">

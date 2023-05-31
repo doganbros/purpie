@@ -65,6 +65,7 @@ const ChannelMembers: FC<ChannelMembersProps> = ({ channelId }) => {
                 userName={c.user.userName}
                 name={c.user.fullName}
                 displayPhoto={c.user.displayPhoto}
+                channelRole="Moderator"
               />
             ))
         ))}
@@ -78,7 +79,6 @@ const ChannelMembers: FC<ChannelMembersProps> = ({ channelId }) => {
       )}
     </Box>
   );
-  return null;
 };
 
 export default ChannelMembers;

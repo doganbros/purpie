@@ -10,6 +10,7 @@ interface Props {
   topComponent?: React.ReactNode;
   rightComponent?: React.ReactNode;
   rightComponentWithoutOverflow?: boolean;
+  topComponentWithoutPadTop?: boolean;
 }
 
 const PrivatePageLayout: FC<Props> = ({
@@ -19,6 +20,7 @@ const PrivatePageLayout: FC<Props> = ({
   topComponent,
   changeTitle,
   rightComponentWithoutOverflow = false,
+  topComponentWithoutPadTop = false,
 }) => {
   useTitle(`${title} - Purpie`, changeTitle);
   const size = useContext(ResponsiveContext);
@@ -32,6 +34,7 @@ const PrivatePageLayout: FC<Props> = ({
       topComponent={topComponent}
       rightComponent={rightComponent}
       rightComponentWithoutOverflow={rightComponentWithoutOverflow}
+      topComponentWithoutPadTop={topComponentWithoutPadTop}
     >
       {children}
     </Desktop>

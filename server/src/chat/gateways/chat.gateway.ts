@@ -7,11 +7,12 @@ import {
   WsException,
 } from '@nestjs/websockets';
 import { nanoid } from 'nanoid/async';
-import { Socket, Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { PostService } from 'src/post/services/post.service';
 import { ChatMessageDto } from '../dto/chat-message.dto';
 import { ChatService } from '../services/chat.service';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { UserLogService } from '../../log/services/user-log.service';
 
 interface SocketWithTokenPayload extends Socket {
   user: {
@@ -44,6 +45,7 @@ export class ChatGateway {
   constructor(
     private chatService: ChatService,
     private postService: PostService,
+    private userLogService: UserLogService,
   ) {}
 
   @SubscribeMessage('delete_message')
@@ -148,6 +150,30 @@ export class ChatGateway {
     await socket.leave(roomName);
   }
 
+  @SubscribeMessage('join_direct_user')
+  async joinDirectUser(
+    @ConnectedSocket() socket: SocketWithTokenPayload,
+    @MessageBody() userId: string,
+  ) {
+    await this.handleConnection(socket, userId);
+
+    return userId;
+  }
+
+  @SubscribeMessage('leave_direct_user')
+  async leaveDirectUser(
+    @ConnectedSocket() socket: SocketWithTokenPayload,
+    @MessageBody() userId: string,
+  ) {
+    const roomName = this.chatService.getRoomName(userId, 'direct');
+
+    socket.to(roomName).emit('user_left', {
+      socketId: socket.id,
+      userId: socket.user.id,
+    });
+    await socket.leave(roomName);
+  }
+
   @SubscribeMessage('typing')
   handleTyping(
     @ConnectedSocket() socket: SocketWithTokenPayload,
@@ -186,7 +212,7 @@ export class ChatGateway {
     socket.to(roomName).emit('presence', socket.user.id);
   }
 
-  async handleConnection(socket: SocketWithTokenPayload) {
+  async handleConnection(socket: SocketWithTokenPayload, userId: string) {
     try {
       const currentUser = await this.chatService.getCurrentUser(socket);
 
@@ -195,14 +221,22 @@ export class ChatGateway {
 
       socket.join(this.chatService.getRoomName(socket.user.id));
 
+      await this.chatService.updateMessageReadOn(
+        userId,
+        socket.user.id,
+        new Date(),
+      );
+
       const contactIds = await this.chatService.fetchUserContactUserIds(
         socket.user.id,
       );
 
       contactIds.forEach((contactId) => {
-        socket.join(this.chatService.getRoomName(contactId));
+        const contactRoomName = this.chatService.getRoomName(contactId);
+        socket.join(contactRoomName);
+
         socket
-          .to(this.chatService.getRoomName(contactId))
+          .to(contactRoomName)
           .emit('contact_user_connected', socket.user.id);
       });
 
@@ -215,7 +249,7 @@ export class ChatGateway {
       // socket.join(this.chatService.getRoomName(channelId, 'channel'));
       // });
 
-      socket.on('disconnecting', () => this.handleDisconnecting(socket));
+      socket.on('disconnect', () => this.handleDisconnecting(socket));
       return null;
     } catch (err) {
       return null;
@@ -224,6 +258,8 @@ export class ChatGateway {
 
   async handleDisconnecting(socket: SocketWithTokenPayload) {
     try {
+      socket.removeAllListeners();
+      await this.userLogService.upsertUserOnlineDate(socket.user.id);
       const contactIds = await this.chatService.fetchUserContactUserIds(
         socket.user.id,
       );

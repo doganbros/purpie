@@ -9,7 +9,7 @@ import {
   Text,
   TextInput,
 } from 'grommet';
-import { Edit, Hide, View } from 'grommet-icons';
+import { Camera, Hide, View } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
@@ -100,7 +100,7 @@ const PersonalSettings: () => Menu | null = () => {
               />
             </Box>
             <Box background="focus" round pad="xsmall">
-              <Edit size="small" />
+              <Camera size="small" />
             </Box>
           </Stack>
           <Box>

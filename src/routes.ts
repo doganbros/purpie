@@ -15,9 +15,9 @@ import ResetPassword from './pages/Public/ResetPassword';
 import ThirdPartyAuth from './pages/Public/ThirdPartyAuth';
 import VerifyUserEmail from './pages/Public/VerifyUserEmail';
 import VerifyUserEmailInfo from './pages/Public/VerifyUserEmailInfo';
-import ComingSoon from './pages/Private/ComingSoon';
 import JoinPage from './pages/Public/JoinPage';
 import CompleteThirdPartyAuth from './pages/Public/CompleteThirdPartyAuth';
+import Messages from './pages/Private/messages/Messages';
 
 interface AppRoute {
   id: string;
@@ -138,7 +138,7 @@ export const privateRoutes: Array<AppRoute> = [
   {
     id: nanoid(),
     path: '/messages',
-    component: ComingSoon,
+    component: Messages,
     description: 'User views and write a message',
   },
 ];

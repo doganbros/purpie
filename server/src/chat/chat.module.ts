@@ -10,12 +10,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChatService } from './services/chat.service';
 import { ChatGateway } from './gateways/chat.gateway';
 import { ChatController } from './controllers/chat.controller';
+import { UserLogModule } from '../log/user-log.module';
 
 @Module({
   providers: [ChatGateway, ChatService],
   imports: [
     AuthModule,
     PostModule,
+    UserLogModule,
     TypeOrmModule.forFeature([
       UserChannel,
       Contact,

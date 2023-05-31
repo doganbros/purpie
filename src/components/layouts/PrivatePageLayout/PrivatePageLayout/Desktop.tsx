@@ -12,12 +12,14 @@ interface Props {
   topComponent?: React.ReactNode;
   rightComponent?: React.ReactNode;
   rightComponentWithoutOverflow?: boolean;
+  topComponentWithoutPadTop?: boolean;
 }
 
 const Desktop: FC<Props> = ({
   children,
   rightComponent,
   rightComponentWithoutOverflow = false,
+  topComponentWithoutPadTop = false,
   topComponent,
 }) => {
   const leftComponentWidth = 135;
@@ -75,7 +77,9 @@ const Desktop: FC<Props> = ({
         right={`${rightComponent ? rightComponentWidth : 0}px`}
         minHeight="100vh"
         pad={{
-          top: `${topComponent ? topComponentHeight : 0}px`,
+          top: `${
+            topComponent && !topComponentWithoutPadTop ? topComponentHeight : 0
+          }px`,
           horizontal: 'large',
         }}
       >

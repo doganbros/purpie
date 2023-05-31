@@ -196,9 +196,29 @@ export class ChatService {
       .leftJoin('chat.parent', 'parentChat')
       .leftJoinAndSelect('chat.attachments', 'attachments')
       .leftJoin('parentChat.createdBy', 'parentChatCreatedBy')
-      .orderBy('chat.id', 'DESC')
-      .where('chat.medium = :medium', { medium })
-      .andWhere('chat.to = :to', { to: id });
+      .orderBy('chat.createdOn', 'DESC')
+      .where(
+        new Brackets((qb) => {
+          qb.where("chat.medium = 'post'").andWhere('chat.to = :to', {
+            to: id,
+          });
+        }),
+      )
+      .orWhere(
+        new Brackets((qb) => {
+          qb.where("chat.medium = 'direct'").andWhere(
+            new Brackets((qbb) => {
+              qbb.where(
+                '(chat.to = :userId and chat.createdById = :id) or (chat.to = :id and chat.createdById = :userId)',
+                {
+                  userId,
+                  id,
+                },
+              );
+            }),
+          );
+        }),
+      );
 
     if (query.lastDate)
       baseQuery.andWhere('chat.createdOn < :lastDate', {
@@ -206,6 +226,12 @@ export class ChatService {
       });
 
     return baseQuery.paginate({ limit: query.limit, skip: 0 });
+  }
+
+  async getUnreadMessageCounts(to: string, createdById: string) {
+    return this.chatMessageRepository.count({
+      where: { to, createdById, readOn: null },
+    });
   }
 
   async saveChatMessage(
@@ -279,6 +305,20 @@ export class ChatService {
 
   async getTotalNumberOfStreamViewers(postId: string) {
     return this.currentStreamViewerRepository.count({ postId });
+  }
+
+  async updateMessageReadOn(createdById: string, to: string, readOn: Date) {
+    const unreadMessages = await this.chatMessageRepository.find({
+      where: {
+        to,
+        createdById,
+        readOn: null,
+      },
+    });
+
+    for (const message of unreadMessages) {
+      await this.chatMessageRepository.update({ id: message.id }, { readOn });
+    }
   }
 
   async getChatAttachments(

@@ -26,6 +26,11 @@ import { errorResponseMessage, getChatRoomName } from '../../helpers/utils';
 import { http } from '../../config/http';
 import PurpieLogoAnimated from '../../assets/purpie-logo/purpie-logo-animated';
 
+export interface ChatInfo {
+  typingUsers: User[];
+  unreadMessageCounts: { userId: string; count: number }[];
+}
+
 interface Props {
   medium: 'direct' | 'channel' | 'post';
   name?: string;
@@ -35,6 +40,8 @@ interface Props {
   canEdit?: boolean;
   handleTypingEvent?: boolean;
   canAddFile?: boolean;
+  chatInfo?: ChatInfo;
+  setChatInfo?: ({ typingUsers, unreadMessageCounts }: ChatInfo) => void;
 }
 
 const FETCH_MESSAGE_LIMIT = 50;
@@ -48,9 +55,10 @@ const Chat: React.FC<Props> = ({
   canReply = true,
   canEdit = true,
   canAddFile = false,
+  setChatInfo,
+  chatInfo,
 }) => {
   const { t } = useTranslation();
-
   const [messages, setMessages] = useState<Array<ChatMessage> | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [typingUser, setTypingUser] = useState<User | null>(null);
@@ -87,7 +95,7 @@ const Chat: React.FC<Props> = ({
       medium,
       id,
       FETCH_MESSAGE_LIMIT
-      // messages?.length ? messages[0].createdOn : undefined // TODO what is this 'lastDate' logic
+      // messages?.length ? messages[0].createdOn : undefined
     ).then((res) => res.data);
 
     if (!result.length) setHasMore(false);
@@ -220,7 +228,19 @@ const Chat: React.FC<Props> = ({
 
   useEffect(() => {
     const messageListener = (message: ChatMessage): void => {
-      if (message.roomName !== roomName) return;
+      if (message.createdBy.id !== id && chatInfo && setChatInfo) {
+        const newChatInfo = updateUnreadMessageCount(
+          chatInfo,
+          message.createdBy.id,
+          1
+        );
+        if (newChatInfo) setChatInfo(newChatInfo);
+      }
+      if (
+        (medium === 'direct' && message.createdBy.id !== id) ||
+        (medium !== 'direct' && message.roomName !== roomName)
+      )
+        return;
       if (message.edited)
         updateMessages(
           (msgs) =>
@@ -242,19 +262,35 @@ const Chat: React.FC<Props> = ({
     const typingListener = (payload: {
       id: number;
       to: number;
+      medium: string;
       roomName: string;
       user: Record<string, any>;
     }) => {
       if (
         payload.user.id !== currentUser?.id &&
-        payload.roomName === roomName
+        (payload.medium === 'direct' ||
+          (payload.medium === 'post' && payload.roomName === roomName))
       ) {
         if (typingTimerId.current) {
           clearTimeout(typingTimerId.current);
           typingTimerId.current = null;
         }
         setTypingUser(payload.user as any);
+        if (chatInfo && setChatInfo)
+          setChatInfo({
+            ...chatInfo,
+            typingUsers: [...chatInfo.typingUsers, payload.user as User],
+          });
+
         typingTimerId.current = setTimeout(() => {
+          if (chatInfo && setChatInfo)
+            setChatInfo({
+              ...chatInfo,
+              typingUsers: chatInfo.typingUsers.filter(
+                (u) => u.id !== typingUser?.id
+              ),
+            });
+
           setTypingUser(null);
         }, 2000);
       }
@@ -266,7 +302,7 @@ const Chat: React.FC<Props> = ({
       medium: string;
       roomName: string;
     }) => {
-      if (payload.roomName !== roomName) return;
+      if (medium !== 'direct' && payload.roomName !== roomName) return;
       updateMessages(
         (msgs) =>
           msgs &&
@@ -301,6 +337,14 @@ const Chat: React.FC<Props> = ({
       return () => {
         setMessages(null);
         socket.emit('leave_post', id);
+      };
+    }
+    if (medium === 'direct') {
+      socket.emit('join_direct_user', id, () => fetchMessages());
+
+      return () => {
+        setMessages(null);
+        socket.emit('leave_direct_user', id);
       };
     }
     fetchMessages();
@@ -475,9 +519,9 @@ const Chat: React.FC<Props> = ({
             />
           </MessageBoxContainer>
 
-          {typingUser ? (
+          {typingUser && medium !== 'direct' ? (
             <Text size="small" as="i" textAlign="center">
-              {t('common.typing', { name: typingUser.fullName })}
+              {t('Chat.typing', { name: typingUser.fullName })}
             </Text>
           ) : null}
         </Box>
@@ -486,4 +530,25 @@ const Chat: React.FC<Props> = ({
   );
 };
 
+export const updateUnreadMessageCount = (
+  chatInfo: ChatInfo,
+  userId: string,
+  count: number
+): ChatInfo | null => {
+  const tempUnreadMessageCounts = [...chatInfo.unreadMessageCounts];
+  const userUnReadMessageIndex = tempUnreadMessageCounts.findIndex(
+    (c) => c.userId === userId
+  );
+  if (userUnReadMessageIndex !== -1) {
+    tempUnreadMessageCounts[userUnReadMessageIndex].count =
+      count === 0
+        ? 0
+        : tempUnreadMessageCounts[userUnReadMessageIndex].count + count;
+    return {
+      ...chatInfo,
+      unreadMessageCounts: tempUnreadMessageCounts,
+    };
+  }
+  return null;
+};
 export default Chat;

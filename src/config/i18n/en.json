@@ -124,7 +124,8 @@
     "live": "Live",
     "newest": "Newest",
     "popular": "Popular",
-    "title": "Timeline"
+    "title": "Timeline",
+    "youAreAt": "You are at"
   },
   "ChannelList": {
     "noFollowedChannel": "No channels are followed {{zone}}",
@@ -435,6 +436,12 @@
     "zones": "Zones",
     "login": "Login"
   },
+  "ZoneNotFound": {
+    "title": "Zone not found.",
+    "description": "It looks like you may have taken a wrong zone subdomain.",
+    "home": "Home",
+    "login": "Login"
+  },
   "ErrorTypes": {
     "NOT_VALID": "Not Valid",
     "NOT_IMPLEMENTED": "Not Implemented",
@@ -550,7 +557,6 @@
     "owner": "Owner",
     "member": "Member",
     "general": "General",
-    "permissions":"Permissions",
     "members": "Members",
     "followers": "Followers",
     "userInfo": "User Info",
@@ -567,7 +573,6 @@
     "title": "Manage Zone Member",
     "saveChannelChangesConfirm": "Are you sure you want to save the changes on selected zone?"
   },
-
   "ContactsToFollow": {
     "title": "People to add",
     "add": "Add",
@@ -760,5 +765,4 @@
     "canEdit": "Update channel",
     "canManageRole": "Manage zone roles"
   }
-
 }

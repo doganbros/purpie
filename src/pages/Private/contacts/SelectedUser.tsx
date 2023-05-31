@@ -38,7 +38,7 @@ const SelectedUser: FC<SelectedUserProps> = ({ user }) => {
             onClick={() => setShowRemoveDialog(true)}
             color="status-error"
             alignSelf="center"
-            margin={{ vertical: 'medium' }}
+            margin={{ top: 'medium' }}
             label={t('SelectedUser.removeContact')}
           />
           {showRemoveDialog && (

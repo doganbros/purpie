@@ -45,8 +45,8 @@ const ListButton: FC<ListButtonProps> = ({
         setHover(false);
       }}
       pad={{ vertical: 'xsmall', horizontal: 'small' }}
-      {...props}
       flex={{ grow: 1 }}
+      {...props}
     >
       <Box fill direction="row" align="center" justify="between">
         <Box direction="row" align="center" gap="small">

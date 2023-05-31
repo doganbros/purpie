@@ -9,7 +9,7 @@ import {
   TextInput,
 } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
-import { CaretDownFill, CaretRightFill, Edit } from 'grommet-icons';
+import { CaretDownFill, CaretRightFill, Camera } from 'grommet-icons';
 import { useTranslation } from 'react-i18next';
 import ListButton from '../../../components/utils/ListButton';
 import { AppState } from '../../../store/reducers/root.reducer';
@@ -190,7 +190,7 @@ const ZoneSettings: () => Menu | null = () => {
               />
             </Box>
             <Box background="focus" round pad="xsmall">
-              <Edit size="small" />
+              <Camera size="small" />
             </Box>
           </Stack>
         )}

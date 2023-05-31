@@ -16,6 +16,7 @@ initApp();
 const { HTTP_MAX_BODY_SIZE } = process.env;
 
 async function bootstrap() {
+  process.env.TZ = 'UTC';
   const app = await NestFactory.create(AppModule);
 
   app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'combined'));

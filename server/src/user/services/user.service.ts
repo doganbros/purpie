@@ -26,6 +26,7 @@ import { SystemUserListQuery } from '../dto/system-user-list.query';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { UserTokenPayload } from '../../auth/interfaces/user.interface';
 import { MailService } from '../../mail/mail.service';
+import { UserLog } from '../../../entities/UserLog.entity';
 
 const { REACT_APP_CLIENT_HOST = '' } = process.env;
 
@@ -308,7 +309,7 @@ export class UserService {
     return this.invitationRepository.delete(id);
   }
 
-  listContacts(
+  async listContacts(
     identity: { userName?: string; userId?: string },
     query: PaginationQuery,
   ) {
@@ -323,8 +324,16 @@ export class UserService {
         'contactUser.fullName',
         'contactUser.displayPhoto',
       ])
+      .addSelect(
+        (sq) =>
+          sq
+            .select('userLog.updatedOn')
+            .from(UserLog, 'userLog')
+            .where('userLog.createdById = contactUser.id')
+            .andWhere('action = :action', { action: 'lastOnlineDate' }),
+        'lastOnlineDate',
+      )
       .innerJoin('contact.contactUser', 'contactUser');
-
     if (identity.userId)
       baseQuery.where('contact.userId = :userId', { userId: identity.userId });
     else
@@ -780,5 +789,9 @@ export class UserService {
 
   async removeFeaturedPost(userId: string) {
     return this.featuredPostRepository.delete({ userId });
+  }
+
+  async getUser(userId: string) {
+    return this.userRepository.findOne({ id: userId });
   }
 }

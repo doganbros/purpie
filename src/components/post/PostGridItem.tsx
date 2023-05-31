@@ -1,14 +1,15 @@
 import React, { FC, useState } from 'react';
 import { Box, Stack, Text } from 'grommet';
 import { Add, Chat, Favorite, Play } from 'grommet-icons';
+import dayjs from 'dayjs';
 import ExtendedBox from '../utils/ExtendedBox';
 import { VideoPost } from './VideoPost';
 import { ImagePost } from './ImagePost';
 import { Post } from '../../store/types/post.types';
 import { FavoriteFill } from '../utils/CustomIcons';
-import { getTimezoneTimeFromUTC } from '../../helpers/utils';
 import { UserAvatar } from '../utils/Avatars/UserAvatar';
 import * as MeetingService from '../../store/services/meeting.service';
+import EllipsesOverflowText from '../utils/EllipsesOverflowText';
 
 interface PostGridItemProps {
   post: Post;
@@ -72,10 +73,17 @@ const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
                   src={post.createdBy.displayPhoto}
                 />
               </Box>
-              <Text color="status-disabled">{post.createdBy?.fullName}</Text>
+              <EllipsesOverflowText
+                maxWidth="140px"
+                textAlign="center"
+                weight="bold"
+                size="small"
+                color="status-disabled"
+                text={post.createdBy?.fullName}
+              />
             </Box>
             <Text color="status-disabled">
-              {getTimezoneTimeFromUTC(post.createdOn).fromNow()}
+              {dayjs(post.createdOn).fromNow()}
             </Text>
           </ExtendedBox>
           <Box direction="row" justify="between" align="start">

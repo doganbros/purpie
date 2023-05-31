@@ -1,5 +1,5 @@
 export interface ChatState {
-  usersOnline: Array<number>;
+  usersOnline: Array<string>;
 }
 
 export interface ChatAttachment {

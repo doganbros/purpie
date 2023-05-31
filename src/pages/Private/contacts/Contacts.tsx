@@ -21,6 +21,7 @@ import InviteToPurpie from './InviteToPurpie';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 import useDelayTime from '../../../hooks/useDelayTime';
 import { DELAY_TIME } from '../../../helpers/constants';
+import { getContactSuggestionsAction } from '../../../store/actions/activity.action';
 
 const Contacts: FC = () => {
   const dispatch = useDispatch();
@@ -31,9 +32,6 @@ const Contacts: FC = () => {
   const {
     user: { contacts },
     invitation: { invitations },
-    activity: {
-      contactSuggestions: { data, loading },
-    },
   } = useSelector((state: AppState) => state);
 
   const getContacts = (skip?: number) => {
@@ -96,7 +94,6 @@ const Contacts: FC = () => {
           isVisibleDrop={isVisibleInvitationDrop}
           setVisibleDrop={setVisibleInvitationDrop}
         />
-        {data?.length !== 0 && !loading && <Divider />}
         <ContactsToFollow />
       </Box>
     );
@@ -104,6 +101,7 @@ const Contacts: FC = () => {
 
   useEffect(() => {
     getContacts();
+    dispatch(getContactSuggestionsAction());
   }, []);
 
   return (
