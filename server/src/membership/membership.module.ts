@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { MembershipController } from './controllers/MembershipController';
+import { MembershipController } from './controllers/membership.controller';
 import { MembershipService } from './services/membership.service';
 
 @Module({
