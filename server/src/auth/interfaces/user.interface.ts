@@ -43,7 +43,7 @@ export interface UserTokenPayload {
 }
 
 export interface ConferenceUser {
-  id: number;
+  id: string;
   name: string;
   email: string;
 }

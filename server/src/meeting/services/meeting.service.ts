@@ -409,7 +409,7 @@ export class MeetingService {
 
   async getConferenceInfo(
     slug: string,
-    userId: number,
+    userId: string,
   ): Promise<ConferenceInfoResponse> {
     const meeting = await this.postRepository
       .createQueryBuilder('meeting')
@@ -494,5 +494,12 @@ export class MeetingService {
           : null,
       },
     };
+  }
+
+  async getRecordingAndStreamingMeetingBySlug(slug: string) {
+    return this.postRepository.findOneOrFail({
+      where: { slug, record: true, streaming: true },
+      relations: ['createdBy'],
+    });
   }
 }
