@@ -85,7 +85,7 @@
   "ForgotPassword": {
     "title": "Forgot Password",
     "formTitle": "Password Recovery",
-    "formSubTitle": "Enter email to receive your password.",
+    "formSubTitle": "Enter email to reset your password.",
     "rememberPassword": "Remember Password",
     "send": "SEND"
   },
