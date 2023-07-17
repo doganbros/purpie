@@ -18,6 +18,7 @@ import VerifyUserEmailInfo from './pages/Public/VerifyUserEmailInfo';
 import JoinPage from './pages/Public/JoinPage';
 import CompleteThirdPartyAuth from './pages/Public/CompleteThirdPartyAuth';
 import Messages from './pages/Private/messages/Messages';
+import Analytics from './pages/Private/video/Analytics/Analytics';
 
 interface AppRoute {
   id: string;
@@ -140,5 +141,11 @@ export const privateRoutes: Array<AppRoute> = [
     path: '/messages',
     component: Messages,
     description: 'User views and write a message',
+  },
+  {
+    id: nanoid(),
+    path: '/analytics',
+    component: Analytics,
+    description: 'Post analytics',
   },
 ];

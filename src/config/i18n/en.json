@@ -416,7 +416,19 @@
     "viewCount": "{{count}} view",
     "viewsCount": "{{count}} views",
     "dislike": "Dislike",
-    "removePostConfirmMsg": "Are you sure you want to remove this post?"
+    "removePostConfirmMsg": "Are you sure you want to remove this post?",
+    "seeAnalytics": "See Analytics"
+  },
+  "Analytics": {
+    "title": "Analytics",
+    "timeframe": "Timeframe",
+    "people": "People",
+    "topic": "Topic",
+    "deviceCategory": "Device Category",
+    "mobile": "Mobile",
+    "tablet": "Tablet",
+    "desktop": "Desktop",
+    "topCountries": "Top Countries"
   },
   "VideoSettings": {
     "videoName": "Video Name",

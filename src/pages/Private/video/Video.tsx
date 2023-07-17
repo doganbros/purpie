@@ -304,24 +304,31 @@ const Video: FC = () => {
               />
 
               <Box direction="row" align="center" justify="between">
-                {data.streaming ? (
-                  <Text>
-                    {liveStreamCount <= 1
-                      ? t('Video.userWatching', { count: liveStreamCount })
-                      : t('Video.usersWatching', { count: liveStreamCount })}
-                  </Text>
-                ) : (
-                  <Text color="status-disabled">
-                    {t(
-                      `Video.${
-                        data.postReaction.viewsCount === 1
-                          ? 'viewCount'
-                          : 'viewsCount'
-                      }`,
-                      { count: data.postReaction.viewsCount }
-                    )}
-                  </Text>
-                )}
+                <Box direction="row" gap="small">
+                  <Box onClick={() => history.push('/analytics', { data })}>
+                    <Text color="brand" weight="bold">
+                      {t('Video.seeAnalytics')}
+                    </Text>
+                  </Box>
+                  {data.streaming ? (
+                    <Text>
+                      {liveStreamCount <= 1
+                        ? t('Video.userWatching', { count: liveStreamCount })
+                        : t('Video.usersWatching', { count: liveStreamCount })}
+                    </Text>
+                  ) : (
+                    <Text color="status-disabled">
+                      {t(
+                        `Video.${
+                          data.postReaction.viewsCount === 1
+                            ? 'viewCount'
+                            : 'viewsCount'
+                        }`,
+                        { count: data.postReaction.viewsCount }
+                      )}
+                    </Text>
+                  )}
+                </Box>
 
                 <Box direction="row" gap="medium">
                   <Box direction="row" gap="xsmall" align="center">
