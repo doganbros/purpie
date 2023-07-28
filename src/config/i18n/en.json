@@ -508,6 +508,7 @@
     "personalSettings": "Personal Settings",
     "channelSettings": "Channels",
     "zoneSettings": "Zones",
+    "membershipSettings": "Membership",
     "settings": "Settings",
     "search": "Search",
     "username": "Username",
@@ -563,7 +564,12 @@
     "role": "Role",
     "followingDate": "Following Date",
     "joinDate": "Join Date",
-    "action": "Action"
+    "action": "Action",
+    "activeMembership": "Active Membership",
+    "membershipPlans": "Membership Plans",
+    "upgradeMembership": "Upgrade",
+    "cancelMembership": "Cancel Membership",
+    "downgradeMembership": "Downgrade"
   },
   "ManageChannelUser": {
     "title": "Manage Channel Follower",
