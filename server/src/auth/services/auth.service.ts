@@ -36,6 +36,7 @@ import { ChangePasswordDto } from '../dto/change-password.dto';
 import { BrowserType } from '../../../types/BrowserType';
 import { PostFolder } from '../../../entities/PostFolder.entity';
 import { FolderService } from '../../post/services/folder.service';
+import { MembershipService } from '../../membership/services/membership.service';
 
 const {
   AUTH_TOKEN_SECRET = '',
@@ -59,6 +60,7 @@ export class AuthService {
     private userRefreshTokenRepository: Repository<UserRefreshToken>,
     private mailService: MailService,
     private postFolderService: FolderService,
+    private membershipService: MembershipService,
   ) {}
 
   async generateLoginToken(
@@ -240,6 +242,7 @@ export class AuthService {
       userRoleCode: 'NORMAL',
     });
 
+    this.membershipService.createUserMembership(user.id, user.email);
     return this.setMailVerificationToken(user);
   }
 
