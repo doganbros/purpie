@@ -28,6 +28,7 @@ import { NotificationModule } from './notification/notification.module';
 import { ResponseCodeMiddleware } from './utils/middlewares/response-code.middleware';
 import { UserLogModule } from './log/user-log.module';
 import { LoggerMiddleware } from './utils/middlewares/logger.middleware';
+import { MembershipModule } from './membership/membership.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { LoggerMiddleware } from './utils/middlewares/logger.middleware';
     ChatModule,
     NotificationModule,
     UserLogModule,
+    MembershipModule,
   ],
   providers: [
     {
