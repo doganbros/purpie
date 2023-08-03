@@ -1,89 +1,40 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { Anchor, Box, Button, Text } from 'grommet';
-import React, { FC } from 'react';
-
-import { AppState } from '../../../store/reducers/root.reducer';
+import { Anchor, Box, Text } from 'grommet';
+import React, { useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
+import { listMembershipAction } from '../../../store/actions/membership.action';
+import { AppState } from '../../../store/reducers/root.reducer';
+import MembershipCard from '../../../layers/settings-and-static-pages/MembershipCard';
+import { getCustomerPortal } from '../../../store/services/membership.service';
 
 const MembershipSettings: () => Menu | null = () => {
-  const {
-    auth: { user },
-  } = useSelector((state: AppState) => state);
-
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
-  if (!user) return null;
+  const { memberships, userMembership } = useSelector(
+    (state: AppState) => state.membership
+  );
 
-  const memberShipPlan = 'Pro';
-  const memberShipPlanOrder = ['Free', 'Essential', 'Pro', 'Enterprise'];
-  interface MembershipLinks {
-    [key: string]: string;
-  }
+  useEffect(() => {
+    dispatch(listMembershipAction());
+  }, []);
 
-  const membershipLinks: MembershipLinks = {
-    Free: 'https://buy.stripe.com/test_28obLSfz30ySbBu6op',
-    Essential: 'https://buy.stripe.com/test_4gwcPW0E9gxQ8pi4gj',
-    Pro: 'https://buy.stripe.com/test_28obLSfz30ySbBu6op',
-    Enterprise: 'https://buy.stripe.com/test_28obLSfz30ySbBu6op',
+  const manageInvoiceAndPayments = async () => {
+    window.location.href = await getCustomerPortal();
   };
 
-  const comparePlans = (planName: string) => {
-    if (
-      memberShipPlanOrder.indexOf(planName) >
-      memberShipPlanOrder.indexOf(memberShipPlan)
-    ) {
-      return `${t('settings.upgradeMembership')} to ${planName}`;
-    }
-    if (
-      memberShipPlanOrder.indexOf(planName) <
-      memberShipPlanOrder.indexOf(memberShipPlan)
-    ) {
-      return `${t('settings.downgradeMembership')} to ${planName}`;
-    }
-    if (planName === memberShipPlanOrder[0]) {
-      return t('settings.activeMembership');
-    }
-    return t('settings.activeMembership');
-  };
-
-  const MembershipPlanBox: FC<{ planName: string; size?: string }> = ({
-    planName,
-    size,
-  }) => {
-    return (
-      <Box
-        elevation="peach"
-        border={{ size: '1px', color: 'status-disabled' }}
-        round="small"
-        justify="center"
-        align="center"
-        pad="small"
-        width={size || undefined}
-      >
-        <Text size="medium" weight="bold">
-          {planName}
-        </Text>
-        <Text>Unlimited Streams</Text>
-        <Text>Unlimited Video Upload</Text>
-        <Text>Unlimited Meetings</Text>
-        <Text>Unlimited Participants</Text>
-        <Text size="small">10$ / month</Text>
-        <Box margin={{ top: 'small' }}>
-          <Anchor
-            href={planName === memberShipPlan ? '#' : membershipLinks[planName]}
-            label={
-              <Button
-                primary
-                label={<Text size="small">{comparePlans(planName)}</Text>}
-              />
-            }
-          />
-        </Box>
-      </Box>
+  const membershipInfo = useMemo(() => {
+    const membershipList = memberships.data.sort(
+      (m1, m2) => m1.price - m2.price
     );
-  };
+
+    const userMembershipIndex = membershipList.findIndex(
+      (m) => m.id === userMembership?.id
+    );
+
+    return { membershipList, userMembershipIndex };
+  }, [memberships, userMembership]);
 
   return {
     id: 0,
@@ -98,14 +49,13 @@ const MembershipSettings: () => Menu | null = () => {
           <Box
             justify="between"
             align="start"
-            // border={{ size: 'xsmall', color: 'brand' }}
             round="small"
             gap="small"
             pad="xxsmall"
           >
-            <Text>Pro</Text>
+            <Text>{userMembership?.type}</Text>
             <Anchor
-              href="https://billing.stripe.com/p/login/test_dR62bu6hkcGFgp2dQQ"
+              onClick={manageInvoiceAndPayments}
               label={<Text size="small">Manage Invoice & Payments</Text>}
             />
           </Box>
@@ -123,10 +73,14 @@ const MembershipSettings: () => Menu | null = () => {
             gap="small"
             pad="xxsmall"
           >
-            <MembershipPlanBox planName="Free" />
-            <MembershipPlanBox planName="Essential" />
-            <MembershipPlanBox planName="Pro" />
-            <MembershipPlanBox planName="Enterprise" />
+            {membershipInfo.membershipList.map((membership, index) => (
+              <MembershipCard
+                key={membership.id}
+                index={index}
+                userMembershipIndex={membershipInfo.userMembershipIndex}
+                membership={membership}
+              />
+            ))}
           </Box>
         ),
       },

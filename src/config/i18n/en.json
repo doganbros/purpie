@@ -770,5 +770,17 @@
     "canDelete": "Delete channel",
     "canEdit": "Update channel",
     "canManageRole": "Manage zone roles"
+  },
+  "Membership": {
+    "channelCount":"Channel Count: ",
+    "meetingCount": "Meeting Count: ",
+    "meetingDuration": "Meeting Duration(min): ",
+    "meetingMaxParticipantCount": "Meeting Max Participant",
+    "streamCount": "Stream Count: ",
+    "streamMeeting": "Stream Meeting: ",
+    "streamingStudioCount": "Streaming Studio Count: ",
+    "videoSize": "Video Size(kb): ",
+    "webinarCount": "Webinar Count: ",
+    "zoneCount": "Zone Count: "
   }
 }

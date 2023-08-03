@@ -1,7 +1,6 @@
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
-import { Response } from 'express';
 import { MembershipService } from '../services/membership.service';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { UserTokenPayload } from '../../auth/interfaces/user.interface';
@@ -37,43 +36,19 @@ export class MembershipController {
   async createPaymentSession(
     @CurrentUser() user: UserTokenPayload,
     @Body() req: { membershipId: string },
-    @Res() res: Response,
   ) {
-    try {
-      const url = await this.membershipService.createPaymentSession(
-        user.id,
-        req.membershipId,
-      );
-      return res.redirect(url, 303);
-    } catch (e) {
-      res.status(400);
-      return res.send({
-        error: {
-          message: e.message,
-        },
-      });
-    }
+    return this.membershipService.createPaymentSession(
+      user.id,
+      req.membershipId,
+    );
   }
 
-  @Post('/payment/customer-portal')
+  @Get('/payment/customer-portal')
   @ApiOkResponse({
     description: 'Create customer portal link for user',
   })
   @IsAuthenticated()
-  async createCustomerPortal(
-    @CurrentUser() user: UserTokenPayload,
-    @Res() res: Response,
-  ) {
-    try {
-      const url = await this.membershipService.createCustomerPortal(user.id);
-      return res.redirect(url, 303);
-    } catch (e) {
-      res.status(400);
-      return res.send({
-        error: {
-          message: e.message,
-        },
-      });
-    }
+  async createCustomerPortal(@CurrentUser() user: UserTokenPayload) {
+    return this.membershipService.createCustomerPortal(user.id);
   }
 }
