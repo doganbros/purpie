@@ -28,7 +28,7 @@ export interface Membership {
     streamingStudioCount: number;
     meetingDuration: number;
     meetingMaxParticipantCount: number;
-    streamMeeting: number;
+    streamMeeting: boolean;
     videoSize: number;
   };
 }

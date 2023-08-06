@@ -29,8 +29,15 @@ const MembershipCard: FC<MembershipCardProps> = ({
     window.location.href = await createPaymentSession(membership.id);
   };
 
+  const getValueText = (value: any) => {
+    if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+    return value;
+  };
+
   return (
     <Box
+      gap="small"
+      width="full"
       elevation="peach"
       border={{ size: '1px', color: 'status-disabled' }}
       round="small"
@@ -41,12 +48,25 @@ const MembershipCard: FC<MembershipCardProps> = ({
       <Text size="medium" weight="bold">
         {membership.type}
       </Text>
-      <Text>Unlimited Streams</Text>
-      <Text>Unlimited Video Upload</Text>
-      <Text>Unlimited Meetings</Text>
-      <Text>Unlimited Participants</Text>
-      <Text size="small">{`${membership.price}$ / month`}</Text>
-      <Box margin={{ top: 'small' }}>
+      <Box width="full">
+        {Object.entries(membership.actions).map(([key, value]) => (
+          <Box direction="row" align="center" justify="between" key={key}>
+            <Text size="xsmall" weight="normal" color="status-disabled">
+              {t(`Membership.${key}`)}
+            </Text>
+            <Text size="small" color="dark" weight={500}>
+              {getValueText(value)}
+            </Text>
+          </Box>
+        ))}
+      </Box>
+
+      <Text
+        size="medium"
+        weight={500}
+        color="dark"
+      >{`${membership.price}$ / month`}</Text>
+      <Box>
         <Button
           onClick={createPayment}
           disabled={userMembershipIndex === index}
