@@ -502,7 +502,8 @@
     "INVALID_VIDEO_FORMAT": "Please upload a valid video format!",
     "CURRENT_PASSWORD_NOT_CORRECT": "Current password is not correct!",
     "PASSWORDS_NOT_MATCH": "Passwords do not match!",
-    "OWNER_NOT_EXIST": "The last owner cannot be deleted!"
+    "OWNER_NOT_EXIST": "The last owner cannot be deleted!",
+    "INSUFFICIENT_MEMBERSHIP": "Your membership is insufficient to operate requested operation. Please upgrade your membership to continue."
   },
   "settings": {
     "personalSettings": "Personal Settings",
@@ -772,7 +773,7 @@
     "canManageRole": "Manage zone roles"
   },
   "Membership": {
-    "channelCount":"Channel Count: ",
+    "channelCount": "Channel Count: ",
     "meetingCount": "Meeting Count: ",
     "meetingDuration": "Meeting Duration(min): ",
     "meetingMaxParticipantCount": "Meeting Max Participant",

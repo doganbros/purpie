@@ -12,7 +12,10 @@ import { UserChannel } from 'entities/UserChannel.entity';
 import { PostVideo } from 'entities/PostVideo.entity';
 import { generateJWT, verifyJWT } from 'helpers/jwt';
 import { Brackets, DeepPartial, Repository } from 'typeorm';
-import { UserProfile } from 'src/auth/interfaces/user.interface';
+import {
+  UserMembership,
+  UserProfile,
+} from 'src/auth/interfaces/user.interface';
 import {
   generateLowerAlphaNumId,
   meetingConfigStringify,
@@ -33,6 +36,7 @@ import { ClientMeetingEventDto } from '../dto/client-meeting-event.dto';
 import { CreateMeetingDto } from '../dto/create-meeting.dto';
 import { ConferenceInfoResponse } from '../responses/conference-info.response';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { PostType } from '../../../types/Post';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -61,6 +65,25 @@ export class MeetingService {
     private postTagRepository: Repository<PostTag>,
     private mailService: MailService,
   ) {}
+
+  async validateCreateMeeting(
+    userId: string,
+    membership: UserMembership,
+    liveStream?: boolean,
+  ) {
+    const meetingCount = await this.postRepository.count({
+      where: { createdById: userId, type: 'meeting' },
+    });
+
+    if (
+      meetingCount >= membership.meetingCount ||
+      (liveStream && !membership.streamMeeting)
+    )
+      throw new BadRequestException(
+        ErrorTypes.INSUFFICIENT_MEMBERSHIP,
+        'Your meeting create operation failed due to insufficient membership.',
+      );
+  }
 
   async validateUserChannel(
     userId: string,

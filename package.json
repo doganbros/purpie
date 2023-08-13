@@ -73,7 +73,7 @@
     "video.js": "^7.14.3"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts --openssl-legacy-provider start",
     "start:concurrent:dev": "npm-run-all --parallel server:start:dev start",
     "build": "react-scripts build",
     "test": "react-scripts test",

@@ -514,4 +514,8 @@ export class AuthService {
 
     return true;
   }
+
+  async getUserMembership(userId: string) {
+    return this.membershipService.getUserMembership(userId);
+  }
 }

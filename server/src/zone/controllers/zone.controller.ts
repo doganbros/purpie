@@ -32,6 +32,7 @@ import { Express, Response } from 'express';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import {
   CurrentUser,
+  CurrentUserMembership,
   CurrentUserProfile,
 } from 'src/auth/decorators/current-user.decorator';
 import { User } from 'entities/User.entity';
@@ -43,6 +44,7 @@ import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-reques
 import { errorResponseDoc } from 'helpers/error-response-doc';
 import { SystemUserListQuery } from 'src/user/dto/system-user-list.query';
 import {
+  UserMembership,
   UserProfile,
   UserTokenPayload,
 } from 'src/auth/interfaces/user.interface';
@@ -76,11 +78,20 @@ export class ZoneController {
     schema: { type: 'integer' },
   })
   @ValidationBadRequest()
-  @IsAuthenticated(['canCreateZone'], { injectUserProfile: true })
+  @IsAuthenticated(['canCreateZone'], {
+    injectUserProfile: true,
+    injectUserMembership: true,
+  })
   async createZone(
     @Body() createZoneInfo: CreateZoneDto,
     @CurrentUserProfile() userProfile: UserProfile,
+    @CurrentUserMembership() userMembership: UserMembership,
   ) {
+    await this.zoneService.validateCreateZone(
+      userProfile.id,
+      userMembership.zoneCount,
+    );
+
     const userZone = await this.zoneService.createZone(
       userProfile.id,
       createZoneInfo,

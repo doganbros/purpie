@@ -51,6 +51,7 @@ export interface ConferenceUser {
 export interface UserPermissionOptions {
   removeAccessTokens?: boolean;
   injectUserProfile?: boolean;
+  injectUserMembership?: boolean;
 }
 
 export class UserBasic {
@@ -69,4 +70,52 @@ export class UserBasicWithToken {
 
   @ApiProperty()
   token: string;
+}
+
+export enum MembershipType {
+  FREE = 'FREE',
+  ESSENTIAL = 'ESSENTIAL',
+  PRO = 'PRO',
+  ENTERPRISE = 'ENTERPRISE',
+}
+
+export class UserMembership {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  type: MembershipType;
+
+  @ApiProperty()
+  price: number;
+
+  @ApiProperty()
+  channelCount: number;
+
+  @ApiProperty()
+  zoneCount: number;
+
+  @ApiProperty()
+  meetingCount: number;
+
+  @ApiProperty()
+  streamCount: number;
+
+  @ApiProperty()
+  webinarCount: number;
+
+  @ApiProperty()
+  streamingStudioCount: number;
+
+  @ApiProperty()
+  meetingDuration: number;
+
+  @ApiProperty()
+  meetingMaxParticipantCount: number;
+
+  @ApiProperty()
+  streamMeeting: boolean;
+
+  @ApiProperty()
+  videoSize: number;
 }
