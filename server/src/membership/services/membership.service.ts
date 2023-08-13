@@ -15,18 +15,24 @@ export class MembershipService {
     return membership.data;
   }
 
-  async getUserMembership(userId: string) {
+  async getUserMembership(userId: string, userEmail?: string) {
     const membership = await axios({
       url: `${MEMBERSHIP_URL}v1/membership/user/${userId}`,
       method: 'get',
       headers: { secret: MEMBERSHIP_API_SECRET },
     });
 
+    if (!membership.data && userEmail) {
+      const a = await this.createUserMembership(userId, userEmail);
+      console.log('sdfsdf: ', a);
+      return a;
+    }
+
     return membership.data;
   }
 
   async createUserMembership(userId: string, email: string) {
-    await axios({
+    const response = await axios({
       url: `${MEMBERSHIP_URL}v1/membership/user/create`,
       method: 'post',
       headers: { secret: MEMBERSHIP_API_SECRET },
@@ -35,6 +41,8 @@ export class MembershipService {
         email,
       },
     });
+
+    return response.data;
   }
 
   async createPaymentSession(

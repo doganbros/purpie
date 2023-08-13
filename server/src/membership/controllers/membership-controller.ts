@@ -2,8 +2,14 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { MembershipService } from '../services/membership.service';
-import { CurrentUser } from '../../auth/decorators/current-user.decorator';
-import { UserTokenPayload } from '../../auth/interfaces/user.interface';
+import {
+  CurrentUser,
+  CurrentUserProfile,
+} from '../../auth/decorators/current-user.decorator';
+import {
+  UserProfile,
+  UserTokenPayload,
+} from '../../auth/interfaces/user.interface';
 
 @Controller({ path: 'membership', version: '1' })
 @ApiTags('membership')
@@ -23,9 +29,12 @@ export class MembershipController {
   @ApiOkResponse({
     description: 'Authenticated user membership info',
   })
-  @IsAuthenticated()
-  async getUserMembership(@CurrentUser() user: UserTokenPayload) {
-    return this.membershipService.getUserMembership(user.id);
+  @IsAuthenticated([], { injectUserProfile: true })
+  async getUserMembership(@CurrentUserProfile() userProfile: UserProfile) {
+    return this.membershipService.getUserMembership(
+      userProfile.id,
+      userProfile.email,
+    );
   }
 
   @Post('/payment/create-session')
