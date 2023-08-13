@@ -36,7 +36,6 @@ import { ClientMeetingEventDto } from '../dto/client-meeting-event.dto';
 import { CreateMeetingDto } from '../dto/create-meeting.dto';
 import { ConferenceInfoResponse } from '../responses/conference-info.response';
 import { ErrorTypes } from '../../../types/ErrorTypes';
-import { PostType } from '../../../types/Post';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
