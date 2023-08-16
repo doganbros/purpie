@@ -21,7 +21,8 @@ const MembershipSettings: () => Menu | null = () => {
   }, []);
 
   const manageInvoiceAndPayments = async () => {
-    window.location.href = await getCustomerPortal();
+    const customerPortal = await getCustomerPortal();
+    if (customerPortal) window.location.href = customerPortal;
   };
 
   const membershipInfo = useMemo(() => {

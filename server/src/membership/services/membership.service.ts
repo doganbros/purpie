@@ -23,9 +23,7 @@ export class MembershipService {
     });
 
     if (!membership.data && userEmail) {
-      const a = await this.createUserMembership(userId, userEmail);
-      console.log('sdfsdf: ', a);
-      return a;
+      return this.createUserMembership(userId, userEmail);
     }
 
     return membership.data;
