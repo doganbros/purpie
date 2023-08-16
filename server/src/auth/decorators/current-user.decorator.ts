@@ -13,3 +13,10 @@ export const CurrentUserProfile = createParamDecorator(
     return req.userProfile;
   },
 );
+
+export const CurrentUserMembership = createParamDecorator(
+  (_: unknown, ctx: ExecutionContext) => {
+    const req = ctx.switchToHttp().getRequest();
+    return req.userMembership;
+  },
+);

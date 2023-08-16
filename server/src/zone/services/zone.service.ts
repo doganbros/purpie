@@ -40,6 +40,17 @@ export class ZoneService {
     private mailService: MailService,
   ) {}
 
+  async validateCreateZone(userId: string, maxZoneCount: number) {
+    const zoneCount = await this.userZoneRepository.count({
+      where: { userId },
+    });
+    if (zoneCount >= maxZoneCount)
+      throw new BadRequestException(
+        ErrorTypes.INSUFFICIENT_MEMBERSHIP,
+        'Your channel zone operation failed due to insufficient membership.',
+      );
+  }
+
   async createZone(userId: string, createZoneInfo: CreateZoneDto) {
     if (
       await this.zoneRepository.findOne({ subdomain: createZoneInfo.subdomain })

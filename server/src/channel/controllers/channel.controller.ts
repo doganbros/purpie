@@ -38,9 +38,11 @@ import { errorResponseDoc } from 'helpers/error-response-doc';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import {
   CurrentUser,
+  CurrentUserMembership,
   CurrentUserProfile,
 } from 'src/auth/decorators/current-user.decorator';
 import {
+  UserMembership,
   UserProfile,
   UserTokenPayload,
 } from 'src/auth/interfaces/user.interface';
@@ -87,12 +89,23 @@ export class ChannelController {
     name: 'userZoneId',
     description: 'user zone id',
   })
-  @UserZoneRole(['canCreateChannel'], [], {}, { injectUserProfile: true })
+  @UserZoneRole(
+    ['canCreateChannel'],
+    [],
+    {},
+    { injectUserProfile: true, injectUserMembership: true },
+  )
   async createNewChannel(
     @Body() createChannelInfo: CreateChannelDto,
     @CurrentUserProfile() userProfile: UserProfile,
+    @CurrentUserMembership() userMembership: UserMembership,
     @CurrentUserZone() currentUserZone: UserZone,
   ) {
+    await this.channelService.validateCreateChannel(
+      userProfile.id,
+      userMembership.channelCount,
+    );
+
     const userChannel = await this.channelService.createChannel(
       userProfile.id,
       currentUserZone.id,
