@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { Accordion, AccordionPanel, Anchor, Box } from 'grommet';
 import { Trans, useTranslation } from 'react-i18next';
-import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 import StaticText from './StaticText';
 import StaticTitle from './StaticTitle';
 import StaticList from './StaticList';
 
-const Faq: () => Menu | null = () => {
+const Faq: () => any = () => {
   const { t } = useTranslation();
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0);
 

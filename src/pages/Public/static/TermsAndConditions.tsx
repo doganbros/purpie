@@ -1,12 +1,11 @@
 import React from 'react';
 import { Anchor, Box } from 'grommet';
 import { Trans } from 'react-i18next';
-import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 import StaticText from './StaticText';
 import StaticTitle from './StaticTitle';
 import StaticList from './StaticList';
 
-const TermsAndConditions: () => Menu | null = () => {
+const TermsAndConditions: () => any = () => {
   return {
     id: 0,
     key: 'terms-and-conditions',

@@ -15,6 +15,7 @@ const Settings: FC = () => {
     PersonalSettings(),
     ChannelSettings(),
     ZoneSettings(),
+    // MembershipSettings(),
   ].filter((v): v is Menu => v !== null);
 
   return (

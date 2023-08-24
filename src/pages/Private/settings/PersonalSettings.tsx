@@ -25,7 +25,7 @@ import { UpdatePasswordPayload } from '../../../store/types/auth.types';
 import { FormSubmitEvent } from '../../../models/form-submit-event';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 
-const PersonalSettings: () => Menu | null = () => {
+const PersonalSettings = (): Menu | null => {
   const {
     auth: { user },
   } = useSelector((state: AppState) => state);
@@ -50,6 +50,7 @@ const PersonalSettings: () => Menu | null = () => {
     confirm: false,
   });
   const { t } = useTranslation();
+
   if (!user) return null;
 
   const isFormInitialState =
@@ -75,63 +76,72 @@ const PersonalSettings: () => Menu | null = () => {
     }
   };
 
+  const headerContent = (
+    <>
+      <Box direction="row" gap="small" align="center">
+        <Stack anchor="top-right" onClick={() => setShowAvatarUpload(true)}>
+          <Box
+            round="full"
+            border={{ color: 'light-2', size: 'medium' }}
+            wrap
+            justify="center"
+            pad="5px"
+          >
+            <UserAvatar
+              src={user?.displayPhoto}
+              name={user.fullName}
+              id={user?.id}
+            />
+          </Box>
+          <Box background="focus" round pad="xsmall">
+            <Camera size="small" />
+          </Box>
+        </Stack>
+        <Box>
+          <Text>{user.fullName}</Text>
+          <Text color="status-disabled">{user.userName}</Text>
+          <Text color="status-disabled">{user.email}</Text>
+        </Box>
+      </Box>
+
+      {showAvatarUpload && (
+        <AvatarUpload
+          onSubmit={(file: any) => {
+            dispatch(updateProfilePhotoAction(file));
+            setShowAvatarUpload(false);
+          }}
+          onDismiss={() => {
+            setShowAvatarUpload(false);
+          }}
+          type="user"
+          src={user?.displayPhoto}
+          id={user?.id}
+          name={user?.fullName}
+        />
+      )}
+    </>
+  );
+
   return {
-    id: 0,
     key: 'personalSettings',
     label: t('settings.personalSettings'),
-    url: 'personalSettings',
-    name: user?.fullName,
-
-    avatarWidget: (
-      <>
-        <Box direction="row" gap="small" align="center">
-          <Stack anchor="top-right" onClick={() => setShowAvatarUpload(true)}>
-            <Box
-              round="full"
-              border={{ color: 'light-2', size: 'medium' }}
-              wrap
-              justify="center"
-              pad="5px"
-            >
-              <UserAvatar
-                src={user?.displayPhoto}
-                name={user.fullName}
-                id={user?.id}
-              />
-            </Box>
-            <Box background="focus" round pad="xsmall">
-              <Camera size="small" />
-            </Box>
-          </Stack>
-          <Box>
-            <Text>{user.fullName}</Text>
-            <Text color="status-disabled">{user.userName}</Text>
-            <Text color="status-disabled">{user.email}</Text>
-          </Box>
-        </Box>
-
-        {showAvatarUpload && (
-          <AvatarUpload
-            onSubmit={(file: any) => {
-              dispatch(updateProfilePhotoAction(file));
-              setShowAvatarUpload(false);
-            }}
-            onDismiss={() => {
-              setShowAvatarUpload(false);
-            }}
-            type="user"
-            src={user?.displayPhoto}
-            id={user?.id}
-            name={user?.fullName}
-          />
-        )}
-      </>
+    url: 'personal-settings',
+    header: headerContent,
+    action: (
+      <Button
+        disabled={isFormInitialState && isPasswordFormInitialState}
+        onClick={handleSaveChanges}
+        primary
+        label={t('settings.save')}
+        margin={{ vertical: size === 'small' ? 'small' : 'medium' }}
+        type="submit"
+        form="passwordForm"
+      />
     ),
     items: [
       {
         key: 'username',
-        title: t('settings.username'),
-        value: user?.userName,
+        label: t('settings.username'),
         component: (
           <Box
             direction="row"
@@ -158,8 +168,7 @@ const PersonalSettings: () => Menu | null = () => {
       },
       {
         key: 'fullName',
-        title: t('settings.fullName'),
-        value: user?.fullName,
+        label: t('settings.fullName'),
         component: (
           <Box
             direction="row"
@@ -186,7 +195,7 @@ const PersonalSettings: () => Menu | null = () => {
       },
       {
         key: 'pasword',
-        title: t('settings.passwordChange'),
+        label: t('settings.passwordChange'),
         component: (
           <Box gap="small">
             <Form onSubmit={handleSubmitPassword} id="passwordForm">
@@ -334,17 +343,6 @@ const PersonalSettings: () => Menu | null = () => {
         ),
       },
     ],
-    saveButton: (
-      <Button
-        disabled={isFormInitialState && isPasswordFormInitialState}
-        onClick={handleSaveChanges}
-        primary
-        label={t('settings.save')}
-        margin={{ vertical: size === 'small' ? 'small' : 'medium' }}
-        type="submit"
-        form="passwordForm"
-      />
-    ),
   };
 };
 

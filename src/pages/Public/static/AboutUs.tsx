@@ -1,10 +1,9 @@
 import React from 'react';
 import { Box } from 'grommet';
 import { useTranslation } from 'react-i18next';
-import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 import StaticText from './StaticText';
 
-const AboutUs: () => Menu | null = () => {
+const AboutUs: () => any = () => {
   const { t } = useTranslation();
   return {
     id: 0,
