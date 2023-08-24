@@ -502,12 +502,14 @@
     "INVALID_VIDEO_FORMAT": "Please upload a valid video format!",
     "CURRENT_PASSWORD_NOT_CORRECT": "Current password is not correct!",
     "PASSWORDS_NOT_MATCH": "Passwords do not match!",
-    "OWNER_NOT_EXIST": "The last owner cannot be deleted!"
+    "OWNER_NOT_EXIST": "The last owner cannot be deleted!",
+    "INSUFFICIENT_MEMBERSHIP": "Your membership is insufficient to operate requested operation. Please upgrade your membership to continue."
   },
   "settings": {
     "personalSettings": "Personal Settings",
     "channelSettings": "Channels",
     "zoneSettings": "Zones",
+    "membershipSettings": "Membership",
     "settings": "Settings",
     "search": "Search",
     "username": "Username",
@@ -563,7 +565,12 @@
     "role": "Role",
     "followingDate": "Following Date",
     "joinDate": "Join Date",
-    "action": "Action"
+    "action": "Action",
+    "activeMembership": "Active Membership",
+    "membershipPlans": "Membership Plans",
+    "upgradeMembership": "Upgrade",
+    "cancelMembership": "Cancel Membership",
+    "downgradeMembership": "Downgrade"
   },
   "ManageChannelUser": {
     "title": "Manage Channel Follower",
@@ -764,5 +771,17 @@
     "canDelete": "Delete channel",
     "canEdit": "Update channel",
     "canManageRole": "Manage zone roles"
+  },
+  "Membership": {
+    "channelCount": "Channel Count: ",
+    "meetingCount": "Meeting Count: ",
+    "meetingDuration": "Meeting Duration(min): ",
+    "meetingMaxParticipantCount": "Meeting Max Participant",
+    "streamCount": "Stream Count: ",
+    "streamMeeting": "Stream Meeting: ",
+    "streamingStudioCount": "Streaming Studio Count: ",
+    "videoSize": "Video Size(kb): ",
+    "webinarCount": "Webinar Count: ",
+    "zoneCount": "Zone Count: "
   }
 }

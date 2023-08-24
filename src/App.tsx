@@ -23,6 +23,7 @@ import useDelayTime from './hooks/useDelayTime';
 import { listFolderAction } from './store/actions/folder.action';
 import StaticPage from './pages/Public/static/StaticPage';
 import ZoneNotFound from './pages/Private/ZoneNotFound';
+import { getUserMembershipAction } from './store/actions/membership.action';
 
 const App: FC = () => {
   const dispatch = useDispatch();
@@ -48,6 +49,7 @@ const App: FC = () => {
       dispatch(getUserChannelsAction());
       dispatch(getUserZonesAction());
       dispatch(listFolderAction());
+      dispatch(getUserMembershipAction());
     }
   }, [isAuthenticated]);
 

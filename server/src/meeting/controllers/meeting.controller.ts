@@ -24,10 +24,12 @@ import { Post as PostEntity } from 'entities/Post.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import {
   CurrentUser,
+  CurrentUserMembership,
   CurrentUserProfile,
 } from 'src/auth/decorators/current-user.decorator';
 import {
   ConferenceUser,
+  UserMembership,
   UserProfile,
   UserTokenPayload,
 } from 'src/auth/interfaces/user.interface';
@@ -59,7 +61,7 @@ export class MeetingController {
   constructor(private meetingService: MeetingService) {}
 
   @Post('create')
-  @IsAuthenticated([], { injectUserProfile: true })
+  @IsAuthenticated([], { injectUserProfile: true, injectUserMembership: true })
   @ValidationBadRequest()
   @ApiCreatedResponse({
     description:
@@ -74,7 +76,14 @@ export class MeetingController {
   async createMeeting(
     @Body() createMeetingInfo: CreateMeetingDto,
     @CurrentUserProfile() user: UserProfile,
+    @CurrentUserMembership() userMembership: UserMembership,
   ) {
+    await this.meetingService.validateCreateMeeting(
+      user.id,
+      userMembership,
+      createMeetingInfo.liveStream,
+    );
+
     const { channelId, timeZone } = createMeetingInfo;
 
     const {
