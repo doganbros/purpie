@@ -122,15 +122,20 @@ const SettingsAndStaticPage: FC<SettingsAndStaticPageLayoutProps> = ({
 
     return (
       <Box flex="grow" pad={{ horizontal: 'small' }} gap="medium">
-        {selectedMenu.label && !searchText && size !== 'small' && (
+        {!searchText && size !== 'small' && !selectedMenu.labelNotVisible && (
           <Box>
             <Text size="xlarge">{selectedMenu.label}</Text>
           </Box>
         )}
-        <Box direction={size === 'small' ? 'column' : 'row'} justify="between">
-          {selectedMenu.header}
-          {selectedMenu.action}
-        </Box>
+        {(selectedMenu.header || selectedMenu.action) && (
+          <Box
+            direction={size === 'small' ? 'column' : 'row'}
+            justify="between"
+          >
+            {selectedMenu.header}
+            {selectedMenu.action}
+          </Box>
+        )}
         {!searchText && selectedMenu.tabs && selectedMenu.tabs.length > 1 ? (
           <Box gap="medium" className="z-index--1">
             <Box direction="row" gap="medium">

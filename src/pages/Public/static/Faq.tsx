@@ -4,8 +4,9 @@ import { Trans, useTranslation } from 'react-i18next';
 import StaticText from './StaticText';
 import StaticTitle from './StaticTitle';
 import StaticList from './StaticList';
+import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 
-const Faq: () => any = () => {
+const Faq = (): Menu => {
   const { t } = useTranslation();
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0);
 
@@ -33,8 +34,8 @@ const Faq: () => any = () => {
       </Box>
     </AccordionPanel>
   );
+
   return {
-    id: 0,
     key: 'faq',
     label: 'FAQ',
     labelNotVisible: true,
@@ -42,7 +43,7 @@ const Faq: () => any = () => {
     items: [
       {
         key: 'faq-content',
-        title: 'FAQ',
+        label: 'FAQ',
         component: (
           <Box
             border={{ size: 'xsmall', color: 'status-disabled-light' }}

@@ -2,11 +2,11 @@ import React from 'react';
 import { Box } from 'grommet';
 import { useTranslation } from 'react-i18next';
 import StaticText from './StaticText';
+import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 
-const AboutUs: () => any = () => {
+const AboutUs = (): Menu => {
   const { t } = useTranslation();
   return {
-    id: 0,
     key: 'aboutUs',
     label: t('AboutUs.title'),
     labelNotVisible: true,
@@ -14,7 +14,7 @@ const AboutUs: () => any = () => {
     items: [
       {
         key: 'about-us-content',
-        title: t('AboutUs.title'),
+        label: t('AboutUs.title'),
         component: (
           <Box
             border={{ size: 'xsmall', color: 'status-disabled-light' }}

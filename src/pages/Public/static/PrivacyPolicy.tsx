@@ -4,12 +4,12 @@ import { Trans, useTranslation } from 'react-i18next';
 import StaticText from './StaticText';
 import StaticTitle from './StaticTitle';
 import StaticList from './StaticList';
+import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 
-const PrivacyPolicy: () => any = () => {
+const PrivacyPolicy = (): Menu => {
   const { t } = useTranslation();
 
   return {
-    id: 0,
     key: 'privacy-policy',
     label: t('PrivacyPolicy.title'),
     labelNotVisible: true,
@@ -17,7 +17,7 @@ const PrivacyPolicy: () => any = () => {
     items: [
       {
         key: 'privacy-policy-content',
-        title: t('PrivacyPolicy.title'),
+        label: t('PrivacyPolicy.title'),
         component: (
           <Box
             border={{ size: 'xsmall', color: 'status-disabled-light' }}

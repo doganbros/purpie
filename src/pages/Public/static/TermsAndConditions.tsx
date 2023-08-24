@@ -4,10 +4,10 @@ import { Trans } from 'react-i18next';
 import StaticText from './StaticText';
 import StaticTitle from './StaticTitle';
 import StaticList from './StaticList';
+import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 
-const TermsAndConditions: () => any = () => {
+const TermsAndConditions = (): Menu => {
   return {
-    id: 0,
     key: 'terms-and-conditions',
     label: 'Terms & Conditions',
     labelNotVisible: true,
@@ -15,7 +15,7 @@ const TermsAndConditions: () => any = () => {
     items: [
       {
         key: 'terms-and-conditions-content',
-        title: 'Terms & Conditions',
+        label: 'Terms & Conditions',
         component: (
           <Box
             border={{ size: 'xsmall', color: 'status-disabled-light' }}

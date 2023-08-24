@@ -10,6 +10,7 @@ export interface MenuItem {
 export interface Menu {
   key: string;
   label: string;
+  labelNotVisible?: boolean;
   url: string;
   header?: ReactNode;
   action?: ReactNode;
