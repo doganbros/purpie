@@ -23,7 +23,7 @@ const StaticPage: FC = () => {
     PrivacyPolicy(),
     TermsAndConditions(),
     Faq(),
-  ].filter((v): v is Menu => v !== null);
+  ];
 
   return (
     <SettingsAndStaticPageLayout

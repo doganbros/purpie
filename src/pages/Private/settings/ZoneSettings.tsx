@@ -1,34 +1,17 @@
-import React, { useContext, useState } from 'react';
-import {
-  Box,
-  Button,
-  DropButton,
-  ResponsiveContext,
-  Stack,
-  Text,
-  TextInput,
-} from 'grommet';
-import { useDispatch, useSelector } from 'react-redux';
-import { CaretDownFill, CaretRightFill, Camera } from 'grommet-icons';
+import React, { useEffect, useState } from 'react';
+import { Box, Text, TextInput } from 'grommet';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ListButton from '../../../components/utils/ListButton';
 import { AppState } from '../../../store/reducers/root.reducer';
 import {
   UpdateZonePayload,
   UserZoneListItem,
 } from '../../../store/types/zone.types';
-import {
-  deleteZoneAction,
-  leaveZoneAction,
-  updateZoneInfoAction,
-  updateZonePhotoAction,
-} from '../../../store/actions/zone.action';
-import AvatarUpload from './AvatarUpload';
-import { ZoneAvatar } from '../../../components/utils/Avatars/ZoneAvatar';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
-import ConfirmDialog from '../../../components/utils/ConfirmDialog';
-import ZonePermissions from '../../../layers/settings-and-static-pages/permissions/ZonePermissions';
-import ZoneUsers from '../../../layers/settings-and-static-pages/ZoneUsers';
+import ZonePermissions from '../../../layers/settings-and-static-pages/zone/ZonePermissions';
+import ZoneUsers from '../../../layers/settings-and-static-pages/zone/ZoneUsers';
+import ZoneSettingsHeader from '../../../layers/settings-and-static-pages/zone/ZoneSettingsHeader';
+import ZoneSettingsActions from '../../../layers/settings-and-static-pages/zone/ZoneSettingsActions';
 
 const initialZonePayload = {
   name: '',
@@ -38,368 +21,187 @@ const initialZonePayload = {
   public: false,
 };
 
-const ZoneSettings: () => Menu | null = () => {
+const ZoneSettings = (): Menu => {
   const {
     zone: {
-      selectedUserZone,
       getUserZones: { userZones },
     },
   } = useSelector((state: AppState) => state);
-
-  const dispatch = useDispatch();
-  const size = useContext(ResponsiveContext);
 
   const [selectedZone, setSelectedZone] = useState<UserZoneListItem | null>(
     null
   );
 
-  const [showAvatarUpload, setShowAvatarUpload] = useState(false);
-  const [showDeletePopup, setShowDeletePopup] = useState(false);
-  const [showLeavePopup, setShowLeavePopup] = useState(false);
   const { t } = useTranslation();
-
-  const [showZoneSelector, setShowZoneSelector] = useState(true);
-  const [isDropOpen, setIsDropOpen] = useState(false);
 
   const [zonePayload, setZonePayload] = useState<UpdateZonePayload>(
     initialZonePayload
   );
 
-  if (userZones?.length === 0) {
-    return {
-      id: 2,
-      key: 'zone',
-      label: t('settings.zoneSettings'),
-      url: 'zone',
-      items: [
-        {
-          key: 'zoneName',
-          title: '',
-          value: 'value',
-          component: (
-            <Box
-              direction="row"
-              justify="between"
-              align="center"
-              gap="small"
-              round="small"
-              pad="xxsmall"
-            >
-              <Text>{t('settings.noZone')}</Text>
-            </Box>
-          ),
-        },
-      ],
-      isEmpty: true,
-    };
-  }
+  useEffect(() => {
+    if (selectedZone)
+      setZonePayload({
+        name: selectedZone.zone.name,
+        id: selectedZone.zone.id,
+        subdomain: selectedZone.zone.subdomain,
+        public: selectedZone.zone.public,
+        description: selectedZone.zone.description,
+      });
+    else setZonePayload(initialZonePayload);
+  }, [selectedZone]);
 
-  const isFormInitialState =
-    zonePayload.name === selectedZone?.zone.name &&
-    zonePayload.description === selectedZone?.zone.description &&
-    zonePayload.subdomain === selectedZone?.zone.subdomain &&
-    zonePayload.public === selectedZone?.zone.public;
-
-  const result = {
-    id: 2,
+  const zoneSettings: Menu = {
     key: 'zone',
     label: t('settings.zoneSettings'),
     url: 'zone',
-    saveButton: (
-      <Button
-        disabled={isFormInitialState}
-        onClick={() =>
-          dispatch(updateZoneInfoAction(selectedZone!.zone.id, zonePayload))
-        }
-        primary
-        label={t('settings.save')}
-        margin={{ vertical: 'medium' }}
-      />
-    ),
-    deleteButton: (
-      <Button
-        onClick={() => setShowDeletePopup(true)}
-        primary
-        color="red"
-        label={t('common.delete')}
-        margin={{ vertical: 'medium' }}
-      />
-    ),
-    deletePopup: showDeletePopup && (
-      <ConfirmDialog
-        message={`${t('settings.deleteMessage')} \n ${
-          selectedZone?.zone.name
-        } zone?`}
-        onConfirm={() => {
-          dispatch(
-            deleteZoneAction(
-              selectedZone!.zone.id,
-              selectedZone?.zone.id === selectedUserZone?.zone.id
-            )
-          );
-
-          setShowDeletePopup(false);
-          setSelectedZone(null);
-          setShowZoneSelector(true);
-          setZonePayload(initialZonePayload);
-        }}
-        onDismiss={() => setShowDeletePopup(false)}
-        textProps={{ wordBreak: 'break-word' }}
-      />
-    ),
-    leaveButton: (
-      <Button
-        onClick={() => setShowLeavePopup(true)}
-        secondary
-        color="red"
-        label={t('common.leave')}
-        margin={{ vertical: 'medium' }}
-      />
-    ),
-    leavePopup: showLeavePopup && (
-      <ConfirmDialog
-        message={`${t('settings.zoneLeaveMessage')}\n${
-          selectedZone!.zone.name
-        } zone?`}
-        onConfirm={() => {
-          dispatch(leaveZoneAction(selectedZone!.id!));
-          setShowLeavePopup(false);
-          setSelectedZone(null);
-          setShowZoneSelector(true);
-          setZonePayload(initialZonePayload);
-        }}
-        onDismiss={() => setShowLeavePopup(false)}
-        textProps={{ wordBreak: 'break-word' }}
-      />
-    ),
-    avatarWidget: (
-      <Box direction="row" gap="small" align="center">
-        {!showZoneSelector && (
-          <Stack anchor="top-right" onClick={() => setShowAvatarUpload(true)}>
-            <Box
-              round={{ size: 'medium' }}
-              border={{ color: 'light-2', size: 'medium' }}
-              wrap
-              justify="center"
-              pad="5px"
-            >
-              <ZoneAvatar
-                id={selectedZone!.zone.id}
-                name={selectedZone!.zone.name}
-                src={selectedZone!.zone.displayPhoto}
-              />
-            </Box>
-            <Box background="focus" round pad="xsmall">
-              <Camera size="small" />
-            </Box>
-          </Stack>
-        )}
-        <DropButton
-          open={isDropOpen}
-          onOpen={() => setIsDropOpen(true)}
-          onClose={() => setIsDropOpen(false)}
-          dropProps={{
-            responsive: false,
-            stretch: false,
-          }}
-          dropAlign={
-            size === 'small'
-              ? { left: 'left', top: 'bottom' }
-              : { left: 'right', top: 'top' }
-          }
-          dropContent={
-            <Box width={{ min: '250px' }} overflow="auto">
-              {userZones?.map((item) => (
-                <ListButton
-                  label={item.zone.name}
-                  subLabel={t(`Permissions.${item.zoneRole.roleCode}`)}
-                  key={item.zone.id}
-                  onClick={() => {
-                    setZonePayload({
-                      name: item.zone.name,
-                      id: item.zone.id,
-                      subdomain: item.zone.subdomain,
-                      public: item.zone.public,
-                      description: item.zone.description,
-                    });
-                    setSelectedZone(item);
-                    setShowZoneSelector(false);
-                    setIsDropOpen(false);
-                  }}
-                  leftIcon={
-                    <ZoneAvatar
-                      id={item.zone.id}
-                      name={item.zone.name}
-                      src={item.zone.displayPhoto}
-                      outerCircle
-                    />
-                  }
-                />
-              ))}
-            </Box>
-          }
-        >
-          {!showZoneSelector ? (
-            <Box direction="row" align="center">
-              <Box>
-                <Text>{selectedZone?.zone.name}</Text>
-                <Text color="status-disabled">
-                  {t(`Permissions.${selectedZone?.zoneRole.roleCode}`)}
-                </Text>
-              </Box>
-              <CaretDownFill />
-            </Box>
-          ) : (
-            <Box
-              background="status-disabled-light"
-              pad="medium"
-              round="small"
-              direction="row"
-              align="center"
-              justify="center"
-            >
-              <Text>{t('settings.selectZone')}</Text>
-              <CaretRightFill color="brand" />{' '}
-            </Box>
-          )}
-        </DropButton>
-        {showAvatarUpload && (
-          <AvatarUpload
-            onSubmit={(file: any) => {
-              dispatch(updateZonePhotoAction(file, selectedZone!.id!));
-              setShowAvatarUpload(false);
-            }}
-            onDismiss={() => {
-              setShowAvatarUpload(false);
-            }}
-            type="zone"
-            src={selectedZone?.zone.displayPhoto}
-            id={selectedZone?.zone.id}
-            name={selectedZone?.zone.name}
-          />
-        )}
-      </Box>
-    ),
-    tabs: [{ index: 1, label: t('settings.general') }],
-    items: [
-      {
-        key: 'zoneName',
-        title: t('settings.zoneName'),
-        value: 'value',
-        tabIndex: 1,
-        component: (
-          <Box
-            direction="row"
-            justify="between"
-            align="center"
-            gap="small"
-            border={{ size: 'xsmall', color: 'brand' }}
-            round="small"
-            pad="xxsmall"
-          >
-            <TextInput
-              disabled={!selectedZone?.zoneRole.canEdit}
-              placeholder={t('settings.zoneNamePlaceholder')}
-              value={zonePayload.name}
-              plain
-              focusIndicator={false}
-              onChange={(event) =>
-                setZonePayload({
-                  ...zonePayload,
-                  name: event.target.value,
-                })
-              }
-            />
-          </Box>
-        ),
-      },
-      {
-        key: 'zoneTitle',
-        title: t('settings.zoneSubdomain'),
-        value: 'value',
-        tabIndex: 1,
-        component: (
-          <Box
-            direction="row"
-            justify="between"
-            align="center"
-            gap="small"
-            border={{ size: 'xsmall', color: 'brand' }}
-            round="small"
-            pad="xxsmall"
-          >
-            <TextInput
-              disabled={!selectedZone?.zoneRole.canEdit}
-              placeholder={t('settings.zoneSubdomainPlaceholder')}
-              value={zonePayload.subdomain}
-              plain
-              focusIndicator={false}
-              onChange={(event) =>
-                setZonePayload({
-                  ...zonePayload,
-                  subdomain: event.target.value,
-                })
-              }
-            />
-          </Box>
-        ),
-      },
-      {
-        key: 'zoneDescription',
-        title: t('settings.zoneDescription'),
-        value: 'value',
-        tabIndex: 1,
-        component: (
-          <Box
-            direction="row"
-            justify="between"
-            align="center"
-            gap="small"
-            border={{ size: 'xsmall', color: 'brand' }}
-            round="small"
-            pad="xxsmall"
-          >
-            <TextInput
-              disabled={!selectedZone?.zoneRole.canEdit}
-              placeholder={t('settings.zoneDescriptionPlaceholder')}
-              value={zonePayload.description || ''}
-              plain
-              focusIndicator={false}
-              onChange={(event) =>
-                setZonePayload({
-                  ...zonePayload,
-                  description: event.target.value,
-                })
-              }
-            />
-          </Box>
-        ),
-      },
-    ],
-    isEmpty: showZoneSelector,
-    canDelete: selectedZone?.zoneRole.canDelete,
-    showLeaveButton: !selectedZone?.zoneRole.canDelete,
   };
 
-  if (selectedZone && selectedZone.zoneRole.canManageRole) {
-    result.tabs.push({ index: 2, label: t('settings.permissions') });
-    result.items.push({
+  if (userZones?.length === 0) {
+    zoneSettings.items = [
+      {
+        key: 'noZone',
+        label: '',
+        component: (
+          <Box
+            direction="row"
+            justify="between"
+            align="center"
+            gap="small"
+            round="small"
+            pad="xxsmall"
+          >
+            <Text>{t('settings.noZone')}</Text>
+          </Box>
+        ),
+      },
+    ];
+    return zoneSettings;
+  }
+
+  zoneSettings.header = (
+    <ZoneSettingsHeader
+      selectedZone={selectedZone}
+      setSelectedZone={setSelectedZone}
+    />
+  );
+  zoneSettings.action = (
+    <ZoneSettingsActions
+      selectedZone={selectedZone}
+      setSelectedZone={setSelectedZone}
+      zonePayload={zonePayload}
+    />
+  );
+  zoneSettings.tabs = [{ index: 1, label: t('settings.general') }];
+  zoneSettings.items = [
+    {
+      key: 'zoneName',
+      label: t('settings.zoneName'),
+      tabIndex: 1,
+      component: (
+        <Box
+          direction="row"
+          justify="between"
+          align="center"
+          gap="small"
+          border={{ size: 'xsmall', color: 'brand' }}
+          round="small"
+          pad="xxsmall"
+        >
+          <TextInput
+            disabled={!selectedZone?.zoneRole.canEdit}
+            placeholder={t('settings.zoneNamePlaceholder')}
+            value={zonePayload.name}
+            plain
+            focusIndicator={false}
+            onChange={(event) =>
+              setZonePayload({
+                ...zonePayload,
+                name: event.target.value,
+              })
+            }
+          />
+        </Box>
+      ),
+    },
+    {
+      key: 'zoneTitle',
+      label: t('settings.zoneSubdomain'),
+      tabIndex: 1,
+      component: (
+        <Box
+          direction="row"
+          justify="between"
+          align="center"
+          gap="small"
+          border={{ size: 'xsmall', color: 'brand' }}
+          round="small"
+          pad="xxsmall"
+        >
+          <TextInput
+            disabled={!selectedZone?.zoneRole.canEdit}
+            placeholder={t('settings.zoneSubdomainPlaceholder')}
+            value={zonePayload.subdomain}
+            plain
+            focusIndicator={false}
+            onChange={(event) =>
+              setZonePayload({
+                ...zonePayload,
+                subdomain: event.target.value,
+              })
+            }
+          />
+        </Box>
+      ),
+    },
+    {
+      key: 'zoneDescription',
+      label: t('settings.zoneDescription'),
+      tabIndex: 1,
+      component: (
+        <Box
+          direction="row"
+          justify="between"
+          align="center"
+          gap="small"
+          border={{ size: 'xsmall', color: 'brand' }}
+          round="small"
+          pad="xxsmall"
+        >
+          <TextInput
+            disabled={!selectedZone?.zoneRole.canEdit}
+            placeholder={t('settings.zoneDescriptionPlaceholder')}
+            value={zonePayload.description || ''}
+            plain
+            focusIndicator={false}
+            onChange={(event) =>
+              setZonePayload({
+                ...zonePayload,
+                description: event.target.value,
+              })
+            }
+          />
+        </Box>
+      ),
+    },
+  ];
+
+  if (selectedZone?.zoneRole.canManageRole) {
+    zoneSettings.tabs.push({ index: 2, label: t('settings.permissions') });
+    zoneSettings.items.push({
       key: 'zonePermissions',
-      title: '',
-      value: 'value',
+      label: '',
       tabIndex: 2,
       component: <ZonePermissions userZone={selectedZone} />,
     });
-    result.tabs.push({ index: 3, label: t('settings.members') });
-    result.items.push({
-      key: 'zoneFollowers',
-      title: '',
-      value: 'value',
+    zoneSettings.tabs.push({ index: 3, label: t('settings.members') });
+    zoneSettings.items.push({
+      key: 'zoneMembers',
+      label: '',
       tabIndex: 3,
       component: <ZoneUsers zoneId={selectedZone.zone.id} />,
     });
   }
-  return result;
+  return zoneSettings;
 };
 
 export default ZoneSettings;

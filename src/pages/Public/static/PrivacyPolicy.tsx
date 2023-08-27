@@ -1,16 +1,15 @@
 import React from 'react';
 import { Anchor, Box } from 'grommet';
 import { Trans, useTranslation } from 'react-i18next';
-import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 import StaticText from './StaticText';
 import StaticTitle from './StaticTitle';
 import StaticList from './StaticList';
+import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 
-const PrivacyPolicy: () => Menu | null = () => {
+const PrivacyPolicy = (): Menu => {
   const { t } = useTranslation();
 
   return {
-    id: 0,
     key: 'privacy-policy',
     label: t('PrivacyPolicy.title'),
     labelNotVisible: true,
@@ -18,7 +17,7 @@ const PrivacyPolicy: () => Menu | null = () => {
     items: [
       {
         key: 'privacy-policy-content',
-        title: t('PrivacyPolicy.title'),
+        label: t('PrivacyPolicy.title'),
         component: (
           <Box
             border={{ size: 'xsmall', color: 'status-disabled-light' }}

@@ -3,7 +3,7 @@ import { Box, ResponsiveContext, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { AppState } from '../../../store/reducers/root.reducer';
-import RoleHeader from './RoleHeader';
+import RoleHeader from '../permissions/RoleHeader';
 import {
   UserZoneListItem,
   ZoneRole,
@@ -13,7 +13,7 @@ import {
   getZoneRolesAction,
   updateZonePermissionsAction,
 } from '../../../store/actions/zone.action';
-import PermissionCheckBox from './PermissionCheckBox';
+import PermissionCheckBox from '../permissions/PermissionCheckBox';
 
 interface ZonePermissionsProps {
   userZone: UserZoneListItem;

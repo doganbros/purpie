@@ -2,13 +2,13 @@ import { useTranslation } from 'react-i18next';
 import { Anchor, Box, Text } from 'grommet';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 import { listMembershipAction } from '../../../store/actions/membership.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import MembershipCard from '../../../layers/settings-and-static-pages/MembershipCard';
 import { getCustomerPortal } from '../../../store/services/membership.service';
+import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 
-const MembershipSettings: () => Menu | null = () => {
+const MembershipSettings = (): Menu => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
@@ -38,14 +38,13 @@ const MembershipSettings: () => Menu | null = () => {
   }, [memberships, userMembership]);
 
   return {
-    id: 0,
     key: 'MembershipSettings',
     label: t('settings.membershipSettings'),
-    url: 'MembershipSettings',
+    url: 'memberships',
     items: [
       {
         key: 'activeMembership',
-        title: t('settings.activeMembership'),
+        label: t('settings.activeMembership'),
         component: (
           <Box
             justify="between"
@@ -64,7 +63,7 @@ const MembershipSettings: () => Menu | null = () => {
       },
       {
         key: 'membershipPlans',
-        title: t('settings.membershipPlans'),
+        label: t('settings.membershipPlans'),
         component: (
           <Box
             direction="row"

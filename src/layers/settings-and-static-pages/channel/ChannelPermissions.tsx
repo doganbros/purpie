@@ -13,9 +13,9 @@ import {
   UserChannelListItem,
   UserChannelPermissionList,
 } from '../../../store/types/channel.types';
-import RoleHeader from './RoleHeader';
-import PermissionCheckBox from './PermissionCheckBox';
-import './Style.scss';
+import RoleHeader from '../permissions/RoleHeader';
+import PermissionCheckBox from '../permissions/PermissionCheckBox';
+import '../permissions/Style.scss';
 
 interface ChannelPermissionsProps {
   userChannel: UserChannelListItem;

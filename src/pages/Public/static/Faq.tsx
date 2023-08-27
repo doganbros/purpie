@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Accordion, AccordionPanel, Anchor, Box } from 'grommet';
 import { Trans, useTranslation } from 'react-i18next';
-import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 import StaticText from './StaticText';
 import StaticTitle from './StaticTitle';
 import StaticList from './StaticList';
+import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 
-const Faq: () => Menu | null = () => {
+const Faq = (): Menu => {
   const { t } = useTranslation();
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0);
 
@@ -34,8 +34,8 @@ const Faq: () => Menu | null = () => {
       </Box>
     </AccordionPanel>
   );
+
   return {
-    id: 0,
     key: 'faq',
     label: 'FAQ',
     labelNotVisible: true,
@@ -43,7 +43,7 @@ const Faq: () => Menu | null = () => {
     items: [
       {
         key: 'faq-content',
-        title: 'FAQ',
+        label: 'FAQ',
         component: (
           <Box
             border={{ size: 'xsmall', color: 'status-disabled-light' }}
