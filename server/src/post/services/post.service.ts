@@ -177,7 +177,11 @@ export class PostService {
       where: { createdById: userId, id: postId },
     });
 
-    if (!post) return null;
+    if (!post)
+      throw new NotFoundException(
+        ErrorTypes.POST_NOT_FOUND,
+        'Post not found or unauthorized',
+      );
 
     await this.postVideoRepository.delete({
       slug: post.slug,
@@ -578,14 +582,18 @@ export class PostService {
 
     const post = await this.getPostById(currentUserId, featuredPost.id);
 
-    if (!post) return null;
+    if (!post)
+      throw new NotFoundException(
+        ErrorTypes.POST_NOT_FOUND,
+        'Post not found or unauthorized',
+      );
 
     result.post = post;
 
     return post;
   }
 
-  editPost(postId: string, userId: string, payload: EditPostDto) {
+  async editPost(postId: string, userId: string, payload: EditPostDto) {
     const editPayload: Partial<EditPostDto> = {};
 
     if (payload.title) editPayload.title = payload.title;
@@ -598,7 +606,7 @@ export class PostService {
         'Edit Payload empty',
       );
 
-    return this.postRepository.update(
+    await this.postRepository.update(
       { id: postId, createdById: userId },
       editPayload,
     );

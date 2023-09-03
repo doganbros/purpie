@@ -16,6 +16,7 @@ export const ValidationBadRequest = () =>
   applyDecorators(
     ApiBadRequestResponse({
       type: ValidationError,
-      description: 'This error is returned when validation error occurs',
+      description:
+        'Error thrown when validation error occurs according to requested payload.',
     }),
   );

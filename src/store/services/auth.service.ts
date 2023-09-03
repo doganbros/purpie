@@ -67,12 +67,12 @@ export const resendMailVerificationToken = async (
   userId: string
 ): Promise<any> => {
   return http
-    .post(`/auth/resend-mail-verification-token/${userId}`)
+    .post(`/auth/resend-verification-mail/${userId}`)
     .then((res) => res.data);
 };
 
-export const resetPasswordRequest = (email: string): Promise<any> =>
-  http.post('/auth/reset-password-request', {
+export const resetPasswordRequest = (email: string): Promise<void> =>
+  http.post('/auth/request-reset-password', {
     email,
   });
 

@@ -398,7 +398,10 @@ export class AuthService {
     const isValid = await compareHash(token, user.mailVerificationToken);
 
     if (!isValid)
-      throw new NotFoundException(ErrorTypes.USER_NOT_FOUND, 'User not found');
+      throw new UnauthorizedException(
+        ErrorTypes.INVALID_JWT,
+        'Email confirmation JWT is invalid',
+      );
 
     user.emailConfirmed = true;
     user.mailVerificationToken = null!;

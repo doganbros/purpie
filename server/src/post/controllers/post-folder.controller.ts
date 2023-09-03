@@ -8,7 +8,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
@@ -16,20 +16,30 @@ import { FolderService } from '../services/folder.service';
 import { CreatePostFolderDto } from '../dto/create-post-folder.dto';
 import { UpdatePostFolderDto } from '../dto/update-post-folder.dto';
 import { AddOrRemovePostFolderItemDto } from '../dto/add-or-remove-post-folder-item.dto';
+import { PostFolderResponse } from '../response/post.response';
 
 @Controller({ version: '1', path: 'post/folder' })
-@ApiTags('post/folder')
+@ApiTags('Post Folder')
 export class PostFolderController {
   constructor(private readonly folderService: FolderService) {}
 
   @Get('list')
   @IsAuthenticated()
+  @ApiOkResponse({
+    type: PostFolderResponse,
+    isArray: true,
+    description: 'User gets folders which created for listing saved posts.',
+  })
   getUserFolderList(@CurrentUser() user: UserTokenPayload) {
     return this.folderService.getUserPostFolders(user.id);
   }
 
   @Post('create')
   @IsAuthenticated()
+  @ApiOkResponse({
+    type: PostFolderResponse,
+    description: 'Create new folder and return created folder.',
+  })
   createPostFolder(
     @CurrentUser() user: UserTokenPayload,
     @Body() info: CreatePostFolderDto,
