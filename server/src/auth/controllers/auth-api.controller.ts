@@ -37,8 +37,7 @@ export class AuthApiController {
   async getCredentials(@CurrentUser() user: UserTokenPayload) {
     const credentials = await this.authService.getApiCredentials(user.id);
 
-    if (!credentials)
-      return await this.authService.createApiCredentials(user.id);
+    if (!credentials) return this.authService.createApiCredentials(user.id);
 
     return credentials;
   }
