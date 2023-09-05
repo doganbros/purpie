@@ -86,4 +86,10 @@ export class User extends RecordEntity {
 
   @Column({ type: 'simple-json', select: false, default: defaultPostSettings })
   postSettings: PostSettings;
+
+  @Column({ nullable: true })
+  apiKey: string;
+
+  @Column({ nullable: true })
+  apiSecret: string;
 }
