@@ -15,7 +15,11 @@ import { Request, Response } from 'express';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { errorResponseDoc } from 'helpers/error-response-doc';
 import { AuthService } from '../services/auth.service';
-import { UserProfile, UserTokenPayload } from '../interfaces/user.interface';
+import {
+  UserApiCredentials,
+  UserProfile,
+  UserTokenPayload,
+} from '../interfaces/user.interface';
 import { IsAuthenticated } from '../decorators/auth.decorator';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { ErrorTypes } from '../../../types/ErrorTypes';
@@ -26,18 +30,40 @@ import { LoginApiUserDto } from '../dto/login-api-user.dto';
 export class AuthApiController {
   constructor(private authService: AuthService) {}
 
-  @Get('credentials')
-  @ValidationBadRequest()
+  @Post('generate')
   @IsAuthenticated()
   @ApiOkResponse({
-    type: UserProfile,
+    type: UserApiCredentials,
+    description: 'Create Api key and secret for authenticated user',
+  })
+  @HttpCode(HttpStatus.OK)
+  async createCredentials(@CurrentUser() user: UserTokenPayload) {
+    return this.authService.createApiCredentials(user.id);
+  }
+
+  @Get('credentials')
+  @IsAuthenticated()
+  @ApiOkResponse({
     description: `Signs in user. If it contains a header subdomain, it will be validated. If user's email is not verified an unauthorized error will be thrown. `,
+  })
+  @ApiNotFoundResponse({
+    description:
+      "Error thrown when user's api key or secret is not exist for user ",
+    schema: errorResponseDoc(
+      404,
+      'User api key not exist.',
+      ErrorTypes.USER_API_CREDENTIALS_NOT_EXIST,
+    ),
   })
   @HttpCode(HttpStatus.OK)
   async getCredentials(@CurrentUser() user: UserTokenPayload) {
     const credentials = await this.authService.getApiCredentials(user.id);
 
-    if (!credentials) return this.authService.createApiCredentials(user.id);
+    if (!credentials)
+      throw new NotFoundException(
+        'User api key not exist',
+        ErrorTypes.USER_API_CREDENTIALS_NOT_EXIST,
+      );
 
     return credentials;
   }
