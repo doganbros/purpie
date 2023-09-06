@@ -14,10 +14,16 @@ import { AuthThirdPartyService } from './services/auth-third-party.service';
 import { PostModule } from '../post/post.module';
 import { PostFolder } from '../../entities/PostFolder.entity';
 import { MembershipModule } from '../membership/membership.module';
+import { AuthApiController } from './controllers/auth-api.controller';
 
 @Global()
 @Module({
-  controllers: [AuthController, AuthThirdPartyController, ClientAuthController],
+  controllers: [
+    AuthController,
+    AuthThirdPartyController,
+    ClientAuthController,
+    AuthApiController,
+  ],
   imports: [
     TypeOrmModule.forFeature([
       User,

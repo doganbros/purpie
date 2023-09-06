@@ -15,8 +15,8 @@ import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
 import { Request, Response } from 'express';
 import { generateJWT, getJWTCookieKeys } from 'helpers/jwt';
-import { compareHash, detectBrowser, hash } from 'helpers/utils';
-import { nanoid } from 'nanoid';
+import { alphaNum, compareHash, detectBrowser, hash } from 'helpers/utils';
+import { customAlphabet, nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
 import { Brackets, IsNull, Not, Repository } from 'typeorm';
 import { isUUID } from '@nestjs/common/utils/is-uuid';
@@ -340,6 +340,15 @@ export class AuthService {
     });
   }
 
+  getUserByApiKey(value: string) {
+    return this.userRepository.findOne({
+      where: {
+        apiKey: value,
+      },
+      relations: ['userRole'],
+    });
+  }
+
   async verifyResendMailVerificationToken(userId: string) {
     const user = await this.userRepository.findOne({
       where: {
@@ -520,5 +529,31 @@ export class AuthService {
 
   async getUserMembership(userId: string) {
     return this.membershipService.getUserMembership(userId);
+  }
+
+  async getApiCredentials(userId: string) {
+    const { apiKey } = await this.userRepository.findOneOrFail({
+      id: userId,
+    });
+
+    if (apiKey) {
+      return { apiKey };
+    }
+
+    return null;
+  }
+
+  async createApiCredentials(userId: string) {
+    const apiKey = customAlphabet(alphaNum, 50)();
+    const apiSecret = customAlphabet(alphaNum, 70)();
+
+    const apiSecretHashed = await bcrypt.hash(apiSecret, 10);
+
+    await this.userRepository.update(
+      { id: userId },
+      { apiKey, apiSecret: apiSecretHashed },
+    );
+
+    return { apiKey, apiSecret };
   }
 }
