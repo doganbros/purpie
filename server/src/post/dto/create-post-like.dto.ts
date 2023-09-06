@@ -1,13 +1,12 @@
 import { IsIn, IsOptional, IsUUID } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreatePostLikeDto {
   @ApiProperty()
   @IsUUID()
   postId: string;
 
-  @ApiProperty({
-    required: false,
+  @ApiPropertyOptional({
     enum: ['like', 'dislike'],
   })
   @IsOptional()

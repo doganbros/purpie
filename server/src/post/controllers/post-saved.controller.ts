@@ -26,7 +26,7 @@ import { MixedPostFeedListResponse } from '../response/post-list-feed.response';
 import { PostSavedService } from '../services/post-saved.service';
 
 @Controller({ version: '1', path: 'post/saved' })
-@ApiTags('post/saved')
+@ApiTags('Post Saved')
 export class PostSavedController {
   constructor(
     private readonly postService: PostService,

@@ -8,9 +8,11 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
+  Res,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
@@ -26,9 +28,10 @@ import { PostLikeListResponse } from '../response/post.response';
 import { PostLikeQuery } from '../dto/post-like.query';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { PostLikeService } from '../services/post-like.service';
+import { Response } from 'express';
 
 @Controller({ version: '1', path: 'post/like' })
-@ApiTags('post/like')
+@ApiTags('Post Like')
 export class PostLikeController {
   constructor(
     private readonly postService: PostService,
@@ -38,8 +41,7 @@ export class PostLikeController {
   @Post('create')
   @ValidationBadRequest()
   @ApiCreatedResponse({
-    description: 'User likes a post. Returns the like id',
-    schema: { type: 'int', example: 1 },
+    description: 'User likes a post.',
   })
   @IsAuthenticated()
   @ApiNotFoundResponse({
@@ -51,9 +53,18 @@ export class PostLikeController {
       'POST_NOT_FOUND',
     ),
   })
+  @ApiForbiddenResponse({
+    description: 'Error thrown when the post is not allowed for reaction',
+    schema: errorResponseDoc(
+      403,
+      "This post doesn't allow reactions",
+      'POST_REACTION_NOT_ALLOWED',
+    ),
+  })
   async createPostLike(
     @Body() info: CreatePostLikeDto,
     @CurrentUser() user: UserTokenPayload,
+    @Res() res: Response,
   ) {
     const post = await this.postService.validatePost(user.id, info.postId);
 
@@ -74,7 +85,7 @@ export class PostLikeController {
       await this.postLikeService.updatePostLike(like, positive);
     } else await this.postLikeService.createPostLike(user.id, info);
 
-    return like?.id;
+    return res.status(200);
   }
 
   @Get('list/:postId')
