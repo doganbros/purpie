@@ -119,3 +119,11 @@ export class UserMembership {
   @ApiProperty()
   videoSize: number;
 }
+
+export class UserApiCredentials {
+  @ApiProperty()
+  apiKey: string;
+
+  @ApiProperty()
+  apiSecret: string;
+}

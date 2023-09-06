@@ -27,6 +27,7 @@ import {
 import { InitializeUserDto } from '../dto/initialize-user.dto';
 import { RegisterUserDto } from '../dto/register-user.dto';
 import {
+  UserApiCredentials,
   UserBasicWithToken,
   UserProfile,
   UserTokenPayload,
@@ -540,7 +541,7 @@ export class AuthService {
     return null;
   }
 
-  async createApiCredentials(userId: string) {
+  async createApiCredentials(userId: string): Promise<UserApiCredentials> {
     const apiKey = customAlphabet(alphaNum, 50)();
     const apiSecret = customAlphabet(alphaNum, 70)();
 
