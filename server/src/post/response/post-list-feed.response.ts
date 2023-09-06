@@ -1,5 +1,4 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { User } from 'entities/User.entity';
 import { PostType } from 'types/Post';
 
 class PostFeedUser {

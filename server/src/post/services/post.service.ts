@@ -13,7 +13,6 @@ import { PostLike } from 'entities/PostLike.entity';
 import { PostTag } from 'entities/PostTag.entity';
 import { PostVideo } from 'entities/PostVideo.entity';
 import { PostView } from 'entities/PostView.entity';
-import { SavedPost } from 'entities/SavedPost.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { booleanValue, tsqueryParam } from 'helpers/utils';
@@ -255,15 +254,6 @@ export class PostService {
             .andWhere('user_post_like.positive = false')
             .andWhere('user_post_like.userId = :currentUserId'),
         'post_disliked',
-      )
-      .addSelect(
-        (sq) =>
-          sq
-            .select('count(*) > 0')
-            .from(SavedPost, 'user_saved_post')
-            .where('user_saved_post.postId = post.id')
-            .andWhere('user_saved_post.userId = :currentUserId'),
-        'post_saved',
       )
       .addSelect(
         (sq) =>
