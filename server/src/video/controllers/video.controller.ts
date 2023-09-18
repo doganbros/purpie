@@ -8,7 +8,13 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiConsumes,
+  ApiExcludeEndpoint,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Post as PostEntity } from 'entities/Post.entity';
 import path from 'path';
@@ -26,6 +32,7 @@ import { User } from '../../../entities/User.entity';
 import { PostReaction } from '../../../entities/PostReaction.entity';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { defaultPostSettings } from '../../../entities/data/default-post-settings';
+import { errorResponseDoc } from '../../../helpers/error-response-doc';
 
 const { S3_VIDEO_POST_DIR = '' } = process.env;
 
@@ -36,6 +43,15 @@ export class VideoController {
 
   @Post('create')
   @ApiConsumes('multipart/form-data')
+  @ApiBadRequestResponse({
+    description:
+      'Error thrown when the requested video format invalid. Valid formats: 3gpp, mp4, quicktime, webm, x-flv and mpeg',
+    schema: errorResponseDoc(
+      400,
+      'Please upload a valid video format',
+      'INVALID_VIDEO_FORMAT',
+    ),
+  })
   @UseInterceptors(
     FileInterceptor('videoFile', {
       storage: s3Storage(S3_VIDEO_POST_DIR),
@@ -66,6 +82,9 @@ export class VideoController {
   )
   @IsAuthenticated([], { injectUserProfile: true })
   @ValidationBadRequest()
+  @ApiOkResponse({
+    description: 'Upload a video file successfully',
+  })
   async createVideoPost(
     @Body() videoInfo: CreateVideoDto,
     @CurrentUserProfile() user: UserProfile,
@@ -118,6 +137,7 @@ export class VideoController {
     return videoPostPayload;
   }
 
+  @ApiExcludeEndpoint()
   @Post('client/feedback')
   @IsClientAuthenticated(['manageStream'])
   @ApiOkResponse({

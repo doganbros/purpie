@@ -22,13 +22,13 @@ import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
+import { Response } from 'express';
 import { CreatePostLikeDto } from '../dto/create-post-like.dto';
 import { PostService } from '../services/post.service';
 import { PostLikeListResponse } from '../response/post.response';
 import { PostLikeQuery } from '../dto/post-like.query';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { PostLikeService } from '../services/post-like.service';
-import { Response } from 'express';
 
 @Controller({ version: '1', path: 'post/like' })
 @ApiTags('Post Like')

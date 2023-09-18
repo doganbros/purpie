@@ -30,7 +30,6 @@ import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
 import { PostService } from '../services/post.service';
 import {
   BasePostFeedList,
-  MixedPostFeedDetail,
   PublicPostFeedListResponse,
 } from '../response/post-list-feed.response';
 import { ListPostFeedQuery } from '../dto/list-post-feed.query';

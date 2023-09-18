@@ -62,6 +62,7 @@ async function bootstrap() {
     swaggerOptions: {
       persistAuthorization: true,
     },
+    customfavIcon: '../../public/favicon.ico',
   });
 
   app

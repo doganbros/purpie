@@ -27,7 +27,6 @@ import {
   ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
-  getSchemaPath,
 } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
@@ -68,7 +67,7 @@ export class AuthController {
 
   @Post('register')
   @ApiCreatedResponse({
-    type: UserBasic, //TODO swagger update
+    type: UserBasic,
     description:
       'User register with requested payload and returns user basic details',
   })

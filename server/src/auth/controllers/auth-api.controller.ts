@@ -44,7 +44,7 @@ export class AuthApiController {
   @Get('credentials')
   @IsAuthenticated()
   @ApiOkResponse({
-    description: `Signs in user. If it contains a header subdomain, it will be validated. If user's email is not verified an unauthorized error will be thrown. `,
+    description: `Signs in api user. If user's email is not verified an unauthorized error will be thrown. `,
   })
   @ApiNotFoundResponse({
     description:
@@ -68,7 +68,7 @@ export class AuthApiController {
     return credentials;
   }
 
-  @Post('login')
+  @Post('authorize')
   @ValidationBadRequest()
   @ApiNotFoundResponse({
     description: "Error thrown when user's api key or secret is invalid ",

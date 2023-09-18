@@ -20,14 +20,15 @@ import {
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
+import { Response } from 'express';
 import { FolderService } from '../services/folder.service';
 import { CreatePostFolderDto } from '../dto/create-post-folder.dto';
 import { UpdatePostFolderDto } from '../dto/update-post-folder.dto';
 import { AddOrRemovePostFolderItemDto } from '../dto/add-or-remove-post-folder-item.dto';
 import { PostFolderResponse } from '../response/post.response';
-import { Response } from 'express';
 import { errorResponseDoc } from '../../../helpers/error-response-doc';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+
 @Controller({ version: '1', path: 'post/folder' })
 @ApiTags('Post Folder')
 export class PostFolderController {

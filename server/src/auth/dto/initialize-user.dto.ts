@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, Matches } from 'class-validator';
 import { USER_NAME_CONSTRAINT } from 'helpers/constants';
 import { RegisterUserDto } from './register-user.dto';

@@ -26,6 +26,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
+import { Response } from 'express';
 import { CreatePostCommentDto } from '../dto/create-post-comment.dto';
 import { UpdatePostCommentDto } from '../dto/update-comment.dto';
 import {
@@ -37,7 +38,6 @@ import { ErrorTypes } from '../../../types/ErrorTypes';
 import { PostCommentService } from '../services/post-comment.service';
 import { PostService } from '../services/post.service';
 import { CreatePostCommentLikeDto } from '../dto/create-post-comment-like.dto';
-import { Response } from 'express';
 
 @Controller({ version: '1', path: 'post/comment' })
 @ApiTags('Post Comment')

@@ -14,7 +14,14 @@ import {
 import { ChatMessageAttachment } from 'entities/ChatMessageAttachment.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
-import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiForbiddenResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { s3, s3HeadObject, s3Storage } from 'config/s3-storage';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
@@ -22,15 +29,37 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
 import { ChatMessageListQuery } from '../dto/chat-message-list.dto';
 import { ChatService } from '../services/chat.service';
+import { errorResponseDoc } from '../../../helpers/error-response-doc';
+import { ErrorTypes } from '../../../types/ErrorTypes';
+import { ChatListResponse } from '../response/chat-list.response';
+import { ChatCountResponse } from '../response/chat-count.response';
 
 const { S3_BUCKET_NAME = '', S3_CHAT_ATTACHMENTS_DIR = '' } = process.env;
 
-@ApiTags('chat')
+@ApiTags('Chat')
 @Controller({ version: '1', path: 'chat' })
 export class ChatController {
   constructor(private chatService: ChatService) {}
 
   @Get('list/messages/:medium/:id')
+  @ApiParam({
+    name: 'medium',
+    description: 'medium of the messages',
+    enum: ['direct', 'channel', 'post'],
+  })
+  @ApiForbiddenResponse({
+    description:
+      'Error thrown when given medium source not found with given credentials.',
+    schema: errorResponseDoc(
+      403,
+      'You are not authorized',
+      ErrorTypes.NOT_AUTHORIZED,
+    ),
+  })
+  @ApiOkResponse({
+    description: 'List chat messages with given params',
+    type: ChatListResponse,
+  })
   @IsAuthenticated()
   listChatMessages(
     @Param('medium') medium: string,
@@ -42,6 +71,11 @@ export class ChatController {
   }
 
   @Get('message/unread/counts')
+  @ApiOkResponse({
+    description: 'Get unread message count with each contact user',
+    type: ChatCountResponse,
+    isArray: true,
+  })
   @IsAuthenticated()
   async countUnreadMessages(@CurrentUser() user: UserTokenPayload) {
     const result = [];
@@ -121,11 +155,11 @@ export class ChatController {
 
   @Delete('attachment/:name')
   @IsAuthenticated()
+  @ApiOkResponse({ description: 'Delete specified chat attachment' })
   async removeChatAttachment(
     @Param('name') name: string,
     @CurrentUser() user: UserTokenPayload,
   ) {
     await this.chatService.removeChatMessageAttachment(name, user.id);
-    return 'OK';
   }
 }

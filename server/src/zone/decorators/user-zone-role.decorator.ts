@@ -6,6 +6,8 @@ import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { UserPermissionOptions } from 'src/auth/interfaces/user.interface';
 import { RolePermission } from 'types/RolePermission';
 import { UserZoneGuard } from '../guards/user-zone.guard';
+import { errorResponseDoc } from '../../../helpers/error-response-doc';
+import { ErrorTypes } from '../../../types/ErrorTypes';
 
 export const UserZoneRole = (
   permissions: Array<RolePermission<ZoneRole>> = [],
@@ -21,6 +23,10 @@ export const UserZoneRole = (
     ApiNotFoundResponse({
       description:
         'User Zone not found. Error thrown when user zone is not found.',
-      status: 404,
+      schema: errorResponseDoc(
+        404,
+        'User Zone not found',
+        ErrorTypes.ZONE_NOT_FOUND,
+      ),
     }),
   );

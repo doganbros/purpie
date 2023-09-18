@@ -1,5 +1,5 @@
 import { IsIn, IsOptional } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { PaginationQuery } from 'types/PaginationQuery';
 
 export class PostLikeQuery extends PaginationQuery {

@@ -6,7 +6,12 @@ import {
   HttpStatus,
   Post,
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiExcludeController,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { IsAuthenticated } from '../decorators/auth.decorator';
 import { IsClientAuthenticated } from '../decorators/client-auth.decorator';
 import { CurrentClient } from '../decorators/current-client.decorator';
@@ -22,6 +27,7 @@ import {
 import { UserTokenPayload } from '../interfaces/user.interface';
 import { ClientAuthService } from '../services/client-auth.service';
 
+@ApiExcludeController()
 @Controller({ path: 'auth/client', version: '1' })
 @ApiTags('auth-client')
 export class ClientAuthController {

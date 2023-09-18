@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from 'entities/Notification.entity';
 import { Connection, In, IsNull, Repository } from 'typeorm';
-import { ListNotificationQuery } from './dto/list-notification.query';
+import { ListNotificationQuery } from '../dto/list-notification.query';
 
 @Injectable()
 export class NotificationService {
