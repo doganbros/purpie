@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserRole } from 'entities/UserRole.entity';
 import { SoftEntity } from 'types/SoftEntity';
 
@@ -12,12 +12,13 @@ export class UserProfile {
   @ApiProperty()
   email: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional({ type: String })
   userName?: string | null;
 
-  @ApiProperty()
+  @ApiPropertyOptional({ type: String })
   displayPhoto?: string | null;
 
+  @ApiPropertyOptional()
   refreshTokenId?: string;
 
   @ApiProperty({

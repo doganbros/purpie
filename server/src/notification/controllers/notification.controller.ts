@@ -7,25 +7,37 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
-import { ListNotificationQuery } from './dto/list-notification.query';
-import { NotificationService } from './notification.service';
+import { ListNotificationQuery } from '../dto/list-notification.query';
+import { NotificationService } from '../services/notification.service';
+import {
+  NotificationCount,
+  NotificationResponse,
+} from '../responses/notification.response';
 
 @Controller({ version: '1', path: 'notification' })
-@ApiTags('notification')
+@ApiTags('Notification')
 export class NotificationController {
   constructor(private notificationService: NotificationService) {}
 
   @Get('count')
+  @ApiOkResponse({
+    description: 'Get number of count of notification',
+    type: NotificationCount,
+  })
   @IsAuthenticated()
   getNotificationCount(@CurrentUser() user: UserTokenPayload) {
     return this.notificationService.getNotificationCount(user.id);
   }
 
   @Get('list')
+  @ApiOkResponse({
+    description: 'List notifications with given query parameters',
+    type: NotificationResponse,
+  })
   @IsAuthenticated()
   listNotifications(
     @CurrentUser() user: UserTokenPayload,
@@ -35,6 +47,10 @@ export class NotificationController {
   }
 
   @Post('view')
+  @ApiOkResponse({
+    description:
+      'View specified notification and update readOn date property on notification',
+  })
   @IsAuthenticated()
   async viewNotifications(
     @CurrentUser() user: UserTokenPayload,
@@ -60,15 +76,18 @@ export class NotificationController {
     type: Number,
     allowEmptyValue: true,
   })
+  @ApiOkResponse({
+    description:
+      'Read specified notification and update readOn date property on notification',
+  })
   @IsAuthenticated()
   async readNotifications(
     @CurrentUser() user: UserTokenPayload,
     @Param('notificationId') notificationId?: string,
   ) {
-    const result = await this.notificationService.markNotificationsAsRead(
+    await this.notificationService.markNotificationsAsRead(
       user.id,
       notificationId || undefined,
     );
-    return result.affected ? 'Created' : 'OK';
   }
 }

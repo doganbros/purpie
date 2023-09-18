@@ -1,10 +1,11 @@
 import { Body, Controller, ForbiddenException, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiExcludeController, ApiTags } from '@nestjs/swagger';
 import { SendTestMailDto } from './dto/send-test-mail.dto';
 import { MailService } from './mail.service';
 import { ErrorTypes } from '../../types/ErrorTypes';
 
 @ApiTags('mail')
+@ApiExcludeController()
 @Controller({ version: '1', path: 'mail' })
 export class MailController {
   constructor(private mailService: MailService) {}

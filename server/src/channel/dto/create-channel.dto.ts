@@ -5,24 +5,24 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateChannelDto {
-  @ApiProperty()
+  @ApiProperty({ maxLength: 32 })
   @IsString()
   @IsNotEmpty()
   @MaxLength(32)
   name: string;
 
-  @ApiProperty({
-    required: false,
+  @ApiPropertyOptional({
+    maxLength: 256,
   })
   @IsString()
   @IsOptional()
   @MaxLength(256)
   description?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   public?: boolean;

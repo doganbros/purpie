@@ -1,6 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserChannel } from 'entities/UserChannel.entity';
 import { Repository } from 'typeorm';
 import { PostService } from './post.service';
 import { ErrorTypes } from '../../../types/ErrorTypes';
@@ -17,8 +20,6 @@ export class FolderService {
     private folderRepository: Repository<PostFolder>,
     @InjectRepository(PostFolderItem)
     private folderItemRepository: Repository<PostFolderItem>,
-    @InjectRepository(UserChannel)
-    private userChannelRepository: Repository<UserChannel>,
     private postService: PostService,
   ) {}
 
@@ -115,7 +116,10 @@ export class FolderService {
     const post = await this.postService.getPostById(userId, info.postId);
 
     if (!post)
-      throw new NotFoundException(ErrorTypes.POST_NOT_FOUND, 'Post not found');
+      throw new BadRequestException(
+        ErrorTypes.POST_NOT_FOUND,
+        'Post not found',
+      );
 
     const folderItem = await this.folderItemRepository
       .create({
@@ -148,7 +152,7 @@ export class FolderService {
         'Post folder item not found',
       );
 
-    return this.folderItemRepository.delete({
+    await this.folderItemRepository.delete({
       postId: info.postId,
       folderId: info.folderId,
     });
