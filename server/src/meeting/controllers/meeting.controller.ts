@@ -56,6 +56,8 @@ import { ErrorTypes } from '../../../types/ErrorTypes';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+const { NODE_ENV } = process.env;
+
 @Controller({ path: 'meeting', version: '1' })
 @ApiTags('Meeting')
 export class MeetingController {
@@ -88,11 +90,12 @@ export class MeetingController {
     @CurrentUserProfile() user: UserProfile,
     @CurrentUserMembership() userMembership: UserMembership,
   ) {
-    await this.meetingService.validateCreateMeeting(
-      user.id,
-      userMembership,
-      createMeetingInfo.liveStream,
-    );
+    if (NODE_ENV !== 'development')
+      await this.meetingService.validateCreateMeeting(
+        user.id,
+        userMembership,
+        createMeetingInfo.liveStream,
+      );
 
     const { channelId, timeZone } = createMeetingInfo;
 

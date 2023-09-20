@@ -49,7 +49,8 @@ const App: FC = () => {
       dispatch(getUserChannelsAction());
       dispatch(getUserZonesAction());
       dispatch(listFolderAction());
-      dispatch(getUserMembershipAction());
+      process.env.NODE_ENV !== 'development' &&
+        dispatch(getUserMembershipAction());
     }
   }, [isAuthenticated]);
 

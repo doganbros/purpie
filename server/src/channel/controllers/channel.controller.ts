@@ -66,7 +66,11 @@ import { ErrorTypes } from '../../../types/ErrorTypes';
 import { ChannelSearchResponse } from '../responses/channel-search.response';
 import { ChannelUserResponse } from '../responses/channel-user.response';
 
-const { S3_PROFILE_PHOTO_DIR = '', S3_BUCKET_NAME = '' } = process.env;
+const {
+  S3_PROFILE_PHOTO_DIR = '',
+  S3_BUCKET_NAME = '',
+  NODE_ENV,
+} = process.env;
 
 @Controller({ path: 'channel', version: '1' })
 @ApiTags('Channel')
@@ -108,10 +112,11 @@ export class ChannelController {
     @CurrentUserMembership() userMembership: UserMembership,
     @CurrentUserZone() currentUserZone: UserZone,
   ) {
-    await this.channelService.validateCreateChannel(
-      userProfile.id,
-      userMembership.channelCount,
-    );
+    if (NODE_ENV !== 'development')
+      await this.channelService.validateCreateChannel(
+        userProfile.id,
+        userMembership.channelCount,
+      );
 
     const userChannel = await this.channelService.createChannel(
       userProfile.id,
