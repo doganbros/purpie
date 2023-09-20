@@ -6,6 +6,7 @@ import ZoneSettings from './ZoneSettings';
 import { useTitle } from '../../../hooks/useTitle';
 import SettingsAndStaticPageLayout from '../../../components/layouts/SettingsAndStaticPageLayout/SettingsAndStaticPageLayout';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
+import ApiManagement from './MemberShip/ApiManagement/ApiManagement';
 
 const Settings: FC = () => {
   const { t } = useTranslation();
@@ -16,6 +17,7 @@ const Settings: FC = () => {
     ChannelSettings(),
     ZoneSettings(),
     // MembershipSettings(),
+    ApiManagement(),
   ].filter((v): v is Menu => v !== null);
 
   return (

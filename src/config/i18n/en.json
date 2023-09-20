@@ -570,7 +570,11 @@
     "membershipPlans": "Membership Plans",
     "upgradeMembership": "Upgrade",
     "cancelMembership": "Cancel Membership",
-    "downgradeMembership": "Downgrade"
+    "downgradeMembership": "Downgrade",
+    "apiManagement": "API Management",
+    "generateApi": "Generate",
+    "regenerateApi": "Regenerate",
+    "apiManagementSubText": "Manage your API key and secret"
   },
   "ManageChannelUser": {
     "title": "Manage Channel Follower",
