@@ -20,7 +20,6 @@ import {
   ApiBadRequestResponse,
   ApiBody,
   ApiCreatedResponse,
-  ApiExcludeEndpoint,
   ApiForbiddenResponse,
   ApiHeader,
   ApiNotFoundResponse,
@@ -60,6 +59,7 @@ import { ChangePasswordDto } from '../dto/change-password.dto';
 
 const { VERIFICATION_TOKEN_SECRET = '' } = process.env;
 
+// @ApiExcludeController()
 @Controller({ path: 'auth', version: '1' })
 @ApiTags('Auth')
 export class AuthController {
@@ -193,7 +193,7 @@ export class AuthController {
   }
 
   @Post('/initial-user')
-  @ApiExcludeEndpoint()
+  // @ApiExcludeEndpoint()
   @UseGuards(InitialUserGuard)
   async setInitialUser(
     @Body() info: InitializeUserDto,

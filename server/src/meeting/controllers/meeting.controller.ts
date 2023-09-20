@@ -12,7 +12,6 @@ import {
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
-  ApiExcludeEndpoint,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
@@ -342,7 +341,7 @@ export class MeetingController {
     return result;
   }
 
-  @ApiExcludeEndpoint()
+  // @ApiExcludeEndpoint()
   @Get('logs/list/:meetingSlug')
   @ApiOkResponse({
     description: 'User gets meeting logs',
@@ -356,7 +355,7 @@ export class MeetingController {
     return this.meetingService.getMeetingLogs(user.id, meetingSlug, query);
   }
 
-  @ApiExcludeEndpoint()
+  // @ApiExcludeEndpoint()
   @Get('recordings/list/:meetingSlug')
   @ApiOkResponse({
     description: 'User gets meeting recordings',
@@ -375,7 +374,7 @@ export class MeetingController {
     return this.meetingService.getMeetingRecordingList(meetingSlug, query);
   }
 
-  @ApiExcludeEndpoint()
+  // @ApiExcludeEndpoint()
   @Post('/events/:identifier/:eventName')
   @ApiCreatedResponse({
     description:
@@ -400,7 +399,7 @@ export class MeetingController {
     }
   }
 
-  @ApiExcludeEndpoint()
+  // @ApiExcludeEndpoint()
   @Post('/client/verify')
   @ApiCreatedResponse({
     description:
@@ -426,7 +425,7 @@ export class MeetingController {
     return 'OK';
   }
 
-  @ApiExcludeEndpoint()
+  // @ApiExcludeEndpoint()
   @Get('conference/info')
   @ApiOkResponse({
     description: 'Get current conference information',
