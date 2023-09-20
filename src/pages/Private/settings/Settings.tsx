@@ -18,7 +18,7 @@ const Settings: FC = () => {
     ZoneSettings(),
   ].filter((v): v is Menu => v !== null);
 
-  process.env.NODE_ENV !== 'development' && data.push(MembershipSettings());
+  if (process.env.NODE_ENV !== 'development') data.push(MembershipSettings());
   return (
     <SettingsAndStaticPageLayout
       pageTitle={t('settings.settings')}
