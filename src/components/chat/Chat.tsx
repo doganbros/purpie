@@ -325,6 +325,7 @@ const Chat: React.FC<Props> = ({
 
     socket.on('call_started', (payload) => {
       if (payload.roomName === roomName)
+        // eslint-disable-next-line
         alert(`call started from userID: ${payload.userId}`);
     });
 

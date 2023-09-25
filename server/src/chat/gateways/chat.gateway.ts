@@ -162,6 +162,7 @@ export class ChatGateway {
       userId: socket.user.id,
     });
   }
+
   @SubscribeMessage('leave_call')
   async leaveCall(
     @ConnectedSocket() socket: SocketWithTokenPayload,
@@ -170,7 +171,7 @@ export class ChatGateway {
     const roomName = this.chatService.getRoomName(userId);
 
     socket.to(roomName).emit('call_ended', {
-      roomName: roomName,
+      roomName,
       userId: socket.user.id,
     });
   }
