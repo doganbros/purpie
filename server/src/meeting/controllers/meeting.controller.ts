@@ -12,7 +12,6 @@ import {
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
-  ApiExcludeEndpoint,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
@@ -57,6 +56,8 @@ import { ErrorTypes } from '../../../types/ErrorTypes';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+const { NODE_ENV } = process.env;
+
 @Controller({ path: 'meeting', version: '1' })
 @ApiTags('Meeting')
 export class MeetingController {
@@ -89,11 +90,12 @@ export class MeetingController {
     @CurrentUserProfile() user: UserProfile,
     @CurrentUserMembership() userMembership: UserMembership,
   ) {
-    await this.meetingService.validateCreateMeeting(
-      user.id,
-      userMembership,
-      createMeetingInfo.liveStream,
-    );
+    if (NODE_ENV !== 'development')
+      await this.meetingService.validateCreateMeeting(
+        user.id,
+        userMembership,
+        createMeetingInfo.liveStream,
+      );
 
     const { channelId, timeZone } = createMeetingInfo;
 
@@ -342,7 +344,7 @@ export class MeetingController {
     return result;
   }
 
-  @ApiExcludeEndpoint()
+  // @ApiExcludeEndpoint()
   @Get('logs/list/:meetingSlug')
   @ApiOkResponse({
     description: 'User gets meeting logs',
@@ -356,7 +358,7 @@ export class MeetingController {
     return this.meetingService.getMeetingLogs(user.id, meetingSlug, query);
   }
 
-  @ApiExcludeEndpoint()
+  // @ApiExcludeEndpoint()
   @Get('recordings/list/:meetingSlug')
   @ApiOkResponse({
     description: 'User gets meeting recordings',
@@ -375,7 +377,7 @@ export class MeetingController {
     return this.meetingService.getMeetingRecordingList(meetingSlug, query);
   }
 
-  @ApiExcludeEndpoint()
+  // @ApiExcludeEndpoint()
   @Post('/events/:identifier/:eventName')
   @ApiCreatedResponse({
     description:
@@ -400,7 +402,7 @@ export class MeetingController {
     }
   }
 
-  @ApiExcludeEndpoint()
+  // @ApiExcludeEndpoint()
   @Post('/client/verify')
   @ApiCreatedResponse({
     description:
@@ -426,7 +428,7 @@ export class MeetingController {
     return 'OK';
   }
 
-  @ApiExcludeEndpoint()
+  // @ApiExcludeEndpoint()
   @Get('conference/info')
   @ApiOkResponse({
     description: 'Get current conference information',

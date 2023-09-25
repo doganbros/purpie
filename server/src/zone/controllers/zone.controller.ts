@@ -66,7 +66,11 @@ import { ZoneUserResponse } from '../responses/zone-user.response';
 import { SearchZoneResponse } from '../responses/search-zone.response';
 import { UserZoneRoleResponse } from '../responses/user-zone.response';
 
-const { S3_PROFILE_PHOTO_DIR = '', S3_BUCKET_NAME = '' } = process.env;
+const {
+  S3_PROFILE_PHOTO_DIR = '',
+  S3_BUCKET_NAME = '',
+  NODE_ENV,
+} = process.env;
 
 @Controller({ version: '1', path: 'zone' })
 @ApiTags('Zone')
@@ -109,10 +113,11 @@ export class ZoneController {
     @CurrentUserProfile() userProfile: UserProfile,
     @CurrentUserMembership() userMembership: UserMembership,
   ) {
-    await this.zoneService.validateCreateZone(
-      userProfile.id,
-      userMembership.zoneCount,
-    );
+    if (NODE_ENV !== 'development')
+      await this.zoneService.validateCreateZone(
+        userProfile.id,
+        userMembership.zoneCount,
+      );
 
     const userZone = await this.zoneService.createZone(
       userProfile.id,

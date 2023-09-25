@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiExcludeEndpoint, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
@@ -49,7 +49,7 @@ export class ActivityController {
     return this.activityService.getContactSuggestions(user.id);
   }
 
-  @ApiExcludeEndpoint()
+  // @ApiExcludeEndpoint()
   @Get('/list/notifications')
   @IsAuthenticated()
   getUserNotifications(
@@ -59,7 +59,7 @@ export class ActivityController {
     return this.activityService.getNotifications(user.id, query);
   }
 
-  @ApiExcludeEndpoint()
+  // @ApiExcludeEndpoint()
   @Post('/mark/notification')
   @IsAuthenticated()
   markNotificationAsRead(

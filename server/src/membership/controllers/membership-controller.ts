@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { ApiExcludeController, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { MembershipService } from '../services/membership.service';
 import {
@@ -12,7 +12,7 @@ import {
 } from '../../auth/interfaces/user.interface';
 
 @Controller({ path: 'membership', version: '1' })
-@ApiExcludeController()
+// @ApiExcludeController()
 @ApiTags('membership')
 export class MembershipController {
   constructor(private membershipService: MembershipService) {}
