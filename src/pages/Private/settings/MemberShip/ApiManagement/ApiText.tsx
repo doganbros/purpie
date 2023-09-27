@@ -5,8 +5,9 @@ import React from 'react';
 interface ApiTextProps {
   text: string;
   title: string;
+  copyActive: boolean;
 }
-const ApiText: React.FC<ApiTextProps> = ({ text, title }) => {
+const ApiText: React.FC<ApiTextProps> = ({ text, title, copyActive }) => {
   const handleCopy = () => {
     navigator.clipboard.writeText(text);
   };
@@ -26,9 +27,11 @@ const ApiText: React.FC<ApiTextProps> = ({ text, title }) => {
         <Text wordBreak="break-all" size="small">
           {text}
         </Text>
-        <Box style={{ cursor: 'pointer' }}>
-          <Copy onClick={handleCopy} />
-        </Box>
+        {copyActive && (
+          <Box style={{ cursor: 'pointer' }}>
+            <Copy onClick={handleCopy} />
+          </Box>
+        )}
       </Box>
     </Box>
   );

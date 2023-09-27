@@ -46,10 +46,18 @@ const ApiManagement: () => Menu | null = () => {
               <ApiText
                 text={apiKey || '*'.repeat(100)}
                 title={t('settings.apiKey')}
+                copyActive={
+                  apiKey !== undefined && apiKey !== null && apiKey?.length > 0
+                }
               />
               <ApiText
-                text={apiSecret || '*'.repeat(apiKey?.length * 1.3 || 100)}
+                text={apiSecret || '*'.repeat(apiKey?.length * 1.4 || 100)}
                 title={t('settings.apiSecret')}
+                copyActive={
+                  apiSecret !== undefined &&
+                  apiSecret !== null &&
+                  apiSecret?.length > 0
+                }
               />
             </Box>
             <Button
