@@ -574,7 +574,9 @@
     "apiManagement": "API Management",
     "generateApi": "Generate",
     "regenerateApi": "Regenerate",
-    "apiManagementSubText": "Manage your API key and secret"
+    "apiManagementSubText": "Manage your API key and secret",
+    "apiKey": "API Key",
+    "apiSecret": "API Secret"
   },
   "ManageChannelUser": {
     "title": "Manage Channel Follower",
