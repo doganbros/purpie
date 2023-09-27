@@ -11,7 +11,6 @@ import {
 import {
   ApiBadRequestResponse,
   ApiConsumes,
-  ApiExcludeEndpoint,
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -37,7 +36,7 @@ import { errorResponseDoc } from '../../../helpers/error-response-doc';
 const { S3_VIDEO_POST_DIR = '' } = process.env;
 
 @Controller({ path: 'video', version: '1' })
-@ApiTags('video')
+@ApiTags('Video')
 export class VideoController {
   constructor(private staticVideoService: VideoService) {}
 
@@ -137,7 +136,7 @@ export class VideoController {
     return videoPostPayload;
   }
 
-  @ApiExcludeEndpoint()
+  // @ApiExcludeEndpoint()
   @Post('client/feedback')
   @IsClientAuthenticated(['manageStream'])
   @ApiOkResponse({

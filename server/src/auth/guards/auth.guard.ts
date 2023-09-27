@@ -105,7 +105,10 @@ export class AuthGuard implements CanActivate {
       }
     }
 
-    if (userPermissions.length || userPermissionOptions.injectUserMembership) {
+    if (
+      (userPermissions.length || userPermissionOptions.injectUserMembership) &&
+      process.env.NODE_ENV !== 'development'
+    ) {
       req.userMembership = await this.authService.getUserMembership(
         req.user.id,
       );

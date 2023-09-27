@@ -9,7 +9,10 @@ import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { json } from 'express';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
 import { AppModule } from './app.module';
+
+import swaggerJson from './swagger.json';
 
 initApp();
 
@@ -64,6 +67,8 @@ async function bootstrap() {
     },
     customfavIcon: '../../public/favicon.ico',
   });
+
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJson));
 
   app
     .listen(SERVER_PORT)

@@ -14,7 +14,8 @@
     "baseUrl": "./",
     "noImplicitAny": true,
     "incremental": true,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "resolveJsonModule": true
   },
   "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }
