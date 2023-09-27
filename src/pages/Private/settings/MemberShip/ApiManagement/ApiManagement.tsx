@@ -43,8 +43,11 @@ const ApiManagement: () => Menu | null = () => {
           >
             {/* <Text>Manage Your Api and Usage</Text> */}
             <Box gap="small">
-              <ApiText text={apiKey || '******'} title="API Key" />
-              <ApiText text={apiSecret || '******'} title="API Secret" />
+              <ApiText text={apiKey || '*'.repeat(100)} title="API Key" />
+              <ApiText
+                text={apiSecret || '*'.repeat(apiKey?.length * 1.3 || 100)}
+                title="API Secret"
+              />
             </Box>
             <Button
               onClick={handleCreate}
