@@ -11,7 +11,6 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
-  Req,
   Res,
   UnauthorizedException,
   UseGuards,
@@ -27,7 +26,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { errorResponseDoc } from 'helpers/error-response-doc';
 import { hash } from 'helpers/utils';
@@ -111,8 +110,6 @@ export class AuthController {
   async loginUser(
     @Body() loginUserDto: LoginUserDto,
     @Headers('app-subdomain') subdomain: string,
-    @Res({ passthrough: true }) res: Response,
-    @Req() req: Request,
   ) {
     if (subdomain)
       await this.authService.subdomainValidity(
@@ -164,15 +161,14 @@ export class AuthController {
         'Email must be verified',
       );
 
-    await this.authService.setAccessTokens(
-      {
-        id: user.id,
-      },
-      res,
-      req,
-    );
+    const {
+      accessToken,
+      refreshToken,
+    } = await this.authService.setAccessTokens({
+      id: user.id,
+    });
 
-    return userPayload;
+    return { user: userPayload, accessToken, refreshToken };
   }
 
   @Post('/logout')
@@ -180,27 +176,15 @@ export class AuthController {
   @ApiOkResponse({
     description: 'Ok code returned when logout successfully.',
   })
-  async logout(
-    @CurrentUser() user: UserTokenPayload,
-    @Res({ passthrough: true }) res: Response,
-    @Req() req: Request,
-  ) {
+  async logout(@CurrentUser() user: UserTokenPayload) {
     await this.authService.removeRefreshToken(user.id, user.refreshTokenId!);
-
-    this.authService.removeAccessTokens(req, res);
-
-    return res.status(200);
   }
 
   @Post('/initial-user')
   // @ApiExcludeEndpoint()
   @UseGuards(InitialUserGuard)
-  async setInitialUser(
-    @Body() info: InitializeUserDto,
-    @Res({ passthrough: true }) res: Response,
-    @Req() req: Request,
-  ) {
-    return this.authService.initializeUser(info, res, req);
+  async setInitialUser(@Body() info: InitializeUserDto) {
+    return this.authService.initializeUser(info);
   }
 
   @Post('/verify-email')
@@ -385,14 +369,8 @@ export class AuthController {
     @CurrentUser() user: UserTokenPayload,
     @Body() changePasswordDto: ChangePasswordDto,
     @Res({ passthrough: true }) res: Response,
-    @Req() req: Request,
   ) {
-    const result = await this.authService.changePassword(
-      user.id,
-      changePasswordDto,
-    );
-
-    if (result) this.authService.removeAccessTokens(req, res);
+    await this.authService.changePassword(user.id, changePasswordDto);
 
     return res.status(200);
   }
