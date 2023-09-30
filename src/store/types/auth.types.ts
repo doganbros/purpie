@@ -54,6 +54,12 @@ export interface ExistenceResult {
   suggestions: Array<string>;
 }
 
+export interface SignInResponse {
+  user: User;
+  accessToken: string;
+  refreshToken: string;
+}
+
 export interface UserRole {
   roleCode: UserRoleCode;
   roleName: string;

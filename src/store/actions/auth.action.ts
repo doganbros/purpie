@@ -54,12 +54,16 @@ import {
   VerifyEmailPayload,
 } from '../types/auth.types';
 import { setToastAction } from './util.action';
+import { removeCookie, setCookie } from '../../helpers/cookie';
 
 const {
   REACT_APP_SERVER_HOST,
   REACT_APP_CLIENT_HOST = 'http://localhost:3000',
 } = process.env;
 const clientHostUrl = new URL(REACT_APP_CLIENT_HOST);
+
+const ACCESS_TOKEN_COOKIE_NAME = `PURPIE_${process.env.NODE_ENV.toUpperCase()}_ACCESS_TOKEN`;
+const REFRESH_TOKEN_COOKIE_NAME = `PURPIE_${process.env.NODE_ENV.toUpperCase()}_REFRESH_TOKEN`;
 
 export const loginAction = (user: LoginPayload): AuthAction => {
   return async (dispatch) => {
@@ -68,9 +72,10 @@ export const loginAction = (user: LoginPayload): AuthAction => {
     });
     try {
       const payload = await AuthService.login(user);
+      setTokenToCookie(payload.accessToken, payload.refreshToken);
       dispatch({
         type: LOGIN_SUCCESS,
-        payload,
+        payload: payload.user,
       });
     } catch (err: any) {
       dispatch({
@@ -146,9 +151,11 @@ export const completeProfileAction = (
       });
       const payload = await AuthService.completeProfile(body);
 
+      setTokenToCookie(payload.accessToken, payload.refreshToken);
+
       dispatch({
         type: COMPLETE_PROFILE_SUCCESS,
-        payload,
+        payload: payload.user,
       });
     } catch (err: any) {
       dispatch({
@@ -183,11 +190,13 @@ export const authenticateWithThirdPartyCodeAction = (
       );
       if (typeof payload === 'string')
         appHistory.replace(`/complete-profile/${payload}`);
-      else
+      else {
+        setTokenToCookie(payload.accessToken, payload.refreshToken);
         dispatch({
           type: THIRD_PARTY_AUTH_WITH_CODE_SUCCESS,
-          payload,
+          payload: payload.user,
         });
+      }
     } catch (err: any) {
       dispatch({
         type: THIRD_PARTY_AUTH_WITH_CODE_FAILED,
@@ -201,6 +210,8 @@ export const authenticateWithThirdPartyCodeAction = (
 export const logoutAction = (): AuthAction => {
   return async (dispatch) => {
     await AuthService.logOut();
+    removeCookie(ACCESS_TOKEN_COOKIE_NAME);
+    removeCookie(REFRESH_TOKEN_COOKIE_NAME);
     dispatch({
       type: LOGOUT,
     });
@@ -307,9 +318,12 @@ export const initializeUserAction = (user: RegisterPayload): AuthAction => {
     });
     try {
       const payload = await AuthService.initializeUser(user);
+
+      setTokenToCookie(payload.accessToken, payload.refreshToken);
+
       dispatch({
         type: INITIALIZE_USER_SUCCESS,
-        payload,
+        payload: payload.user,
       });
       appHistory.replace('/');
     } catch (err: any) {
@@ -375,6 +389,8 @@ export const updatePasswordAction = (
     try {
       const payload = await AuthService.updatePassword(password);
       setToastAction('ok', i18n.t('settings.passwordChanged'))(dispatch);
+      removeCookie(ACCESS_TOKEN_COOKIE_NAME);
+      removeCookie(REFRESH_TOKEN_COOKIE_NAME);
       dispatch({
         type: UPDATE_PASSWORD_SUCCESS,
         payload,
@@ -386,4 +402,9 @@ export const updatePasswordAction = (
       });
     }
   };
+};
+
+const setTokenToCookie = (access: string, refresh: string) => {
+  setCookie(ACCESS_TOKEN_COOKIE_NAME, 30, access);
+  setCookie(REFRESH_TOKEN_COOKIE_NAME, 30, refresh);
 };

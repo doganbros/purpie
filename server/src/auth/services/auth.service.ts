@@ -7,15 +7,13 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import bcrypt from 'bcryptjs';
-import dayjs from 'dayjs';
 import { User } from 'entities/User.entity';
 import { UserRefreshToken } from 'entities/UserRefreshToken.entity';
 import { UserRole } from 'entities/UserRole.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
-import { Request, Response } from 'express';
-import { generateJWT, getJWTCookieKeys } from 'helpers/jwt';
-import { alphaNum, compareHash, detectBrowser, hash } from 'helpers/utils';
+import { generateJWT } from 'helpers/jwt';
+import { alphaNum, compareHash, hash } from 'helpers/utils';
 import { customAlphabet, nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
 import { Brackets, IsNull, Not, Repository } from 'typeorm';
@@ -34,7 +32,6 @@ import {
 } from '../interfaces/user.interface';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { ChangePasswordDto } from '../dto/change-password.dto';
-import { BrowserType } from '../../../types/BrowserType';
 import { PostFolder } from '../../../entities/PostFolder.entity';
 import { FolderService } from '../../post/services/folder.service';
 import { MembershipService } from '../../membership/services/membership.service';
@@ -45,8 +42,6 @@ const {
   AUTH_TOKEN_LIFE = '1h',
   AUTH_TOKEN_REFRESH_LIFE = '30d',
   REACT_APP_CLIENT_HOST = '',
-  REACT_APP_SERVER_HOST = '',
-  NODE_ENV = '',
   VERIFICATION_TOKEN_SECRET = '',
 } = process.env;
 
@@ -104,11 +99,7 @@ export class AuthService {
     );
   }
 
-  async setAccessTokens(
-    userPayload: UserTokenPayload,
-    res: Response,
-    req: Request,
-  ) {
+  async setAccessTokens(userPayload: UserTokenPayload) {
     if (userPayload.refreshTokenId) {
       await this.userRefreshTokenRepository.delete({
         userId: userPayload.id,
@@ -130,53 +121,11 @@ export class AuthService {
       })
       .save();
 
-    const domain = `.${new URL(REACT_APP_SERVER_HOST).hostname}`;
-    const isDevelopment = NODE_ENV === 'development';
-
-    const userAgent = req.headers['user-agent'];
-    const isSafariBrowser = detectBrowser(userAgent!) === BrowserType.SAFARI;
-
-    const { accessTokenKey, refreshAccessTokenKey } = getJWTCookieKeys();
-    res.cookie(accessTokenKey, accessToken, {
-      expires: dayjs().add(30, 'days').toDate(),
-      domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
-      httpOnly: true,
-      secure: !(isDevelopment && isSafariBrowser),
-      sameSite: isDevelopment ? 'none' : 'lax',
-    });
-    res.cookie(refreshAccessTokenKey, refreshToken, {
-      expires: dayjs().add(30, 'days').toDate(),
-      domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
-      httpOnly: true,
-      secure: !(isDevelopment && isSafariBrowser),
-      sameSite: isDevelopment ? 'none' : 'lax',
-    });
-
-    return refreshTokenId;
-  }
-
-  removeAccessTokens(req: Request, res: Response) {
-    const domain = `.${new URL(REACT_APP_SERVER_HOST).hostname}`;
-    const isDevelopment = NODE_ENV === 'development';
-
-    const userAgent = req.headers['user-agent'];
-    const isSafariBrowser = detectBrowser(userAgent!) === BrowserType.SAFARI;
-
-    const { accessTokenKey, refreshAccessTokenKey } = getJWTCookieKeys();
-    res.clearCookie(accessTokenKey, {
-      expires: dayjs().add(30, 'days').toDate(),
-      domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
-      httpOnly: true,
-      secure: !(isDevelopment && isSafariBrowser),
-      sameSite: isDevelopment ? 'none' : 'lax',
-    });
-    res.clearCookie(refreshAccessTokenKey, {
-      expires: dayjs().add(30, 'days').toDate(),
-      domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
-      httpOnly: true,
-      secure: !(isDevelopment && isSafariBrowser),
-      sameSite: isDevelopment ? 'none' : 'lax',
-    });
+    return {
+      refreshTokenId,
+      accessToken,
+      refreshToken,
+    };
   }
 
   async verifyRefreshToken(refreshTokenId: string, refreshToken: string) {
@@ -207,7 +156,7 @@ export class AuthService {
       where: { id: refreshTokenId, userId },
     });
 
-    if (userRefreshToken) userRefreshToken.remove();
+    if (userRefreshToken) await userRefreshToken.remove();
   }
 
   async systemUserCount() {
@@ -421,7 +370,7 @@ export class AuthService {
     return user;
   }
 
-  async initializeUser(info: InitializeUserDto, res: Response, req: Request) {
+  async initializeUser(info: InitializeUserDto) {
     const user = await this.userRepository
       .create({
         fullName: info.fullName,
@@ -449,15 +398,11 @@ export class AuthService {
         },
       };
 
-      await this.setAccessTokens(
-        {
-          id: user.id,
-        },
-        res,
-        req,
-      );
+      const { accessToken, refreshToken } = await this.setAccessTokens({
+        id: user.id,
+      });
 
-      return userPayload;
+      return { user: userPayload, accessToken, refreshToken };
     } catch (err: any) {
       await user.remove();
       throw err;

@@ -6,12 +6,11 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { getJWTCookieKeys, verifyJWT } from 'helpers/jwt';
-import { pick } from 'lodash';
 import { AuthService } from '../services/auth.service';
 import { UserPermissionOptions } from '../interfaces/user.interface';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 
-const { AUTH_TOKEN_SECRET = '', AUTH_TOKEN_SECRET_REFRESH = '' } = process.env;
+const { AUTH_TOKEN_SECRET = '' } = process.env;
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -19,7 +18,6 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
-    const res = context.switchToHttp().getResponse();
     const userPermissions = this.reflector.get<string[]>(
       'userPermissions',
       context.getHandler(),
@@ -29,11 +27,15 @@ export class AuthGuard implements CanActivate {
       context.getHandler(),
     );
 
-    const { accessTokenKey, refreshAccessTokenKey } = getJWTCookieKeys();
-    const token = req.cookies[accessTokenKey];
-    const refreshToken = req.cookies[refreshAccessTokenKey];
+    const [type, token] = req.headers.authorization?.split(' ') ?? [];
+    let accessToken = type === 'Bearer' ? token : undefined;
 
-    if (!token) {
+    if (!accessToken) {
+      const { accessTokenKey } = getJWTCookieKeys();
+      accessToken = req.cookies[accessTokenKey];
+    }
+
+    if (!accessToken) {
       const systemUserCount = await this.authService.systemUserCount();
 
       if (!systemUserCount)
@@ -48,49 +50,23 @@ export class AuthGuard implements CanActivate {
       );
     }
 
-    await verifyJWT(token, AUTH_TOKEN_SECRET)
+    await verifyJWT(accessToken, AUTH_TOKEN_SECRET)
       .then((payload) => {
         req.user = payload;
       })
       .catch(async () => {
-        try {
-          const refreshPayload = await verifyJWT(
-            refreshToken,
-            AUTH_TOKEN_SECRET_REFRESH,
-          );
-          const userPayload = pick(refreshPayload, ['id', 'refreshTokenId']);
+        const systemUserCount = await this.authService.systemUserCount();
 
-          await this.authService.verifyRefreshToken(
-            userPayload.refreshTokenId,
-            refreshToken,
-          );
-
-          const newRefreshTokenId = await this.authService.setAccessTokens(
-            userPayload,
-            res,
-            req,
-          );
-
-          userPayload.refreshTokenId = newRefreshTokenId;
-
-          req.user = userPayload;
-        } catch (err: any) {
-          if (userPermissionOptions.removeAccessTokens)
-            this.authService.removeAccessTokens(req, res);
-
-          const systemUserCount = await this.authService.systemUserCount();
-
-          if (!systemUserCount)
-            throw new UnauthorizedException(
-              ErrorTypes.INITIAL_USER_REQUIRED,
-              'You need to set the initial super admin user',
-            );
-
+        if (!systemUserCount)
           throw new UnauthorizedException(
-            ErrorTypes.NOT_SIGNED_IN,
-            'You not authorized to use this route',
+            ErrorTypes.INITIAL_USER_REQUIRED,
+            'You need to set the initial super admin user',
           );
-        }
+
+        throw new UnauthorizedException(
+          ErrorTypes.NOT_SIGNED_IN,
+          'You not authorized to use this route',
+        );
       });
 
     if (userPermissions.length || userPermissionOptions.injectUserProfile) {

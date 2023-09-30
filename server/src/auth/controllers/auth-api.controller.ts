@@ -7,11 +7,8 @@ import {
   HttpStatus,
   NotFoundException,
   Post,
-  Req,
-  Res,
 } from '@nestjs/common';
 import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { Request, Response } from 'express';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { errorResponseDoc } from 'helpers/error-response-doc';
 import { AuthService } from '../services/auth.service';
@@ -83,11 +80,7 @@ export class AuthApiController {
     description: `Signs in api user and put tokens to response cookie and return user profile.`,
   })
   @HttpCode(HttpStatus.OK)
-  async loginApiUser(
-    @Body() loginApiUserDto: LoginApiUserDto,
-    @Res({ passthrough: true }) res: Response,
-    @Req() req: Request,
-  ) {
+  async loginApiUser(@Body() loginApiUserDto: LoginApiUserDto) {
     const user = await this.authService.getUserByApiKey(loginApiUserDto.apiKey);
 
     if (!user)
@@ -107,40 +100,22 @@ export class AuthApiController {
         'Invalid api secret for requested api key.',
       );
 
-    const userPayload: UserProfile = {
+    const {
+      accessToken,
+      refreshToken,
+    } = await this.authService.setAccessTokens({
       id: user.id,
-      fullName: user.fullName,
-      email: user.email,
-      userName: user.userName,
-      displayPhoto: user.displayPhoto,
-      userRole: {
-        ...user.userRole,
-      },
-    };
+    });
 
-    await this.authService.setAccessTokens(
-      {
-        id: user.id,
-      },
-      res,
-      req,
-    );
-
-    return userPayload;
+    return { accessToken, refreshToken };
   }
 
   @Post('/logout')
   @IsAuthenticated([], { removeAccessTokens: true })
   @ApiOkResponse({ schema: { type: 'string', example: 'OK' } })
   @HttpCode(HttpStatus.OK)
-  async logout(
-    @CurrentUser() user: UserTokenPayload,
-    @Res({ passthrough: true }) res: Response,
-    @Req() req: Request,
-  ) {
+  async logout(@CurrentUser() user: UserTokenPayload) {
     await this.authService.removeRefreshToken(user.id, user.refreshTokenId!);
-
-    this.authService.removeAccessTokens(req, res);
 
     return 'OK';
   }
