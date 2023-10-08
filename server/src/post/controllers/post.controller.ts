@@ -17,9 +17,11 @@ import { Request, Response } from 'express';
 import {
   ApiAcceptedResponse,
   ApiBadRequestResponse,
+  ApiExcludeEndpoint,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { s3, s3HeadObject } from 'config/s3-storage';
@@ -61,6 +63,11 @@ export class PostController {
       'NOT_VALID',
     ),
   })
+  @ApiOperation({
+    summary: 'List Post Feed',
+    description:
+      'Returning list of post feed according to requested payload with pagination.',
+  })
   @IsAuthenticated()
   async getPostFeed(
     @Query() query: ListPostFeedQuery,
@@ -78,7 +85,7 @@ export class PostController {
 
   @Get('/feed/detail/:postId')
   @ApiOkResponse({
-    description: 'User gets post by requested id.',
+    description: 'Get a post.',
     type: BasePostFeedList,
   })
   @ApiNotFoundResponse({
@@ -89,6 +96,11 @@ export class PostController {
       'Post not found or unauthorized',
       'POST_NOT_FOUND',
     ),
+  })
+  @ApiOperation({
+    summary: 'Post Detail',
+    description:
+      'Returning a specific post detail according to requested post id.',
   })
   @IsAuthenticated()
   async getFeedById(
@@ -108,7 +120,7 @@ export class PostController {
 
   @Put('update/:postId')
   @ApiNoContentResponse({
-    description: 'Post update successfully completed with given parameters.',
+    description: 'Post updated successfully.',
   })
   @ApiBadRequestResponse({
     description: 'Error thrown when updated field are empty.',
@@ -117,6 +129,10 @@ export class PostController {
       'Edit Payload empty',
       'EDIT_POST_PAYLOAD_EMPTY',
     ),
+  })
+  @ApiOperation({
+    summary: 'Update Post',
+    description: 'Updates a post with requested postId and payload.',
   })
   @IsAuthenticated()
   async editPostById(
@@ -132,7 +148,7 @@ export class PostController {
 
   @Delete('remove/:postId')
   @IsAuthenticated()
-  @ApiAcceptedResponse({ description: 'Requested post deleted successfully' })
+  @ApiAcceptedResponse({ description: 'Post deleted successfully' })
   @ApiNotFoundResponse({
     description:
       'Error thrown when the post is not found or user does not have the right to access',
@@ -141,6 +157,10 @@ export class PostController {
       'Post not found or unauthorized',
       'POST_NOT_FOUND',
     ),
+  })
+  @ApiOperation({
+    summary: 'Delete Post',
+    description: 'Deletes a post with requested postId.',
   })
   async removePostById(
     @Param('postId', ParseUUIDPipe) postId: string,
@@ -158,13 +178,18 @@ export class PostController {
 
   @Get('video/view/:slug/:fileName')
   @ApiOkResponse({
-    description: 'View video with given post slug and filename.',
+    description: 'View video.',
   })
   @ApiNotFoundResponse({
     description: 'Error thrown when the post video is not found.',
     schema: errorResponseDoc(404, 'Video not found', 'VIDEO_NOT_FOUND'),
   })
   @IsAuthenticated()
+  @ApiOperation({
+    summary: 'View Video Post',
+    description:
+      'View video post with requested post slug and file name of video.',
+  })
   async viewVideoPost(
     @CurrentUser() user: UserTokenPayload,
     @Param('slug') slug: string,
@@ -217,11 +242,15 @@ export class PostController {
 
   @Post('video/stats/views')
   @ApiOkResponse({
-    description: 'Change video view stats according to requested parameters.',
+    description: 'Change video post statistics',
   })
   @ApiNotFoundResponse({
     description: 'Error thrown when the post is not found.',
     schema: errorResponseDoc(404, 'Post not found', 'POST_NOT_FOUND'),
+  })
+  @ApiOperation({
+    summary: 'Change Video Stats',
+    description: 'Change video view statistics according to requested payload.',
   })
   @IsAuthenticated()
   async videoViewStats(
@@ -237,7 +266,7 @@ export class PostController {
   @Delete('remove/video/:postId/:videoName')
   @IsAuthenticated()
   @ApiAcceptedResponse({
-    description: 'Requested post video removed successfully.',
+    description: 'Video post deleted.',
   })
   @ApiNotFoundResponse({
     description:
@@ -247,6 +276,11 @@ export class PostController {
       'Post not found or unauthorized',
       'POST_NOT_FOUND',
     ),
+  })
+  @ApiOperation({
+    summary: 'Delete Video Post',
+    description:
+      'Delete video post with requested postId and video name params.',
   })
   async removePostVideo(
     @Param('postId', ParseUUIDPipe) postId: string,
@@ -260,6 +294,7 @@ export class PostController {
   }
 
   @Get('featured/user/:userId')
+  @ApiExcludeEndpoint()
   @ApiAcceptedResponse({
     description: 'Returns authenticated user featured posts.',
   })

@@ -59,6 +59,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+
   SwaggerModule.setup('swagger', app, document, {
     explorer: true,
     customSiteTitle: 'Purpie API Docs',

@@ -11,7 +11,9 @@ import {
 import {
   ApiBadRequestResponse,
   ApiConsumes,
+  ApiExcludeEndpoint,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -84,6 +86,11 @@ export class VideoController {
   @ApiOkResponse({
     description: 'Upload a video file successfully',
   })
+  @ApiOperation({
+    summary: 'Create Video Post',
+    description:
+      'Create a new video post with requested video file and payload.',
+  })
   async createVideoPost(
     @Body() videoInfo: CreateVideoDto,
     @CurrentUserProfile() user: UserProfile,
@@ -136,7 +143,7 @@ export class VideoController {
     return videoPostPayload;
   }
 
-  // @ApiExcludeEndpoint()
+  @ApiExcludeEndpoint()
   @Post('client/feedback')
   @IsClientAuthenticated(['manageStream'])
   @ApiOkResponse({

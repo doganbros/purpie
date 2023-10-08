@@ -17,6 +17,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
@@ -50,7 +51,7 @@ export class PostCommentController {
   @Post('create')
   @ValidationBadRequest()
   @ApiCreatedResponse({
-    description: 'User creates a new comment for given postId. ',
+    description: 'Post comment created.',
     type: PostCommentResponse,
   })
   @ApiNotFoundResponse({
@@ -71,6 +72,11 @@ export class PostCommentController {
     ),
   })
   @IsAuthenticated()
+  @ApiOperation({
+    summary: 'Create Comment',
+    description:
+      'Create new post comment which consist of requested payload. Also, user can create parent-child relational comments.',
+  })
   async createComment(
     @Body() info: CreatePostCommentDto,
     @CurrentUser() user: UserTokenPayload,
@@ -95,8 +101,12 @@ export class PostCommentController {
   })
   @ApiOkResponse({
     type: PostCommentListResponse,
+    description: 'List specific post comments',
+  })
+  @ApiOperation({
+    summary: 'List Comments',
     description:
-      'User gets the comments belonging to the postId. If parentId param is specified, retrieves the replies for that comment',
+      'List comments belonging to the postId. If parentId param is specified, retrieves the replies for that comment.',
   })
   @ApiNotFoundResponse({
     description:
@@ -122,9 +132,13 @@ export class PostCommentController {
   @Put('update')
   @ValidationBadRequest()
   @ApiCreatedResponse({
-    description: 'User updates a specific post comment',
+    description: 'Comment updated.',
   })
   @IsAuthenticated()
+  @ApiOperation({
+    summary: 'Update Comment',
+    description: 'Update post comment with requested payload.',
+  })
   async updateComment(
     @Body() info: UpdatePostCommentDto,
     @CurrentUser() user: UserTokenPayload,
@@ -141,12 +155,16 @@ export class PostCommentController {
 
   @Delete('remove/:commentId')
   @ApiAcceptedResponse({
-    description: 'User deletes a comment successfully.',
+    description: 'Comment deleted',
   })
   @IsAuthenticated()
   @ApiParam({
     type: Number,
     name: 'commentId',
+  })
+  @ApiOperation({
+    summary: 'Delete Comment',
+    description: 'Delete post comment with requested commentId.',
   })
   async removeComment(
     @CurrentUser() user: UserTokenPayload,
@@ -160,8 +178,7 @@ export class PostCommentController {
 
   @Get('count/:postId/:parentId?')
   @ApiOkResponse({
-    description:
-      'Get the number of comments belonging to the postId. If parentId is specified, it returns the number of replies for that comment.',
+    description: 'Get comment count',
   })
   @IsAuthenticated()
   @ApiParam({
@@ -173,6 +190,11 @@ export class PostCommentController {
     name: 'parentId',
     required: false,
     allowEmptyValue: true,
+  })
+  @ApiOperation({
+    summary: 'Comment Count',
+    description:
+      'Get the number of comments belonging to the postId. If parentId is specified, it returns the number of replies for that comment.',
   })
   @ApiNotFoundResponse({
     description:
@@ -199,8 +221,7 @@ export class PostCommentController {
   @Post('like/create')
   @ValidationBadRequest()
   @ApiCreatedResponse({
-    description: 'User likes a post comment.',
-    schema: { type: 'int', example: 1 },
+    description: 'Liked a post comment.',
   })
   @IsAuthenticated()
   @ApiNotFoundResponse({
@@ -211,6 +232,11 @@ export class PostCommentController {
       'Post not found or unauthorized',
       ErrorTypes.POST_NOT_FOUND,
     ),
+  })
+  @ApiOperation({
+    summary: 'Create Comment Like',
+    description:
+      'Create a like which related with post comment with requested payload.',
   })
   async createCommentLike(
     @Body() info: CreatePostCommentLikeDto,
@@ -227,7 +253,12 @@ export class PostCommentController {
   @Get('like/list/:postId/:commentId')
   @ApiOkResponse({
     type: PostLikeListResponse,
-    description: 'User gets the likes belonging to the postId and commentId',
+    description: 'List post comment like',
+  })
+  @ApiOperation({
+    summary: 'List Comment Like',
+    description:
+      'List post comment likes belonging to the postId and commentId.',
   })
   @ApiParam({
     type: Number,
@@ -260,8 +291,11 @@ export class PostCommentController {
 
   @Delete('like/remove/:commentId')
   @ApiAcceptedResponse({
-    description:
-      'User unlikes a post comment. Returns Created when some rows are affected and OK otherwise',
+    description: 'Unlike post comment',
+  })
+  @ApiOperation({
+    summary: 'Delete Comment Like',
+    description: 'Delete post comment like with requested commentId.',
   })
   @IsAuthenticated()
   async removeCommentLike(
