@@ -1,16 +1,32 @@
 import React, { FC } from 'react';
 import { RedocStandalone } from 'redoc';
+import { Box } from 'grommet';
 
 const ApiDocs: FC = () => {
   return (
-    <RedocStandalone
-      specUrl="./openapi.yaml"
-      options={{
-        nativeScrollbars: true,
-        hideDownloadButton: true,
-        theme: { colors: { primary: { main: '#9060EB' } } },
-      }}
-    />
+    <Box className="api-docs">
+      <RedocStandalone
+        specUrl="./openapi.yaml"
+        options={{
+          hideFab: true,
+          nativeScrollbars: true,
+          hideDownloadButton: true,
+          theme: {
+            rightPanel: {
+              backgroundColor: '#643FBB',
+              textColor: 'white',
+            },
+            logo: {
+              maxHeight: '160px',
+              maxWidth: '160px',
+              gutter: '16px',
+            },
+            typography: { fontFamily: 'Poppins' },
+            colors: { primary: { main: '#9060EB' } },
+          },
+        }}
+      />
+    </Box>
   );
 };
 export default ApiDocs;
