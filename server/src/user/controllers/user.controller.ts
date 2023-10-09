@@ -26,6 +26,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -80,6 +81,10 @@ export class UserController {
     description: 'User responds to contact invitation',
     schema: { type: 'string', example: 'OK' },
   })
+  @ApiOperation({
+    summary: 'Respond Contact Invitation',
+    description: 'Respond contact invitation with request payload.',
+  })
   @ApiNotFoundResponse({
     description:
       'Error thrown when the requested contact invitation not found.',
@@ -131,6 +136,11 @@ export class UserController {
   }
 
   @Post('/contact/invitation/create')
+  @ApiOperation({
+    summary: 'Create Contact Invitation',
+    description:
+      'Authenticated user creates a new contact invitation for a user belonging to email.',
+  })
   @ApiCreatedResponse({
     description: 'User creates a new contact invitation',
     schema: { type: 'integer' },
@@ -171,8 +181,12 @@ export class UserController {
   }
 
   @Get('invitations/list')
+  @ApiOperation({
+    summary: 'List Invitations',
+    description: 'User lists all invitations, contacts, channels, zones.',
+  })
   @ApiOkResponse({
-    description: 'User lists all invitations, contacts, channels, zones',
+    description: 'Lists all invitations',
     type: ContactInvitationListResponse,
   })
   @IsAuthenticated()
@@ -184,6 +198,10 @@ export class UserController {
   }
 
   @Get('/contact/list')
+  @ApiOperation({
+    summary: 'List Contacts',
+    description: 'User lists contacts.',
+  })
   @ApiOkResponse({
     description: 'User lists contacts',
     type: ContactListResponse,
@@ -197,6 +215,10 @@ export class UserController {
   }
 
   @Get('/contact/list/:userName')
+  @ApiOperation({
+    summary: 'List User Contact',
+    description: 'User lists another public users contacts',
+  })
   @ApiOkResponse({
     description: `User lists another public users contacts`,
     type: ContactListResponse,
@@ -210,6 +232,10 @@ export class UserController {
   }
 
   @Delete('/contact/remove/:contactId')
+  @ApiOperation({
+    summary: 'Delete Contact',
+    description: 'User deletes a contact with requested "contactId."',
+  })
   @ApiOkResponse({
     description: 'User removes a contact by id',
     schema: { type: 'string', example: 'OK' },
@@ -225,6 +251,10 @@ export class UserController {
   }
 
   @Get('/search')
+  @ApiOperation({
+    summary: 'Search Users',
+    description: 'Search user with requested payload.',
+  })
   @IsAuthenticated()
   @ApiQuery({
     name: 'excludeCurrentUser',
@@ -274,9 +304,13 @@ export class UserController {
   }
 
   @Put('/role/change')
-  @ApiCreatedResponse({
+  @ApiOperation({
+    summary: 'Update User Role',
     description:
-      'User changes a role for an existing user. User must have canManageRole permission',
+      'User changes a role for an existing user. User must have "canManageRole" permission',
+  })
+  @ApiCreatedResponse({
+    description: 'Update user role',
     schema: { type: 'string', example: 'OK' },
   })
   @ApiForbiddenResponse({
@@ -295,8 +329,12 @@ export class UserController {
   }
 
   @Post('user-name-check')
-  @ApiCreatedResponse({
+  @ApiOperation({
+    summary: 'Check Username',
     description: 'Checks if user name provided has already been taken.',
+  })
+  @ApiCreatedResponse({
+    description: 'Checked username',
     type: UserNameExistenceCheckResponse,
   })
   @ValidationBadRequest()
@@ -313,6 +351,10 @@ export class UserController {
   }
 
   @Get('/zone/list/:userName')
+  @ApiOperation({
+    summary: 'List User Zones',
+    description: 'List public zones of user belonging to "userName" parameter.',
+  })
   @ApiOkResponse({
     description: 'List requested user public zones',
     type: UserZoneResponse,
@@ -327,6 +369,11 @@ export class UserController {
   }
 
   @Get('/channel/list/:userName')
+  @ApiOperation({
+    summary: 'List User Channels',
+    description:
+      'List public channels of user belonging to "userName" parameter.',
+  })
   @ApiOkResponse({
     description: 'List requested user public channels',
     type: UserChannelResponse,
@@ -341,6 +388,10 @@ export class UserController {
   }
 
   @Get('profile')
+  @ApiOperation({
+    summary: 'Get Profile',
+    description: 'Get authenticated user profile informations.',
+  })
   @ApiOkResponse({
     description: 'Get authenticated user profile informations.',
     type: UserProfile,
@@ -351,6 +402,11 @@ export class UserController {
   }
 
   @Get('profile/:userName')
+  @ApiOperation({
+    summary: 'Get User Profile',
+    description:
+      'Get public user profile informations belonging to "userName".',
+  })
   @IsAuthenticated()
   @ApiOkResponse({
     description: 'Get public specified user profile informations.',
@@ -367,6 +423,11 @@ export class UserController {
   @ApiOkResponse({
     description:
       'Updates authenticated user profile informations with given request.',
+  })
+  @ApiOperation({
+    summary: 'Update Profile',
+    description:
+      'Updates authenticated user profile informations with requested parameters.',
   })
   @ApiNotFoundResponse({
     description:
@@ -387,10 +448,14 @@ export class UserController {
   }
 
   @Put('display-photo')
+  @ApiOperation({
+    summary: 'Update Display Photo',
+    description:
+      'Updates display photo of user with requested photo file and return new photo file URL.',
+  })
   @ApiConsumes('multipart/form-data')
   @ApiOkResponse({
-    description:
-      'Updates display photo of user with requested photo file and return new photo file URL',
+    description: 'Updates display photo',
     schema: {
       type: 'string',
       description: 'Currently uploaded photo file url',
@@ -457,6 +522,10 @@ export class UserController {
   }
 
   @Delete('display-photo')
+  @ApiOperation({
+    summary: 'Delete Display Photo User Zones',
+    description: 'Delete user display photo.',
+  })
   @ApiOkResponse({
     description: 'Delete user display photo',
   })
@@ -485,6 +554,10 @@ export class UserController {
   }
 
   @Get('display-photo/:fileName')
+  @ApiOperation({
+    summary: 'Get Display Photo',
+    description: 'View display photo of authenticated user.',
+  })
   @ApiOkResponse({ description: 'View display photo of authenticated user' })
   @Header('Cache-Control', 'max-age=3600')
   async viewProfilePhoto(

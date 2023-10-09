@@ -15,6 +15,7 @@ import {
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
@@ -39,7 +40,11 @@ export class PostFolderController {
   @ApiOkResponse({
     type: PostFolderResponse,
     isArray: true,
-    description: 'User gets folders which created for listing saved posts.',
+    description: 'List saved posts.',
+  })
+  @ApiOperation({
+    summary: 'List Post Folder',
+    description: 'List folders which created for listing saved posts.',
   })
   getUserFolderList(@CurrentUser() user: UserTokenPayload) {
     return this.folderService.getUserPostFolders(user.id);
@@ -49,7 +54,11 @@ export class PostFolderController {
   @IsAuthenticated()
   @ApiOkResponse({
     type: PostFolderResponse,
-    description: 'Create new folder and return created folder.',
+    description: 'Create new folder.',
+  })
+  @ApiOperation({
+    summary: 'Create Post Folder',
+    description: 'Create new folder to save posts.',
   })
   createPostFolder(
     @CurrentUser() user: UserTokenPayload,
@@ -59,7 +68,11 @@ export class PostFolderController {
   }
 
   @Put('update')
-  @ApiNoContentResponse({ description: 'Post folder updated successfully.' })
+  @ApiNoContentResponse({ description: 'Post folder updated.' })
+  @ApiOperation({
+    summary: 'Update Post Folder',
+    description: 'Update specific folder with requested payload.',
+  })
   @IsAuthenticated()
   async updatePostFolder(
     @CurrentUser() user: UserTokenPayload,
@@ -73,7 +86,7 @@ export class PostFolderController {
 
   @Delete('remove/:folderId')
   @IsAuthenticated()
-  @ApiAcceptedResponse({ description: 'Specified post folder deleted' })
+  @ApiAcceptedResponse({ description: 'Post folder deleted.' })
   @ApiNotFoundResponse({
     description: 'Error thrown when the post folder is not found.',
     schema: errorResponseDoc(
@@ -81,6 +94,10 @@ export class PostFolderController {
       'Post folder not found',
       ErrorTypes.POST_FOLDER_NOT_FOUND,
     ),
+  })
+  @ApiOperation({
+    summary: 'Delete Post Folder',
+    description: 'Delete specific folder.',
   })
   async removePostFolder(
     @CurrentUser() user: UserTokenPayload,
@@ -96,6 +113,10 @@ export class PostFolderController {
   @ApiOkResponse({
     type: PostFolderResponse,
     description: 'Add requested post to folder',
+  })
+  @ApiOperation({
+    summary: 'Add Post to Folder',
+    description: 'Save requested post into requested folder.',
   })
   @ApiNotFoundResponse({
     description: 'Error thrown when the post folder is not found.',
@@ -126,8 +147,12 @@ export class PostFolderController {
       ErrorTypes.POST_FOLDER_ITEM_NOT_FOUND,
     ),
   })
-  @ApiAcceptedResponse({ description: 'Specified post folder item deleted' })
+  @ApiAcceptedResponse({ description: 'Folder post deleted' })
   @IsAuthenticated()
+  @ApiOperation({
+    summary: 'Remove Post from Folder',
+    description: 'Remove requested post into requested folder.',
+  })
   async removeFolderItem(
     @CurrentUser() user: UserTokenPayload,
     @Body() info: AddOrRemovePostFolderItemDto,

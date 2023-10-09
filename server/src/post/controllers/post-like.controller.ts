@@ -15,6 +15,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { errorResponseDoc } from 'helpers/error-response-doc';
@@ -42,6 +43,10 @@ export class PostLikeController {
   @ValidationBadRequest()
   @ApiCreatedResponse({
     description: 'User likes a post.',
+  })
+  @ApiOperation({
+    summary: 'Create Post Like',
+    description: 'Create a post like or dislike with given parameters.',
   })
   @IsAuthenticated()
   @ApiNotFoundResponse({
@@ -89,9 +94,13 @@ export class PostLikeController {
   }
 
   @Get('list/:postId')
+  @ApiOperation({
+    summary: 'List Post Like',
+    description: 'List likes or dislikes of post belonging to the postId.',
+  })
   @ApiOkResponse({
     type: PostLikeListResponse,
-    description: 'User gets the likes belonging to the postId',
+    description: 'List post likes',
   })
   @ApiNotFoundResponse({
     description:
@@ -114,6 +123,10 @@ export class PostLikeController {
   }
 
   @Get('count/:postId')
+  @ApiOperation({
+    summary: 'Count Post Like',
+    description: 'Get the number of likes belonging to the postId.',
+  })
   @ApiNotFoundResponse({
     description:
       'Error thrown when the post is not found or user does not have the right to access',
@@ -124,7 +137,7 @@ export class PostLikeController {
     ),
   })
   @ApiOkResponse({
-    description: 'Get the number of likes belonging to the postId.',
+    description: 'Get count of post likes.',
     schema: { type: 'int', example: 15 },
   })
   @IsAuthenticated()
@@ -138,9 +151,12 @@ export class PostLikeController {
   }
 
   @Delete('remove/:postId')
+  @ApiOperation({
+    summary: 'Delete Post Like',
+    description: 'Unlike a post belonging to postId.',
+  })
   @ApiCreatedResponse({
-    description:
-      'User unlikes a post. Returns Created when some rows are affected and OK otherwise',
+    description: 'Unlikes a post',
     schema: { type: 'string', example: 'OK' },
   })
   @IsAuthenticated()

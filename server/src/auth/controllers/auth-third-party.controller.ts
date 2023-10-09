@@ -16,6 +16,7 @@ import { Response } from 'express';
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiExcludeController,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -45,7 +46,7 @@ const {
   VERIFICATION_TOKEN_SECRET = '',
 } = process.env;
 
-// @ApiExcludeController()
+@ApiExcludeController()
 @Controller({ path: 'auth/third-party', version: '1' })
 @ApiTags('Third Party Auth')
 export class AuthThirdPartyController {

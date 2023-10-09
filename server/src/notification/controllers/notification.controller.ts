@@ -7,7 +7,12 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
@@ -28,6 +33,10 @@ export class NotificationController {
     description: 'Get number of count of notification',
     type: NotificationCount,
   })
+  @ApiOperation({
+    summary: 'Get Notification Count',
+    description: 'Get number of count of notification.',
+  })
   @IsAuthenticated()
   getNotificationCount(@CurrentUser() user: UserTokenPayload) {
     return this.notificationService.getNotificationCount(user.id);
@@ -37,6 +46,10 @@ export class NotificationController {
   @ApiOkResponse({
     description: 'List notifications with given query parameters',
     type: NotificationResponse,
+  })
+  @ApiOperation({
+    summary: 'List Notifications',
+    description: 'List notifications with given query parameters.',
   })
   @IsAuthenticated()
   listNotifications(
@@ -48,8 +61,12 @@ export class NotificationController {
 
   @Post('view')
   @ApiOkResponse({
+    description: 'View specified notification',
+  })
+  @ApiOperation({
+    summary: 'View Notification',
     description:
-      'View specified notification and update readOn date property on notification',
+      'View specified notification and update "readOn" date property on notification',
   })
   @IsAuthenticated()
   async viewNotifications(
@@ -77,8 +94,12 @@ export class NotificationController {
     allowEmptyValue: true,
   })
   @ApiOkResponse({
+    description: 'Read specified notification',
+  })
+  @ApiOperation({
+    summary: 'Read Notification',
     description:
-      'Read specified notification and update readOn date property on notification',
+      'Read specified notification and update "readOn" date property on notification.',
   })
   @IsAuthenticated()
   async readNotifications(

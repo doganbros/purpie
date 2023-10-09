@@ -18,7 +18,7 @@ export class PaginationQuery implements Pagination {
 
   @ApiPropertyOptional({
     default: 0,
-    description: 'The number of records to skip. Defaults to 0',
+    description: 'The number of records to skip.',
   })
   @IsOptional()
   @IsInt()

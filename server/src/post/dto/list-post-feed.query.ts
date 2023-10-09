@@ -67,7 +67,7 @@ export class ListPostFeedQuery extends PaginationQuery {
   @IsOptional()
   tags: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ description: 'Search posts with given search text' })
   @IsOptional()
   @IsString()
   searchTerm: string;
@@ -81,8 +81,7 @@ export class ListPostFeedQuery extends PaginationQuery {
   @ApiPropertyOptional({
     enum: ['time', 'popularity'],
     default: 'popularity',
-    description:
-      'Sort post by time or popularity. If not specified, defaults to time',
+    description: 'Sort post by time or popularity.',
   })
   @IsOptional()
   sortBy: 'time' | 'popularity';
@@ -90,7 +89,7 @@ export class ListPostFeedQuery extends PaginationQuery {
   @ApiPropertyOptional({
     default: 'DESC',
     enum: ['ASC', 'DESC'],
-    description: 'Sort direction of post. If not specified, defaults to DESC',
+    description: 'Sort direction of post.',
   })
   @IsOptional()
   @IsIn(['ASC', 'DESC'])

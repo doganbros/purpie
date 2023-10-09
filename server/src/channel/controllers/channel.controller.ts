@@ -23,9 +23,11 @@ import {
   ApiBody,
   ApiConsumes,
   ApiCreatedResponse,
+  ApiExcludeEndpoint,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
@@ -82,9 +84,13 @@ export class ChannelController {
 
   @Post('/create/:userZoneId')
   @ApiCreatedResponse({
-    description:
-      'Current authenticated user adds a new channel to a zone. User channel id is returned. User channel must have canCreateChannel permission',
+    description: 'Channel created',
     schema: { type: 'string' },
+  })
+  @ApiOperation({
+    summary: 'Create Channel',
+    description:
+      'Current authenticated user create a new channel into a zone. User channel id is returned. User channel must have "canCreateChannel" permission.',
   })
   @ValidationBadRequest()
   @ApiParam({
@@ -139,6 +145,10 @@ export class ChannelController {
     description: 'Search channels with requested search term',
     type: ChannelSearchResponse,
   })
+  @ApiOperation({
+    summary: 'Search Channel',
+    description: 'Search channels with requested search term.',
+  })
   @IsAuthenticated()
   searchChannel(
     @Query() query: SearchChannelQuery,
@@ -148,9 +158,13 @@ export class ChannelController {
   }
 
   @Post('/join/:channelId')
-  @ApiCreatedResponse({
+  @ApiOperation({
+    summary: 'Join Channel',
     description:
       "Current authenticated user joins a public channel. When the user doesn't belong to the zone he/she is added to that zone. The id of the user channel is returned",
+  })
+  @ApiCreatedResponse({
+    description: 'Join channel',
   })
   @ApiNotFoundResponse({
     description: 'Error thrown when the joined channel is not found',
@@ -192,10 +206,14 @@ export class ChannelController {
   }
 
   @Post('/invite/:channelId')
+  @ApiOperation({
+    summary: 'Invite to Channel',
+    description:
+      'Current authenticated channel member invites a user to this channel. The id of the invitation is returned. User channel must have "canInvite" permission',
+  })
   @UserChannelRole(['canInvite'])
   @ApiCreatedResponse({
-    description:
-      'Current authenticated channel member invites a user to this channel. The id of the invitation is returned. User channel must have canInvite permission',
+    description: 'Invite to channel for user',
     schema: { type: 'integer' },
   })
   @ApiNotFoundResponse({
@@ -235,6 +253,10 @@ export class ChannelController {
   }
 
   @Post('/invitation/response')
+  @ApiOperation({
+    summary: 'Respond Channel Invitation',
+    description: 'User Responds to channel invitation.',
+  })
   @ValidationBadRequest()
   @ApiNotFoundResponse({
     description: 'Error thrown when the invitation is not found',
@@ -291,13 +313,17 @@ export class ChannelController {
   }
 
   @Delete('/remove/:channelId')
+  @ApiOperation({
+    summary: 'Delete Channel',
+    description:
+      'User deletes a channel. User channel must have the "canDelete" permission.',
+  })
   @ApiParam({
     name: 'channelId',
     description: 'The channel id',
   })
   @ApiOkResponse({
-    description:
-      'User deletes a channel. User channel must have the canDelete permission',
+    description: 'User deletes a channel.',
   })
   @HttpCode(HttpStatus.OK)
   @UserChannelRole(['canDelete'])
@@ -306,9 +332,13 @@ export class ChannelController {
   }
 
   @Put('/update/:channelId')
-  @ApiCreatedResponse({
+  @ApiOperation({
+    summary: 'Update Channel',
     description:
-      'User updates a zone. User channel must have the canEdit permission',
+      'User updates a zone. User channel must have the "canEdit" permission',
+  })
+  @ApiCreatedResponse({
+    description: 'User updates a zone.',
   })
   @ApiParam({
     name: 'channelId',
@@ -327,6 +357,10 @@ export class ChannelController {
     description: 'User lists channel users',
     type: ChannelUserResponse,
   })
+  @ApiOperation({
+    summary: 'List Channel Users',
+    description: 'List channel users belonging to "channelId" parameter.',
+  })
   channelUserList(
     @Query() query: SystemUserListQuery,
     @Param('channelId', ParseUUIDPipe) channelId: string,
@@ -335,10 +369,14 @@ export class ChannelController {
   }
 
   @Get('/role/list/:channelId')
+  @ApiOperation({
+    summary: 'List Channel Roles',
+    description:
+      'User lists all channel roles. User must have "canManageRole" permission.',
+  })
   @ApiOkResponse({
     type: ChannelRole,
-    description:
-      'User lists all channel roles. User must have canManageRole permission',
+    description: 'User lists all channel roles.',
   })
   @ValidationBadRequest()
   @UserChannelRole(['canManageRole'])
@@ -347,6 +385,7 @@ export class ChannelController {
   }
 
   @Put('/role/change/:channelId')
+  @ApiExcludeEndpoint()
   @ApiCreatedResponse({
     description:
       'User changes a role for an existing user channel. User must have canManageRole permission',
@@ -371,6 +410,7 @@ export class ChannelController {
   }
 
   @Put('/permissions/update/:channelId')
+  @ApiExcludeEndpoint()
   @ApiCreatedResponse({
     description:
       'User updates permissions for user role. User must have canManageRole permission',
@@ -385,6 +425,7 @@ export class ChannelController {
     ),
   })
   @ValidationBadRequest()
+  @ApiExcludeEndpoint()
   @UserChannelRole(['canManageRole'])
   async updateUserRolePermissions(
     @Body() info: UpdateChannelPermission,
@@ -399,6 +440,11 @@ export class ChannelController {
   }
 
   @Put('/:userChannelId/display-photo')
+  @ApiOperation({
+    summary: 'Update Display Photo',
+    description:
+      'Update user channel display photo belonging to "userChannelId".',
+  })
   @ApiConsumes('multipart/form-data')
   @ApiBadRequestResponse({
     description:
@@ -466,6 +512,11 @@ export class ChannelController {
   }
 
   @Get('display-photo/:fileName')
+  @ApiOperation({
+    summary: 'Get Display Photo',
+    description:
+      'Get display photo of selected channel belonging to "fileName" parameter.',
+  })
   @ApiOkResponse({ description: 'Get display photo of selected channel' })
   @Header('Cache-Control', 'max-age=3600')
   async viewProfilePhoto(
@@ -490,6 +541,11 @@ export class ChannelController {
   }
 
   @Put('/:userChannelId/background-photo')
+  @ApiOperation({
+    summary: 'Update Background Photo',
+    description:
+      'Update user channel background photo belonging to "userChannelId".',
+  })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -560,6 +616,11 @@ export class ChannelController {
   @Get('background-photo/:fileName')
   @Header('Cache-Control', 'max-age=3600')
   @ApiOkResponse({ description: 'Get background photo of selected channel' })
+  @ApiOperation({
+    summary: 'Get Background Photo',
+    description:
+      'Get background photo of selected channel belonging to "fileName" parameter.',
+  })
   async viewBackgroundPhoto(
     @Res() res: Response,
     @Param('fileName') fileName: string,

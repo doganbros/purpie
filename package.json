@@ -70,7 +70,10 @@
     "swagger-ui-express": "5.0.0",
     "typeorm": "^0.2.34",
     "uuid": "^3.3.3",
-    "video.js": "^7.14.3"
+    "video.js": "^7.14.3",
+    "mobx": "6.10.2",
+    "core-js": "3.33.0",
+    "redoc": "2.1.2"
   },
   "scripts": {
     "start": "react-scripts --openssl-legacy-provider start",
