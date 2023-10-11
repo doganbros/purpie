@@ -24,6 +24,7 @@ import { listFolderAction } from './store/actions/folder.action';
 import StaticPage from './pages/Public/static/StaticPage';
 import ZoneNotFound from './pages/Private/ZoneNotFound';
 import { getUserMembershipAction } from './store/actions/membership.action';
+import { VideoCallOverlay } from './components/video-call/VideoCallOverlay';
 
 const App: FC = () => {
   const dispatch = useDispatch();
@@ -62,6 +63,7 @@ const App: FC = () => {
           message={toast.message}
           id={toast.toastId}
         />
+        <VideoCallOverlay />
         {delay || loading || (isAuthenticated && !userZoneInitialized) ? (
           <Loader />
         ) : (

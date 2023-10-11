@@ -5,3 +5,7 @@ declare module 'axios' {
     showErrorToast?: (err: any) => boolean;
   }
 }
+
+declare global {
+  const JitsiMeetJS: any;
+}
