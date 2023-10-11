@@ -10,6 +10,7 @@ import { StreamService } from '../stream.service';
 
 @Controller({ version: '1', path: 'stream' })
 @ApiTags('stream')
+// @ApiExcludeController()
 export class StreamController {
   constructor(private readonly streamService: StreamService) {}
 

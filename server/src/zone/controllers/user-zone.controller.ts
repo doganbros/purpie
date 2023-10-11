@@ -1,12 +1,18 @@
 import {
   Controller,
-  Get,
   Delete,
+  Get,
+  Headers,
   HttpCode,
   HttpStatus,
-  Headers,
 } from '@nestjs/common';
-import { ApiHeader, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiHeader,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { UserZone } from 'entities/UserZone.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
@@ -15,19 +21,16 @@ import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
 import { CurrentUserZone } from '../decorators/current-user-zone.decorator';
 import { UserZoneRole } from '../decorators/user-zone-role.decorator';
 import {
-  UserZoneListResponse,
   UserZoneDetailResponse,
+  UserZoneListResponse,
 } from '../responses/user-zone.response';
 import { UserZoneService } from '../services/user-zone.service';
-import { ZoneService } from '../services/zone.service';
+import { errorResponseDoc } from '../../../helpers/error-response-doc';
 
 @Controller({ path: 'user-zone', version: '1' })
-@ApiTags('user-zone')
+@ApiTags('User Zone')
 export class UserZoneController {
-  constructor(
-    private zoneService: ZoneService,
-    private userZoneService: UserZoneService,
-  ) {}
+  constructor(private userZoneService: UserZoneService) {}
 
   @Get('list')
   @ApiOkResponse({
@@ -54,6 +57,10 @@ export class UserZoneController {
     type: UserZoneDetailResponse,
     description:
       "Get current user's zone detail, This is deduced from the current subdomain",
+  })
+  @ApiNotFoundResponse({
+    description: 'Error thrown when the user zone ist not found',
+    schema: errorResponseDoc(404, 'User Zone not found', 'ZONE_NOT_FOUND'),
   })
   @ApiParam({
     name: 'userZoneId',

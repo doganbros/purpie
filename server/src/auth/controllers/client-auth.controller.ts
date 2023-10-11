@@ -22,6 +22,7 @@ import {
 import { UserTokenPayload } from '../interfaces/user.interface';
 import { ClientAuthService } from '../services/client-auth.service';
 
+// @ApiExcludeController()
 @Controller({ path: 'auth/client', version: '1' })
 @ApiTags('auth-client')
 export class ClientAuthController {

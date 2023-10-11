@@ -12,6 +12,7 @@ import {
 } from '../../auth/interfaces/user.interface';
 
 @Controller({ path: 'membership', version: '1' })
+// @ApiExcludeController()
 @ApiTags('membership')
 export class MembershipController {
   constructor(private membershipService: MembershipService) {}

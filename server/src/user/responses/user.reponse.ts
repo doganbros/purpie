@@ -29,8 +29,8 @@ class ContactInvitationList {
 }
 
 export class ContactInvitationListResponse {
-  @ApiProperty()
-  data: Array<ContactInvitationList>;
+  @ApiProperty({ isArray: true })
+  data: ContactInvitationList;
 
   @ApiProperty()
   total: number;
@@ -82,7 +82,12 @@ export class ContactListResponse {
 }
 
 export class UserNameExistenceCheckResponse {
+  @ApiProperty()
   userName: string;
 
+  @ApiProperty()
   exist: boolean;
+
+  @ApiProperty({ isArray: true })
+  suggestions: string;
 }

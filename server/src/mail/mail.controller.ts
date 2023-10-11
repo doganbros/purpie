@@ -5,6 +5,7 @@ import { MailService } from './mail.service';
 import { ErrorTypes } from '../../types/ErrorTypes';
 
 @ApiTags('mail')
+// @ApiExcludeController()
 @Controller({ version: '1', path: 'mail' })
 export class MailController {
   constructor(private mailService: MailService) {}

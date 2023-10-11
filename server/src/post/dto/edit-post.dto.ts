@@ -1,18 +1,18 @@
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class EditPostDto {
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   title: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   description: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsBoolean()
   public?: boolean;
 }

@@ -15,13 +15,13 @@ export const getPostFeeds = (
   params: FeedPayload
 ): Promise<PaginatedResponse<Post>> =>
   http
-    .get('/post/list/feed', {
+    .get('/post/feed/list', {
       params,
     })
     .then((res) => res.data);
 
 export const getPostDetail = (postId: string): Promise<Post> =>
-  http.get(`/post/detail/feed/${postId}`).then((res) => res.data);
+  http.get(`/post/feed/detail/${postId}`).then((res) => res.data);
 
 export const updatePostDetail = (payload: EditVideoPayload): Promise<Post> =>
   http.put(`/post/update/${payload.postId}`, payload).then((res) => res.data);
@@ -35,7 +35,7 @@ export const createVideo = (
     .then((res) => res.data);
 
 export const create = (postId: number): Promise<Post> =>
-  http.get(`/post/detail/feed/${postId}`).then((res) => res.data);
+  http.get(`/post/feed/detail/${postId}`).then((res) => res.data);
 
 export const createPostLike = (payload: {
   postId: string;
@@ -52,7 +52,7 @@ export const removePost = (postId: string): Promise<Post> =>
 export const searchPost = (
   params: PostSearchParams
 ): Promise<PaginatedResponse<Post>> =>
-  http.get(`/post/list/feed`, { params }).then((res) => res.data);
+  http.get(`/post/feed/list`, { params }).then((res) => res.data);
 
 export const postViewStats = (
   postId: string,

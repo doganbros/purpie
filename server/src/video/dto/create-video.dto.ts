@@ -5,7 +5,7 @@ import {
   IsUUID,
   ValidateIf,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 
 export class CreateVideoDto {
@@ -13,19 +13,19 @@ export class CreateVideoDto {
   @IsString()
   title: string;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   description?: string;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   @ValidateIf((o) => {
     return !o.public;
   })
   @IsUUID()
   channelId?: string;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   @ValidateIf((o) => {
     return !o.channelId;
   })
@@ -36,19 +36,19 @@ export class CreateVideoDto {
   @ApiProperty({ type: String, format: 'binary' })
   videoFile: string;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   @Transform(({ value }) => ['true', true, 1, '1'].includes(value))
   @IsOptional()
   @IsBoolean()
   allowDislike?: boolean;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   @Transform(({ value }) => ['true', true, 1, '1'].includes(value))
   @IsOptional()
   @IsBoolean()
   allowReaction?: boolean;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   @Transform(({ value }) => ['true', true, 1, '1'].includes(value))
   @IsOptional()
   @IsBoolean()

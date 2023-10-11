@@ -11,94 +11,94 @@ import {
   MinDate,
   ValidateIf,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { JitsiConfig } from 'types/Meeting';
 import { timeZones } from 'entities/data/time-zones';
 
 export class CreateMeetingDto {
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   title?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   description?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsDate()
   @MinDate(new Date())
   @Type(() => Date)
   startDate?: Date;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsDate()
   @Type(() => Date)
   endDate?: Date;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   channelId?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @ValidateIf((o) => {
     return !o.channelId;
   })
   @IsBoolean()
   public?: boolean;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsObject()
   config?: JitsiConfig;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   saveConfig?: boolean;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   liveStream?: boolean;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   allowDislike?: boolean;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   allowReaction?: boolean;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   allowComment?: boolean;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   record?: boolean;
 
-  @ApiProperty({ type: Number, isArray: true })
+  @ApiPropertyOptional({ type: Number, isArray: true })
   @IsOptional()
   @IsArray()
   invitationIds?: Array<number>;
 
-  @ApiProperty({ enum: timeZones })
+  @ApiPropertyOptional({ enum: timeZones })
   @IsOptional()
   @IsNotEmpty()
   @IsIn(timeZones, { message: 'Invalid timezone option specified' })
   timeZone?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsInt()
   joinLinkExpiryAsHours?: number;

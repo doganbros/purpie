@@ -12,7 +12,7 @@ import { MarkNotificationDto } from '../dto/mark-notification.dto';
 import { ActivityService } from '../services/activity.service';
 
 @Controller({ path: 'activity', version: '1' })
-@ApiTags('activity')
+@ApiTags('Activity')
 export class ActivityController {
   constructor(private activityService: ActivityService) {}
 
@@ -49,6 +49,7 @@ export class ActivityController {
     return this.activityService.getContactSuggestions(user.id);
   }
 
+  // @ApiExcludeEndpoint()
   @Get('/list/notifications')
   @IsAuthenticated()
   getUserNotifications(
@@ -58,6 +59,7 @@ export class ActivityController {
     return this.activityService.getNotifications(user.id, query);
   }
 
+  // @ApiExcludeEndpoint()
   @Post('/mark/notification')
   @IsAuthenticated()
   markNotificationAsRead(

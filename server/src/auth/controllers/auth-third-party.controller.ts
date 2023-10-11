@@ -17,6 +17,7 @@ import { Request, Response } from 'express';
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiParam,
@@ -45,8 +46,9 @@ const {
   VERIFICATION_TOKEN_SECRET = '',
 } = process.env;
 
+// @ApiExcludeController()
 @Controller({ path: 'auth/third-party', version: '1' })
-@ApiTags('auth-third-party')
+@ApiTags('Third Party Auth')
 export class AuthThirdPartyController {
   constructor(
     private authService: AuthService,
@@ -57,9 +59,10 @@ export class AuthThirdPartyController {
   @ApiParam({
     name: 'name',
     type: String,
+    enum: ['google', 'apple'],
   })
   @ApiOkResponse({
-    description: `User is redirected to a third-party to sign in.`,
+    description: `User is redirected to a third-party auth url to sign in.`,
   })
   async thirdPartyLogin(
     @Param() { name }: ThirdPartyLoginParams,
@@ -106,10 +109,19 @@ export class AuthThirdPartyController {
   @ApiParam({
     name: 'name',
     type: String,
+    enum: ['google', 'apple'],
   })
   @ApiOkResponse({
     type: UserProfile,
     description: `User signs in with a third-party. `,
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Error thrown when requested third party name is invalid.',
+    schema: errorResponseDoc(
+      500,
+      'Something went wrong while authenticating using "name"',
+      'THIRD_PARTY_AUTH_ERROR',
+    ),
   })
   @HttpCode(HttpStatus.OK)
   async authenticateByThirdParty(
@@ -225,16 +237,16 @@ export class AuthThirdPartyController {
     schema: errorResponseDoc(404, 'User not found', 'USER_NOT_FOUND'),
   })
   @ApiUnauthorizedResponse({
-    description: 'Error thrown when jwt used to verify the email is invalid',
+    description: 'Error thrown when JWT used to verify the email is invalid',
     schema: errorResponseDoc(
-      404,
-      'Email verification token is invalid',
+      401,
+      'Email confirmation JWT is invalid',
       'INVALID_JWT',
     ),
   })
   @ApiCreatedResponse({
     type: UserProfile,
-    description: `User verifies email received from inbox. `,
+    description: `User complete profile which created with third party auth register.`,
   })
   @ApiBody({
     type: CompleteProfileDto,

@@ -5,7 +5,13 @@ import {
   Get,
   Headers,
 } from '@nestjs/common';
-import { ApiHeader, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiHeader,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
@@ -16,9 +22,10 @@ import { UserChannelListResponse } from '../responses/user-channel.response';
 import { UserChannelService } from '../services/user-channel.service';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { ChannelRoleCode } from '../../../types/RoleCodes';
+import { errorResponseDoc } from '../../../helpers/error-response-doc';
 
 @Controller({ path: 'user-channel', version: '1' })
-@ApiTags('user-channel')
+@ApiTags('User Channel')
 export class UserChannelController {
   constructor(private userChannelService: UserChannelService) {}
 
@@ -27,7 +34,7 @@ export class UserChannelController {
     type: UserChannelListResponse,
     isArray: true,
     description:
-      "Get the list of current user's channels. public channels of zone not joined yet will be listed when user is authorized in the zone(public, or userzone). But the userChannel id will be null",
+      "Get the list of current user's channels. Public channels of zone not joined yet will be listed when user is authorized in the zone(public, or userzone). But the userChannel id will be null",
   })
   @ApiHeader({
     name: 'app-subdomain',
@@ -55,12 +62,21 @@ export class UserChannelController {
   }
 
   @Delete('remove/:userChannelId')
+  @ApiBadRequestResponse({
+    description:
+      'Error thrown when the owner of the channel want to leave from channel.',
+    schema: errorResponseDoc(
+      400,
+      'Channel owner can not unfollow the channel',
+      'OWNER_CANT_UNFOLLOW_CHANNEL',
+    ),
+  })
   @ApiParam({
     name: 'UserZoneIdParams',
     description: 'User Zone Id',
   })
   @ApiOkResponse({
-    schema: { type: 'string', example: 'OK' },
+    description: 'User can leave from channel.',
   })
   @UserChannelRole()
   async deleteUserChannelById(
@@ -72,6 +88,5 @@ export class UserChannelController {
         'Channel owner can not unfollow the channel',
       );
     await currentUserChannel.remove();
-    return 'OK';
   }
 }

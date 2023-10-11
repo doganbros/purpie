@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
@@ -45,7 +46,7 @@ export class ZoneService {
       where: { userId },
     });
     if (zoneCount >= maxZoneCount)
-      throw new BadRequestException(
+      throw new ForbiddenException(
         ErrorTypes.INSUFFICIENT_MEMBERSHIP,
         'Your channel zone operation failed due to insufficient membership.',
       );
@@ -117,7 +118,7 @@ export class ZoneService {
       .getRawOne();
 
     if (zone)
-      throw new BadRequestException(
+      throw new ConflictException(
         ErrorTypes.USER_ALREADY_MEMBER_OF_ZONE,
         `The user with the email ${email} is already a member of this zone`,
       );
@@ -283,7 +284,7 @@ export class ZoneService {
       if (remainingSuperAdminCount === 0)
         throw new ForbiddenException(
           ErrorTypes.OWNER_NOT_EXIST,
-          'There must be at least one super admin',
+          'There must be at least one owner of zone.',
         );
     }
 

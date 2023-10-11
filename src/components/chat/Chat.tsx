@@ -1,4 +1,4 @@
-import { Box, Text } from 'grommet';
+import { Box, Button, Text } from 'grommet';
 import { nanoid } from 'nanoid';
 import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
@@ -323,10 +323,17 @@ const Chat: React.FC<Props> = ({
     socket.on('typing', typingListener);
     socket.on('message_deleted', msgDeletedListener);
 
+    socket.on('call_started', (payload) => {
+      if (payload.roomName === roomName)
+        // eslint-disable-next-line
+        alert(`call started from userID: ${payload.userId}`);
+    });
+
     return () => {
       socket.off('new_message', messageListener);
       socket.off('typingListener', typingListener);
       socket.off('message_deleted', msgDeletedListener);
+      socket.off('call_started', msgDeletedListener);
     };
   }, []);
 
@@ -382,6 +389,10 @@ const Chat: React.FC<Props> = ({
         </DayHeader>
       </DayContainer>
     );
+  };
+
+  const handleCall = () => {
+    socket.emit('join_call', currentUser?.id);
   };
 
   return (
@@ -487,6 +498,8 @@ const Chat: React.FC<Props> = ({
             </InfiniteScroll>
           </ScrollContainer>
           <MessageBoxContainer pad="small">
+            <Button onClick={handleCall}>Temp Call</Button>
+
             <MessageBox
               name={name}
               handleTypingEvent={handleTypingEvent}

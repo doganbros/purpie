@@ -4,6 +4,7 @@ import { UserRole } from 'entities/UserRole.entity';
 import { RolePermission } from 'types/RolePermission';
 import { AuthGuard } from '../guards/auth.guard';
 import { UserPermissionOptions } from '../interfaces/user.interface';
+import { errorResponseDoc } from '../../../helpers/error-response-doc';
 
 export const IsAuthenticated = (
   permissions: Array<RolePermission<UserRole>> = [],
@@ -15,7 +16,12 @@ export const IsAuthenticated = (
     UseGuards(AuthGuard),
     ApiUnauthorizedResponse({
       description:
-        "This is the error thrown when the user has not logged in. (Error Code: 'NOT_SIGNED_IN' is returned when jwt is not valid)",
+        'Error thrown when the user has not authorized or JWT is invalid.',
       status: 401,
+      schema: errorResponseDoc(
+        401,
+        'You not authorized to use this route',
+        'NOT_SIGNED_IN',
+      ),
     }),
   );

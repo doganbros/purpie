@@ -150,6 +150,32 @@ export class ChatGateway {
     await socket.leave(roomName);
   }
 
+  @SubscribeMessage('join_call')
+  async startCall(
+    @ConnectedSocket() socket: SocketWithTokenPayload,
+    @MessageBody() userId: string,
+  ) {
+    const roomName = this.chatService.getRoomName(userId);
+
+    socket.to(roomName).emit('call_started', {
+      socketId: socket.id,
+      userId: socket.user.id,
+    });
+  }
+
+  @SubscribeMessage('leave_call')
+  async leaveCall(
+    @ConnectedSocket() socket: SocketWithTokenPayload,
+    @MessageBody() userId: string,
+  ) {
+    const roomName = this.chatService.getRoomName(userId);
+
+    socket.to(roomName).emit('call_ended', {
+      roomName,
+      userId: socket.user.id,
+    });
+  }
+
   @SubscribeMessage('join_direct_user')
   async joinDirectUser(
     @ConnectedSocket() socket: SocketWithTokenPayload,

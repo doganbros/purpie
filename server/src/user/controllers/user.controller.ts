@@ -10,7 +10,6 @@ import {
   NotFoundException,
   Param,
   ParseArrayPipe,
-  ParseUUIDPipe,
   Post,
   Put,
   Query,
@@ -19,9 +18,13 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiBody,
+  ApiConflictResponse,
   ApiConsumes,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiQuery,
   ApiTags,
@@ -39,11 +42,8 @@ import {
   UserTokenPayload,
 } from 'src/auth/interfaces/user.interface';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
-import { User } from 'entities/User.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { PostSettings } from 'types/PostSettings';
 import { emptyPaginatedResponse } from 'helpers/utils';
-import { UserRole } from 'entities/UserRole.entity';
 import { PaginationQuery } from 'types/PaginationQuery';
 import { UserNameExistenceCheckDto } from 'src/meeting/dto/user-name-existence-check.dto';
 import { ContactIdParam } from '../dto/contact-id.param';
@@ -58,16 +58,17 @@ import { SearchUsersQuery } from '../dto/search-users.query';
 import { SetUserRoleDto } from '../dto/set-user-role.dto';
 import { UserService } from '../services/user.service';
 import { UpdateProfileDto } from '../dto/update-profile.dto';
-import { UpdateUserPermission } from '../dto/update-permissions.dto';
-import { SystemUserListQuery } from '../dto/system-user-list.query';
-import { CreateBlockedUserDto } from '../dto/create-blocked-user.dto';
 import { UserEvent } from '../listeners/user.event';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { errorResponseDoc } from '../../../helpers/error-response-doc';
+import { UserSearchResponse } from '../responses/user-search.response';
+import { UserZoneResponse } from '../responses/user-zone.response';
+import { UserChannelResponse } from '../responses/user-channel.response';
 
 const { S3_PROFILE_PHOTO_DIR = '', S3_BUCKET_NAME = '' } = process.env;
 
 @Controller({ path: 'user', version: '1' })
-@ApiTags('user')
+@ApiTags('User')
 export class UserController {
   constructor(
     private userService: UserService,
@@ -78,6 +79,24 @@ export class UserController {
   @ApiCreatedResponse({
     description: 'User responds to contact invitation',
     schema: { type: 'string', example: 'OK' },
+  })
+  @ApiNotFoundResponse({
+    description:
+      'Error thrown when the requested contact invitation not found.',
+    schema: errorResponseDoc(
+      404,
+      'Contact Invitation not found',
+      'CONTACT_INVITATION_NOT_FOUND',
+    ),
+  })
+  @ApiBadRequestResponse({
+    description:
+      'Error thrown when the requested contact id is same as authenticated user id.',
+    schema: errorResponseDoc(
+      404,
+      'You cannot add yourself to your contacts',
+      'CONTACT_ELIGIBILITY_ERROR',
+    ),
   })
   @IsAuthenticated()
   async contactInvitationResponse(
@@ -116,6 +135,23 @@ export class UserController {
     description: 'User creates a new contact invitation',
     schema: { type: 'integer' },
   })
+  @ApiBadRequestResponse({
+    description:
+      'Error thrown when the user already sent invitation to requested email.',
+    schema: errorResponseDoc(
+      400,
+      'Invitation to this user has already been sent',
+      'INVITATION_ALREADY_SENT_FOR_USER',
+    ),
+  })
+  @ApiConflictResponse({
+    description: 'Error thrown when the user already received invitation .',
+    schema: errorResponseDoc(
+      400,
+      'You have already been invited by this user',
+      'INVITATION_ALREADY_RECEIVED_FROM_USER',
+    ),
+  })
   @IsAuthenticated()
   async createNewContactInvitation(
     @CurrentUser() user: UserTokenPayload,
@@ -134,24 +170,6 @@ export class UserController {
     return invitationInviteeUserId;
   }
 
-  @Get('/contact/invitation/list')
-  @ApiOkResponse({
-    description: 'User lists their contact invitation list',
-    type: ContactInvitationListResponse,
-  })
-  @IsAuthenticated()
-  async getContactInvitations(
-    @CurrentUser() user: UserTokenPayload,
-    @Query() paginatedQuery: PaginationQuery,
-  ) {
-    const invitations = await this.userService.listContactInvitations(
-      user.id,
-      paginatedQuery,
-    );
-
-    return invitations;
-  }
-
   @Get('invitations/list')
   @ApiOkResponse({
     description: 'User lists all invitations, contacts, channels, zones',
@@ -162,17 +180,12 @@ export class UserController {
     @CurrentUser() user: UserTokenPayload,
     @Query() paginatedQuery: PaginationQuery,
   ) {
-    const invitations = await this.userService.listInvitationsForUser(
-      user.id,
-      paginatedQuery,
-    );
-
-    return invitations;
+    return this.userService.listInvitationsForUser(user.id, paginatedQuery);
   }
 
   @Get('/contact/list')
   @ApiOkResponse({
-    description: 'User lists contact',
+    description: 'User lists contacts',
     type: ContactListResponse,
   })
   @IsAuthenticated()
@@ -185,7 +198,7 @@ export class UserController {
 
   @Get('/contact/list/:userName')
   @ApiOkResponse({
-    description: `User lists another's contacts`,
+    description: `User lists another public users contacts`,
     type: ContactListResponse,
   })
   @IsAuthenticated()
@@ -211,43 +224,6 @@ export class UserController {
     return 'OK';
   }
 
-  @Get('/blocked/list')
-  @IsAuthenticated()
-  getBlockedUsers(
-    @CurrentUser() user: UserTokenPayload,
-    @Query() paginatedQuery: PaginationQuery,
-  ) {
-    return this.userService.getBlockedUsers(user.id, paginatedQuery);
-  }
-
-  @Post('/blocked/create')
-  @IsAuthenticated()
-  createBlockedUser(
-    @Body() info: CreateBlockedUserDto,
-    @CurrentUser() user: UserTokenPayload,
-  ) {
-    return this.userService.createBlockedUser(user.id, info.userId);
-  }
-
-  @Delete('/blocked/remove/:userId')
-  @IsAuthenticated()
-  unblockUser(
-    @CurrentUser() user: UserTokenPayload,
-    @Param('userId', ParseUUIDPipe) userId: string,
-  ) {
-    return this.userService.unBlockUser(user.id, userId);
-  }
-
-  @Get('/list')
-  @ApiOkResponse({
-    description: 'User lists system users',
-    type: User,
-  })
-  @IsAuthenticated(['canManageRole'])
-  systemUserList(@Query() query: SystemUserListQuery) {
-    return this.userService.listSystemUsers(query);
-  }
-
   @Get('/search')
   @IsAuthenticated()
   @ApiQuery({
@@ -256,6 +232,10 @@ export class UserController {
       'Exclude current user in search. Specify false to disable this.',
     type: String,
     required: false,
+  })
+  @ApiOkResponse({
+    description: 'Search user with requested payload',
+    type: UserSearchResponse,
   })
   async searchUsers(
     @CurrentUser() user: UserTokenPayload,
@@ -293,67 +273,24 @@ export class UserController {
     return users;
   }
 
-  @Get('/role/list')
-  @ApiOkResponse({
-    type: UserRole,
-    description:
-      'User lists user roles. User must have canManageRole permission',
-  })
-  @ValidationBadRequest()
-  @IsAuthenticated(['canManageRole'])
-  async listUserRoles() {
-    return this.userService.listUserRoles();
-  }
-
-  @Post('/role/create')
-  @ApiCreatedResponse({
-    description:
-      'User creates a new user role. User must have canManageRole permission',
-    schema: { type: 'string', example: 'OK' },
-  })
-  @ValidationBadRequest()
-  @IsAuthenticated(['canManageRole'])
-  async createUserRole(@Body() info: UserRole) {
-    await this.userService.createUserRole(info);
-    return 'OK';
-  }
-
   @Put('/role/change')
   @ApiCreatedResponse({
     description:
       'User changes a role for an existing user. User must have canManageRole permission',
     schema: { type: 'string', example: 'OK' },
   })
+  @ApiForbiddenResponse({
+    description: 'Error thrown when changed user role is last super admin.',
+    schema: errorResponseDoc(
+      403,
+      'There must be at least one super admin',
+      'SUPER_ADMIN_NOT_EXIST',
+    ),
+  })
   @ValidationBadRequest()
   @IsAuthenticated(['canManageRole'])
   async changeUserRole(@Body() info: SetUserRoleDto) {
     await this.userService.changeUserRole(info);
-    return 'OK';
-  }
-
-  @Delete('/role/remove/:roleCode')
-  @ApiCreatedResponse({
-    description:
-      'User removes a new user role. User must have canManageRole permission. When a role is removed Created is returned else OK',
-    schema: { type: 'string', example: 'OK' },
-  })
-  @ValidationBadRequest()
-  @IsAuthenticated(['canManageRole'])
-  async removeUserRole(@Param('roleCode') roleCode: string) {
-    const result = await this.userService.removeUserRole(roleCode);
-    return result ? 'Created' : 'OK';
-  }
-
-  @Put('/permissions/update')
-  @ApiCreatedResponse({
-    description:
-      'User updates permissions for user role. User must have canManageRole permission',
-    schema: { type: 'string', example: 'OK' },
-  })
-  @ValidationBadRequest()
-  @IsAuthenticated(['canManageRole'])
-  async updateUserRolePermissions(@Body() info: UpdateUserPermission) {
-    await this.userService.editUserRolePermissions(info.roleCode, info);
     return 'OK';
   }
 
@@ -365,6 +302,7 @@ export class UserController {
   @ValidationBadRequest()
   async userNameExistenceCheck(@Body() info: UserNameExistenceCheckDto) {
     const user = await this.userService.userNameExists(info.userName);
+
     return {
       userName: info.userName,
       exists: !!user,
@@ -375,6 +313,10 @@ export class UserController {
   }
 
   @Get('/zone/list/:userName')
+  @ApiOkResponse({
+    description: 'List requested user public zones',
+    type: UserZoneResponse,
+  })
   @IsAuthenticated()
   listPublicUserZones(
     @CurrentUser() user: UserTokenPayload,
@@ -385,6 +327,10 @@ export class UserController {
   }
 
   @Get('/channel/list/:userName')
+  @ApiOkResponse({
+    description: 'List requested user public channels',
+    type: UserChannelResponse,
+  })
   @IsAuthenticated()
   listPublicUserChannels(
     @CurrentUser() user: UserTokenPayload,
@@ -395,6 +341,10 @@ export class UserController {
   }
 
   @Get('profile')
+  @ApiOkResponse({
+    description: 'Get authenticated user profile informations.',
+    type: UserProfile,
+  })
   @IsAuthenticated([], { injectUserProfile: true })
   getUserProfile(@CurrentUserProfile() userProfile: UserProfile) {
     return userProfile;
@@ -402,6 +352,10 @@ export class UserController {
 
   @Get('profile/:userName')
   @IsAuthenticated()
+  @ApiOkResponse({
+    description: 'Get public specified user profile informations.',
+    type: UserProfile,
+  })
   getPublicUserProfile(
     @Param('userName') userName: string,
     @CurrentUser() user: UserTokenPayload,
@@ -410,17 +364,47 @@ export class UserController {
   }
 
   @Put('profile')
+  @ApiOkResponse({
+    description:
+      'Updates authenticated user profile informations with given request.',
+  })
+  @ApiNotFoundResponse({
+    description:
+      'Error thrown when authenticated user informations are not found.',
+    schema: errorResponseDoc(404, 'User profile not found', 'USER_NOT_FOUND'),
+  })
+  @ApiBadRequestResponse({
+    description:
+      'Error thrown when detected no changes between requested payload and current user information.',
+    schema: errorResponseDoc(400, 'No Changes detected', 'NO_CHANGES_DETECTED'),
+  })
   @IsAuthenticated()
   async updateUserProfile(
     @CurrentUser() user: UserTokenPayload,
     @Body() info: UpdateProfileDto,
   ) {
     await this.userService.updateProfile(user.id, info);
-    return 'OK';
   }
 
   @Put('display-photo')
   @ApiConsumes('multipart/form-data')
+  @ApiOkResponse({
+    description:
+      'Updates display photo of user with requested photo file and return new photo file URL',
+    schema: {
+      type: 'string',
+      description: 'Currently uploaded photo file url',
+    },
+  })
+  @ApiBadRequestResponse({
+    description:
+      'Error thrown when the requested photo format invalid. Valid formats: jpg, jpeg, png, bmp and svg',
+    schema: errorResponseDoc(
+      400,
+      'Please upload a valid photo format',
+      'INVALID_IMAGE_FORMAT',
+    ),
+  })
   @ApiBody({
     schema: {
       type: 'object',
@@ -475,7 +459,14 @@ export class UserController {
   @Delete('display-photo')
   @ApiOkResponse({
     description: 'Delete user display photo',
-    schema: { type: 'string', example: 'OK' },
+  })
+  @ApiNotFoundResponse({
+    description: 'Error thrown when user display photo is not found.',
+    schema: errorResponseDoc(
+      404,
+      'The specified user has not any display photo!',
+      'USER_DISPLAY_PHOTO_NOT_FOUND',
+    ),
   })
   @HttpCode(HttpStatus.OK)
   @IsAuthenticated([], { injectUserProfile: true })
@@ -494,6 +485,7 @@ export class UserController {
   }
 
   @Get('display-photo/:fileName')
+  @ApiOkResponse({ description: 'View display photo of authenticated user' })
   @Header('Cache-Control', 'max-age=3600')
   async viewProfilePhoto(
     @Res() res: Response,
@@ -514,33 +506,5 @@ export class UserController {
     } catch (err: any) {
       return res.status(err.statusCode || 500).json(err);
     }
-  }
-
-  @Get('post-settings')
-  @ApiOkResponse({
-    type: PostSettings,
-    description: 'Retrieves default post settings for a user',
-  })
-  @IsAuthenticated()
-  getCurrentUserPostSettings(@CurrentUser() user: UserTokenPayload) {
-    return this.userService.getPostSettings(user.id);
-  }
-
-  @Put('post-settings/update')
-  @IsAuthenticated()
-  updatePostSettings(
-    @CurrentUser() user: UserTokenPayload,
-    @Body() settings: PostSettings,
-  ) {
-    return this.userService.updatePostSettings(user.id, settings);
-  }
-
-  @Put('featured-post/set/:postId')
-  @IsAuthenticated()
-  setFeaturedPost(
-    @CurrentUser() user: UserTokenPayload,
-    @Param('postId', ParseUUIDPipe) postId: string,
-  ) {
-    return this.userService.setFeaturedPost(user.id, postId);
   }
 }

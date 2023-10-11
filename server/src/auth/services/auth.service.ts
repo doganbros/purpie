@@ -15,8 +15,8 @@ import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
 import { Request, Response } from 'express';
 import { generateJWT, getJWTCookieKeys } from 'helpers/jwt';
-import { compareHash, detectBrowser, hash } from 'helpers/utils';
-import { nanoid } from 'nanoid';
+import { alphaNum, compareHash, detectBrowser, hash } from 'helpers/utils';
+import { customAlphabet, nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
 import { Brackets, IsNull, Not, Repository } from 'typeorm';
 import { isUUID } from '@nestjs/common/utils/is-uuid';
@@ -27,6 +27,7 @@ import {
 import { InitializeUserDto } from '../dto/initialize-user.dto';
 import { RegisterUserDto } from '../dto/register-user.dto';
 import {
+  UserApiCredentials,
   UserBasicWithToken,
   UserProfile,
   UserTokenPayload,
@@ -340,6 +341,15 @@ export class AuthService {
     });
   }
 
+  getUserByApiKey(value: string) {
+    return this.userRepository.findOne({
+      where: {
+        apiKey: value,
+      },
+      relations: ['userRole'],
+    });
+  }
+
   async verifyResendMailVerificationToken(userId: string) {
     const user = await this.userRepository.findOne({
       where: {
@@ -398,7 +408,10 @@ export class AuthService {
     const isValid = await compareHash(token, user.mailVerificationToken);
 
     if (!isValid)
-      throw new NotFoundException(ErrorTypes.USER_NOT_FOUND, 'User not found');
+      throw new UnauthorizedException(
+        ErrorTypes.INVALID_JWT,
+        'Email confirmation JWT is invalid',
+      );
 
     user.emailConfirmed = true;
     user.mailVerificationToken = null!;
@@ -517,5 +530,31 @@ export class AuthService {
 
   async getUserMembership(userId: string) {
     return this.membershipService.getUserMembership(userId);
+  }
+
+  async getApiCredentials(userId: string) {
+    const { apiKey } = await this.userRepository.findOneOrFail({
+      id: userId,
+    });
+
+    if (apiKey) {
+      return { apiKey };
+    }
+
+    return null;
+  }
+
+  async createApiCredentials(userId: string): Promise<UserApiCredentials> {
+    const apiKey = customAlphabet(alphaNum, 50)();
+    const apiSecret = customAlphabet(alphaNum, 70)();
+
+    const apiSecretHashed = await bcrypt.hash(apiSecret, 10);
+
+    await this.userRepository.update(
+      { id: userId },
+      { apiKey, apiSecret: apiSecretHashed },
+    );
+
+    return { apiKey, apiSecret };
   }
 }

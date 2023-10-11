@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -190,9 +191,9 @@ export class UserService {
         'Invitation to this user has already been sent',
       );
     else if (existing)
-      throw new BadRequestException(
+      throw new ConflictException(
         ErrorTypes.INVITATION_ALREADY_RECEIVED_FROM_USER,
-        'You have already been invited by this user already',
+        'You have already been invited by this user',
       );
 
     const invitation = await this.invitationRepository
@@ -224,26 +225,6 @@ export class UserService {
       'purpie-invite',
       context,
     );
-  }
-
-  listContactInvitations(userId: string, query: PaginationQuery) {
-    return this.invitationRepository
-      .createQueryBuilder('contact_invitation')
-      .innerJoin('contact_invitation.createdBy', 'inviter')
-      .innerJoin('contact_invitation.invitee', 'invitee')
-      .select([
-        'contact_invitation.id',
-        'contact_invitation.createdOn',
-        'inviter.id',
-        'inviter.email',
-        'inviter.fullName',
-        'inviter.displayPhoto',
-        'inviter.userName',
-      ])
-      .where('contact_invitation.zoneId is null')
-      .andWhere('contact_invitation.channelId is null')
-      .andWhere('invitee.id = :userId', { userId })
-      .paginate(query);
   }
 
   getContactInvitationByIdAndInviteeId(id: string, inviteeId: string) {

@@ -50,7 +50,8 @@ const App: FC = () => {
       dispatch(getUserChannelsAction());
       dispatch(getUserZonesAction());
       dispatch(listFolderAction());
-      dispatch(getUserMembershipAction());
+      if (process.env.NODE_ENV !== 'development')
+        dispatch(getUserMembershipAction());
     }
   }, [isAuthenticated]);
 
