@@ -27,6 +27,7 @@ import { MeetingGateway } from './gateways/meeting.gateway';
     MailModule,
     ChannelModule,
   ],
+  exports: [MeetingService],
   controllers: [MeetingController],
   providers: [MeetingService, MeetingGateway],
 })

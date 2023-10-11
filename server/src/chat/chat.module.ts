@@ -11,6 +11,7 @@ import { ChatService } from './services/chat.service';
 import { ChatGateway } from './gateways/chat.gateway';
 import { ChatController } from './controllers/chat.controller';
 import { UserLogModule } from '../log/user-log.module';
+import { MeetingModule } from '../meeting/meeting.module';
 
 @Module({
   providers: [ChatGateway, ChatService],
@@ -18,6 +19,7 @@ import { UserLogModule } from '../log/user-log.module';
     AuthModule,
     PostModule,
     UserLogModule,
+    MeetingModule,
     TypeOrmModule.forFeature([
       UserChannel,
       Contact,
@@ -26,6 +28,7 @@ import { UserLogModule } from '../log/user-log.module';
       CurrentStreamViewer,
     ]),
   ],
+
   controllers: [ChatController],
 })
 export class ChatModule {}
