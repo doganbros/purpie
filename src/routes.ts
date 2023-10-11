@@ -18,6 +18,7 @@ import VerifyUserEmailInfo from './pages/Public/VerifyUserEmailInfo';
 import JoinPage from './pages/Public/JoinPage';
 import CompleteThirdPartyAuth from './pages/Public/CompleteThirdPartyAuth';
 import Messages from './pages/Private/messages/Messages';
+import ApiDocs from './pages/Public/ApiDocs';
 
 interface AppRoute {
   id: string;
@@ -30,6 +31,12 @@ interface AppRoute {
 }
 
 export const publicRoutes: Array<AppRoute> = [
+  {
+    id: nanoid(),
+    path: '/api-docs',
+    component: ApiDocs,
+    description: 'Purpie API Documentations',
+  },
   {
     id: nanoid(),
     path: '/join',

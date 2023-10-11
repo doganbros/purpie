@@ -10,6 +10,7 @@ import {
   ApiHeader,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
@@ -36,13 +37,17 @@ export class UserZoneController {
   @ApiOkResponse({
     type: UserZoneListResponse,
     isArray: true,
-    description:
-      "Get the list of current user's zones. It also adds the public zone which is selected but not joined yet, Its userzoneId will be null when the user zone is not found",
+    description: "List of current user's zones.",
   })
   @ApiHeader({
     name: 'app-subdomain',
     required: false,
     description: 'Zone subdomain',
+  })
+  @ApiOperation({
+    summary: 'List User Zones',
+    description:
+      "Get the list of current user's zones. It also adds the public zone which is selected but not joined yet, Its userZoneId will be null when the user zone is not found.",
   })
   @IsAuthenticated()
   async getCurrentUserZones(
@@ -55,8 +60,12 @@ export class UserZoneController {
   @Get('detail')
   @ApiOkResponse({
     type: UserZoneDetailResponse,
+    description: 'Get zone detail',
+  })
+  @ApiOperation({
+    summary: 'Get User Zone',
     description:
-      "Get current user's zone detail, This is deduced from the current subdomain",
+      "Get current user's zone detail, This is deduced from the current subdomain.",
   })
   @ApiNotFoundResponse({
     description: 'Error thrown when the user zone ist not found',
@@ -79,7 +88,11 @@ export class UserZoneController {
   @Get('detail/:userZoneId')
   @ApiOkResponse({
     type: UserZoneDetailResponse,
-    description: 'Get user zone detail by user zone id',
+    description: 'Get user zone',
+  })
+  @ApiOperation({
+    summary: 'Get User Zone',
+    description: 'Get user zone detail by user zone id.',
   })
   @ApiParam({
     name: 'userZoneId',
@@ -93,6 +106,10 @@ export class UserZoneController {
   @Delete('remove/:userZoneId')
   @ApiOkResponse({
     schema: { type: 'string', example: 'OK' },
+  })
+  @ApiOperation({
+    summary: 'Delete User Zone',
+    description: 'Delete user zone with "userZoneId" parameter.',
   })
   @ApiParam({
     name: 'userZoneId',
@@ -108,6 +125,10 @@ export class UserZoneController {
   @Delete('remove/:zoneId')
   @ApiOkResponse({
     schema: { type: 'string', example: 'OK' },
+  })
+  @ApiOperation({
+    summary: 'Delete User Zone',
+    description: 'Delete user zone with only "zoneId" parameter.',
   })
   @ApiParam({
     name: 'zoneId',

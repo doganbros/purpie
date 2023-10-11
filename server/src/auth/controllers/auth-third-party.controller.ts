@@ -10,13 +10,13 @@ import {
   InternalServerErrorException,
   Param,
   Post,
-  Req,
   Res,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiExcludeController,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -46,7 +46,7 @@ const {
   VERIFICATION_TOKEN_SECRET = '',
 } = process.env;
 
-// @ApiExcludeController()
+@ApiExcludeController()
 @Controller({ path: 'auth/third-party', version: '1' })
 @ApiTags('Third Party Auth')
 export class AuthThirdPartyController {
@@ -128,7 +128,6 @@ export class AuthThirdPartyController {
     @Param() { name }: ThirdPartyLoginParams,
     @Body() body: AuthByThirdPartyDto,
     @Res({ passthrough: true }) res: Response,
-    @Req() req: Request,
   ) {
     let user: User | undefined;
 
@@ -156,15 +155,15 @@ export class AuthThirdPartyController {
             ...user.userRole,
           },
         };
-        await this.authService.setAccessTokens(
-          {
-            id: user.id,
-          },
-          res,
-          req,
-        );
+        const token = await this.authService.setAccessTokens({
+          id: user.id,
+        });
 
-        return userPayload;
+        return {
+          user: userPayload,
+          accessToken: token.accessToken,
+          refreshToken: token.refreshToken,
+        };
       }
       const {
         token,
@@ -188,15 +187,15 @@ export class AuthThirdPartyController {
             ...user!.userRole,
           },
         };
-        await this.authService.setAccessTokens(
-          {
-            id: userPayload.id,
-          },
-          res,
-          req,
-        );
+        const tokens = await this.authService.setAccessTokens({
+          id: userPayload.id,
+        });
 
-        return userPayload;
+        return {
+          user: userPayload,
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+        };
       }
       let userInfo;
       if (body.user) userInfo = JSON.parse(body.user);
@@ -262,8 +261,6 @@ export class AuthThirdPartyController {
     )
     { email }: UserBasic,
     @Body() { token, userName }: CompleteProfileDto,
-    @Res({ passthrough: true }) res: Response,
-    @Req() req: Request,
   ) {
     const user = await this.authService.verifyUserEmail(email, userName, token);
 
@@ -276,14 +273,13 @@ export class AuthThirdPartyController {
         ...user.userRole,
       },
     };
-    await this.authService.setAccessTokens(
-      {
-        id: user.id,
-      },
-      res,
-      req,
-    );
+    const {
+      accessToken,
+      refreshToken,
+    } = await this.authService.setAccessTokens({
+      id: user.id,
+    });
 
-    return userPayload;
+    return { user: userPayload, accessToken, refreshToken };
   }
 }

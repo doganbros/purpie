@@ -23,9 +23,11 @@ import {
   ApiConflictResponse,
   ApiConsumes,
   ApiCreatedResponse,
+  ApiExcludeEndpoint,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
@@ -81,9 +83,13 @@ export class ZoneController {
   ) {}
 
   @Post('create')
-  @ApiCreatedResponse({
+  @ApiOperation({
+    summary: 'Create Zone',
     description:
-      'Current authenticated user adds a new zone. The id of the user zone is returned. User zone must have canCreateZone permission',
+      'Current authenticated user creates a new zone. The id of the user zone is returned. User must have "canCreateZone" permission.',
+  })
+  @ApiCreatedResponse({
+    description: 'New zone created.',
     schema: { type: 'integer' },
   })
   @ApiForbiddenResponse({
@@ -130,9 +136,13 @@ export class ZoneController {
   }
 
   @Put('/update/:zoneId')
-  @ApiCreatedResponse({
+  @ApiOperation({
+    summary: 'Update Zone',
     description:
-      'User updates a zone. User must have the canEdit permission on zone',
+      'User updates a zone belonging to zoneId with given parameters. User must have the "canEdit" permission on zone.',
+  })
+  @ApiCreatedResponse({
+    description: 'Zone updated',
     schema: { type: 'string', example: 'OK' },
   })
   @ApiParam({
@@ -149,9 +159,13 @@ export class ZoneController {
   }
 
   @Delete('/remove/:zoneId')
-  @ApiOkResponse({
+  @ApiOperation({
+    summary: 'Delete Zone',
     description:
-      'User deletes a zone. User must have the canDelete permission on zone.',
+      'User deletes a zone belonging to "zoneId". User must have the "canDelete" permission on zone.',
+  })
+  @ApiOkResponse({
+    description: 'Zone deleted',
     schema: { type: 'string', example: 'OK' },
   })
   @HttpCode(HttpStatus.OK)
@@ -166,8 +180,12 @@ export class ZoneController {
   }
 
   @Get('/search')
-  @ApiOkResponse({
+  @ApiOperation({
+    summary: 'Search Zone',
     description: 'Search zone with requested search term field.',
+  })
+  @ApiOkResponse({
+    description: 'Search zone.',
     type: SearchZoneResponse,
   })
   @IsAuthenticated()
@@ -180,8 +198,12 @@ export class ZoneController {
 
   @Get('/users/list/:zoneId')
   @ApiOkResponse({
-    description: 'Lists zone users according to requested zone id.',
+    description: 'Lists zone users',
     type: ZoneUserResponse,
+  })
+  @ApiOperation({
+    summary: 'List Zone Users',
+    description: 'List users of the zone belonging to "zoneId".',
   })
   @UserZoneRole(['canManageRole'])
   zoneUserList(
@@ -192,9 +214,13 @@ export class ZoneController {
   }
 
   @Post('/join/:zoneId')
-  @ApiCreatedResponse({
+  @ApiOperation({
+    summary: 'Join Zone',
     description:
-      'Current authenticated user joins a public zone. The id of the user zone is returned',
+      'Current authenticated user joins a zone belonging to "zoneId". The id of the user zone is returned',
+  })
+  @ApiCreatedResponse({
+    description: 'Joined zone',
     schema: { type: 'integer' },
   })
   @ApiNotFoundResponse({
@@ -218,10 +244,14 @@ export class ZoneController {
   }
 
   @Post('/invite/:zoneId')
+  @ApiOperation({
+    summary: 'Invite User to Zone',
+    description:
+      'Current authenticated user invites a user to specified zone. The id of the invitation is returned. User must have "canInvite" permission on zone permissions.',
+  })
   @UserZoneRole(['canInvite'])
   @ApiCreatedResponse({
-    description:
-      'Current authenticated invites a user to this zone. The id of the invitation is returned. User must have canInvite permission on zone permissions.',
+    description: 'Zone user invited',
     schema: { type: 'integer' },
   })
   @ApiNotFoundResponse({
@@ -267,6 +297,11 @@ export class ZoneController {
 
   @Post('/invitation/response')
   @IsAuthenticated([], { injectUserProfile: true })
+  @ApiOperation({
+    summary: 'Respond Invitation of Zone',
+    description:
+      'Respond invitation of specified zone with "accept" or "reject" enum parameters.',
+  })
   @ApiCreatedResponse({
     description: 'User Responds to invitation',
     schema: { type: 'string', example: 'OK' },
@@ -311,6 +346,11 @@ export class ZoneController {
   @ApiParam({
     name: 'userZoneId',
     description: 'Alternatively you can use zoneId',
+  })
+  @ApiOperation({
+    summary: 'Upload Display Photo',
+    description:
+      'Upload a display photo for specified zone with "jpg, jpeg, png, bmp and svg" image formats.',
   })
   @ApiBadRequestResponse({
     description:
@@ -375,6 +415,10 @@ export class ZoneController {
 
   @Get('display-photo/:fileName')
   @ApiOkResponse({ description: 'Get display photo of selected zone' })
+  @ApiOperation({
+    summary: 'Get Display Photo',
+    description: 'Get display photo stream of zone with "fileName" parameter',
+  })
   @Header('Cache-Control', 'max-age=3600')
   async viewProfilePhoto(
     @Res() res: Response,
@@ -401,8 +445,12 @@ export class ZoneController {
   @ApiOkResponse({
     type: UserZoneRoleResponse,
     isArray: true,
+    description: 'List zone roles',
+  })
+  @ApiOperation({
+    summary: 'List Zone Roles',
     description:
-      'User lists all zone roles. User must have canManageRole permission',
+      'User lists all zone roles. User must have "canManageRole" permission.',
   })
   @ApiParam({
     name: 'zoneId',
@@ -414,10 +462,15 @@ export class ZoneController {
     return this.zoneService.listZoneRoles(zoneId);
   }
 
+  @ApiExcludeEndpoint()
   @Put('/role/change/:zoneId')
-  @ApiCreatedResponse({
+  @ApiOperation({
+    summary: 'Update Zone Role',
     description:
-      'User changes a role for an existing user zone. User must have canManageRole permission',
+      'User changes a role for an existing user zone. User must have "canManageRole" permission.',
+  })
+  @ApiCreatedResponse({
+    description: 'Update zone role',
     schema: { type: 'string', example: 'OK' },
   })
   @ApiForbiddenResponse({
@@ -438,14 +491,19 @@ export class ZoneController {
     return 'OK';
   }
 
+  @ApiExcludeEndpoint()
   @Delete('/role/remove/:zoneId/:roleCode')
+  @ApiOperation({
+    summary: 'Delete Zone Role',
+    description:
+      'User deletes a zone role with requested parameters. User must have "canManageRole" permission.',
+  })
   @ApiParam({
     name: 'zoneId',
     description: 'The zone id',
   })
   @ApiCreatedResponse({
-    description:
-      'User removes a new zone role. User must have canManageRole permission. When a role is removed Created is returned else OK',
+    description: 'User removes a zone role',
     schema: { type: 'string', example: 'OK' },
   })
   @ApiForbiddenResponse({
@@ -467,6 +525,7 @@ export class ZoneController {
     return result ? 'Created' : 'OK';
   }
 
+  @ApiExcludeEndpoint()
   @Put('/permissions/update/:zoneId')
   @ApiParam({
     name: 'zoneId',

@@ -128,3 +128,11 @@ export class UserApiCredentials {
   @ApiProperty()
   apiSecret: string;
 }
+
+export class AuthenticationTokens {
+  @ApiProperty()
+  accessToken: string;
+
+  @ApiProperty()
+  refreshToken: string;
+}
