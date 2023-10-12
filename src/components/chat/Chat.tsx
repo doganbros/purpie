@@ -69,6 +69,7 @@ const Chat: React.FC<Props> = ({
   const [repliedMessage, setRepliedMessage] = useState<ChatMessage | null>(
     null
   );
+  const [tempCallStarted, setTempCallStarted] = useState(false);
   const [editedMessage, setEditedMessage] = useState<ChatMessage | null>(null);
   const [uploadingFiles, setUploadingFiles] = useState<Array<File>>([]);
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
@@ -324,9 +325,7 @@ const Chat: React.FC<Props> = ({
     socket.on('message_deleted', msgDeletedListener);
 
     socket.on('call_started', (payload) => {
-      if (payload.roomName === roomName)
-        // eslint-disable-next-line
-        alert(`call started from userID: ${payload.userId}`);
+      if (payload.userId === id) setTempCallStarted(true);
     });
 
     return () => {
@@ -392,7 +391,7 @@ const Chat: React.FC<Props> = ({
   };
 
   const handleCall = () => {
-    socket.emit('join_call', currentUser?.id);
+    socket.emit('join_call', id);
   };
 
   return (
@@ -499,6 +498,7 @@ const Chat: React.FC<Props> = ({
           </ScrollContainer>
           <MessageBoxContainer pad="small">
             <Button onClick={handleCall}>Temp Call</Button>
+            {tempCallStarted && <Button onClick={handleCall}>Join Call</Button>}
 
             <MessageBox
               name={name}
