@@ -12,10 +12,6 @@ const ApiDocs: FC = () => {
           nativeScrollbars: true,
           hideDownloadButton: true,
           theme: {
-            rightPanel: {
-              backgroundColor: '#643FBB',
-              textColor: 'white',
-            },
             logo: {
               maxHeight: '160px',
               maxWidth: '160px',
