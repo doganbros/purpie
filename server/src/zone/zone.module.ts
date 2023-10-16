@@ -10,6 +10,7 @@ import { UserZoneController } from './controllers/user-zone.controller';
 import { ZoneService } from './services/zone.service';
 import { ZoneController } from './controllers/zone.controller';
 import { UserZoneService } from './services/user-zone.service';
+import { BlacklistName } from "../../entities/BlacklistName.entity";
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { UserZoneService } from './services/user-zone.service';
       ZoneRole,
       UserZone,
       UserChannel,
+      BlacklistName
     ]),
     MailModule,
   ],
