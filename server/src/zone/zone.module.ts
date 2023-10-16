@@ -6,6 +6,7 @@ import { ZoneRole } from 'entities/ZoneRole.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { MailModule } from 'src/mail/mail.module';
+import { BlacklistName } from '../../entities/BlacklistName.entity';
 import { UserZoneController } from './controllers/user-zone.controller';
 import { ZoneService } from './services/zone.service';
 import { ZoneController } from './controllers/zone.controller';
@@ -19,6 +20,7 @@ import { UserZoneService } from './services/user-zone.service';
       ZoneRole,
       UserZone,
       UserChannel,
+      BlacklistName,
     ]),
     MailModule,
   ],
