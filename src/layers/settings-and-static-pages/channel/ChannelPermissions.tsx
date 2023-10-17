@@ -72,12 +72,12 @@ const ChannelPermissions: FC<ChannelPermissionsProps> = ({ userChannel }) => {
 
         <Box
           gap={size === 'small' ? 'medium' : 'small'}
-          elevation="peach"
           direction="column"
           justify="between"
           align="center"
           round="small"
           pad="small"
+          border={{ size: '1px', color: 'status-disabled-light' }}
         >
           {Object.keys(actions).map((action) => (
             <Box
@@ -88,7 +88,7 @@ const ChannelPermissions: FC<ChannelPermissionsProps> = ({ userChannel }) => {
               width="full"
               gap="small"
             >
-              <Text size="small" color="dark">
+              <Text size="small" color="dark" weight={400}>
                 {t(`ChannelPermissionAction.${action}`)}
               </Text>
               <Box direction="row" gap={size === 'small' ? '16px' : '72px'}>

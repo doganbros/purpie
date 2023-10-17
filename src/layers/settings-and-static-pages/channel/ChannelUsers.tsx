@@ -95,7 +95,7 @@ const ChannelUsers: FC<ChannelUsersProps> = ({ channelId }) => {
           onClick={() =>
             setManageUserInfo({ userId: user.id, role: channelRole.roleCode })
           }
-          icon={<SettingsOption size="medium" color="grayish-blue" />}
+          icon={<SettingsOption size="20px" color="status-disabled" />}
           size="small"
           key={id}
         />,
@@ -123,7 +123,7 @@ const ChannelUsers: FC<ChannelUsersProps> = ({ channelId }) => {
                   border={{ side: 'bottom', color: 'status-disabled-light' }}
                   align={idx === 0 ? 'left' : 'center'}
                 >
-                  <Text color="status-disabled" size="small" weight={500}>
+                  <Text color="dark" weight={400} size="small">
                     {c.label}
                   </Text>
                 </TableCell>
@@ -145,7 +145,11 @@ const ChannelUsers: FC<ChannelUsersProps> = ({ channelId }) => {
                         align={idx === 0 ? 'left' : 'center'}
                       >
                         {typeof data.columns[idx] === 'string' ? (
-                          <Text size="small" color="status-disabled">
+                          <Text
+                            size="small"
+                            color="status-disabled"
+                            weight={400}
+                          >
                             {data.columns[idx]}
                           </Text>
                         ) : (
