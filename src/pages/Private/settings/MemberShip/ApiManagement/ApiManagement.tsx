@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Box, Button } from 'grommet';
+import { Box, Button, Text } from 'grommet';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Menu } from '../../../../../components/layouts/SettingsAndStaticPageLayout/types';
@@ -40,18 +40,19 @@ const ApiManagement: () => Menu | null = () => {
             round="small"
             gap="small"
             pad="xxsmall"
+            fill="horizontal"
           >
             {/* <Text>Manage Your Api and Usage</Text> */}
-            <Box gap="small">
+            <Box gap="xsmall" fill="horizontal">
               <ApiText
-                text={apiKey || '*'.repeat(100)}
+                text={apiKey || '∗'.repeat(100)}
                 title={t('settings.apiKey')}
                 copyActive={
                   apiKey !== undefined && apiKey !== null && apiKey?.length > 0
                 }
               />
               <ApiText
-                text={apiSecret || '*'.repeat(apiKey?.length * 1.4 || 100)}
+                text={apiSecret || '∗'.repeat(apiKey?.length * 2 || 100)}
                 title={t('settings.apiSecret')}
                 copyActive={
                   apiSecret !== undefined &&
@@ -60,15 +61,21 @@ const ApiManagement: () => Menu | null = () => {
                 }
               />
             </Box>
-            <Button
-              onClick={handleCreate}
-              primary
-              label={t(
-                apiKey.length > 0
-                  ? 'settings.regenerateApi'
-                  : 'settings.generateApi'
-              )}
-            />
+            <Box fill="horizontal" align="end" justify="end">
+              <Button
+                onClick={handleCreate}
+                primary
+                label={
+                  <Text size="small">
+                    {t(
+                      apiKey.length > 0
+                        ? 'settings.regenerateApi'
+                        : 'settings.generateApi'
+                    )}
+                  </Text>
+                }
+              />
+            </Box>
           </Box>
         ),
       },
