@@ -1,6 +1,5 @@
-import { Box, Text } from 'grommet';
-import { Copy } from 'grommet-icons';
-import React from 'react';
+import { Box, Button, FormField, Text } from 'grommet';
+import React, { useState } from 'react';
 
 interface ApiTextProps {
   text: string;
@@ -8,30 +7,47 @@ interface ApiTextProps {
   copyActive: boolean;
 }
 const ApiText: React.FC<ApiTextProps> = ({ text, title, copyActive }) => {
+  const [isCopied, setIsCopied] = useState(false);
   const handleCopy = () => {
+    setIsCopied(true);
     navigator.clipboard.writeText(text);
   };
 
   return (
-    <Box>
-      <Text size="small">{title}</Text>
-      <Box
-        border={{ color: 'brand', size: 'xsmall' }}
-        round="small"
-        direction="row"
-        gap="small"
-        pad="small"
-        justify="between"
-        align="center"
-      >
-        <Text wordBreak="break-all" size="small">
-          {text}
-        </Text>
-        {copyActive && (
-          <Box style={{ cursor: 'pointer' }}>
-            <Copy onClick={handleCopy} />
+    <Box gap="small" fill="horizontal">
+      <Text size="medium" weight={500}>
+        {title}
+      </Text>
+      <Box fill="horizontal">
+        <FormField>
+          <Box
+            direction="row"
+            gap="small"
+            pad="small"
+            justify="between"
+            align="center"
+            fill="horizontal"
+          >
+            <Text
+              wordBreak="break-all"
+              size="small"
+              color="gray"
+              style={{ verticalAlign: 'sub' }}
+            >
+              {text}
+            </Text>
+            {copyActive && (
+              <Box width="xsmall" justify="center" align="center">
+                <Button
+                  onClick={handleCopy}
+                  label={isCopied ? 'Copied' : 'Copy'}
+                  size="small"
+                  primary
+                />
+              </Box>
+            )}
           </Box>
-        )}
+        </FormField>
       </Box>
     </Box>
   );
