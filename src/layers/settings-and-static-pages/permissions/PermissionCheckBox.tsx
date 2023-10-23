@@ -18,7 +18,7 @@ const PermissionCheckBox: FC<PermissionCheckBoxProps> = ({
       value={{
         checkBox: {
           ...theme.checkBox,
-          size: '16px',
+          size: '24px',
         },
       }}
     >

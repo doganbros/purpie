@@ -53,12 +53,12 @@ const ZonePermissions: FC<ZonePermissionsProps> = ({ userZone }) => {
 
         <Box
           gap={size === 'small' ? 'medium' : 'small'}
-          elevation="peach"
           direction="column"
           justify="between"
           align="center"
           round="small"
           pad="small"
+          border={{ size: '1px', color: 'status-disabled-light' }}
         >
           {Object.keys(actions).map((action) => (
             <Box
@@ -69,7 +69,7 @@ const ZonePermissions: FC<ZonePermissionsProps> = ({ userZone }) => {
               width="full"
               gap="small"
             >
-              <Text size="small" color="dark">
+              <Text size="small" color="dark" weight={4400}>
                 {t(`ZonePermissionAction.${action}`)}
               </Text>
               <Box direction="row" gap={size === 'small' ? '16px' : '72px'}>

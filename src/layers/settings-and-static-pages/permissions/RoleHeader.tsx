@@ -14,7 +14,7 @@ const RoleHeader: FC = () => {
           key={role}
           pad={index === roles.length - 1 ? 'none' : { right: '30px' }}
         >
-          <Text size="small" color="light-turquoise">
+          <Text size="small" color="dark">
             {t(`Permissions.${role}`)}
           </Text>
         </Box>
