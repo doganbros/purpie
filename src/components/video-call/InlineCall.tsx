@@ -1,31 +1,43 @@
+import React, { FC, useState } from 'react';
 import { Box, Text } from 'grommet';
-import React, { FC } from 'react';
-import { Up } from 'grommet-icons';
+import { Down, Up } from 'grommet-icons';
 import { ActiveCallIcon } from './ActiveCallIcon';
 import { VideoFrame } from './VideoFrame';
 
-export const InlineCall: FC = () => {
+interface InlineCallProps {
+  onClickVideo: () => void;
+}
+
+export const InlineCall: FC<InlineCallProps> = ({ onClickVideo }) => {
+  const [isExpanded, setIsExpanded] = useState(true);
   return (
-    <div style={{ zIndex: 100, position: 'fixed', bottom: 0, right: 0 }}>
-      <Box
-        elevation="large"
-        round="large"
-        pad="medium"
-        background="white"
-        width="400px"
-        gap="medium"
-      >
-        <VideoFrame />
-        <Box direction="row" align="center">
-          <Box fill direction="row" gap="small">
-            <Text weight="normal">Test User</Text>
-            <Up />
-          </Box>
-          <Box direction="row" gap="small">
-            <ActiveCallIcon />
-          </Box>
+    <Box
+      elevation="large"
+      round="large"
+      pad="medium"
+      background="white"
+      width="400px"
+      gap="medium"
+    >
+      {isExpanded && (
+        <Box onClick={onClickVideo}>
+          <VideoFrame />
+        </Box>
+      )}
+      <Box direction="row" align="center" gap="medium">
+        <Box
+          fill
+          direction="row"
+          gap="small"
+          onClick={() => setIsExpanded((p) => !p)}
+        >
+          <Text weight="normal">Test User</Text>
+          {isExpanded ? <Down /> : <Up />}
+        </Box>
+        <Box direction="row" gap="small">
+          <ActiveCallIcon />
         </Box>
       </Box>
-    </div>
+    </Box>
   );
 };

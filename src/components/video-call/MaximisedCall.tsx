@@ -1,22 +1,19 @@
-import React, { FC } from 'react';
-import { Box, Text } from 'grommet';
+import React, { FC, useState } from 'react';
+import { Box, Layer, Stack, Text } from 'grommet';
 import { Close } from 'grommet-icons';
-import styled from 'styled-components';
 import { VideoFrame } from './VideoFrame';
+import { useJitsiContext } from './VideoCallContext';
+import { VideoSettings } from './VideoSettings';
 
-const MaximizedCallContainer = styled.div`
-  z-index: 100;
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+interface MaximizedCallProps {
+  onDismiss: () => void;
+}
 
-export const MaximizedCall: FC = () => {
+export const MaximizedCall: FC<MaximizedCallProps> = ({ onDismiss }) => {
+  const { localTracks, remoteTracks } = useJitsiContext();
+  const [showSettings, setShowSettings] = useState(false);
   return (
-    <MaximizedCallContainer>
+    <>
       <Box
         elevation="large"
         round="small"
@@ -50,12 +47,29 @@ export const MaximizedCall: FC = () => {
               <Text>5:12</Text>
             </Box>
           </Box>
-          <Close color="white" />
+          <Close color="white" onClick={onDismiss} />
         </Box>
         <Box pad="medium" background="white">
-          <VideoFrame height="330px" />
+          <Stack anchor="bottom-right">
+            <VideoFrame height="300px" tracks={remoteTracks} />
+            <VideoFrame
+              height="150px"
+              tracks={localTracks}
+              local
+              onClickSettings={() => setShowSettings(true)}
+            />
+          </Stack>
         </Box>
       </Box>
-    </MaximizedCallContainer>
+      {showSettings && (
+        <Layer
+          background={{ opacity: 0 }}
+          onEsc={() => setShowSettings(false)}
+          onClickOutside={() => setShowSettings(false)}
+        >
+          <VideoSettings onDismiss={() => setShowSettings(false)} />
+        </Layer>
+      )}
+    </>
   );
 };

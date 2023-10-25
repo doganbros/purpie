@@ -64,7 +64,7 @@ const App: FC = () => {
           message={toast.message}
           id={toast.toastId}
         />
-        <VideoCallOverlay />
+        {!delay && !loading && isAuthenticated && <VideoCallOverlay />}
         {delay || loading || (isAuthenticated && !userZoneInitialized) ? (
           <Loader />
         ) : (

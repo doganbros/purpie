@@ -1,3 +1,5 @@
+/* eslint-disable no-var */
+/* eslint-disable vars-on-top */
 import { AxiosRequestConfig as DefaultAxiosRequestConfig } from 'axios';
 
 declare module 'axios' {
@@ -7,5 +9,7 @@ declare module 'axios' {
 }
 
 declare global {
-  const JitsiMeetJS: any;
+  var JitsiMeetJS: any;
 }
+
+export {};
