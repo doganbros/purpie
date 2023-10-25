@@ -25,6 +25,7 @@ import { UpdateUserZoneRoleDto } from '../dto/update-user-zone-role.dto';
 import { UpdateZonePermission } from '../dto/update-zone-permission.dto';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { ZoneRoleCode } from '../../../types/RoleCodes';
+import { BlacklistName } from '../../../entities/BlacklistName.entity';
 
 const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
 
@@ -32,6 +33,8 @@ const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
 export class ZoneService {
   constructor(
     @InjectRepository(Zone) private zoneRepository: Repository<Zone>,
+    @InjectRepository(BlacklistName)
+    private blacklistRepository: Repository<BlacklistName>,
     @InjectRepository(ZoneRole)
     private zoneRoleRepository: Repository<ZoneRole>,
     @InjectRepository(UserZone)
@@ -54,7 +57,13 @@ export class ZoneService {
 
   async createZone(userId: string, createZoneInfo: CreateZoneDto) {
     if (
-      await this.zoneRepository.findOne({ subdomain: createZoneInfo.subdomain })
+      (await this.zoneRepository.findOne({
+        subdomain: createZoneInfo.subdomain,
+      })) ||
+      (await this.blacklistRepository.findOne({
+        text: createZoneInfo.subdomain,
+        type: 'subdomain',
+      }))
     ) {
       throw new BadRequestException(
         ErrorTypes.ZONE_SUBDOMAIN_ALREADY_EXIST,

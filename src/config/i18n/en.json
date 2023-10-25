@@ -515,7 +515,7 @@
     "username": "Username",
     "fullName": "Full Name",
     "mainEmail": "Your main email address",
-    "email": "Email",
+    "email": "EMAIL",
     "passwordChange": "Password Change",
     "currentPassword": "Current Password",
     "newPassword": "New Password",
@@ -561,11 +561,11 @@
     "general": "General",
     "members": "Members",
     "followers": "Followers",
-    "userInfo": "User Info",
-    "role": "Role",
-    "followingDate": "Following Date",
+    "userInfo": "USER INFO",
+    "role": "ROLE",
+    "followingDate": "FOLLOWING DATE",
     "joinDate": "Join Date",
-    "action": "Action",
+    "action": "ACTION",
     "activeMembership": "Active Membership",
     "membershipPlans": "Membership Plans",
     "upgradeMembership": "Upgrade",
@@ -761,9 +761,9 @@
     "a7": "Yes! Purple supports a burgeoning community in <0>community.purpie.org</0>. Also, don’t forget to check out our website, <1>purpie.org</1>."
   },
   "Permissions": {
-    "OWNER": "Owner",
-    "MODERATOR": "Moderator",
-    "USER": "User"
+    "OWNER": "OWNER",
+    "MODERATOR": "MODERATOR",
+    "USER": "USER"
   },
   "ChannelPermissionAction": {
     "canInvite": "Create invitation for new people",

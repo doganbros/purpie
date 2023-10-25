@@ -9,8 +9,8 @@ import { JitsiContextProvider } from './VideoCallContext';
 
 export const VideoCallOverlay: FC = () => {
   const [incomingCall, setIncomingCall] = useState<any>(null);
-  const [activeCall] = useState(true);
-  const [isCallMaximized, setIsCallMaximized] = useState(true);
+  const [activeCall] = useState(false);
+  const [isCallMaximized, setIsCallMaximized] = useState(false);
 
   useEffect(() => {
     socket.on('call_started', (e) => setIncomingCall(e));

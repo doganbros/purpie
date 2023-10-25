@@ -151,7 +151,7 @@ const SettingsAndStaticPage: FC<SettingsAndStaticPageLayoutProps> = ({
                     align="center"
                     border={{
                       side: 'bottom',
-                      size: 'small',
+                      size: activeTab === tab.index ? 'small' : '0',
                       color:
                         activeTab === tab.index ? 'brand' : 'status-disabled',
                     }}
@@ -159,7 +159,7 @@ const SettingsAndStaticPage: FC<SettingsAndStaticPageLayoutProps> = ({
                   >
                     <Text
                       size="medium"
-                      weight="bold"
+                      weight={500}
                       color={
                         activeTab === tab.index ? 'brand' : 'status-disabled'
                       }
