@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
-const { MEMBERSHIP_URL, MEMBERSHIP_API_SECRET } = process.env;
+const { MEMBERSHIP_URL, MEMBERSHIP_API_SECRET, NODE_ENV } = process.env;
 
 @Injectable()
 export class MembershipService {
   async listMemberships() {
+    if (NODE_ENV !== 'development') return;
     const membership = await axios({
       url: `${MEMBERSHIP_URL}v1/membership/list`,
       method: 'get',
@@ -16,6 +17,8 @@ export class MembershipService {
   }
 
   async getUserMembership(userId: string, userEmail?: string) {
+    if (NODE_ENV !== 'development') return;
+
     const membership = await axios({
       url: `${MEMBERSHIP_URL}v1/membership/user/${userId}`,
       method: 'get',
@@ -30,6 +33,8 @@ export class MembershipService {
   }
 
   async createUserMembership(userId: string, email: string) {
+    if (NODE_ENV !== 'development') return;
+
     const response = await axios({
       url: `${MEMBERSHIP_URL}v1/membership/user/create`,
       method: 'post',
@@ -46,7 +51,9 @@ export class MembershipService {
   async createPaymentSession(
     userId: string,
     membershipId: string,
-  ): Promise<string> {
+  ): Promise<string | undefined> {
+    if (NODE_ENV !== 'development') return;
+
     const response = await axios({
       url: `${MEMBERSHIP_URL}v1/payment/create-checkout-session`,
       method: 'post',
@@ -60,7 +67,9 @@ export class MembershipService {
     return response.data.paymentUrl;
   }
 
-  async createCustomerPortal(userId: string): Promise<string> {
+  async createCustomerPortal(userId: string): Promise<string|undefined> {
+    if (NODE_ENV !== 'development') return;
+
     const response = await axios({
       url: `${MEMBERSHIP_URL}v1/payment/customer-portal`,
       method: 'post',

@@ -43,7 +43,6 @@ const {
   AUTH_TOKEN_REFRESH_LIFE = '30d',
   REACT_APP_CLIENT_HOST = '',
   VERIFICATION_TOKEN_SECRET = '',
-  NODE_ENV,
 } = process.env;
 
 @Injectable()
@@ -193,8 +192,7 @@ export class AuthService {
       userRoleCode: 'NORMAL',
     });
 
-    if (NODE_ENV !== 'development')
-      this.membershipService.createUserMembership(user.id, user.email);
+    this.membershipService.createUserMembership(user.id, user.email);
     return this.setMailVerificationToken(user);
   }
 
