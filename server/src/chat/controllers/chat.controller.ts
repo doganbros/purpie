@@ -17,8 +17,10 @@ import { Response } from 'express';
 import {
   ApiBody,
   ApiConsumes,
+  ApiExcludeController,
   ApiForbiddenResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
@@ -37,6 +39,7 @@ import { ChatCountResponse } from '../response/chat-count.response';
 const { S3_BUCKET_NAME = '', S3_CHAT_ATTACHMENTS_DIR = '' } = process.env;
 
 @ApiTags('Chat')
+@ApiExcludeController()
 @Controller({ version: '1', path: 'chat' })
 export class ChatController {
   constructor(private chatService: ChatService) {}
@@ -57,8 +60,12 @@ export class ChatController {
     ),
   })
   @ApiOkResponse({
-    description: 'List chat messages with given params',
+    description: 'List chat messages',
     type: ChatListResponse,
+  })
+  @ApiOperation({
+    summary: 'List Chat Messages',
+    description: 'List chat messages with requested payload.',
   })
   @IsAuthenticated()
   listChatMessages(
@@ -76,6 +83,10 @@ export class ChatController {
     type: ChatCountResponse,
     isArray: true,
   })
+  @ApiOperation({
+    summary: 'Get Unread Count',
+    description: 'Get unread message count with each contact user.',
+  })
   @IsAuthenticated()
   async countUnreadMessages(@CurrentUser() user: UserTokenPayload) {
     const result = [];
@@ -92,6 +103,10 @@ export class ChatController {
   }
 
   @Get('list/attachments/:medium/:id')
+  @ApiOperation({
+    summary: 'List Chat Attachments',
+    description: 'List chat attachments with "medium" and "id" params.',
+  })
   @IsAuthenticated()
   listChatAttachments(
     @Param('medium') medium: 'channel' | 'post' | 'direct',

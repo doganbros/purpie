@@ -1,5 +1,10 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiExcludeEndpoint,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
@@ -21,6 +26,10 @@ export class ActivityController {
     description: 'User gets public channel suggestions',
     type: PublicChannelSuggestionListResponse,
   })
+  @ApiOperation({
+    summary: 'List Suggested Channels',
+    description: 'List public channel suggestions',
+  })
   @IsAuthenticated()
   getPublicChannels(
     @Query() query: PaginationQuery,
@@ -30,6 +39,10 @@ export class ActivityController {
   }
 
   @Get('/list/suggestions/zone')
+  @ApiOperation({
+    summary: 'List Suggested Zones',
+    description: 'List public zone suggestions',
+  })
   @ApiOkResponse({
     description: 'User gets public zone suggestions',
     type: PublicZoneSuggestionListResponse,
@@ -44,12 +57,16 @@ export class ActivityController {
 
   // TODO api ok response revision
   @Get('/list/suggestions/contact')
+  @ApiOperation({
+    summary: 'List Suggested Contacts',
+    description: 'List public contact suggestions',
+  })
   @IsAuthenticated()
   getContactSuggestions(@CurrentUser() user: UserTokenPayload) {
     return this.activityService.getContactSuggestions(user.id);
   }
 
-  // @ApiExcludeEndpoint()
+  @ApiExcludeEndpoint()
   @Get('/list/notifications')
   @IsAuthenticated()
   getUserNotifications(
@@ -59,7 +76,7 @@ export class ActivityController {
     return this.activityService.getNotifications(user.id, query);
   }
 
-  // @ApiExcludeEndpoint()
+  @ApiExcludeEndpoint()
   @Post('/mark/notification')
   @IsAuthenticated()
   markNotificationAsRead(

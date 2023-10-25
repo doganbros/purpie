@@ -12,8 +12,10 @@ import {
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
+  ApiExcludeEndpoint,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -66,9 +68,13 @@ export class MeetingController {
   @Post('create')
   @IsAuthenticated([], { injectUserProfile: true, injectUserMembership: true })
   @ValidationBadRequest()
-  @ApiCreatedResponse({
+  @ApiOperation({
+    summary: 'Create Meeting',
     description:
-      'User creates a new meeting. A meeting url is returned when meeting starts now else the id of the meeting is returned',
+      'User creates a new meeting. A meeting url is returned when meeting starts now else the id of the meeting is returned.',
+  })
+  @ApiCreatedResponse({
+    description: 'User creates a new meeting.',
     schema: {
       oneOf: [
         { type: 'string', example: 'https://meet.jit.si/ab1-3a2-4vs' },
@@ -214,6 +220,10 @@ export class MeetingController {
   }
 
   @Get('join-link/:slug')
+  @ApiOperation({
+    summary: 'Get Join Link',
+    description: 'Meeting link with requested slug will be returned.',
+  })
   @ApiNotFoundResponse({
     description: "Error thrown is meeting doesn't exist",
     schema: errorResponseDoc(404, 'Meeting not found', 'MEETING_NOT_FOUND'),
@@ -258,7 +268,7 @@ export class MeetingController {
     const userConfig = await this.meetingService.getCurrentUserConfig(user.id);
 
     const meetingToken = await this.meetingService.generateMeetingToken(
-      meeting,
+      meeting.slug,
       user,
       meeting.createdById === user.id,
       userConfig
@@ -270,6 +280,10 @@ export class MeetingController {
   }
 
   @Get('join/:token')
+  @ApiOperation({
+    summary: 'Join Meeting',
+    description: 'User redirected to meeting url with token parameter',
+  })
   @ApiOkResponse({ description: 'User redirected to meeting url' })
   @ApiNotFoundResponse({
     description:
@@ -332,6 +346,10 @@ export class MeetingController {
       'MEETING_CONFIG_NOT_FOUND',
     ),
   })
+  @ApiOperation({
+    summary: 'Get User Config',
+    description: 'User loads meeting configuration.',
+  })
   @IsAuthenticated()
   async getCurrentUserMeetingConfig(@CurrentUser() user: UserTokenPayload) {
     const result = await this.meetingService.getCurrentUserConfig(user.id);
@@ -344,7 +362,7 @@ export class MeetingController {
     return result;
   }
 
-  // @ApiExcludeEndpoint()
+  @ApiExcludeEndpoint()
   @Get('logs/list/:meetingSlug')
   @ApiOkResponse({
     description: 'User gets meeting logs',
@@ -358,7 +376,7 @@ export class MeetingController {
     return this.meetingService.getMeetingLogs(user.id, meetingSlug, query);
   }
 
-  // @ApiExcludeEndpoint()
+  @ApiExcludeEndpoint()
   @Get('recordings/list/:meetingSlug')
   @ApiOkResponse({
     description: 'User gets meeting recordings',
@@ -377,7 +395,7 @@ export class MeetingController {
     return this.meetingService.getMeetingRecordingList(meetingSlug, query);
   }
 
-  // @ApiExcludeEndpoint()
+  @ApiExcludeEndpoint()
   @Post('/events/:identifier/:eventName')
   @ApiCreatedResponse({
     description:
@@ -402,7 +420,7 @@ export class MeetingController {
     }
   }
 
-  // @ApiExcludeEndpoint()
+  @ApiExcludeEndpoint()
   @Post('/client/verify')
   @ApiCreatedResponse({
     description:
@@ -428,7 +446,7 @@ export class MeetingController {
     return 'OK';
   }
 
-  // @ApiExcludeEndpoint()
+  @ApiExcludeEndpoint()
   @Get('conference/info')
   @ApiOkResponse({
     description: 'Get current conference information',

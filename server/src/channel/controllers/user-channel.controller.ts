@@ -9,6 +9,7 @@ import {
   ApiBadRequestResponse,
   ApiHeader,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
@@ -30,11 +31,15 @@ export class UserChannelController {
   constructor(private userChannelService: UserChannelService) {}
 
   @Get('list')
+  @ApiOperation({
+    summary: 'List User Channel',
+    description:
+      "Get the list of current user's channels. Public channels of zone not joined yet will be listed when user is authorized in the zone(public, or userzone). But the userChannel id will be null",
+  })
   @ApiOkResponse({
     type: UserChannelListResponse,
     isArray: true,
-    description:
-      "Get the list of current user's channels. Public channels of zone not joined yet will be listed when user is authorized in the zone(public, or userzone). But the userChannel id will be null",
+    description: 'List user channel',
   })
   @ApiHeader({
     name: 'app-subdomain',
@@ -50,11 +55,15 @@ export class UserChannelController {
   }
 
   @Get('list/all')
+  @ApiOperation({
+    summary: 'List All User Channel',
+    description:
+      "Get the list of current user's channels. public channels of zone not joined yet will be listed when user is authorized in the zone(public, or userzone). But the userChannel id will be null",
+  })
   @ApiOkResponse({
     type: UserChannelListResponse,
     isArray: true,
-    description:
-      "Get the list of current user's channels. public channels of zone not joined yet will be listed when user is authorized in the zone(public, or userzone). But the userChannel id will be null",
+    description: 'List all user channel',
   })
   @IsAuthenticated()
   async getCurrentUserAllChannels(@CurrentUser() user: UserTokenPayload) {
@@ -62,6 +71,10 @@ export class UserChannelController {
   }
 
   @Delete('remove/:userChannelId')
+  @ApiOperation({
+    summary: 'Delete User Channel',
+    description: 'Delete user channel belonging to "userChannelId" parameter.',
+  })
   @ApiBadRequestResponse({
     description:
       'Error thrown when the owner of the channel want to leave from channel.',
@@ -76,7 +89,7 @@ export class UserChannelController {
     description: 'User Zone Id',
   })
   @ApiOkResponse({
-    description: 'User can leave from channel.',
+    description: 'Leave from channel.',
   })
   @UserChannelRole()
   async deleteUserChannelById(

@@ -6,7 +6,7 @@ export class PostCommentResponse {
   @ApiProperty()
   id: number;
 
-  @ApiProperty({ nullable: true })
+  @ApiPropertyOptional()
   parentId: number;
 
   @ApiProperty()
@@ -18,13 +18,13 @@ export class PostCommentResponse {
   @ApiProperty()
   comment: string;
 
-  @ApiProperty({ nullable: true })
+  @ApiPropertyOptional()
   replyCount: number;
 
-  @ApiProperty({ nullable: true })
+  @ApiPropertyOptional()
   likesCount: number;
 
-  @ApiProperty({ nullable: true })
+  @ApiPropertyOptional()
   liked: boolean;
 
   @ApiProperty()
@@ -33,7 +33,7 @@ export class PostCommentResponse {
   @ApiProperty()
   createdOn: Date;
 
-  @ApiProperty({ nullable: true })
+  @ApiPropertyOptional()
   updatedOn: Date;
 }
 

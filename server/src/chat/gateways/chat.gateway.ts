@@ -13,6 +13,12 @@ import { ChatMessageDto } from '../dto/chat-message.dto';
 import { ChatService } from '../services/chat.service';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { UserLogService } from '../../log/services/user-log.service';
+import {
+  generateLowerAlphaNumId,
+  separateString,
+} from '../../../helpers/utils';
+import { MeetingService } from '../../meeting/services/meeting.service';
+import { AuthService } from '../../auth/services/auth.service';
 
 interface SocketWithTokenPayload extends Socket {
   user: {
@@ -46,6 +52,8 @@ export class ChatGateway {
     private chatService: ChatService,
     private postService: PostService,
     private userLogService: UserLogService,
+    private meetingService: MeetingService,
+    private authService: AuthService,
   ) {}
 
   @SubscribeMessage('delete_message')
@@ -157,9 +165,19 @@ export class ChatGateway {
   ) {
     const roomName = this.chatService.getRoomName(userId);
 
+    const meetingRoomName = separateString(generateLowerAlphaNumId(9), 3);
+    const user = await this.authService.getUserProfile(userId);
+    const meetingToken = await this.meetingService.generateMeetingToken(
+      meetingRoomName,
+      user,
+      false,
+      24,
+    );
     socket.to(roomName).emit('call_started', {
       socketId: socket.id,
       userId: socket.user.id,
+      meetingRoomName,
+      meetingToken,
     });
   }
 

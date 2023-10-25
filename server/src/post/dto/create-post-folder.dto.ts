@@ -7,7 +7,8 @@ export class CreatePostFolderDto {
   title: string;
 
   @ApiPropertyOptional({
-    description: 'This is the first post that will be added to the folder',
+    description:
+      'This is the first post that will be added to the folder when creating first time.',
   })
   @IsUUID()
   @IsOptional()

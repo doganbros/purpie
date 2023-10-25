@@ -182,7 +182,7 @@ export class MeetingService {
     tokenExpiry: number,
   ) {
     const meetingToken = await this.generateMeetingToken(
-      meeting,
+      meeting.slug,
       user,
       moderator,
       tokenExpiry,
@@ -321,7 +321,7 @@ export class MeetingService {
   }
 
   async generateMeetingToken(
-    meeting: Post,
+    room: string,
     user: UserProfile,
     moderator: boolean,
     tokenExpiry: number,
@@ -338,7 +338,7 @@ export class MeetingService {
           name: user.fullName,
           email: user.email,
           id: user.id,
-          room: meeting.slug,
+          room,
           lobby_bypass: moderator,
         },
         group: 'a122-123-456-789',
@@ -347,7 +347,7 @@ export class MeetingService {
       exp,
       aud: JWT_APP_ID,
       iss: JWT_APP_ID,
-      room: meeting.slug,
+      room,
       sub: new URL(JITSI_DOMAIN).hostname,
     };
     return generateJWT(payload, JITSI_SECRET);
