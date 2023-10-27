@@ -546,7 +546,7 @@ export class MeetingService {
     await this.callRepository
       .create({
         callee: calleeId,
-        roomName: roomName,
+        roomName,
         createdById: userId,
       })
       .save();
