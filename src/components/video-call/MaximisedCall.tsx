@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import { Box, Layer, Stack, Text } from 'grommet';
 import { Close } from 'grommet-icons';
 import { VideoFrame } from './VideoFrame';
-import { useJitsiContext } from './VideoCallContext';
+import { useJitsiContext } from './JitsiContext';
 import { VideoSettings } from './VideoSettings';
 
 interface MaximizedCallProps {

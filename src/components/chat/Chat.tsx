@@ -25,6 +25,7 @@ import PlanMeetingTheme from '../../layers/meeting/custom-theme';
 import { errorResponseMessage, getChatRoomName } from '../../helpers/utils';
 import { http } from '../../config/http';
 import PurpieLogoAnimated from '../../assets/purpie-logo/purpie-logo-animated';
+import { useVideoCallContext } from '../video-call/VideoCallContext';
 
 export interface ChatInfo {
   typingUsers: User[];
@@ -58,6 +59,8 @@ const Chat: React.FC<Props> = ({
   setChatInfo,
   chatInfo,
 }) => {
+  // FIXME
+  const { initiateCall } = useVideoCallContext();
   const { t } = useTranslation();
   const [messages, setMessages] = useState<Array<ChatMessage> | null>(null);
   const [hasMore, setHasMore] = useState(true);
@@ -69,7 +72,6 @@ const Chat: React.FC<Props> = ({
   const [repliedMessage, setRepliedMessage] = useState<ChatMessage | null>(
     null
   );
-  const [tempCallStarted, setTempCallStarted] = useState(false);
   const [editedMessage, setEditedMessage] = useState<ChatMessage | null>(null);
   const [uploadingFiles, setUploadingFiles] = useState<Array<File>>([]);
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
@@ -324,15 +326,10 @@ const Chat: React.FC<Props> = ({
     socket.on('typing', typingListener);
     socket.on('message_deleted', msgDeletedListener);
 
-    socket.on('call_started', (payload) => {
-      if (payload.userId === id) setTempCallStarted(true);
-    });
-
     return () => {
       socket.off('new_message', messageListener);
       socket.off('typingListener', typingListener);
       socket.off('message_deleted', msgDeletedListener);
-      socket.off('call_started', msgDeletedListener);
     };
   }, []);
 
@@ -388,10 +385,6 @@ const Chat: React.FC<Props> = ({
         </DayHeader>
       </DayContainer>
     );
-  };
-
-  const handleCall = () => {
-    socket.emit('join_call', id);
   };
 
   return (
@@ -497,8 +490,7 @@ const Chat: React.FC<Props> = ({
             </InfiniteScroll>
           </ScrollContainer>
           <MessageBoxContainer pad="small">
-            <Button onClick={handleCall}>Temp Call</Button>
-            {tempCallStarted && <Button onClick={handleCall}>Join Call</Button>}
+            <Button onClick={() => initiateCall(id)}>Temp Call</Button>
 
             <MessageBox
               name={name}

@@ -3,7 +3,11 @@ import { Box, Text } from 'grommet';
 import { AnswerIcon } from './AnswerIcon';
 import { RejectIcon } from './RejectIcon';
 
-export const CallNotification: FC = () => {
+interface CallNotificationProps {
+  onAccept: () => void;
+}
+
+export const CallNotification: FC<CallNotificationProps> = ({ onAccept }) => {
   return (
     <Box
       elevation="large"
@@ -18,7 +22,7 @@ export const CallNotification: FC = () => {
         <Text weight="normal">Test User</Text>
       </Box>
       <Box direction="row" gap="small">
-        <AnswerIcon />
+        <AnswerIcon onClick={onAccept} />
         <RejectIcon />
       </Box>
     </Box>

@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Box, Select } from 'grommet';
-import { useJitsiContext } from './VideoCallContext';
+import { useJitsiContext } from './JitsiContext';
 import { enumerateDevices } from './utils';
 
 interface VideoSettingsProps {

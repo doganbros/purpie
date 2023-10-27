@@ -1,26 +1,18 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { Layer } from 'grommet';
 import { CallNotification } from './CallNotification';
 import { MaximizedCall } from './MaximisedCall';
 import { InlineCall } from './InlineCall';
-import { socket } from '../../helpers/socket';
 import { NotifiicationList } from './NotificationList';
-import { JitsiContextProvider } from './VideoCallContext';
+import { JitsiContextProvider } from './JitsiContext';
+import { useVideoCallContext } from './VideoCallContext';
 
 export const VideoCallOverlay: FC = () => {
-  const [incomingCall, setIncomingCall] = useState<any>(null);
-  const [activeCall] = useState(true);
   const [isCallMaximized, setIsCallMaximized] = useState(false);
-
-  useEffect(() => {
-    socket.on('call_started', (e) => setIncomingCall(e));
-  }, []);
+  const { activeCall, incomingCall, joinCall } = useVideoCallContext();
 
   return (
-    <JitsiContextProvider
-      displayName="Test User"
-      room="test-room189012342f3908w47"
-    >
+    <JitsiContextProvider displayName="Test User" room={undefined}>
       {activeCall && isCallMaximized && (
         <Layer animate={false}>
           <MaximizedCall
@@ -34,7 +26,9 @@ export const VideoCallOverlay: FC = () => {
         {activeCall && !isCallMaximized && (
           <InlineCall onClickVideo={() => setIsCallMaximized(true)} />
         )}
-        {incomingCall && <CallNotification />}
+        {incomingCall && (
+          <CallNotification onAccept={() => joinCall(incomingCall)} />
+        )}
       </NotifiicationList>
     </JitsiContextProvider>
   );
