@@ -165,7 +165,27 @@ export class ChatGateway {
   ) {
     const roomName = this.chatService.getRoomName(userId);
 
-    const meetingRoomName = separateString(generateLowerAlphaNumId(9), 3);
+    const activeCall = await this.meetingService.getActiveCall(userId);
+    const currentUser = await this.chatService.getCurrentUser(socket);
+
+    let meetingRoomName;
+
+    if (activeCall) {
+      meetingRoomName = activeCall.roomName;
+
+      if (activeCall.callee === userId || activeCall.createdById === userId) {
+        socket.to(roomName).emit('already_another_call');
+        return;
+      }
+    } else {
+      meetingRoomName = separateString(generateLowerAlphaNumId(9), 3);
+      await this.meetingService.createCall(
+        currentUser.id,
+        userId,
+        meetingRoomName,
+      );
+    }
+
     const user = await this.authService.getUserProfile(userId);
     const meetingToken = await this.meetingService.generateMeetingToken(
       meetingRoomName,
@@ -178,6 +198,12 @@ export class ChatGateway {
       userId: socket.user.id,
       meetingRoomName,
       meetingToken,
+      user: {
+        avatar: user.displayPhoto,
+        name: user.fullName,
+        email: user.email,
+        id: user.id,
+      },
     });
   }
 

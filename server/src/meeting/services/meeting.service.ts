@@ -36,6 +36,7 @@ import { ClientMeetingEventDto } from '../dto/client-meeting-event.dto';
 import { CreateMeetingDto } from '../dto/create-meeting.dto';
 import { ConferenceInfoResponse } from '../responses/conference-info.response';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { Call } from '../../../entities/Call.entity';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -57,6 +58,8 @@ export class MeetingService {
     private meetingLogRepository: Repository<MeetingLog>,
     @InjectRepository(PostVideo)
     private postVideoRepository: Repository<PostVideo>,
+    @InjectRepository(Call)
+    private callRepository: Repository<Call>,
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(UserChannel)
     private userChannelRepository: Repository<UserChannel>,
@@ -523,5 +526,29 @@ export class MeetingService {
       where: { slug, record: true, streaming: true },
       relations: ['createdBy'],
     });
+  }
+
+  async getActiveCall(userId: string) {
+    return this.callRepository
+      .createQueryBuilder('call')
+      .where('isActive = true')
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where('call.createdById = :userId', {
+            userId,
+          }).orWhere('call.callee = :userId', { userId });
+        }),
+      )
+      .getOne();
+  }
+
+  async createCall(userId: string, calleeId: string, roomName: string) {
+    await this.callRepository
+      .create({
+        callee: calleeId,
+        roomName: roomName,
+        createdById: userId,
+      })
+      .save();
   }
 }
