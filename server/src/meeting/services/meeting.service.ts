@@ -531,7 +531,7 @@ export class MeetingService {
   async getActiveCall(userId: string) {
     return this.callRepository
       .createQueryBuilder('call')
-      .where('isActive = true')
+      .where('call.isLive = true')
       .andWhere(
         new Brackets((qb) => {
           qb.where('call.createdById = :userId', {
@@ -550,5 +550,14 @@ export class MeetingService {
         createdById: userId,
       })
       .save();
+  }
+
+  async endCall(userId: string) {
+    const activeCall = await this.getActiveCall(userId);
+
+    return this.callRepository.update(
+      { id: activeCall?.id },
+      { isLive: false },
+    );
   }
 }

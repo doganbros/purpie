@@ -169,11 +169,10 @@ export class ChatGateway {
     const currentUser = await this.chatService.getCurrentUser(socket);
 
     let meetingRoomName;
-
     if (activeCall) {
       meetingRoomName = activeCall.roomName;
 
-      if (activeCall.callee === userId || activeCall.createdById === userId) {
+      if (activeCall.callee !== currentUser.id) {
         socket.to(roomName).emit('already_another_call');
         return;
       }
@@ -213,7 +212,7 @@ export class ChatGateway {
     @MessageBody() userId: string,
   ) {
     const roomName = this.chatService.getRoomName(userId);
-
+    await this.meetingService.endCall(userId);
     socket.to(roomName).emit('call_ended', {
       roomName,
       userId: socket.user.id,
