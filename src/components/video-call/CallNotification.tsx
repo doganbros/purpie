@@ -4,10 +4,16 @@ import { AnswerIcon } from './AnswerIcon';
 import { RejectIcon } from './RejectIcon';
 
 interface CallNotificationProps {
+  name: string;
   onAccept: () => void;
+  onReject: () => void;
 }
 
-export const CallNotification: FC<CallNotificationProps> = ({ onAccept }) => {
+export const CallNotification: FC<CallNotificationProps> = ({
+  name,
+  onAccept,
+  onReject,
+}) => {
   return (
     <Box
       elevation="large"
@@ -19,11 +25,11 @@ export const CallNotification: FC<CallNotificationProps> = ({ onAccept }) => {
       align="center"
     >
       <Box fill>
-        <Text weight="normal">Test User</Text>
+        <Text weight="normal">{name}</Text>
       </Box>
       <Box direction="row" gap="small">
         <AnswerIcon onClick={onAccept} />
-        <RejectIcon />
+        <RejectIcon onClick={onReject} />
       </Box>
     </Box>
   );

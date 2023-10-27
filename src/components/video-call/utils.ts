@@ -3,10 +3,10 @@ export const JITSI_INIT_CONFIG = {
 };
 export const JITSI_CONNECTION_CONFIG = {
   hosts: {
-    domain: 'alpha.jitsi.net',
-    muc: 'conference.alpha.jitsi.net',
+    domain: 'meet.purpie.io',
+    muc: 'conference.meet.purpie.io',
   },
-  bosh: 'https://alpha.jitsi.net/http-bind',
+  bosh: 'https://meet.purpie.io/http-bind',
   clientNode: 'http://jitsi.org/jitsimeet',
   resolution: 320,
   constraints: {

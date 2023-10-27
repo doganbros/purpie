@@ -51,12 +51,14 @@ export const VideoCallOverlay: FC = () => {
         )}
         {incomingCall && (
           <CallNotification
+            name={incomingCall.userId}
             onAccept={() => dispatch(answerCallAction(incomingCall))}
+            onReject={() => dispatch(leaveCallAction(incomingCall.userId))}
           />
         )}
         {outgoingCall && (
           <OutgoingCall
-            name={outgoingCall.id}
+            name={outgoingCall.fullName}
             onEndCall={() => dispatch(leaveCallAction(outgoingCall.id))}
           />
         )}

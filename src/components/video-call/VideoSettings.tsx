@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Box, Select } from 'grommet';
+import { Box, Select, Text } from 'grommet';
 import { useJitsiContext } from './JitsiContext';
 import { enumerateDevices } from './utils';
 
@@ -12,9 +12,6 @@ export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
   const [audioInputDevices, setAudioInputDevices] = useState<MediaDeviceInfo[]>(
     []
   );
-  const [audioOutputDevices, setAudioOutputDevices] = useState<
-    MediaDeviceInfo[]
-  >([]);
 
   const [
     selectedVideoDevice,
@@ -26,11 +23,6 @@ export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
     setSelectedAudioInputDevice,
   ] = useState<MediaDeviceInfo>();
 
-  const [
-    selectedAudioOutputDevice,
-    setSelectedAudioOutputDevice,
-  ] = useState<MediaDeviceInfo>();
-
   const setAvailableDevices = async () => {
     const mediaDevices = await enumerateDevices();
     mediaDevices.forEach((d) => {
@@ -38,8 +30,6 @@ export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
         setVideoDevices((p) => [...p, d]);
       } else if (d.kind === 'audioinput') {
         setAudioInputDevices((p) => [...p, d]);
-      } else if (d.kind === 'audiooutput') {
-        setAudioOutputDevices((p) => [...p, d]);
       }
     });
   };
@@ -72,7 +62,7 @@ export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
       height="100%"
       background={{ color: 'dark', opacity: 'weak' }}
     >
-      <Box background="white" pad="small" round="medium">
+      <Box background="white" pad="small" round="medium" gap="small">
         Video
         <Select
           options={videoDevices}
@@ -87,14 +77,27 @@ export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
           labelKey="label"
           onChange={({ option }) => setSelectedAudioInputDevice(option)}
         />
-        Audio Output
-        <Select
-          options={audioOutputDevices}
-          value={selectedAudioOutputDevice}
-          labelKey="label"
-          onChange={({ option }) => setSelectedAudioOutputDevice(option)}
-        />
-        <Box onClick={onDismiss}>Dismiss</Box>
+        <Box
+          border={{ color: 'brand', size: '2px' }}
+          round="small"
+          pad="xsmall"
+          justify="center"
+          align="center"
+        >
+          <Text color="brand" weight="bold">
+            Apply
+          </Text>
+        </Box>
+        <Box
+          onClick={onDismiss}
+          border={{ color: 'brand', size: '2px' }}
+          round="small"
+          pad="xsmall"
+          justify="center"
+          align="center"
+        >
+          <Text color="brand">Dismiss</Text>
+        </Box>
       </Box>
     </Box>
   );
