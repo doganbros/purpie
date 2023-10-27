@@ -256,11 +256,10 @@ export class PostController {
   async videoViewStats(
     @Body() payload: VideoViewStats,
     @CurrentUser() user: UserTokenPayload,
-    @Res() res: Response,
   ) {
     await this.postService.validatePost(user.id, payload.postId);
     await this.postService.videoViewStats(user.id, payload);
-    return res.status(200);
+    return 'OK';
   }
 
   @Delete('remove/video/:postId/:videoName')
