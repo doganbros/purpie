@@ -609,6 +609,7 @@ export class PostService {
     const lastIntervalExists = await this.postViewRepository.findOne({
       where: {
         userId,
+        postId: payload.postId,
         createdOn: MoreThanOrEqual(
           dayjs()
             .subtract(+VIDEO_VIEW_COUNT_HOUR_INTERVAL, 'hours')
