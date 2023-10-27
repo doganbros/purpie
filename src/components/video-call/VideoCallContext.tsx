@@ -1,7 +1,5 @@
-/* eslint-disable */
-// @ts-nocheck
-
 import React, {
+  FC,
   createContext,
   useCallback,
   useContext,
@@ -14,22 +12,35 @@ import {
   JITSI_CONNECTION_CONFIG,
   defaultContextValues,
   JITSI_INIT_CONFIG,
+  enumerateDevices,
 } from './utils';
 
 const JitsiContext = createContext(defaultContextValues);
 
-const JitsiContextProvider = ({ room, displayName, children }) => {
-  const jitsiConnection = useRef();
-  const jitsiConference = useRef();
-  const [remoteTracks, setRemoteTracks] = useState([]);
-  const [localTracks, setLocalTracks] = useState([]);
-  const [participants, setParticipants] = useState([]);
+interface JitsiContextProviderProps {
+  room?: string;
+  displayName?: string;
+}
+const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
+  room,
+  displayName,
+  children,
+}) => {
+  const jitsiConnection = useRef<any>();
+  const jitsiConference = useRef<any>();
+  const [remoteTracks, setRemoteTracks] = useState<any[]>([]);
+  const [localTracks, setLocalTracks] = useState<any[]>([]);
+  const [participants, setParticipants] = useState<any[]>([]);
 
-  const onTrackAdded = (track) => {
-    setRemoteTracks((prev) => [...prev, track]);
+  const onTrackAdded = (track: any) => {
+    if (!track?.isLocal()) {
+      setLocalTracks((prev) => [...prev, track]);
+    } else {
+      setRemoteTracks((prev) => [...prev, track]);
+    }
   };
 
-  const onTrackRemoved = (track) => {
+  const onTrackRemoved = (track: any) => {
     setRemoteTracks((prev) => prev.filter((t) => t.getId() !== track.getId()));
   };
 
@@ -38,55 +49,54 @@ const JitsiContextProvider = ({ room, displayName, children }) => {
     setParticipants(jitsiConference.current?.getParticipants());
   };
 
-  const onUserJoined = (id, user) => {
+  const onUserJoined = (id: string, user: any) => {
     setParticipants((prev) => [...prev, user]);
   };
 
-  const onUserLeft = (id) => {
+  const onUserLeft = (id: string) => {
     setParticipants((prev) => prev.filter((p) => p._id !== id));
   };
 
-  const createLocalTracks = useCallback(() => {
+  const createLocalTracks = useCallback(async () => {
     if (!jitsiConference.current) {
       return;
     }
+    const mediaDevices = await enumerateDevices();
 
-    JitsiMeetJS.mediaDevices?.enumerateDevices((mediaDevices) => {
-      let cameraDeviceId;
-      let micDeviceId;
-      mediaDevices.forEach((d) => {
-        if (d.kind === 'videoinput') {
-          cameraDeviceId = d.deviceId;
-        } else {
-          micDeviceId = d.deviceId;
-        }
-      });
-      JitsiMeetJS.createLocalTracks({
-        devices: ['video', 'audio'],
-        cameraDeviceId,
-        micDeviceId,
-      })
-        .then((ts) => {
-          setLocalTracks(ts);
-          ts.forEach((t) => {
-            if (!jitsiConference.current) {
-              t.stopStream();
-              return;
-            }
-            jitsiConference.current
-              ?.addTrack(t)
-              .catch((e) => console.log('track add error', e));
-          });
-        })
-        .catch((err) => {
-          console.log('----------------local track error----------------');
-          console.log(err);
-        });
+    const cameraDeviceId = mediaDevices.find((d) => d.kind === 'videoinput')
+      ?.deviceId;
+
+    const micDeviceId = mediaDevices.find((d) => d.kind === 'audioinput')
+      ?.deviceId;
+
+    const devices = [];
+
+    if (cameraDeviceId) {
+      devices.push('video');
+    }
+    if (micDeviceId) {
+      devices.push('audio');
+    }
+
+    const tracks = await JitsiMeetJS.createLocalTracks({
+      devices,
+      cameraDeviceId,
+      micDeviceId,
+    });
+
+    setLocalTracks(tracks);
+
+    tracks.forEach((t: any) => {
+      if (!jitsiConference.current) {
+        t.stopStream();
+        return;
+      }
+      jitsiConference.current?.addTrack(t);
     });
   }, [jitsiConference.current]);
 
   const removeLocalTracks = useCallback(() => {
-    jitsiConference.current?.getLocalTracks().forEach((t) => {
+    jitsiConference.current?.getLocalTracks().forEach((t: any) => {
       if (t.isLocal()) {
         jitsiConference.current?.removeTrack(t);
       }
@@ -95,10 +105,6 @@ const JitsiContextProvider = ({ room, displayName, children }) => {
 
   const jitsiConnectionFailed = () => {
     console.log('----------------connection failed----------------');
-  };
-
-  const jitsiConnectionDisconnected = () => {
-    console.log('----------------connection disconnected----------------');
   };
 
   const jitsiConferenceInit = () => {
@@ -122,11 +128,6 @@ const JitsiContextProvider = ({ room, displayName, children }) => {
     );
 
     jitsiConference.current?.on(
-      JitsiMeetJS.events.conference.CONFERENCE_LEFT,
-      () => {}
-    );
-
-    jitsiConference.current?.on(
       JitsiMeetJS.events.conference.USER_JOINED,
       onUserJoined
     );
@@ -143,7 +144,6 @@ const JitsiContextProvider = ({ room, displayName, children }) => {
     if (!jitsiConnection.current) {
       return;
     }
-    console.log('----------------connection established----------------');
     jitsiConferenceInit();
   };
 
@@ -167,18 +167,6 @@ const JitsiContextProvider = ({ room, displayName, children }) => {
       jitsiConnection.current?.addEventListener(
         JitsiMeetJS.events.connection.CONNECTION_FAILED,
         jitsiConnectionFailed
-      );
-
-      jitsiConnection.current?.addEventListener(
-        JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED,
-        jitsiConnectionDisconnected
-      );
-
-      JitsiMeetJS.mediaDevices.addEventListener(
-        JitsiMeetJS.events.mediaDevices.DEVICE_LIST_CHANGED,
-        (devices) => {
-          console.log('devices', { devices });
-        }
       );
 
       jitsiConnection.current?.connect();

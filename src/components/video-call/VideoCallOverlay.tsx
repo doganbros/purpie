@@ -9,7 +9,7 @@ import { JitsiContextProvider } from './VideoCallContext';
 
 export const VideoCallOverlay: FC = () => {
   const [incomingCall, setIncomingCall] = useState<any>(null);
-  const [activeCall] = useState(false);
+  const [activeCall] = useState(true);
   const [isCallMaximized, setIsCallMaximized] = useState(false);
 
   useEffect(() => {
@@ -17,7 +17,10 @@ export const VideoCallOverlay: FC = () => {
   }, []);
 
   return (
-    <JitsiContextProvider displayName="Test User" room={null}>
+    <JitsiContextProvider
+      displayName="Test User"
+      room="test-room189012342f3908w47"
+    >
       {activeCall && isCallMaximized && (
         <Layer animate={false}>
           <MaximizedCall

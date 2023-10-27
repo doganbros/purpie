@@ -1,10 +1,9 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { Box, Stack, Text, Video } from 'grommet';
 import { Camera, Microphone, MoreVertical } from 'grommet-icons';
-import { HeightType } from 'grommet/utils';
 
 interface VideoFrameProps {
-  height?: HeightType;
+  size?: number;
   tracks?: any[];
   displayName?: string;
   local?: boolean;
@@ -12,7 +11,7 @@ interface VideoFrameProps {
 }
 
 export const VideoFrame: FC<VideoFrameProps> = ({
-  height = '250px',
+  size = 250,
   tracks = [],
   local = false,
   displayName = 'Test User',
@@ -27,9 +26,25 @@ export const VideoFrame: FC<VideoFrameProps> = ({
   const [isVideoMuted, setIsVideoMuted] = useState(videoTrack?.isMuted());
   const [isAudioMuted, setIsAudioMuted] = useState(audioTrack?.isMuted());
 
+  const toggleMuteAudio = () => {
+    if (audioTrack?.isMuted()) {
+      audioTrack?.unmute();
+    } else {
+      audioTrack?.mute();
+    }
+  };
+
+  const toggleMuteVideo = () => {
+    if (videoTrack?.isMuted()) {
+      videoTrack?.unmute();
+    } else {
+      videoTrack?.mute();
+    }
+  };
+
   useEffect(() => {
     const handleVideoMuteChange = (t: any) => {
-      setIsVideoMuted(t.muted);
+      setIsVideoMuted(t.isMuted());
     };
 
     setIsVideoMuted(videoTrack?.isMuted());
@@ -51,7 +66,7 @@ export const VideoFrame: FC<VideoFrameProps> = ({
 
   useEffect(() => {
     const handleAudioMuteChange = (t: any) => {
-      setIsAudioMuted(t.muted);
+      setIsAudioMuted(t.isMuted());
     };
 
     setIsAudioMuted(audioTrack?.isMuted());
@@ -72,7 +87,7 @@ export const VideoFrame: FC<VideoFrameProps> = ({
   }, [audioTrack]);
 
   return (
-    <Box height={height} style={{ aspectRatio: ' 1.7' }}>
+    <Box width={`${size}px`} height={`${size}px`}>
       <Box
         background="dark"
         fill
@@ -82,11 +97,12 @@ export const VideoFrame: FC<VideoFrameProps> = ({
         border={{ side: 'all', color: 'brand' }}
       >
         <Stack anchor="top" fill guidingChild="last">
-          <Box fill>
+          <Box width={`${size}px`} height={`${size}px`}>
             <Video
               ref={videoElementRef}
               autoPlay
-              fit="contain"
+              fit="cover"
+              hidden={isVideoMuted}
               controls={false}
             />
             <audio ref={audioElementRef} />
@@ -105,10 +121,12 @@ export const VideoFrame: FC<VideoFrameProps> = ({
             >
               <Microphone
                 size="20px"
+                onClick={toggleMuteAudio}
                 color={isAudioMuted ? 'status-error' : 'white'}
               />
               <Camera
                 size="20px"
+                onClick={toggleMuteVideo}
                 color={isVideoMuted ? 'status-error' : 'white'}
               />
               {local && <MoreVertical size="20px" onClick={onClickSettings} />}

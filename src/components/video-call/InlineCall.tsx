@@ -9,7 +9,7 @@ interface InlineCallProps {
 }
 
 export const InlineCall: FC<InlineCallProps> = ({ onClickVideo }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   return (
     <Box
       elevation="large"
@@ -21,7 +21,7 @@ export const InlineCall: FC<InlineCallProps> = ({ onClickVideo }) => {
     >
       {isExpanded && (
         <Box onClick={onClickVideo}>
-          <VideoFrame />
+          <VideoFrame size={352} />
         </Box>
       )}
       <Box direction="row" align="center" gap="medium">

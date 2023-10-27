@@ -51,9 +51,9 @@ export const MaximizedCall: FC<MaximizedCallProps> = ({ onDismiss }) => {
         </Box>
         <Box pad="medium" background="white">
           <Stack anchor="bottom-right">
-            <VideoFrame height="300px" tracks={remoteTracks} />
+            <VideoFrame size={430} tracks={remoteTracks} />
             <VideoFrame
-              height="150px"
+              size={220}
               tracks={localTracks}
               local
               onClickSettings={() => setShowSettings(true)}

@@ -1,6 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
 export const JITSI_INIT_CONFIG = {
   disableAudioLevels: true,
 };
@@ -28,13 +25,19 @@ export const JITSI_CONFERENCE_CONFIG = {
   p2p: { enabled: false },
 };
 
-
 export const defaultContextValues = {
-  participants: [],
-  localTracks: [],
-  remoteTracks: [],
+  participants: [] as any[],
+  localTracks: [] as any[],
+  remoteTracks: [] as any[],
   jitsiConnection: {},
   jitsiConference: {},
-  createLocalTracks: () => {},
-  removeLocalTracks: () => {},
+  createLocalTracks: (() => {}) as () => void,
+  removeLocalTracks: (() => {}) as () => void,
 };
+
+export const enumerateDevices = () =>
+  new Promise<MediaDeviceInfo[]>((resolve) => {
+    JitsiMeetJS.mediaDevices?.enumerateDevices(
+      (mediaDevices: MediaDeviceInfo[]) => resolve(mediaDevices)
+    );
+  });
