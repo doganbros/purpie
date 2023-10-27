@@ -12,7 +12,7 @@ import { ZoneModule } from 'src/zone/zone.module';
 import { MeetingController } from './controllers/meeting.controller';
 import { MeetingService } from './services/meeting.service';
 import { MeetingGateway } from './gateways/meeting.gateway';
-import { Call } from "../../entities/Call.entity";
+import { Call } from '../../entities/Call.entity';
 
 @Module({
   imports: [
@@ -23,7 +23,7 @@ import { Call } from "../../entities/Call.entity";
       MeetingLog,
       PostTag,
       PostVideo,
-      Call
+      Call,
     ]),
     ZoneModule,
     MailModule,

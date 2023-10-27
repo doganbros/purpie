@@ -1,6 +1,5 @@
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { RecordEntity } from './base/RecordEntity';
-import { ChatMessageAttachment } from './ChatMessageAttachment.entity';
 import { User } from './User.entity';
 
 @Entity()
