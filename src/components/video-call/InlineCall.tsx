@@ -6,9 +6,13 @@ import { VideoFrame } from './VideoFrame';
 
 interface InlineCallProps {
   onClickVideo: () => void;
+  onEndCall: () => void;
 }
 
-export const InlineCall: FC<InlineCallProps> = ({ onClickVideo }) => {
+export const InlineCall: FC<InlineCallProps> = ({
+  onClickVideo,
+  onEndCall,
+}) => {
   const [isExpanded, setIsExpanded] = useState(true);
   return (
     <Box
@@ -34,7 +38,7 @@ export const InlineCall: FC<InlineCallProps> = ({ onClickVideo }) => {
           <Text weight="normal">Test User</Text>
           {isExpanded ? <Down /> : <Up />}
         </Box>
-        <Box direction="row" gap="small">
+        <Box onClick={onEndCall}>
           <ActiveCallIcon />
         </Box>
       </Box>

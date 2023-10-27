@@ -1,18 +1,38 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Layer } from 'grommet';
+import { useDispatch, useSelector } from 'react-redux';
 import { CallNotification } from './CallNotification';
 import { MaximizedCall } from './MaximisedCall';
 import { InlineCall } from './InlineCall';
 import { NotifiicationList } from './NotificationList';
 import { JitsiContextProvider } from './JitsiContext';
-import { useVideoCallContext } from './VideoCallContext';
+import { AppState } from '../../store/reducers/root.reducer';
+import {
+  answerCallAction,
+  leaveCallAction,
+} from '../../store/actions/videocall.action';
+import { OutgoingCall } from './OutgoingCall';
 
 export const VideoCallOverlay: FC = () => {
   const [isCallMaximized, setIsCallMaximized] = useState(false);
-  const { activeCall, incomingCall, joinCall } = useVideoCallContext();
+  const {
+    auth: { user },
+    videocall: { activeCall, incomingCall, outgoingCall },
+  } = useSelector((state: AppState) => state);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!activeCall) {
+      setIsCallMaximized(false);
+    }
+  }, [activeCall]);
 
   return (
-    <JitsiContextProvider displayName="Test User" room={undefined}>
+    <JitsiContextProvider
+      displayName={user?.fullName}
+      room={activeCall?.meetingRoomName}
+      jwt={activeCall?.meetingToken}
+    >
       {activeCall && isCallMaximized && (
         <Layer animate={false}>
           <MaximizedCall
@@ -24,10 +44,21 @@ export const VideoCallOverlay: FC = () => {
       )}
       <NotifiicationList>
         {activeCall && !isCallMaximized && (
-          <InlineCall onClickVideo={() => setIsCallMaximized(true)} />
+          <InlineCall
+            onClickVideo={() => setIsCallMaximized(true)}
+            onEndCall={() => dispatch(leaveCallAction(activeCall.userId))}
+          />
         )}
         {incomingCall && (
-          <CallNotification onAccept={() => joinCall(incomingCall)} />
+          <CallNotification
+            onAccept={() => dispatch(answerCallAction(incomingCall))}
+          />
+        )}
+        {outgoingCall && (
+          <OutgoingCall
+            name={outgoingCall.id}
+            onEndCall={() => dispatch(leaveCallAction(outgoingCall.id))}
+          />
         )}
       </NotifiicationList>
     </JitsiContextProvider>

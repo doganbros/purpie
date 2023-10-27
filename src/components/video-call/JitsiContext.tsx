@@ -20,11 +20,13 @@ const JitsiContext = createContext(defaultContextValues);
 interface JitsiContextProviderProps {
   room?: string;
   displayName?: string;
+  jwt?: string;
 }
 const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
   room,
   displayName,
   children,
+  jwt,
 }) => {
   const jitsiConnection = useRef<any>();
   const jitsiConference = useRef<any>();
@@ -34,10 +36,9 @@ const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
 
   const onTrackAdded = (track: any) => {
     if (track?.isLocal()) {
-      setLocalTracks((prev) => [...prev, track]);
-    } else {
-      setRemoteTracks((prev) => [...prev, track]);
+      return;
     }
+    setRemoteTracks((prev) => [...prev, track]);
   };
 
   const onTrackRemoved = (track: any) => {
@@ -141,6 +142,7 @@ const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
   };
 
   const jitsiConnectionEstablished = () => {
+    console.log('----------------connection established----------------');
     if (!jitsiConnection.current) {
       return;
     }
@@ -148,14 +150,15 @@ const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
   };
 
   useEffect(() => {
-    if (room && displayName) {
+    if (room && displayName && jwt) {
       JitsiMeetJS.init(JITSI_INIT_CONFIG);
 
       JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
 
       jitsiConnection.current = new JitsiMeetJS.JitsiConnection(
         null,
-        null,
+        // FIXME
+        null && jwt,
         JITSI_CONNECTION_CONFIG
       );
 
@@ -182,7 +185,7 @@ const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
         jitsiConnection.current?.disconnect();
       }
     };
-  }, [room, displayName]);
+  }, [room, displayName, jwt]);
 
   return (
     <JitsiContext.Provider

@@ -25,7 +25,6 @@ import StaticPage from './pages/Public/static/StaticPage';
 import ZoneNotFound from './pages/Private/ZoneNotFound';
 import { getUserMembershipAction } from './store/actions/membership.action';
 import { VideoCallOverlay } from './components/video-call/VideoCallOverlay';
-import { VideoCallContextProvider } from './components/video-call/VideoCallContext';
 
 const App: FC = () => {
   const dispatch = useDispatch();
@@ -59,51 +58,45 @@ const App: FC = () => {
   return (
     <Grommet theme={theme}>
       <I18nextProvider i18n={i18n}>
-        <VideoCallContextProvider>
-          <AppToast
-            visible={toast.visible}
-            status={toast.status}
-            message={toast.message}
-            id={toast.toastId}
-          />
-          {!delay && !loading && isAuthenticated && <VideoCallOverlay />}
-          {delay || loading || (isAuthenticated && !userZoneInitialized) ? (
-            <Loader />
-          ) : (
-            <Router history={appHistory}>
-              <Switch>
-                {privateRoutes.map(({ id, path, component, exact = true }) => (
-                  <PrivateRoute
-                    key={id}
-                    exact={exact}
-                    path={path}
-                    component={component}
-                  />
-                ))}
+        <AppToast
+          visible={toast.visible}
+          status={toast.status}
+          message={toast.message}
+          id={toast.toastId}
+        />
+        {!delay && !loading && isAuthenticated && <VideoCallOverlay />}
+        {delay || loading || (isAuthenticated && !userZoneInitialized) ? (
+          <Loader />
+        ) : (
+          <Router history={appHistory}>
+            <Switch>
+              {privateRoutes.map(({ id, path, component, exact = true }) => (
+                <PrivateRoute
+                  key={id}
+                  exact={exact}
+                  path={path}
+                  component={component}
+                />
+              ))}
 
-                {publicRoutes.map(({ id, path, component, exact = true }) => (
-                  <PublicRoute
-                    key={id}
-                    exact={exact}
-                    path={path}
-                    component={component}
-                  />
-                ))}
-                <Route
-                  path={['/support/:page', '/support']}
-                  component={StaticPage}
+              {publicRoutes.map(({ id, path, component, exact = true }) => (
+                <PublicRoute
+                  key={id}
+                  exact={exact}
+                  path={path}
+                  component={component}
                 />
-                <Route
-                  exact
-                  path="/initialize-user"
-                  component={InitializeUser}
-                />
-                <Route exact path="/zone-not-found" component={ZoneNotFound} />
-                <Route exact path="*" component={NotFound} />
-              </Switch>
-            </Router>
-          )}
-        </VideoCallContextProvider>
+              ))}
+              <Route
+                path={['/support/:page', '/support']}
+                component={StaticPage}
+              />
+              <Route exact path="/initialize-user" component={InitializeUser} />
+              <Route exact path="/zone-not-found" component={ZoneNotFound} />
+              <Route exact path="*" component={NotFound} />
+            </Switch>
+          </Router>
+        )}
       </I18nextProvider>
     </Grommet>
   );

@@ -1,9 +1,10 @@
 import React, { FC } from 'react';
-import { Box, Text } from 'grommet';
-import { useSelector } from 'react-redux';
+import { Box, Button, Text } from 'grommet';
+import { useDispatch, useSelector } from 'react-redux';
 import { UserAvatar } from '../../../components/utils/Avatars/UserAvatar';
 import { User } from '../../../store/types/auth.types';
 import { AppState } from '../../../store/reducers/root.reducer';
+import { initiateCallAction } from '../../../store/actions/videocall.action';
 
 interface Props {
   user: User | null;
@@ -14,31 +15,34 @@ const SelectedUserHead: FC<Props> = ({ user, typingUsers }) => {
   const {
     chat: { usersOnline },
   } = useSelector((state: AppState) => state);
-
+  const dispatch = useDispatch();
   if (user) {
     const userOnline = usersOnline.includes(user.id);
     return (
-      <Box direction="row" gap="xsmall" align="center">
-        <UserAvatar
-          online={userOnline}
-          id={user.id}
-          name={user.fullName}
-          src={user.displayPhoto}
-        />
-        <Box>
-          <Text size="small" weight={500} color="dark">
-            {user.fullName}
-          </Text>
-          {typingUsers.map((u) => u.id).includes(user.id) ? (
-            <Text size="10px" weight={400} color="brand-alt">
-              Typing...
+      <Box>
+        <Box direction="row" gap="xsmall" align="center">
+          <UserAvatar
+            online={userOnline}
+            id={user.id}
+            name={user.fullName}
+            src={user.displayPhoto}
+          />
+          <Box>
+            <Text size="small" weight={500} color="dark">
+              {user.fullName}
             </Text>
-          ) : (
-            <Text size="10px" weight={400} color="status-disabled">
-              {userOnline ? 'Online' : 'Offline'}
-            </Text>
-          )}
+            {typingUsers.map((u) => u.id).includes(user.id) ? (
+              <Text size="10px" weight={400} color="brand-alt">
+                Typing...
+              </Text>
+            ) : (
+              <Text size="10px" weight={400} color="status-disabled">
+                {userOnline ? 'Online' : 'Offline'}
+              </Text>
+            )}
+          </Box>
         </Box>
+        <Button onClick={() => dispatch(initiateCallAction(user))}>Call</Button>
       </Box>
     );
   }

@@ -1,9 +1,11 @@
 import React, { FC, useState } from 'react';
 import { Box, Layer, Stack, Text } from 'grommet';
 import { Close } from 'grommet-icons';
+import { useSelector } from 'react-redux';
 import { VideoFrame } from './VideoFrame';
 import { useJitsiContext } from './JitsiContext';
 import { VideoSettings } from './VideoSettings';
+import { AppState } from '../../store/reducers/root.reducer';
 
 interface MaximizedCallProps {
   onDismiss: () => void;
@@ -12,6 +14,9 @@ interface MaximizedCallProps {
 export const MaximizedCall: FC<MaximizedCallProps> = ({ onDismiss }) => {
   const { localTracks, remoteTracks } = useJitsiContext();
   const [showSettings, setShowSettings] = useState(false);
+  const {
+    videocall: { activeCall },
+  } = useSelector((state: AppState) => state);
   return (
     <>
       <Box
@@ -38,13 +43,7 @@ export const MaximizedCall: FC<MaximizedCallProps> = ({ onDismiss }) => {
               pad={{ vertical: 'xsmall', horizontal: 'small' }}
               width={{ min: '200px' }}
             >
-              <Text>Meeting</Text>
-            </Box>
-            <Box
-              pad={{ vertical: 'xsmall', horizontal: 'small' }}
-              background={{ color: 'black', opacity: 0.5 }}
-            >
-              <Text>5:12</Text>
+              <Text>{activeCall?.meetingRoomName}</Text>
             </Box>
           </Box>
           <Close color="white" onClick={onDismiss} />
