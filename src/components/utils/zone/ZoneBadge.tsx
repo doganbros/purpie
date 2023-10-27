@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Anchor, TextExtendedProps, ThemeContext } from 'grommet';
+import { Anchor, Box, TextExtendedProps, ThemeContext } from 'grommet';
 import { navigateToSubdomain } from '../../../helpers/app-subdomain';
 import EllipsesOverflowText from '../EllipsesOverflowText';
 
@@ -28,12 +28,15 @@ const ZoneBadge: FC<ZoneBadgeProps> = ({
       <Anchor
         onClick={() => navigateToSubdomain(subdomain)}
         label={
-          <EllipsesOverflowText
-            maxWidth={truncateWith || '210px'}
-            text={`▣ ${name}`}
-            lineClamp={1}
-            {...textProps}
-          />
+          <Box direction="row" align="center" gap="4px">
+            ▣
+            <EllipsesOverflowText
+              maxWidth={truncateWith || '210px'}
+              text={name}
+              lineClamp={1}
+              {...textProps}
+            />
+          </Box>
         }
       />
     </ThemeContext.Extend>

@@ -373,8 +373,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     await this.authService.changePassword(user.id, changePasswordDto);
-
-    return res.status(200);
+    return 'OK';
   }
 
   @IsAuthenticated([], { injectUserProfile: true })

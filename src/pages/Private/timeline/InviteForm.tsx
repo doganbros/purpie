@@ -45,13 +45,13 @@ const InviteForm: FC<InviteDropButtonProps> = ({
 
   return (
     <Box gap="small">
-      <Box direction="row" gap="xxsmall">
+      <Box direction="row" gap="xxsmall" align="center">
         <Text color="brand" weight="bold" size="small">
           Invite People to{' '}
         </Text>
         {channelName && (
           <ChannelBadge
-            truncateWith="230px"
+            truncateWith="200px"
             textProps={{ size: 'small', weight: 'bold' }}
             url="/"
             name={channelName}
@@ -60,7 +60,7 @@ const InviteForm: FC<InviteDropButtonProps> = ({
 
         {zoneName && (
           <ZoneBadge
-            truncateWith="230px"
+            truncateWith="200px"
             textProps={{ size: 'small', weight: 'bold' }}
             name={zoneName}
             subdomain={zoneSubdomain}
