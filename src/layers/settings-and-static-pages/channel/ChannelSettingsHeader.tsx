@@ -88,8 +88,8 @@ const ChannelSettingsHeader: FC<ChannelSettingsHeaderProps> = ({
       onDismiss={() => {
         setShowBackgroundPhotoUpload(false);
       }}
-      type="channel"
-      src={selectedUserChannel?.channel.backgroundPhoto}
+      type="channelBackground"
+      src={selectedUserChannel?.channel?.backgroundPhoto || 'default'}
       id={selectedUserChannel?.channel.id}
       name={selectedUserChannel?.channel.name}
     />
