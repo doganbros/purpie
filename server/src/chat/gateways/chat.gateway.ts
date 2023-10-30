@@ -186,22 +186,25 @@ export class ChatGateway {
     }
 
     const user = await this.authService.getUserProfile(userId);
+    const calleeUser = await this.authService.getUserProfile(user.id);
+
     const meetingToken = await this.meetingService.generateMeetingToken(
       meetingRoomName,
       user,
       false,
       24,
     );
+
     socket.to(roomName).emit('call_started', {
       socketId: socket.id,
       userId: socket.user.id,
       meetingRoomName,
       meetingToken,
       user: {
-        avatar: user.displayPhoto,
-        name: user.fullName,
-        email: user.email,
-        id: user.id,
+        avatar: calleeUser.displayPhoto,
+        name: calleeUser.fullName,
+        email: calleeUser.email,
+        id: calleeUser.id,
       },
     });
   }
