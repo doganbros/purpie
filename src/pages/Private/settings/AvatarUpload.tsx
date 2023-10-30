@@ -36,7 +36,6 @@ const AvatarUpload: FC<AvatarUploadProps> = ({
 }) => {
   const [imgSrc, setImgSrc] = useState<string>();
   const { t } = useTranslation();
-  console.log(src);
   const renderAvatar = () => {
     if (src === 'default') {
       return <Image fit="contain" src={imagePlaceholder} />;
