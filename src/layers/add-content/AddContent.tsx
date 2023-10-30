@@ -35,7 +35,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
         form: { submitting },
       },
     },
-    channel: { selectedChannel },
+    channel: { selectedChannelId },
   } = useSelector((state: AppState) => state);
 
   const iconProps = {
@@ -50,7 +50,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
       description: t('AddContent.meetingDescription'),
       onClick: () => {
         const meeting: CreateMeetingPayload = { public: true };
-        if (selectedChannel) meeting.channelId = selectedChannel.channel.id;
+        if (selectedChannelId) meeting.channelId = selectedChannelId;
         if (!submitting) dispatch(createMeetingAction(meeting));
         onDismiss();
       },
@@ -65,7 +65,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
           public: true,
           liveStream: true,
         };
-        if (selectedChannel) meeting.channelId = selectedChannel.channel.id;
+        if (selectedChannelId) meeting.channelId = selectedChannelId;
         if (!submitting) dispatch(createMeetingAction(meeting));
         onDismiss();
       },

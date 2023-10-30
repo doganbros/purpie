@@ -38,6 +38,7 @@ import InviteToZone from './InviteToZone';
 import ChannelMembers from './ChannelMembers';
 import { getInvitationListAction } from '../../../store/actions/invitation.action';
 import { listChannelUsersAction } from '../../../store/actions/channel.action';
+import { useSelectedChannel } from '../../../hooks/useSelectedChannel';
 import {
   getChannelSuggestionsAction,
   getNotificationCountAction,
@@ -64,6 +65,7 @@ const Timeline: FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const selectedChannel = useSelectedChannel();
 
   const { delay, setDelay } = useWaitTime(DELAY_TIME);
   const { delay: loading } = useWaitTime(DELAY_TIME);
@@ -78,7 +80,6 @@ const Timeline: FC = () => {
       getUserZones: { userZones },
     },
     activity: { zoneSuggestions, channelSuggestions },
-    channel: { selectedChannel },
     invitation: { invitations },
   } = useSelector((state: AppState) => state);
 

@@ -29,7 +29,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const {
-    channel: { userChannels, selectedChannel },
+    channel: { userChannels, selectedChannelId },
     post: {
       createVideo: { uploading, error },
     },
@@ -134,7 +134,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
                 />
               </FormField>
 
-              {!selectedChannel && (
+              {!selectedChannelId && (
                 <FormField name="public">
                   <Switch
                     width="fit-content"

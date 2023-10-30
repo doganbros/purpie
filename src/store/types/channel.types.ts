@@ -130,7 +130,7 @@ export interface ChannelRole {
 }
 
 export interface ChannelState {
-  selectedChannel: UserChannelListItem | null;
+  selectedChannelId: string | null;
   showCreateChannelLayer: boolean;
   userChannels: {
     data: UserChannelListItem[];
@@ -202,7 +202,7 @@ export type ChannelActionParams =
     }
   | {
       type: typeof SET_SELECTED_CHANNEL;
-      payload: UserChannelListItem;
+      payload: string;
     }
   | {
       type:

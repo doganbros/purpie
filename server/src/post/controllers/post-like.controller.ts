@@ -8,7 +8,6 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
-  Res,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -23,7 +22,6 @@ import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
-import { Response } from 'express';
 import { CreatePostLikeDto } from '../dto/create-post-like.dto';
 import { PostService } from '../services/post.service';
 import { PostLikeListResponse } from '../response/post.response';
@@ -69,7 +67,6 @@ export class PostLikeController {
   async createPostLike(
     @Body() info: CreatePostLikeDto,
     @CurrentUser() user: UserTokenPayload,
-    @Res() res: Response,
   ) {
     const post = await this.postService.validatePost(user.id, info.postId);
 
@@ -90,7 +87,7 @@ export class PostLikeController {
       await this.postLikeService.updatePostLike(like, positive);
     } else await this.postLikeService.createPostLike(user.id, info);
 
-    return res.status(200);
+    return 'OK';
   }
 
   @Get('list/:postId')

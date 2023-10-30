@@ -155,7 +155,7 @@ const Video: FC = () => {
 
   const handleSelectChannel = () => {
     if (data?.channel) {
-      dispatch(setSelectedChannelAction(userChannelsFiltered));
+      dispatch(setSelectedChannelAction(userChannelsFiltered.channel.id));
     }
   };
 

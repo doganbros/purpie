@@ -1,15 +1,15 @@
 import React, { FC } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Box } from 'grommet';
 import { FormLock } from 'grommet-icons';
 import { unsetSelectedChannelAction } from '../../../store/actions/channel.action';
 import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
 import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
 import { UserChannelListItem } from '../../../store/types/channel.types';
-import { AppState } from '../../../store/reducers/root.reducer';
 import { apiURL } from '../../../config/http';
 import PulsatingCircle from '../../../components/utils/PulsatingCircle';
 import imagePlaceholder from '../../../assets/banner-placeholder.jpg';
+import { useSelectedChannel } from '../../../hooks/useSelectedChannel';
 
 interface ChannelListItemProps {
   c: UserChannelListItem;
@@ -23,9 +23,7 @@ const SelectedChannelListItem: FC<ChannelListItemProps> = ({
   zoneName,
 }: ChannelListItemProps) => {
   const dispatch = useDispatch();
-  const {
-    channel: { selectedChannel },
-  } = useSelector((state: AppState) => state);
+  const selectedChannel = useSelectedChannel();
 
   return (
     <Box
