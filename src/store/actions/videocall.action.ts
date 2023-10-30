@@ -11,9 +11,7 @@ import { store } from '../store';
 import { UserBasic } from '../types/auth.types';
 import { CallEvent, VideoCallAction } from '../types/videocall.types';
 
-export const answerCallAction = (
-  payload: CallEvent & { user: UserBasic }
-): VideoCallAction => {
+export const answerCallAction = (payload: CallEvent): VideoCallAction => {
   return (dispatch) => {
     socket.emit('join_call', payload.userId);
     dispatch({
@@ -42,9 +40,7 @@ export const leaveCallAction = (userId: string): VideoCallAction => {
   };
 };
 
-const callAnsweredAction = (
-  payload: CallEvent & { user: UserBasic }
-): VideoCallAction => {
+const callAnsweredAction = (payload: CallEvent): VideoCallAction => {
   return (dispatch) =>
     dispatch({
       type: CALL_ANSWERED,
@@ -54,8 +50,9 @@ const callAnsweredAction = (
 
 const handleCallStarted = (e: CallEvent) => {
   const { outgoingCall } = store.getState().videocall;
-  if (outgoingCall) {
-    callAnsweredAction({ user: outgoingCall, ...e })(store.dispatch);
+  const recepientId = outgoingCall?.id;
+  if (recepientId === e.userId) {
+    callAnsweredAction(e)(store.dispatch);
   } else {
     store.dispatch({ type: INCOMING_CALL, payload: e });
   }

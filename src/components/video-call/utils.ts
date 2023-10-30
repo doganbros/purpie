@@ -1,12 +1,14 @@
 export const JITSI_INIT_CONFIG = {
   disableAudioLevels: true,
 };
+
+const HOST = 'meet.purpie.io';
 export const JITSI_CONNECTION_CONFIG = {
   hosts: {
-    domain: 'meet.purpie.io',
-    muc: 'conference.meet.purpie.io',
+    domain: HOST,
+    muc: `conference.${HOST}`,
   },
-  bosh: 'https://meet.purpie.io/http-bind',
+  bosh: `https://${HOST}/http-bind`,
   clientNode: 'http://jitsi.org/jitsimeet',
   resolution: 320,
   constraints: {
@@ -33,6 +35,10 @@ export const defaultContextValues = {
   jitsiConference: {},
   createLocalTracks: (() => {}) as () => void,
   removeLocalTracks: (() => {}) as () => void,
+  changeDevices: (() => {}) as (
+    cameraDeviceId?: string,
+    micDeviceId?: string
+  ) => void,
 };
 
 export const enumerateDevices = () =>

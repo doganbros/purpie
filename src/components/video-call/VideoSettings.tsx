@@ -7,11 +7,9 @@ interface VideoSettingsProps {
   onDismiss: () => void;
 }
 export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
-  const { localTracks } = useJitsiContext();
+  const { localTracks, changeDevices } = useJitsiContext();
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
-  const [audioInputDevices, setAudioInputDevices] = useState<MediaDeviceInfo[]>(
-    []
-  );
+  const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
 
   const [
     selectedVideoDevice,
@@ -19,8 +17,8 @@ export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
   ] = useState<MediaDeviceInfo>();
 
   const [
-    selectedAudioInputDevice,
-    setSelectedAudioInputDevice,
+    selectedAudioDevice,
+    setSelectedAudioDevice,
   ] = useState<MediaDeviceInfo>();
 
   const setAvailableDevices = async () => {
@@ -29,7 +27,7 @@ export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
       if (d.kind === 'videoinput') {
         setVideoDevices((p) => [...p, d]);
       } else if (d.kind === 'audioinput') {
-        setAudioInputDevices((p) => [...p, d]);
+        setAudioDevices((p) => [...p, d]);
       }
     });
   };
@@ -51,10 +49,15 @@ export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
     const currentAudioDeviceId = localTracks
       .find((t) => t.getType() === 'audio')
       ?.getDeviceId();
-    setSelectedAudioInputDevice(
-      audioInputDevices.find((d) => d.deviceId === currentAudioDeviceId)
+    setSelectedAudioDevice(
+      audioDevices.find((d) => d.deviceId === currentAudioDeviceId)
     );
-  }, [audioInputDevices]);
+  }, [audioDevices]);
+
+  const onApply = () => {
+    changeDevices(selectedVideoDevice?.deviceId, selectedAudioDevice?.deviceId);
+    onDismiss();
+  };
 
   return (
     <Box
@@ -72,10 +75,10 @@ export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
         />
         Audio
         <Select
-          options={audioInputDevices}
-          value={selectedAudioInputDevice}
+          options={audioDevices}
+          value={selectedAudioDevice}
           labelKey="label"
-          onChange={({ option }) => setSelectedAudioInputDevice(option)}
+          onChange={({ option }) => setSelectedAudioDevice(option)}
         />
         <Box
           border={{ color: 'brand', size: '2px' }}
@@ -83,6 +86,7 @@ export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
           pad="xsmall"
           justify="center"
           align="center"
+          onClick={onApply}
         >
           <Text color="brand" weight="bold">
             Apply

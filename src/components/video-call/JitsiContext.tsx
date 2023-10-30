@@ -1,7 +1,6 @@
 import React, {
   FC,
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -21,12 +20,14 @@ interface JitsiContextProviderProps {
   room?: string;
   displayName?: string;
   jwt?: string;
+  onParticipantLeave?: () => void;
 }
 const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
   room,
   displayName,
   children,
   jwt,
+  onParticipantLeave,
 }) => {
   const jitsiConnection = useRef<any>();
   const jitsiConference = useRef<any>();
@@ -56,12 +57,17 @@ const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
 
   const onUserLeft = (id: string) => {
     setParticipants((prev) => prev.filter((p) => p._id !== id));
+    if (onParticipantLeave) {
+      onParticipantLeave();
+    }
   };
 
-  const createLocalTracks = useCallback(async () => {
+  const createLocalTracks = async () => {
+    console.log('-------------create-local-tracks-------------');
     if (!jitsiConference.current) {
       return;
     }
+
     const mediaDevices = await enumerateDevices();
 
     const cameraDeviceId = mediaDevices.find((d) => d.kind === 'videoinput')
@@ -94,18 +100,20 @@ const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
       }
       jitsiConference.current?.addTrack(t);
     });
-  }, [jitsiConference.current]);
+  };
 
-  const removeLocalTracks = useCallback(() => {
+  const removeLocalTracks = () => {
+    console.log('-------------remove-local-tracks-------------');
+
     jitsiConference.current?.getLocalTracks().forEach((t: any) => {
-      if (t.isLocal()) {
-        jitsiConference.current?.removeTrack(t);
-      }
+      jitsiConference.current?.removeTrack(t);
+      t.stopStream();
     });
-  }, [jitsiConference.current]);
+    setLocalTracks([]);
+  };
 
   const jitsiConnectionFailed = () => {
-    console.log('----------------connection failed----------------');
+    // FIXME
   };
 
   const jitsiConferenceInit = () => {
@@ -129,6 +137,13 @@ const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
     );
 
     jitsiConference.current?.on(
+      JitsiMeetJS.events.conference.CONFERENCE_FAILED,
+      (e: string) => {
+        console.log('conference failed error', e);
+      }
+    );
+
+    jitsiConference.current?.on(
       JitsiMeetJS.events.conference.USER_JOINED,
       onUserJoined
     );
@@ -142,7 +157,6 @@ const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
   };
 
   const jitsiConnectionEstablished = () => {
-    console.log('----------------connection established----------------');
     if (!jitsiConnection.current) {
       return;
     }
@@ -157,8 +171,7 @@ const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
 
       jitsiConnection.current = new JitsiMeetJS.JitsiConnection(
         null,
-        // FIXME
-        null && jwt,
+        jwt,
         JITSI_CONNECTION_CONFIG
       );
 
@@ -174,7 +187,6 @@ const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
 
       jitsiConnection.current?.connect();
     }
-
     return () => {
       removeLocalTracks();
       if (jitsiConference.current) {
@@ -187,6 +199,41 @@ const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
     };
   }, [room, displayName, jwt]);
 
+  const changeDevices = async (
+    cameraDeviceId?: string,
+    micDeviceId?: string
+  ) => {
+    jitsiConference.current?.getLocalTracks().forEach((t: any) => {
+      jitsiConference.current?.removeTrack(t);
+      t.stopStream();
+    });
+
+    const devices = [];
+
+    if (cameraDeviceId) {
+      devices.push('video');
+    }
+    if (micDeviceId) {
+      devices.push('audio');
+    }
+
+    const tracks = await JitsiMeetJS.createLocalTracks({
+      devices,
+      cameraDeviceId,
+      micDeviceId,
+    });
+
+    setLocalTracks(tracks);
+
+    tracks.forEach((t: any) => {
+      if (!jitsiConference.current) {
+        t.stopStream();
+        return;
+      }
+      jitsiConference.current?.addTrack(t);
+    });
+  };
+
   return (
     <JitsiContext.Provider
       value={{
@@ -197,6 +244,7 @@ const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
         jitsiConference,
         createLocalTracks,
         removeLocalTracks,
+        changeDevices,
       }}
     >
       {children}

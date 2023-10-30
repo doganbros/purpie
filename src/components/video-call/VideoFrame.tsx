@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { Box, Stack, Text, Video } from 'grommet';
+import { Box, Stack, Text } from 'grommet';
 import { Camera, Microphone, MoreVertical } from 'grommet-icons';
+import { StyledVideo } from './StyledVideo';
 
 interface VideoFrameProps {
   size?: number;
@@ -14,11 +15,10 @@ export const VideoFrame: FC<VideoFrameProps> = ({
   size = 250,
   tracks = [],
   local = false,
-  displayName = 'Test User',
+  displayName,
   onClickSettings,
 }) => {
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
-  const audioElementRef = useRef<HTMLAudioElement | null>(null);
 
   const videoTrack = tracks.find((t) => t.getType() === 'video');
   const audioTrack = tracks.find((t) => t.getType() === 'audio');
@@ -70,7 +70,6 @@ export const VideoFrame: FC<VideoFrameProps> = ({
     };
 
     setIsAudioMuted(audioTrack?.isMuted());
-    audioTrack?.attach(audioElementRef.current);
 
     audioTrack?.addEventListener(
       JitsiMeetJS.events.track.TRACK_MUTE_CHANGED,
@@ -78,7 +77,6 @@ export const VideoFrame: FC<VideoFrameProps> = ({
     );
 
     return () => {
-      audioTrack?.detach(audioElementRef.current);
       audioTrack?.removeEventListener(
         window.JitsiMeetJS.events.track.TRACK_MUTE_CHANGED,
         handleAudioMuteChange
@@ -98,19 +96,26 @@ export const VideoFrame: FC<VideoFrameProps> = ({
       >
         <Stack anchor="top" fill guidingChild="last">
           <Box width={`${size}px`} height={`${size}px`}>
-            <Video
+            <StyledVideo
               ref={videoElementRef}
               autoPlay
               fit="cover"
               hidden={isVideoMuted}
               controls={false}
+              mirrored={local}
             />
-            <audio ref={audioElementRef} />
           </Box>
           <Box direction="row" overflow="hidden" justify="between">
-            <Box background={{ color: 'brand-alt', opacity: 0.7 }} pad="small">
-              <Text color="white">{displayName}</Text>
-            </Box>
+            {displayName ? (
+              <Box
+                background={{ color: 'brand-alt', opacity: 0.7 }}
+                pad="small"
+              >
+                <Text color="white">{displayName}</Text>
+              </Box>
+            ) : (
+              <Box />
+            )}
 
             <Box
               background={{ color: 'black', opacity: 0.7 }}
@@ -121,12 +126,12 @@ export const VideoFrame: FC<VideoFrameProps> = ({
             >
               <Microphone
                 size="20px"
-                onClick={toggleMuteAudio}
+                onClick={local ? toggleMuteAudio : undefined}
                 color={isAudioMuted ? 'status-error' : 'white'}
               />
               <Camera
                 size="20px"
-                onClick={toggleMuteVideo}
+                onClick={local ? toggleMuteVideo : undefined}
                 color={isVideoMuted ? 'status-error' : 'white'}
               />
               {local && <MoreVertical size="20px" onClick={onClickSettings} />}

@@ -13,24 +13,30 @@ export interface CallEvent {
   userId: string;
   meetingRoomName: string;
   meetingToken: string;
+  user: {
+    avatar?: string;
+    name: string;
+    email: string;
+    id: string;
+  };
 }
 
 export interface VideoCallState {
-  incomingCall: (CallEvent & { user: UserBasic }) | null;
+  incomingCall: CallEvent | null;
   outgoingCall: null | UserBasic;
-  activeCall: (CallEvent & { user: UserBasic }) | null;
+  activeCall: CallEvent | null;
 }
 
 export type VideoCallActionParam =
   | {
       type: typeof INCOMING_CALL;
-      payload: CallEvent & { user: UserBasic };
+      payload: CallEvent;
     }
   | {
       type: typeof ANSWER_CALL;
-      payload: CallEvent & { user: UserBasic };
+      payload: CallEvent;
     }
-  | { type: typeof CALL_ANSWERED; payload: CallEvent & { user: UserBasic } }
+  | { type: typeof CALL_ANSWERED; payload: CallEvent }
   | { type: typeof INITIATE_CALL; payload: UserBasic }
   | { type: typeof LEAVE_CALL }
   | { type: typeof CALL_ENDED };

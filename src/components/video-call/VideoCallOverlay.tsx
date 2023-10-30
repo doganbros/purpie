@@ -12,6 +12,7 @@ import {
   leaveCallAction,
 } from '../../store/actions/videocall.action';
 import { OutgoingCall } from './OutgoingCall';
+import { RemoteAudio } from './RemoteAudio';
 
 export const VideoCallOverlay: FC = () => {
   const [isCallMaximized, setIsCallMaximized] = useState(false);
@@ -19,6 +20,7 @@ export const VideoCallOverlay: FC = () => {
     auth: { user },
     videocall: { activeCall, incomingCall, outgoingCall },
   } = useSelector((state: AppState) => state);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -29,6 +31,11 @@ export const VideoCallOverlay: FC = () => {
 
   return (
     <JitsiContextProvider
+      onParticipantLeave={
+        activeCall
+          ? () => dispatch(leaveCallAction(activeCall.userId))
+          : undefined
+      }
       displayName={user?.fullName}
       room={activeCall?.meetingRoomName}
       jwt={activeCall?.meetingToken}
@@ -42,16 +49,21 @@ export const VideoCallOverlay: FC = () => {
           />
         </Layer>
       )}
+      {/* The video rendering component will change based on the chosen layout, while the
+      audio will consistently remain active, so we handle its rendering
+      independently. */}
+      {activeCall && <RemoteAudio />}
       <NotifiicationList>
         {activeCall && !isCallMaximized && (
           <InlineCall
+            name={activeCall.user.name}
             onClickVideo={() => setIsCallMaximized(true)}
             onEndCall={() => dispatch(leaveCallAction(activeCall.userId))}
           />
         )}
         {incomingCall && (
           <CallNotification
-            name={incomingCall.userId}
+            name={incomingCall.user.name}
             onAccept={() => dispatch(answerCallAction(incomingCall))}
             onReject={() => dispatch(leaveCallAction(incomingCall.userId))}
           />
