@@ -1,10 +1,4 @@
-import {
-  IsBoolean,
-  IsOptional,
-  IsString,
-  IsUUID,
-  ValidateIf,
-} from 'class-validator';
+import { IsBoolean, IsOptional, IsString, ValidateIf } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 
@@ -22,7 +16,6 @@ export class CreateVideoDto {
   @ValidateIf((o) => {
     return !o.public;
   })
-  @IsUUID()
   channelId?: string;
 
   @ApiPropertyOptional()
@@ -30,7 +23,6 @@ export class CreateVideoDto {
     return !o.channelId;
   })
   @Transform(({ value }) => ['true', true, 1, '1'].includes(value))
-  @IsBoolean()
   public?: boolean;
 
   @ApiProperty({ type: String, format: 'binary' })
