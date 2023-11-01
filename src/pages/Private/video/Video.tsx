@@ -5,7 +5,7 @@ import {
   AddCircle,
   Chat as ChatIcon,
   Dislike,
-  Like,
+  Favorite,
   SettingsOption,
 } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -41,6 +41,7 @@ import useDelayTime from '../../../hooks/useDelayTime';
 import { AddToFolderDrop } from '../../../layers/saved-video/folder/AddToFolderDrop';
 import { useResponsive } from '../../../hooks/useResponsive';
 import ShareVideo from './ShareVideo';
+import { FavoriteFill } from '../../../components/utils/CustomIcons';
 
 interface RouteParams {
   id: string;
@@ -343,9 +344,9 @@ const Video: FC = () => {
                       }
                       icon={
                         data.liked ? (
-                          <Like color="brand" size="17px" />
+                          <FavoriteFill color="brand" />
                         ) : (
-                          <Like color="status-disabled" size="17px" />
+                          <Favorite color="status-disabled" />
                         )
                       }
                     />
