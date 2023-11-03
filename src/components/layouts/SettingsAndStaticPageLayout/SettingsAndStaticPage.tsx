@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { FC, useContext, useState } from 'react';
 import {
   Accordion,
