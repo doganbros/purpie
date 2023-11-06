@@ -52,9 +52,8 @@ const MessageFiles: React.FC<Props> = ({
             />
             <ImageDeleteButton
               margin="xsmall"
-              color="green"
               onClick={() => onDeleteFile(file)}
-              icon={<Close size="small" color="brand-2" />}
+              icon={<Close size="small" color="white" />}
             />
             {uploadErrors.includes(file.name) && (
               <ImageErrorIcon src={Warning} />
