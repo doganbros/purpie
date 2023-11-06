@@ -26,7 +26,7 @@ const UnselectedChannelListItem: FC<ChannelListItemProps> = ({
     <Box
       onClick={() => {
         handleWaiting?.();
-        dispatch(setSelectedChannelAction(c));
+        dispatch(setSelectedChannelAction(c.channel.id));
       }}
       focusIndicator={false}
       key={c.channel.id}

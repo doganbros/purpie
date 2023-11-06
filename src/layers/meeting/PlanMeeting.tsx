@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Box, Button, Text, Layer, Grid } from 'grommet';
+import { Box, Button, Grid, Layer, Text } from 'grommet';
 import { Close } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEqual } from 'lodash';
@@ -50,7 +50,7 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
       },
       userMeetingConfig,
     },
-    channel: { selectedChannel },
+    channel: { selectedChannelId },
   } = useSelector((state: AppState) => state);
 
   useEffect(() => {
@@ -110,7 +110,7 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
             record,
           }
         );
-      if (selectedChannel) formPayload.channelId = selectedChannel.channel.id;
+      if (selectedChannelId) formPayload.channelId = selectedChannelId;
 
       if (!showPersistance && configChanged) {
         setShowPersistance(true);

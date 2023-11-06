@@ -291,7 +291,7 @@ export const updatePostAction = (payload: EditVideoPayload): PostAction => {
     } catch (err) {
       dispatch({
         type: UPDATE_POST_DETAIL_FAILED,
-        payload: err?.reponse?.data,
+        payload: err?.response?.data,
       });
     }
   };

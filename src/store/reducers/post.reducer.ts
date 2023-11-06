@@ -26,12 +26,12 @@ import {
   REMOVE_POST_COMMENT_LIKE_SUCCESS,
   REMOVE_POST_COMMENT_SUCCESS,
   REMOVE_POST_LIKE_SUCCESS,
+  REMOVE_POST_SUCCESS,
   SEARCH_POST_FAILED,
   SEARCH_POST_REQUESTED,
   SEARCH_POST_SUCCESS,
   UPDATE_POST_COMMENT_SUCCESS,
   UPDATE_POST_DETAIL_SUCCESS,
-  REMOVE_POST_SUCCESS,
 } from '../constants/post.constants';
 import { PostActionParams, PostState } from '../types/post.types';
 import { paginationInitialState } from '../../helpers/constants';

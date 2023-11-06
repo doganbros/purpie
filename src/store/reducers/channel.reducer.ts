@@ -29,7 +29,7 @@ import {
 import { ChannelActionParams, ChannelState } from '../types/channel.types';
 
 const initialState: ChannelState = {
-  selectedChannel: null,
+  selectedChannelId: null,
   showCreateChannelLayer: false,
   userChannels: {
     data: [],
@@ -126,12 +126,12 @@ const channelReducer = (
     case SET_SELECTED_CHANNEL:
       return {
         ...state,
-        selectedChannel: action.payload,
+        selectedChannelId: action.payload,
       };
     case UNSET_SELECTED_CHANNEL:
       return {
         ...state,
-        selectedChannel: null,
+        selectedChannelId: null,
       };
     case SEARCH_CHANNEL_REQUESTED:
       return {
@@ -221,11 +221,10 @@ const channelReducer = (
           loading: false,
           error: null,
         },
-        selectedChannel:
-          state.selectedChannel &&
-          state.selectedChannel.channel.id === action.payload
+        selectedChannelId:
+          state.selectedChannelId === action.payload
             ? null
-            : state.selectedChannel,
+            : state.selectedChannelId,
       };
     case UNFOLLOW_CHANNEL_SUCCESS:
       return {

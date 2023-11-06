@@ -139,11 +139,10 @@ export class PostController {
     @Param('postId', ParseUUIDPipe) postId: string,
     @CurrentUser() user: UserTokenPayload,
     @Body() editPostPayload: EditPostDto,
-    @Res() res: Response,
   ) {
     await this.postService.editPost(postId, user.id, editPostPayload);
 
-    return res.status(204);
+    return 'OK';
   }
 
   @Delete('remove/:postId')
