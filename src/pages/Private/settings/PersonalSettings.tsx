@@ -65,7 +65,12 @@ const PersonalSettings = (): Menu | null => {
   const handleSubmitPassword: FormSubmitEvent<UpdatePasswordPayload> = ({
     value,
   }) => {
-    if (Object.keys(value).length !== 0) {
+    if (
+      Object.keys(value).length !== 0 &&
+      value.currentPassword &&
+      value.newPassword &&
+      value.confirmNewPassword
+    ) {
       dispatch(updatePasswordAction(value));
     }
   };
@@ -198,7 +203,11 @@ const PersonalSettings = (): Menu | null => {
         label: t('settings.passwordChange'),
         component: (
           <Box gap="small">
-            <Form onSubmit={handleSubmitPassword} id="passwordForm">
+            <Form
+              validate="change"
+              onSubmit={handleSubmitPassword}
+              id="passwordForm"
+            >
               <FormField
                 name="currentPassword"
                 htmlFor="currentPassword"

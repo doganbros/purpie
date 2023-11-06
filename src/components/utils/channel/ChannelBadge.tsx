@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { TextExtendedProps, ThemeContext } from 'grommet';
+import { Box, TextExtendedProps, ThemeContext } from 'grommet';
 import { AnchorLink } from '../AnchorNavLink';
 import EllipsesOverflowText from '../EllipsesOverflowText';
 
@@ -29,12 +29,15 @@ const ChannelBadge: FC<ChannelBadgeProps> = ({
       <AnchorLink
         to={url}
         label={
-          <EllipsesOverflowText
-            maxWidth={truncateWith || '180px'}
-            text={`◉ ${name}`}
-            lineClamp={1}
-            {...textProps}
-          />
+          <Box direction="row" align="center" gap="4px">
+            ◉
+            <EllipsesOverflowText
+              maxWidth={truncateWith || '180px'}
+              text={name}
+              lineClamp={1}
+              {...textProps}
+            />
+          </Box>
         }
       />
     </ThemeContext.Extend>

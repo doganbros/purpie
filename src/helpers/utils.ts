@@ -8,8 +8,10 @@ import { ResponseError } from '../models/response-error';
 
 export const errorResponseMessage = (error?: ResponseError): string => {
   if (!error) return '';
-
-  if (Array.isArray(error.message)) return error.message.join(', ');
+  if (Array.isArray(error.message))
+    return error.message
+      .map((m) => m.charAt(0).toUpperCase() + m.slice(1))
+      .join(', ');
 
   return i18n.t(`ErrorTypes.${error.message}`);
 };
