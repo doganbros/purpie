@@ -141,12 +141,10 @@ const SettingsAndStaticPage: FC<SettingsAndStaticPageLayoutProps> = ({
             onActive={(i) => {
               setPermissionTab(i[0]);
             }}
-            animate
           >
             {menu.tabs.map((tab) => (
               <AccordionPanel label={tab.label} key={tab.label}>
                 <Box
-                  // border={{ side: 'bottom', size: 'small', color: 'brand' }}
                   pad={{ horizontal: 'xsmall', vertical: 'small' }}
                   gap="small"
                 >
