@@ -37,7 +37,17 @@ const MeetingDetails: FC = () => {
 
   return (
     <>
-      <FormField name="name" htmlFor="nameInput">
+      <FormField
+        name="name"
+        htmlFor="nameInput"
+        error={
+          formPayload && formPayload.title && formPayload.title.length > 64
+            ? t('validators.maxLengthDefaultMsg', {
+                length: 64,
+              })
+            : undefined
+        }
+      >
         <TextInput
           defaultValue={formPayload?.title}
           id="nameInput"

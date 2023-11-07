@@ -26,7 +26,7 @@ const VideoSettings: FC<VideoSettingsProps> = ({
     },
   } = useSelector((state: AppState) => state);
 
-  const [title, setTitle] = useState(data?.title);
+  const [title, setTitle] = useState(data?.title || '');
   const [description, setDescription] = useState(data?.description);
   const [publicVisibility, setPublicVisibility] = useState(data?.public);
 
@@ -52,7 +52,7 @@ const VideoSettings: FC<VideoSettingsProps> = ({
     return isChanged;
   };
 
-  const notValid = !title;
+  const notValid = title?.length === 0 || title?.length > 64;
 
   return (
     <Box pad="medium" height={{ min: '100vh' }}>
@@ -61,7 +61,10 @@ const VideoSettings: FC<VideoSettingsProps> = ({
           name="title"
           htmlFor="videoName"
           label={t('VideoSettings.videoName')}
-          validate={[validators.required(t('VideoSettings.videoName'))]}
+          validate={[
+            validators.required(t('VideoSettings.videoName')),
+            validators.maxLength(64),
+          ]}
         >
           <TextInput
             id="videoName"

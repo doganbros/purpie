@@ -89,6 +89,9 @@ const PlanMeeting: FC<Props> = ({ onClose, visible }) => {
   if (!visible) return null;
 
   const submitMeeting = () => {
+    if (formPayload && formPayload.title && formPayload.title.length > 64)
+      return;
+
     if (formPayload && userMeetingConfig.config) {
       const {
         public: publicMeeting,

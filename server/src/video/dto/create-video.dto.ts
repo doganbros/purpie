@@ -1,10 +1,17 @@
-import { IsBoolean, IsOptional, IsString, ValidateIf } from 'class-validator';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  MaxLength,
+  ValidateIf,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 
 export class CreateVideoDto {
-  @ApiProperty()
+  @ApiPropertyOptional({ maxLength: 64 })
   @IsString()
+  @MaxLength(64)
   title: string;
 
   @ApiPropertyOptional()
