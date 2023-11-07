@@ -96,15 +96,18 @@ const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
             </Text>
           </ExtendedBox>
           <Box direction="row" justify="between" align="start">
-            <Text
-              style={{ cursor: 'pointer' }}
-              size="large"
-              weight="bold"
-              color="brand"
+            <Box
               onClick={() => onClickPlay(post.id)}
+              style={{ cursor: 'pointer' }}
             >
-              {post.title}
-            </Text>
+              <EllipsesOverflowText
+                maxWidth="305px"
+                size="large"
+                weight="bold"
+                color="brand"
+                text={post.title}
+              />
+            </Box>
             {post.streaming ? (
               <Text>
                 {post.postReaction.liveStreamViewersCount <= 1
