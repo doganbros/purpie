@@ -52,7 +52,7 @@ const CommentList: FC<CommentsProps> = ({ postId }) => {
                 round="small"
               >
                 <Box pad={{ left: 'small' }} gap="small">
-                  <CommentBase comment={item} postId={postId} />
+                  <CommentBase hasReply comment={item} postId={postId} />
                   {item.replyCount > 0 && (
                     <Replies parentComment={item} postId={postId} />
                   )}

@@ -388,7 +388,7 @@
   },
   "CommentBase": {
     "editComment": "Edit Comment",
-    "writePublicReply": "Write a public reply",
+    "writePublicReply": "Write a reply",
     "deleteCommentConfirmMsg": "Are you sure you want to delete the comment?"
   },
   "CommentList": {
@@ -507,6 +507,7 @@
   },
   "settings": {
     "personalSettings": "Personal Settings",
+    "securitySettings": "Security",
     "channelSettings": "Channels",
     "zoneSettings": "Zones",
     "membershipSettings": "Membership",
