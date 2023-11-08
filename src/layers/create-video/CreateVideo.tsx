@@ -16,6 +16,7 @@ import {
 import { Close } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { validators } from '../../helpers/validators';
 import { AppState } from '../../store/reducers/root.reducer';
 import { CreateVideoPayload } from '../../store/types/post.types';
 import { createVideoAction } from '../../store/actions/post.action';
@@ -99,6 +100,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
                 required
                 name="title"
                 label={t('CreateVideo.videoTitle')}
+                validate={[validators.maxLength(64)]}
               >
                 <TextInput
                   value={title}

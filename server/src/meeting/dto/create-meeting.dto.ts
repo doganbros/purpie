@@ -8,6 +8,7 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  MaxLength,
   MinDate,
   ValidateIf,
 } from 'class-validator';
@@ -17,9 +18,10 @@ import { JitsiConfig } from 'types/Meeting';
 import { timeZones } from 'entities/data/time-zones';
 
 export class CreateMeetingDto {
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ maxLength: 64 })
   @IsString()
   @IsOptional()
+  @MaxLength(64)
   title?: string;
 
   @ApiPropertyOptional()
