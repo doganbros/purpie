@@ -120,6 +120,7 @@ export class PostCommentService {
           parentId: params.parentId,
         },
       )
+      .orderBy('postComment.createdOn', 'DESC')
       .paginate(query);
   }
 
