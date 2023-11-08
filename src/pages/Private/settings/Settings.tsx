@@ -1,13 +1,14 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import ChannelSettings from './ChannelSettings';
-import PersonalSettings from './PersonalSettings';
 import ZoneSettings from './ZoneSettings';
 import { useTitle } from '../../../hooks/useTitle';
 import SettingsAndStaticPageLayout from '../../../components/layouts/SettingsAndStaticPageLayout/SettingsAndStaticPageLayout';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 import ApiManagement from './MemberShip/ApiManagement/ApiManagement';
 import MembershipSettings from './MembershipSettings';
+import PasswordSettings from './PasswordSettings';
+import PersonalSettings from './PersonalSettings';
 
 const Settings: FC = () => {
   const { t } = useTranslation();
@@ -15,6 +16,7 @@ const Settings: FC = () => {
 
   const data: Menu[] = [
     PersonalSettings(),
+    PasswordSettings(),
     ChannelSettings(),
     ZoneSettings(),
     // MembershipSettings(),

@@ -507,6 +507,7 @@
   },
   "settings": {
     "personalSettings": "Personal Settings",
+    "securitySettings": "Security",
     "channelSettings": "Channels",
     "zoneSettings": "Zones",
     "membershipSettings": "Membership",
