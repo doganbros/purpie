@@ -105,11 +105,17 @@ export const VideoFrame: FC<VideoFrameProps> = ({
               mirrored={local}
             />
           </Box>
-          <Box direction="row" overflow="hidden" justify="between">
+          <Box
+            direction="row"
+            overflow="hidden"
+            justify="between"
+            margin="small"
+          >
             {displayName ? (
               <Box
-                background={{ color: 'brand-alt', opacity: 0.7 }}
+                background={{ color: 'brand-alt' }}
                 pad="small"
+                round="small"
               >
                 <Text color="white">{displayName}</Text>
               </Box>
@@ -123,6 +129,7 @@ export const VideoFrame: FC<VideoFrameProps> = ({
               direction="row"
               align="center"
               gap="small"
+              round="small"
             >
               <Microphone
                 size="20px"
