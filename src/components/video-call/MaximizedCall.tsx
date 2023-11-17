@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { Box, Layer, Stack, Text } from 'grommet';
+import { Box, Layer, Text } from 'grommet';
 import { Close } from 'grommet-icons';
 import { useSelector } from 'react-redux';
 import { VideoFrame } from './VideoFrame';
@@ -22,7 +22,7 @@ export const MaximizedCall: FC<MaximizedCallProps> = ({ onDismiss }) => {
       <Box
         elevation="large"
         round="small"
-        width="470px"
+        width="916px"
         align="stretch"
         overflow="hidden"
       >
@@ -48,16 +48,18 @@ export const MaximizedCall: FC<MaximizedCallProps> = ({ onDismiss }) => {
           </Box>
           <Close color="white" onClick={onDismiss} />
         </Box>
-        <Box pad="medium" background="white">
-          <Stack anchor="bottom-right">
-            <VideoFrame size={430} tracks={remoteTracks} />
-            <VideoFrame
-              size={220}
-              tracks={localTracks}
-              local
-              onClickSettings={() => setShowSettings(true)}
-            />
-          </Stack>
+        <Box pad="medium" background="white" direction="row" gap="small">
+          <VideoFrame
+            size={422}
+            tracks={remoteTracks}
+            displayName={activeCall?.user.name}
+          />
+          <VideoFrame
+            size={422}
+            tracks={localTracks}
+            local
+            onClickSettings={() => setShowSettings(true)}
+          />
         </Box>
       </Box>
       {showSettings && (

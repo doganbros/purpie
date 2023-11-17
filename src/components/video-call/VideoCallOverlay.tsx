@@ -2,8 +2,8 @@ import React, { FC, useEffect, useRef, useState } from 'react';
 import { Layer } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { CallNotification } from './CallNotification';
-import { MaximizedCall } from './MaximisedCall';
-import { InlineCall } from './InlineCall';
+import { MaximizedCall } from './MaximizedCall';
+import { MinimizedCall } from './MinimizedCall';
 import { NotifiicationList } from './NotificationList';
 import { JitsiContextProvider } from './JitsiContext';
 import { AppState } from '../../store/reducers/root.reducer';
@@ -52,6 +52,12 @@ export const VideoCallOverlay: FC = () => {
       room={activeCall?.meetingRoomName}
       jwt={activeCall?.meetingToken}
     >
+      {/* The video rendering component will change based on the chosen layout, while the
+      audio will consistently remain active, so we handle its rendering
+      independently. */}
+
+      {activeCall && <RemoteAudio />}
+
       {activeCall && isCallMaximized && (
         <Layer animate={false}>
           <MaximizedCall
@@ -61,13 +67,10 @@ export const VideoCallOverlay: FC = () => {
           />
         </Layer>
       )}
-      {/* The video rendering component will change based on the chosen layout, while the
-      audio will consistently remain active, so we handle its rendering
-      independently. */}
-      {activeCall && <RemoteAudio />}
+
       <NotifiicationList>
         {activeCall && !isCallMaximized && (
-          <InlineCall
+          <MinimizedCall
             name={activeCall.user.name}
             onClickVideo={() => setIsCallMaximized(true)}
             onEndCall={() => dispatch(leaveCallAction(activeCall.userId))}
