@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Layer } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { CallNotification } from './CallNotification';
@@ -13,6 +13,7 @@ import {
 } from '../../store/actions/videocall.action';
 import { OutgoingCall } from './OutgoingCall';
 import { RemoteAudio } from './RemoteAudio';
+import CallSound from '../../assets/call-sound.mp3';
 
 export const VideoCallOverlay: FC = () => {
   const [isCallMaximized, setIsCallMaximized] = useState(false);
@@ -20,6 +21,7 @@ export const VideoCallOverlay: FC = () => {
     auth: { user },
     videocall: { activeCall, incomingCall, outgoingCall },
   } = useSelector((state: AppState) => state);
+  const callSoundRef = useRef(new Audio(CallSound));
 
   const dispatch = useDispatch();
 
@@ -28,6 +30,16 @@ export const VideoCallOverlay: FC = () => {
       setIsCallMaximized(false);
     }
   }, [activeCall]);
+
+  useEffect(() => {
+    callSoundRef.current.loop = true;
+    if (incomingCall) {
+      callSoundRef.current.play();
+    } else {
+      callSoundRef.current.pause();
+      callSoundRef.current.currentTime = 0;
+    }
+  }, [!!incomingCall]);
 
   return (
     <JitsiContextProvider
