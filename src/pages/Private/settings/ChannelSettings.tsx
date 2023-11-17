@@ -182,7 +182,18 @@ const ChannelSettings = (): Menu => {
       key: 'channelPermissions',
       label: '',
       tabIndex: 2,
-      component: <ChannelPermissions userChannel={selectedUserChannel} />,
+      componentFunc: (search?: string) => (
+        <ChannelPermissions
+          userChannel={selectedUserChannel}
+          searchText={search}
+        />
+      ),
+      searchableTexts: [
+        t('ChannelPermissionAction.canInvite'),
+        t('ChannelPermissionAction.canDelete'),
+        t('ChannelPermissionAction.canEdit'),
+        t('ChannelPermissionAction.canManageRole'),
+      ],
     });
     channelSettings.tabs.push({ index: 3, label: t('settings.followers') });
     channelSettings.items.push({

@@ -3,6 +3,7 @@ import { Box, ResponsiveContext, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useTranslation } from 'react-i18next';
+import { nanoid } from 'nanoid';
 import {
   getChannelRolesAction,
   updateChannelPermissionsAction,
@@ -19,9 +20,13 @@ import '../permissions/Style.scss';
 
 interface ChannelPermissionsProps {
   userChannel: UserChannelListItem;
+  searchText?: string;
 }
 
-const ChannelPermissions: FC<ChannelPermissionsProps> = ({ userChannel }) => {
+const ChannelPermissions: FC<ChannelPermissionsProps> = ({
+  userChannel,
+  searchText,
+}) => {
   const { t } = useTranslation();
   const size = useContext(ResponsiveContext);
 
@@ -79,53 +84,71 @@ const ChannelPermissions: FC<ChannelPermissionsProps> = ({ userChannel }) => {
           pad="small"
           border={{ size: '1px', color: 'status-disabled-light' }}
         >
-          {Object.keys(actions).map((action) => (
-            <Box
-              key={action}
-              align={size === 'small' ? 'start' : 'center'}
-              direction={size === 'small' ? 'column' : 'row'}
-              justify={size === 'small' ? 'center' : 'between'}
-              width="full"
-              gap="small"
-            >
-              <Text size="small" color="dark" weight={400}>
-                {t(`ChannelPermissionAction.${action}`)}
-              </Text>
-              <Box direction="row" gap={size === 'small' ? '16px' : '72px'}>
-                {roleCodes.map((role) => {
-                  const permission = channelPermissions.find(
-                    (p) => p.roleCode === role
-                  );
-                  const permissionAction = action as keyof UserChannelPermissionList;
-                  return (
-                    <>
-                      {size === 'small' && (
-                        <Text
-                          size="small"
-                          color="light-turquoise"
-                          margin={{ right: 'small' }}
-                        >
-                          {t(`Permissions.${role}`)}
-                        </Text>
+          {Object.keys(actions).map((action) => {
+            const labelParts = t(`ChannelPermissionAction.${action}`)
+              .split(new RegExp(`(${searchText})`, 'gi'))
+              .map((p) => ({ part: p, id: nanoid() }));
+
+            return (
+              <Box
+                key={action}
+                align={size === 'small' ? 'start' : 'center'}
+                direction={size === 'small' ? 'column' : 'row'}
+                justify={size === 'small' ? 'center' : 'between'}
+                width="full"
+                gap="small"
+              >
+                {labelParts.length > 0 && (
+                  <Box direction="column">
+                    <Text size="small" weight={400} color="dark">
+                      {labelParts.map(({ part, id }) =>
+                        part.toLowerCase() !== searchText!.toLowerCase() ? (
+                          `${part}`
+                        ) : (
+                          <Text size="small" key={id} weight="bold">
+                            {part}
+                          </Text>
+                        )
                       )}
-                      <PermissionCheckBox
-                        key={role}
-                        disabled={role === ChannelRoleCode.OWNER}
-                        checked={permission?.[permissionAction] as boolean}
-                        handleChange={(checked) =>
-                          handeChannelPermissionChange(
-                            role,
-                            permissionAction,
-                            checked
-                          )
-                        }
-                      />
-                    </>
-                  );
-                })}
+                    </Text>
+                  </Box>
+                )}
+                <Box direction="row" gap={size === 'small' ? '16px' : '72px'}>
+                  {roleCodes.map((role) => {
+                    const permission = channelPermissions.find(
+                      (p) => p.roleCode === role
+                    );
+                    const permissionAction = action as keyof UserChannelPermissionList;
+                    return (
+                      <>
+                        {size === 'small' && (
+                          <Text
+                            size="small"
+                            color="light-turquoise"
+                            margin={{ right: 'small' }}
+                          >
+                            {t(`Permissions.${role}`)}
+                          </Text>
+                        )}
+                        <PermissionCheckBox
+                          key={role}
+                          disabled={role === ChannelRoleCode.OWNER}
+                          checked={permission?.[permissionAction] as boolean}
+                          handleChange={(checked) =>
+                            handeChannelPermissionChange(
+                              role,
+                              permissionAction,
+                              checked
+                            )
+                          }
+                        />
+                      </>
+                    );
+                  })}
+                </Box>
               </Box>
-            </Box>
-          ))}
+            );
+          })}
         </Box>
       </Box>
     );
