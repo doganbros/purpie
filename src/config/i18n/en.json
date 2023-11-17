@@ -790,5 +790,11 @@
     "videoSize": "Video Size(kb): ",
     "webinarCount": "Webinar Count: ",
     "zoneCount": "Zone Count: "
+  },
+  "OneOnOneCall": {
+    "settingsVideo": "Video",
+    "settingsAudio": "Audio",
+    "settingsApply": "Apply",
+    "settingsDismiss": "Dismiss"
   }
 }

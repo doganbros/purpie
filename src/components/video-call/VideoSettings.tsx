@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Box, Select, Text } from 'grommet';
+import { useTranslation } from 'react-i18next';
 import { useJitsiContext } from './JitsiContext';
 import { enumerateDevices } from './utils';
 
@@ -7,6 +8,8 @@ interface VideoSettingsProps {
   onDismiss: () => void;
 }
 export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
+  const { t } = useTranslation();
+
   const { localTracks, changeDevices } = useJitsiContext();
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
   const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
@@ -38,7 +41,7 @@ export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
 
   useEffect(() => {
     const currentVideoDeviceId = localTracks
-      .find((t) => t.getType() === 'video')
+      .find((track) => track.getType() === 'video')
       ?.getDeviceId();
     setSelectedVideoDevice(
       videoDevices.find((d) => d.deviceId === currentVideoDeviceId)
@@ -47,7 +50,7 @@ export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
 
   useEffect(() => {
     const currentAudioDeviceId = localTracks
-      .find((t) => t.getType() === 'audio')
+      .find((track) => track.getType() === 'audio')
       ?.getDeviceId();
     setSelectedAudioDevice(
       audioDevices.find((d) => d.deviceId === currentAudioDeviceId)
@@ -66,14 +69,15 @@ export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
       background={{ color: 'dark', opacity: 'weak' }}
     >
       <Box background="white" pad="small" round="medium" gap="small">
-        Video
+        {t('OneOnOneCall.settingsVideo')}
         <Select
           options={videoDevices}
           value={selectedVideoDevice}
           labelKey="label"
           onChange={({ option }) => setSelectedVideoDevice(option)}
         />
-        Audio
+        {t('OneOnOneCall.settingsAudio')}
+
         <Select
           options={audioDevices}
           value={selectedAudioDevice}
@@ -89,7 +93,7 @@ export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
           onClick={onApply}
         >
           <Text color="brand" weight="bold">
-            Apply
+            {t('OneOnOneCall.settingsApply')}
           </Text>
         </Box>
         <Box
@@ -100,7 +104,7 @@ export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
           justify="center"
           align="center"
         >
-          <Text color="brand">Dismiss</Text>
+          <Text color="brand"> {t('OneOnOneCall.settingsDismiss')}</Text>
         </Box>
       </Box>
     </Box>
