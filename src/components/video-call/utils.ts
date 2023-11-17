@@ -8,7 +8,7 @@ export const JITSI_CONNECTION_CONFIG = {
     domain: HOST,
     muc: `conference.${HOST}`,
   },
-  bosh: `https://${HOST}/http-bind`,
+  serviceUrl: `https://${HOST}/http-bind`,
   clientNode: 'http://jitsi.org/jitsimeet',
   resolution: 320,
   constraints: {
