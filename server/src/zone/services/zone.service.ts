@@ -147,7 +147,7 @@ export class ZoneService {
     return this.invitationRepository.delete({ email, zoneId });
   }
 
-  async validateInvitationResponse(invitationId: number, email: string) {
+  async validateInvitationResponse(invitationId: string, email: string) {
     return this.invitationRepository.findOne({
       where: {
         email,
