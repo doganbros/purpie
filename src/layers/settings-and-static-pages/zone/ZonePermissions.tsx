@@ -2,6 +2,7 @@ import React, { FC, useContext, useEffect } from 'react';
 import { Box, ResponsiveContext, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { nanoid } from 'nanoid';
 import { AppState } from '../../../store/reducers/root.reducer';
 import RoleHeader from '../permissions/RoleHeader';
 import {
@@ -17,9 +18,13 @@ import PermissionCheckBox from '../permissions/PermissionCheckBox';
 
 interface ZonePermissionsProps {
   userZone: UserZoneListItem;
+  searchText?: string;
 }
 
-const ZonePermissions: FC<ZonePermissionsProps> = ({ userZone }) => {
+const ZonePermissions: FC<ZonePermissionsProps> = ({
+  userZone,
+  searchText,
+}) => {
   const { t } = useTranslation();
   const {
     zone: { zoneRoles },
@@ -60,53 +65,72 @@ const ZonePermissions: FC<ZonePermissionsProps> = ({ userZone }) => {
           pad="small"
           border={{ size: '1px', color: 'status-disabled-light' }}
         >
-          {Object.keys(actions).map((action) => (
-            <Box
-              key={action}
-              align={size === 'small' ? 'start' : 'center'}
-              direction={size === 'small' ? 'column' : 'row'}
-              justify={size === 'small' ? 'center' : 'between'}
-              width="full"
-              gap="small"
-            >
-              <Text size="small" color="dark" weight={4400}>
-                {t(`ZonePermissionAction.${action}`)}
-              </Text>
-              <Box direction="row" gap={size === 'small' ? '16px' : '72px'}>
-                {roleCodes.map((role) => {
-                  const permission = zoneRoles.data.find(
-                    (p) => p.roleCode === role
-                  );
-                  const permissionAction = action as keyof ZoneRole;
-                  return (
-                    <>
-                      {size === 'small' && (
-                        <Text
-                          size="small"
-                          color="light-turquoise"
-                          margin={{ right: 'small' }}
-                        >
-                          {t(`Permissions.${role}`)}
-                        </Text>
+          {Object.keys(actions).map((action) => {
+            const labelParts = t(`ZonePermissionAction.${action}`)
+              .split(new RegExp(`(${searchText})`, 'gi'))
+              .map((p) => ({ part: p, id: nanoid() }));
+
+            return (
+              <Box
+                key={action}
+                align={size === 'small' ? 'start' : 'center'}
+                direction={size === 'small' ? 'column' : 'row'}
+                justify={size === 'small' ? 'center' : 'between'}
+                width="full"
+                gap="small"
+              >
+                {labelParts.length > 0 && (
+                  <Box direction="column">
+                    <Text size="small" weight={400} color="dark">
+                      {labelParts.map((label) =>
+                        label.part.toLowerCase() !==
+                        searchText!.toLowerCase() ? (
+                          `${label.part}`
+                        ) : (
+                          <Text size="small" key={label.id} weight="bold">
+                            {label.part}
+                          </Text>
+                        )
                       )}
-                      <PermissionCheckBox
-                        key={role}
-                        disabled={role === ZoneRoleCode.OWNER}
-                        checked={permission?.[permissionAction] as boolean}
-                        handleChange={(checked) =>
-                          handeZonePermissionChange(
-                            role,
-                            permissionAction,
-                            checked
-                          )
-                        }
-                      />
-                    </>
-                  );
-                })}
+                    </Text>
+                  </Box>
+                )}
+                <Box direction="row" gap={size === 'small' ? '16px' : '72px'}>
+                  {roleCodes.map((role) => {
+                    const permission = zoneRoles.data.find(
+                      (p) => p.roleCode === role
+                    );
+                    const permissionAction = action as keyof ZoneRole;
+                    return (
+                      <>
+                        {size === 'small' && (
+                          <Text
+                            size="small"
+                            color="light-turquoise"
+                            margin={{ right: 'small' }}
+                          >
+                            {t(`Permissions.${role}`)}
+                          </Text>
+                        )}
+                        <PermissionCheckBox
+                          key={role}
+                          disabled={role === ZoneRoleCode.OWNER}
+                          checked={permission?.[permissionAction] as boolean}
+                          handleChange={(checked) =>
+                            handeZonePermissionChange(
+                              role,
+                              permissionAction,
+                              checked
+                            )
+                          }
+                        />
+                      </>
+                    );
+                  })}
+                </Box>
               </Box>
-            </Box>
-          ))}
+            );
+          })}
         </Box>
       </Box>
     );

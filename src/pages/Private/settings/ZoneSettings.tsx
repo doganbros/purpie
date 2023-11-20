@@ -191,7 +191,16 @@ const ZoneSettings = (): Menu => {
       key: 'zonePermissions',
       label: '',
       tabIndex: 2,
-      component: <ZonePermissions userZone={selectedZone} />,
+      componentFunc: (search?: string) => (
+        <ZonePermissions userZone={selectedZone} searchText={search} />
+      ),
+      searchableTexts: [
+        t('ZonePermissionAction.canCreateChannel'),
+        t('ZonePermissionAction.canInvite'),
+        t('ZonePermissionAction.canDelete'),
+        t('ZonePermissionAction.canEdit'),
+        t('ZonePermissionAction.canManageRole'),
+      ],
     });
     zoneSettings.tabs.push({ index: 3, label: t('settings.members') });
     zoneSettings.items.push({

@@ -3,8 +3,10 @@ import { ReactNode } from 'react';
 export interface MenuItem {
   key: string;
   label: string;
-  component: ReactNode;
+  component?: ReactNode;
+  componentFunc?: (searchText?: string) => ReactNode;
   tabIndex?: number;
+  searchableTexts?: string[];
 }
 
 export interface Menu {

@@ -56,6 +56,14 @@ const SettingsAndStaticPage: FC<SettingsAndStaticPageLayoutProps> = ({
             ) {
               searchedMenuItemList.push(menuItem);
             }
+            if (
+              menuItem.searchableTexts &&
+              menuItem.searchableTexts.some((text) =>
+                sanitizeMenuItem(text).includes(search)
+              )
+            ) {
+              searchedMenuItemList.push(menuItem);
+            }
           });
           if (searchedMenuItemList.length > 0) {
             searchedMenuList.push({ ...menu, items: searchedMenuItemList });
@@ -82,8 +90,12 @@ const SettingsAndStaticPage: FC<SettingsAndStaticPageLayoutProps> = ({
     }, {});
   };
 
-  const renderMenuItem = (menuItem: MenuItem) => {
-    const labelParts = menuItem.label
+  const renderMenuItem = (menuItem: MenuItem, label?: string) => {
+    let l = '';
+    if (menuItem.label) l = menuItem.label;
+    if (label) l = label;
+
+    const labelParts = l
       .split(new RegExp(`(${searchText})`, 'gi'))
       .map((p) => ({ part: p, id: nanoid() }));
 
@@ -112,12 +124,15 @@ const SettingsAndStaticPage: FC<SettingsAndStaticPageLayoutProps> = ({
           </Box>
         )}
         <Box>{menuItem.component}</Box>
+        <Box>{menuItem.componentFunc?.(searchText)}</Box>
       </Box>
     );
   };
 
   const renderMenu = (menu: Menu) => {
-    const tabGroups = groupByTabIndex(menu.items);
+    const menuItems = searchText
+      ? menu.items
+      : groupByTabIndex(menu.items)[permissionTab + 1];
 
     return (
       <Box flex="grow" pad={{ horizontal: 'small' }} gap="medium">
@@ -149,7 +164,8 @@ const SettingsAndStaticPage: FC<SettingsAndStaticPageLayoutProps> = ({
                   gap="small"
                 >
                   {(permissionTab || permissionTab === 0) &&
-                    tabGroups[permissionTab + 1].map((menuItem: MenuItem) =>
+                    menuItems.length > 0 &&
+                    menuItems.map((menuItem: MenuItem) =>
                       renderMenuItem(menuItem)
                     )}
                 </Box>
@@ -157,9 +173,15 @@ const SettingsAndStaticPage: FC<SettingsAndStaticPageLayoutProps> = ({
             ))}
           </Accordion>
         )}
-        {(!menu.tabs || menu.tabs.length <= 1) &&
+        {(!menu.tabs || menu.tabs.length <= 1 || searchText) &&
           menu?.items?.map<React.ReactNode>((menuItem) =>
-            renderMenuItem(menuItem)
+            renderMenuItem(
+              menuItem,
+              menuItem.label
+                ? menuItem.label
+                : menu.tabs?.find((tab) => tab.index === menuItem.tabIndex)
+                    ?.label
+            )
           )}
       </Box>
     );
