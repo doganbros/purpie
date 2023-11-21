@@ -26,7 +26,7 @@ import i18n from '../../../config/i18n/i18n-config';
 const COLUMNS = [
   {
     property: 'userInfo',
-    label: i18n.t('settings.userInfo'),
+    label: '',
   },
   {
     property: 'email',
