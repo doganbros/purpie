@@ -8,6 +8,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CreatePostCommentLikeDto } from '../dto/create-post-comment-like.dto';
 import { CreatePostCommentDto } from '../dto/create-post-comment.dto';
 import { PostEvent } from '../listeners/post-events';
+import { ListPostCommentDto } from '../dto/list-post-comment.dto';
 
 @Injectable()
 export class PostCommentService {
@@ -62,7 +63,7 @@ export class PostCommentService {
   async listComments(
     userId: string,
     postId: string,
-    query: PaginationQuery,
+    query: ListPostCommentDto,
     params: Record<string, any>,
   ): Promise<PaginationResponse<PostComment>> {
     return this.postCommentRepository
@@ -120,7 +121,12 @@ export class PostCommentService {
           parentId: params.parentId,
         },
       )
-      .orderBy('postComment.createdOn', 'DESC')
+      .orderBy(
+        query.sortBy
+          ? `"postComment_${query.sortBy}"`
+          : '"postComment_createdOn"',
+        query.sortOrder || 'DESC',
+      )
       .paginate(query);
   }
 
