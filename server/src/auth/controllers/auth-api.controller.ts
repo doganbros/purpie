@@ -53,7 +53,7 @@ export class AuthApiController {
   })
   @HttpCode(HttpStatus.OK)
   async getCredentials(@CurrentUser() user: UserTokenPayload) {
-    return await this.authService.getApiCredentials(user.id);
+    return this.authService.getApiCredentials(user.id);
   }
 
   @Post('authorize')
