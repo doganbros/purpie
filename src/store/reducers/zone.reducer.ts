@@ -2,6 +2,8 @@ import { appSubdomain } from '../../helpers/app-subdomain';
 import { paginationInitialState } from '../../helpers/constants';
 import {
   CLOSE_CREATE_ZONE_LAYER,
+  CREATE_ZONE_FAILED,
+  CREATE_ZONE_SUCCESS,
   DELETE_ZONE_SUCCESS,
   GET_CURRENT_USER_ZONE_FAILED,
   GET_CURRENT_USER_ZONE_REQUESTED,
@@ -73,6 +75,7 @@ const initialState: ZoneState = {
     loading: false,
     error: null,
   },
+  createZoneError: null,
 };
 
 const zoneReducer = (
@@ -389,6 +392,18 @@ const zoneReducer = (
         },
       };
     }
+
+    case CREATE_ZONE_SUCCESS:
+      return {
+        ...state,
+        showCreateZoneLayer: false,
+      };
+
+    case CREATE_ZONE_FAILED:
+      return {
+        ...state,
+        createZoneError: action.payload,
+      };
 
     default:
       return state;

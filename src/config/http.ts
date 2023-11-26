@@ -48,14 +48,16 @@ axios.interceptors.response.use(
           return Promise.reject(error);
         return Promise.reject();
       }
-      store.dispatch({
-        type: 'SET_TOAST',
-        payload: {
-          toastId,
-          status: 'error',
-          message: errorResponseMessage(error?.response?.data || error),
-        },
-      });
+
+      if (error.response.data.message !== 'ZONE_SUBDOMAIN_ALREADY_EXIST')
+        store.dispatch({
+          type: 'SET_TOAST',
+          payload: {
+            toastId,
+            status: 'error',
+            message: errorResponseMessage(error?.response?.data || error),
+          },
+        });
 
       setTimeout(() => {
         store.dispatch({

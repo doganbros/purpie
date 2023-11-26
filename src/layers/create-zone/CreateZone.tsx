@@ -1,4 +1,4 @@
-import React, { FC, useContext, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -13,18 +13,16 @@ import {
   ThemeContext,
 } from 'grommet';
 import { Close } from 'grommet-icons';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import {
-  closeCreateZoneLayerAction,
-  createZoneAction,
-} from '../../store/actions/zone.action';
+import { createZoneAction } from '../../store/actions/zone.action';
 import { CreateZonePayload } from '../../store/types/zone.types';
 import { nameToSubdomain } from '../../helpers/utils';
 import { appSubdomain, hostname } from '../../helpers/app-subdomain';
 import { validators } from '../../helpers/validators';
 import Switch from '../../components/utils/Switch';
 import { CreateFormTheme } from './custom-theme';
+import { AppState } from '../../store/reducers/root.reducer';
 
 const baseHost = hostname
   .split('.')
@@ -39,10 +37,22 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
+  const { createZoneError } = useSelector((state: AppState) => state.zone);
+
   const size = useContext(ResponsiveContext);
 
   const [subdomain, setSubdomain] = useState('');
+  const [subdomainError, setSubdomainError] = useState('');
   const [subdomainInputFocus, setSubdomainInputFocus] = useState(false);
+
+  useEffect(() => {
+    if (
+      createZoneError &&
+      createZoneError.message === 'ZONE_SUBDOMAIN_ALREADY_EXIST'
+    ) {
+      setSubdomainError(createZoneError.error || '');
+    }
+  }, [createZoneError]);
 
   return (
     <Layer onClickOutside={onDismiss}>
@@ -72,7 +82,6 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
             <Form
               onSubmit={({ value }: FormExtendedEvent<CreateZonePayload>) => {
                 dispatch(createZoneAction({ ...value, subdomain }));
-                dispatch(closeCreateZoneLayerAction());
               }}
             >
               <Box height={{ min: 'min-content' }}>
@@ -83,6 +92,7 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                   gap="small"
                 >
                   <FormField
+                    error={subdomainError}
                     width="60%"
                     name="name"
                     validate={[
@@ -95,6 +105,7 @@ const CreateZone: FC<CreateZoneProps> = ({ onDismiss }) => {
                       placeholder={`${t('CreateZone.zoneName')}*`}
                       name="name"
                       onChange={({ target: { value } }) => {
+                        if (subdomainError) setSubdomainError('');
                         setSubdomain(nameToSubdomain(value));
                       }}
                     />

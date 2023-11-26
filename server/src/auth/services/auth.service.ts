@@ -488,7 +488,7 @@ export class AuthService {
       return { apiKey };
     }
 
-    return null;
+    return {};
   }
 
   async createApiCredentials(userId: string): Promise<UserApiCredentials> {

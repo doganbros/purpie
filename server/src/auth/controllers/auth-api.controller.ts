@@ -51,26 +51,9 @@ export class AuthApiController {
   @ApiOkResponse({
     description: `Signs in api user. If user's email is not verified an unauthorized error will be thrown. `,
   })
-  @ApiNotFoundResponse({
-    description:
-      "Error thrown when user's api key or secret is not exist for user ",
-    schema: errorResponseDoc(
-      404,
-      'User api key not exist.',
-      ErrorTypes.USER_API_CREDENTIALS_NOT_EXIST,
-    ),
-  })
   @HttpCode(HttpStatus.OK)
   async getCredentials(@CurrentUser() user: UserTokenPayload) {
-    const credentials = await this.authService.getApiCredentials(user.id);
-
-    if (!credentials)
-      throw new NotFoundException(
-        'User api key not exist',
-        ErrorTypes.USER_API_CREDENTIALS_NOT_EXIST,
-      );
-
-    return credentials;
+    return await this.authService.getApiCredentials(user.id);
   }
 
   @Post('authorize')

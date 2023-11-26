@@ -12,12 +12,14 @@
   },
   "root": false,
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
+  "plugins": [
+    "@typescript-eslint"
+  ],
   "parserOptions": {
     "ecmaVersion": 2020,
     "sourceType": "module",
-    "project": "./tsconfig.json",
-    "tsconfigRootDir": "./server"
+    "project": "../tsconfig.json",
+    "tsconfigRootDir": "../"
   },
   "rules": {
     "@typescript-eslint/interface-name-prefix": "off",
@@ -38,7 +40,13 @@
     "no-restricted-syntax": "off",
     "global-require": "off",
     "import/no-dynamic-require": "off",
-    "no-use-before-define": ["error", { "functions": false, "classes": true }],
+    "no-use-before-define": [
+      "error",
+      {
+        "functions": false,
+        "classes": true
+      }
+    ],
     "no-await-in-loop": "off",
     "no-underscore-dangle": "off",
     "no-plusplus": "off",
