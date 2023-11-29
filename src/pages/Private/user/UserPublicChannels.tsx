@@ -2,12 +2,14 @@ import { Box, Text } from 'grommet';
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
 import GradientScroll from '../../../components/utils/GradientScroll';
 import { listUserPublicChannelsAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
 import { ChannelAvatar } from '../../../components/utils/Avatars/ChannelAvatar';
 import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
+import { setSelectedChannelAction } from '../../../store/actions/channel.action';
 
 const UserPublicChannels: FC<{ userName: string }> = ({ userName }) => {
   const dispatch = useDispatch();
@@ -15,6 +17,7 @@ const UserPublicChannels: FC<{ userName: string }> = ({ userName }) => {
   const {
     user: { publicChannels },
   } = useSelector((state: AppState) => state);
+  const history = useHistory();
 
   useEffect(() => {
     dispatch(listUserPublicChannelsAction(userName));
@@ -39,6 +42,10 @@ const UserPublicChannels: FC<{ userName: string }> = ({ userName }) => {
                 gap="small"
                 align="center"
                 width={{ min: '102px' }}
+                onClick={() => {
+                  dispatch(setSelectedChannelAction(channel.id));
+                  history.push('/');
+                }}
               >
                 <ChannelAvatar
                   id={channel.id}
