@@ -37,6 +37,7 @@ import { ErrorTypes } from '../../../types/ErrorTypes';
 import { PostCommentService } from '../services/post-comment.service';
 import { PostService } from '../services/post.service';
 import { CreatePostCommentLikeDto } from '../dto/create-post-comment-like.dto';
+import { ListPostCommentDto } from '../dto/list-post-comment.dto';
 
 @Controller({ version: '1', path: 'post/comment' })
 @ApiTags('Post Comment')
@@ -117,7 +118,7 @@ export class PostCommentController {
   })
   @IsAuthenticated()
   async listComments(
-    @Query() query: PaginationQuery,
+    @Query() query: ListPostCommentDto,
     @Param('postId', ParseUUIDPipe) postId: string,
     @Param() params: Record<string, any>,
     @CurrentUser() user: UserTokenPayload,

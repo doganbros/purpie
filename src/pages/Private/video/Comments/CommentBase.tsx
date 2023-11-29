@@ -106,7 +106,7 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId, hasReply }) => {
             </Text>
           )}
           <Text size="small" color="status-disabled">
-            {dayjs(comment.createdOn).format('L')}
+            {dayjs(comment.createdOn).fromNow()}
           </Text>
           {comment.user.id === user?.id && !isEditing && (
             <DropButton
