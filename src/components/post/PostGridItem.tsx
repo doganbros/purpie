@@ -28,7 +28,7 @@ const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
   };
 
   const handleUserClick = () => {
-    history.push(`user/${post.createdBy.userName}`);
+    history.push(`/user/${post.createdBy.userName}`);
   };
 
   return (
