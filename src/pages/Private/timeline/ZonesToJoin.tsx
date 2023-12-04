@@ -18,8 +18,7 @@ const ZonesToJoin: FC = () => {
   } = useSelector((state: AppState) => state);
 
   const [displayCount, setDisplayCount] = useState(SUGGESTION_AMOUNT_LESS);
-  if (!zoneSuggestions.loading && zoneSuggestions.data.length === 0)
-    return <Box height="0" />;
+
   return (
     <Box gap="small">
       <Box direction="row" align="center" justify="between">
@@ -51,7 +50,9 @@ const ZonesToJoin: FC = () => {
 
       {!zoneSuggestions.loading &&
         (zoneSuggestions.data.length === 0 ? (
-          <Text size="small">{t('ZonesToJoin.noZonesFound')}</Text>
+          <Text size="small" color="brand" weight={500}>
+            {t('ZonesToJoin.noZonesFound')}
+          </Text>
         ) : (
           zoneSuggestions.data
             .slice(0, displayCount)

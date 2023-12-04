@@ -62,13 +62,13 @@ const ChannelSettingsHeader: FC<ChannelSettingsHeaderProps> = ({
   const avatarUploadContent = (
     <AvatarUpload
       onSubmit={(file: any) => {
-        dispatch(updateChannelPhoto(file, selectedUserChannel!.channel.id));
+        dispatch(updateChannelPhoto(file, selectedUserChannel!.id!));
         setShowAvatarUpload(false);
       }}
       onDismiss={() => {
         setShowAvatarUpload(false);
       }}
-      type="channel"
+      type="channel/display-photo"
       src={selectedUserChannel?.channel.displayPhoto}
       id={selectedUserChannel?.channel.id}
       name={selectedUserChannel?.channel.name}
@@ -88,8 +88,8 @@ const ChannelSettingsHeader: FC<ChannelSettingsHeaderProps> = ({
       onDismiss={() => {
         setShowBackgroundPhotoUpload(false);
       }}
-      type="channelBackground"
-      src={selectedUserChannel?.channel?.backgroundPhoto || 'default'}
+      type="channel/background-photo"
+      src={selectedUserChannel?.channel.backgroundPhoto || 'default'}
       id={selectedUserChannel?.channel.id}
       name={selectedUserChannel?.channel.name}
     />

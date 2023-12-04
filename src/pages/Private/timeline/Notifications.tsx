@@ -43,9 +43,6 @@ const Notifications: FC = () => {
       ? notification.data.slice(0, displayCount)
       : notification.data;
 
-  if (!notification?.loading && data.length === 0) {
-    return null;
-  }
   return (
     <Box gap="small">
       <Box direction="row" align="center" justify="between">
@@ -74,7 +71,9 @@ const Notifications: FC = () => {
         <Text size="small">Loading</Text>
       )}
       {!notification.loading && data.length === 0 && (
-        <Text size="small">No notifications found</Text>
+        <Text size="small" color="brand" weight={500}>
+          No notifications found
+        </Text>
       )}
       <Box overflow="auto" height={{ max: '472px' }}>
         <InfiniteScroll

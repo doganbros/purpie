@@ -133,7 +133,7 @@
   },
   "ChannelsToFollow": {
     "title": "Channels to follow",
-    "noChannelsFound": "No channels found"
+    "noChannelsFound": "We could not find any channels to  recommend"
   },
   "EmptyFeedContent": {
     "noContent": "NO CONTENT AVAILABLE",
@@ -149,7 +149,7 @@
   },
   "ZonesToJoin": {
     "title": "Zones to join",
-    "noZonesFound": "No zones found"
+    "noZonesFound": "We could not find any zones to  recommend"
   },
   "MessageBox": {
     "sendAgain": "Send Message Again"
