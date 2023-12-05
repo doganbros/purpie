@@ -15,18 +15,23 @@ const AboutUs = (): Menu => {
       {
         key: 'about-us-content',
         label: t('AboutUs.title'),
-        component: (
+        componentFunc: (search?: string) => (
           <Box
             border={{ size: 'xsmall', color: 'status-disabled-light' }}
             round="small"
             pad="medium"
             gap="small"
           >
-            <StaticText tKey="AboutUs.text1" />
-            <StaticText tKey="AboutUs.text2" />
-            <StaticText tKey="AboutUs.text3" />
+            <StaticText tKey="AboutUs.text1" searchText={search} />
+            <StaticText tKey="AboutUs.text2" searchText={search} />
+            <StaticText tKey="AboutUs.text3" searchText={search} />
           </Box>
         ),
+        searchableTexts: [
+          t('AboutUs.text1'),
+          t('AboutUs.text2'),
+          t('AboutUs.text3'),
+        ],
       },
     ],
   };
