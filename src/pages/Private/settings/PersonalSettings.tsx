@@ -84,7 +84,7 @@ const PersonalSettings = (): Menu | null => {
           onDismiss={() => {
             setShowAvatarUpload(false);
           }}
-          type="user"
+          type="user/display-photo"
           src={user?.displayPhoto}
           id={user?.id}
           name={user?.fullName}

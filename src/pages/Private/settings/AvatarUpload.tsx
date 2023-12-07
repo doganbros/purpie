@@ -41,7 +41,7 @@ const AvatarUpload: FC<AvatarUploadProps> = ({
       return <Image fit="contain" src={imagePlaceholder} />;
     }
     if (src) {
-      return <Image src={`${apiURL}/${type}/display-photo/${src}`} />;
+      return <Image src={`${apiURL}/${type}/${src}`} />;
     }
 
     return (

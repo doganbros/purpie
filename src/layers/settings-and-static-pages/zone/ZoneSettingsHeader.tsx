@@ -41,7 +41,7 @@ const ZoneSettingsHeader: FC<ZoneSettingsHeaderProps> = ({
       onDismiss={() => {
         setShowAvatarUpload(false);
       }}
-      type="zone"
+      type="zone/display-photo"
       src={selectedZone?.zone.displayPhoto}
       id={selectedZone?.zone.id}
       name={selectedZone?.zone.name}
