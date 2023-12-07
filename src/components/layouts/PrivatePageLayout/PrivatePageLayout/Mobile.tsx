@@ -66,7 +66,7 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
           >
             <ExtendedBox minWidth="min-content">{topComponent}</ExtendedBox>
           </ExtendedBox>
-          <Divider />
+          <Divider marginBottom="small" />
         </ExtendedBox>
       )}
       <Box pad="large" fill overflow="auto">
