@@ -505,7 +505,10 @@ export class ChannelController {
       '',
     );
 
-    await this.channelService.changeDisplayPhoto(userChannel.channel.id, fileName);
+    await this.channelService.changeDisplayPhoto(
+      userChannel.channel.id,
+      fileName,
+    );
 
     return fileName;
   }
