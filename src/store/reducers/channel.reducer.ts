@@ -21,6 +21,7 @@ import {
   SET_SELECTED_CHANNEL,
   UNFOLLOW_CHANNEL_SUCCESS,
   UNSET_SELECTED_CHANNEL,
+  UPDATE_CHANNEL_BACKGROUND_PHOTO_SUCCESS,
   UPDATE_CHANNEL_INFO_SUCCESS,
   UPDATE_CHANNEL_PERMISSIONS_SUCCESS,
   UPDATE_CHANNEL_PHOTO_SUCCESS,
@@ -168,10 +169,28 @@ const channelReducer = (
       };
     case UPDATE_CHANNEL_PHOTO_SUCCESS: {
       const test = state.userChannels.data.map((item) =>
-        item.channel.id === action.channelId
+        item.id === action.channelId
           ? {
               ...item,
               channel: { ...item.channel, displayPhoto: action.payload },
+            }
+          : item
+      );
+      return {
+        ...state,
+        userChannels: {
+          data: test,
+          loading: false,
+          error: null,
+        },
+      };
+    }
+    case UPDATE_CHANNEL_BACKGROUND_PHOTO_SUCCESS: {
+      const test = state.userChannels.data.map((item) =>
+        item.id === action.userChannelId
+          ? {
+              ...item,
+              channel: { ...item.channel, backgroundPhoto: action.payload },
             }
           : item
       );
