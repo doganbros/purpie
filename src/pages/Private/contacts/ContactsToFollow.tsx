@@ -67,8 +67,8 @@ const ContactsToFollow: FC = () => {
                     disabled={isAdded}
                     label={t(
                       isAdded
-                        ? 'ContactsToFollow.added'
-                        : 'ContactsToFollow.add'
+                        ? 'ContactsToFollow.invited'
+                        : 'ContactsToFollow.invite'
                     )}
                     size="small"
                   />
