@@ -52,12 +52,18 @@ const Video: FC = () => {
   const {
     channel: { userChannels },
     post: {
-      postDetail: { data, loading },
+      postDetail: { data, loading, error },
     },
     auth: { user },
   } = useSelector((state: AppState) => state);
-
   const history = useHistory();
+
+  useEffect(() => {
+    if (error && error.message === 'POST_NOT_FOUND') {
+      history.push('/');
+    }
+  }, [error]);
+
   const [showSettings, setShowSettings] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const previousTime = useRef(0);

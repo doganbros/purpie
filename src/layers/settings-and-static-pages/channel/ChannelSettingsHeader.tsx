@@ -1,4 +1,4 @@
-import React, { FC, useContext, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, DropButton, ResponsiveContext, Stack, Text } from 'grommet';
 import { Camera, CaretDownFill, CaretRightFill } from 'grommet-icons';
@@ -36,6 +36,15 @@ const ChannelSettingsHeader: FC<ChannelSettingsHeaderProps> = ({
       getUserZones: { userZones },
     },
   } = useSelector((state: AppState) => state);
+
+  useEffect(() => {
+    if (selectedUserChannel) {
+      const userChannel = userChannels.data.find(
+        (c) => c.id === selectedUserChannel.id
+      );
+      if (userChannel) setSelectedUserChannel(userChannel);
+    }
+  }, [userChannels]);
 
   const size = useContext(ResponsiveContext);
   const dispatch = useDispatch();
