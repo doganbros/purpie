@@ -408,13 +408,15 @@ const Video: FC = () => {
             </Box>
           </Box>
           {data.description && (
-            <Highlight
-              match={matchDescriptionTags}
-              renderHighlight={({ match }) => (
-                <Text color="brand">{match}</Text>
-              )}
-              text={data.description!}
-            />
+            <Box height={{ max: '148px' }} overflow="auto">
+              <Highlight
+                match={matchDescriptionTags}
+                renderHighlight={({ match }) => (
+                  <Text color="brand">{match}</Text>
+                )}
+                text={data.description!}
+              />
+            </Box>
           )}
           {renderChatResponsive()}
           <RecommendedVideos />
