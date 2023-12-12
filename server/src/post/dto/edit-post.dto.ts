@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, MaxLength } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class EditPostDto {
@@ -10,6 +10,7 @@ export class EditPostDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
+  @MaxLength(10)
   description: string;
 
   @ApiPropertyOptional()

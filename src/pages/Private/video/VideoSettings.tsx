@@ -1,5 +1,13 @@
 import React, { FC, useState } from 'react';
-import { Anchor, Box, Button, FormField, TextArea, TextInput } from 'grommet';
+import {
+  Anchor,
+  Box,
+  Button,
+  Form,
+  FormField,
+  TextArea,
+  TextInput,
+} from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { validators } from '../../../helpers/validators';
@@ -26,16 +34,18 @@ const VideoSettings: FC<VideoSettingsProps> = ({
     },
   } = useSelector((state: AppState) => state);
 
-  const [title, setTitle] = useState(data?.title || '');
-  const [description, setDescription] = useState(data?.description);
   const [publicVisibility, setPublicVisibility] = useState(data?.public);
+  const [value, setValue] = useState({
+    title: data?.title,
+    description: data?.description,
+  });
 
   const onSubmit = () => {
-    if (data && title) {
+    if (data && value.title) {
       const request: EditVideoPayload = {
         postId: data.id,
-        title,
-        description,
+        title: value.title,
+        description: value.description,
         public: publicVisibility,
       };
 
@@ -44,96 +54,99 @@ const VideoSettings: FC<VideoSettingsProps> = ({
     }
   };
   const isVideoSettingsChanged = (): boolean => {
-    const isTitleChanged: boolean = title !== data?.title;
-    const isDescriptionChanged: boolean = description !== data?.description;
+    const isTitleChanged: boolean = value.title !== data?.title;
+    const isDescriptionChanged: boolean =
+      value.description !== data?.description;
     const isPublicChanged: boolean = publicVisibility !== data?.public;
     const isChanged: boolean =
       isTitleChanged || isDescriptionChanged || isPublicChanged;
     return isChanged;
   };
 
-  const notValid = title?.length === 0 || title?.length > 64;
-
   return (
     <Box pad="medium" height={{ min: '100vh' }}>
       <VideoSettingsTheme>
-        <FormField
-          name="title"
-          htmlFor="videoName"
-          label={t('VideoSettings.videoName')}
-          validate={[
-            validators.required(t('VideoSettings.videoName')),
-            validators.maxLength(64),
-          ]}
+        <Form
+          value={value}
+          onChange={(nextValue) => setValue(nextValue)}
+          onSubmit={() => {
+            onSubmit();
+          }}
         >
-          <TextInput
-            id="videoName"
-            defaultValue={title}
+          <FormField
             name="title"
-            autoFocus
-            plain="full"
-            type="text"
-            placeholder={t('VideoSettings.videoNamePlaceholder')}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </FormField>
-        <FormField
-          name="description"
-          htmlFor="videoDescription"
-          flex={{ shrink: 0 }}
-          label={t('VideoSettings.videoDescription')}
-        >
-          <TextArea
-            id="videoDescription"
-            placeholder={t('VideoSettings.videoDescriptionPlaceholder')}
-            defaultValue={description}
+            htmlFor="videoName"
+            label={t('VideoSettings.videoName')}
+            validate={[
+              validators.required(t('VideoSettings.videoName')),
+              validators.maxLength(64),
+            ]}
+          >
+            <TextInput
+              id="videoName"
+              name="title"
+              autoFocus
+              plain="full"
+              type="text"
+              placeholder={t('VideoSettings.videoNamePlaceholder')}
+            />
+          </FormField>
+          <FormField
             name="description"
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </FormField>
-        <Box
-          border={{ color: 'status-disabled-light' }}
-          round="medium"
-          pad="medium"
-          gap="medium"
-        >
-          <Box gap="small">
-            <Switch
-              label={t('common.public')}
-              value={publicVisibility}
-              onChange={(checked) => {
-                setPublicVisibility(checked);
-              }}
+            htmlFor="videoDescription"
+            flex={{ shrink: 0 }}
+            label={t('VideoSettings.videoDescription')}
+            validate={[validators.maxLength(4096)]}
+          >
+            <TextArea
+              id="videoDescription"
+              placeholder={t('VideoSettings.videoDescriptionPlaceholder')}
+              name="description"
             />
+          </FormField>
+          <Box
+            border={{ color: 'status-disabled-light' }}
+            round="medium"
+            pad="medium"
+            gap="medium"
+          >
+            <Box gap="small">
+              <Switch
+                label={t('common.public')}
+                value={publicVisibility}
+                onChange={(checked) => {
+                  setPublicVisibility(checked);
+                }}
+              />
+            </Box>
           </Box>
-        </Box>
-        <Box margin={{ vertical: 'auto' }} />
-        <Box gap="small" margin={{ top: '20px' }}>
-          <Box direction="row" gap="small">
-            <Button
-              type="button"
-              label={t('common.close')}
-              onClick={() => setShowSettings(false)}
-              fill="horizontal"
-            />
-            <Button
-              type="submit"
-              disabled={notValid || !isVideoSettingsChanged()}
-              onClick={onSubmit}
-              primary
-              fill="horizontal"
-              label={t('VideoSettings.save')}
-            />
+          <Box margin={{ vertical: 'auto' }} />
+          <Box gap="small" margin={{ top: '20px' }}>
+            <Box direction="row" gap="small">
+              <Button
+                type="button"
+                label={t('common.close')}
+                onClick={() => setShowSettings(false)}
+                fill="horizontal"
+              />
+              <Button
+                type="submit"
+                disabled={!isVideoSettingsChanged()}
+                primary
+                fill="horizontal"
+                label={t('VideoSettings.save')}
+              />
+            </Box>
+            <Box align="center" flex={{ shrink: 0 }} margin={{ top: 'medium' }}>
+              <Anchor
+                weight="400"
+                onClick={() => setShowDeleteConfirmation(true)}
+                label={t('VideoSettings.deleteVideo')}
+                size="16px"
+              />
+            </Box>
           </Box>
-          <Box align="center" flex={{ shrink: 0 }} margin={{ top: 'medium' }}>
-            <Anchor
-              weight="400"
-              onClick={() => setShowDeleteConfirmation(true)}
-              label={t('VideoSettings.deleteVideo')}
-              size="16px"
-            />
-          </Box>
-        </Box>
+        </Form>
       </VideoSettingsTheme>
     </Box>
   );

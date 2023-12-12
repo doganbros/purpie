@@ -17,6 +17,7 @@ export class CreateVideoDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
+  @MaxLength(10)
   description?: string;
 
   @ApiPropertyOptional()
