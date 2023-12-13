@@ -1,4 +1,4 @@
-import React, { FC, useContext, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, DropButton, ResponsiveContext, Stack, Text } from 'grommet';
 import { Camera, CaretDownFill, CaretRightFill } from 'grommet-icons';
@@ -37,6 +37,15 @@ const ChannelSettingsHeader: FC<ChannelSettingsHeaderProps> = ({
     },
   } = useSelector((state: AppState) => state);
 
+  useEffect(() => {
+    if (selectedUserChannel) {
+      const userChannel = userChannels.data.find(
+        (c) => c.id === selectedUserChannel.id
+      );
+      if (userChannel) setSelectedUserChannel(userChannel);
+    }
+  }, [userChannels]);
+
   const size = useContext(ResponsiveContext);
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -62,13 +71,13 @@ const ChannelSettingsHeader: FC<ChannelSettingsHeaderProps> = ({
   const avatarUploadContent = (
     <AvatarUpload
       onSubmit={(file: any) => {
-        dispatch(updateChannelPhoto(file, selectedUserChannel!.channel.id));
+        dispatch(updateChannelPhoto(file, selectedUserChannel!.id!));
         setShowAvatarUpload(false);
       }}
       onDismiss={() => {
         setShowAvatarUpload(false);
       }}
-      type="channel"
+      type="channel/display-photo"
       src={selectedUserChannel?.channel.displayPhoto}
       id={selectedUserChannel?.channel.id}
       name={selectedUserChannel?.channel.name}
@@ -88,8 +97,8 @@ const ChannelSettingsHeader: FC<ChannelSettingsHeaderProps> = ({
       onDismiss={() => {
         setShowBackgroundPhotoUpload(false);
       }}
-      type="channel"
-      src={selectedUserChannel?.channel.backgroundPhoto}
+      type="channel/background-photo"
+      src={selectedUserChannel?.channel.backgroundPhoto || 'default'}
       id={selectedUserChannel?.channel.id}
       name={selectedUserChannel?.channel.name}
     />

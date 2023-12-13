@@ -1,4 +1,4 @@
-import React, { FC, useContext, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, DropButton, ResponsiveContext, Stack, Text } from 'grommet';
 import { Camera, CaretDownFill, CaretRightFill } from 'grommet-icons';
@@ -32,6 +32,13 @@ const ZoneSettingsHeader: FC<ZoneSettingsHeaderProps> = ({
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
   const [isDropOpen, setIsDropOpen] = useState(false);
 
+  useEffect(() => {
+    if (selectedZone) {
+      const userZone = userZones?.find((c) => c.id === selectedZone.id);
+      if (userZone) setSelectedZone(userZone);
+    }
+  }, [userZones]);
+
   const avatarUploadContent = (
     <AvatarUpload
       onSubmit={(file: any) => {
@@ -41,7 +48,7 @@ const ZoneSettingsHeader: FC<ZoneSettingsHeaderProps> = ({
       onDismiss={() => {
         setShowAvatarUpload(false);
       }}
-      type="zone"
+      type="zone/display-photo"
       src={selectedZone?.zone.displayPhoto}
       id={selectedZone?.zone.id}
       name={selectedZone?.zone.name}

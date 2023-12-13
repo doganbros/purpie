@@ -16,6 +16,7 @@ import {
 import { Close } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { validators } from '../../helpers/validators';
 import { AppState } from '../../store/reducers/root.reducer';
 import { CreateVideoPayload } from '../../store/types/post.types';
 import { createVideoAction } from '../../store/actions/post.action';
@@ -29,7 +30,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const {
-    channel: { userChannels, selectedChannel },
+    channel: { userChannels, selectedChannelId },
     post: {
       createVideo: { uploading, error },
     },
@@ -99,6 +100,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
                 required
                 name="title"
                 label={t('CreateVideo.videoTitle')}
+                validate={[validators.maxLength(64)]}
               >
                 <TextInput
                   value={title}
@@ -106,7 +108,11 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
                   name="title"
                 />
               </FormField>
-              <FormField name="description" label={t('common.description')}>
+              <FormField
+                name="description"
+                label={t('common.description')}
+                validate={[validators.maxLength(4096)]}
+              >
                 <TextInput
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -134,7 +140,7 @@ const CreateVideo: FC<CreateVideoProps> = ({ onDismiss }) => {
                 />
               </FormField>
 
-              {!selectedChannel && (
+              {!selectedChannelId && (
                 <FormField name="public">
                   <Switch
                     width="fit-content"

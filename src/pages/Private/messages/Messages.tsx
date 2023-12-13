@@ -14,13 +14,12 @@ import MessageContactList from './MessageContactList';
 import { User } from '../../../store/types/auth.types';
 import SelectedUserHead from './SelectedUserHead';
 import { getUnreadMessageCounts } from '../../../store/services/chat.service';
+import EmptyContact from '../contacts/EmptyContact';
 
 const Messages: FC = () => {
   const { t } = useTranslation();
   const {
-    post: {
-      postDetail: { data },
-    },
+    user: { contacts },
   } = useSelector((state: AppState) => state);
 
   const [chatInfo, setChatInfo] = useState<ChatInfo>({
@@ -60,18 +59,24 @@ const Messages: FC = () => {
 
   return (
     <PrivatePageLayout
-      title={data?.title || t('common.loading')}
+      title={t('Sidebar.messages')}
       topComponentWithoutPadTop
       topComponent={
-        <SelectedUserHead
-          user={selectedContact}
-          typingUsers={chatInfo.typingUsers}
-        />
+        contacts.data.length > 0 && (
+          <SelectedUserHead
+            user={selectedContact}
+            typingUsers={chatInfo.typingUsers}
+          />
+        )
       }
       rightComponent={
         <Box pad="medium" gap="medium">
-          {searchContact()}
-          <Divider />
+          {contacts.data.length > 0 && (
+            <>
+              {searchContact()}
+              <Divider />
+            </>
+          )}
           <MessageContactList
             searchText={search}
             chatInfo={chatInfo}
@@ -84,7 +89,7 @@ const Messages: FC = () => {
         </Box>
       }
     >
-      {selectedContact && (
+      {selectedContact ? (
         <Chat
           medium="direct"
           id={selectedContact.id}
@@ -93,6 +98,8 @@ const Messages: FC = () => {
           chatInfo={chatInfo}
           setChatInfo={setChatInfo}
         />
+      ) : (
+        <EmptyContact />
       )}
     </PrivatePageLayout>
   );

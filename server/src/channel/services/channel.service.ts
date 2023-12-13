@@ -316,7 +316,7 @@ export class ChannelService {
     );
   }
 
-  async validateInvitationResponse(invitationId: number, email: string) {
+  async validateInvitationResponse(invitationId: string, email: string) {
     return this.invitationRepository.findOne({
       where: {
         email,

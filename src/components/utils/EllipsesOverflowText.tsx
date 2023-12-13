@@ -20,6 +20,7 @@ const EllipsesOverflowTextStyled = styled(Text)`
 
 const EllipsesOverflowText: FC<Props> = ({ text, ...props }) => {
   const splitText = text?.split(' ');
+
   if (splitText && splitText.length > 1)
     return (
       <EllipsesOverflowTextStyled {...props} display="-webkit-box">

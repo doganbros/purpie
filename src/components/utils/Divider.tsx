@@ -7,6 +7,7 @@ interface Props {
   color?: string;
   size?: string;
   width?: string;
+  marginBottom?: string;
 }
 
 const Divider: FC<Props> = ({
@@ -14,9 +15,11 @@ const Divider: FC<Props> = ({
   color = 'light-3',
   size = '3px',
   width = '100%',
+  marginBottom,
 }) => (
   <Box
-    height={size}
+    margin={{ bottom: marginBottom || '0' }}
+    height={{ min: size, height: size }}
     width={width}
     background={
       dashed

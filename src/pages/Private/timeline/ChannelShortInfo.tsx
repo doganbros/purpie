@@ -1,17 +1,14 @@
 import React, { FC } from 'react';
 import { Box, Image, Text } from 'grommet';
-import { useSelector } from 'react-redux';
 import { SettingsOption } from 'grommet-icons';
 import { useHistory } from 'react-router-dom';
-import { AppState } from '../../../store/reducers/root.reducer';
 import { apiURL } from '../../../config/http';
 import imagePlaceholder from '../../../assets/banner-placeholder.jpg';
 import './Style.scss';
+import { useSelectedChannel } from '../../../hooks/useSelectedChannel';
 
 const ChannelShortInfo: FC = () => {
-  const {
-    channel: { selectedChannel },
-  } = useSelector((state: AppState) => state);
+  const selectedChannel = useSelectedChannel();
 
   const history = useHistory();
   const WIDTH = '385px';

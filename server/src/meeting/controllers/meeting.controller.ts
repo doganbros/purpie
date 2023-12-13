@@ -54,6 +54,7 @@ import { UserChannel } from '../../../entities/UserChannel.entity';
 import { defaultPostSettings } from '../../../entities/data/default-post-settings';
 import { defaultPrivacyConfig } from '../../../entities/data/default-privacy-config';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { generateMeetingName } from '../../../helpers/base-meeting-names';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -118,7 +119,7 @@ export class MeetingController {
       privacyConfig.joinLinkExpiryAsHours;
 
     const meetingPayload: Partial<PostEntity> = {
-      title: createMeetingInfo.title || 'Untitled Meeting',
+      title: createMeetingInfo.title || generateMeetingName(),
       description: createMeetingInfo.description,
       type: 'meeting',
       startDate: createMeetingInfo.startDate

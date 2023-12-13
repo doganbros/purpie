@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import dayjs from 'dayjs';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import { Box, Button, DropButton, Text, TextInput } from 'grommet';
-import { Like, MoreVertical } from 'grommet-icons';
+import { Favorite, MoreVertical } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import InitialsAvatar from '../../../../components/utils/Avatars/InitialsAvatar';
@@ -17,16 +17,17 @@ import {
   updatePostCommentAction,
 } from '../../../../store/actions/post.action';
 import ConfirmDialog from '../../../../components/utils/ConfirmDialog';
-import { LikeFill } from '../../../../components/utils/CustomIcons';
+import { FavoriteFill } from '../../../../components/utils/CustomIcons';
 
 dayjs.extend(LocalizedFormat);
 
 interface CommentBaseProps {
   comment: PostComment;
   postId: string;
+  hasReply?: boolean;
 }
 
-const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
+const CommentBase: FC<CommentBaseProps> = ({ comment, postId, hasReply }) => {
   const {
     auth: { user },
   } = useSelector((state: AppState) => state);
@@ -105,7 +106,7 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
             </Text>
           )}
           <Text size="small" color="status-disabled">
-            {dayjs(comment.createdOn).format('L')}
+            {dayjs(comment.createdOn).fromNow()}
           </Text>
           {comment.user.id === user?.id && !isEditing && (
             <DropButton
@@ -159,40 +160,45 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId }) => {
         )}
       </Box>
       <Box direction="row" align="center" gap="medium">
-        {comment.liked ? (
+        <Box direction="row" gap="xsmall" align="center">
           <Button
-            onClick={() => {
-              dispatch(
-                removePostCommentLikeAction({
-                  commentId: comment.id,
-                  parentId: comment.parentId || undefined,
-                })
-              );
-            }}
-          >
-            <LikeFill color="brand" size="14px" />
-          </Button>
-        ) : (
-          <Button
-            onClick={() => {
-              dispatch(
-                createPostCommentLikeAction({
-                  postId,
-                  commentId: comment.id,
-                  parentId: comment.parentId || undefined,
-                })
-              );
-            }}
-          >
-            <Like color="status-disabled" size="14px" />
+            plain
+            onClick={() =>
+              comment.liked
+                ? dispatch(
+                    removePostCommentLikeAction({
+                      commentId: comment.id,
+                      parentId: comment.parentId || undefined,
+                    })
+                  )
+                : dispatch(
+                    createPostCommentLikeAction({
+                      postId,
+                      commentId: comment.id,
+                      parentId: comment.parentId || undefined,
+                    })
+                  )
+            }
+            icon={
+              comment.liked ? (
+                <FavoriteFill size="18px" color="brand" />
+              ) : (
+                <Favorite size="18px" color="status-disabled" />
+              )
+            }
+          />
+          <Text color="status-disabled" size="small">
+            {comment.likesCount}
+          </Text>
+        </Box>
+
+        {hasReply && (
+          <Button onClick={handleShowReply}>
+            <Text color="status-disabled" size="14px">
+              {t('common.reply')}
+            </Text>
           </Button>
         )}
-
-        <Button onClick={handleShowReply}>
-          <Text color="status-disabled" size="14px">
-            {t('common.reply')}
-          </Text>
-        </Button>
       </Box>
       {showReplyInput && user && (
         <Box gap="small">

@@ -7,7 +7,6 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
-  Res,
 } from '@nestjs/common';
 import {
   ApiAcceptedResponse,
@@ -21,7 +20,6 @@ import {
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
-import { Response } from 'express';
 import { FolderService } from '../services/folder.service';
 import { CreatePostFolderDto } from '../dto/create-post-folder.dto';
 import { UpdatePostFolderDto } from '../dto/update-post-folder.dto';
@@ -77,11 +75,10 @@ export class PostFolderController {
   async updatePostFolder(
     @CurrentUser() user: UserTokenPayload,
     @Body() info: UpdatePostFolderDto,
-    @Res() res: Response,
   ) {
     await this.folderService.updateFolder(user.id, info);
 
-    return res.status(204);
+    return 'OK';
   }
 
   @Delete('remove/:folderId')
@@ -102,11 +99,10 @@ export class PostFolderController {
   async removePostFolder(
     @CurrentUser() user: UserTokenPayload,
     @Param('folderId', ParseUUIDPipe) folderId: string,
-    @Res() res: Response,
   ) {
     await this.folderService.removeFolder(user.id, folderId);
 
-    return res.status(202);
+    return 'OK';
   }
 
   @Post('item/create')
@@ -156,10 +152,9 @@ export class PostFolderController {
   async removeFolderItem(
     @CurrentUser() user: UserTokenPayload,
     @Body() info: AddOrRemovePostFolderItemDto,
-    @Res() res: Response,
   ) {
     await this.folderService.removeFolderItem(user.id, info);
 
-    return res.status(202);
+    return 'OK';
   }
 }

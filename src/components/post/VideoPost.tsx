@@ -14,6 +14,7 @@ interface VideoPostProps {
   slug: string;
   live: boolean;
   savedIcon?: boolean;
+  onClick?: () => void;
 }
 
 const { REACT_APP_STREAMING_URL } = process.env;
@@ -24,12 +25,14 @@ export const VideoPost: FC<VideoPostProps> = ({
   slug,
   live,
   savedIcon = true,
+  onClick,
 }) => {
   const player = useRef<videojs.Player | null>(null);
   const [hover, setHover] = useState(false);
 
   return (
     <ExtendedBox
+      onClick={onClick}
       position="relative"
       onMouseEnter={() => {
         setHover(true);

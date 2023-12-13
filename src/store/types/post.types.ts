@@ -153,6 +153,7 @@ export interface ListPostCommentsParams {
   limit?: number;
   skip?: number;
   postId: string;
+  sortBy?: string;
 }
 
 export interface ListPostCommentRepliesParams extends ListPostCommentsParams {

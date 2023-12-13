@@ -12,8 +12,9 @@ export const UploadedImageContainer = styled(Box)`
 export const UploadedImage = styled(Image)`
   box-shadow: 0px 2px 20px #ffe7e380;
   border-radius: 12px;
-  display: block;
   object-fit: scale-down;
+  max-width: 262px;
+  max-height: 220px;
   display: inline-block;
   z-index: 4;
 `;
@@ -22,7 +23,7 @@ export const ImageDeleteButton = styled(Button)`
   position: absolute;
   top: 0;
   right: 0;
-  background-color: ${theme.global?.colors?.white};
+  background-color: ${theme.global?.colors?.brand};
   padding: 6px;
   border-radius: 100%;
   &:hover {

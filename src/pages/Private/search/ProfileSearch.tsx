@@ -46,17 +46,20 @@ const ProfileSearch: FC = () => {
 
   const getActionButton = (item: UserBasic) => {
     if (user?.id !== item.id) {
-      if (item.contactUserId)
-        return <Button plain disabled label={t('ContactsToFollow.added')} />;
-      if (
+      const invited =
+        !!item.contactUserId ||
         item.invited ||
-        invitedContacts.userIds.some((userId) => userId === item.id)
-      )
-        return <Button plain disabled label={t('ContactsToFollow.invited')} />;
+        invitedContacts.userIds.some((userId) => userId === item.id);
+
       return (
         <Button
-          primary
-          label={t('ContactsToFollow.add')}
+          primary={!invited}
+          disabled={invited}
+          label={
+            invited
+              ? t('ContactsToFollow.invited')
+              : t('ContactsToFollow.invite')
+          }
           onClick={(e) => {
             e.stopPropagation();
             dispatch(createContactInvitation(item?.email));

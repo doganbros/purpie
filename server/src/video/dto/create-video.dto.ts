@@ -2,27 +2,28 @@ import {
   IsBoolean,
   IsOptional,
   IsString,
-  IsUUID,
+  MaxLength,
   ValidateIf,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 
 export class CreateVideoDto {
-  @ApiProperty()
+  @ApiPropertyOptional({ maxLength: 64 })
   @IsString()
+  @MaxLength(64)
   title: string;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
+  @MaxLength(10)
   description?: string;
 
   @ApiPropertyOptional()
   @ValidateIf((o) => {
     return !o.public;
   })
-  @IsUUID()
   channelId?: string;
 
   @ApiPropertyOptional()
@@ -30,7 +31,6 @@ export class CreateVideoDto {
     return !o.channelId;
   })
   @Transform(({ value }) => ['true', true, 1, '1'].includes(value))
-  @IsBoolean()
   public?: boolean;
 
   @ApiProperty({ type: String, format: 'binary' })

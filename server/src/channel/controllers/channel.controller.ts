@@ -499,14 +499,16 @@ export class ChannelController {
   async changeDisplayPhoto(
     @CurrentUserChannel() userChannel: UserChannel,
     @UploadedFile() file: Express.MulterS3.File,
-    @Param('userChannelId', ParseUUIDPipe) userChannelId: string,
   ) {
     const fileName = file.key.replace(
       `${S3_PROFILE_PHOTO_DIR}/channel-dp/`,
       '',
     );
 
-    await this.channelService.changeDisplayPhoto(userChannelId, fileName);
+    await this.channelService.changeDisplayPhoto(
+      userChannel.channel.id,
+      fileName,
+    );
 
     return fileName;
   }

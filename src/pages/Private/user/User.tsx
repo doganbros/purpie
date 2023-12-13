@@ -43,7 +43,7 @@ const User: FC = () => {
 
   useEffect(() => {
     dispatch(getUserDetailAction(params));
-  }, []);
+  }, [params.userName]);
 
   useEffect(() => {
     if (detail.user)

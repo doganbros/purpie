@@ -101,9 +101,7 @@ const Desktop: FC<Props> = ({
             <GradientScroll justify="center" height="100%" pad="xsmall">
               {topComponent}
             </GradientScroll>
-            <Box fill="horizontal">
-              <Divider />
-            </Box>
+            <Divider marginBottom="small" />
           </ExtendedBox>
         )}
         {rightComponent && (

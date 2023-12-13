@@ -9,7 +9,6 @@ import {
   Post,
   Put,
   Query,
-  Res,
 } from '@nestjs/common';
 import {
   ApiAcceptedResponse,
@@ -27,7 +26,6 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserTokenPayload } from 'src/auth/interfaces/user.interface';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { PaginationQuery } from 'types/PaginationQuery';
-import { Response } from 'express';
 import { CreatePostCommentDto } from '../dto/create-post-comment.dto';
 import { UpdatePostCommentDto } from '../dto/update-comment.dto';
 import {
@@ -39,6 +37,7 @@ import { ErrorTypes } from '../../../types/ErrorTypes';
 import { PostCommentService } from '../services/post-comment.service';
 import { PostService } from '../services/post.service';
 import { CreatePostCommentLikeDto } from '../dto/create-post-comment-like.dto';
+import { ListPostCommentDto } from '../dto/list-post-comment.dto';
 
 @Controller({ version: '1', path: 'post/comment' })
 @ApiTags('Post Comment')
@@ -119,7 +118,7 @@ export class PostCommentController {
   })
   @IsAuthenticated()
   async listComments(
-    @Query() query: PaginationQuery,
+    @Query() query: ListPostCommentDto,
     @Param('postId', ParseUUIDPipe) postId: string,
     @Param() params: Record<string, any>,
     @CurrentUser() user: UserTokenPayload,
@@ -142,7 +141,6 @@ export class PostCommentController {
   async updateComment(
     @Body() info: UpdatePostCommentDto,
     @CurrentUser() user: UserTokenPayload,
-    @Res() res: Response,
   ) {
     await this.postCommentService.editComment(
       user.id,
@@ -150,7 +148,7 @@ export class PostCommentController {
       info.comment,
     );
 
-    return res.status(201);
+    return 'OK';
   }
 
   @Delete('remove/:commentId')
@@ -169,11 +167,9 @@ export class PostCommentController {
   async removeComment(
     @CurrentUser() user: UserTokenPayload,
     @Param('commentId') commentId: string,
-    @Res() res: Response,
   ) {
     await this.postCommentService.removeComment(user.id, commentId);
-
-    return res.status(202);
+    return 'OK';
   }
 
   @Get('count/:postId/:parentId?')
@@ -241,13 +237,12 @@ export class PostCommentController {
   async createCommentLike(
     @Body() info: CreatePostCommentLikeDto,
     @CurrentUser() user: UserTokenPayload,
-    @Res() res: Response,
   ) {
     await this.postService.validatePost(user.id, info.postId);
 
     await this.postCommentService.createCommentLike(user.id, info);
 
-    return res.status(201);
+    return 'Created';
   }
 
   @Get('like/list/:postId/:commentId')
@@ -301,10 +296,9 @@ export class PostCommentController {
   async removeCommentLike(
     @CurrentUser() user: UserTokenPayload,
     @Param('commentId', ParseUUIDPipe) commentId: string,
-    @Res() res: Response,
   ) {
     await this.postCommentService.removeCommentLike(user.id, commentId);
 
-    return res.status(202);
+    return 'OK';
   }
 }

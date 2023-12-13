@@ -1,5 +1,5 @@
-import React, { FC, useEffect } from 'react';
-import { Box, InfiniteScroll, Stack, Text } from 'grommet';
+import React, { FC, useEffect, useState } from 'react';
+import { Box, InfiniteScroll, Select, Stack, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { listPostCommentsAction } from '../../../../store/actions/post.action';
@@ -11,9 +11,10 @@ import { UserAvatar } from '../../../../components/utils/Avatars/UserAvatar';
 
 interface CommentsProps {
   postId: string;
+  commentCount: number;
 }
 
-const CommentList: FC<CommentsProps> = ({ postId }) => {
+const CommentList: FC<CommentsProps> = ({ postId, commentCount }) => {
   const {
     auth: { user },
     post: {
@@ -23,19 +24,44 @@ const CommentList: FC<CommentsProps> = ({ postId }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
+  const [sortBy, setSortBy] = useState('createdOn');
+
   const getComments = (skip?: number) => {
-    dispatch(listPostCommentsAction({ postId, skip }));
+    dispatch(listPostCommentsAction({ postId, skip, sortBy }));
+  };
+
+  const handleSortChange = ({ value }: { value: string; label: string }) => {
+    setSortBy(value);
   };
 
   useEffect(() => {
     getComments();
-  }, []);
+  }, [sortBy]);
 
   return (
     <Box gap="medium">
-      <Text size="large" color="brand" weight="bold">
-        {t('CommentList.comments')}
-      </Text>
+      <Box direction="row" justify="between" align="center">
+        <Text size="large" color="brand" weight="bold">
+          {t('CommentList.comments')}
+          <Text
+            size="medium"
+            color="status-disabled"
+          >{`(${commentCount})`}</Text>
+        </Text>
+        <Select
+          value={sortBy}
+          onChange={({ option }) => handleSortChange(option)}
+          size="small"
+          options={[
+            { label: 'Newest', value: 'createdOn' },
+            { label: 'Most Liked', value: 'likesCount' },
+          ]}
+          valueKey={{ key: 'value', reduce: true }}
+          placeholder="Sort by"
+          labelKey="label"
+        />
+      </Box>
+
       {user && <Input user={user} postId={postId} />}
       {comments.data.length === 0 ? (
         <Box margin={{ vertical: 'small' }}>
@@ -52,7 +78,7 @@ const CommentList: FC<CommentsProps> = ({ postId }) => {
                 round="small"
               >
                 <Box pad={{ left: 'small' }} gap="small">
-                  <CommentBase comment={item} postId={postId} />
+                  <CommentBase hasReply comment={item} postId={postId} />
                   {item.replyCount > 0 && (
                     <Replies parentComment={item} postId={postId} />
                   )}

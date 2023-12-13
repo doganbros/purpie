@@ -3,7 +3,6 @@ import {
   Accordion,
   AccordionPanel,
   Box,
-  Button,
   ResponsiveContext,
   Text,
 } from 'grommet';
@@ -25,7 +24,7 @@ const SettingsAndStaticPage: FC<SettingsAndStaticPageLayoutProps> = ({
 }) => {
   const size = useContext(ResponsiveContext);
 
-  const [activeTab, setActiveTab] = useState(1);
+  const [permissionTab, setPermissionTab] = useState(0);
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0);
 
   const { t } = useTranslation();
@@ -57,6 +56,14 @@ const SettingsAndStaticPage: FC<SettingsAndStaticPageLayoutProps> = ({
             ) {
               searchedMenuItemList.push(menuItem);
             }
+            if (
+              menuItem.searchableTexts &&
+              menuItem.searchableTexts.some((text) =>
+                sanitizeMenuItem(text).includes(search)
+              )
+            ) {
+              searchedMenuItemList.push(menuItem);
+            }
           });
           if (searchedMenuItemList.length > 0) {
             searchedMenuList.push({ ...menu, items: searchedMenuItemList });
@@ -83,8 +90,12 @@ const SettingsAndStaticPage: FC<SettingsAndStaticPageLayoutProps> = ({
     }, {});
   };
 
-  const renderMenuItem = (menuItem: MenuItem) => {
-    const labelParts = menuItem.label
+  const renderMenuItem = (menuItem: MenuItem, label?: string) => {
+    let l = '';
+    if (menuItem.label) l = menuItem.label;
+    if (label) l = label;
+
+    const labelParts = l
       .split(new RegExp(`(${searchText})`, 'gi'))
       .map((p) => ({ part: p, id: nanoid() }));
 
@@ -113,72 +124,65 @@ const SettingsAndStaticPage: FC<SettingsAndStaticPageLayoutProps> = ({
           </Box>
         )}
         <Box>{menuItem.component}</Box>
+        <Box>{menuItem.componentFunc?.(searchText)}</Box>
       </Box>
     );
   };
 
-  const renderMenu = (selectedMenu: Menu) => {
-    const tabGroups = groupByTabIndex(selectedMenu.items);
+  const renderMenu = (menu: Menu) => {
+    const menuItems = searchText
+      ? menu.items
+      : groupByTabIndex(menu.items)[permissionTab + 1];
 
     return (
       <Box flex="grow" pad={{ horizontal: 'small' }} gap="medium">
-        {!searchText && size !== 'small' && !selectedMenu.labelNotVisible && (
+        {!searchText && size !== 'small' && !menu.labelNotVisible && (
           <Box>
-            <Text size="xlarge">{selectedMenu.label}</Text>
+            <Text size="xlarge">{menu.label}</Text>
           </Box>
         )}
-        {(selectedMenu.header || selectedMenu.action) && (
+        {(menu.header || menu.action) && (
           <Box
             direction={size === 'small' ? 'column' : 'row'}
             justify="between"
           >
-            {selectedMenu.header}
-            {selectedMenu.action}
+            {menu.header}
+            {menu.action}
           </Box>
         )}
-        {!searchText && selectedMenu.tabs && selectedMenu.tabs.length > 1 ? (
-          <Box gap="medium" className="z-index--1">
-            <Box direction="row" gap="medium">
-              {selectedMenu.tabs.map((tab) => (
-                <Button
-                  key={`timelineTab-${tab.index}`}
-                  onClick={() => {
-                    setActiveTab(tab.index);
-                  }}
-                  plain
+        {!searchText && menu.tabs && menu.tabs.length > 1 && (
+          <Accordion
+            activeIndex={permissionTab}
+            onActive={(i) => {
+              setPermissionTab(i[0]);
+            }}
+          >
+            {menu.tabs.map((tab) => (
+              <AccordionPanel label={tab.label} key={tab.label}>
+                <Box
+                  pad={{ horizontal: 'xsmall', vertical: 'small' }}
+                  gap="small"
                 >
-                  <Box
-                    align="center"
-                    border={{
-                      side: 'bottom',
-                      size: activeTab === tab.index ? 'small' : '0',
-                      color:
-                        activeTab === tab.index ? 'brand' : 'status-disabled',
-                    }}
-                    pad={{ horizontal: 'xsmall' }}
-                  >
-                    <Text
-                      size="medium"
-                      weight={500}
-                      color={
-                        activeTab === tab.index ? 'brand' : 'status-disabled'
-                      }
-                    >
-                      {tab.label}
-                    </Text>
-                  </Box>
-                </Button>
-              ))}
-            </Box>
-            {tabGroups[activeTab].map((menuItem: MenuItem) =>
-              renderMenuItem(menuItem)
-            )}
-          </Box>
-        ) : (
-          selectedMenu?.items?.map<React.ReactNode>((menuItem) =>
-            renderMenuItem(menuItem)
-          )
+                  {(permissionTab || permissionTab === 0) &&
+                    menuItems.length > 0 &&
+                    menuItems.map((menuItem: MenuItem) =>
+                      renderMenuItem(menuItem)
+                    )}
+                </Box>
+              </AccordionPanel>
+            ))}
+          </Accordion>
         )}
+        {(!menu.tabs || menu.tabs.length <= 1 || searchText) &&
+          menu?.items?.map<React.ReactNode>((menuItem) =>
+            renderMenuItem(
+              menuItem,
+              menuItem.label
+                ? menuItem.label
+                : menu.tabs?.find((tab) => tab.index === menuItem.tabIndex)
+                    ?.label
+            )
+          )}
       </Box>
     );
   };

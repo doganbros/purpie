@@ -1,13 +1,7 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import videojs from 'video.js';
 import { Box, Button, Layer, Text } from 'grommet';
-import {
-  AddCircle,
-  Chat as ChatIcon,
-  Dislike,
-  Like,
-  SettingsOption,
-} from 'grommet-icons';
+import { AddCircle, Dislike, Favorite, SettingsOption } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -41,6 +35,7 @@ import useDelayTime from '../../../hooks/useDelayTime';
 import { AddToFolderDrop } from '../../../layers/saved-video/folder/AddToFolderDrop';
 import { useResponsive } from '../../../hooks/useResponsive';
 import ShareVideo from './ShareVideo';
+import { FavoriteFill } from '../../../components/utils/CustomIcons';
 
 interface RouteParams {
   id: string;
@@ -57,12 +52,18 @@ const Video: FC = () => {
   const {
     channel: { userChannels },
     post: {
-      postDetail: { data, loading },
+      postDetail: { data, loading, error },
     },
     auth: { user },
   } = useSelector((state: AppState) => state);
-
   const history = useHistory();
+
+  useEffect(() => {
+    if (error && error.message === 'POST_NOT_FOUND') {
+      history.push('/');
+    }
+  }, [error]);
+
   const [showSettings, setShowSettings] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const previousTime = useRef(0);
@@ -155,7 +156,7 @@ const Video: FC = () => {
 
   const handleSelectChannel = () => {
     if (data?.channel) {
-      dispatch(setSelectedChannelAction(userChannelsFiltered));
+      dispatch(setSelectedChannelAction(userChannelsFiltered.channel.id));
     }
   };
 
@@ -343,9 +344,9 @@ const Video: FC = () => {
                       }
                       icon={
                         data.liked ? (
-                          <Like color="brand" size="17px" />
+                          <FavoriteFill color="brand" />
                         ) : (
-                          <Like color="status-disabled" size="17px" />
+                          <Favorite color="status-disabled" />
                         )
                       }
                     />
@@ -402,28 +403,27 @@ const Video: FC = () => {
                       </Box>
                     )}
                   />
-                  <Box direction="row" gap="xsmall" align="center">
-                    <ChatIcon color="status-disabled" size="17px" />
-                    <Text color="status-disabled">
-                      {data.postReaction.commentsCount}
-                    </Text>
-                  </Box>
                 </Box>
               </Box>
             </Box>
           </Box>
           {data.description && (
-            <Highlight
-              match={matchDescriptionTags}
-              renderHighlight={({ match }) => (
-                <Text color="brand">{match}</Text>
-              )}
-              text={data.description!}
-            />
+            <Box height={{ max: '148px' }} overflow="auto">
+              <Highlight
+                match={matchDescriptionTags}
+                renderHighlight={({ match }) => (
+                  <Text color="brand">{match}</Text>
+                )}
+                text={data.description!}
+              />
+            </Box>
           )}
           {renderChatResponsive()}
           <RecommendedVideos />
-          <CommentList postId={params.id} />
+          <CommentList
+            postId={params.id}
+            commentCount={data.postReaction.commentsCount}
+          />
           {showDeleteConfirmation && (
             <ConfirmDialog
               onConfirm={() => {
