@@ -1,9 +1,9 @@
 import React, { FC, useState } from 'react';
-import { Box, Text } from 'grommet';
+import { Box, Image, Text } from 'grommet';
 import { Down, Up } from 'grommet-icons';
 import { VideoFrame } from './VideoFrame';
 import { useJitsiContext } from './JitsiContext';
-import { ActiveCallIcon } from './ActiveCallIcon';
+import ActiveCallIcon from '../../assets/video-call/active-call.svg';
 
 interface MinimizedCallProps {
   onClickVideo: () => void;
@@ -43,7 +43,12 @@ export const MinimizedCall: FC<MinimizedCallProps> = ({
           <Text weight="normal">{name}</Text>
           {isExpanded ? <Down /> : <Up />}
         </Box>
-        <ActiveCallIcon onClick={onEndCall} />
+        <Image
+          src={ActiveCallIcon}
+          onClick={onEndCall}
+          height={30}
+          width={54}
+        />
       </Box>
     </Box>
   );

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
-import { Box, Text } from 'grommet';
-import { AnswerIcon } from './AnswerIcon';
-import { RejectIcon } from './RejectIcon';
+import { Box, Image, Text } from 'grommet';
+import AnswerIcon from '../../assets/video-call/answer.svg';
+import RejectIcon from '../../assets/video-call/reject.svg';
 
 interface CallNotificationProps {
   name: string;
@@ -28,8 +28,8 @@ export const CallNotification: FC<CallNotificationProps> = ({
         <Text weight="normal">{name}</Text>
       </Box>
       <Box direction="row" gap="small">
-        <AnswerIcon onClick={onAccept} />
-        <RejectIcon onClick={onReject} />
+        <Image src={AnswerIcon} onClick={onAccept} />
+        <Image src={RejectIcon} onClick={onReject} />
       </Box>
     </Box>
   );

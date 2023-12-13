@@ -191,7 +191,7 @@ export class ChatGateway {
     const meetingToken = await this.meetingService.generateMeetingToken(
       meetingRoomName,
       user,
-      false,
+      true,
       24,
     );
 

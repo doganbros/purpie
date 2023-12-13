@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import { Box, Text } from 'grommet';
-import { ActiveCallIcon } from './ActiveCallIcon';
+import { Box, Image, Text } from 'grommet';
+import ActiveCallIcon from '../../assets/video-call/active-call.svg';
 
 interface OutgoingCallProps {
   name: string;
@@ -22,7 +22,7 @@ export const OutgoingCall: FC<OutgoingCallProps> = ({ onEndCall, name }) => {
           <Text weight="normal">{name}</Text>
         </Box>
         <Box onClick={onEndCall}>
-          <ActiveCallIcon />
+          <Image src={ActiveCallIcon} height={30} width={54} />
         </Box>
       </Box>
     </Box>
