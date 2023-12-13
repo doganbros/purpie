@@ -358,7 +358,8 @@
   },
   "SelectedUser": {
     "removeContact": "Remove from Contacts",
-    "removeConfirmMsg": "Are you sure you want to remove {{fullName}} from you contacts?"
+    "removeConfirmMsg": "Are you sure you want to remove {{fullName}} from you contacts?",
+    "call": "Call"
   },
   "Saved": {
     "title": "Saved Posts",
@@ -792,5 +793,11 @@
     "videoSize": "Video Size(kb): ",
     "webinarCount": "Webinar Count: ",
     "zoneCount": "Zone Count: "
+  },
+  "OneOnOneCall": {
+    "settingsVideo": "Video",
+    "settingsAudio": "Audio",
+    "settingsApply": "Apply",
+    "settingsDismiss": "Dismiss"
   }
 }

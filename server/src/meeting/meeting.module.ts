@@ -12,6 +12,7 @@ import { ZoneModule } from 'src/zone/zone.module';
 import { MeetingController } from './controllers/meeting.controller';
 import { MeetingService } from './services/meeting.service';
 import { MeetingGateway } from './gateways/meeting.gateway';
+import { Call } from '../../entities/Call.entity';
 
 @Module({
   imports: [
@@ -22,11 +23,13 @@ import { MeetingGateway } from './gateways/meeting.gateway';
       MeetingLog,
       PostTag,
       PostVideo,
+      Call,
     ]),
     ZoneModule,
     MailModule,
     ChannelModule,
   ],
+  exports: [MeetingService],
   controllers: [MeetingController],
   providers: [MeetingService, MeetingGateway],
 })

@@ -13,6 +13,12 @@ import { ChatMessageDto } from '../dto/chat-message.dto';
 import { ChatService } from '../services/chat.service';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { UserLogService } from '../../log/services/user-log.service';
+import {
+  generateLowerAlphaNumId,
+  separateString,
+} from '../../../helpers/utils';
+import { MeetingService } from '../../meeting/services/meeting.service';
+import { AuthService } from '../../auth/services/auth.service';
 
 interface SocketWithTokenPayload extends Socket {
   user: {
@@ -46,6 +52,8 @@ export class ChatGateway {
     private chatService: ChatService,
     private postService: PostService,
     private userLogService: UserLogService,
+    private meetingService: MeetingService,
+    private authService: AuthService,
   ) {}
 
   @SubscribeMessage('delete_message')
@@ -148,6 +156,70 @@ export class ChatGateway {
     socket.to(roomName).emit('stream_viewer_count_change', { counter, postId });
 
     await socket.leave(roomName);
+  }
+
+  @SubscribeMessage('join_call')
+  async startCall(
+    @ConnectedSocket() socket: SocketWithTokenPayload,
+    @MessageBody() userId: string,
+  ) {
+    const roomName = this.chatService.getRoomName(userId);
+
+    const activeCall = await this.meetingService.getActiveCall(userId);
+    const currentUser = await this.chatService.getCurrentUser(socket);
+
+    let meetingRoomName;
+    if (activeCall) {
+      meetingRoomName = activeCall.roomName;
+
+      if (activeCall.callee !== currentUser.id) {
+        socket.to(roomName).emit('already_another_call');
+        return;
+      }
+    } else {
+      meetingRoomName = separateString(generateLowerAlphaNumId(9), 3);
+      await this.meetingService.createCall(
+        currentUser.id,
+        userId,
+        meetingRoomName,
+      );
+    }
+
+    const user = await this.authService.getUserProfile(userId);
+    const calleeUser = await this.authService.getUserProfile(user.id);
+
+    const meetingToken = await this.meetingService.generateMeetingToken(
+      meetingRoomName,
+      user,
+      true,
+      24,
+    );
+
+    socket.to(roomName).emit('call_started', {
+      socketId: socket.id,
+      userId: socket.user.id,
+      meetingRoomName,
+      meetingToken,
+      user: {
+        avatar: calleeUser.displayPhoto,
+        name: calleeUser.fullName,
+        email: calleeUser.email,
+        id: calleeUser.id,
+      },
+    });
+  }
+
+  @SubscribeMessage('leave_call')
+  async leaveCall(
+    @ConnectedSocket() socket: SocketWithTokenPayload,
+    @MessageBody() userId: string,
+  ) {
+    const roomName = this.chatService.getRoomName(userId);
+    await this.meetingService.endCall(userId);
+    socket.to(roomName).emit('call_ended', {
+      roomName,
+      userId: socket.user.id,
+    });
   }
 
   @SubscribeMessage('join_direct_user')

@@ -269,7 +269,7 @@ export class MeetingController {
     const userConfig = await this.meetingService.getCurrentUserConfig(user.id);
 
     const meetingToken = await this.meetingService.generateMeetingToken(
-      meeting,
+      meeting.slug,
       user,
       meeting.createdById === user.id,
       userConfig

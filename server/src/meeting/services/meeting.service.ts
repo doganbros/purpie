@@ -36,6 +36,7 @@ import { ClientMeetingEventDto } from '../dto/client-meeting-event.dto';
 import { CreateMeetingDto } from '../dto/create-meeting.dto';
 import { ConferenceInfoResponse } from '../responses/conference-info.response';
 import { ErrorTypes } from '../../../types/ErrorTypes';
+import { Call } from '../../../entities/Call.entity';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -57,6 +58,8 @@ export class MeetingService {
     private meetingLogRepository: Repository<MeetingLog>,
     @InjectRepository(PostVideo)
     private postVideoRepository: Repository<PostVideo>,
+    @InjectRepository(Call)
+    private callRepository: Repository<Call>,
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(UserChannel)
     private userChannelRepository: Repository<UserChannel>,
@@ -182,7 +185,7 @@ export class MeetingService {
     tokenExpiry: number,
   ) {
     const meetingToken = await this.generateMeetingToken(
-      meeting,
+      meeting.slug,
       user,
       moderator,
       tokenExpiry,
@@ -321,7 +324,7 @@ export class MeetingService {
   }
 
   async generateMeetingToken(
-    meeting: Post,
+    room: string,
     user: UserProfile,
     moderator: boolean,
     tokenExpiry: number,
@@ -338,7 +341,7 @@ export class MeetingService {
           name: user.fullName,
           email: user.email,
           id: user.id,
-          room: meeting.slug,
+          room,
           lobby_bypass: moderator,
         },
         group: 'a122-123-456-789',
@@ -347,7 +350,7 @@ export class MeetingService {
       exp,
       aud: JWT_APP_ID,
       iss: JWT_APP_ID,
-      room: meeting.slug,
+      room,
       sub: new URL(JITSI_DOMAIN).hostname,
     };
     return generateJWT(payload, JITSI_SECRET);
@@ -523,5 +526,38 @@ export class MeetingService {
       where: { slug, record: true, streaming: true },
       relations: ['createdBy'],
     });
+  }
+
+  async getActiveCall(userId: string) {
+    return this.callRepository
+      .createQueryBuilder('call')
+      .where('call.isLive = true')
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where('call.createdById = :userId', {
+            userId,
+          }).orWhere('call.callee = :userId', { userId });
+        }),
+      )
+      .getOne();
+  }
+
+  async createCall(userId: string, calleeId: string, roomName: string) {
+    await this.callRepository
+      .create({
+        callee: calleeId,
+        roomName,
+        createdById: userId,
+      })
+      .save();
+  }
+
+  async endCall(userId: string) {
+    const activeCall = await this.getActiveCall(userId);
+
+    return this.callRepository.update(
+      { id: activeCall?.id },
+      { isLive: false },
+    );
   }
 }
