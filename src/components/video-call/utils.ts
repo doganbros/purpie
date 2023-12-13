@@ -41,7 +41,7 @@ export const defaultContextValues = {
   ) => void,
 };
 
-export const enumerateDevices = () =>
+export const enumerateDevices = (): Promise<MediaDeviceInfo[]> =>
   new Promise<MediaDeviceInfo[]>((resolve) => {
     JitsiMeetJS.mediaDevices?.enumerateDevices(
       (mediaDevices: MediaDeviceInfo[]) => resolve(mediaDevices)

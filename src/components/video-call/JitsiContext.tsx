@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, {
   FC,
   createContext,
@@ -252,6 +253,7 @@ const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
   );
 };
 
-const useJitsiContext = () => useContext(JitsiContext);
+const useJitsiContext = (): typeof defaultContextValues =>
+  useContext(JitsiContext);
 
 export { JitsiContextProvider, useJitsiContext };
