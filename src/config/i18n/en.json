@@ -390,7 +390,10 @@
   "CommentBase": {
     "editComment": "Edit Comment",
     "writePublicReply": "Write a reply",
-    "deleteCommentConfirmMsg": "Are you sure you want to delete the comment?"
+    "deleteCommentConfirmMsg": "Are you sure you want to delete the comment?",
+    "edited": "edited",
+    "readMore": "Read more",
+    "readLess": "Read less"
   },
   "CommentList": {
     "comments": "Comments",

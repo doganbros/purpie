@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import { Box, Button, DropButton, Text, TextInput } from 'grommet';
@@ -18,6 +18,7 @@ import {
 } from '../../../../store/actions/post.action';
 import ConfirmDialog from '../../../../components/utils/ConfirmDialog';
 import { FavoriteFill } from '../../../../components/utils/CustomIcons';
+import './Style.scss';
 
 dayjs.extend(LocalizedFormat);
 
@@ -38,6 +39,22 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId, hasReply }) => {
   const [inputValue, setInputValue] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(comment.comment);
+
+  const [isFullTextShown, setIsFullTextShown] = useState(false);
+  const [isTextLong, setIsTextLong] = useState(false);
+  const textRef = useRef<HTMLParagraphElement | null>(null);
+  const boxRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const checkTextLength = () => {
+      if (textRef.current) {
+        setIsTextLong(
+          textRef.current.scrollHeight > textRef.current.clientHeight
+        );
+      }
+    };
+    checkTextLength();
+  }, []);
 
   const isChildComment = !!comment.parentId;
 
@@ -102,7 +119,7 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId, hasReply }) => {
               color="status-disabled"
               margin={{ right: 'xsmall' }}
             >
-              (edited)
+              {`(${t('CommentBase.edited')})`}
             </Text>
           )}
           <Text size="small" color="status-disabled">
@@ -156,7 +173,29 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId, hasReply }) => {
             </Box>
           </Box>
         ) : (
-          <Text color="status-disabled">{comment.comment}</Text>
+          <Box>
+            <Text
+              ref={textRef}
+              color="status-disabled"
+              className={isTextLong && !isFullTextShown ? 'line-clamp' : ''}
+            >
+              {comment.comment}
+            </Text>
+            {!isFullTextShown && isTextLong && (
+              <Button onClick={() => setIsFullTextShown(true)}>
+                <Text color="status-disabled" size="14px">
+                  {t('CommentBase.readMore')}
+                </Text>
+              </Button>
+            )}
+            {isFullTextShown && (
+              <Button onClick={() => setIsFullTextShown(false)}>
+                <Text color="status-disabled" size="14px">
+                  {t('CommentBase.readLess')}
+                </Text>
+              </Button>
+            )}
+          </Box>
         )}
       </Box>
       <Box direction="row" align="center" gap="medium">
