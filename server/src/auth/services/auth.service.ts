@@ -186,15 +186,17 @@ export class AuthService {
   }: RegisterUserDto): Promise<UserBasicWithToken> {
     const password = await bcrypt.hash(unhashedPassword, 10);
 
-    const user = await this.userRepository.create({
-      fullName,
-      email,
-      password,
-      userRoleCode: 'NORMAL',
-    });
+    const user = await this.userRepository
+      .create({
+        fullName,
+        email,
+        password,
+        userRoleCode: 'NORMAL',
+      })
+      .save();
 
     if (NODE_ENV !== 'development')
-      this.membershipService.createUserMembership(user.id, user.email);
+      await this.membershipService.createUserMembership(user.id, user.email);
     return this.setMailVerificationToken(user);
   }
 
