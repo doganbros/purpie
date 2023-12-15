@@ -191,10 +191,10 @@ export class AuthService {
       email,
       password,
       userRoleCode: 'NORMAL',
-    });
+    }).save();
 
     if (NODE_ENV !== 'development')
-      this.membershipService.createUserMembership(user.id, user.email);
+      await this.membershipService.createUserMembership(user.id, user.email);
     return this.setMailVerificationToken(user);
   }
 
