@@ -30,7 +30,7 @@ export class MembershipService {
   }
 
   async createUserMembership(userId: string, email: string) {
-    try{
+    try {
       const response = await axios({
         url: `${MEMBERSHIP_URL}v1/membership/user/create`,
         method: 'post',
@@ -42,9 +42,10 @@ export class MembershipService {
       });
 
       return response.data;
-    }
-    catch (err){
-      console.log("Create membership user error : ", err)
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log('Create membership user error : ', err);
+      throw err;
     }
   }
 
