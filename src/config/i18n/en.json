@@ -52,7 +52,9 @@
     "accept": "Accept",
     "accepted": "Accepted",
     "hour": "Hour",
-    "hours": "Hours"
+    "hours": "Hours",
+    "showMore": "Show more",
+    "showLess": "Show less"
   },
   "Login": {
     "title": "Login",
@@ -391,9 +393,7 @@
     "editComment": "Edit Comment",
     "writePublicReply": "Write a reply",
     "deleteCommentConfirmMsg": "Are you sure you want to delete the comment?",
-    "edited": "edited",
-    "readMore": "Read more",
-    "readLess": "Read less"
+    "edited": "edited"
   },
   "CommentList": {
     "comments": "Comments",

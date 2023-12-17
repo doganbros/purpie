@@ -10,7 +10,7 @@ export class EditPostDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
-  @MaxLength(10)
+  @MaxLength(4096)
   description: string;
 
   @ApiPropertyOptional()
