@@ -30,17 +30,23 @@ export class MembershipService {
   }
 
   async createUserMembership(userId: string, email: string) {
-    const response = await axios({
-      url: `${MEMBERSHIP_URL}v1/membership/user/create`,
-      method: 'post',
-      headers: { secret: MEMBERSHIP_API_SECRET },
-      data: {
-        userId,
-        email,
-      },
-    });
+    try {
+      const response = await axios({
+        url: `${MEMBERSHIP_URL}v1/membership/user/create`,
+        method: 'post',
+        headers: { secret: MEMBERSHIP_API_SECRET },
+        data: {
+          userId,
+          email,
+        },
+      });
 
-    return response.data;
+      return response.data;
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log('Create membership user error : ', err);
+      throw err;
+    }
   }
 
   async createPaymentSession(

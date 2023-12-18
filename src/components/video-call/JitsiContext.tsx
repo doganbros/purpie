@@ -68,7 +68,10 @@ const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
     if (!jitsiConference.current) {
       return;
     }
-
+    await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: true,
+    });
     const mediaDevices = await enumerateDevices();
 
     const cameraDeviceId = mediaDevices.find((d) => d.kind === 'videoinput')

@@ -10,7 +10,7 @@ import User from './pages/Private/user/User';
 import Video from './pages/Private/video/Video';
 import ForgotPassword from './pages/Public/ForgotPassword';
 import Login from './pages/Public/Login';
-import Register from './pages/Public/Register';
+import RegisterWithEmail from './pages/Public/RegisterWithEmail';
 import ResetPassword from './pages/Public/ResetPassword';
 import ThirdPartyAuth from './pages/Public/ThirdPartyAuth';
 import VerifyUserEmail from './pages/Public/VerifyUserEmail';
@@ -19,6 +19,7 @@ import JoinPage from './pages/Public/JoinPage';
 import CompleteThirdPartyAuth from './pages/Public/CompleteThirdPartyAuth';
 import Messages from './pages/Private/messages/Messages';
 import ApiDocs from './pages/Public/ApiDocs';
+import Register from './pages/Public/Register';
 
 interface AppRoute {
   id: string;
@@ -53,6 +54,12 @@ export const publicRoutes: Array<AppRoute> = [
     id: nanoid(),
     path: '/register',
     component: Register,
+    description: 'Join register',
+  },
+  {
+    id: nanoid(),
+    path: '/register-with-email',
+    component: RegisterWithEmail,
     description: 'User Logs into the app',
   },
   {

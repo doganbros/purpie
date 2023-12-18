@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { Box, Stack, Text } from 'grommet';
+import { Box, Image, Stack, Text } from 'grommet';
 import { Add, Play } from 'grommet-icons';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +11,7 @@ import { Post } from '../../store/types/post.types';
 import { UserAvatar } from '../utils/Avatars/UserAvatar';
 import * as MeetingService from '../../store/services/meeting.service';
 import EllipsesOverflowText from '../utils/EllipsesOverflowText';
+import HiddenVideo from '../../assets/icons/hidden-video.svg';
 
 interface PostGridItemProps {
   post: Post;
@@ -100,13 +101,30 @@ const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
               onClick={() => onClickPlay(post.id)}
               style={{ cursor: 'pointer' }}
             >
-              <EllipsesOverflowText
-                maxWidth="300px"
-                size="large"
-                weight="bold"
-                color="brand"
-                text={post.title}
-              />
+              {post.public && (
+                <EllipsesOverflowText
+                  maxWidth="300px"
+                  size="large"
+                  weight="bold"
+                  color="brand"
+                  text={post.title}
+                />
+              )}
+
+              {!post.public && (
+                <Box direction="row" gap="20px">
+                  <Box>
+                    <Image src={HiddenVideo} width="16px" height="20px" />
+                  </Box>
+                  <EllipsesOverflowText
+                    maxWidth="300px"
+                    size="large"
+                    weight="bold"
+                    color="brand"
+                    text={post.title}
+                  />
+                </Box>
+              )}
             </Box>
             {post.streaming ? (
               <Text>
