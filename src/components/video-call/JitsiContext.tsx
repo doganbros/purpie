@@ -35,6 +35,7 @@ const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
   const [remoteTracks, setRemoteTracks] = useState<any[]>([]);
   const [localTracks, setLocalTracks] = useState<any[]>([]);
   const [participants, setParticipants] = useState<any[]>([]);
+  const streams = useRef<MediaStream | null>(null);
 
   const onTrackAdded = (track: any) => {
     if (track?.isLocal()) {
@@ -68,7 +69,7 @@ const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
     if (!jitsiConference.current) {
       return;
     }
-    await navigator.mediaDevices.getUserMedia({
+    streams.current = await navigator.mediaDevices.getUserMedia({
       audio: true,
       video: true,
     });
@@ -108,7 +109,7 @@ const JitsiContextProvider: FC<JitsiContextProviderProps> = ({
 
   const removeLocalTracks = () => {
     console.log('-------------remove-local-tracks-------------');
-
+    streams.current?.getTracks().forEach((t) => t.stop());
     jitsiConference.current?.getLocalTracks().forEach((t: any) => {
       jitsiConference.current?.removeTrack(t);
       t.stopStream();
