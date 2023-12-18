@@ -101,7 +101,7 @@ const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
               style={{ cursor: 'pointer' }}
             >
               <EllipsesOverflowText
-                maxWidth="305px"
+                maxWidth="300px"
                 size="large"
                 weight="bold"
                 color="brand"

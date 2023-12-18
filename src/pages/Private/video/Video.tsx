@@ -326,7 +326,12 @@ const Video: FC = () => {
                 )}
 
                 <Box direction="row" gap="medium">
-                  <Box direction="row" gap="xsmall" align="center">
+                  <Box
+                    direction="row"
+                    gap="xsmall"
+                    align="center"
+                    width={{ min: '45px' }}
+                  >
                     <Button
                       plain
                       onClick={() =>

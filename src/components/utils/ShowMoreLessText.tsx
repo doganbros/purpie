@@ -4,13 +4,18 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 export const ShowMoreLessTextContainer = styled(Box)<{ $lineNumber?: number }>`
-  .line-clamp {
+  .text {
     -webkit-line-clamp: ${(props) => props.$lineNumber};
     -webkit-box-orient: vertical;
     display: -webkit-box;
     overflow: hidden;
     text-overflow: ellipsis;
     overflow-wrap: break-word;
+  }
+
+  .full-text {
+    -webkit-line-clamp: unset;
+    overflow: unset;
   }
 `;
 
@@ -49,7 +54,7 @@ const ShowMoreLessText: FC<ShowMoreLessTextProps> = ({
         ref={textRef}
         color={color}
         style={style}
-        className={isTextLong && !isFullTextShown ? 'line-clamp' : ''}
+        className={`text ${isFullTextShown ? 'full-text' : ''}`}
       >
         {children}
       </Text>
