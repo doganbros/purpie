@@ -2,8 +2,11 @@ import React, { FC, useEffect, useRef, useState } from 'react';
 import { Box, Stack, Text } from 'grommet';
 import { Camera, Microphone, MoreVertical } from 'grommet-icons';
 import { StyledVideo } from './StyledVideo';
+import { UserAvatar } from '../utils/Avatars/UserAvatar';
 
 interface VideoFrameProps {
+  userId?: string;
+  displayPhoto?: string;
   size?: number;
   tracks?: any[];
   displayName?: string;
@@ -17,6 +20,8 @@ export const VideoFrame: FC<VideoFrameProps> = ({
   local = false,
   displayName,
   onClickSettings,
+  userId = '',
+  displayPhoto,
 }) => {
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
 
@@ -95,23 +100,34 @@ export const VideoFrame: FC<VideoFrameProps> = ({
         border={{ side: 'all', color: 'brand' }}
       >
         <Stack anchor="top" fill guidingChild="last">
-          <Box width={`${size}px`} height={`${size}px`}>
-            <StyledVideo
-              ref={videoElementRef}
-              autoPlay
-              fit="cover"
-              hidden={isVideoMuted}
-              controls={false}
-              mirrored={local}
+          <Stack anchor="center">
+            <Box width={`${size}px`} height={`${size}px`}>
+              <StyledVideo
+                ref={videoElementRef}
+                autoPlay
+                fit="cover"
+                hidden={isVideoMuted}
+                controls={false}
+                mirrored={local}
+              />
+            </Box>
+            <UserAvatar
+              size="xlarge"
+              textProps={{
+                size: 'xlarge',
+              }}
+              id={userId || '1'}
+              name={displayName}
+              src={displayPhoto}
             />
-          </Box>
+          </Stack>
           <Box
             direction="row"
             overflow="hidden"
             justify="between"
             margin="small"
           >
-            {displayName ? (
+            {displayName && !local ? (
               <Box
                 background={{ color: 'brand-alt' }}
                 pad="small"

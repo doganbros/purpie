@@ -15,6 +15,7 @@ export const MaximizedCall: FC<MaximizedCallProps> = ({ onDismiss }) => {
   const { localTracks, remoteTracks } = useJitsiContext();
   const [showSettings, setShowSettings] = useState(false);
   const {
+    auth: { user },
     videocall: { activeCall },
   } = useSelector((state: AppState) => state);
   return (
@@ -53,10 +54,15 @@ export const MaximizedCall: FC<MaximizedCallProps> = ({ onDismiss }) => {
             size={422}
             tracks={remoteTracks}
             displayName={activeCall?.user.name}
+            userId={activeCall?.user.id}
+            displayPhoto={activeCall?.user.avatar}
           />
           <VideoFrame
             size={422}
             tracks={localTracks}
+            displayName={user?.fullName}
+            displayPhoto={user?.displayPhoto}
+            userId={user?.id}
             local
             onClickSettings={() => setShowSettings(true)}
           />

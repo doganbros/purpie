@@ -185,12 +185,11 @@ export class ChatGateway {
       );
     }
 
-    const user = await this.authService.getUserProfile(userId);
-    const calleeUser = await this.authService.getUserProfile(user.id);
+    const calleeUser = await this.authService.getUserProfile(socket.user.id);
 
     const meetingToken = await this.meetingService.generateMeetingToken(
       meetingRoomName,
-      user,
+      calleeUser,
       true,
       24,
     );
