@@ -36,6 +36,7 @@ import { AddToFolderDrop } from '../../../layers/saved-video/folder/AddToFolderD
 import { useResponsive } from '../../../hooks/useResponsive';
 import ShareVideo from './ShareVideo';
 import { FavoriteFill } from '../../../components/utils/CustomIcons';
+import ShowMoreLessText from '../../../components/utils/ShowMoreLessText';
 
 interface RouteParams {
   id: string;
@@ -325,7 +326,12 @@ const Video: FC = () => {
                 )}
 
                 <Box direction="row" gap="medium">
-                  <Box direction="row" gap="xsmall" align="center">
+                  <Box
+                    direction="row"
+                    gap="xsmall"
+                    align="center"
+                    width={{ min: '45px' }}
+                  >
                     <Button
                       plain
                       onClick={() =>
@@ -408,7 +414,7 @@ const Video: FC = () => {
             </Box>
           </Box>
           {data.description && (
-            <Box height={{ max: '148px' }} overflow="auto">
+            <ShowMoreLessText>
               <Highlight
                 match={matchDescriptionTags}
                 renderHighlight={({ match }) => (
@@ -416,7 +422,7 @@ const Video: FC = () => {
                 )}
                 text={data.description!}
               />
-            </Box>
+            </ShowMoreLessText>
           )}
           {renderChatResponsive()}
           <RecommendedVideos />

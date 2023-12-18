@@ -103,7 +103,7 @@ const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
             >
               {post.public && (
                 <EllipsesOverflowText
-                  maxWidth="305px"
+                  maxWidth="300px"
                   size="large"
                   weight="bold"
                   color="brand"
@@ -117,7 +117,7 @@ const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
                     <Image src={HiddenVideo} width="16px" height="20px" />
                   </Box>
                   <EllipsesOverflowText
-                    maxWidth="305px"
+                    maxWidth="300px"
                     size="large"
                     weight="bold"
                     color="brand"

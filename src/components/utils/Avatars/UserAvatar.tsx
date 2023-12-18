@@ -27,7 +27,7 @@ export const UserAvatar: FC<AvatarItemProps> = ({
     <ExtendedBox position="relative">
       {src ? (
         <Avatar
-          alignSelf="center"
+          alignSelf="start"
           round={round || 'full'}
           src={`${apiURL}/user/display-photo/${src}`}
           size={size || 'medium'}
