@@ -25,10 +25,6 @@ export const VideoSettings: FC<VideoSettingsProps> = ({ onDismiss }) => {
   ] = useState<MediaDeviceInfo>();
 
   const setAvailableDevices = async () => {
-    await navigator.mediaDevices.getUserMedia({
-      audio: true,
-      video: true,
-    });
     const mediaDevices = await enumerateDevices();
     mediaDevices.forEach((d) => {
       if (d.kind === 'videoinput') {
