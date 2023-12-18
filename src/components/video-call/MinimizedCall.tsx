@@ -1,9 +1,11 @@
 import React, { FC, useState } from 'react';
 import { Box, Image, Text } from 'grommet';
 import { Down, Up } from 'grommet-icons';
+import { useSelector } from 'react-redux';
 import { VideoFrame } from './VideoFrame';
 import { useJitsiContext } from './JitsiContext';
 import ActiveCallIcon from '../../assets/video-call/active-call.svg';
+import { AppState } from '../../store/reducers/root.reducer';
 
 interface MinimizedCallProps {
   onClickVideo: () => void;
@@ -18,7 +20,9 @@ export const MinimizedCall: FC<MinimizedCallProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const { remoteTracks } = useJitsiContext();
-
+  const {
+    videocall: { activeCall },
+  } = useSelector((state: AppState) => state);
   return (
     <Box
       elevation="large"
@@ -30,7 +34,13 @@ export const MinimizedCall: FC<MinimizedCallProps> = ({
     >
       {isExpanded && (
         <Box onClick={onClickVideo}>
-          <VideoFrame size={352} tracks={remoteTracks} />
+          <VideoFrame
+            size={352}
+            tracks={remoteTracks}
+            displayName={activeCall?.user.name}
+            userId={activeCall?.user.id}
+            displayPhoto={activeCall?.user.avatar}
+          />
         </Box>
       )}
       <Box direction="row" align="center" gap="medium">
