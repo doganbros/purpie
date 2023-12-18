@@ -52,7 +52,8 @@
     "accept": "Accept",
     "accepted": "Accepted",
     "hour": "Hour",
-    "hours": "Hours"
+    "hours": "Hours",
+    "or": "or"
   },
   "Login": {
     "title": "Login",
@@ -81,6 +82,13 @@
     "formSubTitle": "Sign up to continue",
     "alreadyHaveAccount": "Already have an account?",
     "signUp": "SIGN UP"
+  },
+  "JoinRegister": {
+    "title": "Register",
+    "formTitle": "Create an Account",
+    "formSubTitle": "Sign up to continue",
+    "alreadyHaveAccount": "Already have an account?",
+    "signUp": "Sign Up with Email"
   },
   "ForgotPassword": {
     "title": "Forgot Password",
