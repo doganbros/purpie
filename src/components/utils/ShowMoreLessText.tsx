@@ -45,7 +45,7 @@ const ShowMoreLessText: FC<ShowMoreLessTextProps> = ({
       }
     };
     checkTextLength();
-  }, []);
+  }, [children]);
 
   const style: any = { '-webkit-line-clamp': lineNumber };
   return (
