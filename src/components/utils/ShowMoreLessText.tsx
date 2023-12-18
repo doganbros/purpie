@@ -40,7 +40,7 @@ const ShowMoreLessText: FC<ShowMoreLessTextProps> = ({
     const checkTextLength = () => {
       if (textRef.current) {
         setIsTextLong(
-          textRef.current.scrollHeight > textRef.current.clientHeight
+          textRef.current.scrollHeight > textRef.current.clientHeight + 5
         );
       }
     };
