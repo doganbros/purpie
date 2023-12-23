@@ -18,6 +18,7 @@ import {
 } from '../../../../store/actions/post.action';
 import ConfirmDialog from '../../../../components/utils/ConfirmDialog';
 import { FavoriteFill } from '../../../../components/utils/CustomIcons';
+import ShowMoreLessText from '../../../../components/utils/ShowMoreLessText';
 
 dayjs.extend(LocalizedFormat);
 
@@ -102,7 +103,7 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId, hasReply }) => {
               color="status-disabled"
               margin={{ right: 'xsmall' }}
             >
-              (edited)
+              {`(${t('CommentBase.edited')})`}
             </Text>
           )}
           <Text size="small" color="status-disabled">
@@ -156,7 +157,9 @@ const CommentBase: FC<CommentBaseProps> = ({ comment, postId, hasReply }) => {
             </Box>
           </Box>
         ) : (
-          <Text color="status-disabled">{comment.comment}</Text>
+          <ShowMoreLessText color="status-disabled">
+            {comment.comment}
+          </ShowMoreLessText>
         )}
       </Box>
       <Box direction="row" align="center" gap="medium">

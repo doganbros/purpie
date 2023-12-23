@@ -47,6 +47,7 @@ import ChannelsToFollow from '../timeline/ChannelsToFollow';
 import ZonesToJoin from '../timeline/ZonesToJoin';
 import Notifications from '../timeline/Notifications';
 import { useSelectedChannel } from '../../../hooks/useSelectedChannel';
+import ShowMoreLessText from '../../../components/utils/ShowMoreLessText';
 
 interface RouteParams {
   id: string;
@@ -382,7 +383,12 @@ const Video: FC = () => {
                 )}
 
                 <Box direction="row" gap="medium">
-                  <Box direction="row" gap="xsmall" align="center">
+                  <Box
+                    direction="row"
+                    gap="xsmall"
+                    align="center"
+                    width={{ min: '45px' }}
+                  >
                     <Button
                       plain
                       onClick={() =>
@@ -465,7 +471,7 @@ const Video: FC = () => {
             </Box>
           </Box>
           {data.description && (
-            <Box height={{ max: '148px' }} overflow="auto">
+            <ShowMoreLessText>
               <Highlight
                 match={matchDescriptionTags}
                 renderHighlight={({ match }) => (
@@ -473,7 +479,7 @@ const Video: FC = () => {
                 )}
                 text={data.description!}
               />
-            </Box>
+            </ShowMoreLessText>
           )}
           {renderChatResponsive()}
           <RecommendedVideos />
