@@ -11,10 +11,9 @@ import { UserAvatar } from '../../../../components/utils/Avatars/UserAvatar';
 
 interface CommentsProps {
   postId: string;
-  commentCount: number;
 }
 
-const CommentList: FC<CommentsProps> = ({ postId, commentCount }) => {
+const CommentList: FC<CommentsProps> = ({ postId }) => {
   const {
     auth: { user },
     post: {
@@ -43,10 +42,13 @@ const CommentList: FC<CommentsProps> = ({ postId, commentCount }) => {
       <Box direction="row" justify="between" align="center">
         <Text size="large" color="brand" weight="bold">
           {t('CommentList.comments')}
-          <Text
-            size="medium"
-            color="status-disabled"
-          >{`(${commentCount})`}</Text>
+          <Text size="medium" color="status-disabled">{`(${
+            comments.data.length +
+            comments.data.reduce(
+              (total, current) => total + current.replyCount,
+              0
+            )
+          })`}</Text>
         </Text>
         <Select
           value={sortBy}
