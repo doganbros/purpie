@@ -8,6 +8,7 @@ import CommentBase from './CommentBase';
 import Input from './Input';
 import Replies from './Replies';
 import { UserAvatar } from '../../../../components/utils/Avatars/UserAvatar';
+import { useResponsive } from '../../../../hooks/useResponsive';
 
 interface CommentsProps {
   postId: string;
@@ -22,6 +23,7 @@ const CommentList: FC<CommentsProps> = ({ postId }) => {
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const size = useResponsive();
 
   const [sortBy, setSortBy] = useState('createdOn');
 
@@ -79,7 +81,10 @@ const CommentList: FC<CommentsProps> = ({ postId }) => {
                 elevation="peach"
                 round="small"
               >
-                <Box pad={{ left: 'small' }} gap="small">
+                <Box
+                  pad={{ left: size === 'small' ? '36px' : 'small' }}
+                  gap="small"
+                >
                   <CommentBase hasReply comment={item} postId={postId} />
                   {item.replyCount > 0 && (
                     <Replies parentComment={item} postId={postId} />
