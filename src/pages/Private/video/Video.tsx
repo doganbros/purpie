@@ -483,10 +483,7 @@ const Video: FC = () => {
           )}
           {renderChatResponsive()}
           <RecommendedVideos />
-          <CommentList
-            postId={params.id}
-            commentCount={data.postReaction.commentsCount}
-          />
+          <CommentList postId={params.id} />
           {showDeleteConfirmation && (
             <ConfirmDialog
               onConfirm={() => {

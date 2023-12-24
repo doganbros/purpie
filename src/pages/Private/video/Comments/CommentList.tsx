@@ -8,13 +8,13 @@ import CommentBase from './CommentBase';
 import Input from './Input';
 import Replies from './Replies';
 import { UserAvatar } from '../../../../components/utils/Avatars/UserAvatar';
+import { useResponsive } from '../../../../hooks/useResponsive';
 
 interface CommentsProps {
   postId: string;
-  commentCount: number;
 }
 
-const CommentList: FC<CommentsProps> = ({ postId, commentCount }) => {
+const CommentList: FC<CommentsProps> = ({ postId }) => {
   const {
     auth: { user },
     post: {
@@ -23,6 +23,7 @@ const CommentList: FC<CommentsProps> = ({ postId, commentCount }) => {
   } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const size = useResponsive();
 
   const [sortBy, setSortBy] = useState('createdOn');
 
@@ -43,10 +44,13 @@ const CommentList: FC<CommentsProps> = ({ postId, commentCount }) => {
       <Box direction="row" justify="between" align="center">
         <Text size="large" color="brand" weight="bold">
           {t('CommentList.comments')}
-          <Text
-            size="medium"
-            color="status-disabled"
-          >{`(${commentCount})`}</Text>
+          <Text size="medium" color="status-disabled">{`(${
+            comments.data.length +
+            comments.data.reduce(
+              (total, current) => total + current.replyCount,
+              0
+            )
+          })`}</Text>
         </Text>
         <Select
           value={sortBy}
@@ -77,7 +81,10 @@ const CommentList: FC<CommentsProps> = ({ postId, commentCount }) => {
                 elevation="peach"
                 round="small"
               >
-                <Box pad={{ left: 'small' }} gap="small">
+                <Box
+                  pad={{ left: size === 'small' ? '36px' : 'small' }}
+                  gap="small"
+                >
                   <CommentBase hasReply comment={item} postId={postId} />
                   {item.replyCount > 0 && (
                     <Replies parentComment={item} postId={postId} />
