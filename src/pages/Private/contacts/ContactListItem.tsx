@@ -50,12 +50,14 @@ const ContactListItem: FC<ContactListItemProps> = ({
           name={contact.contactUser.fullName}
           src={contact.contactUser.displayPhoto}
         />
-        <Text weight="bold" color={selected ? 'white' : 'brand'}>
-          {contact.contactUser.fullName}
-        </Text>
-        <Text color={selected ? 'status-disabled-light' : 'status-disabled'}>
-          @{contact.contactUser.userName}
-        </Text>
+        <Box direction="column">
+          <Text weight="bold" color={selected ? 'white' : 'brand'}>
+            {contact.contactUser.fullName}
+          </Text>
+          <Text color={selected ? 'status-disabled-light' : 'status-disabled'}>
+            @{contact.contactUser.userName}
+          </Text>
+        </Box>
       </Box>
       <Text
         onClick={(e) => {
