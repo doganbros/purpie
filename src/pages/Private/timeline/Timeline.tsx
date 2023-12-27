@@ -36,7 +36,6 @@ import useWaitTime from '../../../hooks/useDelayTime';
 import InviteToChannel from './InviteToChannel';
 import InviteToZone from './InviteToZone';
 import ChannelMembers from './ChannelMembers';
-import { getInvitationListAction } from '../../../store/actions/invitation.action';
 import { listChannelUsersAction } from '../../../store/actions/channel.action';
 import { useSelectedChannel } from '../../../hooks/useSelectedChannel';
 import {
@@ -127,7 +126,6 @@ const Timeline: FC = () => {
   };
 
   useEffect(() => {
-    dispatch(getInvitationListAction(INVITATION_AMOUNT_MORE));
     dispatch(getChannelSuggestionsAction(SUGGESTION_AMOUNT_MORE, 0));
     if (selectedChannel) {
       dispatch(

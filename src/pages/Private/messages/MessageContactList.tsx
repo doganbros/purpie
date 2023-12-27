@@ -100,7 +100,6 @@ const MessageContactList: FC<Props> = ({
             >
               <Box direction="row" gap="xsmall" align="center">
                 <UserAvatar
-                  online={userOnline}
                   id={contactUser.id}
                   name={contactUser.fullName}
                   src={contactUser.displayPhoto}

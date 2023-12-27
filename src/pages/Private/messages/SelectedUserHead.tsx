@@ -29,7 +29,6 @@ const SelectedUserHead: FC<Props> = ({ user, typingUsers }) => {
         <Box direction="row" gap="medium" align="center">
           <Box direction="row" gap="xsmall" align="center">
             <UserAvatar
-              online={userOnline}
               id={user.id}
               name={user.fullName}
               src={user.displayPhoto}
