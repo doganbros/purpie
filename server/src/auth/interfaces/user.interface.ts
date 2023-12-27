@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserRole } from 'entities/UserRole.entity';
 import { SoftEntity } from 'types/SoftEntity';
 
@@ -12,12 +12,13 @@ export class UserProfile {
   @ApiProperty()
   email: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional({ type: String })
   userName?: string | null;
 
-  @ApiProperty()
+  @ApiPropertyOptional({ type: String })
   displayPhoto?: string | null;
 
+  @ApiPropertyOptional()
   refreshTokenId?: string;
 
   @ApiProperty({
@@ -43,7 +44,7 @@ export interface UserTokenPayload {
 }
 
 export interface ConferenceUser {
-  id: number;
+  id: string;
   name: string;
   email: string;
 }
@@ -51,6 +52,7 @@ export interface ConferenceUser {
 export interface UserPermissionOptions {
   removeAccessTokens?: boolean;
   injectUserProfile?: boolean;
+  injectUserMembership?: boolean;
 }
 
 export class UserBasic {
@@ -69,4 +71,68 @@ export class UserBasicWithToken {
 
   @ApiProperty()
   token: string;
+}
+
+export enum MembershipType {
+  FREE = 'FREE',
+  ESSENTIAL = 'ESSENTIAL',
+  PRO = 'PRO',
+  ENTERPRISE = 'ENTERPRISE',
+}
+
+export class UserMembership {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  type: MembershipType;
+
+  @ApiProperty()
+  price: number;
+
+  @ApiProperty()
+  channelCount: number;
+
+  @ApiProperty()
+  zoneCount: number;
+
+  @ApiProperty()
+  meetingCount: number;
+
+  @ApiProperty()
+  streamCount: number;
+
+  @ApiProperty()
+  webinarCount: number;
+
+  @ApiProperty()
+  streamingStudioCount: number;
+
+  @ApiProperty()
+  meetingDuration: number;
+
+  @ApiProperty()
+  meetingMaxParticipantCount: number;
+
+  @ApiProperty()
+  streamMeeting: boolean;
+
+  @ApiProperty()
+  videoSize: number;
+}
+
+export class UserApiCredentials {
+  @ApiProperty()
+  apiKey: string;
+
+  @ApiProperty()
+  apiSecret: string;
+}
+
+export class AuthenticationTokens {
+  @ApiProperty()
+  accessToken: string;
+
+  @ApiProperty()
+  refreshToken: string;
 }

@@ -7,6 +7,7 @@ import {
   WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { NotFoundException } from '@nestjs/common';
 import { MeetingService } from '../services/meeting.service';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 
@@ -15,7 +16,7 @@ interface SocketWithTokenPayload extends Socket {
     avatar: string;
     name: string;
     email: string;
-    id: number;
+    id: string;
     room: string;
     lobby_bypass: boolean;
   };
@@ -64,25 +65,50 @@ export class MeetingGateway {
   async handleConnection(socket: SocketWithTokenPayload) {
     try {
       const token = socket.handshake.headers.authorization;
+      const { slug } = socket.data;
 
-      const jwtToken = token?.split(' ')[1];
-      const payload = await this.meetingService.verifyJitsiToken(jwtToken!);
+      let meetingSlug;
+      if (token) {
+        const jwtToken = token?.split(' ')[1];
+        const payload = await this.meetingService.verifyJitsiToken(jwtToken!);
+        if (!payload) return null;
 
-      if (!payload) return null;
-      socket.user = payload.context.user;
-      const meetingSlug = socket.user.room;
+        socket.user = payload.context.user;
+        meetingSlug = socket.user.room;
+      } else if (slug) {
+        const post = await this.meetingService.getRecordingAndStreamingMeetingBySlug(
+          slug,
+        );
+        if (!post)
+          throw new NotFoundException(
+            ErrorTypes.POST_NOT_FOUND,
+            'Recording and streaming post not found with given slug.',
+          );
 
-      socket.join(meetingSlug);
+        socket.user = {
+          avatar: post.createdBy.displayPhoto!,
+          name: post.createdBy.fullName,
+          email: post.createdBy.email,
+          id: post.createdBy.id,
+          room: post.slug,
+          lobby_bypass: false,
+        };
+        meetingSlug = post.slug;
+      }
 
-      socket.emit(
-        'meeting_info',
-        await this.meetingService.getConferenceInfo(
-          meetingSlug,
-          socket.user.id,
-        ),
-      );
+      if (meetingSlug) {
+        socket.join(meetingSlug);
 
-      socket.on('disconnecting', () => this.handleDisconnecting(socket));
+        socket.emit(
+          'meeting_info',
+          await this.meetingService.getConferenceInfo(
+            meetingSlug,
+            socket.user.id,
+          ),
+        );
+
+        socket.on('disconnecting', () => this.handleDisconnecting(socket));
+      }
       return null;
     } catch (err) {
       return null;

@@ -1,4 +1,4 @@
-import { Box, Button } from 'grommet';
+import { Box, Text } from 'grommet';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,7 @@ import { removeContactAction } from '../../../store/actions/user.action';
 import { User } from '../../../store/types/auth.types';
 import { UserSummary } from '../user/UserSummary';
 import PurpieLogoAnimated from '../../../assets/purpie-logo/purpie-logo-animated';
+import { initiateCallAction } from '../../../store/actions/videocall.action';
 
 interface SelectedUserProps {
   user: User | null;
@@ -32,15 +33,32 @@ const SelectedUser: FC<SelectedUserProps> = ({ user }) => {
           email={user.email}
           displayPhoto={user.displayPhoto}
         />
-        <>
-          <Button
-            primary
+        <Box gap="small">
+          <Box
+            onClick={() => dispatch(initiateCallAction(user))}
+            border={{ color: 'brand', size: '2px' }}
+            round="small"
+            pad="xsmall"
+            justify="center"
+            align="center"
+          >
+            <Text color="brand" weight="bold">
+              {t('SelectedUser.call')}
+            </Text>
+          </Box>
+          <Box
             onClick={() => setShowRemoveDialog(true)}
-            color="status-error"
-            alignSelf="center"
-            margin={{ top: 'medium' }}
-            label={t('SelectedUser.removeContact')}
-          />
+            border={{ color: 'status-error', size: '2px' }}
+            round="small"
+            pad="xsmall"
+            justify="center"
+            align="center"
+          >
+            <Text color="status-error" weight="normal">
+              {t('SelectedUser.removeContact')}
+            </Text>
+          </Box>
+
           {showRemoveDialog && (
             <ConfirmDialog
               onDismiss={() => {
@@ -56,7 +74,7 @@ const SelectedUser: FC<SelectedUserProps> = ({ user }) => {
               })}
             />
           )}
-        </>
+        </Box>
       </Box>
     </>
   );

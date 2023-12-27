@@ -17,7 +17,7 @@ const ChannelList: FC<ChannelListProps> = ({
 }: ChannelListProps) => {
   const { t } = useTranslation();
   const {
-    channel: { selectedChannel, userChannels },
+    channel: { selectedChannelId, userChannels },
     zone: { selectedUserZone, getUserZones },
   } = useSelector((state: AppState) => state);
 
@@ -52,7 +52,7 @@ const ChannelList: FC<ChannelListProps> = ({
           </Text>
         ) : (
           userChannelsFiltered.data.map((c) =>
-            selectedChannel?.channel.id === c.channel.id ? (
+            selectedChannelId === c.channel.id ? (
               <SelectedChannelListItem
                 key={c.channel.id}
                 c={c}

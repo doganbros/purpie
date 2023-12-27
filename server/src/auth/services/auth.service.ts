@@ -7,16 +7,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import bcrypt from 'bcryptjs';
-import dayjs from 'dayjs';
 import { User } from 'entities/User.entity';
 import { UserRefreshToken } from 'entities/UserRefreshToken.entity';
 import { UserRole } from 'entities/UserRole.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { Zone } from 'entities/Zone.entity';
-import { Request, Response } from 'express';
-import { generateJWT, getJWTCookieKeys } from 'helpers/jwt';
-import { compareHash, detectBrowser, hash } from 'helpers/utils';
-import { nanoid } from 'nanoid';
+import { generateJWT } from 'helpers/jwt';
+import { alphaNum, compareHash, hash } from 'helpers/utils';
+import { customAlphabet, nanoid } from 'nanoid';
 import { MailService } from 'src/mail/mail.service';
 import { Brackets, IsNull, Not, Repository } from 'typeorm';
 import { isUUID } from '@nestjs/common/utils/is-uuid';
@@ -27,15 +25,16 @@ import {
 import { InitializeUserDto } from '../dto/initialize-user.dto';
 import { RegisterUserDto } from '../dto/register-user.dto';
 import {
+  UserApiCredentials,
   UserBasicWithToken,
   UserProfile,
   UserTokenPayload,
 } from '../interfaces/user.interface';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { ChangePasswordDto } from '../dto/change-password.dto';
-import { BrowserType } from '../../../types/BrowserType';
 import { PostFolder } from '../../../entities/PostFolder.entity';
 import { FolderService } from '../../post/services/folder.service';
+import { MembershipService } from '../../membership/services/membership.service';
 
 const {
   AUTH_TOKEN_SECRET = '',
@@ -43,9 +42,8 @@ const {
   AUTH_TOKEN_LIFE = '1h',
   AUTH_TOKEN_REFRESH_LIFE = '30d',
   REACT_APP_CLIENT_HOST = '',
-  REACT_APP_SERVER_HOST = '',
-  NODE_ENV = '',
   VERIFICATION_TOKEN_SECRET = '',
+  NODE_ENV,
 } = process.env;
 
 @Injectable()
@@ -59,6 +57,7 @@ export class AuthService {
     private userRefreshTokenRepository: Repository<UserRefreshToken>,
     private mailService: MailService,
     private postFolderService: FolderService,
+    private membershipService: MembershipService,
   ) {}
 
   async generateLoginToken(
@@ -101,11 +100,7 @@ export class AuthService {
     );
   }
 
-  async setAccessTokens(
-    userPayload: UserTokenPayload,
-    res: Response,
-    req: Request,
-  ) {
+  async setAccessTokens(userPayload: UserTokenPayload) {
     if (userPayload.refreshTokenId) {
       await this.userRefreshTokenRepository.delete({
         userId: userPayload.id,
@@ -127,53 +122,11 @@ export class AuthService {
       })
       .save();
 
-    const domain = `.${new URL(REACT_APP_SERVER_HOST).hostname}`;
-    const isDevelopment = NODE_ENV === 'development';
-
-    const userAgent = req.headers['user-agent'];
-    const isSafariBrowser = detectBrowser(userAgent!) === BrowserType.SAFARI;
-
-    const { accessTokenKey, refreshAccessTokenKey } = getJWTCookieKeys();
-    res.cookie(accessTokenKey, accessToken, {
-      expires: dayjs().add(30, 'days').toDate(),
-      domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
-      httpOnly: true,
-      secure: !(isDevelopment && isSafariBrowser),
-      sameSite: isDevelopment ? 'none' : 'lax',
-    });
-    res.cookie(refreshAccessTokenKey, refreshToken, {
-      expires: dayjs().add(30, 'days').toDate(),
-      domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
-      httpOnly: true,
-      secure: !(isDevelopment && isSafariBrowser),
-      sameSite: isDevelopment ? 'none' : 'lax',
-    });
-
-    return refreshTokenId;
-  }
-
-  removeAccessTokens(req: Request, res: Response) {
-    const domain = `.${new URL(REACT_APP_SERVER_HOST).hostname}`;
-    const isDevelopment = NODE_ENV === 'development';
-
-    const userAgent = req.headers['user-agent'];
-    const isSafariBrowser = detectBrowser(userAgent!) === BrowserType.SAFARI;
-
-    const { accessTokenKey, refreshAccessTokenKey } = getJWTCookieKeys();
-    res.clearCookie(accessTokenKey, {
-      expires: dayjs().add(30, 'days').toDate(),
-      domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
-      httpOnly: true,
-      secure: !(isDevelopment && isSafariBrowser),
-      sameSite: isDevelopment ? 'none' : 'lax',
-    });
-    res.clearCookie(refreshAccessTokenKey, {
-      expires: dayjs().add(30, 'days').toDate(),
-      domain: REACT_APP_SERVER_HOST.includes('localhost') ? undefined : domain,
-      httpOnly: true,
-      secure: !(isDevelopment && isSafariBrowser),
-      sameSite: isDevelopment ? 'none' : 'lax',
-    });
+    return {
+      refreshTokenId,
+      accessToken,
+      refreshToken,
+    };
   }
 
   async verifyRefreshToken(refreshTokenId: string, refreshToken: string) {
@@ -204,7 +157,7 @@ export class AuthService {
       where: { id: refreshTokenId, userId },
     });
 
-    if (userRefreshToken) userRefreshToken.remove();
+    if (userRefreshToken) await userRefreshToken.remove();
   }
 
   async systemUserCount() {
@@ -233,13 +186,17 @@ export class AuthService {
   }: RegisterUserDto): Promise<UserBasicWithToken> {
     const password = await bcrypt.hash(unhashedPassword, 10);
 
-    const user = await this.userRepository.create({
-      fullName,
-      email,
-      password,
-      userRoleCode: 'NORMAL',
-    });
+    const user = await this.userRepository
+      .create({
+        fullName,
+        email,
+        password,
+        userRoleCode: 'NORMAL',
+      })
+      .save();
 
+    if (NODE_ENV !== 'development')
+      await this.membershipService.createUserMembership(user.id, user.email);
     return this.setMailVerificationToken(user);
   }
 
@@ -337,6 +294,15 @@ export class AuthService {
     });
   }
 
+  getUserByApiKey(value: string) {
+    return this.userRepository.findOne({
+      where: {
+        apiKey: value,
+      },
+      relations: ['userRole'],
+    });
+  }
+
   async verifyResendMailVerificationToken(userId: string) {
     const user = await this.userRepository.findOne({
       where: {
@@ -395,7 +361,10 @@ export class AuthService {
     const isValid = await compareHash(token, user.mailVerificationToken);
 
     if (!isValid)
-      throw new NotFoundException(ErrorTypes.USER_NOT_FOUND, 'User not found');
+      throw new UnauthorizedException(
+        ErrorTypes.INVALID_JWT,
+        'Email confirmation JWT is invalid',
+      );
 
     user.emailConfirmed = true;
     user.mailVerificationToken = null!;
@@ -405,7 +374,7 @@ export class AuthService {
     return user;
   }
 
-  async initializeUser(info: InitializeUserDto, res: Response, req: Request) {
+  async initializeUser(info: InitializeUserDto) {
     const user = await this.userRepository
       .create({
         fullName: info.fullName,
@@ -433,15 +402,11 @@ export class AuthService {
         },
       };
 
-      await this.setAccessTokens(
-        {
-          id: user.id,
-        },
-        res,
-        req,
-      );
+      const { accessToken, refreshToken } = await this.setAccessTokens({
+        id: user.id,
+      });
 
-      return userPayload;
+      return { user: userPayload, accessToken, refreshToken };
     } catch (err: any) {
       await user.remove();
       throw err;
@@ -510,5 +475,35 @@ export class AuthService {
     await user.save();
 
     return true;
+  }
+
+  async getUserMembership(userId: string) {
+    return this.membershipService.getUserMembership(userId);
+  }
+
+  async getApiCredentials(userId: string) {
+    const { apiKey } = await this.userRepository.findOneOrFail({
+      id: userId,
+    });
+
+    if (apiKey) {
+      return { apiKey };
+    }
+
+    return {};
+  }
+
+  async createApiCredentials(userId: string): Promise<UserApiCredentials> {
+    const apiKey = customAlphabet(alphaNum, 50)();
+    const apiSecret = customAlphabet(alphaNum, 70)();
+
+    const apiSecretHashed = await bcrypt.hash(apiSecret, 10);
+
+    await this.userRepository.update(
+      { id: userId },
+      { apiKey, apiSecret: apiSecretHashed },
+    );
+
+    return { apiKey, apiSecret };
   }
 }

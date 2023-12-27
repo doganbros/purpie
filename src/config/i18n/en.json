@@ -52,7 +52,10 @@
     "accept": "Accept",
     "accepted": "Accepted",
     "hour": "Hour",
-    "hours": "Hours"
+    "hours": "Hours",
+    "or": "or",
+    "showMore": "Show more",
+    "showLess": "Show less"
   },
   "Login": {
     "title": "Login",
@@ -82,10 +85,17 @@
     "alreadyHaveAccount": "Already have an account?",
     "signUp": "SIGN UP"
   },
+  "JoinRegister": {
+    "title": "Register",
+    "formTitle": "Create an Account",
+    "formSubTitle": "Sign up to continue",
+    "alreadyHaveAccount": "Already have an account?",
+    "signUp": "Sign Up with Email"
+  },
   "ForgotPassword": {
     "title": "Forgot Password",
     "formTitle": "Password Recovery",
-    "formSubTitle": "Enter email to receive your password.",
+    "formSubTitle": "Enter email to reset your password.",
     "rememberPassword": "Remember Password",
     "send": "SEND"
   },
@@ -133,7 +143,7 @@
   },
   "ChannelsToFollow": {
     "title": "Channels to follow",
-    "noChannelsFound": "No channels found"
+    "noChannelsFound": "We could not find any channels to  recommend"
   },
   "EmptyFeedContent": {
     "noContent": "NO CONTENT AVAILABLE",
@@ -149,7 +159,7 @@
   },
   "ZonesToJoin": {
     "title": "Zones to join",
-    "noZonesFound": "No zones found"
+    "noZonesFound": "We could not find any zones to  recommend"
   },
   "MessageBox": {
     "sendAgain": "Send Message Again"
@@ -169,7 +179,8 @@
     "today": "Today",
     "yesterday": "Yesterday",
     "deleteConfirm": "Are you sure you want to delete this message?",
-    "typing": "{{name}} is typing..."
+    "typing": "{{name}} is typing...",
+    "noMessages": "No messages have been sent yet. Send the first message!"
   },
   "MessageItem": {
     "you": "You",
@@ -358,7 +369,8 @@
   },
   "SelectedUser": {
     "removeContact": "Remove from Contacts",
-    "removeConfirmMsg": "Are you sure you want to remove {{fullName}} from you contacts?"
+    "removeConfirmMsg": "Are you sure you want to remove {{fullName}} from you contacts?",
+    "call": "Call"
   },
   "Saved": {
     "title": "Saved Posts",
@@ -388,8 +400,9 @@
   },
   "CommentBase": {
     "editComment": "Edit Comment",
-    "writePublicReply": "Write a public reply",
-    "deleteCommentConfirmMsg": "Are you sure you want to delete the comment?"
+    "writePublicReply": "Write a reply",
+    "deleteCommentConfirmMsg": "Are you sure you want to delete the comment?",
+    "edited": "edited"
   },
   "CommentList": {
     "comments": "Comments",
@@ -502,18 +515,21 @@
     "INVALID_VIDEO_FORMAT": "Please upload a valid video format!",
     "CURRENT_PASSWORD_NOT_CORRECT": "Current password is not correct!",
     "PASSWORDS_NOT_MATCH": "Passwords do not match!",
-    "OWNER_NOT_EXIST": "The last owner cannot be deleted!"
+    "OWNER_NOT_EXIST": "The last owner cannot be deleted!",
+    "INSUFFICIENT_MEMBERSHIP": "Your membership is insufficient to operate requested operation. Please upgrade your membership to continue."
   },
   "settings": {
     "personalSettings": "Personal Settings",
+    "securitySettings": "Security",
     "channelSettings": "Channels",
     "zoneSettings": "Zones",
+    "membershipSettings": "Membership",
     "settings": "Settings",
     "search": "Search",
     "username": "Username",
     "fullName": "Full Name",
     "mainEmail": "Your main email address",
-    "email": "Email",
+    "email": "EMAIL",
     "passwordChange": "Password Change",
     "currentPassword": "Current Password",
     "newPassword": "New Password",
@@ -550,6 +566,9 @@
     "channelNamePlaceholder": "Change channel name",
     "channelDescriptionPlaceholder": "Change channel description",
     "chooseProfilePicture": "Choose Profile Picture",
+    "chooseChannelPicture": "Choose Channel Picture",
+    "chooseZonePicture": "Choose Zone Picture",
+    "chooseChannelBackgroundPicture": "Choose Channel Bg Picture",
     "browse": "Browse",
     "deleteMessage": "Are you sure you want to delete",
     "channelUnfollowMessage": "Are you sure you want to unfollow",
@@ -559,11 +578,22 @@
     "general": "General",
     "members": "Members",
     "followers": "Followers",
-    "userInfo": "User Info",
-    "role": "Role",
-    "followingDate": "Following Date",
+    "userInfo": "USER INFO",
+    "role": "ROLE",
+    "followingDate": "FOLLOWING DATE",
     "joinDate": "Join Date",
-    "action": "Action"
+    "action": "ACTION",
+    "activeMembership": "Active Membership",
+    "membershipPlans": "Membership Plans",
+    "upgradeMembership": "Upgrade",
+    "cancelMembership": "Cancel Membership",
+    "downgradeMembership": "Downgrade",
+    "apiManagement": "API Management",
+    "generateApi": "Generate",
+    "regenerateApi": "Regenerate",
+    "apiManagementSubText": "Manage your API key and secret",
+    "apiKey": "API Key",
+    "apiSecret": "API Secret"
   },
   "ManageChannelUser": {
     "title": "Manage Channel Follower",
@@ -574,9 +604,8 @@
     "saveChannelChangesConfirm": "Are you sure you want to save the changes on selected zone?"
   },
   "ContactsToFollow": {
-    "title": "People to add",
-    "add": "Add",
-    "added": "Added",
+    "title": "People to invite",
+    "invite": "Invite",
     "invited": "Invited",
     "noContactsFound": "No contacts found!",
     "remove": "Remove"
@@ -748,9 +777,9 @@
     "a7": "Yes! Purple supports a burgeoning community in <0>community.purpie.org</0>. Also, don’t forget to check out our website, <1>purpie.org</1>."
   },
   "Permissions": {
-    "OWNER": "Owner",
-    "MODERATOR": "Moderator",
-    "USER": "User"
+    "OWNER": "OWNER",
+    "MODERATOR": "MODERATOR",
+    "USER": "USER"
   },
   "ChannelPermissionAction": {
     "canInvite": "Create invitation for new people",
@@ -764,5 +793,23 @@
     "canDelete": "Delete channel",
     "canEdit": "Update channel",
     "canManageRole": "Manage zone roles"
+  },
+  "Membership": {
+    "channelCount": "Channel Count: ",
+    "meetingCount": "Meeting Count: ",
+    "meetingDuration": "Meeting Duration(min): ",
+    "meetingMaxParticipantCount": "Meeting Max Participant",
+    "streamCount": "Stream Count: ",
+    "streamMeeting": "Stream Meeting: ",
+    "streamingStudioCount": "Streaming Studio Count: ",
+    "videoSize": "Video Size(kb): ",
+    "webinarCount": "Webinar Count: ",
+    "zoneCount": "Zone Count: "
+  },
+  "OneOnOneCall": {
+    "settingsVideo": "Video",
+    "settingsAudio": "Audio",
+    "settingsApply": "Apply",
+    "settingsDismiss": "Dismiss"
   }
 }

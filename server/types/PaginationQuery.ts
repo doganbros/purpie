@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsInt } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsInt, IsOptional } from 'class-validator';
 import { Request } from 'express';
 
 export interface Pagination {
@@ -8,17 +8,17 @@ export interface Pagination {
 }
 
 export class PaginationQuery implements Pagination {
-  @ApiProperty({
-    required: false,
-    description: 'The number of records to get. Defaults to 30',
+  @ApiPropertyOptional({
+    default: 30,
+    description: 'The number of records to get.',
   })
   @IsOptional()
   @IsInt()
   limit: number;
 
-  @ApiProperty({
-    required: false,
-    description: 'The number of records to skip. Defaults to 0',
+  @ApiPropertyOptional({
+    default: 0,
+    description: 'The number of records to skip.',
   })
   @IsOptional()
   @IsInt()

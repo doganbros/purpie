@@ -21,6 +21,7 @@ import {
   SET_SELECTED_CHANNEL,
   UNFOLLOW_CHANNEL_SUCCESS,
   UNSET_SELECTED_CHANNEL,
+  UPDATE_CHANNEL_BACKGROUND_PHOTO_SUCCESS,
   UPDATE_CHANNEL_INFO_SUCCESS,
   UPDATE_CHANNEL_PERMISSIONS_SUCCESS,
   UPDATE_CHANNEL_PHOTO_SUCCESS,
@@ -29,7 +30,7 @@ import {
 import { ChannelActionParams, ChannelState } from '../types/channel.types';
 
 const initialState: ChannelState = {
-  selectedChannel: null,
+  selectedChannelId: null,
   showCreateChannelLayer: false,
   userChannels: {
     data: [],
@@ -126,12 +127,12 @@ const channelReducer = (
     case SET_SELECTED_CHANNEL:
       return {
         ...state,
-        selectedChannel: action.payload,
+        selectedChannelId: action.payload,
       };
     case UNSET_SELECTED_CHANNEL:
       return {
         ...state,
-        selectedChannel: null,
+        selectedChannelId: null,
       };
     case SEARCH_CHANNEL_REQUESTED:
       return {
@@ -168,10 +169,28 @@ const channelReducer = (
       };
     case UPDATE_CHANNEL_PHOTO_SUCCESS: {
       const test = state.userChannels.data.map((item) =>
-        item.channel.id === action.channelId
+        item.id === action.channelId
           ? {
               ...item,
               channel: { ...item.channel, displayPhoto: action.payload },
+            }
+          : item
+      );
+      return {
+        ...state,
+        userChannels: {
+          data: test,
+          loading: false,
+          error: null,
+        },
+      };
+    }
+    case UPDATE_CHANNEL_BACKGROUND_PHOTO_SUCCESS: {
+      const test = state.userChannels.data.map((item) =>
+        item.id === action.userChannelId
+          ? {
+              ...item,
+              channel: { ...item.channel, backgroundPhoto: action.payload },
             }
           : item
       );
@@ -221,11 +240,10 @@ const channelReducer = (
           loading: false,
           error: null,
         },
-        selectedChannel:
-          state.selectedChannel &&
-          state.selectedChannel.channel.id === action.payload
+        selectedChannelId:
+          state.selectedChannelId === action.payload
             ? null
-            : state.selectedChannel,
+            : state.selectedChannelId,
       };
     case UNFOLLOW_CHANNEL_SUCCESS:
       return {

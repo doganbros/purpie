@@ -9,7 +9,6 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
-  ParseIntPipe,
   ParseUUIDPipe,
   Post,
   Put,
@@ -24,8 +23,11 @@ import {
   ApiBody,
   ApiConsumes,
   ApiCreatedResponse,
+  ApiExcludeEndpoint,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
@@ -38,16 +40,17 @@ import { errorResponseDoc } from 'helpers/error-response-doc';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import {
   CurrentUser,
+  CurrentUserMembership,
   CurrentUserProfile,
 } from 'src/auth/decorators/current-user.decorator';
 import {
+  UserMembership,
   UserProfile,
   UserTokenPayload,
 } from 'src/auth/interfaces/user.interface';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { SystemUserListQuery } from 'src/user/dto/system-user-list.query';
 import { CurrentUserZone } from 'src/zone/decorators/current-user-zone.decorator';
-import { PostSettings } from 'types/PostSettings';
 import { UserZoneRole } from 'src/zone/decorators/user-zone-role.decorator';
 import { UserZoneService } from 'src/zone/services/user-zone.service';
 import { ChannelRole } from 'entities/ChannelRole.entity';
@@ -62,37 +65,65 @@ import { SearchChannelQuery } from '../dto/search-channel.query';
 import { UpdateChannelUserRoleDto } from '../dto/update-channel-user-role.dto';
 import { UpdateChannelPermission } from '../dto/update-channel-permission.dto';
 import { ErrorTypes } from '../../../types/ErrorTypes';
-import { UserChannelService } from '../services/user-channel.service';
-import { ChannelRoleCode } from '../../../types/RoleCodes';
+import { ChannelSearchResponse } from '../responses/channel-search.response';
+import { ChannelUserResponse } from '../responses/channel-user.response';
 
-const { S3_PROFILE_PHOTO_DIR = '', S3_BUCKET_NAME = '' } = process.env;
+const {
+  S3_PROFILE_PHOTO_DIR = '',
+  S3_BUCKET_NAME = '',
+  NODE_ENV,
+} = process.env;
 
 @Controller({ path: 'channel', version: '1' })
-@ApiTags('channel')
+@ApiTags('Channel')
 export class ChannelController {
   constructor(
     private channelService: ChannelService,
     private userZoneService: UserZoneService,
-    private userChannelService: UserChannelService,
   ) {}
 
   @Post('/create/:userZoneId')
   @ApiCreatedResponse({
+    description: 'Channel created',
+    schema: { type: 'string' },
+  })
+  @ApiOperation({
+    summary: 'Create Channel',
     description:
-      'Current authenticated user adds a new channel to a zone. User channel id is returned. User channel must have canCreateChannel permission',
-    schema: { type: 'integer' },
+      'Current authenticated user create a new channel into a zone. User channel id is returned. User channel must have "canCreateChannel" permission.',
   })
   @ValidationBadRequest()
   @ApiParam({
     name: 'userZoneId',
-    description: 'user zone id',
+    description: 'User zone id',
   })
-  @UserZoneRole(['canCreateChannel'], [], {}, { injectUserProfile: true })
+  @ApiBadRequestResponse({
+    description:
+      'Error thrown when user membership is insufficient to create new channel.',
+    schema: errorResponseDoc(
+      400,
+      'Your channel create operation failed due to insufficient membership.',
+      ErrorTypes.INSUFFICIENT_MEMBERSHIP,
+    ),
+  })
+  @UserZoneRole(
+    ['canCreateChannel'],
+    [],
+    {},
+    { injectUserProfile: true, injectUserMembership: true },
+  )
   async createNewChannel(
     @Body() createChannelInfo: CreateChannelDto,
     @CurrentUserProfile() userProfile: UserProfile,
+    @CurrentUserMembership() userMembership: UserMembership,
     @CurrentUserZone() currentUserZone: UserZone,
   ) {
+    if (NODE_ENV !== 'development')
+      await this.channelService.validateCreateChannel(
+        userProfile.id,
+        userMembership.channelCount,
+      );
+
     const userChannel = await this.channelService.createChannel(
       userProfile.id,
       currentUserZone.id,
@@ -110,6 +141,14 @@ export class ChannelController {
   }
 
   @Get('/search')
+  @ApiOkResponse({
+    description: 'Search channels with requested search term',
+    type: ChannelSearchResponse,
+  })
+  @ApiOperation({
+    summary: 'Search Channel',
+    description: 'Search channels with requested search term.',
+  })
   @IsAuthenticated()
   searchChannel(
     @Query() query: SearchChannelQuery,
@@ -118,20 +157,18 @@ export class ChannelController {
     return this.channelService.searchChannel(user, query);
   }
 
-  @Get('/list/public/:zoneId')
-  @IsAuthenticated()
-  async listPublicChannelsByZoneId(
-    @Param('zoneId', ParseUUIDPipe) zoneId: string,
-    @CurrentUser() user: UserTokenPayload,
-  ) {
-    return this.channelService.getPublicChannels(user.id, zoneId);
-  }
-
   @Post('/join/:channelId')
-  @ApiCreatedResponse({
+  @ApiOperation({
+    summary: 'Join Channel',
     description:
-      "Current authenticated user joins a public channel. When the user doesn't belong to the zone he is added. The id of the user channel is returned",
-    schema: { type: 'integer' },
+      "Current authenticated user joins a public channel. When the user doesn't belong to the zone he/she is added to that zone. The id of the user channel is returned",
+  })
+  @ApiCreatedResponse({
+    description: 'Join channel',
+  })
+  @ApiNotFoundResponse({
+    description: 'Error thrown when the joined channel is not found',
+    schema: errorResponseDoc(404, 'Channel not found', 'CHANNEL_NOT_FOUND'),
   })
   @IsAuthenticated([], { injectUserProfile: true })
   async joinPublicChannel(
@@ -160,21 +197,23 @@ export class ChannelController {
         channel.zoneId,
       );
 
-    const userChannel = await this.channelService.addUserToChannel(
+    await this.channelService.addUserToChannel(
       userProfile.id,
       userZone.id,
       channel.id,
     );
     await this.channelService.removeInvitation(userProfile.email, channel.id);
-
-    return userChannel.id;
   }
 
   @Post('/invite/:channelId')
+  @ApiOperation({
+    summary: 'Invite to Channel',
+    description:
+      'Current authenticated channel member invites a user to this channel. The id of the invitation is returned. User channel must have "canInvite" permission',
+  })
   @UserChannelRole(['canInvite'])
   @ApiCreatedResponse({
-    description:
-      'Current authenticated channel member invites a user to this channel. The id of the invitation is returned. User channel must have canInvite permission',
+    description: 'Invite to channel for user',
     schema: { type: 'integer' },
   })
   @ApiNotFoundResponse({
@@ -214,7 +253,19 @@ export class ChannelController {
   }
 
   @Post('/invitation/response')
+  @ApiOperation({
+    summary: 'Respond Channel Invitation',
+    description: 'User Responds to channel invitation.',
+  })
   @ValidationBadRequest()
+  @ApiNotFoundResponse({
+    description: 'Error thrown when the invitation is not found',
+    schema: errorResponseDoc(
+      404,
+      'Invitation not found',
+      'INVITATION_NOT_FOUND',
+    ),
+  })
   @ApiCreatedResponse({
     description: 'User Responds to invitation',
     schema: { type: 'string', example: 'OK' },
@@ -262,27 +313,32 @@ export class ChannelController {
   }
 
   @Delete('/remove/:channelId')
+  @ApiOperation({
+    summary: 'Delete Channel',
+    description:
+      'User deletes a channel. User channel must have the "canDelete" permission.',
+  })
   @ApiParam({
     name: 'channelId',
     description: 'The channel id',
   })
   @ApiOkResponse({
-    description:
-      'User deletes a channel. User channel must have the canDelete permission',
-    schema: { type: 'string', example: 'OK' },
+    description: 'User deletes a channel.',
   })
   @HttpCode(HttpStatus.OK)
   @UserChannelRole(['canDelete'])
   async deleteZone(@CurrentUserChannel() userChannel: UserChannel) {
     await this.channelService.deleteByChannelId(userChannel.channel.id);
-    return 'OK';
   }
 
   @Put('/update/:channelId')
-  @ApiCreatedResponse({
+  @ApiOperation({
+    summary: 'Update Channel',
     description:
-      'User updates a zone. User channel must have the canEdit permission',
-    schema: { type: 'string', example: 'OK' },
+      'User updates a zone. User channel must have the "canEdit" permission',
+  })
+  @ApiCreatedResponse({
+    description: 'User updates a zone.',
   })
   @ApiParam({
     name: 'channelId',
@@ -294,13 +350,16 @@ export class ChannelController {
     @Body() editInfo: EditChannelDto,
   ) {
     await this.channelService.editChannelById(userChannel.channel.id, editInfo);
-    return 'OK';
   }
 
   @Get('/users/list/:channelId')
   @ApiOkResponse({
     description: 'User lists channel users',
-    type: User,
+    type: ChannelUserResponse,
+  })
+  @ApiOperation({
+    summary: 'List Channel Users',
+    description: 'List channel users belonging to "channelId" parameter.',
   })
   channelUserList(
     @Query() query: SystemUserListQuery,
@@ -310,10 +369,14 @@ export class ChannelController {
   }
 
   @Get('/role/list/:channelId')
+  @ApiOperation({
+    summary: 'List Channel Roles',
+    description:
+      'User lists all channel roles. User must have "canManageRole" permission.',
+  })
   @ApiOkResponse({
     type: ChannelRole,
-    description:
-      'User lists all channel roles. User must have canManageRole permission',
+    description: 'User lists all channel roles.',
   })
   @ValidationBadRequest()
   @UserChannelRole(['canManageRole'])
@@ -321,27 +384,20 @@ export class ChannelController {
     return this.channelService.listChannelRoles(channelId);
   }
 
-  @Post('/role/create/:channelId')
-  @ApiCreatedResponse({
-    description:
-      'User creates a new channel role. User must have canManageRole permission',
-    schema: { type: 'string', example: 'OK' },
-  })
-  @ValidationBadRequest()
-  @UserChannelRole(['canManageRole'])
-  async createChannelRole(
-    @Body() info: ChannelRole,
-    @Param('channelId', ParseUUIDPipe) channelId: string,
-  ) {
-    await this.channelService.createChannelRole(channelId, info);
-    return 'OK';
-  }
-
   @Put('/role/change/:channelId')
+  @ApiExcludeEndpoint()
   @ApiCreatedResponse({
     description:
       'User changes a role for an existing user channel. User must have canManageRole permission',
     schema: { type: 'string', example: 'OK' },
+  })
+  @ApiForbiddenResponse({
+    description: 'Error thrown when the specified channel has not any owner',
+    schema: errorResponseDoc(
+      404,
+      'There must be at least one channel owner.',
+      'OWNER_NOT_EXIST',
+    ),
   })
   @ValidationBadRequest()
   @UserChannelRole(['canManageRole'])
@@ -353,32 +409,23 @@ export class ChannelController {
     return 'OK';
   }
 
-  @Delete('/role/remove/:channelId/:roleCode')
-  @ApiCreatedResponse({
-    description:
-      'User removes a new channel role. User must have canManageRole permission. When a role is removed Created is returned else OK',
-    schema: { type: 'string', example: 'OK' },
-  })
-  @ValidationBadRequest()
-  @UserChannelRole(['canManageRole'])
-  async removeChannelRole(
-    @Param('roleCode') roleCode: ChannelRoleCode,
-    @Param('channelId', ParseUUIDPipe) channelId: string,
-  ) {
-    const result = await this.channelService.removeChannelRole(
-      channelId,
-      roleCode,
-    );
-    return result ? 'Created' : 'OK';
-  }
-
   @Put('/permissions/update/:channelId')
+  @ApiExcludeEndpoint()
   @ApiCreatedResponse({
     description:
       'User updates permissions for user role. User must have canManageRole permission',
     schema: { type: 'string', example: 'OK' },
   })
+  @ApiForbiddenResponse({
+    description: 'Error thrown when the the request is changed to owner role.',
+    schema: errorResponseDoc(
+      404,
+      "Channel Owner Permissions can't be changed",
+      'CHANGE_OWNER_PERMISSION',
+    ),
+  })
   @ValidationBadRequest()
+  @ApiExcludeEndpoint()
   @UserChannelRole(['canManageRole'])
   async updateUserRolePermissions(
     @Body() info: UpdateChannelPermission,
@@ -393,7 +440,21 @@ export class ChannelController {
   }
 
   @Put('/:userChannelId/display-photo')
+  @ApiOperation({
+    summary: 'Update Display Photo',
+    description:
+      'Update user channel display photo belonging to "userChannelId".',
+  })
   @ApiConsumes('multipart/form-data')
+  @ApiBadRequestResponse({
+    description:
+      'Error thrown when the requested photo format invalid. Valid formats: jpg, jpeg, png, bmp and svg',
+    schema: errorResponseDoc(
+      400,
+      'Please upload a valid photo format',
+      'INVALID_IMAGE_FORMAT',
+    ),
+  })
   @ApiBody({
     schema: {
       type: 'object',
@@ -438,19 +499,27 @@ export class ChannelController {
   async changeDisplayPhoto(
     @CurrentUserChannel() userChannel: UserChannel,
     @UploadedFile() file: Express.MulterS3.File,
-    @Param('userChannelId', ParseUUIDPipe) userChannelId: string,
   ) {
     const fileName = file.key.replace(
       `${S3_PROFILE_PHOTO_DIR}/channel-dp/`,
       '',
     );
 
-    await this.channelService.changeDisplayPhoto(userChannelId, fileName);
+    await this.channelService.changeDisplayPhoto(
+      userChannel.channel.id,
+      fileName,
+    );
 
     return fileName;
   }
 
   @Get('display-photo/:fileName')
+  @ApiOperation({
+    summary: 'Get Display Photo',
+    description:
+      'Get display photo of selected channel belonging to "fileName" parameter.',
+  })
+  @ApiOkResponse({ description: 'Get display photo of selected channel' })
   @Header('Cache-Control', 'max-age=3600')
   async viewProfilePhoto(
     @Res() res: Response,
@@ -474,6 +543,11 @@ export class ChannelController {
   }
 
   @Put('/:userChannelId/background-photo')
+  @ApiOperation({
+    summary: 'Update Background Photo',
+    description:
+      'Update user channel background photo belonging to "userChannelId".',
+  })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -514,6 +588,15 @@ export class ChannelController {
     }),
   )
   @IsAuthenticated()
+  @ApiBadRequestResponse({
+    description:
+      'Error thrown when the requested photo format invalid. Valid formats: jpg, jpeg, png, bmp and svg',
+    schema: errorResponseDoc(
+      400,
+      'Please upload a valid photo format',
+      'INVALID_IMAGE_FORMAT',
+    ),
+  })
   @UserChannelRole(['canEdit'])
   @ValidationBadRequest()
   async changeBackgroundPhoto(
@@ -534,6 +617,12 @@ export class ChannelController {
 
   @Get('background-photo/:fileName')
   @Header('Cache-Control', 'max-age=3600')
+  @ApiOkResponse({ description: 'Get background photo of selected channel' })
+  @ApiOperation({
+    summary: 'Get Background Photo',
+    description:
+      'Get background photo of selected channel belonging to "fileName" parameter.',
+  })
   async viewBackgroundPhoto(
     @Res() res: Response,
     @Param('fileName') fileName: string,
@@ -553,24 +642,5 @@ export class ChannelController {
     } catch (err: any) {
       return res.status(err.statusCode || 500).json(err);
     }
-  }
-
-  @Get('post-settings/:channelId')
-  @UserChannelRole()
-  @ApiOkResponse({
-    type: PostSettings,
-    description: 'Retrieves default post settings for a channel',
-  })
-  getChannelPostSettings(@Param('channelId', ParseIntPipe) channelId: number) {
-    return this.channelService.getPostSettings(channelId);
-  }
-
-  @Put('post-settings/update/:channelId')
-  @UserChannelRole(['canEdit'])
-  updatePostSettings(
-    @Param('channelId', ParseUUIDPipe) channelId: string,
-    @Body() settings: PostSettings,
-  ) {
-    return this.channelService.updatePostSettings(channelId, settings);
   }
 }

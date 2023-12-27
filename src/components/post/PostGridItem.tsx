@@ -1,15 +1,17 @@
 import React, { FC, useState } from 'react';
-import { Box, Stack, Text } from 'grommet';
-import { Add, Chat, Favorite, Play } from 'grommet-icons';
+import { Box, Image, Stack, Text } from 'grommet';
+import { Add, Play } from 'grommet-icons';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
 import ExtendedBox from '../utils/ExtendedBox';
 import { VideoPost } from './VideoPost';
 import { ImagePost } from './ImagePost';
 import { Post } from '../../store/types/post.types';
-import { FavoriteFill } from '../utils/CustomIcons';
 import { UserAvatar } from '../utils/Avatars/UserAvatar';
 import * as MeetingService from '../../store/services/meeting.service';
 import EllipsesOverflowText from '../utils/EllipsesOverflowText';
+import HiddenVideo from '../../assets/icons/hidden-video.svg';
 
 interface PostGridItemProps {
   post: Post;
@@ -18,10 +20,16 @@ interface PostGridItemProps {
 
 const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
   const [hover, setHover] = useState(false);
+  const history = useHistory();
+  const { t } = useTranslation();
 
   const getJoinLink = async () => {
     const meetingLink = await MeetingService.getMeetingJoinLink(post.slug);
     window.open(meetingLink, '_blank');
+  };
+
+  const handleUserClick = () => {
+    history.push(`/user/${post.createdBy.userName}`);
   };
 
   return (
@@ -34,9 +42,6 @@ const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
       <Box fill pad="small">
         <Box
           fill
-          onClick={() => {
-            onClickPlay(post.id);
-          }}
           focusIndicator={false}
           round={{ size: 'medium' }}
           overflow="hidden"
@@ -45,6 +50,7 @@ const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
         >
           {post.videoName || post.streaming ? (
             <VideoPost
+              onClick={() => onClickPlay(post.id)}
               id={post.id}
               live={post.streaming}
               slug={post.slug}
@@ -60,7 +66,11 @@ const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
             align="center"
             justify="between"
           >
-            <Box direction="row" align="center">
+            <Box
+              direction="row"
+              align="center"
+              onClick={() => handleUserClick()}
+            >
               <Box
                 margin={{ top: '-35px', left: '-3px' }}
                 round="full"
@@ -87,29 +97,57 @@ const PostGridItem: FC<PostGridItemProps> = ({ post, onClickPlay }) => {
             </Text>
           </ExtendedBox>
           <Box direction="row" justify="between" align="start">
-            <Text size="large" weight="bold" color="brand">
-              {post.title}
-            </Text>
             <Box
-              direction="row"
-              align="center"
-              gap="small"
-              flex={{ shrink: 0 }}
-              margin={{ left: 'small' }}
+              onClick={() => onClickPlay(post.id)}
+              style={{ cursor: 'pointer' }}
             >
-              {post.liked ? (
-                <FavoriteFill color="brand" />
-              ) : (
-                <Favorite color="status-disabled" />
+              {post.public && (
+                <EllipsesOverflowText
+                  maxWidth="300px"
+                  size="large"
+                  weight="bold"
+                  color="brand"
+                  text={post.title}
+                />
               )}
-              <Text size="small" color="status-disabled">
-                {post.postReaction.likesCount}
-              </Text>
-              <Chat color="status-disabled" />
-              <Text color="status-disabled">
-                {post.postReaction.commentsCount}
-              </Text>
+
+              {!post.public && (
+                <Box direction="row" gap="20px">
+                  <Box>
+                    <Image src={HiddenVideo} width="16px" height="20px" />
+                  </Box>
+                  <EllipsesOverflowText
+                    maxWidth="300px"
+                    size="large"
+                    weight="bold"
+                    color="brand"
+                    text={post.title}
+                  />
+                </Box>
+              )}
             </Box>
+            {post.streaming ? (
+              <Text>
+                {post.postReaction.liveStreamViewersCount <= 1
+                  ? t('Video.userWatching', {
+                      count: post.postReaction.liveStreamViewersCount,
+                    })
+                  : t('Video.usersWatching', {
+                      count: post.postReaction.liveStreamViewersCount,
+                    })}
+              </Text>
+            ) : (
+              <Text color="status-disabled">
+                {t(
+                  `Video.${
+                    post.postReaction.viewsCount === 1
+                      ? 'viewCount'
+                      : 'viewsCount'
+                  }`,
+                  { count: post.postReaction.viewsCount }
+                )}
+              </Text>
+            )}
           </Box>
         </Box>
         {hover && (post.liveStream || post.streaming) && (

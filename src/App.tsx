@@ -18,11 +18,14 @@ import { AppState } from './store/reducers/root.reducer';
 import InitializeUser from './pages/Public/InitializeUser';
 import { initializeSocket } from './helpers/socket';
 import { getUserChannelsAction } from './store/actions/channel.action';
-import { DELAY_TIME } from './helpers/constants';
+import { DELAY_TIME, INVITATION_AMOUNT_MORE } from './helpers/constants';
 import useDelayTime from './hooks/useDelayTime';
 import { listFolderAction } from './store/actions/folder.action';
 import StaticPage from './pages/Public/static/StaticPage';
 import ZoneNotFound from './pages/Private/ZoneNotFound';
+import { getUserMembershipAction } from './store/actions/membership.action';
+import { VideoCallOverlay } from './components/video-call/VideoCallOverlay';
+import { getInvitationListAction } from './store/actions/invitation.action';
 
 const App: FC = () => {
   const dispatch = useDispatch();
@@ -48,6 +51,10 @@ const App: FC = () => {
       dispatch(getUserChannelsAction());
       dispatch(getUserZonesAction());
       dispatch(listFolderAction());
+      dispatch(getInvitationListAction(INVITATION_AMOUNT_MORE));
+
+      if (process.env.NODE_ENV !== 'development')
+        dispatch(getUserMembershipAction());
     }
   }, [isAuthenticated]);
 
@@ -60,6 +67,7 @@ const App: FC = () => {
           message={toast.message}
           id={toast.toastId}
         />
+        {!delay && !loading && isAuthenticated && <VideoCallOverlay />}
         {delay || loading || (isAuthenticated && !userZoneInitialized) ? (
           <Loader />
         ) : (

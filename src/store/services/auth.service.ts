@@ -10,9 +10,10 @@ import {
   UpdateProfileInfoPayload,
   UpdatePasswordPayload,
   CompleteProfilePayload,
+  SignInResponse,
 } from '../types/auth.types';
 
-export const login = async (user: LoginPayload): Promise<User> =>
+export const login = async (user: LoginPayload): Promise<SignInResponse> =>
   http
     .post('/auth/login', user, {
       showErrorToast: (err) =>
@@ -57,7 +58,7 @@ export const verifyUserEmail = async ({
 export const completeProfile = async ({
   token,
   userName,
-}: CompleteProfilePayload): Promise<any> => {
+}: CompleteProfilePayload): Promise<SignInResponse> => {
   return http
     .post('/auth/third-party/profile/complete', { token, userName })
     .then((res) => res.data);
@@ -67,12 +68,12 @@ export const resendMailVerificationToken = async (
   userId: string
 ): Promise<any> => {
   return http
-    .post(`/auth/resend-mail-verification-token/${userId}`)
+    .post(`/auth/resend-verification-mail/${userId}`)
     .then((res) => res.data);
 };
 
-export const resetPasswordRequest = (email: string): Promise<any> =>
-  http.post('/auth/reset-password-request', {
+export const resetPasswordRequest = (email: string): Promise<void> =>
+  http.post('/auth/request-reset-password', {
     email,
   });
 
@@ -89,12 +90,14 @@ export const authenticateWithThirdPartyCode = async (
   name: string,
   code: string | null,
   email: string | null
-): Promise<User | string> =>
+): Promise<SignInResponse | string> =>
   http
     .post(`/auth/third-party/${name}`, code ? { code } : { email })
     .then((res) => res.data);
 
-export const initializeUser = (user: RegisterPayload): Promise<User> =>
+export const initializeUser = (
+  user: RegisterPayload
+): Promise<SignInResponse> =>
   http.post('auth/initial-user', user).then((res) => res.data);
 
 export const updateProfileInfo = (

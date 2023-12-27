@@ -33,11 +33,24 @@ const Header: FC<HeaderProps> = ({
           />
         );
       if (isUserInvited)
-        return <Button plain disabled label={t('ContactsToFollow.invited')} />;
+        return (
+          <Button
+            primary={false}
+            disabled
+            label={
+              <Box>
+                <Text size="xsmall" weight={500}>
+                  {t('ContactsToFollow.invited')}
+                </Text>
+              </Box>
+            }
+            size="small"
+          />
+        );
       return (
         <Button
           primary
-          label={t('ContactsToFollow.add')}
+          label={t('ContactsToFollow.invite')}
           onClick={() => dispatch(createContactInvitation(user?.email))}
         />
       );

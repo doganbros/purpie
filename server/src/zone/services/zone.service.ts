@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
@@ -24,6 +25,7 @@ import { UpdateUserZoneRoleDto } from '../dto/update-user-zone-role.dto';
 import { UpdateZonePermission } from '../dto/update-zone-permission.dto';
 import { ErrorTypes } from '../../../types/ErrorTypes';
 import { ZoneRoleCode } from '../../../types/RoleCodes';
+import { BlacklistName } from '../../../entities/BlacklistName.entity';
 
 const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
 
@@ -31,6 +33,8 @@ const { REACT_APP_CLIENT_HOST = 'http://localhost:3000' } = process.env;
 export class ZoneService {
   constructor(
     @InjectRepository(Zone) private zoneRepository: Repository<Zone>,
+    @InjectRepository(BlacklistName)
+    private blacklistRepository: Repository<BlacklistName>,
     @InjectRepository(ZoneRole)
     private zoneRoleRepository: Repository<ZoneRole>,
     @InjectRepository(UserZone)
@@ -40,9 +44,26 @@ export class ZoneService {
     private mailService: MailService,
   ) {}
 
+  async validateCreateZone(userId: string, maxZoneCount: number) {
+    const zoneCount = await this.userZoneRepository.count({
+      where: { userId },
+    });
+    if (zoneCount >= maxZoneCount)
+      throw new ForbiddenException(
+        ErrorTypes.INSUFFICIENT_MEMBERSHIP,
+        'Your channel zone operation failed due to insufficient membership.',
+      );
+  }
+
   async createZone(userId: string, createZoneInfo: CreateZoneDto) {
     if (
-      await this.zoneRepository.findOne({ subdomain: createZoneInfo.subdomain })
+      (await this.zoneRepository.findOne({
+        subdomain: createZoneInfo.subdomain,
+      })) ||
+      (await this.blacklistRepository.findOne({
+        text: createZoneInfo.subdomain,
+        type: 'subdomain',
+      }))
     ) {
       throw new BadRequestException(
         ErrorTypes.ZONE_SUBDOMAIN_ALREADY_EXIST,
@@ -106,7 +127,7 @@ export class ZoneService {
       .getRawOne();
 
     if (zone)
-      throw new BadRequestException(
+      throw new ConflictException(
         ErrorTypes.USER_ALREADY_MEMBER_OF_ZONE,
         `The user with the email ${email} is already a member of this zone`,
       );
@@ -126,7 +147,7 @@ export class ZoneService {
     return this.invitationRepository.delete({ email, zoneId });
   }
 
-  async validateInvitationResponse(invitationId: number, email: string) {
+  async validateInvitationResponse(invitationId: string, email: string) {
     return this.invitationRepository.findOne({
       where: {
         email,
@@ -272,7 +293,7 @@ export class ZoneService {
       if (remainingSuperAdminCount === 0)
         throw new ForbiddenException(
           ErrorTypes.OWNER_NOT_EXIST,
-          'There must be at least one super admin',
+          'There must be at least one owner of zone.',
         );
     }
 

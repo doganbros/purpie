@@ -7,6 +7,7 @@ import { listUserPublicZonesAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
 import InitialsAvatar from '../../../components/utils/Avatars/InitialsAvatar';
 import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
+import { navigateToSubdomain } from '../../../helpers/app-subdomain';
 
 const UserPublicZones: FC<{ userName: string }> = ({ userName }) => {
   const dispatch = useDispatch();
@@ -36,6 +37,7 @@ const UserPublicZones: FC<{ userName: string }> = ({ userName }) => {
                 gap="small"
                 align="center"
                 width={{ min: '102px' }}
+                onClick={() => navigateToSubdomain(zone.subdomain)}
               >
                 <InitialsAvatar id={zone.id} value={zone.name} round="small" />
                 <Box align="center">

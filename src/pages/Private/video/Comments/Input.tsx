@@ -54,6 +54,7 @@ const Input: FC<InputProps> = ({ user, postId }) => {
           onClick={handleSend}
           label={t('common.send')}
           size="small"
+          disabled={inputValue.length === 0}
           primary
         />
       </Box>

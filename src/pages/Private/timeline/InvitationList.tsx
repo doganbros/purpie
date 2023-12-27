@@ -30,7 +30,6 @@ const InvitationList: FC = () => {
       ? invitations.data.slice(0, displayCount)
       : invitations.data;
 
-  if (!invitations.loading && invitations.data.length === 0) return null;
   return (
     <Box gap="xsmall">
       <Box direction="row" align="center" justify="between">
@@ -57,9 +56,6 @@ const InvitationList: FC = () => {
       </Box>
       {invitations.loading && data.length === 0 && (
         <PurpieLogoAnimated width={50} height={50} color="#9060EB" />
-      )}
-      {!invitations.loading && data.length === 0 && (
-        <Text size="small">{t('Invitations.noInvitations')}</Text>
       )}
 
       <Box overflow="auto" height={{ max: '472px' }}>

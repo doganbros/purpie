@@ -2,53 +2,53 @@ import {
   IsBoolean,
   IsOptional,
   IsString,
-  IsUUID,
+  MaxLength,
   ValidateIf,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 
 export class CreateVideoDto {
-  @ApiProperty()
+  @ApiPropertyOptional({ maxLength: 64 })
   @IsString()
+  @MaxLength(64)
   title: string;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
+  @MaxLength(10)
   description?: string;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   @ValidateIf((o) => {
     return !o.public;
   })
-  @IsUUID()
   channelId?: string;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   @ValidateIf((o) => {
     return !o.channelId;
   })
   @Transform(({ value }) => ['true', true, 1, '1'].includes(value))
-  @IsBoolean()
   public?: boolean;
 
   @ApiProperty({ type: String, format: 'binary' })
   videoFile: string;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   @Transform(({ value }) => ['true', true, 1, '1'].includes(value))
   @IsOptional()
   @IsBoolean()
   allowDislike?: boolean;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   @Transform(({ value }) => ['true', true, 1, '1'].includes(value))
   @IsOptional()
   @IsBoolean()
   allowReaction?: boolean;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   @Transform(({ value }) => ['true', true, 1, '1'].includes(value))
   @IsOptional()
   @IsBoolean()

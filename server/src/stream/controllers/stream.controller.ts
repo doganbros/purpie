@@ -1,5 +1,10 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiExcludeController,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import { IsClientAuthenticated } from 'src/auth/decorators/client-auth.decorator';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
@@ -10,6 +15,7 @@ import { StreamService } from '../stream.service';
 
 @Controller({ version: '1', path: 'stream' })
 @ApiTags('stream')
+@ApiExcludeController()
 export class StreamController {
   constructor(private readonly streamService: StreamService) {}
 

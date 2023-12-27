@@ -16,6 +16,7 @@ export const UserSummary: FC<UserBasic> = ({
   return (
     <Box gap="medium">
       <UserAvatar
+        hasOnline={false}
         id={id}
         name={fullName}
         src={displayPhoto}

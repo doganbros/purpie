@@ -9,3 +9,11 @@ body {
   margin: 0;
   padding: 0;
 }
+
+.api-docs {
+  .menu-content {
+    a {
+      display: none;
+    }
+  }
+}

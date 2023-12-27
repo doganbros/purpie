@@ -1,19 +1,29 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class EditChannelDto {
-  @ApiProperty()
+  @ApiPropertyOptional({ maxLength: 32 })
   @IsString()
   @IsNotEmpty()
+  @MaxLength(32)
   @IsOptional()
   name: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional({
+    maxLength: 256,
+  })
   @IsString()
   @IsOptional()
+  @MaxLength(256)
   description?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   public?: boolean;

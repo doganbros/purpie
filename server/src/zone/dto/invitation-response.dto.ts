@@ -1,4 +1,4 @@
-import { IsIn, IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsIn, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class InvitationResponseDto {
@@ -9,7 +9,7 @@ export class InvitationResponseDto {
   status: 'accept' | 'reject';
 
   @ApiProperty()
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
-  invitationId: number;
+  invitationId: string;
 }

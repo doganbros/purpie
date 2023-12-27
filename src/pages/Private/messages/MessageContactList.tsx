@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Box, Text } from 'grommet';
 import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
@@ -8,6 +8,9 @@ import { AppState } from '../../../store/reducers/root.reducer';
 import { UserAvatar } from '../../../components/utils/Avatars/UserAvatar';
 import { User } from '../../../store/types/auth.types';
 import { ChatInfo } from '../../../components/chat/Chat';
+import InvitationList from '../timeline/InvitationList';
+import InviteToPurpie from '../contacts/InviteToPurpie';
+import ContactsToFollow from '../contacts/ContactsToFollow';
 
 interface Props {
   chatInfo: ChatInfo;
@@ -28,6 +31,7 @@ const MessageContactList: FC<Props> = ({
     user: { contacts },
     chat: { usersOnline },
   } = useSelector((state: AppState) => state);
+  const [isVisibleInvitationDrop, setVisibleInvitationDrop] = useState(false);
 
   useEffect(() => {
     getContacts();
@@ -50,6 +54,18 @@ const MessageContactList: FC<Props> = ({
 
     return dayjs(date).format('MM.DD.YYYY');
   };
+
+  if (contacts.data.length === 0)
+    return (
+      <Box pad="medium" gap="medium">
+        <InvitationList />
+        <InviteToPurpie
+          isVisibleDrop={isVisibleInvitationDrop}
+          setVisibleDrop={setVisibleInvitationDrop}
+        />
+        <ContactsToFollow />
+      </Box>
+    );
 
   return (
     <Box gap="small">
@@ -84,7 +100,6 @@ const MessageContactList: FC<Props> = ({
             >
               <Box direction="row" gap="xsmall" align="center">
                 <UserAvatar
-                  online={userOnline}
                   id={contactUser.id}
                   name={contactUser.fullName}
                   src={contactUser.displayPhoto}

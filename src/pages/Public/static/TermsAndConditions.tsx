@@ -1,14 +1,296 @@
 import React from 'react';
 import { Anchor, Box } from 'grommet';
-import { Trans } from 'react-i18next';
-import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
+import { Trans, useTranslation } from 'react-i18next';
 import StaticText from './StaticText';
 import StaticTitle from './StaticTitle';
 import StaticList from './StaticList';
+import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
 
-const TermsAndConditions: () => Menu | null = () => {
+const TermsAndConditions = (): Menu => {
+  const { t } = useTranslation();
+
+  const items = [
+    {
+      text: 'TermsAndConditions.text1',
+      type: 1,
+    },
+    {
+      text: (
+        <Trans i18nKey="TermsAndConditions.text2">
+          <Anchor href="https://purpie.io" target="_blank" />
+        </Trans>
+      ),
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.text3',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.text4',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.title1',
+      type: 2,
+    },
+    {
+      text: 'TermsAndConditions.description11',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.description12',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.title2',
+      type: 2,
+    },
+    {
+      text: 'TermsAndConditions.description21',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.description22',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.description22ListItem1',
+      type: 3,
+    },
+    {
+      text: 'TermsAndConditions.description22ListItem2',
+      type: 3,
+    },
+    {
+      text: 'TermsAndConditions.description22ListItem3',
+      type: 3,
+    },
+    {
+      text: 'TermsAndConditions.description22ListItem4',
+      type: 3,
+    },
+    {
+      text: 'TermsAndConditions.description23',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.description24',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.description25',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.description26',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.description26ListItem1',
+      type: 4,
+    },
+    {
+      text: 'TermsAndConditions.description26ListItem2',
+      type: 4,
+    },
+    {
+      text: 'TermsAndConditions.description26ListItem3',
+      type: 4,
+    },
+    {
+      text: 'TermsAndConditions.description26ListItem4',
+      type: 4,
+    },
+    {
+      text: 'TermsAndConditions.description27',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.title3',
+      type: 2,
+    },
+    {
+      text: 'TermsAndConditions.description31',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.description31ListItem1',
+      type: 5,
+    },
+    {
+      text: 'TermsAndConditions.description31ListItem2',
+      type: 5,
+    },
+    {
+      text: 'TermsAndConditions.description31ListItem3',
+      type: 5,
+    },
+    {
+      text: 'TermsAndConditions.description31ListItem4',
+      type: 5,
+    },
+    {
+      text: 'TermsAndConditions.description31ListItem5',
+      type: 5,
+    },
+    {
+      text: 'TermsAndConditions.description32',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.description33',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.description33ListItem1',
+      type: 6,
+    },
+    {
+      text: 'TermsAndConditions.description33ListItem2',
+      type: 6,
+    },
+    {
+      text: 'TermsAndConditions.description33ListItem3',
+      type: 6,
+    },
+    {
+      text: 'TermsAndConditions.description33ListItem4',
+      type: 6,
+    },
+    {
+      text: 'TermsAndConditions.description33ListItem5',
+      type: 6,
+    },
+    {
+      text: 'TermsAndConditions.description33ListItem6',
+      type: 6,
+    },
+    {
+      text: 'TermsAndConditions.description33ListItem7',
+      type: 6,
+    },
+    {
+      text: 'TermsAndConditions.description34',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.description35',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.description36',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.description37',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.description37ListItem1',
+      type: 7,
+    },
+    {
+      text: 'TermsAndConditions.description37ListItem2',
+      type: 7,
+    },
+    {
+      text: 'TermsAndConditions.description37ListItem3',
+      type: 7,
+    },
+    {
+      text: 'TermsAndConditions.description38',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.title4',
+      type: 2,
+    },
+    {
+      text: 'TermsAndConditions.description4',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.title5',
+      type: 2,
+    },
+    {
+      text: 'TermsAndConditions.description5',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.title6',
+      type: 2,
+    },
+    {
+      text: 'TermsAndConditions.description6',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.title7',
+      type: 2,
+    },
+    {
+      text: 'TermsAndConditions.description7',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.title8',
+      type: 2,
+    },
+    {
+      text: 'TermsAndConditions.description81',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.description82',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.title9',
+      type: 2,
+    },
+    {
+      text: 'TermsAndConditions.description91',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.description91ListItem1',
+      type: 8,
+    },
+    {
+      text: 'TermsAndConditions.description91ListItem2',
+      type: 8,
+    },
+    {
+      text: 'TermsAndConditions.description91ListItem3',
+      type: 8,
+    },
+    {
+      text: 'TermsAndConditions.description91ListItem4',
+      type: 8,
+    },
+    {
+      text: 'TermsAndConditions.description92',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.description93',
+      type: 1,
+    },
+    {
+      text: 'TermsAndConditions.title10',
+      type: 2,
+    },
+    {
+      text: 'TermsAndConditions.description10',
+      type: 1,
+    },
+  ];
+
+  let listItems: string[] = [];
+
   return {
-    id: 0,
     key: 'terms-and-conditions',
     label: 'Terms & Conditions',
     labelNotVisible: true,
@@ -16,112 +298,62 @@ const TermsAndConditions: () => Menu | null = () => {
     items: [
       {
         key: 'terms-and-conditions-content',
-        title: 'Terms & Conditions',
-        component: (
+        label: 'Terms & Conditions',
+        searchableTexts: items.map((item) => t(item.text as string)),
+        componentFunc: (search?: string) => (
           <Box
             border={{ size: 'xsmall', color: 'status-disabled-light' }}
             round="small"
             pad="medium"
             gap="small"
           >
-            <StaticText tKey="TermsAndConditions.text1" />
-            <StaticText
-              tKey={
-                <Trans i18nKey="TermsAndConditions.text2">
-                  <Anchor href="https://purpie.io" target="_blank" />
-                </Trans>
-              }
-            />
-            <StaticText tKey="TermsAndConditions.text3" />
-            <StaticText tKey="TermsAndConditions.text4" />
-            <StaticTitle tKey="TermsAndConditions.title1" />
-            <StaticText tKey="TermsAndConditions.description11" />
-            <StaticText tKey="TermsAndConditions.description12" />
-            <StaticTitle tKey="TermsAndConditions.title2" />
-            <StaticText tKey="TermsAndConditions.description21" />
-            <StaticText tKey="TermsAndConditions.description22" />
-            <StaticList
-              tKeys={[
-                'TermsAndConditions.description22ListItem1',
-                'TermsAndConditions.description22ListItem2',
-                'TermsAndConditions.description22ListItem3',
-                'TermsAndConditions.description22ListItem4',
-              ]}
-            />
-            <StaticText tKey="TermsAndConditions.description23" />
-            <StaticText tKey="TermsAndConditions.description24" />
-            <StaticText tKey="TermsAndConditions.description25" />
-            <StaticText tKey="TermsAndConditions.description26" />
-            <StaticList
-              tKeys={[
-                'TermsAndConditions.description26ListItem1',
-                'TermsAndConditions.description26ListItem2',
-                'TermsAndConditions.description26ListItem3',
-                'TermsAndConditions.description26ListItem4',
-              ]}
-            />
-            <StaticText tKey="TermsAndConditions.description27" />
-            <StaticTitle tKey="TermsAndConditions.title3" />
-            <StaticText tKey="TermsAndConditions.description31" />
-            <StaticList
-              tKeys={[
-                'TermsAndConditions.description31ListItem1',
-                'TermsAndConditions.description31ListItem2',
-                'TermsAndConditions.description31ListItem3',
-                'TermsAndConditions.description31ListItem4',
-                'TermsAndConditions.description31ListItem5',
-              ]}
-            />
-            <StaticText tKey="TermsAndConditions.description32" />
-            <StaticText tKey="TermsAndConditions.description33" />
-            <StaticList
-              tKeys={[
-                'TermsAndConditions.description33ListItem1',
-                'TermsAndConditions.description33ListItem2',
-                'TermsAndConditions.description33ListItem3',
-                'TermsAndConditions.description33ListItem4',
-                'TermsAndConditions.description33ListItem5',
-                'TermsAndConditions.description33ListItem6',
-                'TermsAndConditions.description33ListItem7',
-              ]}
-            />
-            <StaticText tKey="TermsAndConditions.description34" />
-            <StaticText tKey="TermsAndConditions.description35" />
-            <StaticText tKey="TermsAndConditions.description36" />
-            <StaticText tKey="TermsAndConditions.description37" />
-            <StaticList
-              tKeys={[
-                'TermsAndConditions.description37ListItem1',
-                'TermsAndConditions.description37ListItem2',
-                'TermsAndConditions.description37ListItem3',
-              ]}
-            />
-            <StaticText tKey="TermsAndConditions.description38" />
-            <StaticTitle tKey="TermsAndConditions.title4" />
-            <StaticText tKey="TermsAndConditions.description4" />
-            <StaticTitle tKey="TermsAndConditions.title5" />
-            <StaticText tKey="TermsAndConditions.description5" />
-            <StaticTitle tKey="TermsAndConditions.title6" />
-            <StaticText tKey="TermsAndConditions.description6" />
-            <StaticTitle tKey="TermsAndConditions.title7" />
-            <StaticText tKey="TermsAndConditions.description7" />
-            <StaticTitle tKey="TermsAndConditions.title8" />
-            <StaticText tKey="TermsAndConditions.description81" />
-            <StaticText tKey="TermsAndConditions.description82" />
-            <StaticTitle tKey="TermsAndConditions.title9" />
-            <StaticText tKey="TermsAndConditions.description91" />
-            <StaticList
-              tKeys={[
-                'TermsAndConditions.description91ListItem1',
-                'TermsAndConditions.description91ListItem2',
-                'TermsAndConditions.description91ListItem3',
-                'TermsAndConditions.description91ListItem4',
-              ]}
-            />
-            <StaticText tKey="TermsAndConditions.description92" />
-            <StaticText tKey="TermsAndConditions.description93" />
-            <StaticTitle tKey="TermsAndConditions.title10" />
-            <StaticText tKey="TermsAndConditions.description10" />
+            {items
+              .map((item) => {
+                if (item.type === 1) {
+                  if (listItems.length > 0) {
+                    const list = (
+                      <StaticList tKeys={listItems} searchText={search} />
+                    );
+                    listItems = [];
+                    return (
+                      <>
+                        {list}
+                        <StaticText tKey={item.text} searchText={search} />
+                      </>
+                    );
+                  }
+                  return <StaticText tKey={item.text} searchText={search} />;
+                }
+                if (item.type === 2) {
+                  if (listItems.length > 0) {
+                    const list = (
+                      <StaticList tKeys={listItems} searchText={search} />
+                    );
+                    listItems = [];
+                    return (
+                      <>
+                        {list}
+                        <StaticTitle
+                          tKey={item.text as string}
+                          searchText={search}
+                        />
+                      </>
+                    );
+                  }
+
+                  return (
+                    <StaticTitle
+                      tKey={item.text as string}
+                      searchText={search}
+                    />
+                  );
+                }
+                if ([3, 4, 5, 6, 7, 8, 9].includes(item.type)) {
+                  listItems.push(item.text as string);
+                }
+                return null;
+              })
+              .filter((item) => item)}
           </Box>
         ),
       },

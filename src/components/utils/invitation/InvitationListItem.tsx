@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, Text } from 'grommet';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import { InvitationListItem as InvitationListItemType } from '../../../store/typ
 import { AppState } from '../../../store/reducers/root.reducer';
 import { UserAvatar } from '../Avatars/UserAvatar';
 import EllipsesOverflowText from '../EllipsesOverflowText';
+import { listContactsAction } from '../../../store/actions/user.action';
 
 interface InvitationListItemProps {
   invitation: InvitationListItemType;
@@ -20,6 +21,10 @@ const InvitationListItem: FC<InvitationListItemProps> = ({ invitation }) => {
   const {
     invitation: { responseInvitation },
   } = useSelector((state: AppState) => state);
+
+  useEffect(() => {
+    if (responseInvitation.loading) dispatch(listContactsAction({}));
+  }, [responseInvitation]);
 
   const getInvitationPayload = () => {
     let invitationType;

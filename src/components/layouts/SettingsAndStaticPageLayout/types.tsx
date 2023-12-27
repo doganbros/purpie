@@ -2,27 +2,20 @@ import { ReactNode } from 'react';
 
 export interface MenuItem {
   key: string;
-  title: string;
-  value?: string;
+  label: string;
+  component?: ReactNode;
+  componentFunc?: (searchText?: string) => ReactNode;
   tabIndex?: number;
-  component: ReactNode;
+  searchableTexts?: string[];
 }
 
 export interface Menu {
-  id: number;
   key: string;
   label: string;
   labelNotVisible?: boolean;
   url: string;
-  items?: MenuItem[];
-  saveButton?: ReactNode;
-  avatarWidget?: ReactNode;
-  isEmpty?: boolean;
-  canDelete?: boolean;
-  deleteButton?: ReactNode;
-  deletePopup?: ReactNode;
-  showLeaveButton?: boolean;
-  leaveButton?: ReactNode;
-  leavePopup?: ReactNode;
+  header?: ReactNode;
+  action?: ReactNode;
   tabs?: { label: string; index: number }[];
+  items?: MenuItem[];
 }

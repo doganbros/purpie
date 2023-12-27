@@ -11,8 +11,10 @@ import {
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { errorResponseDoc } from 'helpers/error-response-doc';
@@ -28,7 +30,7 @@ import { ErrorTypes } from '../../../types/ErrorTypes';
 import { PostLikeService } from '../services/post-like.service';
 
 @Controller({ version: '1', path: 'post/like' })
-@ApiTags('post/like')
+@ApiTags('Post Like')
 export class PostLikeController {
   constructor(
     private readonly postService: PostService,
@@ -38,8 +40,11 @@ export class PostLikeController {
   @Post('create')
   @ValidationBadRequest()
   @ApiCreatedResponse({
-    description: 'User likes a post. Returns the like id',
-    schema: { type: 'int', example: 1 },
+    description: 'User likes a post.',
+  })
+  @ApiOperation({
+    summary: 'Create Post Like',
+    description: 'Create a post like or dislike with given parameters.',
   })
   @IsAuthenticated()
   @ApiNotFoundResponse({
@@ -49,6 +54,14 @@ export class PostLikeController {
       404,
       'Post not found or unauthorized',
       'POST_NOT_FOUND',
+    ),
+  })
+  @ApiForbiddenResponse({
+    description: 'Error thrown when the post is not allowed for reaction',
+    schema: errorResponseDoc(
+      403,
+      "This post doesn't allow reactions",
+      'POST_REACTION_NOT_ALLOWED',
     ),
   })
   async createPostLike(
@@ -74,13 +87,17 @@ export class PostLikeController {
       await this.postLikeService.updatePostLike(like, positive);
     } else await this.postLikeService.createPostLike(user.id, info);
 
-    return like?.id;
+    return 'OK';
   }
 
   @Get('list/:postId')
+  @ApiOperation({
+    summary: 'List Post Like',
+    description: 'List likes or dislikes of post belonging to the postId.',
+  })
   @ApiOkResponse({
     type: PostLikeListResponse,
-    description: 'User gets the likes belonging to the postId',
+    description: 'List post likes',
   })
   @ApiNotFoundResponse({
     description:
@@ -103,6 +120,10 @@ export class PostLikeController {
   }
 
   @Get('count/:postId')
+  @ApiOperation({
+    summary: 'Count Post Like',
+    description: 'Get the number of likes belonging to the postId.',
+  })
   @ApiNotFoundResponse({
     description:
       'Error thrown when the post is not found or user does not have the right to access',
@@ -113,7 +134,7 @@ export class PostLikeController {
     ),
   })
   @ApiOkResponse({
-    description: 'Get the number of likes belonging to the postId.',
+    description: 'Get count of post likes.',
     schema: { type: 'int', example: 15 },
   })
   @IsAuthenticated()
@@ -127,9 +148,12 @@ export class PostLikeController {
   }
 
   @Delete('remove/:postId')
+  @ApiOperation({
+    summary: 'Delete Post Like',
+    description: 'Unlike a post belonging to postId.',
+  })
   @ApiCreatedResponse({
-    description:
-      'User unlikes a post. Returns Created when some rows are affected and OK otherwise',
+    description: 'Unlikes a post',
     schema: { type: 'string', example: 'OK' },
   })
   @IsAuthenticated()

@@ -1,38 +1,45 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { User } from 'aws-sdk/clients/budgets';
+import { BasePostFeedList } from './post-list-feed.response';
 
-class PostCommentList {
+export class PostCommentResponse {
   @ApiProperty()
   id: number;
+
+  @ApiPropertyOptional()
+  parentId: number;
+
+  @ApiProperty()
+  userId: string;
+
+  @ApiProperty()
+  postId: string;
 
   @ApiProperty()
   comment: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   replyCount: number;
 
-  @ApiProperty({ nullable: true })
-  parentId: number;
+  @ApiPropertyOptional()
+  likesCount: number;
+
+  @ApiPropertyOptional()
+  liked: boolean;
+
+  @ApiProperty()
+  publishedInLiveStream: boolean;
 
   @ApiProperty()
   createdOn: Date;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   updatedOn: Date;
-
-  @ApiProperty()
-  edited: boolean;
-
-  @ApiProperty()
-  user: User;
-
-  @ApiProperty()
-  publishedInLiveStream: boolean;
 }
 
 export class PostCommentListResponse {
   @ApiProperty({ isArray: true })
-  data: PostCommentList;
+  data: PostCommentResponse;
 
   @ApiProperty()
   total: number;
@@ -70,4 +77,24 @@ export class PostLikeListResponse {
 
   @ApiProperty()
   skip: number;
+}
+
+export class PostFolderResponse {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  createdOn: Date;
+
+  @ApiPropertyOptional()
+  updatedOn: Date;
+
+  @ApiProperty()
+  postId: string;
+
+  @ApiProperty()
+  folderId: string;
+
+  @ApiProperty()
+  post: BasePostFeedList;
 }

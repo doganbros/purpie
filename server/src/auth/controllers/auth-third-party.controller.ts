@@ -10,13 +10,14 @@ import {
   InternalServerErrorException,
   Param,
   Post,
-  Req,
   Res,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiExcludeController,
+  ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiParam,
@@ -45,8 +46,9 @@ const {
   VERIFICATION_TOKEN_SECRET = '',
 } = process.env;
 
+@ApiExcludeController()
 @Controller({ path: 'auth/third-party', version: '1' })
-@ApiTags('auth-third-party')
+@ApiTags('Third Party Auth')
 export class AuthThirdPartyController {
   constructor(
     private authService: AuthService,
@@ -57,9 +59,10 @@ export class AuthThirdPartyController {
   @ApiParam({
     name: 'name',
     type: String,
+    enum: ['google', 'apple'],
   })
   @ApiOkResponse({
-    description: `User is redirected to a third-party to sign in.`,
+    description: `User is redirected to a third-party auth url to sign in.`,
   })
   async thirdPartyLogin(
     @Param() { name }: ThirdPartyLoginParams,
@@ -106,17 +109,25 @@ export class AuthThirdPartyController {
   @ApiParam({
     name: 'name',
     type: String,
+    enum: ['google', 'apple'],
   })
   @ApiOkResponse({
     type: UserProfile,
     description: `User signs in with a third-party. `,
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Error thrown when requested third party name is invalid.',
+    schema: errorResponseDoc(
+      500,
+      'Something went wrong while authenticating using "name"',
+      'THIRD_PARTY_AUTH_ERROR',
+    ),
   })
   @HttpCode(HttpStatus.OK)
   async authenticateByThirdParty(
     @Param() { name }: ThirdPartyLoginParams,
     @Body() body: AuthByThirdPartyDto,
     @Res({ passthrough: true }) res: Response,
-    @Req() req: Request,
   ) {
     let user: User | undefined;
 
@@ -144,15 +155,15 @@ export class AuthThirdPartyController {
             ...user.userRole,
           },
         };
-        await this.authService.setAccessTokens(
-          {
-            id: user.id,
-          },
-          res,
-          req,
-        );
+        const token = await this.authService.setAccessTokens({
+          id: user.id,
+        });
 
-        return userPayload;
+        return {
+          user: userPayload,
+          accessToken: token.accessToken,
+          refreshToken: token.refreshToken,
+        };
       }
       const {
         token,
@@ -176,15 +187,15 @@ export class AuthThirdPartyController {
             ...user!.userRole,
           },
         };
-        await this.authService.setAccessTokens(
-          {
-            id: userPayload.id,
-          },
-          res,
-          req,
-        );
+        const tokens = await this.authService.setAccessTokens({
+          id: userPayload.id,
+        });
 
-        return userPayload;
+        return {
+          user: userPayload,
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+        };
       }
       let userInfo;
       if (body.user) userInfo = JSON.parse(body.user);
@@ -225,16 +236,16 @@ export class AuthThirdPartyController {
     schema: errorResponseDoc(404, 'User not found', 'USER_NOT_FOUND'),
   })
   @ApiUnauthorizedResponse({
-    description: 'Error thrown when jwt used to verify the email is invalid',
+    description: 'Error thrown when JWT used to verify the email is invalid',
     schema: errorResponseDoc(
-      404,
-      'Email verification token is invalid',
+      401,
+      'Email confirmation JWT is invalid',
       'INVALID_JWT',
     ),
   })
   @ApiCreatedResponse({
     type: UserProfile,
-    description: `User verifies email received from inbox. `,
+    description: `User complete profile which created with third party auth register.`,
   })
   @ApiBody({
     type: CompleteProfileDto,
@@ -250,8 +261,6 @@ export class AuthThirdPartyController {
     )
     { email }: UserBasic,
     @Body() { token, userName }: CompleteProfileDto,
-    @Res({ passthrough: true }) res: Response,
-    @Req() req: Request,
   ) {
     const user = await this.authService.verifyUserEmail(email, userName, token);
 
@@ -264,14 +273,13 @@ export class AuthThirdPartyController {
         ...user.userRole,
       },
     };
-    await this.authService.setAccessTokens(
-      {
-        id: user.id,
-      },
-      res,
-      req,
-    );
+    const {
+      accessToken,
+      refreshToken,
+    } = await this.authService.setAccessTokens({
+      id: user.id,
+    });
 
-    return userPayload;
+    return { user: userPayload, accessToken, refreshToken };
   }
 }

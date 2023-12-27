@@ -17,9 +17,6 @@ const ChannelsToFollow: FC = () => {
   } = useSelector((state: AppState) => state);
   const [displayCount, setDisplayCount] = useState(SUGGESTION_AMOUNT_LESS);
 
-  if (!channelSuggestions.loading && channelSuggestions.data.length === 0)
-    return <Box height="0" />;
-
   return (
     <Box gap="small">
       <Box direction="row" align="center" justify="between">
@@ -47,7 +44,9 @@ const ChannelsToFollow: FC = () => {
       {channelSuggestions.loading && <Text size="small">Loading</Text>}
       {!channelSuggestions.loading &&
         (channelSuggestions.data.length === 0 ? (
-          <Text size="small">{t('ChannelsToFollow.noChannelsFound')}</Text>
+          <Text size="small" color="brand" weight={500}>
+            {t('ChannelsToFollow.noChannelsFound')}
+          </Text>
         ) : (
           channelSuggestions.data
             .slice(0, displayCount)

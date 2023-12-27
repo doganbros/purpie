@@ -2,6 +2,7 @@ import { Box, Text } from 'grommet';
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
 import GradientScroll from '../../../components/utils/GradientScroll';
 import { listContactsAction } from '../../../store/actions/user.action';
 import { AppState } from '../../../store/reducers/root.reducer';
@@ -15,6 +16,7 @@ const UserContacts: FC<{ userName: string }> = ({ userName }) => {
   const {
     user: { contacts },
   } = useSelector((state: AppState) => state);
+  const history = useHistory();
 
   useEffect(() => {
     dispatch(listContactsAction({ userName }));
@@ -39,6 +41,9 @@ const UserContacts: FC<{ userName: string }> = ({ userName }) => {
                 gap="small"
                 align="center"
                 width={{ min: '102px' }}
+                onClick={() =>
+                  history.push(`/user/${contact.contactUser.userName}`)
+                }
               >
                 <UserAvatar
                   id={contact.id}

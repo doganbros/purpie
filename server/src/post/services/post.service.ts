@@ -13,7 +13,6 @@ import { PostLike } from 'entities/PostLike.entity';
 import { PostTag } from 'entities/PostTag.entity';
 import { PostVideo } from 'entities/PostVideo.entity';
 import { PostView } from 'entities/PostView.entity';
-import { SavedPost } from 'entities/SavedPost.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { UserZone } from 'entities/UserZone.entity';
 import { booleanValue, tsqueryParam } from 'helpers/utils';
@@ -177,7 +176,11 @@ export class PostService {
       where: { createdById: userId, id: postId },
     });
 
-    if (!post) return null;
+    if (!post)
+      throw new NotFoundException(
+        ErrorTypes.POST_NOT_FOUND,
+        'Post not found or unauthorized',
+      );
 
     await this.postVideoRepository.delete({
       slug: post.slug,
@@ -251,15 +254,6 @@ export class PostService {
             .andWhere('user_post_like.positive = false')
             .andWhere('user_post_like.userId = :currentUserId'),
         'post_disliked',
-      )
-      .addSelect(
-        (sq) =>
-          sq
-            .select('count(*) > 0')
-            .from(SavedPost, 'user_saved_post')
-            .where('user_saved_post.postId = post.id')
-            .andWhere('user_saved_post.userId = :currentUserId'),
-        'post_saved',
       )
       .addSelect(
         (sq) =>
@@ -578,14 +572,18 @@ export class PostService {
 
     const post = await this.getPostById(currentUserId, featuredPost.id);
 
-    if (!post) return null;
+    if (!post)
+      throw new NotFoundException(
+        ErrorTypes.POST_NOT_FOUND,
+        'Post not found or unauthorized',
+      );
 
     result.post = post;
 
     return post;
   }
 
-  editPost(postId: string, userId: string, payload: EditPostDto) {
+  async editPost(postId: string, userId: string, payload: EditPostDto) {
     const editPayload: Partial<EditPostDto> = {};
 
     if (payload.title) editPayload.title = payload.title;
@@ -598,7 +596,7 @@ export class PostService {
         'Edit Payload empty',
       );
 
-    return this.postRepository.update(
+    await this.postRepository.update(
       { id: postId, createdById: userId },
       editPayload,
     );
@@ -611,6 +609,7 @@ export class PostService {
     const lastIntervalExists = await this.postViewRepository.findOne({
       where: {
         userId,
+        postId: payload.postId,
         createdOn: MoreThanOrEqual(
           dayjs()
             .subtract(+VIDEO_VIEW_COUNT_HOUR_INTERVAL, 'hours')

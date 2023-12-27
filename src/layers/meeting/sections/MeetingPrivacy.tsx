@@ -16,7 +16,7 @@ const MeetingPrivacy: FC = () => {
       },
     },
     zone: { selectedUserZone },
-    channel: { userChannels, selectedChannel },
+    channel: { userChannels, selectedChannelId },
   } = useSelector((state: AppState) => state);
 
   const { t } = useTranslation();
@@ -25,7 +25,7 @@ const MeetingPrivacy: FC = () => {
 
   return (
     <>
-      {!selectedChannel && (
+      {!selectedChannelId && (
         <>
           <SectionContainer label={t('MeetingPrivacy.joining')}>
             {!selectedUserZone ? (

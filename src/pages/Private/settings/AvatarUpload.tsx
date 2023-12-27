@@ -15,6 +15,7 @@ import { Close } from 'grommet-icons';
 import { apiURL } from '../../../config/http';
 import { theme } from '../../../config/app-config';
 import InitialsAvatar from '../../../components/utils/Avatars/InitialsAvatar';
+import imagePlaceholder from '../../../assets/banner-placeholder.jpg';
 
 interface AvatarUploadProps {
   onSubmit: any | ((arg0: File) => void);
@@ -35,13 +36,14 @@ const AvatarUpload: FC<AvatarUploadProps> = ({
 }) => {
   const [imgSrc, setImgSrc] = useState<string>();
   const { t } = useTranslation();
-
   const renderAvatar = () => {
-    if (src) {
-      return (
-        <Image fit="cover" src={`${apiURL}/${type}/display-photo/${src}`} />
-      );
+    if (src === 'default') {
+      return <Image fit="contain" src={imagePlaceholder} />;
     }
+    if (src) {
+      return <Image src={`${apiURL}/${type}/${src}`} />;
+    }
+
     return (
       <Box flex="grow" justify="center" align="center">
         <InitialsAvatar
@@ -53,6 +55,29 @@ const AvatarUpload: FC<AvatarUploadProps> = ({
         />
       </Box>
     );
+  };
+
+  const handleImageRounded = () => {
+    if (type === 'channelBackground') {
+      return '0px';
+    }
+    if (type === 'zone') {
+      return '20px';
+    }
+    return 'full';
+  };
+
+  const renderChooseProfileText = () => {
+    switch (type) {
+      case 'zone':
+        return t('settings.chooseZonePicture');
+      case 'channel':
+        return t('settings.chooseChannelPicture');
+      case 'channelBackground':
+        return t('settings.chooseChannelBackgroundPicture');
+      default:
+        return t('settings.chooseProfilePicture');
+    }
   };
 
   return (
@@ -85,7 +110,7 @@ const AvatarUpload: FC<AvatarUploadProps> = ({
       <Layer responsive={false}>
         <Box elevation="peach" round="20px">
           <Box pad="small" justify="between" direction="row">
-            <Text size="small">{t('settings.chooseProfilePicture')}</Text>
+            <Text size="small">{renderChooseProfileText()}</Text>
             <Close color="brand" size="18px" onClick={onDismiss} />
           </Box>
 
@@ -103,7 +128,7 @@ const AvatarUpload: FC<AvatarUploadProps> = ({
                 height={{ min: '276px', max: '276px' }}
                 alignSelf="center"
                 margin={{ bottom: 'small' }}
-                round={type === 'zone' ? '20px' : 'full'}
+                round={handleImageRounded()}
                 overflow="hidden"
               >
                 {imgSrc ? <Image fit="cover" src={imgSrc} /> : renderAvatar()}

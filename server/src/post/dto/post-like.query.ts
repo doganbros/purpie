@@ -1,10 +1,9 @@
 import { IsIn, IsOptional } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { PaginationQuery } from 'types/PaginationQuery';
 
 export class PostLikeQuery extends PaginationQuery {
-  @ApiProperty({
-    required: false,
+  @ApiPropertyOptional({
     enum: ['likes', 'dislikes'],
     description: "Get either post's likes or dislikes, default is likes",
   })

@@ -11,22 +11,24 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
-  Req,
   Res,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiBody,
   ApiCreatedResponse,
+  ApiExcludeController,
+  ApiExcludeEndpoint,
+  ApiForbiddenResponse,
   ApiHeader,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
-  getSchemaPath,
 } from '@nestjs/swagger';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { ValidationBadRequest } from 'src/utils/decorators/validation-bad-request.decorator';
 import { errorResponseDoc } from 'helpers/error-response-doc';
 import { hash } from 'helpers/utils';
@@ -58,15 +60,17 @@ import { ChangePasswordDto } from '../dto/change-password.dto';
 
 const { VERIFICATION_TOKEN_SECRET = '' } = process.env;
 
+@ApiExcludeController()
 @Controller({ path: 'auth', version: '1' })
-@ApiTags('auth')
+@ApiTags('Auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('register')
   @ApiCreatedResponse({
     type: UserBasic,
-    description: 'Registers user and returns basic details',
+    description:
+      'User register with requested payload and returns user basic details',
   })
   @ValidationBadRequest()
   async registerUser(
@@ -85,7 +89,7 @@ export class AuthController {
   })
   @ValidationBadRequest()
   @ApiNotFoundResponse({
-    description: "Error thrown when user's email or password is invalid ",
+    description: 'Error thrown when requested fields are invalid.',
     schema: errorResponseDoc(
       404,
       'Invalid username or password.',
@@ -96,27 +100,18 @@ export class AuthController {
     description: 'Error thrown when email is not yet verified',
     schema: errorResponseDoc(
       401,
-      'Invalid username or password.',
-      'ERROR_USERNAME_OR_PASSWORD',
-      {
-        user: {
-          schema: {
-            $ref: getSchemaPath(UserProfile),
-          },
-        },
-      },
+      'Email must be verified.',
+      'MUST_VERIFY_EMAIL',
     ),
   })
   @ApiOkResponse({
     type: UserProfile,
-    description: `Signs in user. If it contains a header subdomain, it will be validated. If user's email is not verified an unauthorized error will be thrown. `,
+    description: `Signs in user. If it contains a header subdomain, it will be validated. If user's email is not verified then unauthorized error will be thrown. `,
   })
   @HttpCode(HttpStatus.OK)
   async loginUser(
     @Body() loginUserDto: LoginUserDto,
     @Headers('app-subdomain') subdomain: string,
-    @Res({ passthrough: true }) res: Response,
-    @Req() req: Request,
   ) {
     if (subdomain)
       await this.authService.subdomainValidity(
@@ -168,62 +163,47 @@ export class AuthController {
         'Email must be verified',
       );
 
-    await this.authService.setAccessTokens(
-      {
-        id: user.id,
-      },
-      res,
-      req,
-    );
+    const {
+      accessToken,
+      refreshToken,
+    } = await this.authService.setAccessTokens({
+      id: user.id,
+    });
 
-    return userPayload;
+    return { user: userPayload, accessToken, refreshToken };
   }
 
   @Post('/logout')
   @IsAuthenticated([], { removeAccessTokens: true })
-  @ApiOkResponse({ schema: { type: 'string', example: 'OK' } })
-  @HttpCode(HttpStatus.OK)
-  async logout(
-    @CurrentUser() user: UserTokenPayload,
-    @Res({ passthrough: true }) res: Response,
-    @Req() req: Request,
-  ) {
+  @ApiOkResponse({
+    description: 'Ok code returned when logout successfully.',
+  })
+  async logout(@CurrentUser() user: UserTokenPayload) {
     await this.authService.removeRefreshToken(user.id, user.refreshTokenId!);
-
-    this.authService.removeAccessTokens(req, res);
-
-    return 'OK';
   }
 
   @Post('/initial-user')
+  @ApiExcludeEndpoint()
   @UseGuards(InitialUserGuard)
-  @ApiUnauthorizedResponse({
-    description: 'Error thrown when initial user has already been set',
-    schema: errorResponseDoc(
-      401,
-      'Initial user has been specified already',
-      'INITIAL_USER_SPECIFIED',
-    ),
-  })
-  async setInitialUser(
-    @Body() info: InitializeUserDto,
-    @Res({ passthrough: true }) res: Response,
-    @Req() req: Request,
-  ) {
-    return this.authService.initializeUser(info, res, req);
+  async setInitialUser(@Body() info: InitializeUserDto) {
+    return this.authService.initializeUser(info);
   }
 
   @Post('/verify-email')
   @ValidationBadRequest()
   @ApiNotFoundResponse({
-    description: 'Error thrown when user is not found',
-    schema: errorResponseDoc(404, 'User not found', 'USER_NOT_FOUND'),
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Error thrown when jw used to verify the email is invalid',
+    description: 'Error thrown when user is not found.',
     schema: errorResponseDoc(
       404,
-      'Email verification token is invalid',
+      "User with the email '<email>' doesn't exist",
+      'USER_NOT_FOUND',
+    ),
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Error thrown when used JWT to verify the email is invalid',
+    schema: errorResponseDoc(
+      401,
+      'Email confirmation JWT is invalid',
       'INVALID_JWT',
     ),
   })
@@ -250,27 +230,35 @@ export class AuthController {
     return { fullName: user.fullName, email: user.email };
   }
 
-  @Post('resend-mail-verification-token/:userId')
+  @Post('resend-verification-mail/:userId')
   @ApiCreatedResponse({
-    type: UserBasic,
-    description: 'Basic information about the user the email was sent to',
+    description: 'Verification email sent to requested email address',
   })
   @ApiNotFoundResponse({
     description: 'Error thrown when user is not found',
     schema: errorResponseDoc(404, 'User not found', 'USER_NOT_FOUND'),
   })
+  @ApiBadRequestResponse({
+    description: 'Error thrown when user has already verified email address.',
+    schema: errorResponseDoc(
+      400,
+      'User already registered',
+      'USER_ALREADY_REGISTERED',
+    ),
+  })
   async resendMailVerificationToken(
     @Param('userId', ParseUUIDPipe) userId: string,
+    @Res() res: Response,
   ) {
     const userInfo = await this.authService.verifyResendMailVerificationToken(
       userId,
     );
 
     await this.authService.sendAccountVerificationMail(userInfo);
-    return userInfo.user;
+    return res.status(201);
   }
 
-  @Post('/reset-password-request')
+  @Post('/request-reset-password')
   @ApiCreatedResponse({
     schema: { type: 'string' },
     description: `User makes a password reset request. The email received is sent back.`,
@@ -284,7 +272,10 @@ export class AuthController {
     ),
   })
   @ValidationBadRequest()
-  async resetPasswordRequest(@Body() payload: ResetPasswordRequestDto) {
+  async resetPasswordRequest(
+    @Body() payload: ResetPasswordRequestDto,
+    @Res() res: Response,
+  ) {
     const user = await this.authService.getUserByEmail(payload.email);
 
     if (!user)
@@ -307,20 +298,19 @@ export class AuthController {
       token,
     };
     await this.authService.sendResetPasswordMail(userBasicWithToken);
-    return user.email;
+    return res.status(201);
   }
 
   @Put('/reset-password')
   @ApiCreatedResponse({
-    description: 'User makes a password reset.',
-    schema: { type: 'string', example: 'OK' },
+    description: 'User reset password successfully.',
   })
   @ApiUnauthorizedResponse({
-    description: 'Error thrown when jwt used to verify the email is invalid',
+    description: 'Error thrown when JWT used to reset password is invalid',
     schema: errorResponseDoc(
       404,
       'Password reset token is invalid',
-      'INVALID_JWT',
+      'INVALID_PASSWORD_RESET_TOKEN',
     ),
   })
   @ValidationBadRequest()
@@ -339,6 +329,7 @@ export class AuthController {
       email: string;
     },
     @Body() { password, token }: ResetPasswordDto,
+    @Res() res: Response,
   ) {
     const user = await this.authService.getUserByEmailAndResetPasswordToken(
       email,
@@ -351,29 +342,36 @@ export class AuthController {
 
     await user.save();
 
-    return 'OK';
+    return res.status(201);
   }
 
   @Put('/change-password')
   @ApiCreatedResponse({
-    description: 'User changes a password for user.',
-    schema: { type: 'string', example: 'OK' },
+    description: 'User changes password successfully.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Error thrown when requested passwords are not match',
+    schema: errorResponseDoc(
+      400,
+      'New password and confirm passwords needs to be same.',
+      'PASSWORDS_NOT_MATCH',
+    ),
+  })
+  @ApiForbiddenResponse({
+    description: 'Error thrown when current password is invalid',
+    schema: errorResponseDoc(
+      403,
+      'User current password is invalid.',
+      'CURRENT_PASSWORD_NOT_CORRECT',
+    ),
   })
   @ValidationBadRequest()
   @IsAuthenticated()
   async changePassword(
     @CurrentUser() user: UserTokenPayload,
     @Body() changePasswordDto: ChangePasswordDto,
-    @Res({ passthrough: true }) res: Response,
-    @Req() req: Request,
   ) {
-    const result = await this.authService.changePassword(
-      user.id,
-      changePasswordDto,
-    );
-
-    if (result) this.authService.removeAccessTokens(req, res);
-
+    await this.authService.changePassword(user.id, changePasswordDto);
     return 'OK';
   }
 

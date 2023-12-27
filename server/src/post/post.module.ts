@@ -9,7 +9,6 @@ import { PostVideo } from 'entities/PostVideo.entity';
 import { PostView } from 'entities/PostView.entity';
 import { UserChannel } from 'entities/UserChannel.entity';
 import { FeaturedPost } from 'entities/FeaturedPost.entity';
-import { SavedPost } from 'entities/SavedPost.entity';
 import { User } from 'entities/User.entity';
 import { PostController } from './controllers/post.controller';
 import { PostListener } from './listeners/post.listener';
@@ -20,10 +19,8 @@ import { FolderService } from './services/folder.service';
 import { PostCommentService } from './services/post-comment.service';
 import { PostCommentController } from './controllers/post-comment.controller';
 import { PostLikeService } from './services/post-like.service';
-import { PostSavedService } from './services/post-saved.service';
 import { PostFolderController } from './controllers/post-folder.controller';
 import { PostLikeController } from './controllers/post-like.controller';
-import { PostSavedController } from './controllers/post-saved.controller';
 import { UserLogModule } from '../log/user-log.module';
 
 @Module({
@@ -37,7 +34,6 @@ import { UserLogModule } from '../log/user-log.module';
       PostComment,
       UserChannel,
       PostCommentLike,
-      SavedPost,
       PostVideo,
       Notification,
       PostFolder,
@@ -50,7 +46,6 @@ import { UserLogModule } from '../log/user-log.module';
     PostCommentController,
     PostFolderController,
     PostLikeController,
-    PostSavedController,
   ],
   providers: [
     PostService,
@@ -58,7 +53,6 @@ import { UserLogModule } from '../log/user-log.module';
     FolderService,
     PostCommentService,
     PostLikeService,
-    PostSavedService,
   ],
   exports: [PostService, FolderService],
 })

@@ -12,8 +12,10 @@ import {
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
+  ApiExcludeEndpoint,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -24,10 +26,12 @@ import { Post as PostEntity } from 'entities/Post.entity';
 import { IsAuthenticated } from 'src/auth/decorators/auth.decorator';
 import {
   CurrentUser,
+  CurrentUserMembership,
   CurrentUserProfile,
 } from 'src/auth/decorators/current-user.decorator';
 import {
   ConferenceUser,
+  UserMembership,
   UserProfile,
   UserTokenPayload,
 } from 'src/auth/interfaces/user.interface';
@@ -49,21 +53,29 @@ import { PostReaction } from '../../../entities/PostReaction.entity';
 import { UserChannel } from '../../../entities/UserChannel.entity';
 import { defaultPostSettings } from '../../../entities/data/default-post-settings';
 import { defaultPrivacyConfig } from '../../../entities/data/default-privacy-config';
+import { ErrorTypes } from '../../../types/ErrorTypes';
+import { generateMeetingName } from '../../../helpers/base-meeting-names';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+const { NODE_ENV } = process.env;
+
 @Controller({ path: 'meeting', version: '1' })
-@ApiTags('meeting')
+@ApiTags('Meeting')
 export class MeetingController {
   constructor(private meetingService: MeetingService) {}
 
   @Post('create')
-  @IsAuthenticated([], { injectUserProfile: true })
+  @IsAuthenticated([], { injectUserProfile: true, injectUserMembership: true })
   @ValidationBadRequest()
-  @ApiCreatedResponse({
+  @ApiOperation({
+    summary: 'Create Meeting',
     description:
-      'User creates a new meeting. A meeting url is returned when meeting starts now else the id of the meeting is returned',
+      'User creates a new meeting. A meeting url is returned when meeting starts now else the id of the meeting is returned.',
+  })
+  @ApiCreatedResponse({
+    description: 'User creates a new meeting.',
     schema: {
       oneOf: [
         { type: 'string', example: 'https://meet.jit.si/ab1-3a2-4vs' },
@@ -71,10 +83,27 @@ export class MeetingController {
       ],
     },
   })
+  @ApiBadRequestResponse({
+    description:
+      'Error thrown when user membership is insufficient to create new meeting.',
+    schema: errorResponseDoc(
+      400,
+      'Your meeting create operation failed due to insufficient membership.',
+      ErrorTypes.INSUFFICIENT_MEMBERSHIP,
+    ),
+  })
   async createMeeting(
     @Body() createMeetingInfo: CreateMeetingDto,
     @CurrentUserProfile() user: UserProfile,
+    @CurrentUserMembership() userMembership: UserMembership,
   ) {
+    if (NODE_ENV !== 'development')
+      await this.meetingService.validateCreateMeeting(
+        user.id,
+        userMembership,
+        createMeetingInfo.liveStream,
+      );
+
     const { channelId, timeZone } = createMeetingInfo;
 
     const {
@@ -90,7 +119,7 @@ export class MeetingController {
       privacyConfig.joinLinkExpiryAsHours;
 
     const meetingPayload: Partial<PostEntity> = {
-      title: createMeetingInfo.title || 'Untitled Meeting',
+      title: createMeetingInfo.title || generateMeetingName(),
       description: createMeetingInfo.description,
       type: 'meeting',
       startDate: createMeetingInfo.startDate
@@ -192,6 +221,10 @@ export class MeetingController {
   }
 
   @Get('join-link/:slug')
+  @ApiOperation({
+    summary: 'Get Join Link',
+    description: 'Meeting link with requested slug will be returned.',
+  })
   @ApiNotFoundResponse({
     description: "Error thrown is meeting doesn't exist",
     schema: errorResponseDoc(404, 'Meeting not found', 'MEETING_NOT_FOUND'),
@@ -209,6 +242,10 @@ export class MeetingController {
         ),
       ],
     },
+  })
+  @ApiOkResponse({
+    description: 'Meeting link with requested slug will returned',
+    schema: { type: 'string', example: 'https://meet.jit.si/ab1-3a2-4vs' },
   })
   @IsAuthenticated([], { injectUserProfile: true })
   async getMeetingJoinLink(
@@ -232,7 +269,7 @@ export class MeetingController {
     const userConfig = await this.meetingService.getCurrentUserConfig(user.id);
 
     const meetingToken = await this.meetingService.generateMeetingToken(
-      meeting,
+      meeting.slug,
       user,
       meeting.createdById === user.id,
       userConfig
@@ -244,6 +281,11 @@ export class MeetingController {
   }
 
   @Get('join/:token')
+  @ApiOperation({
+    summary: 'Join Meeting',
+    description: 'User redirected to meeting url with token parameter',
+  })
+  @ApiOkResponse({ description: 'User redirected to meeting url' })
   @ApiNotFoundResponse({
     description:
       "Error thrown is meeting doesn't exist or current user doesn't have the priviledge to join",
@@ -297,15 +339,31 @@ export class MeetingController {
     description: 'User loads meeting configuration',
     type: MeetingConfig,
   })
+  @ApiNotFoundResponse({
+    description: 'Error thrown when the user meeting config not found',
+    schema: errorResponseDoc(
+      404,
+      'User Meeting configuration not found',
+      'MEETING_CONFIG_NOT_FOUND',
+    ),
+  })
+  @ApiOperation({
+    summary: 'Get User Config',
+    description: 'User loads meeting configuration.',
+  })
   @IsAuthenticated()
   async getCurrentUserMeetingConfig(@CurrentUser() user: UserTokenPayload) {
     const result = await this.meetingService.getCurrentUserConfig(user.id);
 
     if (!result)
-      throw new NotFoundException('User Meeting configuration not found');
+      throw new NotFoundException(
+        ErrorTypes.MEETING_CONFIG_NOT_FOUND,
+        'User Meeting configuration not found',
+      );
     return result;
   }
 
+  @ApiExcludeEndpoint()
   @Get('logs/list/:meetingSlug')
   @ApiOkResponse({
     description: 'User gets meeting logs',
@@ -319,6 +377,7 @@ export class MeetingController {
     return this.meetingService.getMeetingLogs(user.id, meetingSlug, query);
   }
 
+  @ApiExcludeEndpoint()
   @Get('recordings/list/:meetingSlug')
   @ApiOkResponse({
     description: 'User gets meeting recordings',
@@ -337,6 +396,7 @@ export class MeetingController {
     return this.meetingService.getMeetingRecordingList(meetingSlug, query);
   }
 
+  @ApiExcludeEndpoint()
   @Post('/events/:identifier/:eventName')
   @ApiCreatedResponse({
     description:
@@ -361,6 +421,7 @@ export class MeetingController {
     }
   }
 
+  @ApiExcludeEndpoint()
   @Post('/client/verify')
   @ApiCreatedResponse({
     description:
@@ -386,6 +447,7 @@ export class MeetingController {
     return 'OK';
   }
 
+  @ApiExcludeEndpoint()
   @Get('conference/info')
   @ApiOkResponse({
     description: 'Get current conference information',

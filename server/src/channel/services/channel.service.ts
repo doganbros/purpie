@@ -45,6 +45,17 @@ export class ChannelService {
     private mailService: MailService,
   ) {}
 
+  async validateCreateChannel(userId: string, maxChannelCount: number) {
+    const channelCount = await this.userChannelRepository.count({
+      where: { userId },
+    });
+    if (channelCount >= maxChannelCount)
+      throw new BadRequestException(
+        ErrorTypes.INSUFFICIENT_MEMBERSHIP,
+        'Your channel create operation failed due to insufficient membership.',
+      );
+  }
+
   async createChannel(
     userId: string,
     userZoneId: string,
@@ -305,7 +316,7 @@ export class ChannelService {
     );
   }
 
-  async validateInvitationResponse(invitationId: number, email: string) {
+  async validateInvitationResponse(invitationId: string, email: string) {
     return this.invitationRepository.findOne({
       where: {
         email,

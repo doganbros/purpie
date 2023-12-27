@@ -117,7 +117,13 @@ const Contacts: FC = () => {
       ) : (
         <Box pad={{ vertical: 'medium' }} gap="medium">
           <Box direction="row" justify="between" align="center">
-            <Text weight="bold">{t('common.contacts')}</Text>
+            <Text weight="bold">
+              {t('common.contacts')}
+              <Text
+                size="small"
+                color="status-disabled"
+              >{`(${contacts.total})`}</Text>
+            </Text>
             {searchContact()}
           </Box>
           <InfiniteScroll

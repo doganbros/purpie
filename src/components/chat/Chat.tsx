@@ -1,4 +1,4 @@
-import { Box, Text } from 'grommet';
+import { Box, Image, Text } from 'grommet';
 import { nanoid } from 'nanoid';
 import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
@@ -25,6 +25,7 @@ import PlanMeetingTheme from '../../layers/meeting/custom-theme';
 import { errorResponseMessage, getChatRoomName } from '../../helpers/utils';
 import { http } from '../../config/http';
 import PurpieLogoAnimated from '../../assets/purpie-logo/purpie-logo-animated';
+import NoMessage from '../../assets/chat/no-message.svg';
 
 export interface ChatInfo {
   typingUsers: User[];
@@ -413,78 +414,98 @@ const Chat: React.FC<Props> = ({
             height="calc(100vh - 500px)"
             id={containerId}
           >
-            <InfiniteScroll
-              height="100%"
-              dataLength={messages.length}
-              inverse
-              hasMore={hasMore}
-              next={fetchMessages}
-              loader={
-                <PurpieLogoAnimated width={50} height={50} color="#9060EB" />
-              }
-              scrollableTarget={containerId}
-            >
-              {messages?.map((message) => {
-                const isCurrentUserMsg =
-                  currentUser?.id === message.createdBy.id;
-
-                const menuItems = [];
-                if (
-                  isCurrentUserMsg &&
-                  typeof message.identifier === 'string' &&
-                  !message.deleted
-                ) {
-                  if (canEdit)
-                    menuItems.push({
-                      label: t('common.edit'),
-                      onClick: () => {
-                        setEditedMessage(message);
-                      },
-                    });
-                  if (canDelete)
-                    menuItems.push({
-                      label: t('common.delete'),
-                      onClick: async () => {
-                        // eslint-disable-next-line no-alert
-                        const proceed = window.confirm(t('Chat.deleteConfirm'));
-                        if (proceed) {
-                          handleDeleteMsg(message);
-                        }
-                      },
-                    });
+            {messages?.length > 0 ? (
+              <InfiniteScroll
+                height="100%"
+                dataLength={messages.length}
+                inverse
+                hasMore={hasMore}
+                next={fetchMessages}
+                loader={
+                  <PurpieLogoAnimated width={50} height={50} color="#9060EB" />
                 }
-                if (canReply && !message.deleted)
-                  menuItems.push({
-                    label: t('common.reply'),
-                    onClick: () => {
-                      setRepliedMessage(message);
-                    },
-                  });
-                const item = (
-                  <Box
-                    key={message.identifier}
-                    alignSelf="center"
-                    align="center"
-                    width="100%"
-                  >
-                    {!lastDate ||
-                    dayjs(message.createdOn)
-                      .startOf('day')
-                      .diff(dayjs(lastDate).startOf('day'), 'day') > 0
-                      ? renderDayItem(message)
-                      : null}
-                    <MessageItem
-                      key={message.id}
-                      message={message}
-                      id={message.id}
-                      menuItems={menuItems}
-                    />
-                  </Box>
-                );
-                lastDate = message.createdOn;
-                return item;
-              })}
-            </InfiniteScroll>
+                scrollableTarget={containerId}
+              >
+                {messages?.map((message) => {
+                  const isCurrentUserMsg =
+                    currentUser?.id === message.createdBy.id;
+
+                  const menuItems = [];
+                  if (
+                    isCurrentUserMsg &&
+                    typeof message.identifier === 'string' &&
+                    !message.deleted
+                  ) {
+                    if (canEdit)
+                      menuItems.push({
+                        label: t('common.edit'),
+                        onClick: () => {
+                          setEditedMessage(message);
+                        },
+                      });
+                    if (canDelete)
+                      menuItems.push({
+                        label: t('common.delete'),
+                        onClick: async () => {
+                          // eslint-disable-next-line no-alert
+                          const proceed = window.confirm(
+                            t('Chat.deleteConfirm')
+                          );
+                          if (proceed) {
+                            handleDeleteMsg(message);
+                          }
+                        },
+                      });
+                  }
+                  if (canReply && !message.deleted)
+                    menuItems.push({
+                      label: t('common.reply'),
+                      onClick: () => {
+                        setRepliedMessage(message);
+                      },
+                    });
+                  const item = (
+                    <Box
+                      key={message.identifier}
+                      alignSelf="center"
+                      align="center"
+                      width="100%"
+                    >
+                      {!lastDate ||
+                      dayjs(message.createdOn)
+                        .startOf('day')
+                        .diff(dayjs(lastDate).startOf('day'), 'day') > 0
+                        ? renderDayItem(message)
+                        : null}
+                      <MessageItem
+                        key={message.id}
+                        message={message}
+                        id={message.id}
+                        menuItems={menuItems}
+                      />
+                    </Box>
+                  );
+                  lastDate = message.createdOn;
+                  return item;
+                })}
+              </InfiniteScroll>
+            ) : (
+              <Box height="100%" align="center" justify="center">
+                <Image src={NoMessage} width={339} height={261} />
+                <Box
+                  justify="center"
+                  align="center"
+                  margin={{
+                    top: '34px',
+                    horizontal: '36px',
+                  }}
+                >
+                  <Text size="small" color="status-disabled" textAlign="center">
+                    {t('Chat.noMessages')}
+                  </Text>
+                </Box>
+              </Box>
+            )}
           </ScrollContainer>
           <MessageBoxContainer pad="small">
             <MessageBox

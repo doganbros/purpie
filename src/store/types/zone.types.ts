@@ -171,6 +171,7 @@ export interface ZoneState {
     loading: boolean;
     error: ResponseError | null;
   };
+  createZoneError: ResponseError | null;
 }
 
 export type ZoneActionParams =
