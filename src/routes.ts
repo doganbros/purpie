@@ -23,7 +23,7 @@ import Register from './pages/Public/Register';
 
 interface AppRoute {
   id: string;
-  path: string;
+  path: string | string[];
   component:
     | React.ComponentType<RouteComponentProps<any>>
     | React.ComponentType<any>;
@@ -139,7 +139,7 @@ export const privateRoutes: Array<AppRoute> = [
   },
   {
     id: nanoid(),
-    path: '/settings',
+    path: ['/settings', '/settings/:page'],
     component: Settings,
     description: 'Settings',
   },
