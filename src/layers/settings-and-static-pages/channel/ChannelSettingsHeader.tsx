@@ -178,7 +178,7 @@ const ChannelSettingsHeader: FC<ChannelSettingsHeaderProps> = ({
         round="small"
         pad={{ bottom: '20px' }}
       >
-        {selectedUserChannel && (
+        {selectedUserChannel && selectedUserChannel.channelRole.canEdit && (
           <>
             <Box
               width={WIDTH}
@@ -200,7 +200,7 @@ const ChannelSettingsHeader: FC<ChannelSettingsHeaderProps> = ({
 
         <Box direction="row" gap="small" className="z-index--1">
           {selectedUserChannel && (
-            <Stack anchor="top-right" onClick={() => setShowAvatarUpload(true)}>
+            <Stack anchor="top-right">
               <Box
                 round="full"
                 border={{ color: 'light-2', size: 'medium' }}
@@ -214,9 +214,16 @@ const ChannelSettingsHeader: FC<ChannelSettingsHeaderProps> = ({
                   src={selectedUserChannel?.channel.displayPhoto}
                 />
               </Box>
-              <Box background="focus" round pad="xsmall">
-                <Camera size="small" />
-              </Box>
+              {selectedUserChannel.channelRole.canEdit && (
+                <Box
+                  onClick={() => setShowAvatarUpload(true)}
+                  background="focus"
+                  round
+                  pad="xsmall"
+                >
+                  <Camera size="small" />
+                </Box>
+              )}
             </Stack>
           )}
           <DropButton
