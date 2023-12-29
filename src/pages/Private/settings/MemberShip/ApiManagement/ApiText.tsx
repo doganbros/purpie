@@ -1,5 +1,6 @@
 import { Box, Button, FormField, Text } from 'grommet';
 import React, { useState } from 'react';
+import { useResponsive } from '../../../../../hooks/useResponsive';
 
 interface ApiTextProps {
   text: string;
@@ -7,6 +8,8 @@ interface ApiTextProps {
   copyActive: boolean;
 }
 const ApiText: React.FC<ApiTextProps> = ({ text, title, copyActive }) => {
+  const size = useResponsive();
+
   const [isCopied, setIsCopied] = useState(false);
   const handleCopy = () => {
     setIsCopied(true);
@@ -18,7 +21,7 @@ const ApiText: React.FC<ApiTextProps> = ({ text, title, copyActive }) => {
       <Text size="medium" weight={500}>
         {title}
       </Text>
-      <Box fill="horizontal">
+      <Box fill="horizontal" direction="column" align="start" gap="xxsmall">
         <FormField>
           <Box
             direction="row"
@@ -36,7 +39,7 @@ const ApiText: React.FC<ApiTextProps> = ({ text, title, copyActive }) => {
             >
               {text}
             </Text>
-            {copyActive && (
+            {size !== 'small' && copyActive && (
               <Box width="xsmall" justify="center" align="center">
                 <Button
                   onClick={handleCopy}
@@ -48,6 +51,14 @@ const ApiText: React.FC<ApiTextProps> = ({ text, title, copyActive }) => {
             )}
           </Box>
         </FormField>
+        {size === 'small' && copyActive && (
+          <Button
+            onClick={handleCopy}
+            label={isCopied ? 'Copied' : 'Copy'}
+            size="small"
+            primary
+          />
+        )}
       </Box>
     </Box>
   );

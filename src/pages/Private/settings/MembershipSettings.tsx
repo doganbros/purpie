@@ -7,10 +7,12 @@ import { AppState } from '../../../store/reducers/root.reducer';
 import MembershipCard from '../../../layers/settings-and-static-pages/MembershipCard';
 import { getCustomerPortal } from '../../../store/services/membership.service';
 import { Menu } from '../../../components/layouts/SettingsAndStaticPageLayout/types';
+import { useResponsive } from '../../../hooks/useResponsive';
 
 const MembershipSettings = (): Menu => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const size = useResponsive();
 
   const { memberships, userMembership } = useSelector(
     (state: AppState) => state.membership
@@ -66,7 +68,7 @@ const MembershipSettings = (): Menu => {
         label: t('settings.membershipPlans'),
         component: (
           <Box
-            direction="row"
+            direction={size === 'small' ? 'column' : 'row'}
             justify="between"
             align="center"
             round="small"

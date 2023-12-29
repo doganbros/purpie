@@ -3,6 +3,7 @@ import { Box, Button, Text } from 'grommet';
 import { useTranslation } from 'react-i18next';
 import { Membership } from '../../store/types/membership.types';
 import { createPaymentSession } from '../../store/services/membership.service';
+import { useResponsive } from '../../hooks/useResponsive';
 
 interface MembershipCardProps {
   membership: Membership;
@@ -16,6 +17,7 @@ const MembershipCard: FC<MembershipCardProps> = ({
   userMembershipIndex,
 }) => {
   const { t } = useTranslation();
+  const size = useResponsive();
 
   const getActionLabel = () => {
     if (index < userMembershipIndex)
@@ -43,7 +45,7 @@ const MembershipCard: FC<MembershipCardProps> = ({
       round="small"
       justify="center"
       align="center"
-      pad="small"
+      pad={size === 'small' ? 'medium' : 'small'}
     >
       <Text size="medium" weight="bold">
         {membership.type}
