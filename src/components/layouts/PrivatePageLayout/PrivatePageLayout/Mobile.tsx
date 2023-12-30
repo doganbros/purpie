@@ -119,7 +119,7 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
           }}
         >
           <Box fill>
-            <Box direction="row" pad="medium">
+            <Box direction="row" pad="small">
               <Button
                 icon={<Close size="medium" color="dark-1" />}
                 onClick={() => {
@@ -127,7 +127,7 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
                 }}
               />
             </Box>
-            <Box fill overflow="auto" pad="large">
+            <Box fill overflow="auto" pad="small">
               <Box flex="grow" height="min-content">
                 {rightComponent}
               </Box>

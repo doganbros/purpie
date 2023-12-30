@@ -82,7 +82,7 @@ const ZoneSettingsHeader: FC<ZoneSettingsHeaderProps> = ({
   return (
     <Box direction="row" gap="small" align="center">
       {selectedZone && (
-        <Stack anchor="top-right" onClick={() => setShowAvatarUpload(true)}>
+        <Stack anchor="top-right">
           <Box
             round={{ size: 'medium' }}
             border={{ color: 'light-2', size: 'medium' }}
@@ -96,9 +96,16 @@ const ZoneSettingsHeader: FC<ZoneSettingsHeaderProps> = ({
               src={selectedZone!.zone.displayPhoto}
             />
           </Box>
-          <Box background="focus" round pad="xsmall">
-            <Camera size="small" />
-          </Box>
+          {selectedZone.zoneRole.canEdit && (
+            <Box
+              onClick={() => setShowAvatarUpload(true)}
+              background="focus"
+              round
+              pad="xsmall"
+            >
+              <Camera size="small" />
+            </Box>
+          )}
         </Stack>
       )}
       <DropButton
