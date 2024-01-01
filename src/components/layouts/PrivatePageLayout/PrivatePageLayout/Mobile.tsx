@@ -56,7 +56,7 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
         </Box>
       </Header>
       {topComponent && (
-        <ExtendedBox pad={{ horizontal: 'large' }}>
+        <ExtendedBox pad={{ horizontal: 'medium' }}>
           <ExtendedBox
             direction="row"
             align="center"
@@ -69,7 +69,7 @@ const Mobile: FC<Props> = ({ children, topComponent, rightComponent }) => {
           <Divider marginBottom="small" />
         </ExtendedBox>
       )}
-      <Box pad="large" fill overflow="auto">
+      <Box pad="medium" fill overflow="auto">
         <ExtendedBox minHeight="min-content">{children}</ExtendedBox>
       </Box>
       {showLeftSidebar && (

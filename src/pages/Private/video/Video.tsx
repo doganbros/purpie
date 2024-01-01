@@ -48,6 +48,7 @@ import ZonesToJoin from '../timeline/ZonesToJoin';
 import Notifications from '../timeline/Notifications';
 import { useSelectedChannel } from '../../../hooks/useSelectedChannel';
 import ShowMoreLessText from '../../../components/utils/ShowMoreLessText';
+import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
 
 interface RouteParams {
   id: string;
@@ -289,15 +290,22 @@ const Video: FC = () => {
           <Box>
             <Box justify="between" direction="row">
               <Box>
-                <Text weight="bold" size="large">
-                  {data.title}
-                </Text>
+                <EllipsesOverflowText
+                  maxWidth={size === 'small' ? '272px' : '480px'}
+                  weight="bold"
+                  size="large"
+                  text={data.title}
+                />
               </Box>
               <Text weight="bold">{dayjs(data.createdOn).fromNow()}</Text>
             </Box>
             <Box justify="between" align="center" direction="row">
               {(data?.type === 'video' && (
-                <Box direction="row" align="center" gap="medium">
+                <Box
+                  gap={size === 'small' ? 'xsmall' : 'medium'}
+                  align={size === 'small' ? 'start' : 'center'}
+                  direction={size === 'small' ? 'column' : 'row'}
+                >
                   {data?.channel?.zone && (
                     <ZoneBadge
                       name={data.channel.zone.name}
