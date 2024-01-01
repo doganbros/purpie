@@ -27,9 +27,11 @@ export const UserAvatar: FC<AvatarItemProps> = ({
 }) => {
   const {
     chat: { usersOnline },
+    auth: { user },
   } = useSelector((state: AppState) => state);
 
-  const userOnline = hasOnline && usersOnline.includes(id);
+  const userOnline = hasOnline && usersOnline.includes(id) && user?.id !== id;
+
   return (
     <ExtendedBox position="relative">
       {src ? (

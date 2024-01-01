@@ -74,7 +74,7 @@ const CommentList: FC<CommentsProps> = ({ postId }) => {
       ) : (
         <InfiniteScroll items={comments.data}>
           {(item: typeof comments.data[0]) => (
-            <Stack key={item.id} interactiveChild="first">
+            <Stack key={item.id}>
               <Box
                 pad={{ vertical: 'small', right: 'small', left: 'medium' }}
                 margin={{ vertical: 'small', left: 'medium' }}
@@ -92,6 +92,7 @@ const CommentList: FC<CommentsProps> = ({ postId }) => {
                 </Box>
               </Box>
               <UserAvatar
+                hasOnline={false}
                 id={item.user.id}
                 name={item.user.fullName}
                 src={item.user.displayPhoto}

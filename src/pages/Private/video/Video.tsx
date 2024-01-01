@@ -136,46 +136,55 @@ const Video: FC = () => {
     if (data) {
       if (data.streaming || data.liveStream)
         return (
-          <Chat medium="post" id={params.id} handleTypingEvent canAddFile />
+          <Box
+            width={{ max: '100%' }}
+            height="500px"
+            background="white"
+            round="large"
+            pad={{ bottom: 'medium' }}
+            elevation="indigo"
+          >
+            <Chat medium="post" id={params.id} handleTypingEvent canAddFile />
+          </Box>
         );
-      return (
-        <Box>
-          <Box pad="medium">
-            <SearchBar />
-          </Box>
-          {selectedChannel && <ChannelShortInfo />}
-          <Box pad="medium" gap="medium">
-            {selectedChannel &&
-              selectedChannel.id &&
-              selectedChannel.channelRole.canInvite && (
-                <Box gap="medium">
-                  <InviteToChannel channel={selectedChannel} />
-                  <InviteToZone
-                    zone={userZones?.find(
-                      (z) => z.zone.id === selectedChannel?.channel.zoneId
-                    )}
-                  />
-                </Box>
+      if (size !== 'small')
+        return (
+          <Box>
+            <Box pad="medium">
+              <SearchBar />
+            </Box>
+            {selectedChannel && <ChannelShortInfo />}
+            <Box pad="medium" gap="medium">
+              {selectedChannel &&
+                selectedChannel.id &&
+                selectedChannel.channelRole.canInvite && (
+                  <Box gap="medium">
+                    <InviteToChannel channel={selectedChannel} />
+                    <InviteToZone
+                      zone={userZones?.find(
+                        (z) => z.zone.id === selectedChannel?.channel.zoneId
+                      )}
+                    />
+                  </Box>
+                )}
+              {!selectedChannel && <InvitationList />}
+              {!selectedChannel &&
+                !invitations.loading &&
+                invitations.data.length !== 0 && <Divider />}
+              {selectedChannel && (
+                <ChannelMembers channelId={selectedChannel.channel.id} />
               )}
-            {!selectedChannel && <InvitationList />}
-            {!selectedChannel &&
-              !invitations.loading &&
-              invitations.data.length !== 0 && <Divider />}
-            {selectedChannel && (
-              <ChannelMembers channelId={selectedChannel.channel.id} />
-            )}
-            {selectedChannel && <Divider />}
-            <ChannelsToFollow />
-            {!channelSuggestions.loading &&
-              channelSuggestions.data.length !== 0 && <Divider />}
-            <ZonesToJoin />
-            {!zoneSuggestions.loading && zoneSuggestions.data.length !== 0 && (
-              <Divider />
-            )}
-            <Notifications />
+              {selectedChannel && <Divider />}
+              <ChannelsToFollow />
+              {!channelSuggestions.loading &&
+                channelSuggestions.data.length !== 0 && <Divider />}
+              <ZonesToJoin />
+              {!zoneSuggestions.loading &&
+                zoneSuggestions.data.length !== 0 && <Divider />}
+              <Notifications />
+            </Box>
           </Box>
-        </Box>
-      );
+        );
     }
     return null;
   }, [data, params.id]);
@@ -196,18 +205,7 @@ const Video: FC = () => {
 
   const renderChatResponsive = () => {
     if (size === 'small') {
-      return (
-        <Box
-          width={{ max: '100%' }}
-          height="500px"
-          background="white"
-          round="large"
-          pad={{ bottom: 'medium' }}
-          elevation="indigo"
-        >
-          {chatComponent}
-        </Box>
-      );
+      return chatComponent;
     }
     return true;
   };
