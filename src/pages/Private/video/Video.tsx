@@ -48,6 +48,7 @@ import ZonesToJoin from '../timeline/ZonesToJoin';
 import Notifications from '../timeline/Notifications';
 import { useSelectedChannel } from '../../../hooks/useSelectedChannel';
 import ShowMoreLessText from '../../../components/utils/ShowMoreLessText';
+import EllipsesOverflowText from '../../../components/utils/EllipsesOverflowText';
 
 interface RouteParams {
   id: string;
@@ -136,46 +137,55 @@ const Video: FC = () => {
     if (data) {
       if (data.streaming || data.liveStream)
         return (
-          <Chat medium="post" id={params.id} handleTypingEvent canAddFile />
+          <Box
+            width={{ max: '100%' }}
+            height="500px"
+            background="white"
+            round="large"
+            pad={{ bottom: 'medium' }}
+            elevation="indigo"
+          >
+            <Chat medium="post" id={params.id} handleTypingEvent canAddFile />
+          </Box>
         );
-      return (
-        <Box>
-          <Box pad="medium">
-            <SearchBar />
-          </Box>
-          {selectedChannel && <ChannelShortInfo />}
-          <Box pad="medium" gap="medium">
-            {selectedChannel &&
-              selectedChannel.id &&
-              selectedChannel.channelRole.canInvite && (
-                <Box gap="medium">
-                  <InviteToChannel channel={selectedChannel} />
-                  <InviteToZone
-                    zone={userZones?.find(
-                      (z) => z.zone.id === selectedChannel?.channel.zoneId
-                    )}
-                  />
-                </Box>
+      if (size !== 'small')
+        return (
+          <Box>
+            <Box pad="medium">
+              <SearchBar />
+            </Box>
+            {selectedChannel && <ChannelShortInfo />}
+            <Box pad="medium" gap="medium">
+              {selectedChannel &&
+                selectedChannel.id &&
+                selectedChannel.channelRole.canInvite && (
+                  <Box gap="medium">
+                    <InviteToChannel channel={selectedChannel} />
+                    <InviteToZone
+                      zone={userZones?.find(
+                        (z) => z.zone.id === selectedChannel?.channel.zoneId
+                      )}
+                    />
+                  </Box>
+                )}
+              {!selectedChannel && <InvitationList />}
+              {!selectedChannel &&
+                !invitations.loading &&
+                invitations.data.length !== 0 && <Divider />}
+              {selectedChannel && (
+                <ChannelMembers channelId={selectedChannel.channel.id} />
               )}
-            {!selectedChannel && <InvitationList />}
-            {!selectedChannel &&
-              !invitations.loading &&
-              invitations.data.length !== 0 && <Divider />}
-            {selectedChannel && (
-              <ChannelMembers channelId={selectedChannel.channel.id} />
-            )}
-            {selectedChannel && <Divider />}
-            <ChannelsToFollow />
-            {!channelSuggestions.loading &&
-              channelSuggestions.data.length !== 0 && <Divider />}
-            <ZonesToJoin />
-            {!zoneSuggestions.loading && zoneSuggestions.data.length !== 0 && (
-              <Divider />
-            )}
-            <Notifications />
+              {selectedChannel && <Divider />}
+              <ChannelsToFollow />
+              {!channelSuggestions.loading &&
+                channelSuggestions.data.length !== 0 && <Divider />}
+              <ZonesToJoin />
+              {!zoneSuggestions.loading &&
+                zoneSuggestions.data.length !== 0 && <Divider />}
+              <Notifications />
+            </Box>
           </Box>
-        </Box>
-      );
+        );
     }
     return null;
   }, [data, params.id]);
@@ -196,18 +206,7 @@ const Video: FC = () => {
 
   const renderChatResponsive = () => {
     if (size === 'small') {
-      return (
-        <Box
-          width={{ max: '100%' }}
-          height="500px"
-          background="white"
-          round="large"
-          pad={{ bottom: 'medium' }}
-          elevation="indigo"
-        >
-          {chatComponent}
-        </Box>
-      );
+      return chatComponent;
     }
     return true;
   };
@@ -291,15 +290,22 @@ const Video: FC = () => {
           <Box>
             <Box justify="between" direction="row">
               <Box>
-                <Text weight="bold" size="large">
-                  {data.title}
-                </Text>
+                <EllipsesOverflowText
+                  maxWidth={size === 'small' ? '272px' : '480px'}
+                  weight="bold"
+                  size="large"
+                  text={data.title}
+                />
               </Box>
               <Text weight="bold">{dayjs(data.createdOn).fromNow()}</Text>
             </Box>
             <Box justify="between" align="center" direction="row">
               {(data?.type === 'video' && (
-                <Box direction="row" align="center" gap="medium">
+                <Box
+                  gap={size === 'small' ? 'xsmall' : 'medium'}
+                  align={size === 'small' ? 'start' : 'center'}
+                  direction={size === 'small' ? 'column' : 'row'}
+                >
                   {data?.channel?.zone && (
                     <ZoneBadge
                       name={data.channel.zone.name}
