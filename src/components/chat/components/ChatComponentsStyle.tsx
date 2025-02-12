@@ -84,7 +84,7 @@ export const AttachmentButton = styled(Button)`
 `;
 
 export const MessageTextAreaComponent = styled(TextArea)`
-  font-family: Poppins;
+  font-family: Stara, DM Sans, sans-serif;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
@@ -92,14 +92,14 @@ export const MessageTextAreaComponent = styled(TextArea)`
 
   ::placeholder,
   ::-webkit-input-placeholder {
-    font-family: Poppins;
+    font-family: Stara, DM Sans, sans-serif;
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
     color: #555c68;
   }
   :-ms-input-placeholder {
-    font-family: Poppins;
+    font-family: Stara, DM Sans, sans-serif;
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;

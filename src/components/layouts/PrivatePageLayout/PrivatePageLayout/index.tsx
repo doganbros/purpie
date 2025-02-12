@@ -22,7 +22,7 @@ const PrivatePageLayout: FC<Props> = ({
   rightComponentWithoutOverflow = false,
   topComponentWithoutPadTop = false,
 }) => {
-  useTitle(`${title} - Purpie`, changeTitle);
+  useTitle(`${title} - Pavilion`, changeTitle);
   const size = useContext(ResponsiveContext);
 
   return size === 'small' ? (

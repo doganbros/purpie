@@ -17,7 +17,7 @@ const ApiDocs: FC = () => {
               maxWidth: '160px',
               gutter: '16px',
             },
-            typography: { fontFamily: 'Poppins' },
+            typography: { fontFamily: 'Stara, DM Sans, sans-serif' },
             colors: { primary: { main: '#9060EB' } },
           },
         }}

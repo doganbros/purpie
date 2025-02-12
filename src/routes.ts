@@ -36,7 +36,7 @@ export const publicRoutes: Array<AppRoute> = [
     id: nanoid(),
     path: '/api-docs',
     component: ApiDocs,
-    description: 'Purpie API Documentations',
+    description: 'Pavilion API Documentations',
   },
   {
     id: nanoid(),

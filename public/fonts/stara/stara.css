@@ -1,0 +1,73 @@
+@font-face {
+    font-family: 'Stara';
+    src: url('./Stara-Regular.woff2') format('woff2'),
+         url('./Stara-Regular.woff') format('woff'),
+         url('./Stara-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Stara';
+    src: url('./Stara-Medium.woff2') format('woff2'),
+         url('./Stara-Medium.woff') format('woff'),
+         url('./Stara-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Stara';
+    src: url('./Stara-SemiBold.woff2') format('woff2'),
+         url('./Stara-SemiBold.woff') format('woff'),
+         url('./Stara-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Stara';
+    src: url('./Stara-Bold.woff2') format('woff2'),
+         url('./Stara-Bold.woff') format('woff'),
+         url('./Stara-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Stara';
+    src: url('./Stara-Italic.woff2') format('woff2'),
+         url('./Stara-Italic.woff') format('woff'),
+         url('./Stara-Italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Stara';
+    src: url('./Stara-MediumItalic.woff2') format('woff2'),
+         url('./Stara-MediumItalic.woff') format('woff'),
+         url('./Stara-MediumItalic.ttf') format('truetype');
+    font-weight: 500;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Stara';
+    src: url('./Stara-SemiBoldItalic.woff2') format('woff2'),
+         url('./Stara-SemiBoldItalic.woff') format('woff'),
+         url('./Stara-SemiBoldItalic.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Stara';
+    src: url('./Stara-BoldItalic.woff2') format('woff2'),
+         url('./Stara-BoldItalic.woff') format('woff'),
+         url('./Stara-BoldItalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+}
+
+

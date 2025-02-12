@@ -1,30 +1,30 @@
 
 
 <p align="center">
-<img src="src/assets/readme/Purpie_ScreenShot.png" width="900" />
+<img src="src/assets/readme/readme-hero.png" width="900" />
 </p>
 
 <hr/>
 
-## What is Purpie?
+## What is Pavilion?
 
-Purpie is an open-source platform that brings together many different solutions, to create a space focused on video-oriented communication and content sharing
+Pavilion is an open-source platform that brings together many different solutions, to create a space focused on video-oriented communication and content sharing
 
 ## Roadmap
 
-You can find our short term and long term goals for Purpie project in [ Roadmap](https://docs.purpie.org/en/latest/08.road_map.html).
+You can find our short term and long term goals for Pavilion project in [ Roadmap](https://docs.pavilion.network/en/latest/08.road_map.html).
 ## Setup
 
-You have two options to setup Purpie. 
+You have two options to setup Pavilion.
 
-- You can either use [Quick Setup](https://docs.purpie.org/en/latest/05.quick_setup.html),
-- Or you can use [Setup From Stratch](https://docs.purpie.org/en/latest/06.manual_setup.html).
+- You can either use [Quick Setup](https://docs.pavilion.network/en/latest/05.quick_setup.html),
+- Or you can use [Setup From Stratch](https://docs.pavilion.network/en/latest/06.manual_setup.html).
 ## Tech Stack
 ### Frontend Features
 
 - Typescript (Strict Mode)
 - ESNext
-- React 17
+- React
 - Prettier
 - Airbnb Coding Style Guide
 - Hooks
@@ -57,14 +57,14 @@ You have two options to setup Purpie.
 
 ## Developer Guide
 
-You can find the developer guide in [Developer Guide](https://docs.purpie.org/en/latest/09.developer_guide.html)
+You can find the developer guide in [Developer Guide](https://docs.pavilion.network/en/latest/09.developer_guide.html)
 ## Contributing Guideline
 
-We are open to, and grateful for, any contributions made by the community. You can visit our [Contributing Guideline](https://docs.purpie.org/en/latest/10.contribution.html) to learn how to contribute to the project.
+We are open to, and grateful for, any contributions made by the community. You can visit our [Contributing Guideline](https://docs.pavilion.network/en/latest/10.contribution.html) to learn how to contribute to the project.
 
 ## Questions and Support
 
-You can visit [Purpie Docs](https://docs.purpie.org/en/latest) to learn how the project works. If you have any questions, you can ask them in [Purpie Community](https://community.purpie.org).
+You can visit [Pavilion Docs](https://docs.pavilion.network/en/latest) to learn how the project works. If you have any questions, you can ask them in [Pavilion Community](https://community.pavilion.network).
 ## License
 
-Purpie is open-source and is released under the[ Apache License 2.0](https://github.com/doganbros/purpie/blob/develop/LICENSE).
+Pavilion is open-source and is released under the[ Apache License 2.0](https://github.com/doganbros/purpie/blob/develop/LICENSE).

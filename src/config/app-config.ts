@@ -5,7 +5,7 @@ import { CaretDownFill, CaretRightFill } from 'grommet-icons';
 export const theme: typeof grommet = deepMerge(base, {
   global: {
     font: {
-      family: 'Poppins',
+      family: 'Stara, DM Sans, sans-serif',
     },
     colors: {
       brand: '#9060EB',
