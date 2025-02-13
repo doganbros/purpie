@@ -7,7 +7,7 @@ interface Props {
 }
 
 const PublicPageLayout: FC<Props> = ({ children, title, changeTitle }) => {
-  useTitle(`${title} - Purpie`, changeTitle);
+  useTitle(`${title} - Pavilion`, changeTitle);
 
   return <> {children} </>;
 };

@@ -154,7 +154,7 @@ const AuthLayout: React.FC<Props> = ({
                   fill="horizontal"
                 >
                   <Image
-                    width={size === 'small' ? '112px' : '132px'}
+                    width={size === 'small' ? '140px' : '160px'}
                     src={theme.dark ? LogoHorizontalWhite : LogoHorizontalColor}
                   />
                 </Box>

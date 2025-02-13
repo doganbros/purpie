@@ -31,7 +31,7 @@ const ShareVideo: FC = () => {
         >
           <SocialMediaIcons
             iconSize={32}
-            title="I am inviting you to watch this video on Purpie."
+            title="I am inviting you to watch this video on Pavilion."
             shareUrl={window.location.href}
           />
         </ExtendedBox>

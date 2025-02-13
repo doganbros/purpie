@@ -24,7 +24,7 @@ const InviteContact: FC = () => {
         round: 'small',
         elevation: 'medium',
       }}
-      label="Invite People to Purpie"
+      label="Invite People to Pavilion"
       dropContent={
         <Box pad="18px" gap="small">
           <Box direction="row" gap="small" align="center">
