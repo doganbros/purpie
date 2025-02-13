@@ -1,16 +1,16 @@
-# How do you contribute to Purpie
+# How do you contribute to Pavilion
 
-We would very much like your request to improve Purpie so please read
+We would very much like your request to improve Pavilion so please read
 and follow this contributions manual before you start working.
 
 # Create and Report Issues
 
 You should give us as much as possible details about the problems and how to reproduce these issues.
-Also, give us more detail about version of the Purpie you are using and development environment.
+Also, give us more detail about version of the Pavilion you are using and development environment.
 
 ## Contributor License Agreement
 
-The Purpie projects are licensed under
+The Pavilion projects are licensed under
 the [Apache License 2.0](https://github.com/doganbros/purpie/blob/develop/LICENSE)
 so you need to sign our Apache-based contributor license agreement as either a [corporation](https://jitsi.org/ccla) or
 an [individual](https://jitsi.org/icla) to
@@ -21,7 +21,7 @@ we cannot accept your contribution.
 
 - Make sure your code passes the linter rules that are executing
   automatically when creating pull request.
-- Purpie is a monorepo project so perform **only** frontend or backend change with **one** logical operation per pull
+- Pavilion is a monorepo project so perform **only** frontend or backend change with **one** logical operation per pull
   request.
 - Cleanly message your commits, squash them if necessary.
 - Rebase your working branch on top of the develop branch before starting the coding.
@@ -39,13 +39,13 @@ we cannot accept your contribution.
 
 ### Formatting
 
-* There are some prettier packages with eslint in the codebase, so you need to adjust your editor with Purpie
+* There are some prettier packages with eslint in the codebase, so you need to adjust your editor with Pavilion
   settings.
 
 ### Naming
 
 * Util function names camelCase, file names kebab-case and react file and component names PascalCase format in the
-  Purpie.
+  Pavilion.
 
 * The names of global constants (including ES6 module-global constants) should
   be written in uppercase with underscores to separate words. For example,

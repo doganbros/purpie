@@ -64,13 +64,12 @@ const ChannelShortInfo: FC = () => {
           justify="between"
         >
           <Text size="small" weight="bold">
-            {' '}
             {selectedChannel?.channel.name}
           </Text>
 
           <Box
             onClick={() =>
-              history.push('/settings', {
+              history.push('/settings/channel', {
                 selectedChannel,
                 selectedIndex: 1,
                 showChannelSelector: false,

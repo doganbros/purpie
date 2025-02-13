@@ -5,14 +5,14 @@ import { useTranslation } from 'react-i18next';
 import EmptyTimeLineImage from '../../../assets/timeline/empty-timeline.svg';
 
 const EmptyTitle = styled(Text)`
-  font-family: Poppins;
+  font-family: Stara, DM Sans, sans-serif;
   font-weight: 600;
   line-height: 30px;
   font-size: 20px;
 `;
 
 const EmptyText = styled(Text)`
-  font-family: Poppins;
+  font-family: Stara, DM Sans, sans-serif;
   font-weight: 400;
   line-height: 21px;
   font-size: 14px;

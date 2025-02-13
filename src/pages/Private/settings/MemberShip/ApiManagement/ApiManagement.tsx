@@ -43,7 +43,7 @@ const ApiManagement: () => Menu | null = () => {
             fill="horizontal"
           >
             {/* <Text>Manage Your Api and Usage</Text> */}
-            <Box gap="xsmall" fill="horizontal">
+            <Box gap="small" fill="horizontal">
               <ApiText
                 text={apiKey || '∗'.repeat(100)}
                 title={t('settings.apiKey')}

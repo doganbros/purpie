@@ -36,7 +36,7 @@ const InviteToPurpie: FC<InvitationPurpieProps> = ({
     <Box gap="small">
       <Text color="brand" weight="bold" size="small">
         {' '}
-        Invite People to Purpie
+        Invite People to Pavilion
       </Text>
       <Box
         round="small"
@@ -143,7 +143,7 @@ const InviteToPurpie: FC<InvitationPurpieProps> = ({
           onClickOutside={() => setShow(false)}
         >
           <SocialMediaIcons
-            shareUrl="https://www.purpie.io/invite"
+            shareUrl="https://app.pavilion.network/invite"
             title="I am inviting you to join Purple."
           />
           <Box
@@ -153,14 +153,16 @@ const InviteToPurpie: FC<InvitationPurpieProps> = ({
             align="center"
             gap="small"
           >
-            <Text size="small">https://www.purpie.io/invite</Text>
+            <Text size="small">https://app.pavilion.network/invite</Text>
 
             <Button
               label="COPY"
               plain
               color="brand"
               onClick={() =>
-                navigator.clipboard.writeText('https://www.purpie.io/invite')
+                navigator.clipboard.writeText(
+                  'https://app.pavilion.network/invite'
+                )
               }
             >
               <Text size="small"> COPY</Text>

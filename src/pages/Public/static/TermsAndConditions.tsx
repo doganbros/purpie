@@ -17,7 +17,7 @@ const TermsAndConditions = (): Menu => {
     {
       text: (
         <Trans i18nKey="TermsAndConditions.text2">
-          <Anchor href="https://purpie.io" target="_blank" />
+          <Anchor href="https://app.pavilion.network" target="_blank" />
         </Trans>
       ),
       type: 1,

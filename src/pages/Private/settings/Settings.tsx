@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import ChannelSettings from './ChannelSettings';
 import ZoneSettings from './ZoneSettings';
 import { useTitle } from '../../../hooks/useTitle';
@@ -10,16 +11,20 @@ import MembershipSettings from './MembershipSettings';
 import PasswordSettings from './PasswordSettings';
 import PersonalSettings from './PersonalSettings';
 
+interface Params {
+  page: string;
+}
+
 const Settings: FC = () => {
   const { t } = useTranslation();
   useTitle(t('settings.documentTitle'));
+  const { page } = useParams<Params>();
 
   const data: Menu[] = [
     PersonalSettings(),
     PasswordSettings(),
     ChannelSettings(),
     ZoneSettings(),
-    // MembershipSettings(),
     ApiManagement(),
   ].filter((v): v is Menu => v !== null);
 
@@ -28,6 +33,7 @@ const Settings: FC = () => {
     <SettingsAndStaticPageLayout
       pageTitle={t('settings.settings')}
       menuList={data}
+      pageUrl={page}
     />
   );
 };
