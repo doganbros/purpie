@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy-frontend:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -31,7 +31,7 @@ jobs:
           sudo cp -r ./build /var/www/purpie/
 
   deploy-backend:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: deploy-frontend # Ensures frontend job runs before the backend
     steps:
       - name: Checkout code
