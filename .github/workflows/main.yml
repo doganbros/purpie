@@ -15,7 +15,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18' # Change this if you're using a different version of Node.js
+          node-version: '16' # Change this if you're using a different version of Node.js
 
       - name: Install dependencies (Frontend)
         run: |
