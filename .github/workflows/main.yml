@@ -1,28 +1,67 @@
-name: Purpie Deployment
+name: Deploy App
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - main
 
 jobs:
-  build-app:
-
-    runs-on: self-hosted
-
-    strategy:
-      matrix:
-        node-version: [14.x]
-
+  deploy-frontend:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          clean: false
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
-      - run: sudo yarn install
-      - run: sudo yarn build
-      - run: "sudo pm2 stop API || :"
-      - run: "sudo pm2 delete API || :"
-      - run: sudo yarn server:start:pm2
+          node-version: '14' # Change this if you're using a different version of Node.js
+
+      - name: Install dependencies (Frontend)
+        run: |
+          yarn install
+
+      - name: Build frontend
+        run: |
+          yarn build
+
+      - name: Replace build folder
+        run: |
+          sudo rm -rf /var/www/purpie/build
+          sudo cp -r ./build /var/www/purpie/
+
+  deploy-backend:
+    runs-on: ubuntu-latest
+    needs: deploy-frontend # Ensures frontend job runs before the backend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14' # Change this if you're using a different version of Node.js
+
+      - name: Install dependencies (Backend)
+        run: |
+          yarn install
+
+      - name: Kill process running on port 8000 (if any)
+        run: |
+          if lsof -i:8000; then
+            sudo fuser -k 8000/tcp
+          else
+            echo "No process running on port 8000"
+          fi
+
+      - name: Start backend server
+        run: |
+          nohup yarn server:start &
+
+      - name: Verify the backend server is running
+        run: |
+          curl --silent --fail http://localhost:8000 || exit 1
+
+      - name: Reload Nginx
+        run: |
+          sudo systemctl reload nginx
