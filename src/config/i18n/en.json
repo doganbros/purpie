@@ -226,7 +226,21 @@
     "streamingStudio": "Streaming Studio",
     "streamingStudioDescription": "Create a meeting and stream it through multiple channels at once both in and out of Pavilion.",
     "webinar": "Webinar",
-    "webinarDescription": "Create a large meeting that follows the format of a seminar with speakers and attendees."
+    "webinarDescription": "Create a large meeting that follows the format of a seminar with speakers and attendees.",
+    "buttons": {
+      "upload": {
+        "title": "Upload & Share",
+        "description": "Quickly upload your video to Pavilion and share it with your audience."
+      },
+      "distribute": {
+        "title": "Distribute Everywhere",
+        "description": "Expand your reach across 8+ social platforms—both centralized and decentralized."
+      },
+      "ai": {
+        "title": "Create with AI",
+        "description": "Connect to multiple AI video generation platforms, watch, compare, and customize your creations with prompts."
+      }
+    }
   },
   "validators": {
     "requiredMsg": "{{field}} is required",

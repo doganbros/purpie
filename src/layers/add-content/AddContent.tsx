@@ -23,11 +23,8 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
     {
       id: 0,
       icon: <ShareOption {...iconProps} />,
-      title: 'Upload & Share',
-      description:
-        'Quickly upload your video to Pavilion and share it with your audience.',
-      expandedDescription:
-        'Easily upload your videos to Pavilion, then share them seamlessly with your community—all from one convenient platform.',
+      title: t('AddContent.buttons.upload.title'),
+      description: t('AddContent.buttons.upload.description'),
       onClick: () => {
         dispatch(openCreateVideoLayerAction());
         onDismiss();
@@ -36,17 +33,15 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
     {
       id: 1,
       icon: <ServicePlay {...iconProps} />,
-      title: 'Distribute Everywhere',
-      description:
-        'Expand your reach across 8+ social platforms—both centralized and decentralized.',
+      title: t('AddContent.buttons.distribute.title'),
+      description: t('AddContent.buttons.distribute.description'),
       soonBanner: true,
     },
     {
       id: 2,
       icon: <Robot {...iconProps} />,
-      title: 'Create with AI',
-      description:
-        'Connect to multiple AI video generation platforms, watch, compare, and customize your creations with prompts.',
+      title: t('AddContent.buttons.ai.title'),
+      description: t('AddContent.buttons.ai.description'),
       soonBanner: true,
     },
   ];
