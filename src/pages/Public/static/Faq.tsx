@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Accordion, AccordionPanel, Anchor, Box } from 'grommet';
-import { Trans, useTranslation } from 'react-i18next';
+import { Accordion, AccordionPanel, Box } from 'grommet';
+import { useTranslation } from 'react-i18next';
 import StaticText from './StaticText';
 import StaticTitle from './StaticTitle';
 import StaticList from './StaticList';
@@ -53,6 +53,11 @@ const Faq = (): Menu => {
           t('Faq.q5'),
           t('Faq.q6'),
           t('Faq.q7'),
+          t('Faq.q8'),
+          t('Faq.q9'),
+          t('Faq.q10'),
+          t('Faq.q11'),
+          t('Faq.q12'),
         ],
         componentFunc: (searchText?: string) => (
           <Box
@@ -64,63 +69,43 @@ const Faq = (): Menu => {
               activeIndex={activeAccordionIndex}
               onActive={(i) => setActiveAccordionIndex(i[0])}
             >
-              {accordion(
-                'Faq.q1',
-                'Faq.a1',
-                [
-                  'Faq.a1ListItem1',
-                  'Faq.a1ListItem2',
-                  'Faq.a1ListItem3',
-                  'Faq.a1ListItem4',
-                  'Faq.a1ListItem5',
-                  'Faq.a1ListItem6',
-                ],
-                searchText
-              )}
+              {accordion('Faq.q1', 'Faq.a1', undefined, searchText)}
               {accordion(
                 'Faq.q2',
                 'Faq.a2',
-                [
-                  'Faq.a2ListItem1',
-                  'Faq.a2ListItem2',
-                  'Faq.a2ListItem3',
-                  'Faq.a2ListItem4',
-                  'Faq.a2ListItem5',
-                  'Faq.a2ListItem6',
-                ],
+                ['Faq.a2ListItem1', 'Faq.a2ListItem2', 'Faq.a2ListItem3'],
                 searchText
               )}
               {accordion('Faq.q3', 'Faq.a3', undefined, searchText)}
-              {accordion(
-                'Faq.q4',
-                ['Faq.a41', 'Faq.a42'],
-                undefined,
-                searchText
-              )}
+              {accordion('Faq.q4', 'Faq.a4', undefined, searchText)}
               {accordion('Faq.q5', 'Faq.a5', undefined, searchText)}
               {accordion('Faq.q6', 'Faq.a6', undefined, searchText)}
-              <AccordionPanel
-                label={
-                  <Box pad={{ vertical: 'small' }}>
-                    <StaticTitle tKey={t('Faq.q7')} searchText={searchText} />
-                  </Box>
-                }
-                key="Faq.q7"
-              >
-                <Box gap="small" pad={{ vertical: 'small' }}>
-                  <StaticText
-                    tKey={
-                      <Trans i18nKey="Faq.a7">
-                        <Anchor
-                          href="https://community.purpie.org/"
-                          target="_blank"
-                        />
-                        <Anchor href="https://purpie.org" target="_blank" />
-                      </Trans>
-                    }
-                  />
-                </Box>
-              </AccordionPanel>
+              {accordion(
+                'Faq.q7',
+                'Faq.a7',
+                [
+                  'Faq.a7ListItem1',
+                  'Faq.a7ListItem2',
+                  'Faq.a7ListItem3',
+                  'Faq.a7ListItem4',
+                ],
+                searchText
+              )}
+              {accordion('Faq.q8', 'Faq.a8', undefined, searchText)}
+              {accordion(
+                'Faq.q9',
+                'Faq.a9',
+                [
+                  'Faq.a9ListItem1',
+                  'Faq.a9ListItem2',
+                  'Faq.a9ListItem3',
+                  'Faq.a9ListItem4',
+                ],
+                searchText
+              )}
+              {accordion('Faq.q10', 'Faq.a10', undefined, searchText)}
+              {accordion('Faq.q11', 'Faq.a11', undefined, searchText)}
+              {accordion('Faq.q12', 'Faq.a12', undefined, searchText)}
             </Accordion>
           </Box>
         ),
