@@ -10,7 +10,7 @@ interface AddContentButtonProps {
   title: string;
   description: string;
   soonBanner?: boolean;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 const AddContentButton: FC<AddContentButtonProps> = ({
@@ -39,7 +39,9 @@ const AddContentButton: FC<AddContentButtonProps> = ({
       >
         {soonBanner && <AddContentButtonBanner src={SoonBanner} />}
         {icon}
-        <Text color="white">{title}</Text>
+        <Text color="white" textAlign="center" style={{ width: '100%' }}>
+          {title}
+        </Text>
         <Text size="xsmall" color="white">
           {description}
         </Text>

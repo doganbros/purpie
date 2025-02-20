@@ -1,24 +1,10 @@
 import React, { FC, useContext } from 'react';
 import { Box, Button, Grid, Layer, ResponsiveContext, Text } from 'grommet';
-import {
-  CirclePlay,
-  Close,
-  Group,
-  SchedulePlay,
-  ServicePlay,
-  ShareOption,
-  Workshop,
-} from 'grommet-icons';
-import { useDispatch, useSelector } from 'react-redux';
+import { Close, Robot, ServicePlay, ShareOption } from 'grommet-icons';
+import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import AddContentButton from './AddContentButton';
-import {
-  createMeetingAction,
-  openPlanCreateMeetingLayerAction,
-} from '../../store/actions/meeting.action';
-import { AppState } from '../../store/reducers/root.reducer';
 import { openCreateVideoLayerAction } from '../../store/actions/post.action';
-import { CreateMeetingPayload } from '../../store/types/meeting.types';
 
 interface AddContentProps {
   onDismiss: () => void;
@@ -29,15 +15,6 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
   const { t } = useTranslation();
   const size = useContext(ResponsiveContext);
 
-  const {
-    meeting: {
-      createMeeting: {
-        form: { submitting },
-      },
-    },
-    channel: { selectedChannelId },
-  } = useSelector((state: AppState) => state);
-
   const iconProps = {
     size: 'large',
     color: 'white',
@@ -45,65 +22,31 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
   const buttonProps = [
     {
       id: 0,
-      icon: <Group {...iconProps} />,
-      title: t('AddContent.meeting'),
-      description: t('AddContent.meetingDescription'),
-      onClick: () => {
-        const meeting: CreateMeetingPayload = { public: true };
-        if (selectedChannelId) meeting.channelId = selectedChannelId;
-        if (!submitting) dispatch(createMeetingAction(meeting));
-        onDismiss();
-      },
-    },
-    {
-      id: 1,
-      icon: <CirclePlay {...iconProps} />,
-      title: t('AddContent.stream'),
-      description: t('AddContent.streamDescription'),
-      onClick: () => {
-        const meeting: CreateMeetingPayload = {
-          public: true,
-          liveStream: true,
-        };
-        if (selectedChannelId) meeting.channelId = selectedChannelId;
-        if (!submitting) dispatch(createMeetingAction(meeting));
-        onDismiss();
-      },
-    },
-    {
-      id: 2,
       icon: <ShareOption {...iconProps} />,
-      title: t('AddContent.shareVideo'),
-      description: t('AddContent.shareVideoDescription'),
+      title: 'Upload & Share',
+      description:
+        'Quickly upload your video to Pavilion and share it with your audience.',
+      expandedDescription:
+        'Easily upload your videos to Pavilion, then share them seamlessly with your community—all from one convenient platform.',
       onClick: () => {
         dispatch(openCreateVideoLayerAction());
         onDismiss();
       },
     },
     {
-      id: 3,
-      icon: <SchedulePlay {...iconProps} />,
-      title: t('AddContent.customMeeting'),
-      description: t('AddContent.customMeetingDescription'),
-      onClick: () => {
-        dispatch(openPlanCreateMeetingLayerAction);
-        onDismiss();
-      },
-    },
-    {
-      id: 4,
+      id: 1,
       icon: <ServicePlay {...iconProps} />,
-      title: t('AddContent.streamingStudio'),
-      description: t('AddContent.streamingStudioDescription'),
-      onClick: () => {},
+      title: 'Distribute Everywhere',
+      description:
+        'Expand your reach across 8+ social platforms—both centralized and decentralized.',
       soonBanner: true,
     },
     {
-      id: 5,
-      icon: <Workshop {...iconProps} />,
-      title: t('AddContent.webinar'),
-      description: t('AddContent.webinarDescription'),
-      onClick: () => {},
+      id: 2,
+      icon: <Robot {...iconProps} />,
+      title: 'Create with AI',
+      description:
+        'Connect to multiple AI video generation platforms, watch, compare, and customize your creations with prompts.',
       soonBanner: true,
     },
   ];
@@ -146,7 +89,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
                 title={title}
                 soonBanner={soonBanner}
                 description={description}
-                onClick={onClick}
+                onClick={soonBanner ? undefined : onClick}
               />
             )
           )}
