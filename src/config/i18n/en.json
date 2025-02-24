@@ -678,6 +678,7 @@
     "description8": "If you have any questions or suggestions about our Privacy Policy, do not hesitate to <0>contact us</0>."
   },
   "TermsAndConditions": {
+    "welcomeMessage": "Welcome to Pavilion, a decentralized, creator-centric social media platform. By accessing or using Pavilion, you agree to abide by the following terms and conditions. Please read them carefully.",
     "acceptanceOfTerms": "Acceptance of Terms",
     "acceptanceDescription": "By using Pavilion, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions, along with any policies referenced herein. If you do not agree, you should discontinue use of Pavilion immediately.",
     "decentralizedNature": "Decentralized Nature of Pavilion",

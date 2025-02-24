@@ -11,6 +11,10 @@ const TermsAndConditions = (): Menu => {
 
   const items = [
     {
+      text: t('TermsAndConditions.welcomeMessage'),
+      type: 1,
+    },
+    {
       text: t('TermsAndConditions.acceptanceOfTerms'),
       type: 2,
     },
