@@ -36,6 +36,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
       title: t('AddContent.buttons.distribute.title'),
       description: t('AddContent.buttons.distribute.description'),
       soonBanner: true,
+      onClick: () => {},
     },
     {
       id: 2,
@@ -43,6 +44,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
       title: t('AddContent.buttons.ai.title'),
       description: t('AddContent.buttons.ai.description'),
       soonBanner: true,
+      onClick: () => {},
     },
   ];
 
@@ -84,7 +86,7 @@ const AddContent: FC<AddContentProps> = ({ onDismiss }) => {
                 title={title}
                 soonBanner={soonBanner}
                 description={description}
-                onClick={soonBanner ? undefined : onClick}
+                onClick={onClick}
               />
             )
           )}
