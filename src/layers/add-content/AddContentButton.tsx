@@ -10,7 +10,7 @@ interface AddContentButtonProps {
   title: string;
   description: string;
   soonBanner?: boolean;
-  onClick?: () => void;
+  onClick: () => void;
 }
 
 const AddContentButton: FC<AddContentButtonProps> = ({
