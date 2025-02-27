@@ -16,7 +16,7 @@ const StaticTitle: FC<Props> = ({ tKey, searchText }) => {
     .map((p) => ({ part: p, id: nanoid() }));
 
   return (
-    <Text color="dark" size="16px" weight={500}>
+    <Text color="dark" size="16px" weight={500} margin={{ vertical: 'xsmall' }}>
       {labelParts.map(({ part, id }) =>
         part.toLowerCase() !== searchText?.toLowerCase() ? (
           `${part}`
