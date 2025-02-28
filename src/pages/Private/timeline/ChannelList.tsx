@@ -30,12 +30,25 @@ const ChannelList: FC<ChannelListProps> = ({
       }
     : userChannels;
   const getZoneName = (channelInfo: UserChannelListItem) => {
-    const { zoneId } = channelInfo.channel;
-    if (getUserZones?.userZones) {
-      return getUserZones.userZones.filter((zone) => zone.zone.id === zoneId)[0]
-        .zone.name;
+    if (!channelInfo || !channelInfo.channel) {
+      return '';
     }
-    return '';
+
+    const { zoneId } = channelInfo.channel;
+
+    if (!getUserZones || !getUserZones.userZones) {
+      return '';
+    }
+
+    const foundZone = getUserZones.userZones.find(
+      (zone) => zone && zone.zone && zone.zone.id === zoneId
+    );
+
+    if (!foundZone || !foundZone.zone) {
+      return '';
+    }
+
+    return foundZone.zone.name || '';
   };
 
   return (
