@@ -1,6 +1,6 @@
 import React from 'react';
-import { Anchor, Box } from 'grommet';
-import { Trans, useTranslation } from 'react-i18next';
+import { Box } from 'grommet';
+import { useTranslation } from 'react-i18next';
 import StaticText from './StaticText';
 import StaticTitle from './StaticTitle';
 import StaticList from './StaticList';
@@ -11,279 +11,187 @@ const TermsAndConditions = (): Menu => {
 
   const items = [
     {
-      text: 'TermsAndConditions.text1',
+      text: t('TermsAndConditions.welcomeMessage'),
       type: 1,
     },
     {
-      text: (
-        <Trans i18nKey="TermsAndConditions.text2">
-          <Anchor href="https://app.pavilion.network" target="_blank" />
-        </Trans>
-      ),
-      type: 1,
-    },
-    {
-      text: 'TermsAndConditions.text3',
-      type: 1,
-    },
-    {
-      text: 'TermsAndConditions.text4',
-      type: 1,
-    },
-    {
-      text: 'TermsAndConditions.title1',
+      text: t('TermsAndConditions.acceptanceOfTerms'),
       type: 2,
     },
     {
-      text: 'TermsAndConditions.description11',
+      text: t('TermsAndConditions.acceptanceDescription'),
       type: 1,
     },
     {
-      text: 'TermsAndConditions.description12',
-      type: 1,
-    },
-    {
-      text: 'TermsAndConditions.title2',
+      text: t('TermsAndConditions.decentralizedNature'),
       type: 2,
     },
     {
-      text: 'TermsAndConditions.description21',
+      text: t('TermsAndConditions.decentralizedDescription'),
       type: 1,
     },
     {
-      text: 'TermsAndConditions.description22',
-      type: 1,
-    },
-    {
-      text: 'TermsAndConditions.description22ListItem1',
+      text: t('TermsAndConditions.noCentralAuthority'),
       type: 3,
     },
     {
-      text: 'TermsAndConditions.description22ListItem2',
+      text: t('TermsAndConditions.contentStored'),
       type: 3,
     },
     {
-      text: 'TermsAndConditions.description22ListItem3',
+      text: t('TermsAndConditions.noAbilityToModify'),
       type: 3,
     },
     {
-      text: 'TermsAndConditions.description22ListItem4',
+      text: t('TermsAndConditions.userResponsibilities'),
+      type: 2,
+    },
+    {
+      text: t('TermsAndConditions.userResponsibilitiesDescription'),
+      type: 1,
+    },
+    {
+      text: t('TermsAndConditions.responsibleForContent'),
       type: 3,
     },
     {
-      text: 'TermsAndConditions.description23',
+      text: t('TermsAndConditions.complianceWithLaws'),
+      type: 3,
+    },
+    {
+      text: t('TermsAndConditions.respectPrivacy'),
+      type: 3,
+    },
+    {
+      text: t('TermsAndConditions.safeguardKeys'),
+      type: 3,
+    },
+    {
+      text: t('TermsAndConditions.lossOfKeys'),
       type: 1,
     },
     {
-      text: 'TermsAndConditions.description24',
-      type: 1,
-    },
-    {
-      text: 'TermsAndConditions.description25',
-      type: 1,
-    },
-    {
-      text: 'TermsAndConditions.description26',
-      type: 1,
-    },
-    {
-      text: 'TermsAndConditions.description26ListItem1',
-      type: 4,
-    },
-    {
-      text: 'TermsAndConditions.description26ListItem2',
-      type: 4,
-    },
-    {
-      text: 'TermsAndConditions.description26ListItem3',
-      type: 4,
-    },
-    {
-      text: 'TermsAndConditions.description26ListItem4',
-      type: 4,
-    },
-    {
-      text: 'TermsAndConditions.description27',
-      type: 1,
-    },
-    {
-      text: 'TermsAndConditions.title3',
+      text: t('TermsAndConditions.prohibitedActivities'),
       type: 2,
     },
     {
-      text: 'TermsAndConditions.description31',
+      text: t('TermsAndConditions.prohibitedDescription'),
       type: 1,
     },
     {
-      text: 'TermsAndConditions.description31ListItem1',
-      type: 5,
+      text: t('TermsAndConditions.illegalContent'),
+      type: 3,
     },
     {
-      text: 'TermsAndConditions.description31ListItem2',
-      type: 5,
+      text: t('TermsAndConditions.hateSpeech'),
+      type: 3,
     },
     {
-      text: 'TermsAndConditions.description31ListItem3',
-      type: 5,
+      text: t('TermsAndConditions.maliciousActivities'),
+      type: 3,
     },
     {
-      text: 'TermsAndConditions.description31ListItem4',
-      type: 5,
+      text: t('TermsAndConditions.spamManipulation'),
+      type: 3,
     },
     {
-      text: 'TermsAndConditions.description31ListItem5',
-      type: 5,
+      text: t('TermsAndConditions.violationOfIP'),
+      type: 3,
     },
     {
-      text: 'TermsAndConditions.description32',
+      text: t('TermsAndConditions.violationsResult'),
       type: 1,
     },
     {
-      text: 'TermsAndConditions.description33',
-      type: 1,
-    },
-    {
-      text: 'TermsAndConditions.description33ListItem1',
-      type: 6,
-    },
-    {
-      text: 'TermsAndConditions.description33ListItem2',
-      type: 6,
-    },
-    {
-      text: 'TermsAndConditions.description33ListItem3',
-      type: 6,
-    },
-    {
-      text: 'TermsAndConditions.description33ListItem4',
-      type: 6,
-    },
-    {
-      text: 'TermsAndConditions.description33ListItem5',
-      type: 6,
-    },
-    {
-      text: 'TermsAndConditions.description33ListItem6',
-      type: 6,
-    },
-    {
-      text: 'TermsAndConditions.description33ListItem7',
-      type: 6,
-    },
-    {
-      text: 'TermsAndConditions.description34',
-      type: 1,
-    },
-    {
-      text: 'TermsAndConditions.description35',
-      type: 1,
-    },
-    {
-      text: 'TermsAndConditions.description36',
-      type: 1,
-    },
-    {
-      text: 'TermsAndConditions.description37',
-      type: 1,
-    },
-    {
-      text: 'TermsAndConditions.description37ListItem1',
-      type: 7,
-    },
-    {
-      text: 'TermsAndConditions.description37ListItem2',
-      type: 7,
-    },
-    {
-      text: 'TermsAndConditions.description37ListItem3',
-      type: 7,
-    },
-    {
-      text: 'TermsAndConditions.description38',
-      type: 1,
-    },
-    {
-      text: 'TermsAndConditions.title4',
+      text: t('TermsAndConditions.contentOwnership'),
       type: 2,
     },
     {
-      text: 'TermsAndConditions.description4',
+      text: t('TermsAndConditions.ownershipDescription'),
       type: 1,
     },
     {
-      text: 'TermsAndConditions.title5',
+      text: t('TermsAndConditions.licenseGrant'),
+      type: 1,
+    },
+    {
+      text: t('TermsAndConditions.contentRemoval'),
+      type: 1,
+    },
+    {
+      text: t('TermsAndConditions.noWarranties'),
       type: 2,
     },
     {
-      text: 'TermsAndConditions.description5',
+      text: t('TermsAndConditions.noWarrantiesDescription'),
       type: 1,
     },
     {
-      text: 'TermsAndConditions.title6',
+      text: t('TermsAndConditions.platformUptime'),
+      type: 3,
+    },
+    {
+      text: t('TermsAndConditions.protectionFromLoss'),
+      type: 3,
+    },
+    {
+      text: t('TermsAndConditions.recoveryOfContent'),
+      type: 3,
+    },
+    {
+      text: t('TermsAndConditions.limitationOfLiability'),
+      type: 1,
+    },
+    {
+      text: t('TermsAndConditions.governanceChanges'),
       type: 2,
     },
     {
-      text: 'TermsAndConditions.description6',
+      text: t('TermsAndConditions.governanceDescription'),
       type: 1,
     },
     {
-      text: 'TermsAndConditions.title7',
+      text: t('TermsAndConditions.updatesToTerms'),
+      type: 1,
+    },
+    {
+      text: t('TermsAndConditions.reviewUpdates'),
+      type: 1,
+    },
+    {
+      text: t('TermsAndConditions.terminationEnforcement'),
       type: 2,
     },
     {
-      text: 'TermsAndConditions.description7',
+      text: t('TermsAndConditions.enforcementDescription'),
       type: 1,
     },
     {
-      text: 'TermsAndConditions.title8',
+      text: t('TermsAndConditions.violationsSubject'),
+      type: 1,
+    },
+    {
+      text: t('TermsAndConditions.thirdPartyServices'),
       type: 2,
     },
     {
-      text: 'TermsAndConditions.description81',
+      text: t('TermsAndConditions.thirdPartyDescription'),
       type: 1,
     },
     {
-      text: 'TermsAndConditions.description82',
+      text: t('TermsAndConditions.thirdPartyResponsibility'),
       type: 1,
     },
     {
-      text: 'TermsAndConditions.title9',
+      text: t('TermsAndConditions.contactSupport'),
       type: 2,
     },
     {
-      text: 'TermsAndConditions.description91',
+      text: t('TermsAndConditions.supportDescription'),
       type: 1,
     },
     {
-      text: 'TermsAndConditions.description91ListItem1',
-      type: 8,
-    },
-    {
-      text: 'TermsAndConditions.description91ListItem2',
-      type: 8,
-    },
-    {
-      text: 'TermsAndConditions.description91ListItem3',
-      type: 8,
-    },
-    {
-      text: 'TermsAndConditions.description91ListItem4',
-      type: 8,
-    },
-    {
-      text: 'TermsAndConditions.description92',
-      type: 1,
-    },
-    {
-      text: 'TermsAndConditions.description93',
-      type: 1,
-    },
-    {
-      text: 'TermsAndConditions.title10',
-      type: 2,
-    },
-    {
-      text: 'TermsAndConditions.description10',
+      text: t('TermsAndConditions.continuedUse'),
       type: 1,
     },
   ];
@@ -299,7 +207,7 @@ const TermsAndConditions = (): Menu => {
       {
         key: 'terms-and-conditions-content',
         label: 'Terms & Conditions',
-        searchableTexts: items.map((item) => t(item.text as string)),
+        searchableTexts: items.map((item) => item.text),
         componentFunc: (search?: string) => (
           <Box
             border={{ size: 'xsmall', color: 'status-disabled-light' }}
