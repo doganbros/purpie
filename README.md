@@ -1,24 +1,36 @@
 
-
 <p align="center">
 <img src="src/assets/readme/readme-hero.png" width="900" />
 </p>
 
 <hr/>
 
-## What is Pavilion?
+# 🚨 IMPORTANT ANNOUNCEMENT 🚨
 
-Pavilion is an open-source platform that brings together many different solutions, to create a space focused on video-oriented communication and content sharing
+## Purpie has been rebranded to Pavilion!
+
+We're excited to announce that Purpie has been rebranded to Pavilion. The project has moved to a new repository:
+
+**👉 [https://github.com/consensuslabs/pavilion-network](https://github.com/consensuslabs/pavilion-network) 👈**
+
+Please visit the new repository for the latest updates, documentation, and to contribute to the project.
+
+This repository will remain available for historical purposes, but all new development will happen in the new repository.
+
+<hr/>
+
+## What is Purpie?
+
+Purpie is an open-source platform that brings together many different solutions, to create a space focused on video-oriented communication and content sharing. The project has been rebranded to Pavilion and moved to a new repository.
 
 ## Roadmap
 
-You can find our short term and long term goals for Pavilion project in [ Roadmap](https://docs.pavilion.network/en/latest/08.road_map.html).
+You can find our short term and long term goals for the project in the [Roadmap](https://docs.pavilion.network/en/latest/08.road_map.html) on our new documentation site.
+
 ## Setup
 
-You have two options to setup Pavilion.
+For setup instructions, please visit the new repository at [https://github.com/consensuslabs/pavilion-network](https://github.com/consensuslabs/pavilion-network).
 
-- You can either use [Quick Setup](https://docs.pavilion.network/en/latest/05.quick_setup.html),
-- Or you can use [Setup From Stratch](https://docs.pavilion.network/en/latest/06.manual_setup.html).
 ## Tech Stack
 ### Frontend Features
 
@@ -58,13 +70,15 @@ You have two options to setup Pavilion.
 ## Developer Guide
 
 You can find the developer guide in [Developer Guide](https://docs.pavilion.network/en/latest/09.developer_guide.html)
+
 ## Contributing Guideline
 
-We are open to, and grateful for, any contributions made by the community. You can visit our [Contributing Guideline](https://docs.pavilion.network/en/latest/10.contribution.html) to learn how to contribute to the project.
+We are open to, and grateful for, any contributions made by the community. Please visit our new repository at [https://github.com/consensuslabs/pavilion-network](https://github.com/consensuslabs/pavilion-network) to contribute.
 
 ## Questions and Support
 
 You can visit [Pavilion Docs](https://docs.pavilion.network/en/latest) to learn how the project works. If you have any questions, you can ask them in [Pavilion Community](https://community.pavilion.network).
+
 ## License
 
-Pavilion is open-source and is released under the[ Apache License 2.0](https://github.com/doganbros/purpie/blob/develop/LICENSE).
+Purpie is open-source and is released under the [Apache License 2.0](https://github.com/doganbros/purpie/blob/develop/LICENSE).
