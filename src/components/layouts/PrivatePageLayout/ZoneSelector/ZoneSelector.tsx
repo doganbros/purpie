@@ -75,7 +75,7 @@ const ZoneSelector: FC = () => {
             <Divider margin="none" />
             <Box
               overflow="auto"
-              height={{ min: '180px', max: '180px' }}
+              height={{ max: '180px' }}
               className="font-weight--bold"
             >
               {userZones &&
@@ -104,7 +104,9 @@ const ZoneSelector: FC = () => {
                   />
                 ))}
             </Box>
-            <Divider margin={{ vertical: 'xxsmall' }} />
+            {userZones && userZones.length > 0 && (
+              <Divider margin={{ vertical: 'xxsmall' }} />
+            )}
             <ListButton
               onClick={() => {
                 if (!createChannelButtonDisabled) {
