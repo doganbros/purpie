@@ -20,6 +20,7 @@ import CompleteThirdPartyAuth from './pages/Public/CompleteThirdPartyAuth';
 import Messages from './pages/Private/messages/Messages';
 import ApiDocs from './pages/Public/ApiDocs';
 import Register from './pages/Public/Register';
+import MetamaskRegister from './pages/Public/MetamaskRegister';
 
 interface AppRoute {
   id: string;
@@ -91,6 +92,13 @@ export const publicRoutes: Array<AppRoute> = [
     path: '/verify-email/:token',
     component: VerifyUserEmail,
     description: 'User verifies email',
+  },
+  {
+    id: nanoid(),
+    path: '/metamask-register',
+    component: MetamaskRegister,
+    exact: true,
+    description: 'User registers with Metamask',
   },
 ];
 

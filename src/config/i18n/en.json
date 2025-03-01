@@ -65,7 +65,10 @@
     "createAccount": "CREATE AN ACCOUNT",
     "emailOrUserName": "EMAIL / USERNAME",
     "forgotPassword": "Forgot Password?",
-    "orSignInWith": "Or Sign in With"
+    "orSignInWith": "Or Sign in With",
+    "connectWithMetamask": "Connect with Metamask",
+    "metamaskNotFound": "Metamask not found. Please install the Metamask extension.",
+    "metamaskError": "Error connecting to Metamask. Please try again."
   },
   "Join": {
     "title": "Join",
@@ -91,6 +94,13 @@
     "formSubTitle": "Sign up to continue",
     "alreadyHaveAccount": "Already have an account?",
     "signUp": "Sign Up with Email"
+  },
+  "MetamaskRegister": {
+    "title": "Metamask Registration",
+    "formTitle": "Complete Your Profile",
+    "formSubTitle": "Please provide your name and email to complete your registration with Metamask. You'll set your username after verifying your email.",
+    "alreadyHaveAccount": "Already have an account?",
+    "signUp": "COMPLETE REGISTRATION"
   },
   "ForgotPassword": {
     "title": "Forgot Password",

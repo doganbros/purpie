@@ -41,6 +41,12 @@ import {
   COMPLETE_PROFILE_REQUESTED,
   COMPLETE_PROFILE_SUCCESS,
   COMPLETE_PROFILE_FAILED,
+  LOGIN_WITH_METAMASK_FAILED,
+  LOGIN_WITH_METAMASK_REQUESTED,
+  LOGIN_WITH_METAMASK_SUCCESS,
+  REGISTER_WITH_METAMASK_FAILED,
+  REGISTER_WITH_METAMASK_REQUESTED,
+  REGISTER_WITH_METAMASK_SUCCESS,
 } from '../constants/auth.constants';
 import { ResponseError } from '../../models/response-error';
 
@@ -123,6 +129,14 @@ export interface AuthState {
     error: ResponseError | null;
   };
   resetPassword: {
+    loading: boolean;
+    error: ResponseError | null;
+  };
+  loginWithMetamask: {
+    loading: boolean;
+    error: ResponseError | null;
+  };
+  registerWithMetamask: {
     loading: boolean;
     error: ResponseError | null;
   };
@@ -228,6 +242,23 @@ export type AuthActionParams =
         | typeof UPDATE_PROFILE_INFO_FAILED
         | typeof UPDATE_PROFILE_PHOTO_FAILED
         | typeof UPDATE_PASSWORD_FAILED;
+      payload: ResponseError;
+    }
+  | {
+      type:
+        | typeof LOGIN_WITH_METAMASK_REQUESTED
+        | typeof REGISTER_WITH_METAMASK_REQUESTED;
+    }
+  | {
+      type:
+        | typeof LOGIN_WITH_METAMASK_SUCCESS
+        | typeof REGISTER_WITH_METAMASK_SUCCESS;
+      payload: User;
+    }
+  | {
+      type:
+        | typeof LOGIN_WITH_METAMASK_FAILED
+        | typeof REGISTER_WITH_METAMASK_FAILED;
       payload: ResponseError;
     };
 

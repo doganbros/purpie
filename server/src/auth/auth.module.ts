@@ -15,6 +15,8 @@ import { PostModule } from '../post/post.module';
 import { PostFolder } from '../../entities/PostFolder.entity';
 import { MembershipModule } from '../membership/membership.module';
 import { AuthApiController } from './controllers/auth-api.controller';
+import { AuthMetamaskService } from './services/auth-metamask.service';
+import { AuthMetamaskController } from './controllers/auth-metamask.controller';
 
 @Global()
 @Module({
@@ -23,6 +25,7 @@ import { AuthApiController } from './controllers/auth-api.controller';
     AuthThirdPartyController,
     ClientAuthController,
     AuthApiController,
+    AuthMetamaskController,
   ],
   imports: [
     TypeOrmModule.forFeature([
@@ -37,6 +40,11 @@ import { AuthApiController } from './controllers/auth-api.controller';
     PostModule,
   ],
   exports: [AuthService],
-  providers: [AuthService, ClientAuthService, AuthThirdPartyService],
+  providers: [
+    AuthService,
+    ClientAuthService,
+    AuthThirdPartyService,
+    AuthMetamaskService,
+  ],
 })
 export class AuthModule {}

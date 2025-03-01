@@ -52,6 +52,12 @@ export class User extends RecordEntity {
   @Column({ nullable: true })
   mailVerificationToken: string;
 
+  @Column({ nullable: true, unique: true })
+  walletAddress: string;
+
+  @Column({ nullable: true })
+  nonce: string;
+
   @Column({
     type: 'simple-json',
     default: {

@@ -41,8 +41,15 @@ import {
   VERIFY_USER_EMAIL_FAILED,
   VERIFY_USER_EMAIL_REQUESTED,
   VERIFY_USER_EMAIL_SUCCESS,
+  LOGIN_WITH_METAMASK_FAILED,
+  LOGIN_WITH_METAMASK_REQUESTED,
+  LOGIN_WITH_METAMASK_SUCCESS,
+  REGISTER_WITH_METAMASK_FAILED,
+  REGISTER_WITH_METAMASK_REQUESTED,
+  REGISTER_WITH_METAMASK_SUCCESS,
 } from '../constants/auth.constants';
 import * as AuthService from '../services/auth.service';
+import * as MetamaskService from '../services/metamask.service';
 import {
   AuthAction,
   CompleteProfilePayload,
@@ -399,6 +406,124 @@ export const updatePasswordAction = (
       dispatch({
         type: UPDATE_PASSWORD_FAILED,
         payload: err?.response?.data,
+      });
+    }
+  };
+};
+
+export const loginWithMetamaskAction = (): AuthAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: LOGIN_WITH_METAMASK_REQUESTED,
+    });
+    let account: string | null = null;
+    let signature: string | null = null;
+    try {
+      // Check if Metamask is installed
+      if (!MetamaskService.isMetamaskInstalled()) {
+        window.open('https://metamask.io/download/', '_blank');
+        throw new Error('Metamask is not installed');
+      }
+
+      // Connect to Metamask
+      account = await MetamaskService.connectToMetamask();
+      if (!account) {
+        throw new Error('Failed to connect to Metamask');
+      }
+
+      // Get nonce for the account
+      const nonce = await MetamaskService.getNonce(account);
+
+      // Sign the nonce
+      const message = `Sign this message to authenticate with your wallet: ${nonce}`;
+      signature = await MetamaskService.signMessage(message, account);
+
+      // Login with Metamask
+      const payload = await MetamaskService.loginWithMetamask(
+        account,
+        signature
+      );
+
+      // Set tokens to cookie
+      setTokenToCookie(payload.accessToken, payload.refreshToken);
+
+      // Dispatch success action
+      dispatch({
+        type: LOGIN_WITH_METAMASK_SUCCESS,
+        payload: payload.user,
+      });
+
+      // Redirect to home page
+      appHistory.push('/');
+    } catch (err: any) {
+      if (
+        err?.response?.data?.message === 'USER_NOT_FOUND' &&
+        account &&
+        signature
+      ) {
+        appHistory.push(
+          `/metamask-register?walletAddress=${account}&signature=${signature}`
+        );
+      } else if (err?.response?.data?.message === 'MUST_VERIFY_EMAIL') {
+        // User needs to verify email, redirect to email verification page
+        const userId = err?.response?.data?.user?.id;
+        if (userId) {
+          appHistory.push(`/verify-email-info/${userId}`);
+        } else {
+          dispatch({
+            type: LOGIN_WITH_METAMASK_FAILED,
+            payload: err?.response?.data,
+          });
+        }
+      } else {
+        dispatch({
+          type: LOGIN_WITH_METAMASK_FAILED,
+          payload: err?.response?.data,
+        });
+      }
+    }
+  };
+};
+
+export const registerWithMetamaskAction = (registerData: {
+  fullName: string;
+  email: string;
+  walletAddress: string;
+  signature: string;
+}): AuthAction => {
+  return async (dispatch) => {
+    dispatch({
+      type: REGISTER_WITH_METAMASK_REQUESTED,
+    });
+
+    try {
+      // Extract data from the parameter
+      const { fullName, email, walletAddress, signature } = registerData;
+
+      // Register with Metamask
+      const user = await MetamaskService.registerWithMetamask(
+        walletAddress,
+        signature,
+        fullName,
+        email
+      );
+
+      // Dispatch success action
+      dispatch({
+        type: REGISTER_WITH_METAMASK_SUCCESS,
+        payload: user,
+      });
+
+      // Redirect to email verification page
+      appHistory.push(`/verify-email-info/${user.id}`);
+    } catch (error) {
+      // Dispatch error action
+      dispatch({
+        type: REGISTER_WITH_METAMASK_FAILED,
+        payload: error.response?.data || {
+          message: error.message,
+          statusCode: 500,
+        },
       });
     }
   };
