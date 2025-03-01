@@ -10,38 +10,66 @@ const PrivacyPolicy = (): Menu => {
   const { t } = useTranslation();
 
   const items = [
-    { text: 'PrivacyPolicy.text1', type: 1 },
-    { text: 'PrivacyPolicy.text2', type: 1 },
-    { text: 'PrivacyPolicy.text3', type: 1 },
-    { text: 'PrivacyPolicy.title1', type: 2 },
-    { text: 'PrivacyPolicy.description1', type: 1 },
-    { text: 'PrivacyPolicy.title2', type: 2 },
-    { text: 'PrivacyPolicy.description2', type: 1 },
-    { text: 'PrivacyPolicy.title3', type: 2 },
-    { text: 'PrivacyPolicy.description31', type: 1 },
-    { text: 'PrivacyPolicy.description32', type: 1 },
-    { text: 'PrivacyPolicy.title4', type: 2 },
-    { text: 'PrivacyPolicy.description41', type: 1 },
-    { text: 'PrivacyPolicy.description41ListItem1', type: 3 },
-    { text: 'PrivacyPolicy.description41ListItem2', type: 3 },
-    { text: 'PrivacyPolicy.description41ListItem3', type: 3 },
-    { text: 'PrivacyPolicy.description41ListItem4', type: 3 },
-    { text: 'PrivacyPolicy.description42', type: 1 },
-    { text: 'PrivacyPolicy.title5', type: 2 },
-    { text: 'PrivacyPolicy.description5', type: 1 },
-    { text: 'PrivacyPolicy.title6', type: 2 },
-    { text: 'PrivacyPolicy.description6', type: 1 },
-    { text: 'PrivacyPolicy.title7', type: 2 },
-    { text: 'PrivacyPolicy.description7', type: 1 },
-    { text: 'PrivacyPolicy.title8', type: 2 },
+    { text: 'PrivacyPolicy.welcomeText', type: 1 },
+    { text: 'PrivacyPolicy.introduction', type: 2 },
+    { text: 'PrivacyPolicy.introductionText', type: 1 },
+
+    { text: 'PrivacyPolicy.informationWeCollect', type: 2 },
+    { text: 'PrivacyPolicy.informationWeCollectText', type: 1 },
+
+    { text: 'PrivacyPolicy.informationYouProvide', type: 2 },
+    { text: 'PrivacyPolicy.informationYouProvideText1', type: 1 },
+    { text: 'PrivacyPolicy.informationYouProvideText2', type: 1 },
+
+    { text: 'PrivacyPolicy.informationCollectedAutomatically', type: 2 },
+    { text: 'PrivacyPolicy.informationCollectedAutomaticallyText1', type: 1 },
+    { text: 'PrivacyPolicy.informationCollectedAutomaticallyText2', type: 1 },
+    { text: 'PrivacyPolicy.informationCollectedAutomaticallyText3', type: 1 },
+
+    { text: 'PrivacyPolicy.thirdPartyIntegrations', type: 2 },
+    { text: 'PrivacyPolicy.thirdPartyIntegrationsText', type: 1 },
+
+    { text: 'PrivacyPolicy.howYourInformationIsUsed', type: 2 },
+    { text: 'PrivacyPolicy.howYourInformationIsUsedText', type: 1 },
+    { text: 'PrivacyPolicy.howYourInformationIsUsedListItem1', type: 4 },
+    { text: 'PrivacyPolicy.howYourInformationIsUsedListItem2', type: 4 },
+    { text: 'PrivacyPolicy.howYourInformationIsUsedListItem3', type: 4 },
+
+    { text: 'PrivacyPolicy.dataOwnershipAndControl', type: 2 },
+    { text: 'PrivacyPolicy.dataOwnershipAndControlText1', type: 1 },
+    { text: 'PrivacyPolicy.dataOwnershipAndControlListItem1', type: 5 },
+    { text: 'PrivacyPolicy.dataOwnershipAndControlListItem2', type: 5 },
+    { text: 'PrivacyPolicy.dataOwnershipAndControlListItem3', type: 5 },
+    { text: 'PrivacyPolicy.dataOwnershipAndControlText2', type: 1 },
+    { text: 'PrivacyPolicy.dataOwnershipAndControlListItem4', type: 6 },
+    { text: 'PrivacyPolicy.dataOwnershipAndControlListItem5', type: 6 },
+
+    { text: 'PrivacyPolicy.securityMeasures', type: 2 },
+    { text: 'PrivacyPolicy.securityMeasuresText', type: 1 },
+    { text: 'PrivacyPolicy.securityMeasuresListItem1', type: 7 },
+    { text: 'PrivacyPolicy.securityMeasuresListItem2', type: 7 },
+    { text: 'PrivacyPolicy.securityMeasuresListItem3', type: 7 },
+
+    { text: 'PrivacyPolicy.thirdPartyServices', type: 2 },
+    { text: 'PrivacyPolicy.thirdPartyServicesText', type: 1 },
+
+    { text: 'PrivacyPolicy.childrensPrivacy', type: 2 },
+    { text: 'PrivacyPolicy.childrensPrivacyText', type: 1 },
+
+    { text: 'PrivacyPolicy.changesToThisPolicy', type: 2 },
+    { text: 'PrivacyPolicy.changesToThisPolicyText', type: 1 },
+
+    { text: 'PrivacyPolicy.contactAndQuestions', type: 2 },
     {
       text: (
-        <Trans i18nKey="PrivacyPolicy.description8">
+        <Trans i18nKey="PrivacyPolicy.contactAndQuestionsText">
           <Anchor href="https://purpie.org" target="_blank" />
         </Trans>
       ),
       type: 1,
     },
+
+    { text: 'PrivacyPolicy.conclusion', type: 1 },
   ];
 
   let listItems: string[] = [];
@@ -102,7 +130,7 @@ const PrivacyPolicy = (): Menu => {
                     />
                   );
                 }
-                if (item.type === 3) {
+                if ([3, 4, 5, 6, 7, 8, 9].includes(item.type)) {
                   listItems.push(item.text as string);
                 }
                 return null;

@@ -28,6 +28,12 @@ import {
   UPDATE_PROFILE_PHOTO_SUCCESS,
   UPDATE_PROFILE_INFO_SUCCESS,
   COMPLETE_PROFILE_SUCCESS,
+  LOGIN_WITH_METAMASK_FAILED,
+  LOGIN_WITH_METAMASK_REQUESTED,
+  LOGIN_WITH_METAMASK_SUCCESS,
+  REGISTER_WITH_METAMASK_FAILED,
+  REGISTER_WITH_METAMASK_REQUESTED,
+  REGISTER_WITH_METAMASK_SUCCESS,
 } from '../constants/auth.constants';
 import { AuthActionParams, AuthState } from '../types/auth.types';
 
@@ -70,6 +76,14 @@ const initialState: AuthState = {
   loginWithGoogle: {
     buttonLoading: false,
     authenticating: false,
+    error: null,
+  },
+  loginWithMetamask: {
+    loading: false,
+    error: null,
+  },
+  registerWithMetamask: {
+    loading: false,
     error: null,
   },
 };
@@ -322,6 +336,58 @@ const authReducer = (
           : null,
       };
 
+    case LOGIN_WITH_METAMASK_REQUESTED:
+      return {
+        ...state,
+        loginWithMetamask: {
+          loading: true,
+          error: null,
+        },
+      };
+    case LOGIN_WITH_METAMASK_SUCCESS:
+      return {
+        ...state,
+        user: action.payload,
+        isAuthenticated: true,
+        loginWithMetamask: {
+          loading: false,
+          error: null,
+        },
+      };
+    case LOGIN_WITH_METAMASK_FAILED:
+      return {
+        ...state,
+        loginWithMetamask: {
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case REGISTER_WITH_METAMASK_REQUESTED:
+      return {
+        ...state,
+        registerWithMetamask: {
+          loading: true,
+          error: null,
+        },
+      };
+    case REGISTER_WITH_METAMASK_SUCCESS:
+      return {
+        ...state,
+        user: action.payload,
+        isAuthenticated: true,
+        registerWithMetamask: {
+          loading: false,
+          error: null,
+        },
+      };
+    case REGISTER_WITH_METAMASK_FAILED:
+      return {
+        ...state,
+        registerWithMetamask: {
+          loading: false,
+          error: action.payload,
+        },
+      };
     default:
       return state;
   }

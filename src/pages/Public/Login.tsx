@@ -1,5 +1,4 @@
 import { Box, Form, FormField, Image, Text, TextInput } from 'grommet';
-import { Apple, Google } from 'grommet-icons';
 import React, { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -7,10 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { AnchorLink } from '../../components/utils/AnchorLink';
 import { validators } from '../../helpers/validators';
 import { FormSubmitEvent } from '../../models/form-submit-event';
-import {
-  getThirdPartyUrlAction,
-  loginAction,
-} from '../../store/actions/auth.action';
+import { loginAction } from '../../store/actions/auth.action';
 import { AppState } from '../../store/reducers/root.reducer';
 import { LoginPayload } from '../../store/types/auth.types';
 import AuthLayout from '../../components/layouts/AuthLayout';
@@ -18,7 +14,7 @@ import SignInRect from '../../assets/sign-in-rect.svg';
 import Figure from '../../assets/login-bg/figure.svg';
 import Banner from '../../assets/login-bg/banner.svg';
 import AuthFormButton from '../../components/auth/AuthFormButton';
-import { theme } from '../../config/app-config';
+import ThirdPartyAuthButtons from '../../components/auth/ThirdPartyAuthButtons';
 
 const Login: FC = () => {
   const dispatch = useDispatch();
@@ -27,7 +23,6 @@ const Login: FC = () => {
 
   const {
     login: { loading },
-    loginWithGoogle: { buttonLoading: googleAuthBtnLoading },
   } = useSelector((state: AppState) => state.auth);
 
   const handleSubmit: FormSubmitEvent<LoginPayload> = ({ value }) => {
@@ -124,26 +119,7 @@ const Login: FC = () => {
               <Image src={SignInRect} />
             </Box>
           </Box>
-
-          <Box margin={{ vertical: 'small' }} style={{ textAlign: 'center' }}>
-            <AuthFormButton
-              label={<span />}
-              color={theme.global?.colors?.['light-3']}
-              backgroundColor={theme.global?.colors?.['light-3']}
-              disabled={googleAuthBtnLoading}
-              onClick={() => dispatch(getThirdPartyUrlAction('google'))}
-              icon={<Google color="plain" size="28px" />}
-              margin={{ bottom: 'small' }}
-            />
-            <AuthFormButton
-              label={<span />}
-              color={theme.global?.colors?.['dark-1']}
-              backgroundColor={theme.global?.colors?.['dark-1']}
-              onClick={() => dispatch(getThirdPartyUrlAction('apple'))}
-              icon={<Apple color="white" size="28px" />}
-              margin={{ bottom: 'small' }}
-            />
-          </Box>
+          <ThirdPartyAuthButtons />
         </Form>
       </>
     </AuthLayout>

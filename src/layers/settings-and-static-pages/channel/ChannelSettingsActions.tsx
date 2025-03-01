@@ -70,12 +70,14 @@ const ChannelSettingsActions: FC<ChannelSettingsActionsProps> = ({
               : t('settings.channelUnfollowMessage')
           } \n ${selectedUserChannel?.channel.name} channel?`}
           onConfirm={() => {
-            dispatch(
-              canDelete
-                ? deleteChannelAction(selectedUserChannel!.channel.id)
-                : dispatch(unfollowChannelAction(selectedUserChannel!.id!))
-            );
-
+            if (canDelete) {
+              dispatch(deleteChannelAction(selectedUserChannel.channel.id));
+            } else {
+              if (!selectedUserChannel) return;
+              if (selectedUserChannel?.id) {
+                dispatch(unfollowChannelAction(selectedUserChannel.id));
+              }
+            }
             setShowDeletePopup(false);
             setSelectedUserChannel(null);
           }}

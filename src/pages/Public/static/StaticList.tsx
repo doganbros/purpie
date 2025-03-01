@@ -8,7 +8,7 @@ interface Props {
 
 const StaticList: FC<Props> = ({ tKeys, searchText }) => {
   return (
-    <ul style={{ margin: '0' }}>
+    <ul style={{ margin: '0 0 0.6rem 0' }}>
       {tKeys.map((tKey) => (
         <li key={tKey}>
           <StaticText tKey={tKey} searchText={searchText} />

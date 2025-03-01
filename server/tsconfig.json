@@ -15,7 +15,8 @@
     "noImplicitAny": true,
     "incremental": true,
     "strictPropertyInitialization": false,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "skipLibCheck": true
   },
   "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }
